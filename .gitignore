@@ -13,6 +13,9 @@
 *.dylib
 *.dll
 
+# Other Stuff
+*.d
+
 # Fortran module files
 *.mod
 
@@ -26,3 +29,12 @@
 *.exe
 *.out
 *.app
+
+# Binary files
+*.root
+*.png
+*.zip
+
+# Folders
+tree*/
+datacards*/

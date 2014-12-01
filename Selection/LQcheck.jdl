@@ -1,0 +1,11 @@
+universe = vanilla
+Executable = ./LQcheck.sh
+should_transfer_files = NO
++IsLocalJob = true
+requirements = TARGET.IsLocalSlot
+notification = Never
+Output = PREFIX_NAME_$(cluster)_$(process).stdout
+Error  = PREFIX_NAME_$(cluster)_$(process).stderr
+Log    = PREFIX_NAME_$(cluster)_$(process).condor
+Arguments = $(cluster) $(process) RUN_DIR PREFIX_NAME INPUT_NAME TREE_DIR SEL_TYPES
+Queue 1

@@ -1,0 +1,97 @@
+#each item on a line must be tab separated
+#each line should begin with OPTION, HISTO, or SET
+#each source must be listed after the appropriate group
+#add final option "noratio" to histo to turn off ratio plot
+
+OPTION
+int	printformatmax	1
+string	printformat1	eps
+string	printsuffix	lqd321
+int	filter	0
+double	luminorm	19712
+bool	printyield	1
+int	yieldprecision	2
+bool	lqd321sel	1
+bool	dofaketau	1
+double	faketaunorm	59.81
+#double	faketauerr	21.71
+bool	dottbar	1
+double	ttbarnorm	52.2
+#double	ttbarerr	13.11
+bool	nosort	1
+bool	bgline	1
+bool	plotoverflow	1
+double	ymin	1
+
+HISTO
+#ptmu	50	0	200	p_{T}(#mu) [GeV]	number of events / 4 GeV
+#bins	40	45	50	55	60	70	80	95	110	125
+#pttau	varbin	p_{T}(#tau) [GeV]	number of events / 4 GeV
+#btagjetpt	50	0	300	p_{T}(b-tag jet) [GeV]	number of events / 6 GeV
+#addljetpt	50	0	300	p_{T}(addl. jet) [GeV]	number of events / 6 GeV
+#masstaub	50	0	1000	M_{#taub} [GeV]	number of events / 20 GeV
+#st	30	0	1200	S_{T} [GeV]	number of events / 40 GeV	liny
+#st	25	100	1100	S_{T} [GeV]	number of events / 40 GeV	liny
+#st	14	220	1340	S_{T} [GeV]	number of events / 80 GeV	liny	noratio
+#st	15	0	1200	S_{T} [GeV]	number of events / 80 GeV	liny	noratio
+bins	200	280	350	420	480	540	610	680	770	860	960	1100	1200
+#st	varbin	S_{T} [GeV]	number of events	liny	noratio
+st	varbin	S_{T} [GeV]	number of events / GeV	liny	noratio	bindivide
+
+SET
+hist	data	data	kBlack	numer	yieldref
+	base	data	SingleMu_A	tree_SingleMu_A_190456_208686_muTau.root	0
+	base	data	SingleMu_B_0	tree_SingleMu_B_190456_208686_muTau_0.root	0
+	base	data	SingleMu_B_1	tree_SingleMu_B_190456_208686_muTau_1.root	0
+	base	data	SingleMu_C_0	tree_SingleMu_C_190456_208686_muTau_0.root	0
+	base	data	SingleMu_C_1	tree_SingleMu_C_190456_208686_muTau_1.root	0
+	base	data	SingleMu_C_2	tree_SingleMu_C_190456_208686_muTau_2.root	0
+	base	data	SingleMu_C_3	tree_SingleMu_C_190456_208686_muTau_3.root	0
+	base	data	SingleMu_D_0	tree_SingleMu_D_190456_208686_muTau_0.root	0
+	base	data	SingleMu_D_1	tree_SingleMu_D_190456_208686_muTau_1.root	0
+	base	data	SingleMu_D_2	tree_SingleMu_D_190456_208686_muTau_2.root	0
+	base	data	SingleMu_D_3	tree_SingleMu_D_190456_208686_muTau_3.root	0
+hist	mc	#tilde{t}300 (LQD321)	kBlack
+	base	mc	Stop300	tree_rpvstop_LQD321_Stop300_chargino.root	1.89	NTrpv
+#hist	mc	#tilde{t}500 (LQD321)	kBlack                                      
+#	base	mc	Stop500	tree_rpvstop_LQD321_Stop500_chargino.root	0.082	NTrpv
+stack	mc	mc	kWhite	denom
+	hist	mc	VV	kRed + 1
+		base	mc	WZ	tree_WZ_muTau.root	33.59
+		base	mc	WW	tree_WW_muTau.root	55.47
+		base	mc	ZZ	tree_ZZ_muTau.root	8.27
+	hist	mc	single-t	kOrange + 7
+		base	mc	T_tWchan	tree_T_tWchan_muTau.root	11.1
+		base	mc	Tbar_tWchan	tree_Tbar_tWchan_muTau.root	11.1
+		base	mc	T_tchan	tree_T_tchan_muTau.root	30.7
+		base	mc	Tbar_tchan	tree_Tbar_tchan_muTau.root	56.4
+		base	mc	T_schan	tree_T_schan_muTau.root	1.76
+		base	mc	Tbar_schan	tree_Tbar_schan_muTau.root	3.79
+	hist	mc	t#bar{t}	kOrange - 2
+		base	mc	TTbarJets	tree_TTbarJets_muTau.root	234	NTfaketaulep
+		hist	mc	t#bar{t} (real #tau)	kViolet + 1	NTttbar
+			base	mc	TTbarJets	tree_TTbarJets_2l_muTau.root	24.56	NTttbar
+	hist	mc	Z(ll/#tau#tau) + jets	kBlue - 9
+		base	mc	ZJets_2l	tree_ZJets_2l_muTau.root	3503.71	NTnofaketau
+#		base	mc	Z1Jets_2l	tree_Z1Jets_2l_muTau.root	666.3	NTnofaketau
+#		base	mc	Z2Jets_2l	tree_Z2Jets_2l_muTau.root	214.97	NTnofaketau
+#		base	mc	Z3Jets_2l	tree_Z3Jets_2l_muTau.root	60.69	NTnofaketau
+#		base	mc	Z4Jets_2l	tree_Z4Jets_2l_muTau.root	27.36	NTnofaketau
+	hist	mc	Fake #tau	kViolet + 1	NTfaketau
+#		base	mc	WJets_ln	tree_WJets_ln_muTau.root	37509.0	NTfaketau
+#		base	mc	ZJets_2l	tree_ZJets_2l_muTau.root	3503.71	NTfaketau
+#		base	mc	TTbarJets	tree_TTbarJets_muTau.root	234	NTfaketau
+		base	mc	W1Jets_ln	tree_W1Jets_ln_muTau.root	6440.58	NTfaketau
+		base	mc	W2Jets_ln	tree_W2Jets_ln_muTau.root	2087.225	NTfaketau
+		base	mc	W3Jets_ln	tree_W3Jets_ln_muTau.root	619.0113	NTfaketau
+		base	mc	W4Jets_ln	tree_W4Jets_ln_muTau.root	255.2378	NTfaketau
+		base	mc	Z1Jets_2l	tree_Z1Jets_2l_muTau.root	666.3	NTfaketau
+		base	mc	Z2Jets_2l	tree_Z2Jets_2l_muTau.root	214.97	NTfaketau
+		base	mc	Z3Jets_2l	tree_Z3Jets_2l_muTau.root	60.69	NTfaketau
+		base	mc	Z4Jets_2l	tree_Z4Jets_2l_muTau.root	27.36	NTfaketau
+		base	mc	TTbarJets2l	tree_TTbarJets_2l_muTau.root	24.56	NTfaketau
+		base	mc	TTbarJetsSl1	tree_TTbarJetsSemiLep_1_muTau.root	102.51	NTfaketau
+		base	mc	TTbarJetsSl2	tree_TTbarJetsSemiLep_2_muTau.root	102.51	NTfaketau
+		base	mc	TTbarJetsSl3	tree_TTbarJetsSemiLep_3_muTau.root	102.51	NTfaketau
+		base	mc	TTbarJetsSl4	tree_TTbarJetsSemiLep_4_muTau.root	102.51	NTfaketau
+		base	mc	TTbarJetsSl5	tree_TTbarJetsSemiLep_5_muTau.root	102.51	NTfaketau
