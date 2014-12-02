@@ -23,6 +23,7 @@ bool	nosort	1
 bool	bgline	1
 bool	plotoverflow	1
 double	ymin	0
+string	chan_label	#mu#tau channel
 
 HISTO
 #ptmu	50	0	200	p_{T}(#mu) [GeV]	number of events / 4 GeV

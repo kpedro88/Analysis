@@ -149,7 +149,9 @@ class KManager {
 				}
 				
 				//create legend
-				KLegend* kleg = new KLegend(nentries,option->Get("chan_label",true));
+				string chan_label = "";
+				option->Get("chan_label",chan_label);
+				KLegend* kleg = new KLegend(nentries,chan_label);
 				double ymin = 1;
 				if(option->Get("ymin",ymin)) kleg->SetManualYmin(ymin);
 				p->second->SetLegend(kleg);

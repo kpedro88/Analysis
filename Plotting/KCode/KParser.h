@@ -77,13 +77,17 @@ class KParser {
 				if(fields[0]=="bool") addOption<bool>(fields[1],ss);
 				else if(fields[0]=="int") addOption<int>(fields[1],ss);
 				else if(fields[0]=="double") addOption<double>(fields[1],ss);
-				else if(fields[0]=="string") addOption<string>(fields[1],ss);
+				else if(fields[0]=="string") addOption(fields[1],ss.str()); //use overloaded version
 			}
 		}
 		template <class O> void addOption(string name, stringstream& val){
 			O tmp;
 			val >> tmp;
 			MyManager->option->Set(name,tmp);
+		}
+		//overload for processing strings, because sstream >> string breaks at spaces
+		void addOption(string name, string val){
+			MyManager->option->Set(name,val);
 		}
 		void processSet(string line){
 			//cout << line << endl;

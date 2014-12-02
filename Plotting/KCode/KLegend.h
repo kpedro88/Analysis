@@ -19,12 +19,10 @@ using namespace std;
 class KLegend{
 	public:
 		//constructor
-		KLegend(int nentries_, bool chan_=true) : nentries(nentries_), leg(0), ymin(0), ymax(0), manual_ymin(false), do_chan(chan_), chan_label("") {
-			if(do_chan) {
-				//todo: change option from bool to string, to vary label
-				chan_label = "#mu#tau channel";
-				++nentries; //will be added to top of legend
-			}
+		KLegend(int nentries_, string chan_label_="") : nentries(nentries_), leg(0), ymin(0), ymax(0), manual_ymin(false), chan_label(chan_label_) {
+			//todo: allow multiple lines of text at top of legend?
+			if(chan_label.size()>0) ++nentries; //will be added to top of legend
+			//chan_label = "#mu#tau channel";
 		}
 		//destructor
 		virtual ~KLegend() {}
@@ -166,7 +164,7 @@ class KLegend{
 			}
 			ymax = max(ymax_[0],ymax_[1]);
 			
-			if(do_chan) leg->AddEntry((TObject*)NULL,chan_label.c_str(),"");
+			if(chan_label.size()>0) leg->AddEntry((TObject*)NULL,chan_label.c_str(),"");
 		}
 		void Draw(TPad* pad){
 			pad->cd();
@@ -187,7 +185,6 @@ class KLegend{
 		TLegend* leg;
 		double ymin, ymax;
 		bool manual_ymin;
-		bool do_chan;
 		string chan_label;
 };
 
