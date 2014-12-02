@@ -37,43 +37,39 @@ class KPlot{
 			//plotting without ratio disabled by default
 			//(i.e. ratio enabled by default)
 			if(option->Get("noratio",false)) {
-				//can = new TCanvas(histo->GetName(),histo->GetName(),700,500);
-				//can = new TCanvas(histo->GetName(),histo->GetName(),700,700);
-				//495x475 * m=1.4
-				can = new TCanvas(histo->GetName(),histo->GetName(),693,665);
+				//can = new TCanvas(histo->GetName(),histo->GetName(),700,555);
+				//account for window frame: 2+2px width, 2+26px height
+				can = new TCanvas(histo->GetName(),histo->GetName(),704,583);
 			
 				pad1 = new TPad("graph","",0,0,1,1);
 				//pad1->SetMargin(0.135,0.05,0.135,0.05);
 				//pad1->SetMargin(0.125,0.05,0.1,0.05);
 				//L,R,B,T: 85,35,70,30 * m=1.4
-				pad1->SetMargin(119/(pad1->GetWw()*pad1->GetAbsWNDC()),49/(pad1->GetWw()*pad1->GetAbsWNDC()),98/(pad1->GetWh()*pad1->GetAbsHNDC()),42/(pad1->GetWh()*pad1->GetAbsHNDC()));
+				pad1->SetMargin(95/(pad1->GetWw()*pad1->GetAbsWNDC()),35/(pad1->GetWw()*pad1->GetAbsWNDC()),68/(pad1->GetWh()*pad1->GetAbsHNDC()),25/(pad1->GetWh()*pad1->GetAbsHNDC()));
 				pad1->SetTicks(1,1);
 				if(!option->Get("liny",false)) pad1->SetLogy(); //liny off by default (i.e. logy on by default)
 				if(option->Get("logx",false)) pad1->SetLogx(); //logx off by default (i.e. linx on by default)
 				
-				histo->GetYaxis()->SetTitleOffset(1.50);
-				histo->GetXaxis()->SetTitleOffset(1.05);
+				//histo->GetYaxis()->SetTitleOffset(1.175);
+				histo->GetYaxis()->SetTitleOffset(1.25);
+				histo->GetXaxis()->SetTitleOffset(0.95);
 				histo->GetXaxis()->SetLabelOffset(5/(pad1->GetWh()*pad1->GetAbsHNDC()));
 			}
 			else {
-				//can = new TCanvas(histo->GetName(),histo->GetName(),700,750);
-				//580 = (665 - 70*1.4 + 13) -> 812 = 580/(5/7)
-				can = new TCanvas(histo->GetName(),histo->GetName(),693,812);
-			
+				//can = new TCanvas(histo->GetName(),histo->GetName(),700,700);
+				//account for window frame: 2+2px width, 2+26px height
+				can = new TCanvas(histo->GetName(),histo->GetName(),704,728);
+				//500/(5/7) = 700
+
 				//setup histo and ratio areas for canvas
-				//pad1 = new TPad("graph","",0,0.27,1.0,1.0);
-				//pad1->SetMargin(0.125,0.05,0.02,0.05);
-				pad1 = new TPad("graph","",0,0.2857,1.0,1.0);
-				//L,R,B,T: 85,35,-,30 * m=1.4
-				pad1->SetMargin(119/(pad1->GetWw()*pad1->GetAbsWNDC()),49/(pad1->GetWw()*pad1->GetAbsWNDC()),13/(pad1->GetWh()*pad1->GetAbsHNDC()),42/(pad1->GetWh()*pad1->GetAbsHNDC()));
+				pad1 = new TPad("graph","",0,2./7.,1.0,1.0);
+				pad1->SetMargin(95/(pad1->GetWw()*pad1->GetAbsWNDC()),35/(pad1->GetWw()*pad1->GetAbsWNDC()),13/(pad1->GetWh()*pad1->GetAbsHNDC()),25/(pad1->GetWh()*pad1->GetAbsHNDC()));
 				pad1->SetTicks(1,1);
 				if(!option->Get("liny",false)) pad1->SetLogy(); //liny off by default (i.e. logy on by default)
 				if(option->Get("logx",false)) pad1->SetLogx(); //logx off by default (i.e. linx on by default)
-				//pad2 = new TPad("dmc","",0,0,1.0,0.25);
-				//pad2->SetMargin(0.125,0.05,0.35,0.05);
-				pad2 = new TPad("dmc","",0,0,1.0,0.2857);
+				pad2 = new TPad("dmc","",0,0,1.0,2./7.);
 				//L,R,B,T: 85,35,70,- * m=1.4
-				pad2->SetMargin(119/(pad2->GetWw()*pad2->GetAbsWNDC()),49/(pad2->GetWw()*pad2->GetAbsWNDC()),98/(pad2->GetWh()*pad2->GetAbsHNDC()),13/(pad2->GetWh()*pad2->GetAbsHNDC()));
+				pad2->SetMargin(95/(pad2->GetWw()*pad2->GetAbsWNDC()),35/(pad2->GetWw()*pad2->GetAbsWNDC()),68/(pad2->GetWh()*pad2->GetAbsHNDC()),13/(pad2->GetWh()*pad2->GetAbsHNDC()));
 				pad2->SetTicks(1,1);
 			
 				//format ratio histo
@@ -81,13 +77,13 @@ class KPlot{
 				ratio->SetMarkerStyle(20);
 				ratio->SetMarkerColor(kBlack);
 				ratio->SetLineColor(kBlack);
-				ratio->GetYaxis()->SetTitleOffset(0.51);
-				ratio->GetXaxis()->SetTitleOffset(1.05);
-				ratio->GetXaxis()->SetTitleSize(38/(pad2->GetWh()*pad2->GetAbsHNDC()));
-				ratio->GetXaxis()->SetLabelSize(32/(pad2->GetWh()*pad2->GetAbsHNDC()));
+				ratio->GetYaxis()->SetTitleOffset(0.425);
+				ratio->GetXaxis()->SetTitleOffset(0.95);
+				ratio->GetXaxis()->SetTitleSize(32/(pad2->GetWh()*pad2->GetAbsHNDC()));
+				ratio->GetXaxis()->SetLabelSize(28/(pad2->GetWh()*pad2->GetAbsHNDC()));
 				ratio->GetXaxis()->SetLabelOffset(5/(pad2->GetWh()*pad2->GetAbsHNDC()));
-				ratio->GetYaxis()->SetTitleSize(38/(pad2->GetWh()*pad2->GetAbsHNDC()));
-				ratio->GetYaxis()->SetLabelSize(32/(pad2->GetWh()*pad2->GetAbsHNDC()));
+				ratio->GetYaxis()->SetTitleSize(32/(pad2->GetWh()*pad2->GetAbsHNDC()));
+				ratio->GetYaxis()->SetLabelSize(28/(pad2->GetWh()*pad2->GetAbsHNDC()));
 				ratio->GetYaxis()->SetLabelOffset(5/(pad2->GetWh()*pad2->GetAbsHNDC()));
 				//ratio->GetYaxis()->SetTickLength(6/(pad2->GetWh()*pad2->GetAbsHNDC()));
 				ratio->GetYaxis()->SetTickLength(9/(pad2->GetWh()*pad2->GetAbsHNDC()));
@@ -99,7 +95,7 @@ class KPlot{
 				ratio->GetYaxis()->SetTitle("Data/MC"); //default title
 				
 				//special formatting for blank histo
-				histo->GetYaxis()->SetTitleOffset(1.315);
+				histo->GetYaxis()->SetTitleOffset(1.1);
 				histo->GetXaxis()->SetLabelOffset(999);
 				histo->GetXaxis()->SetTitle("");
 				
@@ -111,25 +107,20 @@ class KPlot{
 			}
 
 			//setup prelim text
-			double umax3 = .925;
-			pave = new TPaveText(umax3-0.3,0.94,umax3,1.0,"NDC");
+			double umax3 = .95;
+			pave = new TPaveText(umax3-0.275,0.955,umax3,1.0,"NDC");
 			pave->SetFillColor(0);
 			pave->SetBorderSize(0);
-			//pave->SetTextFont(42);
-			pave->SetTextSize(26/(pad1->GetWh()*pad1->GetAbsHNDC()));
+			pave->SetTextFont(42);
+			pave->SetTextSize(20/(pad1->GetWh()*pad1->GetAbsHNDC()));
 			pave->AddText("CMS preliminary 2012");
 			
 			//common formatting for blank histo
-			//histo->GetYaxis()->SetTitleSize(32/(pad1->GetWh()*pad1->GetAbsHNDC()));
-			//histo->GetYaxis()->SetLabelSize(28/(pad1->GetWh()*pad1->GetAbsHNDC()));
-			//histo->GetXaxis()->SetTitleSize(32/(pad1->GetWh()*pad1->GetAbsHNDC()));
-			//histo->GetXaxis()->SetLabelSize(28/(pad1->GetWh()*pad1->GetAbsHNDC()));
-			histo->GetYaxis()->SetTitleSize(38/(pad1->GetWh()*pad1->GetAbsHNDC()));
-			histo->GetYaxis()->SetLabelSize(32/(pad1->GetWh()*pad1->GetAbsHNDC()));
+			histo->GetYaxis()->SetTitleSize(32/(pad1->GetWh()*pad1->GetAbsHNDC()));
+			histo->GetYaxis()->SetLabelSize(28/(pad1->GetWh()*pad1->GetAbsHNDC()));
 			histo->GetYaxis()->SetLabelOffset(5/(pad1->GetWh()*pad1->GetAbsHNDC()));
-			histo->GetXaxis()->SetTitleSize(38/(pad1->GetWh()*pad1->GetAbsHNDC()));
-			histo->GetXaxis()->SetLabelSize(32/(pad1->GetWh()*pad1->GetAbsHNDC()));
-			
+			histo->GetXaxis()->SetTitleSize(32/(pad1->GetWh()*pad1->GetAbsHNDC()));
+			histo->GetXaxis()->SetLabelSize(28/(pad1->GetWh()*pad1->GetAbsHNDC()));
 			histo->GetYaxis()->SetTickLength(12/(pad1->GetWh()*pad1->GetAbsHNDC()));
 			histo->GetXaxis()->SetTickLength(12/(pad1->GetWh()*pad1->GetAbsHNDC()));
 			histo->GetXaxis()->SetNdivisions(507);

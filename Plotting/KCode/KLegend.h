@@ -87,13 +87,13 @@ class KLegend{
 			leg->SetFillColor(0);
 			leg->SetBorderSize(0);
 			leg->SetTextSize(legentry);
-			//leg->SetTextFont(42);
+			leg->SetTextFont(42);
 			
 			pave = new TPaveText(umin[1],vmin[1],umax[1],vmax[1],"NDC");
 			pave->SetFillColor(0);
 			pave->SetBorderSize(0);
 			pave->SetTextSize(legentry);
-			//pave->SetTextFont(42);
+			pave->SetTextFont(42);
 			pave->AddText(fbname.c_str());
 			
 			//step 3: determine ymin (to show low-statistics bins if logy)
