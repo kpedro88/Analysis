@@ -4,7 +4,6 @@
 //ROOT headers
 #include <TROOT.h>
 #include <TLegend.h>
-#include <TPaveText.h>
 #include <TH1F.h>
 
 //STL headers
@@ -20,12 +19,12 @@ using namespace std;
 class KLegend{
 	public:
 		//constructor
-		KLegend(int nentries_, double intlumi_, bool chan_=true) : intlumi(intlumi_), nentries(nentries_), leg(0), pave(0), ymin(0), ymax(0), manual_ymin(false), chan_label(chan_) {
-			stringstream fbname_;
-			string chan = "    ";
-			if(chan_label) chan = "#mu#tau, ";
-			fbname_ << fixed << setprecision(1) << chan << intlumi/1000 << " fb^{-1} at #sqrt{s} = 8 TeV";
-			fbname = fbname_.str();
+		KLegend(int nentries_, bool chan_=true) : nentries(nentries_), leg(0), ymin(0), ymax(0), manual_ymin(false), do_chan(chan_), chan_label("") {
+			if(do_chan) {
+				//todo: change option from bool to string, to vary label
+				chan_label = "#mu#tau channel";
+				++nentries; //will be added to top of legend
+			}
 		}
 		//destructor
 		virtual ~KLegend() {}
@@ -34,6 +33,7 @@ class KLegend{
 		void Build(TPad* pad){
 			bool logy = pad->GetLogy();
 			bool logx = pad->GetLogx();
+			double padH = pad->GetWh()*pad->GetAbsHNDC();
 			double ytick = (hists.size()>0) ? hists[0]->GetYaxis()->GetTickLength() : 0;
 			double xtick = (hists.size()>0) ? hists[0]->GetXaxis()->GetTickLength() : 0;
 		
@@ -51,50 +51,36 @@ class KLegend{
 				if(ph_ > ph) { p = p_; nbins = nbins_; ph = ph_; }
 			}
 			
-			//step 2: determine appropriate legend & pave coords
-			double umin[2], umax[2], vmin[2], vmax[2]; //[0] is for legend, [1] is for pave
+			//step 2: determine appropriate legend coords
+			double umin, umax, vmin, vmax;
 			double lbound = pad->GetLeftMargin() + ytick;
 			double rbound = 1 - (pad->GetRightMargin() + ytick);
 			
 			//how to determine width?
 			double legwidth = 0.33;
-			double pavewidth = 0.425;
 			
 			if(p > nbins/2) {
-				umin[0] = lbound;
-				umax[0] = umin[0] + legwidth;
-				umin[1] = lbound;
-				umax[1] = umin[1] + pavewidth;
+				umin = lbound;
+				umax = umin + legwidth;
 			}
 			else {
-				umax[0] = rbound;
-				umin[0] = umax[0] - legwidth;
-				umax[1] = rbound;
-				umin[1] = umax[1] - pavewidth;
+				umax = rbound;
+				umin = umax - legwidth;
 			}
 
 			//double legentry = 0.05; //line height for each entry
-			double legentry = 26/(pad->GetWh()*pad->GetAbsHNDC()); //line height for each entry
+			double legentry = 26/padH; //line height for each entry
 			double legheight = legentry*nentries; //total height of all entries
 			
-			vmax[1] = 1 - (pad->GetTopMargin() + xtick);
-			vmin[1] = vmax[1] - legentry;
-			vmax[0] = vmin[1];
-			vmin[0] = vmax[0] - legheight;		
+			vmax = 1 - (pad->GetTopMargin() + xtick);
+			vmin = vmax - legheight;		
 
-			//initialize legend and pave with determined coords
-			leg = new TLegend(umin[0],vmin[0],umax[0],vmax[0]);
+			//initialize legend with determined coords
+			leg = new TLegend(umin,vmin,umax,vmax);
 			leg->SetFillColor(0);
 			leg->SetBorderSize(0);
 			leg->SetTextSize(legentry);
 			leg->SetTextFont(42);
-			
-			pave = new TPaveText(umin[1],vmin[1],umax[1],vmax[1],"NDC");
-			pave->SetFillColor(0);
-			pave->SetBorderSize(0);
-			pave->SetTextSize(legentry);
-			pave->SetTextFont(42);
-			pave->AddText(fbname.c_str());
 			
 			//step 3: determine ymin (to show low-statistics bins if logy)
 			//loop over histos
@@ -125,9 +111,9 @@ class KLegend{
 			double eps = 0.05; //small separation between legend and histos
 
 			//bounds to check
-			double ucmin[2], ucmax[2], vcmin[2]; //[0] is legend&pave side, [1] is other side
-			ucmin[0] = max(umin[0],umin[1]);
-			ucmax[0] = max(umax[0],umax[1]);
+			double ucmin[2], ucmax[2], vcmin[2]; //[0] is legend side, [1] is other side
+			ucmin[0] = umin;
+			ucmax[0] = umax;
 			if(p > nbins/2) {
 				ucmin[1] = ucmax[0];
 				ucmax[1] = rbound;
@@ -136,11 +122,11 @@ class KLegend{
 				ucmin[1] = lbound;
 				ucmax[1] = ucmin[0];
 			}
-			vcmin[0] = vmin[0]; //legend always at the bottom
-			vcmin[1] = vmax[1]; //just compare to top of plot (margin + ticks) on the other side
+			vcmin[0] = vmin; //legend always at the bottom
+			vcmin[1] = vmax; //just compare to top of plot (margin + ticks) on the other side
 			
 			//loop over histos
-			double bh[2]; //height of highest bin + error (legend, pave)
+			double bh[2]; //height of highest bin + error (legend)
 			bh[0] = bh[1] = 0;
 			for(unsigned s = 0; s < hists.size(); s++){
 				TAxis* x1 = hists[s]->GetXaxis();
@@ -179,31 +165,30 @@ class KLegend{
 				ymax_[i] = logy ? ymin*pow(bh[i]/ymin, gy/(vcmin[i] - pad->GetBottomMargin() - eps)) : ymin + gy*(bh[i] - ymin)/(vcmin[i] - pad->GetBottomMargin() - eps);
 			}
 			ymax = max(ymax_[0],ymax_[1]);
+			
+			if(do_chan) leg->AddEntry((TObject*)NULL,chan_label.c_str(),"");
 		}
 		void Draw(TPad* pad){
 			pad->cd();
-			if(pave) pave->Draw("same");
 			if(leg) leg->Draw("same");
 		}
 		
 		//accessors
 		void AddHist(TH1F* h) { hists.push_back(h); }
 		TLegend* GetLegend() { return leg; }
-		TPaveText* GetPave() { return pave; }
 		pair<double,double> GetRange(){ return make_pair(ymin,ymax); }
 		void SetManualYmin(double ym) { ymin = ym; manual_ymin = true; }
 
 	protected:
 		//member variables
-		double intlumi;
 		int nentries;
 		string fbname;
 		vector<TH1F*> hists;
 		TLegend* leg;
-		TPaveText* pave;
 		double ymin, ymax;
 		bool manual_ymin;
-		bool chan_label;
+		bool do_chan;
+		string chan_label;
 };
 
 #endif

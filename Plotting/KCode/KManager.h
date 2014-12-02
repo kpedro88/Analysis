@@ -105,6 +105,8 @@ class KManager {
 			
 			//draw each plot - normalization, legend, ratio
 			for(p = MyPlots.GetTable().begin(); p != MyPlots.GetTable().end(); p++){
+				//set lumi for pave
+				p->second->SetLumi(intlumi);
 				//get drawing objects from KPlot
 				TCanvas* can = p->second->GetCanvas();
 				TPad* pad1 = p->second->GetPad1();
@@ -147,7 +149,7 @@ class KManager {
 				}
 				
 				//create legend
-				KLegend* kleg = new KLegend(nentries,intlumi,option->Get("chan_label",true));
+				KLegend* kleg = new KLegend(nentries,option->Get("chan_label",true));
 				double ymin = 1;
 				if(option->Get("ymin",ymin)) kleg->SetManualYmin(ymin);
 				p->second->SetLegend(kleg);
