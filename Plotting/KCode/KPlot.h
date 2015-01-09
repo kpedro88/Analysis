@@ -27,14 +27,14 @@ class KPlot{
 	public:
 		//constructor
 		KPlot() : option(0), histo(0), ratio(0), can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0), intlumi(0),
-				  canvasW(0), canvasH(0), marginL(0), marginR(0), marginB(0), marginT(0), marginM(0), sizeT(0), sizeL(0), sizeP(0), posP(0),
+				  canvasW(0), canvasH(0), marginL(0), marginR(0), marginB(0), marginT(0), marginM(0), sizeT(0), sizeL(0), sizeP(0), sizeTick(0), posP(0),
 				  pad1W(0), pad1H(0), pad2W(0), pad2H(0)
 		{
 			//must always have an option map
 			if(option==0) option = new OptionMap();
 		}
 		KPlot(TH1F* h_, OptionMap* option_) : option(option_), histo(h_), ratio(0), can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0), intlumi(0),
-											  canvasW(0), canvasH(0), marginL(0), marginR(0), marginB(0), marginT(0), marginM(0), sizeT(0), sizeL(0), sizeP(0), posP(0),
+											  canvasW(0), canvasH(0), marginL(0), marginR(0), marginB(0), marginT(0), marginM(0), sizeT(0), sizeL(0), sizeP(0), sizeTick(0), posP(0),
 											  pad1W(0), pad1H(0), pad2W(0), pad2H(0)
 		{
 			//must always have an option map
@@ -50,6 +50,7 @@ class KPlot{
 			sizeT = 32;
 			sizeL = 28;
 			sizeP = 26;
+			sizeTick = 12;
 			//plotting without ratio disabled by default
 			//(i.e. ratio enabled by default)
 			if(option->Get("noratio",false)) {
@@ -94,6 +95,8 @@ class KPlot{
 				//L,R,B,T: 85,35,70,- * m=1.4
 				pad2->SetMargin(marginL/pad2W,marginR/pad2W,marginB/pad2H,marginM/pad2H);
 				pad2->SetTicks(1,1);
+				double tickScaleX2 = (pad2W - marginL - marginR)/pad2W*pad2H;
+				double tickScaleY2 = (pad2H - marginB - marginM)/pad2H*pad2W;
 			
 				//format ratio histo
 				ratio = (TH1F*)histo->Clone();
@@ -109,8 +112,8 @@ class KPlot{
 				ratio->GetYaxis()->SetLabelSize(sizeL/pad2H);
 				ratio->GetYaxis()->SetLabelOffset(5/pad2H);
 				//ratio->GetYaxis()->SetTickLength(6/pad2H);
-				ratio->GetYaxis()->SetTickLength(9/pad2H);
-				ratio->GetXaxis()->SetTickLength(12/pad2H);
+				ratio->GetYaxis()->SetTickLength(sizeTick/tickScaleY2);
+				ratio->GetXaxis()->SetTickLength(sizeTick/tickScaleX2);
 				ratio->GetYaxis()->SetNdivisions(503);
 				ratio->GetXaxis()->SetNdivisions(507);
 				ratio->GetYaxis()->SetRangeUser(0.45,1.55);
@@ -153,13 +156,15 @@ class KPlot{
 			paveExtra->AddText("Preliminary");
 
 			//common formatting for blank histo
+			double tickScaleX1 = (pad1W - marginL - marginR)/pad1W*pad1H;
+			double tickScaleY1 = (pad1H - marginM - marginT)/pad1H*pad1W;
 			histo->GetYaxis()->SetTitleSize(sizeT/pad1H);
 			histo->GetYaxis()->SetLabelSize(sizeL/pad1H);
 			histo->GetYaxis()->SetLabelOffset(5/pad1H);
 			histo->GetXaxis()->SetTitleSize(sizeT/pad1H);
 			histo->GetXaxis()->SetLabelSize(sizeL/pad1H);
-			histo->GetYaxis()->SetTickLength(12/pad1H);
-			histo->GetXaxis()->SetTickLength(12/pad1H);
+			histo->GetYaxis()->SetTickLength(sizeTick/tickScaleY1);
+			histo->GetXaxis()->SetTickLength(sizeTick/tickScaleX1);
 			histo->GetXaxis()->SetNdivisions(507);
 		}
 		
@@ -237,7 +242,7 @@ class KPlot{
 		TPaveText* paveLumi;
 		TLine* line;
 		double intlumi;
-		double canvasW, canvasH, marginL, marginR, marginB, marginT, marginM, sizeT, sizeL, sizeP, posP;
+		double canvasW, canvasH, marginL, marginR, marginB, marginT, marginM, sizeT, sizeL, sizeP, sizeTick, posP;
 		double pad1W, pad1H, pad2W, pad2H;
 };
 
