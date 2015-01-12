@@ -111,7 +111,6 @@ class KManager {
 				//get drawing objects from KPlot
 				TCanvas* can = p->second->GetCanvas();
 				TPad* pad1 = p->second->GetPad1();
-				p->second->DrawInit();
 				
 				//select current histogram in sets
 				for(unsigned s = 0; s < MySets.size(); s++){
