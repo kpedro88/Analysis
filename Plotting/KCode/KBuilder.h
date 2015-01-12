@@ -43,7 +43,7 @@ class KBuilder : public TreeClass {
 		KBuilder(KBase* MyBase_, TTree* tree_) : TreeClass(tree_), MyBase(MyBase_), option(MyBase_->GetOption()), stmp(""), htmp(0) {
 			//enable histo errors
 			TH1::SetDefaultSumw2(kTRUE);
-			gStyle->SetErrorX(0.5);
+			//gStyle->SetErrorX(0.5); //now disabled by default
 			
 			//must always have an option map
 			if(option==0) option = new OptionMap();

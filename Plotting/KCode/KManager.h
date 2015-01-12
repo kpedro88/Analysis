@@ -8,6 +8,7 @@
 
 //ROOT headers
 #include <TROOT.h>
+#include <TExec.h>
 
 //STL headers
 #include <string>
@@ -172,6 +173,17 @@ class KManager {
 				
 				//draw blank histo for axes
 				p->second->DrawHist();
+				//horizontal error bars for histograms are DISABLED by default
+				//but auto-enabled for variable-binned histograms (per CMS style guidelines)
+				//this could eventually be moved to KPlot once the global/local option map update is done
+				//(note: TExec cannot be the first thing drawn on a pad)
+				TExec* exec = 0;
+				string execname = "exec_" + p->first;
+				if(option->Get("horizerrbars",false) || p->second->GetHisto()->GetXaxis()->IsVariableBinSize()){
+					exec = new TExec(execname.c_str(),"gStyle->SetErrorX(0.5);");
+				}
+				else exec = new TExec(execname.c_str(),"gStyle->SetErrorX(0);");
+				exec->Draw();
 				//draw sets (reverse order, so first set is on top)
 				for(int s = MySets.size()-1; s >= 0; s--){
 					MySets[s]->Draw(pad1);

@@ -130,7 +130,11 @@ class KSetData: public KSet {
 		}
 		//adds histo to legend
 		void AddToLegend(TLegend* leg) {
-			leg->AddEntry(htmp,name.c_str(),"pl");
+			//only draw horizontal line if horizontal error bar is enabled
+			if(option->Get("horizerrbars",false) || htmp->GetXaxis()->IsVariableBinSize()){
+				leg->AddEntry(htmp,name.c_str(),"pel");
+			}
+			else leg->AddEntry(htmp,name.c_str(),"pe");
 		}
 		//draw function
 		void Draw(TPad* pad) {
