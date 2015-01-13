@@ -5,6 +5,7 @@
 #include "KMap.h"
 #include "KBase.h"
 #include "KBuilder.h"
+#include "KLegend.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -68,8 +69,8 @@ class KSet : public KBase {
 			}
 			else return NULL; //do not reset if the histo does not exist
 		}
-		//reports number of entries for the legend
-		virtual int GetLegendInfo() { return 1; }
+		//provides size of entries for the legend
+		virtual void GetLegendInfo(KLegend* kleg) { kleg->CheckSize(name); }
 		virtual void CloseFile(){
 			for(unsigned c = 0; c < children.size(); c++){
 				children[c]->CloseFile();
@@ -134,6 +135,7 @@ class KSetData: public KSet {
 			if(option->Get("horizerrbars",false) || htmp->GetXaxis()->IsVariableBinSize()){
 				leg->AddEntry(htmp,name.c_str(),"pel");
 			}
+			//note: this setting only works in ROOT 5.34.11+
 			else leg->AddEntry(htmp,name.c_str(),"pe");
 		}
 		//draw function
@@ -324,12 +326,12 @@ class KSetMCStack : public KSet {
 			}
 			else return NULL; //do not reset if the histo does not exist
 		}
-		//reports number of entries for the legend
-		int GetLegendInfo() { 
-			int num = children.size();
-			//error band enabled by default
-			if(option->Get("errband",true)) num++;
-			return num;
+		//provides size of entries for the legend
+		void GetLegendInfo(KLegend* kleg) {
+			for(unsigned c = 0; c < children.size(); c++){
+				children[c]->GetLegendInfo(kleg);
+			}
+			if(option->Get("errband",true)) kleg->CheckSize("uncertainty");
 		}
 		//adds child histos to legend
 		void AddToLegend(TLegend* leg) {

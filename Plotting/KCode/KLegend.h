@@ -5,11 +5,14 @@
 #include <TROOT.h>
 #include <TLegend.h>
 #include <TH1F.h>
+#include <TLatex.h>
+#include <TPad.h>
 
 //STL headers
 #include <vector>
 #include <string>
 #include <sstream>
+#include <iostream>
 #include <utility>
 #include <iomanip>
 #include <cmath>
@@ -19,19 +22,20 @@ using namespace std;
 class KLegend{
 	public:
 		//constructor
-		KLegend(int nentries_, string chan_label_="") : nentries(nentries_), leg(0), ymin(0), ymax(0), manual_ymin(false), chan_label(chan_label_) {
+		KLegend(TPad* pad_, string chan_label_="") : pad(pad_), legwidth(0), legheight(0), leg(0), ymin(0), ymax(0), manual_ymin(false), chan_label(chan_label_) {
+			padH = pad->GetWh()*pad->GetAbsHNDC();
+			legentry = 26/padH; //line height for each entry
 			//todo: allow multiple lines of text at top of legend?
-			if(chan_label.size()>0) ++nentries; //will be added to top of legend
+			if(chan_label.size()>0) CheckSize(chan_label); //will be added to top of legend
 			//chan_label = "#mu#tau channel";
 		}
 		//destructor
 		virtual ~KLegend() {}
 		
 		//functions
-		void Build(TPad* pad){
+		void Build(){
 			bool logy = pad->GetLogy();
 			bool logx = pad->GetLogx();
-			double padH = pad->GetWh()*pad->GetAbsHNDC();
 			double ytick = (hists.size()>0) ? hists[0]->GetYaxis()->GetTickLength() : 0;
 			double xtick = (hists.size()>0) ? hists[0]->GetXaxis()->GetTickLength() : 0;
 		
@@ -54,8 +58,10 @@ class KLegend{
 			double lbound = pad->GetLeftMargin() + ytick;
 			double rbound = 1 - (pad->GetRightMargin() + ytick);
 			
-			//how to determine width?
-			double legwidth = 0.33;
+			//symbol box takes up fMargin = 0.25 by default
+			legwidth /= 0.75;
+			//add a little padding for each line
+			legheight *= 1.2;
 			
 			if(p > nbins/2) {
 				umin = lbound;
@@ -65,10 +71,6 @@ class KLegend{
 				umax = rbound;
 				umin = umax - legwidth;
 			}
-
-			//double legentry = 0.05; //line height for each entry
-			double legentry = 26/padH; //line height for each entry
-			double legheight = legentry*nentries; //total height of all entries
 			
 			vmax = 1 - (pad->GetTopMargin() + xtick);
 			vmin = vmax - legheight;		
@@ -166,9 +168,16 @@ class KLegend{
 			
 			if(chan_label.size()>0) leg->AddEntry((TObject*)NULL,chan_label.c_str(),"");
 		}
-		void Draw(TPad* pad){
+		void Draw(){
 			pad->cd();
 			if(leg) leg->Draw("same");
+		}
+		void CheckSize(string line){
+			pad->cd();
+			TLatex size_test(0,0,line.c_str());
+			size_test.SetTextSize(legentry);
+			legheight += size_test.GetYsize();
+			if(size_test.GetXsize() > legwidth) legwidth = size_test.GetXsize();
 		}
 		
 		//accessors
@@ -179,8 +188,9 @@ class KLegend{
 
 	protected:
 		//member variables
-		int nentries;
-		string fbname;
+		TPad* pad;
+		double legwidth, legheight;
+		double padH, legentry;
 		vector<TH1F*> hists;
 		TLegend* leg;
 		double ymin, ymax;

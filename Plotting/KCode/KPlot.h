@@ -187,7 +187,7 @@ class KPlot{
 		}
 		void DrawText(){
 			pad1->cd();
-			leg->Draw(pad1);
+			leg->Draw();
 			paveCMS->Draw("same");
 			paveExtra->Draw("same");
 			paveLumi->Draw("same");

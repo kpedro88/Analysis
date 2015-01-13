@@ -82,12 +82,9 @@ class KManager {
 				}
 			}
 			
-			//build everything, check for legend height
-			//add some kind of check for legend width here?
-			double nentries = 0;
+			//build everything
 			for(unsigned s = 0; s < MySets.size(); s++){
 				MySets[s]->Build();
-				nentries += MySets[s]->GetLegendInfo();
 			}
 			
 			//fake tau estimation is calculated during build
@@ -111,6 +108,14 @@ class KManager {
 				//get drawing objects from KPlot
 				TCanvas* can = p->second->GetCanvas();
 				TPad* pad1 = p->second->GetPad1();
+				
+				//create legend
+				string chan_label = "";
+				option->Get("chan_label",chan_label);
+				KLegend* kleg = new KLegend(pad1,chan_label);
+				double ymin = 1;
+				if(option->Get("ymin",ymin)) kleg->SetManualYmin(ymin);
+				p->second->SetLegend(kleg);
 				
 				//select current histogram in sets
 				for(unsigned s = 0; s < MySets.size(); s++){
@@ -147,23 +152,17 @@ class KManager {
 						MySets[s]->BinDivide();
 					}
 				}
-				
-				//create legend
-				string chan_label = "";
-				option->Get("chan_label",chan_label);
-				KLegend* kleg = new KLegend(nentries,chan_label);
-				double ymin = 1;
-				if(option->Get("ymin",ymin)) kleg->SetManualYmin(ymin);
-				p->second->SetLegend(kleg);
 			
 				//pass current histogram to legend
 				//AFTER bindivide if requested
+				//and calculate legend size
 				for(unsigned s = 0; s < MySets.size(); s++){
 					kleg->AddHist(MySets[s]->GetHisto());
+					MySets[s]->GetLegendInfo(kleg);
 				}
 				
 				//build legend
-				kleg->Build(pad1);
+				kleg->Build();
 				
 				//add sets to legend
 				for(unsigned s = 0; s < MySets.size(); s++){

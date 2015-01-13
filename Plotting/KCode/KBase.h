@@ -3,6 +3,7 @@
 
 //custom headers
 #include "KMap.h"
+#include "KLegend.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -142,7 +143,7 @@ class KBase {
 
 		//other virtual functions (unimplemented at this level)
 		virtual void Draw(TPad* pad) {}
-		virtual int GetLegendInfo() {}
+		virtual void GetLegendInfo(KLegend* kleg) {}
 		virtual void AddToLegend(TLegend* leg) {}
 		virtual void AddChild(KBase* ch) {}
 		virtual void Normalize(double nn, bool toYield=true) {}
