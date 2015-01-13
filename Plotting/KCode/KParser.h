@@ -337,6 +337,18 @@ KManager::KManager(string in, string dir) : input(in),treedir(dir),option(0),num
 	//final checks and initializations
 	MyRatio = new KSetRatio(option);
 	if(option->Get("calcfaketau",false)) FakeTauEstimationInit();
+	//store correction root files centrally
+	//todo: make file location and histo name configurable
+	if(option->Get("pucorr",true)) {
+		TFile* pufile = new TFile("corrections/puWeightsLQ.root","READ"); //puWeights
+		TH1F* puWeights = (TH1F*)pufile->Get("pileup");
+		option->Set("puWeights",puWeights);
+	}
+	if(option->Get("mucorr",true)) {
+		TFile* mufile = new TFile("corrections/muIDTight.root","READ"); //puWeights
+		TH1F* muIDTight = (TH1F*)mufile->Get("muIDTight");
+		option->Set("muIDTight",muIDTight);
+	}
 }
 
 #endif

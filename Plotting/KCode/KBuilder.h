@@ -8,14 +8,13 @@
 #include "TreeClass.h"
 
 //custom headers for weighting
-#include "../database/DataBaseManager.cc"
 #include "../btag/GetBtagScale.C"
 
 //ROOT headers
 #include <TROOT.h>
 #include <TFile.h>
 #include <TH1.h>
-#include <TH1F.h>
+#include <TH2.h>
 #include <TStyle.h>
 #include <TLorentzVector.h>
 
@@ -983,19 +982,10 @@ void KBaseData::Build(){
 class KBuilderMC : public KBuilder {
 	public:
 		//constructors
-		KBuilderMC() : KBuilder() { InitWeight(); }
-		KBuilderMC(KBase* MyBase_, TTree* tree_) : KBuilder(MyBase_,tree_) { InitWeight(); }
+		KBuilderMC() : KBuilder() { }
+		KBuilderMC(KBase* MyBase_, TTree* tree_) : KBuilder(MyBase_,tree_) { }
 		//destructor
 		virtual ~KBuilderMC() {}
-		
-		//helper function
-		void InitWeight(){
-			TFile* pufile = new TFile("/data/users/pedrok/LQ2012/puWeightsLQ.root","READ"); //puWeights
-			puWeights = (TH1F*)pufile->Get("pileup");
-		
-			dbm = new DataBaseManager(); //for muon efficiency corrections
-			dbm->loadDb("muID","muIDTight.db");
-		}
 		
 		//functions for histo creation
 		bool Cut(){
@@ -1018,9 +1008,17 @@ class KBuilderMC : public KBuilder {
 			
 			//check option in case correction types are disabled globally
 			//(enabled by default)
-			if(option->Get("pucorr",true)) w *= puWeights->GetBinContent(puWeights->GetXaxis()->FindBin(trueNInteraction));
-			
-			if(option->Get("mucorr",true)) w *= dbm->getDBValue("muID",fabs(MuonEta),MuonPt);
+			if(option->Get("pucorr",true)) {
+				TH1F* puWeights;
+				option->Get("puWeights",puWeights);
+				w *= puWeights->GetBinContent(puWeights->GetXaxis()->FindBin(trueNInteraction));
+			}
+
+			if(option->Get("mucorr",true)) {
+				TH2F* muIDTight;
+				option->Get("muIDTight",muIDTight);
+				w *= muIDTight->GetBinContent(muIDTight->FindBin(fabs(MuonEta),MuonPt));
+			}
 			
 			if(option->Get("btagcorr",true)) {
 				int bSF = 0;
@@ -1044,11 +1042,7 @@ class KBuilderMC : public KBuilder {
 			
 			return w;
 		}
-		
-	private:
-		//member variables
-		TH1F* puWeights;
-		DataBaseManager* dbm;
+
 };
 
 void KBaseMC::Build(){
