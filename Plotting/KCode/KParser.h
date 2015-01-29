@@ -51,7 +51,7 @@ class KParser {
 					else if(line.compare(0,5,"HISTO")==0) { intype = "HISTO"; continue; }
 					
 					//otherwise, process line according to input type
-					if(intype=="OPTION") processOption(line);
+					if(intype=="OPTION") processOption(line,MyManager->option);
 					else if(intype=="SET") processSet(line);
 					else if(intype=="HISTO") processHisto(line);
 				}
@@ -64,30 +64,80 @@ class KParser {
 			return parsed;
 		}
 		//helper functions
-		void processOption(string line){
-			//tab separated input
+		void processOption(string line, OptionMap* option){
+			//type:name[value]
 			vector<string> fields;
-			process(line,'\t',fields);
+			bool goodOption = splitOption(line,fields);
+			if(!goodOption) {
+				cout << "Improperly formatted option:" << endl;
+				cout << line << endl;
+				cout << "This option will not be added." << endl;
+				return;
+			}
 			
-			//currently anticipated option types:
-			//bool, int, double, string
+			//currently anticipated option types: full/abbrev.
+			//bool/b, int/i, double/d, string/s, color/c,
+			//vbool/vb, vint/vi, vdouble/vd, vstring/vs, vcolor/vc (vectors)
 			//others could easily be added...
 			if(fields.size()>=3){
-				stringstream ss(fields[2]);
-				if(fields[0]=="bool") addOption<bool>(fields[1],ss);
-				else if(fields[0]=="int") addOption<int>(fields[1],ss);
-				else if(fields[0]=="double") addOption<double>(fields[1],ss);
-				else if(fields[0]=="string") addOption(fields[1],ss.str()); //use overloaded version
+				string type = fields[0]; string name = fields[1]; string val = fields[2];
+				bool isvector = type[0]=='v';
+				if(isvector) type.erase(0,1);
+				
+				//match strings to types
+				if(type=="bool" || type=="b") addOption<bool>(option,name,val,isvector);
+				else if(type=="int" || type=="i") addOption<int>(option,name,val,isvector);
+				else if(type=="double" || type=="d") addOption<double>(option,name,val,isvector);
+				else if(type=="string" || type=="s") addOption<string>(option,name,val,isvector);
+				else if(type=="color" || type=="c") addOption<Color_t>(option,name,val,isvector);
 			}
 		}
-		template <class O> void addOption(string name, stringstream& val){
-			O tmp;
-			val >> tmp;
-			MyManager->option->Set(name,tmp);
+		//handles vector and non-vector options
+		template <class O> void addOption(OptionMap* option, string name, string val, bool isvector){
+			if(isvector){
+				vector<O> vtmp;
+				//comma-separated values
+				vector<string> fields;
+				process(val,',',fields);
+				for(int i = 0; i < fields.size(); i++){
+					vtmp.push_back(getOptionValue<O>(fields[i]));
+				}
+				option->Set(name,vtmp);
+			}
+			else {
+				option->Set(name, getOptionValue<O>(val));
+			}
 		}
-		//overload for processing strings, because sstream >> string breaks at spaces
-		void addOption(string name, string val){
-			MyManager->option->Set(name,val);
+		//handles default type cases
+		//special cases declared below (namespace scope, outside class declaration)
+		template <class O> O getOptionValue(string val){
+			stringstream sval(val);
+			O tmp;
+			sval >> tmp;
+			return tmp;
+		}
+		//splits option format into three components: type:name[value]
+		bool splitOption(string line, vector<string>& fields){
+			//first component: type
+			int colon = searchLine(line, ':');
+			if(colon>-1) {
+				fields.push_back(line.substr(0,colon));
+				line.erase(0,colon+1);
+			}
+			else return false;
+			
+			//second component: name
+			int lbracket = searchLine(line, '[');
+			if(lbracket>-1){
+				fields.push_back(line.substr(0,lbracket));
+				line.erase(0,lbracket+1);
+			}
+			else return false;
+			
+			//third component: value
+			if(line[line.size()-1]==']') line.erase(line.size()-1,1);
+			fields.push_back(line);
+			return true;
 		}
 		void processSet(string line){
 			//cout << line << endl;
@@ -317,7 +367,14 @@ class KParser {
 			while(getline(ss,field,delim)){
 				fields.push_back(field);
 			}
-		}		
+		}
+		//finds the first location of a given char in a string
+		int searchLine(string line, char val){
+			for(int i = 0; i < line.size(); i++){
+				if(line[i]==val) return i;
+			}
+			return -1;
+		}
 	
 	private:
 		//member variables
@@ -325,6 +382,16 @@ class KParser {
 		bool parsed;
 
 };
+
+//function template specializations
+//special case: just take the string directly
+template <> string KParser::getOptionValue<string>(string val){
+	return val;
+}
+//special case: special processing for colors
+template <> Color_t KParser::getOptionValue<Color_t>(string val){
+	return processColor(val);
+}
 
 //implementation of KManager constructor
 //note: dir="tree" default

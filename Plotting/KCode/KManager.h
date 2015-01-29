@@ -213,20 +213,16 @@ class KManager {
 					p->second->DrawLine();
 				}
 				
-				//print formats must be options labeled sequentially: printformat1, printformat2, ..., printformatN; w/ N specified in printformatmax
-				int pmax = 0;
-				if(doPrint && option->Get<int>("printformatmax",pmax)){
-					for(int j = 0; j < pmax; j++){
-						stringstream pfs;
-						pfs << "printformat" << j+1;
-						string pformat = "";
-						if(option->Get<string>(pfs.str(),pformat)) {
-							string oname = p->first;
-							string suff = "";
-							if(option->Get("printsuffix",suff)) oname += "_" + suff;
-							oname += "." + pformat;
-							can->Print(oname.c_str(),pformat.c_str());
-						}
+				//print formats given as a vector option
+				vector<string> printformat;
+				if(doPrint && option->Get<vector<string> >("printformat",printformat)){
+					for(int j = 0; j < printformat.size(); j++){
+						string pformat = printformat[j];
+						string oname = p->first;
+						string suff = "";
+						if(option->Get("printsuffix",suff)) oname += "_" + suff;
+						oname += "." + pformat;
+						can->Print(oname.c_str(),pformat.c_str());
 					}
 				}
 			}

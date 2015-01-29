@@ -1,24 +1,24 @@
-#each item on a line must be tab separated
-#each line should begin with OPTION, HISTO, or SET
-#each source must be listed after the appropriate group
-#add final option "noratio" to histo to turn off ratio plot
+#three sections: global options in OPTION, 1D histograms in HISTO, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO and SET sections must be tab-separated
+#for datasets, each source must be listed after the appropriate group
 
 OPTION
-int	printformatmax	1
-string	printformat1	png
-int	filter	0
-double	luminorm	19712
-bool	printyield	1
-int	yieldprecision	2
-bool	mainsel	1
-bool	finalsel	1
-bool	dofaketau	1
-double	faketaunorm	117.27
-#double	faketauerr	28.62
-bool	dottbar	1
-double	ttbarnorm	64.2
-#double	ttbarerr	13.11
-bool	closefiles	1
+vstring:printformat[png]
+int:filter[0]
+double:luminorm[19712]
+bool:printyield[1]
+int:yieldprecision[2]
+bool:mainsel[1]
+bool:finalsel[1]
+bool:dofaketau[1]
+double:faketaunorm[117.27]
+#double:faketauerr[28.62]
+bool:dottbar[1]
+double:ttbarnorm[64.2]
+#double:ttbarerr[13.11]
+bool:closefiles[1]
 
 HISTO
 st	120	0	1200	S_{T} [GeV]	number of events / 10 GeV	noratio	liny
