@@ -18,12 +18,13 @@ bool:dottbar[1]
 double:ttbarnorm[52.2]
 #double:ttbarerr[13.11]
 bool:closefiles[1]
+string:yieldref[data]
 
 HISTO
 st	120	0	1200	S_{T} [GeV]	number of events / 10 GeV	noratio	liny
 
 SET
-hist	data	data	kBlack	numer	yieldref
+hist	data	data	kBlack
 	base	data	SingleMu_A	tree_SingleMu_A_190456_208686_muTau.root	0
 	base	data	SingleMu_B_0	tree_SingleMu_B_190456_208686_muTau_0.root	0
 	base	data	SingleMu_B_1	tree_SingleMu_B_190456_208686_muTau_1.root	0

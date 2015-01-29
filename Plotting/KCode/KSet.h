@@ -413,7 +413,15 @@ class KSetMCStack : public KSet {
 				cout << "    "; //indent children
 				children[c]->PrintYield();
 			}
-		} 
+		}
+		//check special status for children also
+		KBase* CheckSpecial(string special){
+			if(name==special) return (KBase*)this;
+			for(unsigned c = 0; c < children.size(); c++){
+				if(children[c]->GetName()==special) return children[c];
+			}
+			return NULL;
+		}
 		
 	protected:
 		//new stack-based member variables

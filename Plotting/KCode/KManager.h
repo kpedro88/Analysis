@@ -29,7 +29,7 @@ class KManager {
 	public:
 		friend class KParser;
 		//constructor
-		KManager() : input(""),treedir("tree"),MyParser(0),MyRatio(0),option(0),numer(0),denom(0),yieldref(0),doPrint(false),varbins(0),nbins(0),parsed(false) {}
+		KManager() : input(""),treedir("tree"),MyParser(0),MyRatio(0),option(0),s_numer(""),s_denom(""),s_yieldref(""),numer(0),denom(0),yieldref(0),doPrint(false),varbins(0),nbins(0),parsed(false) {}
 		KManager(string in, string dir="tree"); //implemented in KParser.h to avoid circular dependency
 		//destructor
 		virtual ~KManager() {}
@@ -57,10 +57,6 @@ class KManager {
 			string rootfilename = "";
 			if(option->Get<string>("rootfile",rootfilename)) out_file = TFile::Open((rootfilename+".root").c_str(),"RECREATE");
 			
-			//add children to ratio, in case it is needed
-			MyRatio->AddNumerator(numer);
-			MyRatio->AddDenominator(denom);
-			
 			//check for intlumi
 			//if it has not been set by the user, get it from data
 			double intlumi = 0;
@@ -82,10 +78,22 @@ class KManager {
 				}
 			}
 			
-			//build everything
+			//get special status options
+			option->Get("numer",s_numer);
+			option->Get("denom",s_denom);
+			option->Get("yieldref",s_yieldref);
+			
+			//build everything & check for special status
 			for(unsigned s = 0; s < MySets.size(); s++){
 				MySets[s]->Build();
+				if(s_numer.size()>0 && numer==0) numer = MySets[s]->CheckSpecial(s_numer);
+				if(s_denom.size()>0 && denom==0) denom = MySets[s]->CheckSpecial(s_denom);
+				if(s_yieldref.size()>0 && yieldref==0) yieldref = MySets[s]->CheckSpecial(s_yieldref);
 			}
+			
+			//add children to ratio, in case it is needed
+			MyRatio->AddNumerator(numer);
+			MyRatio->AddDenominator(denom);
 			
 			//fake tau estimation is calculated during build
 			if(option->Get("calcfaketau",false)){
@@ -124,13 +132,16 @@ class KManager {
 
 				//check if normalization to yield is desired (disabled by default)
 				//BEFORE printing yields
-				if(p->second->GetOption()->Get("yieldnorm",false)){
+				if(p->second->GetOption()->Get("yieldnorm",false) && yieldref){
 					double yield = yieldref->GetYield();
 					if(yield>0){
 						for(unsigned s = 0; s < MySets.size(); s++){
 							if(MySets[s] != yieldref) MySets[s]->Normalize(yield);
 						}
 					}
+				}
+				else if(p->second->GetOption()->Get("yieldnorm",false) && yieldref){
+					cout << "Input error: normalization to yield requested, but yieldref not set. Normalization will not be performed." << endl;
 				}
 				
 				//print yield if enabled
@@ -197,7 +208,7 @@ class KManager {
 				p->second->DrawText();
 				
 				//ratio (enabled by default, i.e. noratio disabled by default)
-				if(!(p->second->GetOption()->Get("noratio",false))){
+				if(!(p->second->GetOption()->Get("noratio",false)) && numer && denom){
 					TPad* pad2 = p->second->GetPad2();
 					
 					//reset ratio name if provided by user
@@ -211,6 +222,13 @@ class KManager {
 					
 					MyRatio->Draw(pad2);
 					p->second->DrawLine();
+				}
+				else if(!(p->second->GetOption()->Get("noratio",false)) && (!numer || !denom)){
+					cout << "Input error: ratio requested, but ";
+					if(!numer && !denom) cout << "numer and denom ";
+					else if(!numer) cout << "numer ";
+					else if(!denom) cout << "denom ";
+					cout << "not set. Ratio will not be drawn." << endl;
 				}
 				
 				//print formats given as a vector option
@@ -257,7 +275,8 @@ class KManager {
 		vector<KBase*> MySets;
 		KSetRatio* MyRatio;
 		OptionMap* option;
-		KBase *numer, *denom, *yieldref; //pointers to sets for specific purposes
+		string s_numer, s_denom, s_yieldref; //names for special sets
+		KBase *numer, *denom, *yieldref; //pointers to special sets
 		bool doPrint;
 		map<int,KBase*> curr_sets;
 		double* varbins;

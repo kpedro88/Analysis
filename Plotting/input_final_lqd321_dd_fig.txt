@@ -23,6 +23,9 @@ bool:bgline[1]
 bool:plotoverflow[1]
 double:ymin[0]
 string:chan_label[#mu#tau channel]
+string:yieldref[data]
+string:numer[data]
+string:denom[mc]
 
 HISTO
 #ptmu	50	0	200	p_{T}(#mu) [GeV]	number of events / 4 GeV
@@ -40,7 +43,7 @@ bins	200	280	350	420	480	540	610	680	770	860	960	1100	1200
 st	varbin	S_{T} [GeV]	number of events / GeV	liny	noratio	bindivide
 
 SET
-hist	data	data	kBlack	numer	yieldref
+hist	data	data	kBlack
 	base	data	SingleMu_A	tree_SingleMu_A_190456_208686_muTau.root	0
 	base	data	SingleMu_B_0	tree_SingleMu_B_190456_208686_muTau_0.root	0
 	base	data	SingleMu_B_1	tree_SingleMu_B_190456_208686_muTau_1.root	0
@@ -56,7 +59,7 @@ hist	mc	#tilde{t}300 (LQD321)	kBlack
 	base	mc	Stop300	tree_rpvstop_LQD321_Stop300_chargino.root	1.89	NTrpv
 #hist	mc	#tilde{t}500 (LQD321)	kBlack                                      
 #	base	mc	Stop500	tree_rpvstop_LQD321_Stop500_chargino.root	0.082	NTrpv
-stack	mc	mc	kWhite	denom
+stack	mc	mc	kWhite
 	hist	mc	VV	kRed + 1
 		base	mc	WZ	tree_WZ_muTau.root	33.59
 		base	mc	WW	tree_WW_muTau.root	55.47

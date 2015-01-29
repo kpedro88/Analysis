@@ -140,6 +140,11 @@ class KBase {
 				htmp->SetBinError(b,htmp->GetBinError(b)/htmp->GetBinWidth(b));
 			}
 		}
+		//check if this name matches a given string for some special status
+		virtual KBase* CheckSpecial(string special){
+			if(name==special) return this;
+			return NULL;
+		}
 
 		//other virtual functions (unimplemented at this level)
 		virtual void Draw(TPad* pad) {}

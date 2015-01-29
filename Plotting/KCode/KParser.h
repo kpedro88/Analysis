@@ -229,7 +229,7 @@ class KParser {
 						//cout << curr_sets[indent-1]->GetName() << "->AddChild(" << tmp->GetName() << ")" << endl;
 					}
 					
-					//check for additional options (numer, denom, yieldref, faketau)
+					//check for additional options
 					if(fields.size()>ctr) {
 						for(unsigned i = ctr; i < fields.size(); i++){
 							if(fields[1]=="mc"){
@@ -243,9 +243,6 @@ class KParser {
 								}
 							}
 							
-							if(fields[i]=="numer") MyManager->numer = MyManager->curr_sets[indent];
-							else if(fields[i]=="denom") MyManager->denom = MyManager->curr_sets[indent];
-							else if(fields[i]=="yieldref") MyManager->yieldref = MyManager->curr_sets[indent]; //should this be restricted to data?
 							else if(fields[i]=="subtract") MyManager->curr_sets[indent]->SetSubtract(true);
 						}
 					}
