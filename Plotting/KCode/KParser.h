@@ -51,7 +51,7 @@ class KParser {
 					else if(line.compare(0,5,"HISTO")==0) { intype = "HISTO"; continue; }
 					
 					//otherwise, process line according to input type
-					if(intype=="OPTION") processOption(line,MyManager->option);
+					if(intype=="OPTION") processOption(line,MyManager->globalOpt);
 					else if(intype=="SET") processSet(line);
 					else if(intype=="HISTO") processHisto(line);
 				}
@@ -182,7 +182,7 @@ class KParser {
 				KBase* tmp = 0;
 				if(fields[0]=="base"){
 					if(fields[1]=="ext") { //external is different
-						tmp = new KBaseExt(fields[2],MyManager->option);
+						tmp = new KBaseExt(fields[2],MyManager->globalOpt);
 						string filename = fields[3];
 						ctr = 4;
 						
@@ -205,8 +205,8 @@ class KParser {
 						
 						//create object
 						string full_filename = MyManager->treedir + "/" + fields[3];
-						if(fields[1]=="data") tmp = new KBaseData(fields[2],full_filename,MyManager->option,property); 
-						else if(fields[1]=="mc") tmp = new KBaseMC(fields[2],full_filename,MyManager->option,property);
+						if(fields[1]=="data") tmp = new KBaseData(fields[2],full_filename,MyManager->globalOpt,property); 
+						else if(fields[1]=="mc") tmp = new KBaseMC(fields[2],full_filename,MyManager->globalOpt,property);
 					}
 				}
 				else {
@@ -214,9 +214,9 @@ class KParser {
 					Color_t color = processColor(fields[3]);
 					
 					//create object
-					if(fields[0]=="hist" && fields[1]=="data") tmp = new KSetData(fields[2],color,MyManager->option);
-					else if(fields[0]=="hist" && fields[1]=="mc") tmp = new KSetMC(fields[2],color,MyManager->option);
-					else if(fields[0]=="stack" && fields[1]=="mc") tmp = new KSetMCStack(fields[2],color,MyManager->option);
+					if(fields[0]=="hist" && fields[1]=="data") tmp = new KSetData(fields[2],color,MyManager->globalOpt);
+					else if(fields[0]=="hist" && fields[1]=="mc") tmp = new KSetMC(fields[2],color,MyManager->globalOpt);
+					else if(fields[0]=="stack" && fields[1]=="mc") tmp = new KSetMCStack(fields[2],color,MyManager->globalOpt);
 					ctr = 4;
 				}
 				
@@ -294,68 +294,20 @@ class KParser {
 			return color;
 		}
 		void processHisto(string line){
-			//cout << line << endl;
-			//cout << line.size() << endl;
-		
 			//tab separated input
 			vector<string> fields;
 			process(line,'\t',fields);
 			
-			//first check for variable bins
-			if(fields.size() > 2 && fields[0]=="bins"){
-				MyManager->varbins = new double[fields.size()-1];
-				for(unsigned i = 0; i < fields.size()-1; i++){
-					stringstream ts(fields[i+1]);
-					ts >> MyManager->varbins[i];
-				}
-				MyManager->nbins = fields.size()-2;
-				return;
-			}
-			
-			//keeps track of last used field
-			unsigned ctr = 0;
-			
-			//otherwise, create a histo
-			TH1F* hist = 0;
-			if(fields.size() >= 4 && fields[1]=="varbin" && MyManager->varbins){ //variable binning case
-				hist = new TH1F(fields[0].c_str(),"",MyManager->nbins,MyManager->varbins);
-				hist->GetXaxis()->SetTitle(fields[2].c_str());
-				hist->GetYaxis()->SetTitle(fields[3].c_str());
-				ctr = 4;
-			}
-			else if(fields.size() >= 6 && fields[1]!="varbin"){ //normal binning case
-				stringstream s1(fields[1]);
-				s1 >> MyManager->nbins;
-				double binlow, binhigh;
-				stringstream s2(fields[2]), s3(fields[3]);
-				s2 >> binlow; s3 >> binhigh;
-				
-				hist = new TH1F(fields[0].c_str(),"",MyManager->nbins,binlow,binhigh);
-				hist->GetXaxis()->SetTitle(fields[4].c_str());
-				hist->GetYaxis()->SetTitle(fields[5].c_str());
-				ctr = 6;
-			}
-			
-			//check for additional options
-			//currently, histo options are only bools; if an opt name is present, that opt is set as enabled
+			string name = fields[0];
 			OptionMap* omap = new OptionMap();
-			if(fields.size() > ctr){
-				for(unsigned i = ctr; i < fields.size(); i++){
-					KOption<bool>* otmp = new KOption<bool>(true);
-					omap->Add(fields[i],otmp);
-				}
+			
+			//everything after the name is an option
+			for(int i = 1; i < fields.size(); i++){
+				processOption(fields[i],omap);
 			}
 			
-			KPlot* ptmp = 0;
-			if(hist){
-				ptmp = new KPlot(hist,omap);
-				MyManager->MyPlots.Add(fields[0],ptmp);
-			}
-			else {
-				cout << "Input error: histo input in an unrecognized format. This input will be ignored." << endl;
-				return;
-			}
-			
+			//store local plot options for later use
+			MyManager->MyPlotOptions.Add(name,omap);
 		}
 		//generalization for processing a line
 		void process(string line, char delim, vector<string>& fields){
@@ -392,26 +344,26 @@ template <> Color_t KParser::getOptionValue<Color_t>(string val){
 
 //implementation of KManager constructor
 //note: dir="tree" default
-KManager::KManager(string in, string dir) : input(in),treedir(dir),option(0),numer(0),denom(0),yieldref(0),doPrint(false),varbins(0),nbins(0),parsed(false) {
+KManager::KManager(string in, string dir) : input(in),treedir(dir),globalOpt(0),numer(0),denom(0),yieldref(0),doPrint(false),varbins(0),nbins(0),parsed(false) {
 	//parser does most initializations based on text input
-	option = new OptionMap();
+	globalOpt = new OptionMap();
 	MyParser = new KParser(this);
 	parsed = MyParser->Parse();
 	
 	//final checks and initializations
-	MyRatio = new KSetRatio(option);
-	if(option->Get("calcfaketau",false)) FakeTauEstimationInit();
+	MyRatio = new KSetRatio(globalOpt);
+	if(globalOpt->Get("calcfaketau",false)) FakeTauEstimationInit();
 	//store correction root files centrally
 	//todo: make file location and histo name configurable
-	if(option->Get("pucorr",true)) {
+	if(globalOpt->Get("pucorr",true)) {
 		TFile* pufile = new TFile("corrections/puWeightsLQ.root","READ"); //puWeights
 		TH1F* puWeights = (TH1F*)pufile->Get("pileup");
-		option->Set("puWeights",puWeights);
+		globalOpt->Set("puWeights",puWeights);
 	}
-	if(option->Get("mucorr",true)) {
+	if(globalOpt->Get("mucorr",true)) {
 		TFile* mufile = new TFile("corrections/muIDTight.root","READ"); //puWeights
 		TH1F* muIDTight = (TH1F*)mufile->Get("muIDTight");
-		option->Set("muIDTight",muIDTight);
+		globalOpt->Set("muIDTight",muIDTight);
 	}
 }
 

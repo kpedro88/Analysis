@@ -21,7 +21,7 @@ bool:closefiles[1]
 string:yieldref[data]
 
 HISTO
-st	120	0	1200	S_{T} [GeV]	number of events / 10 GeV	noratio	liny
+st	i:xnum[120]	d:xmin[0]	d:xmax[1200]	s:xtitle[S_{T} [GeV]]	s:ytitle[number of events / 10 GeV]	b:ratio[0]	b:liny[1]
 
 SET
 hist	data	data	kBlack

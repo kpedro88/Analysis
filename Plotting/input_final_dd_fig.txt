@@ -29,19 +29,16 @@ string:numer[data]
 string:denom[mc]
 
 HISTO
-#ptmu	50	0	200	p_{T}(#mu) [GeV]	number of events / 4 GeV
-#bins	40	45	50	55	60	70	80	95	110	125
-#pttau	varbin	p_{T}(#tau) [GeV]	number of events / 4 GeV
-#btagjetpt	50	0	300	p_{T}(b-tag jet) [GeV]	number of events / 6 GeV
-#addljetpt	50	0	300	p_{T}(addl. jet) [GeV]	number of events / 6 GeV
-#masstaub	50	0	1000	M_{#taub} [GeV]	number of events / 20 GeV
-#st	30	0	1200	S_{T} [GeV]	number of events / 40 GeV	liny
-#st	25	100	1100	S_{T} [GeV]	number of events / 40 GeV	liny
-#st	14	140	1260	S_{T} [GeV]	number of events / 80 GeV	liny	noratio
-#st	15	0	1200	S_{T} [GeV]	number of events / 80 GeV	liny	noratio
-bins	140	210	280	350	420	480	540	620	700	780	870	980	1100	1200
-#st	varbin	S_{T} [GeV]	number of events	liny	noratio
-st	varbin	S_{T} [GeV]	number of events / GeV	liny	noratio	bindivide
+#pttau	vd:xbins[40,45,50,55,60,70,80,95,110,125]	s:xtitle[p_{T}(#tau) [GeV]]	s:ytitle[number of events / 4 GeV]
+#ptmu	i:xnum[50]	d:xmin[0]	d:xmax[200]	s:xtitle[p_{T}(#mu) [GeV]]	s:ytitle[number of events / 4 GeV]
+#btagjetpt	i:xnum[50]	d:xmin[0]	d:xmax[300]	s:xtitle[p_{T}(b-tag jet) [GeV]]	s:ytitle[number of events / 6 GeV]
+#addljetpt	i:xnum[50]	d:xmin[0]	d:xmax[300]	s:xtitle[p_{T}(addl. jet) [GeV]]	s:ytitle[number of events / 6 GeV]
+masstaub	i:xnum[50]	d:xmin[0]	d:xmax[1000]	s:xtitle[M_{#taub} [GeV]]	s:ytitle[number of events / 20 GeV]
+#st	i:xnum[30]	d:xmin[0]	d:xmax[1200]	s:xtitle[S_{T} [GeV]]	s:ytitle[number of events / 40 GeV]	b:liny[1]
+#st	i:xnum[25]	d:xmin[100]	d:xmax[1100]	s:xtitle[S_{T} [GeV]]	s:ytitle[number of events / 40 GeV]	b:liny[1]
+#st	i:xnum[14]	d:xmin[140]	d:xmax[1260]	s:xtitle[S_{T} [GeV]]	s:ytitle[number of events / 80 GeV]	b:liny[1]	b:ratio[0]
+#st	i:xnum[15]	d:xmin[0]	d:xmax[1200]	s:xtitle[S_{T} [GeV]]	s:ytitle[number of events / 80 GeV]	b:liny[1]	b:ratio[0]
+st	vd:xbins[140,210,280,350,420,480,540,620,700,780,870,980,1100,1200]	s:xtitle[S_{T} [GeV]]	s:ytitle[number of events / GeV]	b:liny[1]	b:ratio[0]	b:bindivide[1]
 
 SET
 hist	data	data	kBlack

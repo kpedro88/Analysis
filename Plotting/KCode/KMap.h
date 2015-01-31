@@ -165,9 +165,11 @@ typedef map<string,TH1F*>::iterator HMit;
 typedef map<string,THStack*>::iterator SMit;
 typedef map<string,TGraphAsymmErrors*>::iterator EMit;
 typedef map<string,KPlot*>::iterator PMit;
+typedef map<string,OptionMap*>::iterator OMMit;
 typedef KMap<TH1F*> HistoMap;
 typedef KMap<THStack*> StackMap;
 typedef KMap<TGraphAsymmErrors*> ErrorMap;
 typedef KMap<KPlot*> PlotMap;
+typedef KMap<OptionMap*> OptionMapMap;
 
 #endif

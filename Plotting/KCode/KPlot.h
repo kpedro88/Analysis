@@ -15,8 +15,10 @@
 #include <TLine.h>
 #include <TLatex.h>
 #include <TAxis.h>
+#include <TExec.h>
 
 //STL headers
+#include <vector>
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -29,17 +31,42 @@ using namespace std;
 class KPlot{
 	public:
 		//constructor
-		KPlot() : option(0), histo(0), ratio(0), can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0), intlumi(0),
+		KPlot() : name(""), localOpt(0), globalOpt(0), histo(0), ratio(0), exec(0), isBuilt(false), can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0), intlumi(0),
 				  canvasW(0), canvasH(0), marginL(0), marginR(0), marginB(0), marginT(0), marginM(0), sizeT(0), sizeL(0), sizeP(0), sizeTick(0), sizeLoff(0), 
 				  posP(0), epsilon(0), pad1W(0), pad1H(0), pad2W(0), pad2H(0)
 		{
-			//must always have an option map
-			if(option==0) option = new OptionMap();
+			//must always have local & global option maps
+			if(localOpt==0) localOpt = new OptionMap();
+			if(globalOpt==0) globalOpt = new OptionMap();
 		}
-		KPlot(TH1F* h_, OptionMap* option_) : option(option_), histo(h_), ratio(0), can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0), intlumi(0)
+		KPlot(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : name(name_), localOpt(localOpt_), globalOpt(globalOpt_), histo(0), ratio(0), exec(0), isBuilt(false),
+																	   can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0), intlumi(0)
 		{
-			//must always have an option map
-			if(option==0) option = new OptionMap();
+			//must always have local & global option maps
+			if(localOpt==0) localOpt = new OptionMap();
+			if(globalOpt==0) globalOpt = new OptionMap();
+			
+			//construct histogram
+			vector<double> xbins;
+			int xnum;
+			double xmin, xmax;
+			if(localOpt->Get("xbins",xbins)){ //variable binning case
+				histo = new TH1F(name.c_str(),"",xbins.size()-1,&xbins[0]);
+				isBuilt = true;
+			}
+			else if(localOpt->Get("xnum",xnum) && localOpt->Get("xmin",xmin) && localOpt->Get("xmax",xmax)){ //standard binning case
+				histo = new TH1F(name.c_str(),"",xnum,xmin,xmax);
+				isBuilt = true;
+			}
+			else { //no/incomplete binning information, build failed
+				isBuilt = false;
+				return;
+			}
+			string xtitle, ytitle;
+			localOpt->Get("xtitle",xtitle);
+			localOpt->Get("ytitle",ytitle);
+			histo->GetXaxis()->SetTitle(xtitle.c_str());
+			histo->GetYaxis()->SetTitle(ytitle.c_str());
 			
 			//universal size values
 			canvasW = 704;
@@ -54,9 +81,8 @@ class KPlot{
 			sizeTick = 12;
 			sizeLoff = 5;
 			epsilon = 2;
-			//plotting without ratio disabled by default
-			//(i.e. ratio enabled by default)
-			if(option->Get("noratio",false)) {
+			//plotting with ratio enabled by default
+			if(!localOpt->Get("ratio",true)) {
 				canvasH = 583;
 				//can = new TCanvas(histo->GetName(),histo->GetName(),700,555);
 				//account for window frame: 2+2px width, 2+26px height
@@ -70,8 +96,8 @@ class KPlot{
 				//L,R,B,T: 85,35,70,30 * m=1.4
 				pad1->SetMargin(marginL/pad1W,marginR/pad1W,marginB/pad1H,marginT/pad1H);
 				pad1->SetTicks(1,1);
-				if(!option->Get("liny",false)) pad1->SetLogy(); //liny off by default (i.e. logy on by default)
-				if(option->Get("logx",false)) pad1->SetLogx(); //logx off by default (i.e. linx on by default)
+				if(!localOpt->Get("liny",false)) pad1->SetLogy(); //liny off by default (i.e. logy on by default)
+				if(localOpt->Get("logx",false)) pad1->SetLogx(); //logx off by default (i.e. linx on by default)
 				pad1->Draw();
 
 				histo->GetXaxis()->SetLabelOffset(sizeLoff/pad1H);
@@ -91,8 +117,8 @@ class KPlot{
 				pad1H = pad1->GetWh()*pad1->GetAbsHNDC();
 				pad1->SetMargin(marginL/pad1W,marginR/pad1W,marginM/pad1H,marginT/pad1H);
 				pad1->SetTicks(1,1);
-				if(!option->Get("liny",false)) pad1->SetLogy(); //liny off by default (i.e. logy on by default)
-				if(option->Get("logx",false)) pad1->SetLogx(); //logx off by default (i.e. linx on by default)
+				if(!localOpt->Get("liny",false)) pad1->SetLogy(); //liny off by default (i.e. logy on by default)
+				if(localOpt->Get("logx",false)) pad1->SetLogx(); //logx off by default (i.e. linx on by default)
 				pad1->Draw();
 				pad2 = new TPad("dmc","",0,0,1.0,2./7.);
 				pad2W = pad2->GetWw()*pad2->GetAbsWNDC();
@@ -141,11 +167,14 @@ class KPlot{
 				line->SetLineWidth(2);
 				line->SetLineColor(kRed);
 			}
-
+			pad1->cd();
+			
 			//setup CMS text
+			TLatex width_test_cms(0,0,"CMS");
+			width_test_cms.SetTextSize(sizeP/pad1H);
 			posP = 1-(marginT-1)/pad1H;
 			double uminCMS = marginL/pad1W;
-			double umaxCMS = marginL/pad1W + sizeP/pad1W*3*0.6;
+			double umaxCMS = marginL/pad1W + width_test_cms.GetXsize();
 			paveCMS = new TPaveText(uminCMS,posP,umaxCMS,1.0,"NDC");
 			paveCMS->SetFillColor(0);
 			paveCMS->SetBorderSize(0);
@@ -156,14 +185,32 @@ class KPlot{
 			//setup prelim text
 			//todo: add option to enable/disable/change
 			double sizePextra = sizeP - 3; //smaller
-			double uminExtra = umaxCMS + sizeP/pad1W*0.4;
-			double umaxExtra = uminExtra + sizePextra/pad1W*8*0.6;
+			TLatex width_test_extra(0,0," Preliminary");
+			width_test_extra.SetTextSize(sizePextra/pad1H);
+			double uminExtra = umaxCMS;
+			double umaxExtra = uminExtra + width_test_extra.GetXsize();
 			paveExtra = new TPaveText(uminExtra,posP,umaxExtra,1.0,"NDC");
 			paveExtra->SetFillColor(0);
 			paveExtra->SetBorderSize(0);
 			paveExtra->SetTextFont(52);
 			paveExtra->SetTextSize(sizePextra/pad1H);
-			paveExtra->AddText("Preliminary");
+			paveExtra->AddText(" Preliminary");
+			
+			//setup lumi text
+			globalOpt->Get<double>("luminorm",intlumi);
+			stringstream fbname_;
+			fbname_ << fixed << setprecision(1) << intlumi/1000 << " fb^{-1} (8 TeV)";
+			string fbname = fbname_.str();
+			TLatex width_test_lumi(0,0,fbname.c_str());
+			width_test_lumi.SetTextSize(sizeP/pad1H);
+			double umaxLumi = 1-marginR/pad1W;
+			double uminLumi = umaxLumi - width_test_lumi.GetXsize();
+			paveLumi = new TPaveText(uminLumi,posP,umaxLumi,1.0,"NDC");
+			paveLumi->SetFillColor(0);
+			paveLumi->SetBorderSize(0);
+			paveLumi->SetTextFont(42);
+			paveLumi->SetTextSize(sizeP/pad1H);
+			paveLumi->AddText(fbname.c_str());
 
 			//common formatting for blank histo
 			double tickScaleX1 = (pad1W - marginL - marginR)/pad1W*pad1H;
@@ -184,6 +231,15 @@ class KPlot{
 			//get y axis range of histo from KLegend
 			histo->GetYaxis()->SetRangeUser(leg->GetRange().first,leg->GetRange().second);
 			histo->Draw("hist");
+			//horizontal error bars for histograms are DISABLED by default
+			//but auto-enabled for variable-binned histograms (per CMS style guidelines)
+			//(note: TExec cannot be the first thing drawn on a pad)
+			string execname = "exec_" + name;
+			if(globalOpt->Get("horizerrbars",false) || histo->GetXaxis()->IsVariableBinSize()){
+				exec = new TExec(execname.c_str(),"gStyle->SetErrorX(0.5);");
+			}
+			else exec = new TExec(execname.c_str(),"gStyle->SetErrorX(0);");
+			exec->Draw();
 		}
 		void DrawText(){
 			pad1->cd();
@@ -195,31 +251,14 @@ class KPlot{
 		void DrawRatio(){
 			pad2->cd();
 			ratio->Draw("hist");
+			exec->Draw();
 		}
 		void DrawLine(){
 			pad2->cd();
 			line->Draw("same");
 		}
-		
-		void SetLumi(double intlumi_){
-			intlumi = intlumi_;
-			if(paveLumi) delete paveLumi;
-			
-			stringstream fbname_;
-			fbname_ << fixed << setprecision(1) << intlumi/1000 << " fb^{-1} (8 TeV)";
-			string fbname = fbname_.str();
-			
-			//setup lumi text
-			double umaxLumi = 1-marginR/pad1W;
-			double uminLumi = umaxLumi - sizeP/pad1W*11*0.6;
-			paveLumi = new TPaveText(uminLumi,posP,umaxLumi,1.0,"NDC");
-			paveLumi->SetFillColor(0);
-			paveLumi->SetBorderSize(0);
-			paveLumi->SetTextFont(42);
-			paveLumi->SetTextSize(sizeP/pad1H);
-			paveLumi->AddText(fbname.c_str());
-		}
-		
+
+		//helper
 		void SetTitleOffset(TPad* pad, TAxis* axis){
 			double padW, padH;
 			pad->cd();
@@ -246,6 +285,9 @@ class KPlot{
 		}
 		
 		//accessors
+		string GetName() { return name; }
+		bool GetBuilt() { return isBuilt; }
+		void SetName(string name_) { name = name_; }
 		TH1F* GetHisto() { return histo; }
 		TH1F* GetRatio() { return ratio; }
 		TCanvas* GetCanvas() { return can; }
@@ -256,13 +298,19 @@ class KPlot{
 		TPaveText* GetCMSText() { return paveCMS; }
 		TPaveText* GetExtraText() { return paveExtra; }
 		TPaveText* GetLumiText() { return paveLumi; }
-		OptionMap* GetOption() { return option; }
-		void SetOption(OptionMap* opt) { option = opt; if(option==0) option = new OptionMap(); } //must always have an option map
+		OptionMap* GetLocalOpt() { return localOpt; }
+		void SetLocalOpt(OptionMap* opt) { localOpt = opt; if(localOpt==0) localOpt = new OptionMap(); } //must always have an option map
+		OptionMap* GetGlobalOpt() { return globalOpt; }
+		void SetGlobalOpt(OptionMap* opt) { globalOpt = opt; if(globalOpt==0) globalOpt = new OptionMap(); } //must always have an option map
 
 	protected:
 		//member variables
-		OptionMap* option;
+		string name;
+		OptionMap* localOpt;
+		OptionMap* globalOpt;
 		TH1F *histo, *ratio;
+		TExec *exec;
+		bool isBuilt;
 		TCanvas *can;
 		TPad *pad1, *pad2;
 		KLegend* leg;
