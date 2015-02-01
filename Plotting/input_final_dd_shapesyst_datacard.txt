@@ -1,8 +1,10 @@
 #three sections: global options in OPTION, 1D histograms in HISTO, datasets in SET
 #option format is: type:name[val] or vtype:name[val1,val2,...]
 #available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
-#items on each line in the HISTO and SET sections must be tab-separated
-#for datasets, each source must be listed after the appropriate group
+#items on each line in the HISTO and SET sections must be tab-separated, with required items first, in order
+#HISTO: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
 
 OPTION
 vstring:printformat[png]
