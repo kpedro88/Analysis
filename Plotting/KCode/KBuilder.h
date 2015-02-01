@@ -32,20 +32,15 @@ void TreeClass::Loop() {}
 class KBuilder : public TreeClass {
 	public:
 		//constructors
-		KBuilder() : TreeClass(), MyBase(0), option(0), stmp(""), htmp(0) {
-			//enable histo errors
-			TH1::SetDefaultSumw2(kTRUE);
-			
-			//must always have an option map
-			if(option==0) option = new OptionMap();
+		KBuilder() : TreeClass(), MyBase(0), localOpt(0), globalOpt(0), stmp(""), htmp(0) {
+			//must always have local & global option maps
+			if(localOpt==0) localOpt = new OptionMap();
+			if(globalOpt==0) globalOpt = new OptionMap();
 		}
-		KBuilder(KBase* MyBase_, TTree* tree_) : TreeClass(tree_), MyBase(MyBase_), option(MyBase_->GetOption()), stmp(""), htmp(0) {
-			//enable histo errors
-			TH1::SetDefaultSumw2(kTRUE);
-			//gStyle->SetErrorX(0.5); //now disabled by default
-			
-			//must always have an option map
-			if(option==0) option = new OptionMap();
+		KBuilder(KBase* MyBase_, TTree* tree_) : TreeClass(tree_), MyBase(MyBase_), localOpt(MyBase->GetLocalOpt()), globalOpt(MyBase->GetGlobalOpt()), stmp(""), htmp(0) {
+			//must always have local & global option maps
+			if(localOpt==0) localOpt = new OptionMap();
+			if(globalOpt==0) globalOpt = new OptionMap();
 		}
 		//destructor
 		virtual ~KBuilder() {}
@@ -85,20 +80,22 @@ class KBuilder : public TreeClass {
 			bool goodEvent = true;
 			
 			//check for double counting
-			if ((MyBase->GetNormType()!="chargino" && MyBase->GetNormType()!="rpv") && CheckDoubleCount()) return false;
+			string normtype = "";
+			localOpt->Get("normtype",normtype);
+			if ((normtype!="chargino" && normtype!="rpv") && CheckDoubleCount()) return false;
 			
 			int filter = -1;
-			if(option->Get<int>("filter",filter)){
+			if(globalOpt->Get<int>("filter",filter)){
 				//check appropriate filter conditions
 				if(filter==0){ 
-					if(option->Get("antiisosel",false)){ //anti-iso selection
+					if(globalOpt->Get("antiisosel",false)){ //anti-iso selection
 						TLorentzVector v_mu;
 						v_mu.SetPtEtaPhiM(MuonPt,MuonEta,MuonPhi,0.1056583715);
 						bool anyGoodTau = false;
 						for(int t = 0; t < HPSTauPt->size(); t++){
 							bool goodTau = true;
 							
-							goodTau &= (PFJetMultiplicity>=2) || (option->Get("prepresel",false));
+							goodTau &= (PFJetMultiplicity>=2) || (globalOpt->Get("prepresel",false));
 							
 							TLorentzVector v_tau;
 							v_tau.SetPtEtaPhiM(HPSTauPt->at(t),HPSTauEta->at(t),HPSTauPhi->at(t),1.77682);
@@ -136,27 +133,27 @@ class KBuilder : public TreeClass {
 								FakeTauMassTauJet.push_back(0);
 							}
 							
-							if(option->Get("finaltaupt",false)) goodTau &= HPSTauPt->at(t) > 50;
+							if(globalOpt->Get("finaltaupt",false)) goodTau &= HPSTauPt->at(t) > 50;
 							
-							if(option->Get("mainsel",false)) {
+							if(globalOpt->Get("mainsel",false)) {
 								goodTau &= (FakeTauIndexTauJet[t] != FakeTauIndexMuonJet[t]); //check that good jets were found and paired with leptons
 								
 								//options to do either part of final selection separately
 								
-								//if(option->Get("finalmasscut",false)) goodTau &= MassTauJet > 250;
+								//if(globalOpt->Get("finalmasscut",false)) goodTau &= MassTauJet > 250;
 								double mtb = 250;
-								option->Get("finalmasscutval",mtb);
-								if(option->Get("finalmasscut",false)) goodTau &= FakeTauMassTauJet[t] > mtb;
-								else if(option->Get("finalmasscutinv",false)) goodTau &= FakeTauMassTauJet[t] < mtb;
+								globalOpt->Get("finalmasscutval",mtb);
+								if(globalOpt->Get("finalmasscut",false)) goodTau &= FakeTauMassTauJet[t] > mtb;
+								else if(globalOpt->Get("finalmasscutinv",false)) goodTau &= FakeTauMassTauJet[t] < mtb;
 								
 								//final selection: M(tau,b) > 250 GeV and pT(tau) > 50 GeV
 								//also final selection for lqd333
-								if(option->Get("finalsel",false)) {
+								if(globalOpt->Get("finalsel",false)) {
 									goodTau &= (FakeTauMassTauJet[t] > 250) && (HPSTauPt->at(t) > 50);
 								}
 							}
 							//RPV selection for lqd321
-							else if(option->Get("lqd321sel",false)){ //Nbjet>=1, Njet>=5 (+ tau pT cut)
+							else if(globalOpt->Get("lqd321sel",false)){ //Nbjet>=1, Njet>=5 (+ tau pT cut)
 								//goodTau &= HPSTauPt->at(t) > 40;
 								goodTau &= HPSTauPt->at(t) > 50;
 							}
@@ -166,13 +163,15 @@ class KBuilder : public TreeClass {
 							anyGoodTau |= goodTau;
 							
 							//gen-level checks for MC
-							if(MyBase->GetNormType()=="faketau" && option->Get("dofaketau",false) && HPSTauFakeJet->at(t) != true) goodTau &= false;
-							else if(MyBase->GetNormType()=="nofaketau" && option->Get("dofaketau",false) && HPSTauFakeJet->at(t) != false) goodTau &= false;
+							string normtype = "";
+							localOpt->Get("normtype",normtype);
+							if(normtype=="faketau" && globalOpt->Get("dofaketau",false) && HPSTauFakeJet->at(t) != true) goodTau &= false;
+							else if(normtype=="nofaketau" && globalOpt->Get("dofaketau",false) && HPSTauFakeJet->at(t) != false) goodTau &= false;
 							FakeTauGenDecision.push_back(goodTau);
 						}
 						goodEvent &= anyGoodTau;
 						//RPV selection for lqd321
-						if(option->Get("lqd321sel",false)){ //Nbjet>=1, Njet>=5 (+ tau pT cut)
+						if(globalOpt->Get("lqd321sel",false)){ //Nbjet>=1, Njet>=5 (+ tau pT cut)
 							for(int j = 0; j < PFJetPt->size(); j++){
 								if(BJetIndices.size()<1 && PFJetCSVBTag->at(j)>0.244) BJetIndices.push_back(j);
 								else JetIndices.push_back(j);
@@ -184,38 +183,38 @@ class KBuilder : public TreeClass {
 						//main sample
 						goodEvent &= (MuonPt > 29) //1 lepton with pT > 29 GeV
 						&& (HPSTauPt->at(0) > 29) //1 hadronic tau with pT > 29 GeV
-						&& (option->Get("prepresel",false) || (PFJetMultiplicity >= 2 && PFJetPt->at(0) > 30 && PFJetPt->at(1) > 30)); //2 jets with pT > 30 GeV
+						&& (globalOpt->Get("prepresel",false) || (PFJetMultiplicity >= 2 && PFJetPt->at(0) > 30 && PFJetPt->at(1) > 30)); //2 jets with pT > 30 GeV
 						
-						if(option->Get("finaltaupt",false)) goodEvent &= HPSTauPt->at(0) > 50;
+						if(globalOpt->Get("finaltaupt",false)) goodEvent &= HPSTauPt->at(0) > 50;
 						
 						int dilepmass = -1;
-						if(option->Get("dilepmass",dilepmass)){
+						if(globalOpt->Get("dilepmass",dilepmass)){
 							if(dilepmass==0) goodEvent &= (MassMuonTau < 60);
 							else if(dilepmass==1) goodEvent &= ((MassMuonTau > 60) && (MassMuonTau < 120));
 							else if(dilepmass==2) goodEvent &= (MassMuonTau > 120);
 						}
 						
 						//main selection: 2 good jets, 1 b-jet
-						if(option->Get("mainsel",false)) {
+						if(globalOpt->Get("mainsel",false)) {
 							goodEvent &= (IndexTauJet != IndexMuonJet); //check that good jets were found and paired with leptons
 							
 							//options to do either part of final selection separately
 							
-							//if(option->Get("finalmasscut",false)) goodEvent &= MassTauJet > 250;
+							//if(globalOpt->Get("finalmasscut",false)) goodEvent &= MassTauJet > 250;
 							double mtb = 250;
-							option->Get("finalmasscutval",mtb);
-							if(option->Get("finalmasscut",false)) goodEvent &= MassTauJet > mtb;
-							else if(option->Get("finalmasscutinv",false)) goodEvent &= MassTauJet < mtb;
+							globalOpt->Get("finalmasscutval",mtb);
+							if(globalOpt->Get("finalmasscut",false)) goodEvent &= MassTauJet > mtb;
+							else if(globalOpt->Get("finalmasscutinv",false)) goodEvent &= MassTauJet < mtb;
 							
 							//final selection: M(tau,b) > 250 GeV and pT(tau) > 50 GeV
 							//also final selection for lqd333
-							if(option->Get("finalsel",false)) {
+							if(globalOpt->Get("finalsel",false)) {
 								goodEvent &= (MassTauJet > 250) && (HPSTauPt->at(0) > 50);
 								ST_rpv = MuonPt + HPSTauPt->at(0) + PFMainJetPt[0] + PFMainJetPt[1]; //for lqd333sel1
 							}
 						}
 						//RPV selection for lqd321
-						else if(option->Get("lqd321sel",false)){ //Nbjet>=1, Njet>=5 (+ tau pT cut)
+						else if(globalOpt->Get("lqd321sel",false)){ //Nbjet>=1, Njet>=5 (+ tau pT cut)
 							//goodEvent &= HPSTauPt->at(0) > 40;
 							goodEvent &= HPSTauPt->at(0) > 50;
 							for(int j = 0; j < PFJetPt->size(); j++){
@@ -226,7 +225,7 @@ class KBuilder : public TreeClass {
 						}
 						//RPV selections - testing various versions for Keti
 						//define ST for the event in here - member variable for ST_rpv
-						else if(option->Get("lqd321sel1",false)){ //Nbjet>=1, Njet>=5
+						else if(globalOpt->Get("lqd321sel1",false)){ //Nbjet>=1, Njet>=5
 							goodEvent &= HPSTauPt->at(0) > 50;
 							for(int j = 0; j < PFJetPt->size(); j++){
 								if(BJetIndices.size()<1 && PFJetCSVBTag->at(j)>0.244) BJetIndices.push_back(j);
@@ -236,7 +235,7 @@ class KBuilder : public TreeClass {
 							//calculate ST
 							if(goodEvent) ST_rpv = MuonPt + HPSTauPt->at(0) + PFJetPt->at(BJetIndices[0]) + PFJetPt->at(JetIndices[0]) + PFJetPt->at(JetIndices[1]) + PFJetPt->at(JetIndices[2]) + PFJetPt->at(JetIndices[3]);
 						}
-						else if(option->Get("lqd321sel12",false)){ //Nbjet>=1, Njet>=5, pT>40
+						else if(globalOpt->Get("lqd321sel12",false)){ //Nbjet>=1, Njet>=5, pT>40
 							goodEvent &= HPSTauPt->at(0) > 40;
 							for(int j = 0; j < PFJetPt->size(); j++){
 								if(BJetIndices.size()<1 && PFJetCSVBTag->at(j)>0.244) BJetIndices.push_back(j);
@@ -246,7 +245,7 @@ class KBuilder : public TreeClass {
 							//calculate ST
 							if(goodEvent) ST_rpv = MuonPt + HPSTauPt->at(0) + PFJetPt->at(BJetIndices[0]) + PFJetPt->at(JetIndices[0]) + PFJetPt->at(JetIndices[1]) + PFJetPt->at(JetIndices[2]) + PFJetPt->at(JetIndices[3]);
 						}
-						else if(option->Get("lqd321sel13",false)){ //Nbjet>=1, Njet>=6, pT>40
+						else if(globalOpt->Get("lqd321sel13",false)){ //Nbjet>=1, Njet>=6, pT>40
 							goodEvent &= HPSTauPt->at(0) > 40;
 							for(int j = 0; j < PFJetPt->size(); j++){
 								if(BJetIndices.size()<1 && PFJetCSVBTag->at(j)>0.244) BJetIndices.push_back(j);
@@ -256,7 +255,7 @@ class KBuilder : public TreeClass {
 							//calculate ST
 							if(goodEvent) ST_rpv = MuonPt + HPSTauPt->at(0) + PFJetPt->at(BJetIndices[0]) + PFJetPt->at(JetIndices[0]) + PFJetPt->at(JetIndices[1]) + PFJetPt->at(JetIndices[2]) + PFJetPt->at(JetIndices[3]) + PFJetPt->at(JetIndices[4]);
 						}
-						else if(option->Get("lqd321sel14",false)){ //Nbjet>=1, Njet>=6, pT>30
+						else if(globalOpt->Get("lqd321sel14",false)){ //Nbjet>=1, Njet>=6, pT>30
 							goodEvent &= HPSTauPt->at(0) > 30;
 							for(int j = 0; j < PFJetPt->size(); j++){
 								if(BJetIndices.size()<1 && PFJetCSVBTag->at(j)>0.244) BJetIndices.push_back(j);
@@ -266,7 +265,7 @@ class KBuilder : public TreeClass {
 							//calculate ST
 							if(goodEvent) ST_rpv = MuonPt + HPSTauPt->at(0) + PFJetPt->at(BJetIndices[0]) + PFJetPt->at(JetIndices[0]) + PFJetPt->at(JetIndices[1]) + PFJetPt->at(JetIndices[2]) + PFJetPt->at(JetIndices[3]) + PFJetPt->at(JetIndices[4]);
 						}
-						else if(option->Get("lqd321sel15",false)){ //Nbjet>=2, Njet>=5, pT>40
+						else if(globalOpt->Get("lqd321sel15",false)){ //Nbjet>=2, Njet>=5, pT>40
 							goodEvent &= HPSTauPt->at(0) > 40;
 							for(int j = 0; j < PFJetPt->size(); j++){
 								if(BJetIndices.size()<2 && PFJetCSVBTag->at(j)>0.244) BJetIndices.push_back(j);
@@ -276,7 +275,7 @@ class KBuilder : public TreeClass {
 							//calculate ST
 							if(goodEvent) ST_rpv = MuonPt + HPSTauPt->at(0) + PFJetPt->at(BJetIndices[0]) + PFJetPt->at(BJetIndices[1]) + PFJetPt->at(JetIndices[0]) + PFJetPt->at(JetIndices[1]) + PFJetPt->at(JetIndices[2]);
 						}
-						else if(option->Get("lqd321sel16",false)){ //Nbjet>=2, Njet>=5, pT>30
+						else if(globalOpt->Get("lqd321sel16",false)){ //Nbjet>=2, Njet>=5, pT>30
 							goodEvent &= HPSTauPt->at(0) > 30;
 							for(int j = 0; j < PFJetPt->size(); j++){
 								if(BJetIndices.size()<2 && PFJetCSVBTag->at(j)>0.244) BJetIndices.push_back(j);
@@ -286,7 +285,7 @@ class KBuilder : public TreeClass {
 							//calculate ST
 							if(goodEvent) ST_rpv = MuonPt + HPSTauPt->at(0) + PFJetPt->at(BJetIndices[0]) + PFJetPt->at(BJetIndices[1]) + PFJetPt->at(JetIndices[0]) + PFJetPt->at(JetIndices[1]) + PFJetPt->at(JetIndices[2]);
 						}
-						else if(option->Get("lqd321sel2",false)){ //Nbjet>=1, Njet>=4
+						else if(globalOpt->Get("lqd321sel2",false)){ //Nbjet>=1, Njet>=4
 							goodEvent &= HPSTauPt->at(0) > 50;
 							for(int j = 0; j < PFJetPt->size(); j++){
 								if(BJetIndices.size()<1 && PFJetCSVBTag->at(j)>0.244) BJetIndices.push_back(j);
@@ -296,7 +295,7 @@ class KBuilder : public TreeClass {
 							//calculate ST
 							if(goodEvent) ST_rpv = MuonPt + HPSTauPt->at(0) + PFJetPt->at(BJetIndices[0]) + PFJetPt->at(JetIndices[0]) + PFJetPt->at(JetIndices[1]) + PFJetPt->at(JetIndices[2]);
 						}
-						else if(option->Get("lqd321sel3",false)){ //Nbjet>=1, Njet>=4, pT(jet 3) > 50, pT(jet 4) > 40
+						else if(globalOpt->Get("lqd321sel3",false)){ //Nbjet>=1, Njet>=4, pT(jet 3) > 50, pT(jet 4) > 40
 							goodEvent &= HPSTauPt->at(0) > 50;
 							for(int j = 0; j < PFJetPt->size(); j++){
 								if(BJetIndices.size()<1 && PFJetCSVBTag->at(j)>0.244) BJetIndices.push_back(j);
@@ -308,7 +307,7 @@ class KBuilder : public TreeClass {
 							if(goodEvent) ST_rpv = MuonPt + HPSTauPt->at(0) + PFJetPt->at(BJetIndices[0]) + PFJetPt->at(JetIndices[0]) + PFJetPt->at(JetIndices[1]) + PFJetPt->at(JetIndices[2]);
 						}
 						//note: lqd333sel1 -> finalsel
-						/*else if(option->Get("lqd333sel2",false)){ //Nbjet>=2, Njet>=3
+						/*else if(globalOpt->Get("lqd333sel2",false)){ //Nbjet>=2, Njet>=3
 							goodEvent &= HPSTauPt->at(0) > 50;
 							for(int j = 0; j < PFJetPt->size(); j++){
 								if(BJetIndices.size()<2 && PFJetCSVBTag->at(j)>0.244) BJetIndices.push_back(j);
@@ -318,15 +317,15 @@ class KBuilder : public TreeClass {
 							//calculate ST
 							if(goodEvent) ST_rpv = MuonPt + HPSTauPt->at(0) + PFJetPt->at(BJetIndices[0]) + PFJetPt->at(BJetIndices[1]) + PFJetPt->at(JetIndices[0]);
 						}*/
-						else if(option->Get("lqd333sel2",false)){//3D optimization of sel2, w/ defaults: //Nbjet>=2, Njet>=3, pt>50
+						else if(globalOpt->Get("lqd333sel2",false)){//3D optimization of sel2, w/ defaults: //Nbjet>=2, Njet>=3, pt>50
 							double pt_val = 50;
-							option->Get("pt_val",pt_val);
+							globalOpt->Get("pt_val",pt_val);
 							goodEvent &= HPSTauPt->at(0) > pt_val;
 							
 							int nj_val = 3;
-							option->Get("nj_val",nj_val);
+							globalOpt->Get("nj_val",nj_val);
 							int nb_val = 2;
-							option->Get("nb_val",nb_val);
+							globalOpt->Get("nb_val",nb_val);
 							for(int j = 0; j < PFJetPt->size(); j++){
 								if(BJetIndices.size()<nb_val && PFJetCSVBTag->at(j)>0.244) BJetIndices.push_back(j);
 								else JetIndices.push_back(j);
@@ -350,13 +349,13 @@ class KBuilder : public TreeClass {
 					double MT=sqrt(2*MuonPt*PFMETPatType1*(1-cos(dPhi(MuonPhi,PFMETPhiPatType1))));
 					goodEvent &= (MuonPt > 29) //1 lepton with pT > 29 GeV
 					&& (HPSTauPt->at(0) > 40) //1 hadronic tau with pT > 40 GeV
-					&& (!(option->Get("jetveto",true)) || (PFJetMultiplicity == 0 || PFJetPt->at(0) < 30)) //0 jets with pT > 30 GeV - jet veto for fakes
-					&& (!(option->Get("btagveto",false)) || IndexTauJet == IndexMuonJet) //if those indices are equal, there was no good jet that passed b-tagging
+					&& (!(globalOpt->Get("jetveto",true)) || (PFJetMultiplicity == 0 || PFJetPt->at(0) < 30)) //0 jets with pT > 30 GeV - jet veto for fakes
+					&& (!(globalOpt->Get("btagveto",false)) || IndexTauJet == IndexMuonJet) //if those indices are equal, there was no good jet that passed b-tagging
 					&& MT > 50; //cut on transverse mass to reduce ttbar
 					int nprong;
-					if(option->Get<int>("tauprong",nprong)) goodEvent &= (HPSTauDecayMode->at(0)/5+1==nprong);
+					if(globalOpt->Get<int>("tauprong",nprong)) goodEvent &= (HPSTauDecayMode->at(0)/5+1==nprong);
 					string etaregion;
-					if(option->Get<string>("etaregion",etaregion)){
+					if(globalOpt->Get<string>("etaregion",etaregion)){
 						if(etaregion=="barrel") goodEvent &= (abs(HPSTauEta->at(0))<1.4);
 						else if(etaregion=="endcap") goodEvent &= (abs(HPSTauEta->at(0))>=1.4);
 					}
@@ -367,38 +366,38 @@ class KBuilder : public TreeClass {
 					&& (PFJetMultiplicity >=1 && PFJetPt->at(0) > 25); //1 jet with pT > 25 GeV
 				}
 				else if(filter==3){ //z->mumu control region
-					if(option->Get("finaltaupt",false)) goodEvent &= HPSTauPt->at(0) > 50;
+					if(globalOpt->Get("finaltaupt",false)) goodEvent &= HPSTauPt->at(0) > 50;
 					goodEvent &= (MassMuonMuon > 50); //dimuon mass cut
-					if(option->Get("zpeak",false)) goodEvent &= (MassMuonMuon > 70) && (MassMuonMuon < 110); //look only at region near Z mass peak (for normalization)
+					if(globalOpt->Get("zpeak",false)) goodEvent &= (MassMuonMuon > 70) && (MassMuonMuon < 110); //look only at region near Z mass peak (for normalization)
 					int njets = 0;
-					if(option->Get("njets",njets)) {
-						if(option->Get("njets_excl",false)) goodEvent &= (PFJetMultiplicity == njets);
+					if(globalOpt->Get("njets",njets)) {
+						if(globalOpt->Get("njets_excl",false)) goodEvent &= (PFJetMultiplicity == njets);
 						else goodEvent &= (PFJetMultiplicity >= njets);
 					}
 					int nbjets = 0;
-					if(option->Get("nbjets",nbjets)){
+					if(globalOpt->Get("nbjets",nbjets)){
 						int nb = 0;
 						for(int j = 0; j < PFJetPt->size(); j++){
 							if(PFJetCSVBTag->at(j)>0.244) nb++;
 						}
-						if(option->Get("nbjets_excl",false)) goodEvent &= (nbjets == nb);
+						if(globalOpt->Get("nbjets_excl",false)) goodEvent &= (nbjets == nb);
 						else goodEvent &= (nbjets >= nb);
 					}
 				}
 				else if(filter==4){ //ttbar control region
-					if(option->Get("finaltaupt",false)) goodEvent &= HPSTauPt->at(0) > 50;
+					if(globalOpt->Get("finaltaupt",false)) goodEvent &= HPSTauPt->at(0) > 50;
 					int njets = 0;
-					if(option->Get("njets",njets)){
-						if(option->Get("njets_excl",false)) goodEvent &= (PFJetMultiplicity == njets);
+					if(globalOpt->Get("njets",njets)){
+						if(globalOpt->Get("njets_excl",false)) goodEvent &= (PFJetMultiplicity == njets);
 						else goodEvent &= (PFJetMultiplicity >= njets);
 					}
 					int nbjets = 0;
-					if(option->Get("nbjets",nbjets)){
+					if(globalOpt->Get("nbjets",nbjets)){
 						int nb = 0;
 						for(int j = 0; j < PFJetPt->size(); j++){
 							if(PFJetCSVBTag->at(j)>0.244) nb++;
 						}
-						if(option->Get("nbjets_excl",false)) goodEvent &= (nbjets == nb);
+						if(globalOpt->Get("nbjets_excl",false)) goodEvent &= (nbjets == nb);
 						else goodEvent &= (nbjets >= nb);
 					}
 				}
@@ -410,8 +409,8 @@ class KBuilder : public TreeClass {
 		virtual double Weight() { return 1.; }
 		virtual void FakeTauEstimation(double w){
 			TGraphAsymmErrors* tfr = 0;
-			if(option->Get("use_mc_tfr",false)) option->Get("tfr_mc",tfr);
-			else option->Get("tfr_data",tfr);
+			if(globalOpt->Get("use_mc_tfr",false)) globalOpt->Get("tfr_mc",tfr);
+			else globalOpt->Get("tfr_data",tfr);
 			
 			Double_t *x, *xel, *xeh, *y, *yel, *yeh;
 			x = tfr->GetX();
@@ -442,8 +441,8 @@ class KBuilder : public TreeClass {
 					for(int i = 0; i < nbins; i++){
 						if(x[i] - xel[i] < HPSTauPt->at(t) && HPSTauPt->at(t) < x[i] + xeh[i]) {
 							fr_curr = y[i];
-							if(option->Get("tfr_unc_up",false)) fr_curr += yeh[i];
-							else if(option->Get("tfr_unc_down",false)) fr_curr -= yel[i];
+							if(globalOpt->Get("tfr_unc_up",false)) fr_curr += yeh[i];
+							else if(globalOpt->Get("tfr_unc_down",false)) fr_curr -= yel[i];
 							break;
 						}
 					}
@@ -476,12 +475,12 @@ class KBuilder : public TreeClass {
 			
 			//add result to database
 			double ft_norm = 0;
-			option->Get("ft_norm",ft_norm);
-			option->Set("ft_norm",ft_norm + norm);
+			globalOpt->Get("ft_norm",ft_norm);
+			globalOpt->Set("ft_norm",ft_norm + norm);
 
 			double ft_err = 0;
-			option->Get("ft_err",ft_err);
-			option->Set("ft_err",ft_err + sumw2);
+			globalOpt->Get("ft_err",ft_err);
+			globalOpt->Set("ft_err",ft_err + sumw2);
 			
 		}
 		virtual void Loop() {
@@ -511,7 +510,7 @@ class KBuilder : public TreeClass {
 				
 				double w = Weight();
 				
-				if(option->Get("calcfaketau",false)) FakeTauEstimation(w);
+				if(globalOpt->Get("calcfaketau",false)) FakeTauEstimation(w);
 				
 				HMit sit;
 				for(sit = MyBase->GetTable().begin(); sit != MyBase->GetTable().end(); sit++){
@@ -566,7 +565,7 @@ class KBuilder : public TreeClass {
 						if(PFJetPt->size()>0) htmp->Fill(dPhi(PFMETPhiPatType1,PFJetPhi->at(0)),w);
 					}
 					else if(stmp=="ptmu"){//muon pT
-						if(option->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau ST
+						if(globalOpt->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau ST
 							for(int t = 0; t < HPSTauPt->size(); t++){
 								if(!FakeTauGenDecision[t]) continue;
 								htmp->Fill(MuonPt,w*FakeTauWeight[t]);
@@ -577,7 +576,7 @@ class KBuilder : public TreeClass {
 						}
 					}
 					else if(stmp=="pttau"){//tau pT
-						if(option->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau
+						if(globalOpt->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau
 							for(int t = 0; t < HPSTauPt->size(); t++){
 								if(!FakeTauGenDecision[t]) continue;
 								htmp->Fill(HPSTauPt->at(t),w*FakeTauWeight[t]);
@@ -595,12 +594,12 @@ class KBuilder : public TreeClass {
 					}
 					else if(stmp=="pttauall"){//tau pT (all taus)
 						for(int t = 0; t < HPSTauPt->size(); t++){
-							if(!option->Get("checkfaketau",false) || HPSTauFakeJet->at(t)) htmp->Fill(HPSTauPt->at(t),w);
+							if(!globalOpt->Get("checkfaketau",false) || HPSTauFakeJet->at(t)) htmp->Fill(HPSTauPt->at(t),w);
 						}
 					}
 					else if(stmp=="pttauisoall"){//tau pT (all taus) w/ isolation (fake rate)
 						for(int t = 0; t < HPSTauPt->size(); t++){
-							if( (!option->Get("checkfaketau",false) || HPSTauFakeJet->at(t)) && HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(t)) htmp->Fill(HPSTauPt->at(t),w);
+							if( (!globalOpt->Get("checkfaketau",false) || HPSTauFakeJet->at(t)) && HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(t)) htmp->Fill(HPSTauPt->at(t),w);
 						}
 					}
 					else if(stmp=="pttauantiisoall"){//tau pT (all taus) w/ anti-isolation
@@ -644,7 +643,7 @@ class KBuilder : public TreeClass {
 						htmp->Fill(MuonEta,w);
 					}
 					else if(stmp=="etatau"){//tau eta
-						if(option->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau ST
+						if(globalOpt->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau ST
 							for(int t = 0; t < HPSTauEta->size(); t++){
 								if(!FakeTauGenDecision[t]) continue;
 								htmp->Fill(HPSTauEta->at(t),w*FakeTauWeight[t]);
@@ -656,12 +655,12 @@ class KBuilder : public TreeClass {
 					}
 					else if(stmp=="etatauall"){//tau eta (all taus)
 						for(int t = 0; t < HPSTauPt->size(); t++){
-							if(!option->Get("checkfaketau",false) || HPSTauFakeJet->at(t)) htmp->Fill(HPSTauEta->at(t),w);
+							if(!globalOpt->Get("checkfaketau",false) || HPSTauFakeJet->at(t)) htmp->Fill(HPSTauEta->at(t),w);
 						}
 					}
 					else if(stmp=="etatauisoall"){//tau eta (all taus) w/ isolation (fake rate)
 						for(int t = 0; t < HPSTauPt->size(); t++){
-							if( (!option->Get("checkfaketau",false) || HPSTauFakeJet->at(t)) && HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(t)) htmp->Fill(HPSTauEta->at(t),w);
+							if( (!globalOpt->Get("checkfaketau",false) || HPSTauFakeJet->at(t)) && HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(t)) htmp->Fill(HPSTauEta->at(t),w);
 						}
 					}
 					else if(stmp=="nvertex"){//# good vertices
@@ -770,7 +769,7 @@ class KBuilder : public TreeClass {
 					else if(stmp=="dvtx"){//difference in vertex indices for muon and selected jets
 						bool foundB = false;
 						bool foundJ = false;
-						if(option->Get("lqd321sel",false)) {
+						if(globalOpt->Get("lqd321sel",false)) {
 							htmp->Fill(abs(MuonVtxIndex - PFJetVtxIndex->at(BJetIndices[0])),w);
 							for(int j = 0; j < 4; j++){
 								htmp->Fill(abs(MuonVtxIndex - PFJetVtxIndex->at(JetIndices[j])),w);
@@ -806,11 +805,11 @@ class KBuilder : public TreeClass {
 					}
 					else if(stmp=="st"){//scalar sum of momenta (defined differently for lqd321)
 						double st_base = 0;
-						if(option->Get("lqd321sel",false)) st_base = MuonPt + PFJetPt->at(BJetIndices[0]) + PFJetPt->at(JetIndices[0]) + PFJetPt->at(JetIndices[1]) + PFJetPt->at(JetIndices[2]) + PFJetPt->at(JetIndices[3]);
-						else if(!option->Get("mainsel",false)) st_base = MuonPt + PFJetPt->at(0) + PFJetPt->at(1);
+						if(globalOpt->Get("lqd321sel",false)) st_base = MuonPt + PFJetPt->at(BJetIndices[0]) + PFJetPt->at(JetIndices[0]) + PFJetPt->at(JetIndices[1]) + PFJetPt->at(JetIndices[2]) + PFJetPt->at(JetIndices[3]);
+						else if(!globalOpt->Get("mainsel",false)) st_base = MuonPt + PFJetPt->at(0) + PFJetPt->at(1);
 						else st_base = MuonPt + PFMainJetPt[0] + PFMainJetPt[1];
 						
-						if(option->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau ST
+						if(globalOpt->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau ST
 							for(int t = 0; t < HPSTauPt->size(); t++){
 								if(!FakeTauGenDecision[t]) continue;
 								htmp->Fill(st_base + HPSTauPt->at(t),w*FakeTauWeight[t]);
@@ -820,19 +819,21 @@ class KBuilder : public TreeClass {
 							double st_tot = st_base + HPSTauPt->at(0);
 							htmp->Fill(st_tot,w);
 							//printeventnum uses histo minimum as the threshold
-							if(option->Get("printeventnum",false) && st_tot > htmp->GetXaxis()->GetXmin()){
+							if(globalOpt->Get("printeventnum",false) && st_tot > htmp->GetXaxis()->GetXmin()){
 								//run:ls:event format for crab
-								cout << "ST = " << st_tot << " GeV in " << MyBase->GetFileName() << endl;
+								string filename = "";
+								localOpt->Get("filename",filename);
+								cout << "ST = " << st_tot << " GeV in " << filename << endl;
 								cout << run << ":" << ls << ":" << event << endl;
 								cout << "muon: pt = " << MuonPt << ", eta = " << MuonEta << ", phi = " << MuonPhi << endl;
 								cout << "tau: pt = " << HPSTauPt->at(0) << ", eta = " << HPSTauEta->at(0) << ", phi = " << HPSTauPhi->at(0) << endl;
-								if(option->Get("lqd321sel",false)){
+								if(globalOpt->Get("lqd321sel",false)){
 									cout << "b-jet: pt = " << PFJetPt->at(BJetIndices[0]) << ", eta = " << PFJetEta->at(BJetIndices[0]) << ", phi = " << PFJetPhi->at(BJetIndices[0]) << endl;
 									for(int j = 0; j < 4; j++){
 										cout << "jet " << j+1 << ": pt = " << PFJetPt->at(JetIndices[j]) << ", eta = " << PFJetEta->at(JetIndices[j]) << ", phi = " << PFJetPhi->at(JetIndices[j]) << endl;
 									}
 								}
-								else if(!option->Get("mainsel",false)){
+								else if(!globalOpt->Get("mainsel",false)){
 									cout << "jet 1: pt = " << PFJetPt->at(0) << ", eta = " << PFJetEta->at(0) << ", phi = " << PFJetPhi->at(0) << endl;
 									cout << "jet 2: pt = " << PFJetPt->at(1) << ", eta = " << PFJetEta->at(1) << ", phi = " << PFJetPhi->at(1) << endl;
 								}
@@ -846,7 +847,7 @@ class KBuilder : public TreeClass {
 					else if(stmp=="stlep"){//scalar sum of momenta for leptons
 						double st_base = MuonPt;
 						
-						if(option->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau ST
+						if(globalOpt->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau ST
 							for(int t = 0; t < HPSTauPt->size(); t++){
 								if(!FakeTauGenDecision[t]) continue;
 								htmp->Fill(st_base + HPSTauPt->at(t),w*FakeTauWeight[t]);
@@ -858,11 +859,11 @@ class KBuilder : public TreeClass {
 					}
 					else if(stmp=="stjet"){//scalar sum of momenta for jets
 						double st_base = 0;
-						if(option->Get("lqd321sel",false)) st_base = PFJetPt->at(BJetIndices[0]) + PFJetPt->at(JetIndices[0]) + PFJetPt->at(JetIndices[1]) + PFJetPt->at(JetIndices[2]) + PFJetPt->at(JetIndices[3]);
-						else if(!option->Get("mainsel",false)) st_base = PFJetPt->at(0) + PFJetPt->at(1);
+						if(globalOpt->Get("lqd321sel",false)) st_base = PFJetPt->at(BJetIndices[0]) + PFJetPt->at(JetIndices[0]) + PFJetPt->at(JetIndices[1]) + PFJetPt->at(JetIndices[2]) + PFJetPt->at(JetIndices[3]);
+						else if(!globalOpt->Get("mainsel",false)) st_base = PFJetPt->at(0) + PFJetPt->at(1);
 						else st_base = PFMainJetPt[0] + PFMainJetPt[1];
 						
-						if(option->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau ST
+						if(globalOpt->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau ST
 							for(int t = 0; t < HPSTauPt->size(); t++){
 								if(!FakeTauGenDecision[t]) continue;
 								htmp->Fill(st_base,w*FakeTauWeight[t]);
@@ -886,7 +887,7 @@ class KBuilder : public TreeClass {
 				}
 			}
 			
-			if(option->Get("plotoverflow",false)){
+			if(globalOpt->Get("plotoverflow",false)){
 				HMit sit;
 				for(sit = MyBase->GetTable().begin(); sit != MyBase->GetTable().end(); sit++){
 					//get histo name
@@ -916,7 +917,8 @@ class KBuilder : public TreeClass {
 	protected:
 		//member variables
 		KBase* MyBase;
-		OptionMap* option;
+		OptionMap* localOpt;
+		OptionMap* globalOpt;
 		map<pair<int,int>,int> countmap;
 		string stmp;
 		TH1F* htmp;
@@ -960,7 +962,7 @@ class KBuilderData : public KBuilder {
 			bool goodEvent = KBuilder::Cut();
 			
 			//special blinding option for data (disabled by default)
-			if(option->Get("blind",false)){
+			if(globalOpt->Get("blind",false)){
 				goodEvent &= (MassTauJet < 180); //do not look at signal region
 				//could make this setting into a double value for variable blinding...
 			}
@@ -992,13 +994,15 @@ class KBuilderMC : public KBuilder {
 			bool goodEvent = KBuilder::Cut();
 			
 			//add extra MC cuts here
-			if(!option->Get("antiisosel",false)){ //do not do these checks for the anti-iso region, they will be done at object level where appropriate
+			if(!globalOpt->Get("antiisosel",false)){ //do not do these checks for the anti-iso region, they will be done at object level where appropriate
+				string normtype = "";
+				localOpt->Get("normtype",normtype);
 				int nchargino = 0;
-				if(MyBase->GetNormType()=="faketau" && option->Get("dofaketau",false)) goodEvent &= HPSTauFakeJet->at(0);
-				else if(MyBase->GetNormType()=="nofaketau" && option->Get("dofaketau",false)) goodEvent &= !HPSTauFakeJet->at(0);
-				else if(MyBase->GetNormType()=="ttbar" && option->Get("dottbar",false)) goodEvent &= HPSTauReal->at(0);
-				else if(MyBase->GetNormType()=="faketaulep" && option->Get("dottbar",false)) goodEvent &= HPSTauFakeLep->at(0);
-				else if(MyBase->GetNormType()=="chargino" && option->Get("dochargino",false) && option->Get("nchargino",nchargino)) goodEvent &= (CharginoMultiplicity == nchargino);
+				if(normtype=="faketau" && globalOpt->Get("dofaketau",false)) goodEvent &= HPSTauFakeJet->at(0);
+				else if(normtype=="nofaketau" && globalOpt->Get("dofaketau",false)) goodEvent &= !HPSTauFakeJet->at(0);
+				else if(normtype=="ttbar" && globalOpt->Get("dottbar",false)) goodEvent &= HPSTauReal->at(0);
+				else if(normtype=="faketaulep" && globalOpt->Get("dottbar",false)) goodEvent &= HPSTauFakeLep->at(0);
+				else if(normtype=="chargino" && globalOpt->Get("dochargino",false) && globalOpt->Get("nchargino",nchargino)) goodEvent &= (CharginoMultiplicity == nchargino);
 			}
 			
 			return goodEvent;
@@ -1008,37 +1012,38 @@ class KBuilderMC : public KBuilder {
 			
 			//check option in case correction types are disabled globally
 			//(enabled by default)
-			if(option->Get("pucorr",true)) {
+			if(globalOpt->Get("pucorr",true)) {
 				TH1F* puWeights;
-				option->Get("puWeights",puWeights);
+				globalOpt->Get("puWeights",puWeights);
 				w *= puWeights->GetBinContent(puWeights->GetXaxis()->FindBin(trueNInteraction));
 			}
 
-			if(option->Get("mucorr",true)) {
+			if(globalOpt->Get("mucorr",true)) {
 				TH2F* muIDTight;
-				option->Get("muIDTight",muIDTight);
+				globalOpt->Get("muIDTight",muIDTight);
 				w *= muIDTight->GetBinContent(muIDTight->FindBin(fabs(MuonEta),MuonPt));
 			}
 			
-			if(option->Get("btagcorr",true)) {
+			if(globalOpt->Get("btagcorr",true)) {
 				int bSF = 0;
 				int mSF = 0;
-				option->Get("btagSFunc",bSF);
-				option->Get("mistagSFunc",mSF);
+				globalOpt->Get("btagSFunc",bSF);
+				globalOpt->Get("mistagSFunc",mSF);
 				//btag corrs only applied to specific plots in preselection
-				if(stmp=="leadbjetpt" || stmp=="secondbjetpt" || option->Get("mainsel",false) || option->Get("lqd321sel",false) || option->Get("dobtagcorr",false))
+				if(stmp=="leadbjetpt" || stmp=="secondbjetpt" || globalOpt->Get("mainsel",false) || globalOpt->Get("lqd321sel",false) || globalOpt->Get("dobtagcorr",false))
 					w *= GetBtagScale(PFJetPt,PFJetEta,PFJetPartonFlavour,bSF,mSF);
 			}
 			
 			//now do scaling: norm*xsection/nevents
 			//should this be a separate function using Scale()?
-			int nEventProc = MyBase->GetNEventProc();
-			if(nEventProc > 0) w *= MyBase->GetCrossSection()/nEventProc;
+			int nEventProc = 0;
+			double xsection = 0;
+			if(localOpt->Get("nEventProc",nEventProc) && nEventProc>0 && localOpt->Get("xsection",xsection)) w *= xsection/nEventProc;
 			
 			//get norm from options
 			double norm = 0;
 			//use lumi norm (default)
-			if(option->Get("luminorm",norm)) w *= norm;
+			if(globalOpt->Get("luminorm",norm)) w *= norm;
 			
 			return w;
 		}

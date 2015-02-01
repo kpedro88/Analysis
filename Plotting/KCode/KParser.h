@@ -158,6 +158,16 @@ class KParser {
 			}
 			cout << endl;*/
 			
+			//check for necessary options
+			if(fields.size()<3) {
+				cout << "Input error: not enough fields in this line:" << endl << line << endl << "Check that all fields are tab-separated. This input will be ignored." << endl;
+				return;
+			}
+			//universal variables
+			string type = fields[0];
+			string subtype = fields[1];
+			string name = fields[2];
+			
 			//check corner cases for indent
 			if(indent==0 && fields[0]=="base"){
 				cout << "Input error: base must have a parent set! This input will be ignored." << endl;
@@ -166,7 +176,7 @@ class KParser {
 			else if(indent>0){
 				map<int,KBase*>::iterator it = MyManager->curr_sets.find(indent-1);
 				if(it == MyManager->curr_sets.end()){
-					cout << "Input error: no parent can be identified for this set! There may be too many indents, or the parent was not input properly. This input will be ignored." << endl;
+					cout << "Input error: no parent can be identified for the set " << name << "! There may be too many indents, or the parent was not input properly. This input will be ignored." << endl;
 					return;
 				}
 			}
@@ -175,88 +185,38 @@ class KParser {
 			map<int,KBase*>::iterator it = MyManager->curr_sets.lower_bound(indent);
 			MyManager->curr_sets.erase(it,MyManager->curr_sets.end());
 			
-			if(fields.size()>=4){
-				//keeps track of last used field
-				unsigned ctr = 0;
+			OptionMap* omap = new OptionMap(); //for local options
+			//process local options before constructing objects
+			for(int i = 3; i < fields.size(); i++){
+				processOption(fields[i],omap);
+			}
 			
-				KBase* tmp = 0;
-				if(fields[0]=="base"){
-					if(fields[1]=="ext") { //external is different
-						tmp = new KBaseExt(fields[2],MyManager->globalOpt);
-						string filename = fields[3];
-						ctr = 4;
-						
-						//check for specific histos to import
-						if(fields.size()>ctr+1) {
-							tmp->SetAddExt(true);
-							TFile* f_ext = TFile::Open(filename.c_str(),"READ");
-							for(unsigned i = ctr; i < fields.size(); i+=2){
-								TH1F* htmp = (TH1F*)f_ext->Get(fields[i+1].c_str());
-								tmp->AddHisto(fields[i],htmp);
-							}
-							tmp->SetAddExt(false);
-						}
-					}
-					else{
-						//intlumi for data or xsection for mc
-						double property = 0;
-						if(fields.size()>4) { stringstream ps(fields[4]); ps >> property; ctr = 5; }
-						else ctr = 4;
-						
-						//create object
-						string full_filename = MyManager->treedir + "/" + fields[3];
-						if(fields[1]=="data") tmp = new KBaseData(fields[2],full_filename,MyManager->globalOpt,property); 
-						else if(fields[1]=="mc") tmp = new KBaseMC(fields[2],full_filename,MyManager->globalOpt,property);
-					}
-				}
+			KBase* tmp = 0;
+			if(type=="base"){
+				if(subtype=="ext") tmp = new KBaseExt(name,omap,MyManager->globalOpt);
+				else if(subtype=="data") tmp = new KBaseData(name,omap,MyManager->globalOpt); 
+				else if(subtype=="mc") tmp = new KBaseMC(name,omap,MyManager->globalOpt);
+			}
+			else {
+				//create object
+				if(type=="hist" && subtype=="data") tmp = new KSetData(name,omap,MyManager->globalOpt);
+				else if(type=="hist" && subtype=="mc") tmp = new KSetMC(name,omap,MyManager->globalOpt);
+				else if(type=="stack" && subtype=="mc") tmp = new KSetMCStack(name,omap,MyManager->globalOpt);
+			}
+			
+			//store and add to parent set
+			if(tmp){
+				MyManager->curr_sets[indent] = tmp;
+				if(indent==0) MyManager->MySets.push_back(MyManager->curr_sets[indent]); //add top-level set to manager
 				else {
-					//parse color
-					Color_t color = processColor(fields[3]);
-					
-					//create object
-					if(fields[0]=="hist" && fields[1]=="data") tmp = new KSetData(fields[2],color,MyManager->globalOpt);
-					else if(fields[0]=="hist" && fields[1]=="mc") tmp = new KSetMC(fields[2],color,MyManager->globalOpt);
-					else if(fields[0]=="stack" && fields[1]=="mc") tmp = new KSetMCStack(fields[2],color,MyManager->globalOpt);
-					ctr = 4;
-				}
-				
-				//store and add to parent set
-				if(tmp){
-					MyManager->curr_sets[indent] = tmp;
-					if(indent==0) MyManager->MySets.push_back(MyManager->curr_sets[indent]); //add top-level set to manager
-					else {
-						MyManager->curr_sets[indent-1]->AddChild(tmp);
-						//cout << curr_sets[indent-1]->GetName() << "->AddChild(" << tmp->GetName() << ")" << endl;
-					}
-					
-					//check for additional options
-					if(fields.size()>ctr) {
-						for(unsigned i = ctr; i < fields.size(); i++){
-							if(fields[1]=="mc"){
-								if(fields[i].size()>2 && fields[i].compare(0,2,"NT")==0) MyManager->curr_sets[indent]->SetNormType(fields[i].substr(2));
-								else if(fields[i].size()>3 && fields[i].compare(0,3,"NEP")==0) {
-									stringstream val;
-									val << fields[i].substr(3);
-									int n;
-									val >> n;
-									MyManager->curr_sets[indent]->SetNEventProc(n);
-								}
-							}
-							
-							else if(fields[i]=="subtract") MyManager->curr_sets[indent]->SetSubtract(true);
-						}
-					}
-				}
-				else {
-					cout << "Input error: set type \"" << fields[0] << " " << fields[1] << "\" is not recognized. This input will be ignored." << endl;
-					return;
+					MyManager->curr_sets[indent-1]->AddChild(tmp);
+					//cout << curr_sets[indent-1]->GetName() << "->AddChild(" << tmp->GetName() << ")" << endl;
 				}
 			}
 			else {
-				cout << "Input error: not enough fields in this line. Check that all fields are tab-separated. This input will be ignored." << endl;
+				cout << "Input error: set type \"" << type << " " << subtype << "\" is not recognized. This input will be ignored." << endl;
 				return;
 			}
-
 		}
 		Color_t processColor(string line){
 			//color input is space-separated
@@ -347,11 +307,13 @@ template <> Color_t KParser::getOptionValue<Color_t>(string val){
 KManager::KManager(string in, string dir) : input(in),treedir(dir),globalOpt(0),numer(0),denom(0),yieldref(0),doPrint(false),varbins(0),nbins(0),parsed(false) {
 	//parser does most initializations based on text input
 	globalOpt = new OptionMap();
+	//store treedir in global options
+	globalOpt->Set("treedir",treedir);
 	MyParser = new KParser(this);
 	parsed = MyParser->Parse();
 	
 	//final checks and initializations
-	MyRatio = new KSetRatio(globalOpt);
+	MyRatio = new KSetRatio(NULL,globalOpt);
 	if(globalOpt->Get("calcfaketau",false)) FakeTauEstimationInit();
 	//store correction root files centrally
 	//todo: make file location and histo name configurable

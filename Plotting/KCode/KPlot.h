@@ -9,6 +9,7 @@
 #include <TROOT.h>
 #include <TLegend.h>
 #include <TPaveText.h>
+#include <TH1.h>
 #include <TH1F.h>
 #include <TCanvas.h>
 #include <TPad.h>
@@ -46,7 +47,9 @@ class KPlot{
 			if(localOpt==0) localOpt = new OptionMap();
 			if(globalOpt==0) globalOpt = new OptionMap();
 			
-			//construct histogram
+			//enable histo errors
+			TH1::SetDefaultSumw2(kTRUE);
+			//construct histogram		
 			vector<double> xbins;
 			int xnum;
 			double xmin, xmax;

@@ -17,6 +17,7 @@
 #include <TStyle.h>
 
 //STL headers
+#include <vector>
 #include <string>
 #include <iostream>
 
@@ -30,30 +31,40 @@ class KBuilder;
 class KBase {
 	public:
 		//constructors
-		KBase() : name(""), filename(""),parent(0),option(0),file(0),tree(0),nEventProc(0),MyBuilder(0),stmp(""),htmp(0),etmp(0),isBuilt(false),doSubtract(false),intlumi(-1),normType("") {
+		KBase() : name(""), parent(0), localOpt(0), globalOpt(0), file(0), tree(0), MyBuilder(0), stmp(""), htmp(0), etmp(0), isBuilt(false) {
 			//enable histo errors
 			TH1::SetDefaultSumw2(kTRUE);
-			//must always have an option map
-			if(option==0) option = new OptionMap();
+			//must always have local & global option maps
+			if(localOpt==0) localOpt = new OptionMap();
+			if(globalOpt==0) globalOpt = new OptionMap();
 		}
-		KBase(string name_, string filename_, OptionMap* option_) : name(name_), filename(filename_), tree(0), parent(0), option(option_), MyBuilder(0), stmp(""), 
-																	htmp(0), etmp(0), isBuilt(false), doSubtract(false), intlumi(-1), normType("") {
-			//enable histo errors
-			TH1::SetDefaultSumw2(kTRUE);
+		KBase(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : name(name_), parent(0), localOpt(localOpt_), globalOpt(globalOpt_), file(0), tree(0), MyBuilder(0), stmp(""), 
+																	htmp(0), etmp(0), isBuilt(false) {
+			//must always have local & global option maps
+			if(localOpt==0) localOpt = new OptionMap();
+			if(globalOpt==0) globalOpt = new OptionMap();
 			
-			if(filename.size()>0){
+			string filename;
+			string treedir;
+			if(localOpt->Get("filename",filename)){
+				if(globalOpt->Get("treedir",treedir)) { //get directory from global
+					filename = treedir + "/" + filename;
+					localOpt->Set("filename",filename); //store full filename for future use
+				}
 				//open file
 				file = TFile::Open(filename.c_str());
+				if(!file) {
+					cout << "Input error: file " << filename << " cannot be found or opened. Object " << name << " will not be fully initialized." << endl;
+					return;
+				}
 				//get tree
 				tree = (TTree*)file->Get("tree");
 				//store this value (number of events processed) at the beginning so histo only has to be accessed once
+				int nEventProc = 1;
 				TH1F* nEventHist = (TH1F*)file->Get("nEventProc");
 				if(nEventHist) nEventProc = nEventHist->GetBinContent(1);
-				else nEventProc = 1; //default value;
+				localOpt->Set("nEventProc",nEventProc);
 			}
-			
-			//must always have an option map
-			if(option==0) option = new OptionMap();
 		}
 		//destructor
 		virtual ~KBase() {}
@@ -84,7 +95,6 @@ class KBase {
 		
 		//accessors
 		string GetName() { return name; }
-		string GetFileName() { return filename; }
 		void SetName(string n) { name = n; }
 		//add a blank histo for future building
 		virtual TH1F* AddHisto(string s, TH1F* h){
@@ -116,22 +126,16 @@ class KBase {
 			parent = p;
 			//cout << name << " set parent " << parent->GetName() << endl;
 		}
-		virtual bool GetSubtract() { return doSubtract; }
-		virtual void SetSubtract(bool s) { doSubtract = s; }
-		OptionMap* GetOption() { return option; }
-		void SetOption(OptionMap* opt) { option = opt; if(option==0) option = new OptionMap(); } //must always have an option map
+		OptionMap* GetLocalOpt() { return localOpt; }
+		void SetLocalOpt(OptionMap* opt) { localOpt = opt; if(localOpt==0) localOpt = new OptionMap(); } //must always have an option map
+		OptionMap* GetGlobalOpt() { return globalOpt; }
+		void SetGlobalOpt(OptionMap* opt) { globalOpt = opt; if(globalOpt==0) globalOpt = new OptionMap(); } //must always have an option map
 		virtual void PrintYield() {
 			double err = 0;
 			double hint = htmp->IntegralAndError(0,htmp->GetNbinsX()+1,err);
 			cout << name << ": " << hint << " +/- " << err << endl;
 		}
-		virtual int GetNEventProc(){ return nEventProc; }
-		virtual void SetNEventProc(int n){ nEventProc = n; }
 		virtual double GetYield() { return htmp->Integral(0,htmp->GetNbinsX()+1); }
-		//norm type is an additional property, not included in constructor
-		//it should be set separately if it needs to be changed
-		string GetNormType() { return normType; }
-		void SetNormType(string nt) { normType = nt; }
 		virtual void CloseFile() { file->Close(); }
 		//divide current histo by bin width, default implementation
 		virtual void BinDivide(){
@@ -152,20 +156,16 @@ class KBase {
 		virtual void AddToLegend(TLegend* leg) {}
 		virtual void AddChild(KBase* ch) {}
 		virtual void Normalize(double nn, bool toYield=true) {}
-		//these default values allow to distinguish between data and MC...
-		virtual double GetIntLumi() { return intlumi; }
-		virtual double GetCrossSection() { return -1; }
-		virtual Color_t GetColor() { }
 		virtual void SetAddExt(bool ae) { }
 		
 	protected:
 		//member variables
-		string name, filename;
+		string name;
 		KBase* parent;
-		OptionMap* option;
+		OptionMap* localOpt;
+		OptionMap* globalOpt;
 		TFile* file;
 		TTree* tree;
-		int nEventProc;
 		KBuilder* MyBuilder;
 		HistoMap MyHistos;
 		ErrorMap MyErrorBands;
@@ -173,41 +173,37 @@ class KBase {
 		TH1F* htmp;
 		TGraphAsymmErrors* etmp;
 		bool isBuilt;
-		bool doSubtract;
-		double intlumi;
-		string normType;
 };
 
 //---------------------------------------------------------------
-//extension of base class for data - has intlumi
+//extension of base class for data - has default intlumi
 class KBaseData : public KBase {
 	public:
 		//constructors
-		KBaseData() : KBase() {}
-		KBaseData(string name_, string filename_, OptionMap* option_, double intlumi_=0) : KBase(name_, filename_, option_) { intlumi = intlumi_; }
+		KBaseData() : KBase() { localOpt->Set<double>("intlumi",0.0); }
+		KBaseData(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KBase(name_, localOpt_, globalOpt_) { 
+			if(!localOpt->Has("intlumi")) localOpt->Set<double>("intlumi",0.0);
+		}
 		//destructor
 		virtual ~KBaseData() {}
 
 		//functions for histo creation
 		virtual void Build(); //implemented in KBuilder.h to avoid circular dependency
-		
-		//accessors
-		double GetIntLumi() { return intlumi; }
-		void SetIntLumi(double L) { intlumi = L; }
-		
-	protected:
-		//member variables
-		
 };
 
 //--------------------------------------------------------------------------------
-//extension of base class for MC - has cross section, norm type, error band calc
+//extension of base class for MC - has error band calc, default cross section & norm type
 class KBaseMC : public KBase {
 	public:
 		//constructors
-		KBaseMC() : KBase() { normType = "MC"; }
-		KBaseMC(string name_, string filename_, OptionMap* option_, double xsection_=0) : 
-		KBase(name_, filename_, option_), xsection(xsection_), initWeight(false) { normType = "MC"; }
+		KBaseMC() : KBase() { 
+			localOpt->Set<string>("normtype","MC");
+			localOpt->Set<double>("xsection",0.0);
+		}
+		KBaseMC(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KBase(name_, localOpt_, globalOpt_) {
+			if(!localOpt->Has("normtype")) localOpt->Set<string>("normtype","MC");
+			if(!localOpt->Has("xsection")) localOpt->Set<double>("xsection",0.0); 
+		}
 		//destructor
 		virtual ~KBaseMC() {}
 		
@@ -219,16 +215,6 @@ class KBaseMC : public KBase {
 			if(toYield) htmp->Scale(nn/simyield);
 			else htmp->Scale(nn);
 		}
-		
-		//accessors
-		double GetCrossSection() { return xsection; }
-		void SetCrossSection(double c) { xsection = c; }
-		
-	protected:
-		//member variables
-		double xsection;
-		bool initWeight;
-
 };
 
 //-------------------------------------------
@@ -237,7 +223,31 @@ class KBaseExt : public KBase {
 	public:
 		//constructors
 		KBaseExt() : KBase(), add_ext(false) {}
-		KBaseExt(string name_, OptionMap* option_) : KBase(name_,"",option_), add_ext(false) {}
+		KBaseExt(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KBase(name_, localOpt_, globalOpt_), add_ext(false) {
+			string filename;
+			if(localOpt->Get("filename",filename)){
+				//open file
+				file = TFile::Open(filename.c_str());
+				//check for specific histos to import
+				vector<string> exthisto_in;
+				vector<string> exthisto_out;
+				localOpt->Get("exthisto_in",exthisto_in);
+				localOpt->Get("exthisto_out",exthisto_out);
+				if(exthisto_in.size() != exthisto_out.size()){
+					cout << "Input error: vectors of external histo input and output names must have the same length. These external histos will not be used." << endl;
+					return;
+				}
+				else{
+					add_ext = true;
+					for(int i = 0; i < exthisto_in.size(); i++){
+						TH1F* htmp = (TH1F*)file->Get(exthisto_in[i].c_str());
+						AddHisto(exthisto_out[i],htmp);
+					}
+					add_ext = false;
+				}
+			}
+			
+		}
 		
 		//change histo add mode
 		void SetAddExt(bool ae) { add_ext = ae; }

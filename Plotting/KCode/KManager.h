@@ -61,12 +61,12 @@ class KManager {
 			double intlumi = 0;
 			if(!(globalOpt->Get<double>("luminorm",intlumi))) {
 				for(unsigned s = 0; s < MySets.size(); s++){
-					double tmp = MySets[s]->GetIntLumi();
+					double tmp = 0;
+					MySets[s]->GetLocalOpt()->Get("intlumi",tmp);
 					if(tmp>0) { intlumi = tmp; }
 				}
 				if(intlumi==0) intlumi = 1; //default value
-				KOption<double>* otmp = new KOption<double>(intlumi);
-				globalOpt->Add("luminorm",otmp);
+				globalOpt->Set("luminorm",intlumi);
 			}
 			
 			//get special status options

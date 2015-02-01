@@ -24,11 +24,14 @@ using namespace std;
 //------------------------------------------------------------------------------------------
 //set class: has children and a parent (KBase or KBase-derived)
 //           inherits from KBase to allow for sets of sets
+//           default value for color
 class KSet : public KBase {
 	public:
 		//constructor
-		KSet() : KBase(), color(kBlack) {}
-		KSet(string name_, Color_t color_, OptionMap* option_) : KBase(name_,"",option_), color(color_) {}
+		KSet() : KBase() { localOpt->Set<Color_t>("color",kBlack); }
+		KSet(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KBase(name_, localOpt_, globalOpt_) {
+			if(!localOpt->Has("color")) localOpt->Set<Color_t>("color",kBlack);
+		}
 		//destructor
 		virtual ~KSet() {}
 		
@@ -50,8 +53,8 @@ class KSet : public KBase {
 			HMit sit;
 			for(sit = MyHistos.GetTable().begin(); sit != MyHistos.GetTable().end(); sit++){
 				GetHisto(sit->first); //this will propagate to children
-				for(unsigned c = 0; c < children.size(); c++){ //include option to subtract histos
-					htmp->Add(children[c]->GetHisto(), children[c]->GetSubtract() ? -1 : 1);				
+				for(unsigned c = 0; c < children.size(); c++){ //include option to subtract histos, off by default
+					htmp->Add(children[c]->GetHisto(), children[c]->GetLocalOpt()->Get("subtract",false) ? -1 : 1);				
 				}
 			}
 		}
@@ -86,13 +89,8 @@ class KSet : public KBase {
 			}
 		}
 		
-		//accessors
-		Color_t GetColor() { return color; }
-		void SetColor(Color_t c) { color = c; }
-		
 	protected:
 		//member variables
-		Color_t color;
 		KBase* parent; //overloaded variable name
 		vector<KBase*> children;
 };
@@ -103,14 +101,19 @@ class KSetData: public KSet {
 	public:
 		//constructor
 		KSetData() : KSet() {}
-		KSetData(string name_, Color_t color_, OptionMap* option_) : KSet(name_,color_,option_) {}
+		KSetData(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KSet(name_, localOpt_, globalOpt_) {}
 		//destructor
 		virtual ~KSetData() {}
 		
 		//sum up lumi when adding children
 		void AddChild(KBase* ch){
 			KSet::AddChild(ch);
-			intlumi += ch->GetIntLumi();
+			double intlumi, intlumi_ch;
+			intlumi = intlumi_ch = 0;
+			if(ch->GetLocalOpt()->Get("intlumi",intlumi_ch)) {
+				localOpt->Get("intlumi",intlumi);
+				localOpt->Set("intlumi",intlumi + intlumi_ch);
+			}
 		}	
 		//add function - does formatting
 		TH1F* AddHisto(string s, TH1F* h){
@@ -121,6 +124,8 @@ class KSetData: public KSet {
 				children[c]->AddHisto(s,h);
 			}
 			
+			Color_t color;
+			localOpt->Get("color",color);
 			//formatting
 			htmp->SetLineColor(color);
 			htmp->SetMarkerColor(color);
@@ -132,7 +137,7 @@ class KSetData: public KSet {
 		//adds histo to legend
 		void AddToLegend(TLegend* leg) {
 			//only draw horizontal line if horizontal error bar is enabled
-			if(option->Get("horizerrbars",false) || htmp->GetXaxis()->IsVariableBinSize()){
+			if(globalOpt->Get("horizerrbars",false) || htmp->GetXaxis()->IsVariableBinSize()){
 				leg->AddEntry(htmp,name.c_str(),"pel");
 			}
 			//note: this setting only works in ROOT 5.34.11+
@@ -152,7 +157,7 @@ class KSetMC: public KSet {
 	public:
 		//constructor
 		KSetMC() : KSet() {}
-		KSetMC(string name_, Color_t color_, OptionMap* option_) : KSet(name_,color_,option_) {}
+		KSetMC(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KSet(name_, localOpt_, globalOpt_) {}
 		//destructor
 		virtual ~KSetMC() {}
 
@@ -167,7 +172,7 @@ class KSetMC: public KSet {
 			for(sit = MyHistos.GetTable().begin(); sit != MyHistos.GetTable().end(); sit++){
 				GetHisto(sit->first); //this will propagate to children
 				for(unsigned c = 0; c < children.size(); c++){ //include option to subtract histos
-					htmp->Add(children[c]->GetHisto(), children[c]->GetSubtract() ? -1 : 1);
+					htmp->Add(children[c]->GetHisto(), children[c]->GetLocalOpt()->Get("subtract",false) ? -1 : 1);
 				}
 				
 				//use alternative data-driven normalizations (fake tau, real ttbar) if everything is enabled
@@ -177,15 +182,16 @@ class KSetMC: public KSet {
 				double normerr = 0;
 				bool do_err_prop = false;
 				TH1F* htmp2 = 0;
-				if(normType=="faketau" && option->Get("dofaketau",false) && option->Get<double>("faketaunorm",norm)){
-					if(option->Get<double>("faketauerr",normerr)) {
+				string normtype = "";
+				if(localOpt->Get("normtype",normtype) && normtype=="faketau" && globalOpt->Get("dofaketau",false) && globalOpt->Get<double>("faketaunorm",norm)){
+					if(globalOpt->Get<double>("faketauerr",normerr)) {
 						do_err_prop = true;
 						htmp2 = (TH1F*)htmp->Clone();
 					}
 					htmp->Scale(norm/simyield);
 				}
-				else if(normType=="ttbar" && option->Get("dottbar",false) && option->Get<double>("ttbarnorm",norm)){
-					if(option->Get<double>("ttbarerr",normerr)) {
+				else if(localOpt->Get("normtype",normtype) && normtype=="ttbar" && globalOpt->Get("dottbar",false) && globalOpt->Get<double>("ttbarnorm",norm)){
+					if(globalOpt->Get<double>("ttbarerr",normerr)) {
 						do_err_prop = true;
 						htmp2 = (TH1F*)htmp->Clone();
 					}
@@ -222,6 +228,8 @@ class KSetMC: public KSet {
 				children[c]->AddHisto(s,h);
 			}
 			
+			Color_t color;
+			localOpt->Get("color",color);
 			//formatting
 			htmp->SetFillColor(0);
 			htmp->SetLineColor(color);
@@ -249,7 +257,7 @@ class KSetMCStack : public KSet {
 	public:
 		//constructor
 		KSetMCStack() : KSet() {}
-		KSetMCStack(string name_, Color_t color_, OptionMap* option_) : KSet(name_,color_,option_), shtmp(0) {}
+		KSetMCStack(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KSet(name_, localOpt_, globalOpt_), shtmp(0) {}
 		//destructor
 		virtual ~KSetMCStack() {}
 
@@ -263,11 +271,14 @@ class KSetMCStack : public KSet {
 			for(unsigned c = 0; c < children.size(); c++){
 				TH1F* ctmp = children[c]->AddHisto(s,h);
 				//fix formatting of ctmp for stack
-				ctmp->SetFillColor(children[c]->GetColor());
-				ctmp->SetLineColor(children[c]->GetColor());
-				ctmp->SetMarkerColor(children[c]->GetColor());
+				Color_t color;
+				children[c]->GetLocalOpt()->Get("color",color);
+				ctmp->SetFillColor(color);
+				ctmp->SetLineColor(color);
+				ctmp->SetMarkerColor(color);
 				ctmp->SetLineWidth(1);
-				if(children[c]->GetName().compare(0,2,"LQ")==0 && option->Get("sigstack",false)){
+				string sigstack = "";
+				if(globalOpt->Get("sigstack",sigstack) && children[c]->GetName()==sigstack){
 					ctmp->SetFillColor(kWhite);
 					ctmp->SetLineColor(kBlack);
 					ctmp->SetMarkerColor(kBlack);
@@ -292,22 +303,23 @@ class KSetMCStack : public KSet {
 				
 				//sort vector of children according to current histo - BEFORE adding to stack
 				//unless disabled by user
-				if(!option->Get("nosort",false)) sort(children.begin(),children.end(),KComp());
+				if(!globalOpt->Get("nosort",false)) sort(children.begin(),children.end(),KComp());
 				
+				string sigstack = "";
+				bool do_sigstack = globalOpt->Get("sigstack",sigstack);
+				int c_sigstack = -1;
 				for(unsigned c = 0; c < children.size(); c++){
-					if(children[c]->GetName().compare(0,2,"LQ")==0 && option->Get("sigstack",false)) {} //do not add stacked signal yet
+					if(do_sigstack && children[c]->GetName()==sigstack) c_sigstack = c; //do not add stacked signal yet, just store index
 					else shtmp->Add(children[c]->GetHisto());
 				}
 				
 				//fill in htmp now that shtmp is built
 				htmp = (TH1F*)shtmp->GetStack()->Last();
 				//build error band, enabled by default
-				if(option->Get("errband",true)) BuildErrorBand();
+				if(globalOpt->Get("errband",true)) BuildErrorBand();
 				
-				for(unsigned c = 0; c < children.size(); c++){
-					//add stacked signal histo after calculating error band
-					if(children[c]->GetName().compare(0,2,"LQ")==0 && option->Get("sigstack",false)) shtmp->Add(children[c]->GetHisto());
-				}
+				//add stacked signal histo after calculating error band
+				if(c_sigstack > -1) shtmp->Add(children[c_sigstack]->GetHisto());				
 			}
 		}
 		//polymorphic GetHisto for stacks
@@ -331,12 +343,12 @@ class KSetMCStack : public KSet {
 			for(unsigned c = 0; c < children.size(); c++){
 				children[c]->GetLegendInfo(kleg);
 			}
-			if(option->Get("errband",true)) kleg->CheckSize("uncertainty");
+			if(globalOpt->Get("errband",true)) kleg->CheckSize("uncertainty");
 		}
 		//adds child histos to legend
 		void AddToLegend(TLegend* leg) {
 			//sort vector of children according to current histo - BEFORE adding to legend
-			if(!option->Get("nosort",false)) sort(children.begin(),children.end(),KComp());	
+			if(!globalOpt->Get("nosort",false)) sort(children.begin(),children.end(),KComp());	
 		
 			//add to legend in reverse order so largest is first
 			for(int c = children.size()-1; c >= 0; c--){
@@ -345,7 +357,7 @@ class KSetMCStack : public KSet {
 				leg->AddEntry(ctmp,cname.c_str(),"f");
 			}
 			//error band enabled by default
-			if(option->Get("errband",true)) leg->AddEntry(etmp,"uncertainty","f");
+			if(globalOpt->Get("errband",true)) leg->AddEntry(etmp,"uncertainty","f");
 			//this assumes it has already been created previously... a little unsafe, but a pain in the ass otherwise
 		}
 		//draw function
@@ -354,9 +366,9 @@ class KSetMCStack : public KSet {
 			shtmp->Draw("hist same");
 			
 			//error band enabled by default
-			if(option->Get("errband",true)) etmp->Draw("2 same");
+			if(globalOpt->Get("errband",true)) etmp->Draw("2 same");
 			
-			if(option->Get("bgline",false)&&htmp){
+			if(globalOpt->Get("bgline",false)&&htmp){
 				TH1F* hoverlay = (TH1F*)htmp->Clone();
 				hoverlay->SetFillColor(0);
 				hoverlay->SetLineColor(kBlack);
@@ -383,7 +395,7 @@ class KSetMCStack : public KSet {
 			}
 			
 			//rebuild error band (enabled by default)
-			if(option->Get("errband",true)) BuildErrorBand();
+			if(globalOpt->Get("errband",true)) BuildErrorBand();
 		}
 		//divide current histo by bin width, stack implementation
 		void BinDivide(){
@@ -403,7 +415,7 @@ class KSetMCStack : public KSet {
 			}
 			
 			//rebuild error band (enabled by default)
-			if(option->Get("errband",true)) BuildErrorBand();
+			if(globalOpt->Get("errband",true)) BuildErrorBand();
 		}
 		//print yield from children
 		void PrintYield() { 
@@ -435,7 +447,10 @@ class KSetRatio: public KSet {
 	public:
 		//constructor
 		KSetRatio() : KSet() {}
-		KSetRatio(OptionMap* option_) : KSet("ratio",kBlack,option_) { children.resize(2); }
+		KSetRatio(OptionMap* localOpt_, OptionMap* globalOpt_) : KSet("ratio", localOpt_, globalOpt_) { 
+			localOpt->Set<Color_t>("color",kBlack);
+			children.resize(2); 
+		}
 		//destructor
 		virtual ~KSetRatio() {}
 		
@@ -458,6 +473,8 @@ class KSetRatio: public KSet {
 			}
 			
 			hrat->Divide(hdata,hsim0);
+			Color_t color;
+			localOpt->Get("color",color);
 			//formatting
 			hrat->SetLineColor(color);
 			hrat->SetMarkerColor(color);
@@ -471,7 +488,7 @@ class KSetRatio: public KSet {
 			MyHistos.Add(stmp,htmp);
 			
 			//error band enabled by default
-			if(option->Get("errband",true)) BuildErrorBand();
+			if(globalOpt->Get("errband",true)) BuildErrorBand();
 		}
 		//calculate ratio error band from denom
 		TGraphAsymmErrors* BuildErrorBand(){
@@ -504,7 +521,7 @@ class KSetRatio: public KSet {
 		void Draw(TPad* pad) {
 			pad->cd();
 			//error band enabled by default
-			if(option->Get("errband",true)) etmp->Draw("2 same");
+			if(globalOpt->Get("errband",true)) etmp->Draw("2 same");
 			htmp->Draw("PE same");
 		}
 		

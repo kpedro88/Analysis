@@ -155,6 +155,12 @@ class OptionMap : public KMap<KOpt*> {
 			KOpt* otmp = new KOption<O>(val);
 			Add(name,otmp);
 		}
+		
+		//check if entry exists
+		bool Has(string name) {
+			typename map<string,KOpt*>::iterator it = table.find(name);
+			return it != table.end();
+		}
 };
 
 
