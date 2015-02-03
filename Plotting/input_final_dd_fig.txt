@@ -36,11 +36,11 @@ HISTO
 #btagjetpt	i:xnum[50]	d:xmin[0]	d:xmax[300]	s:xtitle[p_{T}(b-tag jet) [GeV]]	s:ytitle[number of events / 6 GeV]
 #addljetpt	i:xnum[50]	d:xmin[0]	d:xmax[300]	s:xtitle[p_{T}(addl. jet) [GeV]]	s:ytitle[number of events / 6 GeV]
 masstaub	i:xnum[50]	d:xmin[0]	d:xmax[1000]	s:xtitle[M_{#taub} [GeV]]	s:ytitle[number of events / 20 GeV]
-#st	i:xnum[30]	d:xmin[0]	d:xmax[1200]	s:xtitle[S_{T} [GeV]]	s:ytitle[number of events / 40 GeV]	b:liny[1]
-#st	i:xnum[25]	d:xmin[100]	d:xmax[1100]	s:xtitle[S_{T} [GeV]]	s:ytitle[number of events / 40 GeV]	b:liny[1]
-#st	i:xnum[14]	d:xmin[140]	d:xmax[1260]	s:xtitle[S_{T} [GeV]]	s:ytitle[number of events / 80 GeV]	b:liny[1]	b:ratio[0]
-#st	i:xnum[15]	d:xmin[0]	d:xmax[1200]	s:xtitle[S_{T} [GeV]]	s:ytitle[number of events / 80 GeV]	b:liny[1]	b:ratio[0]
-st	vd:xbins[140,210,280,350,420,480,540,620,700,780,870,980,1100,1200]	s:xtitle[S_{T} [GeV]]	s:ytitle[number of events / GeV]	b:liny[1]	b:ratio[0]	b:bindivide[1]
+#st	i:xnum[30]	d:xmin[0]	d:xmax[1200]	s:xtitle[S_{T} [GeV]]	s:ytitle[number of events / 40 GeV]	b:logy[0]
+#st	i:xnum[25]	d:xmin[100]	d:xmax[1100]	s:xtitle[S_{T} [GeV]]	s:ytitle[number of events / 40 GeV]	b:logy[0]
+#st	i:xnum[14]	d:xmin[140]	d:xmax[1260]	s:xtitle[S_{T} [GeV]]	s:ytitle[number of events / 80 GeV]	b:logy[0]	b:ratio[0]
+#st	i:xnum[15]	d:xmin[0]	d:xmax[1200]	s:xtitle[S_{T} [GeV]]	s:ytitle[number of events / 80 GeV]	b:logy[0]	b:ratio[0]
+st	vd:xbins[140,210,280,350,420,480,540,620,700,780,870,980,1100,1200]	s:xtitle[S_{T} [GeV]]	s:ytitle[number of events / GeV]	b:logy[0]	b:ratio[0]	b:bindivide[1]
 
 SET
 hist	data	data	c:color[kBlack]

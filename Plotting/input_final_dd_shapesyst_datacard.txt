@@ -24,7 +24,7 @@ bool:closefiles[1]
 string:yieldref[data]
 
 HISTO
-st	i:xnum[120]	d:xmin[0]	d:xmax[1200]	s:xtitle[S_{T} [GeV]]	s:ytitle[number of events / 10 GeV]	b:ratio[0]	b:liny[1]
+st	i:xnum[120]	d:xmin[0]	d:xmax[1200]	s:xtitle[S_{T} [GeV]]	s:ytitle[number of events / 10 GeV]	b:ratio[0]	b:logy[0]
 
 SET
 hist	data	data	c:color[kBlack]

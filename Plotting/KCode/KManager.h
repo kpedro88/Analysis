@@ -80,31 +80,30 @@ class KManager {
 				if(s_denom.size()>0 && denom==0) denom = MySets[s]->CheckSpecial(s_denom);
 				if(s_yieldref.size()>0 && yieldref==0) yieldref = MySets[s]->CheckSpecial(s_yieldref);
 			}
-			
-			//create plots from local options
-			OMMit om;
-			bool ratio_requested = false;
-			for(om = MyPlotOptions.GetTable().begin(); om != MyPlotOptions.GetTable().end(); om++){
-				if(om->second->Get("ratio",true)) ratio_requested = true; //ratios turned on by default
-				if(!numer || !denom) om->second->Set("ratio",false); //disable ratios if components not available
-				KPlot* ptmp = new KPlot(om->first,om->second,globalOpt);
-				if(ptmp->GetBuilt()) MyPlots.Add(om->first,ptmp);
-				else {
-					cout << "Input error: unable to build histo " << om->first << ". Check binning options." << endl;
-					delete ptmp;
-				}
-			}
-			if(numer && denom){
+			bool ratio_allowed = numer && denom;
+			if(ratio_allowed){
 				//add children to ratio
 				MyRatio->AddNumerator(numer);
 				MyRatio->AddDenominator(denom);
 			}
-			else if(ratio_requested){
-				cout << "Input error: ratio requested, but ";
-				if(!numer && !denom) cout << "numer and denom ";
-				else if(!numer) cout << "numer ";
-				else if(!denom) cout << "denom ";
-				cout << "not set. Ratio will not be drawn." << endl;
+			
+			//create plots from local options
+			OMMit om;			
+			for(om = MyPlotOptions.GetTable().begin(); om != MyPlotOptions.GetTable().end(); om++){
+				if(om->second->Get("ratio",true) && !ratio_allowed){ //ratios turned on by default
+					om->second->Set("ratio",false); //disable ratios if components not available
+					cout << "Input error: ratio requested for histo " << om->first << ", but ";
+					if(!numer && !denom) cout << "numer and denom ";
+					else if(!numer) cout << "numer ";
+					else if(!denom) cout << "denom ";
+					cout << "not set. Ratio will not be drawn." << endl;
+				}
+				KPlot* ptmp = new KPlot(om->first,om->second,globalOpt);
+				if(ptmp->Initialize()) MyPlots.Add(om->first,ptmp);
+				else {
+					cout << "Input error: unable to build histo " << om->first << ". Check binning options." << endl;
+					delete ptmp;
+				}
 			}
 		
 			//load histos into sets

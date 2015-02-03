@@ -32,16 +32,16 @@ using namespace std;
 class KPlot{
 	public:
 		//constructor
-		KPlot() : name(""), localOpt(0), globalOpt(0), histo(0), ratio(0), exec(0), isBuilt(false), can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0), intlumi(0),
-				  canvasW(0), canvasH(0), marginL(0), marginR(0), marginB(0), marginT(0), marginM(0), sizeT(0), sizeL(0), sizeP(0), sizeTick(0), sizeLoff(0), 
+		KPlot() : name(""), localOpt(0), globalOpt(0), histo(0), ratio(0), exec(0), isInit(false), can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0),
+				  canvasW(0), canvasH(0), marginL(0), marginR(0), marginB(0), marginT(0), marginM1(0), marginM2(0), sizeT(0), sizeL(0), sizeP(0), sizeTick(0), sizeLoff(0), 
 				  posP(0), epsilon(0), pad1W(0), pad1H(0), pad2W(0), pad2H(0)
 		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
 			if(globalOpt==0) globalOpt = new OptionMap();
 		}
-		KPlot(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : name(name_), localOpt(localOpt_), globalOpt(globalOpt_), histo(0), ratio(0), exec(0), isBuilt(false),
-																	   can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0), intlumi(0)
+		KPlot(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : name(name_), localOpt(localOpt_), globalOpt(globalOpt_), histo(0), ratio(0), exec(0), isInit(false),
+																	   can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0)
 		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
@@ -49,21 +49,42 @@ class KPlot{
 			
 			//enable histo errors
 			TH1::SetDefaultSumw2(kTRUE);
+			
+			//universal size values
+			canvasW = 704;
+			canvasH = 578;
+			marginL = 95;
+			marginR = 35;
+			marginB = 65;
+			marginT = 35;
+			marginM1 = 15;
+			marginM2 = 10;
+			sizeT = 32;
+			sizeL = 28;
+			sizeP = 26;
+			sizeTick = 12;
+			sizeLoff = 5;
+			epsilon = 2;
+		}
+		//initialization
+		virtual bool Initialize(){
+			if(isInit) return isInit;
+			
 			//construct histogram		
 			vector<double> xbins;
 			int xnum;
 			double xmin, xmax;
 			if(localOpt->Get("xbins",xbins)){ //variable binning case
 				histo = new TH1F(name.c_str(),"",xbins.size()-1,&xbins[0]);
-				isBuilt = true;
+				isInit = true;
 			}
 			else if(localOpt->Get("xnum",xnum) && localOpt->Get("xmin",xmin) && localOpt->Get("xmax",xmax)){ //standard binning case
 				histo = new TH1F(name.c_str(),"",xnum,xmin,xmax);
-				isBuilt = true;
+				isInit = true;
 			}
 			else { //no/incomplete binning information, build failed
-				isBuilt = false;
-				return;
+				isInit = false;
+				return isInit;
 			}
 			string xtitle, ytitle;
 			localOpt->Get("xtitle",xtitle);
@@ -71,44 +92,9 @@ class KPlot{
 			histo->GetXaxis()->SetTitle(xtitle.c_str());
 			histo->GetYaxis()->SetTitle(ytitle.c_str());
 			
-			//universal size values
-			canvasW = 704;
-			marginL = 95;
-			marginR = 35;
-			marginB = 65;
-			marginT = 35;
-			marginM = 13;
-			sizeT = 32;
-			sizeL = 28;
-			sizeP = 26;
-			sizeTick = 12;
-			sizeLoff = 5;
-			epsilon = 2;
 			//plotting with ratio enabled by default
-			if(!localOpt->Get("ratio",true)) {
-				canvasH = 583;
-				//can = new TCanvas(histo->GetName(),histo->GetName(),700,555);
-				//account for window frame: 2+2px width, 2+26px height
-				can = new TCanvas(histo->GetName(),histo->GetName(),canvasW,canvasH);
-			
-				pad1 = new TPad("graph","",0,0,1,1);
-				pad1W = pad1->GetWw()*pad1->GetAbsWNDC();
-				pad1H = pad1->GetWh()*pad1->GetAbsHNDC();
-				//pad1->SetMargin(0.135,0.05,0.135,0.05);
-				//pad1->SetMargin(0.125,0.05,0.1,0.05);
-				//L,R,B,T: 85,35,70,30 * m=1.4
-				pad1->SetMargin(marginL/pad1W,marginR/pad1W,marginB/pad1H,marginT/pad1H);
-				pad1->SetTicks(1,1);
-				if(!localOpt->Get("liny",false)) pad1->SetLogy(); //liny off by default (i.e. logy on by default)
-				if(localOpt->Get("logx",false)) pad1->SetLogx(); //logx off by default (i.e. linx on by default)
-				pad1->Draw();
-
-				histo->GetXaxis()->SetLabelOffset(sizeLoff/pad1H);
-				SetTitleOffset(pad1,histo->GetXaxis());
-				SetTitleOffset(pad1,histo->GetYaxis());
-			}
-			else {
-				canvasH = 728;
+			if(localOpt->Get("ratio",true)) {
+				canvasH += marginM1 + marginM2 + 125;
 				//can = new TCanvas(histo->GetName(),histo->GetName(),700,700);
 				//account for window frame: 2+2px width, 2+26px height
 				can = new TCanvas(histo->GetName(),histo->GetName(),canvasW,canvasH);
@@ -118,38 +104,27 @@ class KPlot{
 				pad1 = new TPad("graph","",0,2./7.,1.0,1.0);
 				pad1W = pad1->GetWw()*pad1->GetAbsWNDC();
 				pad1H = pad1->GetWh()*pad1->GetAbsHNDC();
-				pad1->SetMargin(marginL/pad1W,marginR/pad1W,marginM/pad1H,marginT/pad1H);
+				pad1->SetMargin(marginL/pad1W,marginR/pad1W,marginM1/pad1H,marginT/pad1H);
 				pad1->SetTicks(1,1);
-				if(!localOpt->Get("liny",false)) pad1->SetLogy(); //liny off by default (i.e. logy on by default)
+				if(localOpt->Get("logy",true)) pad1->SetLogy(); //logy on by default (i.e. liny off by default)
 				if(localOpt->Get("logx",false)) pad1->SetLogx(); //logx off by default (i.e. linx on by default)
 				pad1->Draw();
+			
 				pad2 = new TPad("dmc","",0,0,1.0,2./7.);
 				pad2W = pad2->GetWw()*pad2->GetAbsWNDC();
 				pad2H = pad2->GetWh()*pad2->GetAbsHNDC();
 				can->cd();
-				//L,R,B,T: 85,35,70,- * m=1.4
-				pad2->SetMargin(marginL/pad2W,marginR/pad2W,marginB/pad2H,marginM/pad2H);
+				pad2->SetMargin(marginL/pad2W,marginR/pad2W,marginB/pad2H,marginM2/pad2H);
 				pad2->SetTicks(1,1);
 				pad2->Draw();
-				double tickScaleX2 = (pad2W - marginL - marginR)/pad2W*pad2H;
-				double tickScaleY2 = (pad2H - marginB - marginM)/pad2H*pad2W;
 			
 				//format ratio histo
 				ratio = (TH1F*)histo->Clone();
 				ratio->SetMarkerStyle(20);
 				ratio->SetMarkerColor(kBlack);
 				ratio->SetLineColor(kBlack);
-				ratio->GetXaxis()->SetTitleSize(sizeT/pad2H);
-				ratio->GetXaxis()->SetLabelSize(sizeL/pad2H);
-				ratio->GetXaxis()->SetLabelOffset(sizeLoff/pad2H);
-				ratio->GetYaxis()->SetTitleSize(sizeT/pad2H);
-				ratio->GetYaxis()->SetLabelSize(sizeL/pad2H);
-				ratio->GetYaxis()->SetLabelOffset(sizeLoff/pad2W);
-				//ratio->GetYaxis()->SetTickLength(6/pad2H);
-				ratio->GetYaxis()->SetTickLength(sizeTick/tickScaleY2);
-				ratio->GetXaxis()->SetTickLength(sizeTick/tickScaleX2);
+				FormatHist(pad2,ratio);
 				ratio->GetYaxis()->SetNdivisions(503);
-				ratio->GetXaxis()->SetNdivisions(507);
 				ratio->GetYaxis()->SetRangeUser(0.45,1.55);
 				
 				ratio->GetYaxis()->SetTitle("Data/MC"); //default title
@@ -160,6 +135,7 @@ class KPlot{
 				
 				//special formatting for blank histo
 				SetTitleOffset(pad1,histo->GetYaxis());
+				FormatHist(pad1,histo);
 				histo->GetXaxis()->SetLabelOffset(999);
 				histo->GetXaxis()->SetTitle("");
 				
@@ -170,6 +146,30 @@ class KPlot{
 				line->SetLineWidth(2);
 				line->SetLineColor(kRed);
 			}
+			else {
+				//can = new TCanvas(histo->GetName(),histo->GetName(),700,550);
+				//account for window frame: 2+2px width, 2+26px height
+				can = new TCanvas(histo->GetName(),histo->GetName(),canvasW,canvasH);
+			
+				pad1 = new TPad("graph","",0,0,1,1);
+				pad1W = pad1->GetWw()*pad1->GetAbsWNDC();
+				pad1H = pad1->GetWh()*pad1->GetAbsHNDC();
+				pad1->SetMargin(marginL/pad1W,marginR/pad1W,marginB/pad1H,marginT/pad1H);
+				pad1->SetTicks(1,1);
+				if(localOpt->Get("logy",true)) pad1->SetLogy(); //logy on by default (i.e. liny off by default)
+				if(localOpt->Get("logx",false)) pad1->SetLogx(); //logx off by default (i.e. linx on by default)
+				pad1->Draw();
+
+				FormatHist(pad1,histo);
+				SetTitleOffset(pad1,histo->GetXaxis());
+				SetTitleOffset(pad1,histo->GetYaxis());
+			}
+			
+			InitializePaves();
+			
+			return isInit;
+		}
+		void InitializePaves(){
 			pad1->cd();
 			
 			//setup CMS text
@@ -200,6 +200,7 @@ class KPlot{
 			paveExtra->AddText(" Preliminary");
 			
 			//setup lumi text
+			double intlumi = 0;
 			globalOpt->Get<double>("luminorm",intlumi);
 			stringstream fbname_;
 			fbname_ << fixed << setprecision(1) << intlumi/1000 << " fb^{-1} (8 TeV)";
@@ -214,18 +215,6 @@ class KPlot{
 			paveLumi->SetTextFont(42);
 			paveLumi->SetTextSize(sizeP/pad1H);
 			paveLumi->AddText(fbname.c_str());
-
-			//common formatting for blank histo
-			double tickScaleX1 = (pad1W - marginL - marginR)/pad1W*pad1H;
-			double tickScaleY1 = (pad1H - marginM - marginT)/pad1H*pad1W;
-			histo->GetYaxis()->SetTitleSize(sizeT/pad1H);
-			histo->GetYaxis()->SetLabelSize(sizeL/pad1H);
-			histo->GetYaxis()->SetLabelOffset(sizeLoff/pad1W);
-			histo->GetXaxis()->SetTitleSize(sizeT/pad1H);
-			histo->GetXaxis()->SetLabelSize(sizeL/pad1H);
-			histo->GetYaxis()->SetTickLength(sizeTick/tickScaleY1);
-			histo->GetXaxis()->SetTickLength(sizeTick/tickScaleX1);
-			histo->GetXaxis()->SetNdivisions(507);
 		}
 		
 		//drawing
@@ -261,7 +250,7 @@ class KPlot{
 			line->Draw("same");
 		}
 
-		//helper
+		//helpers
 		void SetTitleOffset(TPad* pad, TAxis* axis){
 			double padW, padH;
 			pad->cd();
@@ -286,10 +275,35 @@ class KPlot{
 			axis->SetTitleOffset(Toff);
 			
 		}
+		void FormatHist(TPad* pad, TH1* hist){
+			double padW, padH;
+			double tickScaleX, tickScaleY;
+			pad->cd();
+			if(pad==pad1) {
+				padW = pad1W; padH = pad1H;
+				if(pad2) tickScaleY = (padH - marginM1 - marginT)/padH*padW;
+				else tickScaleY = (padH - marginB - marginT)/padH*padW;
+			}
+			else if(pad==pad2) { 
+				padW = pad2W; padH = pad2H;
+				tickScaleY = (padH - marginB - marginM2)/padH*padW;
+			}
+			tickScaleX = (padW - marginL - marginR)/padW*padH;
+
+			hist->GetYaxis()->SetTitleSize(sizeT/padH);
+			hist->GetYaxis()->SetLabelSize(sizeL/padH);
+			hist->GetYaxis()->SetLabelOffset(sizeLoff/padW);
+			hist->GetXaxis()->SetTitleSize(sizeT/padH);
+			hist->GetXaxis()->SetLabelSize(sizeL/padH);
+			hist->GetXaxis()->SetLabelOffset(sizeLoff/padH);
+			hist->GetYaxis()->SetTickLength(sizeTick/tickScaleY);
+			hist->GetXaxis()->SetTickLength(sizeTick/tickScaleX);
+			hist->GetXaxis()->SetNdivisions(507);
+		}
 		
 		//accessors
 		string GetName() { return name; }
-		bool GetBuilt() { return isBuilt; }
+		bool IsInit() { return isInit; }
 		void SetName(string name_) { name = name_; }
 		TH1F* GetHisto() { return histo; }
 		TH1F* GetRatio() { return ratio; }
@@ -313,7 +327,7 @@ class KPlot{
 		OptionMap* globalOpt;
 		TH1F *histo, *ratio;
 		TExec *exec;
-		bool isBuilt;
+		bool isInit;
 		TCanvas *can;
 		TPad *pad1, *pad2;
 		KLegend* leg;
@@ -321,8 +335,7 @@ class KPlot{
 		TPaveText* paveExtra;
 		TPaveText* paveLumi;
 		TLine* line;
-		double intlumi;
-		double canvasW, canvasH, marginL, marginR, marginB, marginT, marginM, sizeT, sizeL, sizeP, sizeTick, sizeLoff, posP, epsilon;
+		double canvasW, canvasH, marginL, marginR, marginB, marginT, marginM1, marginM2, sizeT, sizeL, sizeP, sizeTick, sizeLoff, posP, epsilon;
 		double pad1W, pad1H, pad2W, pad2H;
 };
 
