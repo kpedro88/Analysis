@@ -877,7 +877,7 @@ class KBuilder : public TreeClass {
 					htmp = sit->second;
 					
 					//temporary histo to calculate error correctly when adding overflow bin to last bin
-					TH1F* otmp = (TH1F*)htmp->Clone();
+					TH1* otmp = (TH1*)htmp->Clone();
 					otmp->Reset("ICEM");
 					int ovbin = htmp->GetNbinsX()+1;
 					double err = 0.;
@@ -903,7 +903,7 @@ class KBuilder : public TreeClass {
 		OptionMap* globalOpt;
 		map<pair<int,int>,int> countmap;
 		string stmp;
-		TH1F* htmp;
+		TH1* htmp;
 		
 		//variables for special event selections (RPV)
 		vector<int> BJetIndices;

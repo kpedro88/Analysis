@@ -86,6 +86,9 @@ class KManager {
 				MyRatio->AddNumerator(numer);
 				MyRatio->AddDenominator(denom);
 			}
+			//ratio name for 2D histo
+			string rationame2D = numer->GetName() + " - " + denom->GetName() + " [#sigma]";
+			globalOpt->Set("rationame2D",rationame2D);
 			
 			//create plots from local options
 			OMMit om;			
@@ -190,7 +193,7 @@ class KManager {
 				//AFTER bindivide if requested
 				//and calculate legend size
 				for(unsigned s = 0; s < MySets.size(); s++){
-					kleg->AddHist(MySets[s]->GetHisto());
+					kleg->AddHist((TH1F*)MySets[s]->GetHisto());
 					MySets[s]->GetLegendInfo(kleg);
 				}
 				
@@ -221,11 +224,6 @@ class KManager {
 				//ratio (enabled by default, auto-disabled above if components not set)
 				if(p->second->GetLocalOpt()->Get("ratio",true)){
 					TPad* pad2 = p->second->GetPad2();
-					
-					//reset ratio name if provided by user
-					//default, data/mc, is set in KPlot
-					string rationame;
-					if(globalOpt->Get<string>("rationame",rationame)) p->second->GetRatio()->GetYaxis()->SetTitle(rationame.c_str());
 
 					p->second->DrawRatio();
 				

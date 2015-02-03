@@ -4,6 +4,7 @@
 //custom headers
 #include "KMap.h"
 #include "KLegend.h"
+#include "KBase.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -11,6 +12,8 @@
 #include <TPaveText.h>
 #include <TH1.h>
 #include <TH1F.h>
+#include <TH2.h>
+#include <TH2F.h>
 #include <TCanvas.h>
 #include <TPad.h>
 #include <TLine.h>
@@ -114,7 +117,9 @@ class KPlot{
 				ratio->GetYaxis()->SetNdivisions(503);
 				ratio->GetYaxis()->SetRangeUser(0.45,1.55);
 				
-				ratio->GetYaxis()->SetTitle("Data/MC"); //default title
+				string rationame = "Data/MC";
+				globalOpt->Get<string>("rationame",rationame); //ratio name could be provided by user
+				ratio->GetYaxis()->SetTitle(rationame.c_str());
 				
 				//note: axis titles are middle-aligned
 				SetTitleOffset(pad2,ratio->GetXaxis());
@@ -258,11 +263,17 @@ class KPlot{
 				Theight *= padH/padW;
 				Toff = (marginL/padW - epsilon/padW - Theight/2.)/(1.6*sizeT/padH);
 			}
+			else if(strcmp(axis->GetName(),"zaxis")==0){
+				//need to scale title height value from pad height to pad width for z palette axis
+				//(acts like y axis on opposite side)
+				Theight *= padH/padW;
+				Toff = (1 - marginR/padW + epsilon/padW + Theight/2.)/(1.6*sizeT/padH);
+			}
 			
 			axis->SetTitleOffset(Toff);
 			
 		}
-		void FormatHist(TPad* pad, TH1* hist){
+		virtual void FormatHist(TPad* pad, TH1* hist){
 			double padW, padH;
 			double tickScaleX, tickScaleY;
 			pad->cd();
@@ -280,20 +291,26 @@ class KPlot{
 			hist->GetYaxis()->SetTitleSize(sizeT/padH);
 			hist->GetYaxis()->SetLabelSize(sizeL/padH);
 			hist->GetYaxis()->SetLabelOffset(sizeLoff/padW);
+			hist->GetYaxis()->SetTickLength(sizeTick/tickScaleY);
 			hist->GetXaxis()->SetTitleSize(sizeT/padH);
 			hist->GetXaxis()->SetLabelSize(sizeL/padH);
 			hist->GetXaxis()->SetLabelOffset(sizeLoff/padH);
-			hist->GetYaxis()->SetTickLength(sizeTick/tickScaleY);
 			hist->GetXaxis()->SetTickLength(sizeTick/tickScaleX);
 			hist->GetXaxis()->SetNdivisions(507);
+			
+			//format z axis just in case
+			hist->GetZaxis()->SetTitleSize(sizeT/padH);
+			hist->GetZaxis()->SetLabelSize(sizeL/padH);
+			hist->GetZaxis()->SetLabelOffset(sizeLoff/padW);
+			hist->GetZaxis()->SetTickLength(sizeTick/tickScaleY);
 		}
 		
 		//accessors
 		string GetName() { return name; }
 		bool IsInit() { return isInit; }
 		void SetName(string name_) { name = name_; }
-		TH1F* GetHisto() { return histo; }
-		TH1F* GetRatio() { return ratio; }
+		TH1* GetHisto() { return histo; }
+		TH1* GetRatio() { return ratio; }
 		TCanvas* GetCanvas() { return can; }
 		TPad* GetPad1() { return pad1; }
 		TPad* GetPad2() { return pad2; }
@@ -312,7 +329,7 @@ class KPlot{
 		string name;
 		OptionMap* localOpt;
 		OptionMap* globalOpt;
-		TH1F *histo, *ratio;
+		TH1 *histo, *ratio;
 		TExec *exec;
 		bool isInit;
 		TCanvas *can;
@@ -324,6 +341,106 @@ class KPlot{
 		TLine* line;
 		double canvasW, canvasH, marginL, marginR, marginB, marginT, marginM1, marginM2, sizeT, sizeL, sizeP, sizeTick, sizeLoff, posP, epsilon;
 		double pad1W, pad1H, pad2W, pad2H;
+};
+
+//-----------------------------------------------------------
+//extension of KPlot for 2D histograms
+//drawn with colz option -> one canvas for each set
+class KPlot2D: public KPlot {
+	public:
+		//constructor
+		KPlot2D() : KPlot(), MySet(0) {}
+		KPlot2D(string name_, KBase* MySet_, OptionMap* localOpt_, OptionMap* globalOpt_) : KPlot(name_,localOpt_,globalOpt_), MySet(MySet_) {}
+				//initialization
+		virtual bool Initialize(){
+			if(isInit) return isInit;
+			
+			//construct histogram		
+			vector<double> xbins, ybins;
+			int xnum, ynum;
+			double xmin, xmax, ymin, ymax;
+			if(localOpt->Get("xbins",xbins)){ //variable x-binning case
+				if(localOpt->Get("ybins",ybins)) { //variable y-binning case
+					histo = new TH2F(name.c_str(),"",xbins.size()-1,&xbins[0],ybins.size()-1,&ybins[0]);	
+					isInit = true;
+				}
+				else if(localOpt->Get("ynum",ynum) && localOpt->Get("ymin",ymin) && localOpt->Get("ymax",ymax)){ //standard y-binning case
+					histo = new TH2F(name.c_str(),"",xbins.size()-1,&xbins[0],ynum,ymin,ymax);
+					isInit = true;
+				}
+				else { //no/incomplete binning information, build failed
+					isInit = false;
+					return isInit;
+				}
+			}
+			else if(localOpt->Get("xnum",xnum) && localOpt->Get("xmin",xmin) && localOpt->Get("xmax",xmax)){ //standard x-binning case
+				if(localOpt->Get("ybins",ybins)) { //variable y-binning case
+					histo = new TH2F(name.c_str(),"",xnum,xmin,xmax,ybins.size()-1,&ybins[0]);	
+					isInit = true;
+				}
+				else if(localOpt->Get("ynum",ynum) && localOpt->Get("ymin",ymin) && localOpt->Get("ymax",ymax)){ //standard y-binning case
+					histo = new TH2F(name.c_str(),"",xnum,xmin,xmax,ynum,ymin,ymax);
+					isInit = true;
+				}
+				else { //no/incomplete binning information, build failed
+					isInit = false;
+					return isInit;
+				}
+			}
+			else { //no/incomplete binning information, build failed
+				isInit = false;
+				return isInit;
+			}
+			string xtitle, ytitle, ztitle;
+			localOpt->Get("xtitle",xtitle);
+			localOpt->Get("ytitle",ytitle);
+			localOpt->Get("ztitle",ztitle);
+			histo->GetXaxis()->SetTitle(xtitle.c_str());
+			histo->GetYaxis()->SetTitle(ytitle.c_str());
+			//include name of set in z title
+			if(MySet->GetName()=="ratio"){
+				string rationame2D = "";
+				globalOpt->Get<string>("rationame2D",rationame2D); //2D ratio name, numer - denom [sigma], set in KManager
+				histo->GetZaxis()->SetTitle(rationame2D.c_str());
+			}
+			else { //include name of set in z title
+				histo->GetZaxis()->SetTitle((MySet->GetName() + ": " + ztitle).c_str());
+			}
+			
+			//extra space for z axis palette
+			canvasW += 150 - marginR;
+			marginR = 150;
+			//can = new TCanvas(histo->GetName(),histo->GetName(),850,550);
+			//account for window frame: 2+2px width, 2+26px height
+			can = new TCanvas(histo->GetName(),histo->GetName(),canvasW,canvasH);
+		
+			pad1 = new TPad("graph","",0,0,1,1);
+			pad1W = pad1->GetWw()*pad1->GetAbsWNDC();
+			pad1H = pad1->GetWh()*pad1->GetAbsHNDC();
+			pad1->SetMargin(marginL/pad1W,marginR/pad1W,marginB/pad1H,marginT/pad1H);
+			pad1->SetTicks(1,1);
+			if(localOpt->Get("logz",true) && MySet->GetName()!="ratio") pad1->SetLogz(); //logz on by default (i.e. linz off by default); except for ratio, which never has logz
+			if(localOpt->Get("logy",false)) pad1->SetLogy(); //logy off by default (i.e. liny on by default)
+			if(localOpt->Get("logx",false)) pad1->SetLogx(); //logx off by default (i.e. linx on by default)
+			pad1->Draw();
+
+			FormatHist(pad1,histo);
+			SetTitleOffset(pad1,histo->GetXaxis());
+			SetTitleOffset(pad1,histo->GetYaxis());
+			SetTitleOffset(pad1,histo->GetZaxis());
+			
+			InitializePaves();
+			
+			return isInit;
+		}
+		
+		//accessors
+		KBase* GetMySet() { return MySet; }
+		void SetMySet(KBase* MySet_) { MySet = MySet_; }
+		
+	protected:
+		//member variables
+		KBase* MySet;
 };
 
 #endif

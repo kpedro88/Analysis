@@ -10,7 +10,7 @@
 //ROOT headers
 #include <TROOT.h>
 #include <TFile.h>
-#include <TH1F.h>
+#include <TH1.h>
 #include <THStack.h>
 
 //STL headers
@@ -59,8 +59,8 @@ class KSet : public KBase {
 			}
 		}
 		//resetting current histo propagates to children for consistency
-		virtual TH1F* GetHisto(string hname){
-			TH1F* hist = MyHistos.Get(hname);
+		virtual TH1* GetHisto(string hname){
+			TH1* hist = MyHistos.Get(hname);
 			etmp = MyErrorBands.Get(hname); //it's okay for etmp to be null
 			if(hist) {
 				stmp = hname;
@@ -116,7 +116,7 @@ class KSetData: public KSet {
 			}
 		}	
 		//add function - does formatting
-		TH1F* AddHisto(string s, TH1F* h){
+		TH1* AddHisto(string s, TH1* h){
 			KBase::AddHisto(s,h);
 			
 			//add to children
@@ -181,19 +181,19 @@ class KSetMC: public KSet {
 				double norm = 0;
 				double normerr = 0;
 				bool do_err_prop = false;
-				TH1F* htmp2 = 0;
+				TH1* htmp2 = 0;
 				string normtype = "";
 				if(localOpt->Get("normtype",normtype) && normtype=="faketau" && globalOpt->Get("dofaketau",false) && globalOpt->Get<double>("faketaunorm",norm)){
 					if(globalOpt->Get<double>("faketauerr",normerr)) {
 						do_err_prop = true;
-						htmp2 = (TH1F*)htmp->Clone();
+						htmp2 = (TH1*)htmp->Clone();
 					}
 					htmp->Scale(norm/simyield);
 				}
 				else if(localOpt->Get("normtype",normtype) && normtype=="ttbar" && globalOpt->Get("dottbar",false) && globalOpt->Get<double>("ttbarnorm",norm)){
 					if(globalOpt->Get<double>("ttbarerr",normerr)) {
 						do_err_prop = true;
-						htmp2 = (TH1F*)htmp->Clone();
+						htmp2 = (TH1*)htmp->Clone();
 					}
 					htmp->Scale(norm/simyield);
 				}
@@ -220,7 +220,7 @@ class KSetMC: public KSet {
 			}
 		}		
 		//add function - does formatting
-		TH1F* AddHisto(string s, TH1F* h){
+		TH1* AddHisto(string s, TH1* h){
 			KBase::AddHisto(s,h);
 			
 			//add to children
@@ -262,14 +262,14 @@ class KSetMCStack : public KSet {
 		virtual ~KSetMCStack() {}
 
 		//polymorphic add function for stacks (does formatting)
-		TH1F* AddHisto(string s, TH1F* h){
+		TH1* AddHisto(string s, TH1* h){
 			stmp = s;
 			shtmp = new THStack(stmp.c_str(),stmp.c_str());
 			MyStacks.Add(stmp,shtmp);
 			
 			//add to children
 			for(unsigned c = 0; c < children.size(); c++){
-				TH1F* ctmp = children[c]->AddHisto(s,h);
+				TH1* ctmp = children[c]->AddHisto(s,h);
 				//fix formatting of ctmp for stack
 				Color_t color;
 				children[c]->GetLocalOpt()->Get("color",color);
@@ -314,7 +314,7 @@ class KSetMCStack : public KSet {
 				}
 				
 				//fill in htmp now that shtmp is built
-				htmp = (TH1F*)shtmp->GetStack()->Last();
+				htmp = (TH1*)shtmp->GetStack()->Last();
 				//build error band, enabled by default
 				if(globalOpt->Get("errband",true)) BuildErrorBand();
 				
@@ -323,13 +323,13 @@ class KSetMCStack : public KSet {
 			}
 		}
 		//polymorphic GetHisto for stacks
-		TH1F* GetHisto(string hname) {
+		TH1* GetHisto(string hname) {
 			THStack* stk = MyStacks.Get(hname);
 			etmp = MyErrorBands.Get(hname); //it's okay for etmp to be null
 			if(stk) {
 				stmp = hname;
 				shtmp = stk;
-				if(shtmp->GetStack()) htmp = (TH1F*)shtmp->GetStack()->Last();
+				if(shtmp->GetStack()) htmp = (TH1*)shtmp->GetStack()->Last();
 				else htmp = NULL; //might have a THStack but no GetStack during the histo building process
 				for(unsigned c = 0; c < children.size(); c++){
 					children[c]->GetHisto(hname); //ignore returned pointer
@@ -352,7 +352,7 @@ class KSetMCStack : public KSet {
 		
 			//add to legend in reverse order so largest is first
 			for(int c = children.size()-1; c >= 0; c--){
-				TH1F* ctmp = children[c]->GetHisto();
+				TH1* ctmp = children[c]->GetHisto();
 				string cname = children[c]->GetName();
 				leg->AddEntry(ctmp,cname.c_str(),"f");
 			}
@@ -369,7 +369,7 @@ class KSetMCStack : public KSet {
 			if(globalOpt->Get("errband",true)) etmp->Draw("2 same");
 			
 			if(globalOpt->Get("bgline",false)&&htmp){
-				TH1F* hoverlay = (TH1F*)htmp->Clone();
+				TH1* hoverlay = (TH1*)htmp->Clone();
 				hoverlay->SetFillColor(0);
 				hoverlay->SetLineColor(kBlack);
 				hoverlay->SetMarkerColor(kBlack);
@@ -385,7 +385,7 @@ class KSetMCStack : public KSet {
 			//scale stack histos
 			TObjArray* stack_array = shtmp->GetStack();
 			for(unsigned s = 0; s < stack_array->GetSize(); s++){
-				TH1F* hist = (TH1F*)stack_array->At(s);
+				TH1* hist = (TH1*)stack_array->At(s);
 				if(hist) hist->Scale(nn/simyield);
 			}
 			
@@ -402,7 +402,7 @@ class KSetMCStack : public KSet {
 			//scale stack histos
 			TObjArray* stack_array = shtmp->GetStack();
 			for(unsigned s = 0; s < stack_array->GetSize(); s++){
-				TH1F* hist = (TH1F*)stack_array->At(s);
+				TH1* hist = (TH1*)stack_array->At(s);
 				for(int b = 1; b <= htmp->GetNbinsX(); b++){
 					hist->SetBinContent(b,hist->GetBinContent(b)/hist->GetBinWidth(b));
 					hist->SetBinError(b,hist->GetBinError(b)/hist->GetBinWidth(b));
@@ -461,28 +461,34 @@ class KSetRatio: public KSet {
 		//ratio class acts a little differently:
 		//only builds from the current histo of numer and denom
 		//(since some histos might not want ratios, and also has to wait for possible norm to yield)
-		void Build(TH1F* hrat_){
+		void Build(TH1* hrat_){
 			stmp = children[0]->GetHistoName();
-			TH1F* hrat = (TH1F*)hrat_->Clone();
-			TH1F* hdata = children[0]->GetHisto();
-			TH1F* hsim0 = (TH1F*)children[1]->GetHisto()->Clone();
+			TH1* hrat = (TH1*)hrat_->Clone();
+			TH1* hdata = children[0]->GetHisto();
+			TH1* hsim = children[1]->GetHisto();
+			TH1* hsim0 = (TH1*)hsim->Clone();
 			
-			//remove sim bin errors
-			for(int b = 0; b <= hsim0->GetEntries(); b++){
-				hsim0->SetBinError(b,0);
+			if(hrat->GetDimension()==1){ //data/mc
+				//remove sim bin errors
+				for(int b = 0; b <= hsim0->GetEntries(); b++){
+					hsim0->SetBinError(b,0);
+				}
+				
+				hrat->Divide(hdata,hsim0);
+				Color_t color;
+				localOpt->Get("color",color);
+				//formatting
+				hrat->SetLineColor(color);
+				hrat->SetMarkerColor(color);
+				hrat->SetMarkerStyle(20);
 			}
-			
-			hrat->Divide(hdata,hsim0);
-			Color_t color;
-			localOpt->Get("color",color);
-			//formatting
-			hrat->SetLineColor(color);
-			hrat->SetMarkerColor(color);
-			hrat->SetMarkerStyle(20);
-			
-			//set title
-			//string rtitle = children[0]->GetName() + "/" + children[1]->GetName();
-			//hrat->GetYaxis()->SetTitle(rtitle.c_str());
+			else if(hrat->GetDimension()==2){//(data-mc)/err
+				hrat->Add(hdata,hsim,1,-1);
+				for(int b = 0; b <= hrat->GetEntries(); b++){
+					hrat->SetBinContent(b,hrat->GetBinContent(b)/hrat->GetBinError(b));
+					hrat->SetBinError(b,0);
+				}
+			}
 			
 			htmp = hrat;
 			MyHistos.Add(stmp,htmp);
@@ -492,8 +498,8 @@ class KSetRatio: public KSet {
 		}
 		//calculate ratio error band from denom
 		TGraphAsymmErrors* BuildErrorBand(){
-			TH1F* hdata = children[0]->GetHisto();
-			TH1F* hsim = children[1]->GetHisto();
+			TH1* hdata = children[0]->GetHisto();
+			TH1* hsim = children[1]->GetHisto();
 		
 			//make sim error band
 			TGraphAsymmErrors* erat = new TGraphAsymmErrors(htmp->GetNbinsX()+2); //under- and overflow

@@ -97,21 +97,21 @@ class KBase {
 		string GetName() { return name; }
 		void SetName(string n) { name = n; }
 		//add a blank histo for future building
-		virtual TH1F* AddHisto(string s, TH1F* h){
+		virtual TH1* AddHisto(string s, TH1* h){
 			//sets current name and histo
 			stmp = s;
-			htmp = (TH1F*)h->Clone();
+			htmp = (TH1*)h->Clone();
 			htmp->Sumw2();
 			MyHistos.Add(stmp,htmp);
 			return htmp;
 		}
 		//gets current histo
-		virtual TH1F* GetHisto(){ return htmp; }
+		virtual TH1* GetHisto(){ return htmp; }
 		//gets current histo name
 		virtual string GetHistoName() { return stmp; }
 		//resets current name and histo
-		virtual TH1F* GetHisto(string hname) {
-			TH1F* hist = MyHistos.Get(hname);
+		virtual TH1* GetHisto(string hname) {
+			TH1* hist = MyHistos.Get(hname);
 			etmp = MyErrorBands.Get(hname); //it's okay for etmp to be null
 			if(hist) {
 				stmp = hname;
@@ -120,7 +120,7 @@ class KBase {
 			}
 			else return NULL; //do not reset if the histo does not exist
 		}
-		virtual map<string,TH1F*>& GetTable() { return MyHistos.GetTable(); }
+		virtual map<string,TH1*>& GetTable() { return MyHistos.GetTable(); }
 		KBase* GetParent() { return parent; }
 		void SetParent(KBase* p) {
 			parent = p;
@@ -170,7 +170,7 @@ class KBase {
 		HistoMap MyHistos;
 		ErrorMap MyErrorBands;
 		string stmp;
-		TH1F* htmp;
+		TH1* htmp;
 		TGraphAsymmErrors* etmp;
 		bool isBuilt;
 };
@@ -240,7 +240,7 @@ class KBaseExt : public KBase {
 				else{
 					add_ext = true;
 					for(int i = 0; i < exthisto_in.size(); i++){
-						TH1F* htmp = (TH1F*)file->Get(exthisto_in[i].c_str());
+						TH1* htmp = (TH1*)file->Get(exthisto_in[i].c_str());
 						AddHisto(exthisto_out[i],htmp);
 					}
 					add_ext = false;
@@ -252,12 +252,12 @@ class KBaseExt : public KBase {
 		//change histo add mode
 		void SetAddExt(bool ae) { add_ext = ae; }
 		//histo add so external histos won't get overwritten
-		TH1F* AddHisto(string s, TH1F* h){
+		TH1* AddHisto(string s, TH1* h){
 			//set current name
 			stmp = s;
 			
 			if(!add_ext){ //if the histo being added is not from ext, check to see if it is already added
-				TH1F* hist = MyHistos.Get(s);
+				TH1* hist = MyHistos.Get(s);
 				if(hist){ //if it is already added, just use it, do not overwrite it
 					htmp = hist;
 					return hist;
@@ -265,7 +265,7 @@ class KBaseExt : public KBase {
 			}
 			
 			//otherwise, set current histo the usual way
-			htmp = (TH1F*)h->Clone();
+			htmp = (TH1*)h->Clone();
 			MyHistos.Add(stmp,htmp);
 			return htmp;
 		}
@@ -289,8 +289,8 @@ class KComp {
 			//first safety check
 			if(!ch1 || !ch2) return false;
 		
-			TH1F* h1 = 0;
-			TH1F* h2 = 0;
+			TH1* h1 = 0;
+			TH1* h2 = 0;
 			
 			//no name - select current histo
 			if(name.size()==0) {
