@@ -40,8 +40,11 @@ class KPlot{
 			if(localOpt==0) localOpt = new OptionMap();
 			if(globalOpt==0) globalOpt = new OptionMap();
 		}
+		//universal size values set in initialization list
 		KPlot(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : name(name_), localOpt(localOpt_), globalOpt(globalOpt_), histo(0), ratio(0), exec(0), isInit(false),
-																	   can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0)
+																	   can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0),
+																	   canvasW(704), canvasH(578), marginL(95), marginR(35), marginB(65), marginT(35), marginM1(15), marginM2(10), 
+																	   sizeT(32), sizeL(28), sizeP(26), sizeTick(12), sizeLoff(5), posP(0), epsilon(2), pad1W(0), pad1H(0), pad2W(0), pad2H(0)
 		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
@@ -49,22 +52,6 @@ class KPlot{
 			
 			//enable histo errors
 			TH1::SetDefaultSumw2(kTRUE);
-			
-			//universal size values
-			canvasW = 704;
-			canvasH = 578;
-			marginL = 95;
-			marginR = 35;
-			marginB = 65;
-			marginT = 35;
-			marginM1 = 15;
-			marginM2 = 10;
-			sizeT = 32;
-			sizeL = 28;
-			sizeP = 26;
-			sizeTick = 12;
-			sizeLoff = 5;
-			epsilon = 2;
 		}
 		//initialization
 		virtual bool Initialize(){
