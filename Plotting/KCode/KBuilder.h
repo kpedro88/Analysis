@@ -4,6 +4,7 @@
 
 //custom headers
 #include "KMap.h"
+#include "KHelper.h"
 #include "KBase.h"
 #include "TreeClass.h"
 
@@ -45,26 +46,7 @@ class KBuilder : public TreeClass {
 		//destructor
 		virtual ~KBuilder() {}
 		
-		//helper functions
-		double phi(double x, double y) {
-			double phi_ = atan2(y, x);
-			return (phi_>=0) ?  phi_ : phi_ + 2*TMath::Pi();
-		}
-		double dPhi(double phi1, double phi2) {
-			double phi1_= phi( cos(phi1), sin(phi1) );
-			double phi2_= phi( cos(phi2), sin(phi2) );
-			double dphi_= phi1_-phi2_;
-			if( dphi_> TMath::Pi() ) dphi_-=2*TMath::Pi();
-			if( dphi_<-TMath::Pi() ) dphi_+=2*TMath::Pi();
-	
-			return dphi_;
-		}
-		double DeltaR(double phi1, double eta1, double phi2, double eta2){
-			double dphi = dPhi(phi1,phi2);
-			double deta = eta2 - eta1;
-			double dR2 = dphi*dphi + deta*deta;
-			return sqrt(dR2);
-		}
+		
 		bool CheckDoubleCount(){
 			pair<int,int> tmp(run,event);
 			map<pair<int,int>,int>::iterator cmit = countmap.find(tmp);
@@ -346,7 +328,7 @@ class KBuilder : public TreeClass {
 					}
 				}
 				else if(filter==1){ //w+jets control region
-					double MT=sqrt(2*MuonPt*PFMETPatType1*(1-cos(dPhi(MuonPhi,PFMETPhiPatType1))));
+					double MT=sqrt(2*MuonPt*PFMETPatType1*(1-cos(KMath::DeltaPhi(MuonPhi,PFMETPhiPatType1))));
 					goodEvent &= (MuonPt > 29) //1 lepton with pT > 29 GeV
 					&& (HPSTauPt->at(0) > 40) //1 hadronic tau with pT > 40 GeV
 					&& (!(globalOpt->Get("jetveto",true)) || (PFJetMultiplicity == 0 || PFJetPt->at(0) < 30)) //0 jets with pT > 30 GeV - jet veto for fakes
@@ -526,23 +508,23 @@ class KBuilder : public TreeClass {
 						htmp->Fill(MassMuonTau,w);
 					}
 					else if(stmp=="Tmass"){//transverse mass to check W+jet contribution: MT=sqrt(2*pt_lepton*pt_met*cos(1-deltaphi(met,lepton))
-						double MT=sqrt(2*MuonPt*PFMETPatType1*(1-cos(dPhi(MuonPhi,PFMETPhiPatType1))));
+						double MT=sqrt(2*MuonPt*PFMETPatType1*(1-cos(KMath::DeltaPhi(MuonPhi,PFMETPhiPatType1))));
 						htmp->Fill(MT,w);
 					}
 					else if(stmp=="Tmassiso"){//transverse mass to check W+jet contribution (isolated taus): MT=sqrt(2*pt_lepton*pt_met*cos(1-deltaphi(met,lepton))
-						double MT=sqrt(2*MuonPt*PFMETPatType1*(1-cos(dPhi(MuonPhi,PFMETPhiPatType1))));
+						double MT=sqrt(2*MuonPt*PFMETPatType1*(1-cos(KMath::DeltaPhi(MuonPhi,PFMETPhiPatType1))));
 						if(HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(0)) htmp->Fill(MT,w);
 					}
 					else if(stmp=="Tmassjet"){//transverse mass w/ leading jet
 						if(PFJetPt->size()>0){
-							double MTj=sqrt(2*PFJetPt->at(0)*PFMETPatType1*(1-cos(dPhi(PFJetPhi->at(0),PFMETPhiPatType1))));
+							double MTj=sqrt(2*PFJetPt->at(0)*PFMETPatType1*(1-cos(KMath::DeltaPhi(PFJetPhi->at(0),PFMETPhiPatType1))));
 							htmp->Fill(MTj,w);
 						}
 					}
 					else if(stmp=="Tmasstauantiisoall"){//transverse mass w/ all anti-iso taus
 						for(int t = 0; t < HPSTauPt->size(); t++){
 							if(!FakeTauGenDecision[t]) continue;
-							double MTt=sqrt(2*HPSTauPt->at(t)*PFMETPatType1*(1-cos(dPhi(HPSTauPhi->at(t),PFMETPhiPatType1))));
+							double MTt=sqrt(2*HPSTauPt->at(t)*PFMETPatType1*(1-cos(KMath::DeltaPhi(HPSTauPhi->at(t),PFMETPhiPatType1))));
 							htmp->Fill(MTt,w);
 						}
 					}
@@ -553,16 +535,16 @@ class KBuilder : public TreeClass {
 						htmp->Fill(PFMETPatType1,w);
 					}
 					else if(stmp=="dphi"){//dphi of muon and tau
-						htmp->Fill(dPhi(MuonPhi,HPSTauPhi->at(0)),w);
+						htmp->Fill(KMath::DeltaPhi(MuonPhi,HPSTauPhi->at(0)),w);
 					}
 					else if(stmp=="dphimu"){//angular correlation w/ MET and muon
-						htmp->Fill(dPhi(PFMETPhiPatType1,MuonPhi),w);
+						htmp->Fill(KMath::DeltaPhi(PFMETPhiPatType1,MuonPhi),w);
 					}
 					else if(stmp=="dphitau"){//angular correlation w/ MET and tau
-						htmp->Fill(dPhi(PFMETPhiPatType1,HPSTauPhi->at(0)),w);
+						htmp->Fill(KMath::DeltaPhi(PFMETPhiPatType1,HPSTauPhi->at(0)),w);
 					}
 					else if(stmp=="dphijet"){//angular correlation w/ MET and leading jet
-						if(PFJetPt->size()>0) htmp->Fill(dPhi(PFMETPhiPatType1,PFJetPhi->at(0)),w);
+						if(PFJetPt->size()>0) htmp->Fill(KMath::DeltaPhi(PFMETPhiPatType1,PFJetPhi->at(0)),w);
 					}
 					else if(stmp=="ptmu"){//muon pT
 						if(globalOpt->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau ST
