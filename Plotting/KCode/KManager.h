@@ -144,7 +144,6 @@ class KManager {
 			for(p = MyPlots.GetTable().begin(); p != MyPlots.GetTable().end(); p++){
 				for(unsigned s = 0; s < MySets.size(); s++){
 					MySets[s]->AddHisto(p->first,p->second->GetHisto());
-					//cout << p->first << " " << MySets[s]->GetName() << endl;
 				}
 			}
 			PMMit pm;
@@ -153,7 +152,6 @@ class KManager {
 				for(unsigned s = 0; s < MySets.size(); s++){
 					KPlot* ptmp = p2map->Get(MySets[s]->GetName());
 					if(ptmp) MySets[s]->AddHisto(pm->first,ptmp->GetHisto());
-					//cout << pm->first << " " << MySets[s]->GetName() << endl;
 				}
 			}
 			
@@ -258,7 +256,6 @@ class KManager {
 				PrintCanvas(p->first,can);
 			}
 
-						
 			//draw each 2D plot - normalization, etc.
 			for(pm = MyPlots2D.GetTable().begin(); pm != MyPlots2D.GetTable().end(); pm++){
 				PlotMap* p2map = pm->second;
