@@ -5,6 +5,7 @@
 #include "KMap.h"
 #include "KLegend.h"
 #include "KBase.h"
+#include "KHelper.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -210,7 +211,7 @@ class KPlot{
 		}
 		
 		//drawing
-		void DrawHist(){
+		virtual void DrawHist(){
 			pad1->cd();
 			//get y axis range of histo from KLegend
 			histo->GetYaxis()->SetRangeUser(leg->GetRange().first,leg->GetRange().second);
@@ -227,7 +228,7 @@ class KPlot{
 		}
 		void DrawText(){
 			pad1->cd();
-			leg->Draw();
+			if(leg) leg->Draw();
 			paveCMS->Draw("same");
 			paveExtra->Draw("same");
 			paveLumi->Draw("same");
@@ -265,9 +266,9 @@ class KPlot{
 			}
 			else if(strcmp(axis->GetName(),"zaxis")==0){
 				//need to scale title height value from pad height to pad width for z palette axis
-				//(acts like y axis on opposite side)
+				//(acts like y axis)
 				Theight *= padH/padW;
-				Toff = (1 - marginR/padW + epsilon/padW + Theight/2.)/(1.6*sizeT/padH);
+				Toff = (marginL/padW - epsilon/padW - Theight/2.)/(1.6*sizeT/padH);
 			}
 			
 			axis->SetTitleOffset(Toff);
@@ -307,6 +308,8 @@ class KPlot{
 		
 		//accessors
 		string GetName() { return name; }
+		virtual string GetNameX() { return name; }
+		virtual string GetNameY() { return ""; }
 		bool IsInit() { return isInit; }
 		void SetName(string name_) { name = name_; }
 		TH1* GetHisto() { return histo; }
@@ -400,19 +403,22 @@ class KPlot2D: public KPlot {
 			//include name of set in z title
 			if(MySet->GetName()=="ratio"){
 				string rationame2D = "";
-				globalOpt->Get<string>("rationame2D",rationame2D); //2D ratio name, numer - denom [sigma], set in KManager
+				globalOpt->Get("rationame2D",rationame2D); //set in KManager
 				histo->GetZaxis()->SetTitle(rationame2D.c_str());
 			}
 			else { //include name of set in z title
 				histo->GetZaxis()->SetTitle((MySet->GetName() + ": " + ztitle).c_str());
 			}
 			
+			
 			//extra space for z axis palette
 			canvasW += 150 - marginR;
 			marginR = 150;
 			//can = new TCanvas(histo->GetName(),histo->GetName(),850,550);
 			//account for window frame: 2+2px width, 2+26px height
-			can = new TCanvas(histo->GetName(),histo->GetName(),canvasW,canvasH);
+			string cname = histo->GetName();
+			cname = cname + "_" + MySet->GetName();
+			can = new TCanvas(cname.c_str(),cname.c_str(),canvasW,canvasH);
 		
 			pad1 = new TPad("graph","",0,0,1,1);
 			pad1W = pad1->GetWw()*pad1->GetAbsWNDC();
@@ -433,14 +439,22 @@ class KPlot2D: public KPlot {
 			
 			return isInit;
 		}
+		//drawing
+		void DrawHist(){
+			pad1->cd();
+			histo->Draw("colz");
+		}
 		
 		//accessors
+		string GetNameX() { return namex; }
+		string GetNameY() { return namey; }
 		KBase* GetMySet() { return MySet; }
 		void SetMySet(KBase* MySet_) { MySet = MySet_; }
 		
 	protected:
 		//member variables
 		KBase* MySet;
+		string namex, namey;
 };
 
 #endif

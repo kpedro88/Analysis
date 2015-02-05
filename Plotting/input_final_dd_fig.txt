@@ -42,6 +42,9 @@ masstaub	i:xnum[50]	d:xmin[0]	d:xmax[1000]	s:xtitle[M_{#taub} [GeV]]	s:ytitle[nu
 #st	i:xnum[15]	d:xmin[0]	d:xmax[1200]	s:xtitle[S_{T} [GeV]]	s:ytitle[number of events / 80 GeV]	b:logy[0]	b:ratio[0]
 st	vd:xbins[140,210,280,350,420,480,540,620,700,780,870,980,1100,1200]	s:xtitle[S_{T} [GeV]]	s:ytitle[number of events / GeV]	b:logy[0]	b:ratio[0]	b:bindivide[1]
 
+#HISTO2D
+#st_masstaub	vd:xbins[140,210,280,350,420,480,540,620,700,780,870,980,1100,1200]	s:xtitle[S_{T} [GeV]]	i:ynum[50]	d:ymin[0]	d:ymax[1000]	s:ytitle[M_{#taub} [GeV]]	s:ztitle[number of events]
+
 SET
 hist	data	data	c:color[kBlack]
 	base	data	SingleMu_A	s:filename[tree_SingleMu_A_190456_208686_muTau.root]

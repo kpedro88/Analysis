@@ -49,12 +49,14 @@ class KParser {
 					//check for input type
 					if(line.compare(0,6,"OPTION")==0) { intype = "OPTION"; continue; }
 					else if(line.compare(0,3,"SET")==0) { intype = "SET"; continue; }
+					else if(line.compare(0,7,"HISTO2D")==0) { intype = "HISTO2D"; continue; }
 					else if(line.compare(0,5,"HISTO")==0) { intype = "HISTO"; continue; }
 					
 					//otherwise, process line according to input type
 					if(intype=="OPTION") KText::processOption(line,MyManager->globalOpt);
 					else if(intype=="SET") processSet(line);
-					else if(intype=="HISTO") processHisto(line);
+					else if(intype=="HISTO2D") processHisto(line,2);
+					else if(intype=="HISTO") processHisto(line,1);
 				}
 				parsed = true;
 			}
@@ -143,7 +145,7 @@ class KParser {
 				return;
 			}
 		}
-		void processHisto(string line){
+		void processHisto(string line, int dim){
 			//tab separated input
 			vector<string> fields;
 			KText::process(line,'\t',fields);
@@ -155,6 +157,9 @@ class KParser {
 			for(int i = 1; i < fields.size(); i++){
 				KText::processOption(fields[i],omap);
 			}
+			
+			//keep track of histo dimension
+			omap->Set("dimension",dim);
 			
 			//store local plot options for later use
 			MyManager->MyPlotOptions.Add(name,omap);
@@ -179,6 +184,8 @@ KManager::KManager(string in, string dir) : input(in),treedir(dir),globalOpt(0),
 	parsed = MyParser->Parse();
 	
 	//final checks and initializations
+	int prcsn;
+	if(globalOpt->Get("yieldprecision",prcsn)) cout << fixed << setprecision(prcsn);
 	MyRatio = new KSetRatio(NULL,globalOpt);
 	if(globalOpt->Get("calcfaketau",false)) FakeTauEstimationInit();
 	//store correction root files centrally

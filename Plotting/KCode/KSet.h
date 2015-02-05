@@ -88,6 +88,15 @@ class KSet : public KBase {
 				children[c]->BinDivide();
 			}
 		}
+		//in case of normalization to yield or other scaling
+		virtual void Normalize(double nn, bool toYield=true){
+			//first, normalize all children
+			for(unsigned c = 0; c < children.size(); c++){
+				children[c]->Normalize(nn,toYield);
+			}
+			//then do current histo
+			KBase::Normalize(nn,toYield);
+		}
 		
 	protected:
 		//member variables
@@ -146,7 +155,8 @@ class KSetData: public KSet {
 		//draw function
 		void Draw(TPad* pad) {
 			pad->cd();
-			htmp->Draw("PE same");
+			if(htmp->GetDimension()==1) htmp->Draw("PE same");
+			else if(htmp->GetDimension()==2) htmp->Draw("colz same");
 		}
 		
 };
@@ -246,7 +256,8 @@ class KSetMC: public KSet {
 		//draw function
 		void Draw(TPad* pad) {
 			pad->cd();
-			htmp->Draw("hist same");
+			if(htmp->GetDimension()==1) htmp->Draw("hist same");
+			else if(htmp->GetDimension()==2) htmp->Draw("colz same");
 		}
 		
 };
@@ -363,19 +374,24 @@ class KSetMCStack : public KSet {
 		//draw function
 		void Draw(TPad* pad) {
 			pad->cd();
-			shtmp->Draw("hist same");
-			
-			//error band enabled by default
-			if(globalOpt->Get("errband",true)) etmp->Draw("2 same");
-			
-			if(globalOpt->Get("bgline",false)&&htmp){
-				TH1* hoverlay = (TH1*)htmp->Clone();
-				hoverlay->SetFillColor(0);
-				hoverlay->SetLineColor(kBlack);
-				hoverlay->SetMarkerColor(kBlack);
-				hoverlay->SetLineStyle(1);
-				hoverlay->SetLineWidth(2);
-				hoverlay->Draw("hist same");
+			if(htmp->GetDimension()==1){
+				shtmp->Draw("hist same");
+				
+				//error band enabled by default
+				if(globalOpt->Get("errband",true)) etmp->Draw("2 same");
+				
+				if(globalOpt->Get("bgline",false)&&htmp){
+					TH1* hoverlay = (TH1*)htmp->Clone();
+					hoverlay->SetFillColor(0);
+					hoverlay->SetLineColor(kBlack);
+					hoverlay->SetMarkerColor(kBlack);
+					hoverlay->SetLineStyle(1);
+					hoverlay->SetLineWidth(2);
+					hoverlay->Draw("hist same");
+				}
+			}
+			else if(htmp->GetDimension()==2){
+				htmp->Draw("colz same");
 			}
 		}
 		//normalize all children histos
@@ -386,12 +402,16 @@ class KSetMCStack : public KSet {
 			TObjArray* stack_array = shtmp->GetStack();
 			for(unsigned s = 0; s < stack_array->GetSize(); s++){
 				TH1* hist = (TH1*)stack_array->At(s);
-				if(hist) hist->Scale(nn/simyield);
+				if(hist){
+					if(toYield) hist->Scale(nn/simyield);
+					else hist->Scale(nn);
+				}
 			}
 			
 			//scale children (directly to overall yield)
 			for(unsigned c = 0; c < children.size(); c++){
-				children[c]->Normalize(nn/simyield,false);
+				if(toYield) children[c]->Normalize(nn/simyield,false);
+				else children[c]->Normalize(nn,false);
 			}
 			
 			//rebuild error band (enabled by default)
@@ -484,8 +504,9 @@ class KSetRatio: public KSet {
 			}
 			else if(hrat->GetDimension()==2){//(data-mc)/err
 				hrat->Add(hdata,hsim,1,-1);
-				for(int b = 0; b <= hrat->GetEntries(); b++){
-					hrat->SetBinContent(b,hrat->GetBinContent(b)/hrat->GetBinError(b));
+				for(int b = 0; b < ((TH2F*)hrat)->GetSize(); b++){
+					if(hrat->GetBinError(b)>0) hrat->SetBinContent(b,hrat->GetBinContent(b)/hrat->GetBinError(b));
+					else hrat->SetBinContent(b,-1000); //hack so empty cells are not painted
 					hrat->SetBinError(b,0);
 				}
 			}
@@ -493,8 +514,8 @@ class KSetRatio: public KSet {
 			htmp = hrat;
 			MyHistos.Add(stmp,htmp);
 			
-			//error band enabled by default
-			if(globalOpt->Get("errband",true)) BuildErrorBand();
+			//error band enabled by default for 1D histo
+			if(globalOpt->Get("errband",true) && htmp->GetDimension()==1) BuildErrorBand();
 		}
 		//calculate ratio error band from denom
 		TGraphAsymmErrors* BuildErrorBand(){
@@ -527,8 +548,13 @@ class KSetRatio: public KSet {
 		void Draw(TPad* pad) {
 			pad->cd();
 			//error band enabled by default
-			if(globalOpt->Get("errband",true)) etmp->Draw("2 same");
-			htmp->Draw("PE same");
+			if(htmp->GetDimension()==1) {
+				if(globalOpt->Get("errband",true)) etmp->Draw("2 same");
+				htmp->Draw("PE same");
+			}
+			else if(htmp->GetDimension()==2){
+				htmp->Draw("colz same");
+			}
 		}
 		
 };

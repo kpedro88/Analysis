@@ -20,11 +20,34 @@
 #include <TLorentzVector.h>
 
 //STL headers
+#include <vector>
 #include <string>
 #include <iostream>
 #include <map>
 
 using namespace std;
+
+//---------------------------------------------------------------
+//little class to store value & weight pairs for filling histos
+class KValue {
+	public:
+		//constructor
+		KValue() : values(0), weights(0) {}
+		//accessors
+		void Fill(double v, double w=1){
+			values.push_back(v);
+			weights.push_back(w);
+		}
+		double & GetValue(int iv) { return values[iv]; }
+		double & GetWeight(int iw) { return weights[iw]; }
+		int GetSize() { return values.size(); }
+		
+	protected:
+		//member variables
+		vector<double> values;
+		vector<double> weights;
+	
+};
 
 void TreeClass::Loop() {}
 
@@ -499,372 +522,407 @@ class KBuilder : public TreeClass {
 					//get histo name
 					stmp = sit->first;
 					htmp = sit->second;
+					//split up histo variable names
+					vector<string> vars;
+					KText::process(stmp,'_',vars);
+					vector<KValue> values(vars.size());
+					//if(jentry%10000==0) cout << stmp << " TH" << vars.size() << " " << jentry;
 				
+					for(int i = 0; i < vars.size(); i++){
 					//list of cases for histo calculation and filling
-					if(stmp=="qT"){//pT of muon + tau
-						htmp->Fill(PtMuonTau,w);
-					}
-					else if(stmp=="mass"){//invariant mass of muon + tau
-						htmp->Fill(MassMuonTau,w);
-					}
-					else if(stmp=="Tmass"){//transverse mass to check W+jet contribution: MT=sqrt(2*pt_lepton*pt_met*cos(1-deltaphi(met,lepton))
-						double MT=sqrt(2*MuonPt*PFMETPatType1*(1-cos(KMath::DeltaPhi(MuonPhi,PFMETPhiPatType1))));
-						htmp->Fill(MT,w);
-					}
-					else if(stmp=="Tmassiso"){//transverse mass to check W+jet contribution (isolated taus): MT=sqrt(2*pt_lepton*pt_met*cos(1-deltaphi(met,lepton))
-						double MT=sqrt(2*MuonPt*PFMETPatType1*(1-cos(KMath::DeltaPhi(MuonPhi,PFMETPhiPatType1))));
-						if(HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(0)) htmp->Fill(MT,w);
-					}
-					else if(stmp=="Tmassjet"){//transverse mass w/ leading jet
-						if(PFJetPt->size()>0){
-							double MTj=sqrt(2*PFJetPt->at(0)*PFMETPatType1*(1-cos(KMath::DeltaPhi(PFJetPhi->at(0),PFMETPhiPatType1))));
-							htmp->Fill(MTj,w);
+						if(vars[i]=="qT"){//pT of muon + tau
+							values[i].Fill(PtMuonTau,w);
 						}
-					}
-					else if(stmp=="Tmasstauantiisoall"){//transverse mass w/ all anti-iso taus
-						for(int t = 0; t < HPSTauPt->size(); t++){
-							if(!FakeTauGenDecision[t]) continue;
-							double MTt=sqrt(2*HPSTauPt->at(t)*PFMETPatType1*(1-cos(KMath::DeltaPhi(HPSTauPhi->at(t),PFMETPhiPatType1))));
-							htmp->Fill(MTt,w);
+						else if(vars[i]=="mass"){//invariant mass of muon + tau
+							values[i].Fill(MassMuonTau,w);
 						}
-					}
-					else if(stmp=="massdimuon"){//invariant mass of muon and second muon (z+jets region)
-						htmp->Fill(MassMuonMuon,w);
-					}
-					else if(stmp=="met"){//MET
-						htmp->Fill(PFMETPatType1,w);
-					}
-					else if(stmp=="dphi"){//dphi of muon and tau
-						htmp->Fill(KMath::DeltaPhi(MuonPhi,HPSTauPhi->at(0)),w);
-					}
-					else if(stmp=="dphimu"){//angular correlation w/ MET and muon
-						htmp->Fill(KMath::DeltaPhi(PFMETPhiPatType1,MuonPhi),w);
-					}
-					else if(stmp=="dphitau"){//angular correlation w/ MET and tau
-						htmp->Fill(KMath::DeltaPhi(PFMETPhiPatType1,HPSTauPhi->at(0)),w);
-					}
-					else if(stmp=="dphijet"){//angular correlation w/ MET and leading jet
-						if(PFJetPt->size()>0) htmp->Fill(KMath::DeltaPhi(PFMETPhiPatType1,PFJetPhi->at(0)),w);
-					}
-					else if(stmp=="ptmu"){//muon pT
-						if(globalOpt->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau ST
+						else if(vars[i]=="Tmass"){//transverse mass to check W+jet contribution: MT=sqrt(2*pt_lepton*pt_met*cos(1-deltaphi(met,lepton))
+							double MT=sqrt(2*MuonPt*PFMETPatType1*(1-cos(KMath::DeltaPhi(MuonPhi,PFMETPhiPatType1))));
+							values[i].Fill(MT,w);
+						}
+						else if(vars[i]=="Tmassiso"){//transverse mass to check W+jet contribution (isolated taus): MT=sqrt(2*pt_lepton*pt_met*cos(1-deltaphi(met,lepton))
+							double MT=sqrt(2*MuonPt*PFMETPatType1*(1-cos(KMath::DeltaPhi(MuonPhi,PFMETPhiPatType1))));
+							if(HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(0)) values[i].Fill(MT,w);
+						}
+						else if(vars[i]=="Tmassjet"){//transverse mass w/ leading jet
+							if(PFJetPt->size()>0){
+								double MTj=sqrt(2*PFJetPt->at(0)*PFMETPatType1*(1-cos(KMath::DeltaPhi(PFJetPhi->at(0),PFMETPhiPatType1))));
+								values[i].Fill(MTj,w);
+							}
+						}
+						else if(vars[i]=="Tmasstauantiisoall"){//transverse mass w/ all anti-iso taus
 							for(int t = 0; t < HPSTauPt->size(); t++){
 								if(!FakeTauGenDecision[t]) continue;
-								htmp->Fill(MuonPt,w*FakeTauWeight[t]);
+								double MTt=sqrt(2*HPSTauPt->at(t)*PFMETPatType1*(1-cos(KMath::DeltaPhi(HPSTauPhi->at(t),PFMETPhiPatType1))));
+								values[i].Fill(MTt,w);
 							}
 						}
-						else{
-							htmp->Fill(MuonPt,w);
+						else if(vars[i]=="massdimuon"){//invariant mass of muon and second muon (z+jets region)
+							values[i].Fill(MassMuonMuon,w);
 						}
-					}
-					else if(stmp=="pttau"){//tau pT
-						if(globalOpt->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau
+						else if(vars[i]=="met"){//MET
+							values[i].Fill(PFMETPatType1,w);
+						}
+						else if(vars[i]=="dphi"){//dphi of muon and tau
+							values[i].Fill(KMath::DeltaPhi(MuonPhi,HPSTauPhi->at(0)),w);
+						}
+						else if(vars[i]=="dphimu"){//angular correlation w/ MET and muon
+							values[i].Fill(KMath::DeltaPhi(PFMETPhiPatType1,MuonPhi),w);
+						}
+						else if(vars[i]=="dphitau"){//angular correlation w/ MET and tau
+							values[i].Fill(KMath::DeltaPhi(PFMETPhiPatType1,HPSTauPhi->at(0)),w);
+						}
+						else if(vars[i]=="dphijet"){//angular correlation w/ MET and leading jet
+							if(PFJetPt->size()>0) values[i].Fill(KMath::DeltaPhi(PFMETPhiPatType1,PFJetPhi->at(0)),w);
+						}
+						else if(vars[i]=="ptmu"){//muon pT
+							if(globalOpt->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau ST
+								for(int t = 0; t < HPSTauPt->size(); t++){
+									if(!FakeTauGenDecision[t]) continue;
+									values[i].Fill(MuonPt,w*FakeTauWeight[t]);
+								}
+							}
+							else{
+								values[i].Fill(MuonPt,w);
+							}
+						}
+						else if(vars[i]=="pttau"){//tau pT
+							if(globalOpt->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau
+								for(int t = 0; t < HPSTauPt->size(); t++){
+									if(!FakeTauGenDecision[t]) continue;
+									values[i].Fill(HPSTauPt->at(t),w*FakeTauWeight[t]);
+								}
+							}
+							else{
+								values[i].Fill(HPSTauPt->at(0),w);
+							}
+						}
+						else if(vars[i]=="pttauiso"){//tau pT w/ isolation (fake rate)
+							if(HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(0)) values[i].Fill(HPSTauPt->at(0),w);
+						}
+						else if(vars[i]=="pttauantiiso"){//tau pT w/ anti-isolation
+							if(!HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(0)) values[i].Fill(HPSTauPt->at(0),w);
+						}
+						else if(vars[i]=="pttauall"){//tau pT (all taus)
+							for(int t = 0; t < HPSTauPt->size(); t++){
+								if(!globalOpt->Get("checkfaketau",false) || HPSTauFakeJet->at(t)) values[i].Fill(HPSTauPt->at(t),w);
+							}
+						}
+						else if(vars[i]=="pttauisoall"){//tau pT (all taus) w/ isolation (fake rate)
+							for(int t = 0; t < HPSTauPt->size(); t++){
+								if( (!globalOpt->Get("checkfaketau",false) || HPSTauFakeJet->at(t)) && HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(t)) values[i].Fill(HPSTauPt->at(t),w);
+							}
+						}
+						else if(vars[i]=="pttauantiisoall"){//tau pT (all taus) w/ anti-isolation
 							for(int t = 0; t < HPSTauPt->size(); t++){
 								if(!FakeTauGenDecision[t]) continue;
-								htmp->Fill(HPSTauPt->at(t),w*FakeTauWeight[t]);
+								if(!HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(t)) values[i].Fill(HPSTauPt->at(t),w);
 							}
 						}
-						else{
-							htmp->Fill(HPSTauPt->at(0),w);
+						else if(vars[i]=="tauisostatus"){//iso status of each tau candidate
+							for(int t = 0; t < HPSTauPt->size(); t++){
+								if(HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(t)) values[i].Fill(t+1,w);
+							}
 						}
-					}
-					else if(stmp=="pttauiso"){//tau pT w/ isolation (fake rate)
-						if(HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(0)) htmp->Fill(HPSTauPt->at(0),w);
-					}
-					else if(stmp=="pttauantiiso"){//tau pT w/ anti-isolation
-						if(!HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(0)) htmp->Fill(HPSTauPt->at(0),w);
-					}
-					else if(stmp=="pttauall"){//tau pT (all taus)
-						for(int t = 0; t < HPSTauPt->size(); t++){
-							if(!globalOpt->Get("checkfaketau",false) || HPSTauFakeJet->at(t)) htmp->Fill(HPSTauPt->at(t),w);
+						else if(vars[i]=="energytau"){//visible energy of tau
+							//needs a 4vec...
+							TLorentzVector v_tau;
+							v_tau.SetPtEtaPhiM(HPSTauPt->at(0),HPSTauEta->at(0),HPSTauPhi->at(0),1.77682);
+							values[i].Fill(v_tau.E(),w);
+						
 						}
-					}
-					else if(stmp=="pttauisoall"){//tau pT (all taus) w/ isolation (fake rate)
-						for(int t = 0; t < HPSTauPt->size(); t++){
-							if( (!globalOpt->Get("checkfaketau",false) || HPSTauFakeJet->at(t)) && HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(t)) htmp->Fill(HPSTauPt->at(t),w);
+						else if(vars[i]=="bcheckall"){//if fake taus come from a b quark
+							for(int t = 0; t < HPSTauPt->size(); t++){
+								if(HPSTauFakeJet->at(t)) values[i].Fill(HPSTauFakeBJet->at(t),w);
+							}
 						}
-					}
-					else if(stmp=="pttauantiisoall"){//tau pT (all taus) w/ anti-isolation
-						for(int t = 0; t < HPSTauPt->size(); t++){
-							if(!FakeTauGenDecision[t]) continue;
-							if(!HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(t)) htmp->Fill(HPSTauPt->at(t),w);
+						else if(vars[i]=="bcheckiso"){//if iso fake taus come from a b quark
+							for(int t = 0; t < HPSTauPt->size(); t++){
+								if(HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(t) && HPSTauFakeJet->at(t)) values[i].Fill(HPSTauFakeBJet->at(t),w);
+							}
 						}
-					}
-					else if(stmp=="tauisostatus"){//iso status of each tau candidate
-						for(int t = 0; t < HPSTauPt->size(); t++){
-							if(HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(t)) htmp->Fill(t+1,w);
+						else if(vars[i]=="bcheckleadiso"){//if lead iso fake tau comes from a b quark
+							if(HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(0) && HPSTauFakeJet->at(0)) values[i].Fill(HPSTauFakeBJet->at(0),w);
 						}
-					}
-					else if(stmp=="energytau"){//visible energy of tau
-						//needs a 4vec...
-						TLorentzVector v_tau;
-						v_tau.SetPtEtaPhiM(HPSTauPt->at(0),HPSTauEta->at(0),HPSTauPhi->at(0),1.77682);
-						htmp->Fill(v_tau.E(),w);
-					
-					}
-					else if(stmp=="bcheckall"){//if fake taus come from a b quark
-						for(int t = 0; t < HPSTauPt->size(); t++){
-							if(HPSTauFakeJet->at(t)) htmp->Fill(HPSTauFakeBJet->at(t),w);
+						else if(vars[i]=="phimu"){//muon phi
+							values[i].Fill(MuonPhi,w);
 						}
-					}
-					else if(stmp=="bcheckiso"){//if iso fake taus come from a b quark
-						for(int t = 0; t < HPSTauPt->size(); t++){
-							if(HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(t) && HPSTauFakeJet->at(t)) htmp->Fill(HPSTauFakeBJet->at(t),w);
+						else if(vars[i]=="phitau"){//tau phi
+							values[i].Fill(HPSTauPhi->at(0),w);
 						}
-					}
-					else if(stmp=="bcheckleadiso"){//if lead iso fake tau comes from a b quark
-						if(HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(0) && HPSTauFakeJet->at(0)) htmp->Fill(HPSTauFakeBJet->at(0),w);
-					}
-					else if(stmp=="phimu"){//muon phi
-						htmp->Fill(MuonPhi,w);
-					}
-					else if(stmp=="phitau"){//tau phi
-						htmp->Fill(HPSTauPhi->at(0),w);
-					}
-					else if(stmp=="etamu"){//muon eta
-						htmp->Fill(MuonEta,w);
-					}
-					else if(stmp=="etatau"){//tau eta
-						if(globalOpt->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau ST
-							for(int t = 0; t < HPSTauEta->size(); t++){
+						else if(vars[i]=="etamu"){//muon eta
+							values[i].Fill(MuonEta,w);
+						}
+						else if(vars[i]=="etatau"){//tau eta
+							if(globalOpt->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau ST
+								for(int t = 0; t < HPSTauEta->size(); t++){
+									if(!FakeTauGenDecision[t]) continue;
+									values[i].Fill(HPSTauEta->at(t),w*FakeTauWeight[t]);
+								}
+							}
+							else{
+								values[i].Fill(HPSTauEta->at(0),w);
+							}
+						}
+						else if(vars[i]=="etatauall"){//tau eta (all taus)
+							for(int t = 0; t < HPSTauPt->size(); t++){
+								if(!globalOpt->Get("checkfaketau",false) || HPSTauFakeJet->at(t)) values[i].Fill(HPSTauEta->at(t),w);
+							}
+						}
+						else if(vars[i]=="etatauisoall"){//tau eta (all taus) w/ isolation (fake rate)
+							for(int t = 0; t < HPSTauPt->size(); t++){
+								if( (!globalOpt->Get("checkfaketau",false) || HPSTauFakeJet->at(t)) && HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(t)) values[i].Fill(HPSTauEta->at(t),w);
+							}
+						}
+						else if(vars[i]=="nvertex"){//# good vertices
+							values[i].Fill(nGoodVertices,w);
+						}
+						else if(vars[i]=="nmuon"){//muon multiplicity
+							values[i].Fill(MuonMultiplicity,w);
+						}
+						else if(vars[i]=="ntau"){//tau multiplicity
+							values[i].Fill(HPSTauMultiplicity,w);
+						}
+						else if(vars[i]=="ntauiso"){//tau multiplicity (iso taus)
+							int ctr = 0;
+							for(int t = 0; t < HPSTauPt->size(); t++){
+								if(HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(t)) ctr++;
+							}
+							if(ctr>0) values[i].Fill(ctr,w);
+						}
+						else if(vars[i]=="ntauantiiso"){//tau multiplicity (anti-iso taus)
+							int ctr = 0;
+							for(int t = 0; t < HPSTauPt->size(); t++){
 								if(!FakeTauGenDecision[t]) continue;
-								htmp->Fill(HPSTauEta->at(t),w*FakeTauWeight[t]);
+								if(!HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(t)) ctr++;
+							}
+							if(ctr>0) values[i].Fill(ctr,w);
+						}
+						else if(vars[i]=="njet"){//jet multiplicity
+							values[i].Fill(PFJetMultiplicity,w);
+						}
+						else if(vars[i]=="leadjetpt"){//leading jet pT
+							if(PFJetPt->size()>0){
+								values[i].Fill(PFJetPt->at(0),w);
 							}
 						}
-						else{
-							htmp->Fill(HPSTauEta->at(0),w);
-						}
-					}
-					else if(stmp=="etatauall"){//tau eta (all taus)
-						for(int t = 0; t < HPSTauPt->size(); t++){
-							if(!globalOpt->Get("checkfaketau",false) || HPSTauFakeJet->at(t)) htmp->Fill(HPSTauEta->at(t),w);
-						}
-					}
-					else if(stmp=="etatauisoall"){//tau eta (all taus) w/ isolation (fake rate)
-						for(int t = 0; t < HPSTauPt->size(); t++){
-							if( (!globalOpt->Get("checkfaketau",false) || HPSTauFakeJet->at(t)) && HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(t)) htmp->Fill(HPSTauEta->at(t),w);
-						}
-					}
-					else if(stmp=="nvertex"){//# good vertices
-						htmp->Fill(nGoodVertices,w);
-					}
-					else if(stmp=="nmuon"){//muon multiplicity
-						htmp->Fill(MuonMultiplicity,w);
-					}
-					else if(stmp=="ntau"){//tau multiplicity
-						htmp->Fill(HPSTauMultiplicity,w);
-					}
-					else if(stmp=="ntauiso"){//tau multiplicity (iso taus)
-						int ctr = 0;
-						for(int t = 0; t < HPSTauPt->size(); t++){
-							if(HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(t)) ctr++;
-						}
-						if(ctr>0) htmp->Fill(ctr,w);
-					}
-					else if(stmp=="ntauantiiso"){//tau multiplicity (anti-iso taus)
-						int ctr = 0;
-						for(int t = 0; t < HPSTauPt->size(); t++){
-							if(!FakeTauGenDecision[t]) continue;
-							if(!HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(t)) ctr++;
-						}
-						if(ctr>0) htmp->Fill(ctr,w);
-					}
-					else if(stmp=="njet"){//jet multiplicity
-						htmp->Fill(PFJetMultiplicity,w);
-					}
-					else if(stmp=="leadjetpt"){//leading jet pT
-						if(PFJetPt->size()>0){
-							htmp->Fill(PFJetPt->at(0),w);
-						}
-					}
-					else if(stmp=="subleadjetpt"){//sub-leading jet pT
-						if(PFJetPt->size()>1){
-							for(unsigned j = 1; j < PFJetPt->size(); j++){
-								htmp->Fill(PFJetPt->at(j),w);
-							}
-						}
-					}
-					else if(stmp=="leadbjetpt"){//leading b-jet pT
-						if(PFJetPt->size()>0){
-							for(unsigned j = 0; j < PFJetPt->size(); j++){
-								if(PFJetCSVBTag->at(j)>0.244){
-									htmp->Fill(PFJetPt->at(j),w);
-									break;
+						else if(vars[i]=="subleadjetpt"){//sub-leading jet pT
+							if(PFJetPt->size()>1){
+								for(unsigned j = 1; j < PFJetPt->size(); j++){
+									values[i].Fill(PFJetPt->at(j),w);
 								}
 							}
 						}
-					}
-					else if(stmp=="secondbjetpt"){//second leading b-jet pT
-						if(PFJetPt->size()>0){
-							bool found_lead = false;
-							for(unsigned j = 0; j < PFJetPt->size(); j++){
-								if(PFJetCSVBTag->at(j)>0.244){
-									if(!found_lead){
-										found_lead = true;
-										continue;
-									}
-									else{
-										htmp->Fill(PFJetPt->at(j),w);
+						else if(vars[i]=="leadbjetpt"){//leading b-jet pT
+							if(PFJetPt->size()>0){
+								for(unsigned j = 0; j < PFJetPt->size(); j++){
+									if(PFJetCSVBTag->at(j)>0.244){
+										values[i].Fill(PFJetPt->at(j),w);
 										break;
 									}
 								}
 							}
 						}
-					}
-					else if(stmp=="nbjet"){//b-jet multiplicity
-						if(PFJetPt->size()>0){
-							int nbjet = 0;
-							for(unsigned j = 0; j < PFJetPt->size(); j++){
-								if(PFJetCSVBTag->at(j)>0.244) nbjet++;
-							}
-							htmp->Fill(nbjet,w);
-						}
-					}
-					else if(stmp=="muoniso"){//muon isolation variable
-						htmp->Fill(MuonPFRelIsoTight,w);
-					}
-					else if(stmp=="charge"){//product of muon and tau charges
-						htmp->Fill(MuonCharge*HPSTauCharge->at(0),w);
-					}
-					else if(stmp=="btagjetpt"){//pt of selected b-tag jet
-						htmp->Fill(PFMainJetPt[1],w);
-					}
-					else if(stmp=="btagjetmass"){//mass of selected b-tag jet (from 4vec)
-						TLorentzVector v_jet;
-						v_jet.SetPtEtaPhiE(PFMainJetPt[1],PFMainJetEta[1],PFMainJetPhi[1],PFMainJetEnergy[1]);
-						htmp->Fill(v_jet.M(),w);
-					}
-					else if(stmp=="addljetpt"){//pt of selected addl. jet
-						htmp->Fill(PFMainJetPt[0],w);
-					}
-					else if(stmp=="addljetmass"){//mass of selected addl. jet (from 4vec)
-						TLorentzVector v_jet;
-						v_jet.SetPtEtaPhiE(PFMainJetPt[0],PFMainJetEta[0],PFMainJetPhi[0],PFMainJetEnergy[0]);
-						htmp->Fill(v_jet.M(),w);
-					}
-					else if(stmp=="leadseljetpt"){//pt of leading selected jet
-						htmp->Fill(max(PFMainJetPt[0],PFMainJetPt[1]),w);
-					}
-					else if(stmp=="secondseljetpt"){//pt of second selected jet
-						htmp->Fill(min(PFMainJetPt[0],PFMainJetPt[1]),w);
-					}
-					else if(stmp=="dvtx"){//difference in vertex indices for muon and selected jets
-						bool foundB = false;
-						bool foundJ = false;
-						if(globalOpt->Get("lqd321sel",false)) {
-							htmp->Fill(abs(MuonVtxIndex - PFJetVtxIndex->at(BJetIndices[0])),w);
-							for(int j = 0; j < 4; j++){
-								htmp->Fill(abs(MuonVtxIndex - PFJetVtxIndex->at(JetIndices[j])),w);
-							}
-						}
-						else {
-							for(int j = 0; j < PFJetPt->size(); j++){
-								if(foundJ && foundB) break;
-							
-								if(!foundB && PFJetCSVBTag->at(j)>0.244){
-									foundB = true;
-									htmp->Fill(abs(MuonVtxIndex - PFJetVtxIndex->at(j)),w);
-								}
-								else if(!foundJ){
-									foundJ = true;
-									htmp->Fill(abs(MuonVtxIndex - PFJetVtxIndex->at(j)),w);
-								}
-							}
-						}
-						
-					}
-					else if(stmp=="masstaub"){//invariant mass of tau and matched (b)jet
-						htmp->Fill(MassTauJet,w);
-					}
-					else if(stmp=="masstaubantiiso"){//invariant mass of tau and matched (b)jet (anti-iso region)
-						for(int t = 0; t < HPSTauPt->size(); t++){
-							if(!FakeTauGenDecision[t]) continue;
-							htmp->Fill(FakeTauMassTauJet[t],w);
-						}
-					}
-					else if(stmp=="massmuonb"){//invariant mass of muon and matched (b)jet
-						htmp->Fill(MassMuonJet,w);
-					}
-					else if(stmp=="st"){//scalar sum of momenta (defined differently for lqd321)
-						double st_base = 0;
-						if(globalOpt->Get("lqd321sel",false)) st_base = MuonPt + PFJetPt->at(BJetIndices[0]) + PFJetPt->at(JetIndices[0]) + PFJetPt->at(JetIndices[1]) + PFJetPt->at(JetIndices[2]) + PFJetPt->at(JetIndices[3]);
-						else if(!globalOpt->Get("mainsel",false)) st_base = MuonPt + PFJetPt->at(0) + PFJetPt->at(1);
-						else st_base = MuonPt + PFMainJetPt[0] + PFMainJetPt[1];
-						
-						if(globalOpt->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau ST
-							for(int t = 0; t < HPSTauPt->size(); t++){
-								if(!FakeTauGenDecision[t]) continue;
-								htmp->Fill(st_base + HPSTauPt->at(t),w*FakeTauWeight[t]);
-							}
-						}
-						else{
-							double st_tot = st_base + HPSTauPt->at(0);
-							htmp->Fill(st_tot,w);
-							//printeventnum uses histo minimum as the threshold
-							if(globalOpt->Get("printeventnum",false) && st_tot > htmp->GetXaxis()->GetXmin()){
-								//run:ls:event format for crab
-								string filename = "";
-								localOpt->Get("filename",filename);
-								cout << "ST = " << st_tot << " GeV in " << filename << endl;
-								cout << run << ":" << ls << ":" << event << endl;
-								cout << "muon: pt = " << MuonPt << ", eta = " << MuonEta << ", phi = " << MuonPhi << endl;
-								cout << "tau: pt = " << HPSTauPt->at(0) << ", eta = " << HPSTauEta->at(0) << ", phi = " << HPSTauPhi->at(0) << endl;
-								if(globalOpt->Get("lqd321sel",false)){
-									cout << "b-jet: pt = " << PFJetPt->at(BJetIndices[0]) << ", eta = " << PFJetEta->at(BJetIndices[0]) << ", phi = " << PFJetPhi->at(BJetIndices[0]) << endl;
-									for(int j = 0; j < 4; j++){
-										cout << "jet " << j+1 << ": pt = " << PFJetPt->at(JetIndices[j]) << ", eta = " << PFJetEta->at(JetIndices[j]) << ", phi = " << PFJetPhi->at(JetIndices[j]) << endl;
+						else if(vars[i]=="secondbjetpt"){//second leading b-jet pT
+							if(PFJetPt->size()>0){
+								bool found_lead = false;
+								for(unsigned j = 0; j < PFJetPt->size(); j++){
+									if(PFJetCSVBTag->at(j)>0.244){
+										if(!found_lead){
+											found_lead = true;
+											continue;
+										}
+										else{
+											values[i].Fill(PFJetPt->at(j),w);
+											break;
+										}
 									}
 								}
-								else if(!globalOpt->Get("mainsel",false)){
-									cout << "jet 1: pt = " << PFJetPt->at(0) << ", eta = " << PFJetEta->at(0) << ", phi = " << PFJetPhi->at(0) << endl;
-									cout << "jet 2: pt = " << PFJetPt->at(1) << ", eta = " << PFJetEta->at(1) << ", phi = " << PFJetPhi->at(1) << endl;
-								}
-								else{
-									cout << "b-jet: pt = " << PFMainJetPt[1] << ", eta = " << PFMainJetEta[1] << ", phi = " << PFMainJetPhi[1] << endl;
-									cout << "jet: pt = " << PFMainJetPt[0] << ", eta = " << PFMainJetEta[0] << ", phi = " << PFMainJetPhi[0] << endl;
-								}
 							}
 						}
-					}
-					else if(stmp=="stlep"){//scalar sum of momenta for leptons
-						double st_base = MuonPt;
-						
-						if(globalOpt->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau ST
+						else if(vars[i]=="nbjet"){//b-jet multiplicity
+							if(PFJetPt->size()>0){
+								int nbjet = 0;
+								for(unsigned j = 0; j < PFJetPt->size(); j++){
+									if(PFJetCSVBTag->at(j)>0.244) nbjet++;
+								}
+								values[i].Fill(nbjet,w);
+							}
+						}
+						else if(vars[i]=="muoniso"){//muon isolation variable
+							values[i].Fill(MuonPFRelIsoTight,w);
+						}
+						else if(vars[i]=="charge"){//product of muon and tau charges
+							values[i].Fill(MuonCharge*HPSTauCharge->at(0),w);
+						}
+						else if(vars[i]=="btagjetpt"){//pt of selected b-tag jet
+							values[i].Fill(PFMainJetPt[1],w);
+						}
+						else if(vars[i]=="btagjetmass"){//mass of selected b-tag jet (from 4vec)
+							TLorentzVector v_jet;
+							v_jet.SetPtEtaPhiE(PFMainJetPt[1],PFMainJetEta[1],PFMainJetPhi[1],PFMainJetEnergy[1]);
+							values[i].Fill(v_jet.M(),w);
+						}
+						else if(vars[i]=="addljetpt"){//pt of selected addl. jet
+							values[i].Fill(PFMainJetPt[0],w);
+						}
+						else if(vars[i]=="addljetmass"){//mass of selected addl. jet (from 4vec)
+							TLorentzVector v_jet;
+							v_jet.SetPtEtaPhiE(PFMainJetPt[0],PFMainJetEta[0],PFMainJetPhi[0],PFMainJetEnergy[0]);
+							values[i].Fill(v_jet.M(),w);
+						}
+						else if(vars[i]=="leadseljetpt"){//pt of leading selected jet
+							values[i].Fill(max(PFMainJetPt[0],PFMainJetPt[1]),w);
+						}
+						else if(vars[i]=="secondseljetpt"){//pt of second selected jet
+							values[i].Fill(min(PFMainJetPt[0],PFMainJetPt[1]),w);
+						}
+						else if(vars[i]=="dvtx"){//difference in vertex indices for muon and selected jets
+							bool foundB = false;
+							bool foundJ = false;
+							if(globalOpt->Get("lqd321sel",false)) {
+								values[i].Fill(abs(MuonVtxIndex - PFJetVtxIndex->at(BJetIndices[0])),w);
+								for(int j = 0; j < 4; j++){
+									values[i].Fill(abs(MuonVtxIndex - PFJetVtxIndex->at(JetIndices[j])),w);
+								}
+							}
+							else {
+								for(int j = 0; j < PFJetPt->size(); j++){
+									if(foundJ && foundB) break;
+								
+									if(!foundB && PFJetCSVBTag->at(j)>0.244){
+										foundB = true;
+										values[i].Fill(abs(MuonVtxIndex - PFJetVtxIndex->at(j)),w);
+									}
+									else if(!foundJ){
+										foundJ = true;
+										values[i].Fill(abs(MuonVtxIndex - PFJetVtxIndex->at(j)),w);
+									}
+								}
+							}
+							
+						}
+						else if(vars[i]=="masstaub"){//invariant mass of tau and matched (b)jet
+							values[i].Fill(MassTauJet,w);
+						}
+						else if(vars[i]=="masstaubantiiso"){//invariant mass of tau and matched (b)jet (anti-iso region)
 							for(int t = 0; t < HPSTauPt->size(); t++){
 								if(!FakeTauGenDecision[t]) continue;
-								htmp->Fill(st_base + HPSTauPt->at(t),w*FakeTauWeight[t]);
+								values[i].Fill(FakeTauMassTauJet[t],w);
 							}
 						}
-						else{
-							htmp->Fill(st_base + HPSTauPt->at(0),w);
+						else if(vars[i]=="massmuonb"){//invariant mass of muon and matched (b)jet
+							values[i].Fill(MassMuonJet,w);
 						}
-					}
-					else if(stmp=="stjet"){//scalar sum of momenta for jets
-						double st_base = 0;
-						if(globalOpt->Get("lqd321sel",false)) st_base = PFJetPt->at(BJetIndices[0]) + PFJetPt->at(JetIndices[0]) + PFJetPt->at(JetIndices[1]) + PFJetPt->at(JetIndices[2]) + PFJetPt->at(JetIndices[3]);
-						else if(!globalOpt->Get("mainsel",false)) st_base = PFJetPt->at(0) + PFJetPt->at(1);
-						else st_base = PFMainJetPt[0] + PFMainJetPt[1];
-						
-						if(globalOpt->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau ST
-							for(int t = 0; t < HPSTauPt->size(); t++){
-								if(!FakeTauGenDecision[t]) continue;
-								htmp->Fill(st_base,w*FakeTauWeight[t]);
+						else if(vars[i]=="st"){//scalar sum of momenta (defined differently for lqd321)
+							double st_base = 0;
+							if(globalOpt->Get("lqd321sel",false)) st_base = MuonPt + PFJetPt->at(BJetIndices[0]) + PFJetPt->at(JetIndices[0]) + PFJetPt->at(JetIndices[1]) + PFJetPt->at(JetIndices[2]) + PFJetPt->at(JetIndices[3]);
+							else if(!globalOpt->Get("mainsel",false)) st_base = MuonPt + PFJetPt->at(0) + PFJetPt->at(1);
+							else st_base = MuonPt + PFMainJetPt[0] + PFMainJetPt[1];
+							
+							if(globalOpt->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau ST
+								for(int t = 0; t < HPSTauPt->size(); t++){
+									if(!FakeTauGenDecision[t]) continue;
+									values[i].Fill(st_base + HPSTauPt->at(t),w*FakeTauWeight[t]);
+								}
+							}
+							else{
+								double st_tot = st_base + HPSTauPt->at(0);
+								values[i].Fill(st_tot,w);
+								//printeventnum uses histo minimum as the threshold
+								if(globalOpt->Get("printeventnum",false) && st_tot > htmp->GetXaxis()->GetXmin()){
+									//run:ls:event format for crab
+									string filename = "";
+									localOpt->Get("filename",filename);
+									cout << "ST = " << st_tot << " GeV in " << filename << endl;
+									cout << run << ":" << ls << ":" << event << endl;
+									cout << "muon: pt = " << MuonPt << ", eta = " << MuonEta << ", phi = " << MuonPhi << endl;
+									cout << "tau: pt = " << HPSTauPt->at(0) << ", eta = " << HPSTauEta->at(0) << ", phi = " << HPSTauPhi->at(0) << endl;
+									if(globalOpt->Get("lqd321sel",false)){
+										cout << "b-jet: pt = " << PFJetPt->at(BJetIndices[0]) << ", eta = " << PFJetEta->at(BJetIndices[0]) << ", phi = " << PFJetPhi->at(BJetIndices[0]) << endl;
+										for(int j = 0; j < 4; j++){
+											cout << "jet " << j+1 << ": pt = " << PFJetPt->at(JetIndices[j]) << ", eta = " << PFJetEta->at(JetIndices[j]) << ", phi = " << PFJetPhi->at(JetIndices[j]) << endl;
+										}
+									}
+									else if(!globalOpt->Get("mainsel",false)){
+										cout << "jet 1: pt = " << PFJetPt->at(0) << ", eta = " << PFJetEta->at(0) << ", phi = " << PFJetPhi->at(0) << endl;
+										cout << "jet 2: pt = " << PFJetPt->at(1) << ", eta = " << PFJetEta->at(1) << ", phi = " << PFJetPhi->at(1) << endl;
+									}
+									else{
+										cout << "b-jet: pt = " << PFMainJetPt[1] << ", eta = " << PFMainJetEta[1] << ", phi = " << PFMainJetPhi[1] << endl;
+										cout << "jet: pt = " << PFMainJetPt[0] << ", eta = " << PFMainJetEta[0] << ", phi = " << PFMainJetPhi[0] << endl;
+									}
+								}
 							}
 						}
-						else{
-							htmp->Fill(st_base,w);
+						else if(vars[i]=="stlep"){//scalar sum of momenta for leptons
+							double st_base = MuonPt;
+							
+							if(globalOpt->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau ST
+								for(int t = 0; t < HPSTauPt->size(); t++){
+									if(!FakeTauGenDecision[t]) continue;
+									values[i].Fill(st_base + HPSTauPt->at(t),w*FakeTauWeight[t]);
+								}
+							}
+							else{
+								values[i].Fill(st_base + HPSTauPt->at(0),w);
+							}
+						}
+						else if(vars[i]=="stjet"){//scalar sum of momenta for jets
+							double st_base = 0;
+							if(globalOpt->Get("lqd321sel",false)) st_base = PFJetPt->at(BJetIndices[0]) + PFJetPt->at(JetIndices[0]) + PFJetPt->at(JetIndices[1]) + PFJetPt->at(JetIndices[2]) + PFJetPt->at(JetIndices[3]);
+							else if(!globalOpt->Get("mainsel",false)) st_base = PFJetPt->at(0) + PFJetPt->at(1);
+							else st_base = PFMainJetPt[0] + PFMainJetPt[1];
+							
+							if(globalOpt->Get("calcfaketau",false)){ //data-driven shape estimation for fake tau ST
+								for(int t = 0; t < HPSTauPt->size(); t++){
+									if(!FakeTauGenDecision[t]) continue;
+									values[i].Fill(st_base,w*FakeTauWeight[t]);
+								}
+							}
+							else{
+								values[i].Fill(st_base,w);
+							}
+						}
+						else if(vars[i]=="st_alt"){//scalar sum of momenta (alfredo's weird definition)
+							double st = MuonPt + HPSTauPt->at(0);
+							if(PFMainJetCSVBTag[0]>0.244) st += PFMainJetPt[0];
+							if(PFMainJetCSVBTag[1]>0.244) st += PFMainJetPt[1];
+							values[i].Fill(st,w);
+						}
+						else if(vars[i]=="strpv"){//scalar sum of momenta for RPV - varying # objects based on selection, computed in Cut()
+							values[i].Fill(ST_rpv,w);
+						}
+						else { //if it's a histogram with no known variable or calculation, do nothing
 						}
 					}
-					else if(stmp=="st_alt"){//scalar sum of momenta (alfredo's weird definition)
-						double st = MuonPt + HPSTauPt->at(0);
-						if(PFMainJetCSVBTag[0]>0.244) st += PFMainJetPt[0];
-						if(PFMainJetCSVBTag[1]>0.244) st += PFMainJetPt[1];
-						htmp->Fill(st,w);
+					
+					//now fill the histogram
+					if(vars.size()==1){
+						for(int ix = 0; ix < values[0].GetSize(); ix++){
+							htmp->Fill(values[0].GetValue(ix), values[0].GetWeight(ix));
+						}
 					}
-					else if(stmp=="strpv"){//scalar sum of momenta for RPV - varying # objects based on selection, computed in Cut()
-						htmp->Fill(ST_rpv,w);
+					else if(vars.size()==2){
+						TH2* htmp2 = (TH2*)htmp; //need to cast to TH2 in order to use Fill(x,y,w)
+						//these three cases allow for various x vs. y comparisons: same # entries per event, or 1 vs. N per event
+						if(values[0].GetSize()==values[1].GetSize()) {
+							for(int i = 0; i < values[0].GetSize(); i++){
+								htmp2->Fill(values[0].GetValue(i), values[1].GetValue(i), values[0].GetWeight(i)); //pick the x weight by default
+							}
+						}
+						else if(values[0].GetSize()==1){
+							for(int iy = 0; iy < values[1].GetSize(); iy++){
+								htmp2->Fill(values[0].GetValue(0), values[1].GetValue(iy), values[1].GetWeight(iy));
+							}
+						}
+						else if(values[1].GetSize()==1){
+							for(int ix = 0; ix < values[0].GetSize(); ix++){
+								htmp2->Fill(values[0].GetValue(ix), values[1].GetValue(0), values[0].GetWeight(ix));
+							}
+						}
 					}
-					else { //if it's a histogram with no known variable or calculation, do nothing
+					else { //no support for other # of vars
 					}
 				}
 			}
@@ -875,6 +933,8 @@ class KBuilder : public TreeClass {
 					//get histo name
 					stmp = sit->first;
 					htmp = sit->second;
+					
+					if(htmp->GetDimension()==2) continue; //not implemented for 2D histos yet
 					
 					//temporary histo to calculate error correctly when adding overflow bin to last bin
 					TH1* otmp = (TH1*)htmp->Clone();

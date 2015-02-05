@@ -144,10 +144,11 @@ class KBase {
 				htmp->SetBinError(b,htmp->GetBinError(b)/htmp->GetBinWidth(b));
 			}
 		}
-		//check if this name matches a given string for some special status
-		virtual KBase* CheckSpecial(string special){
-			if(name==special) return this;
-			return NULL;
+		//in case of normalization to yield or other scaling
+		virtual void Normalize(double nn, bool toYield=true){
+			double simyield = htmp->Integral(0,htmp->GetNbinsX()+1);
+			if(toYield) htmp->Scale(nn/simyield);
+			else htmp->Scale(nn);
 		}
 
 		//other virtual functions (unimplemented at this level)
@@ -155,8 +156,8 @@ class KBase {
 		virtual void GetLegendInfo(KLegend* kleg) {}
 		virtual void AddToLegend(TLegend* leg) {}
 		virtual void AddChild(KBase* ch) {}
-		virtual void Normalize(double nn, bool toYield=true) {}
-		virtual void SetAddExt(bool ae) { }
+		virtual void SetAddExt(bool ae) {}
+		virtual void Build(TH1* hrat_) {}
 		
 	protected:
 		//member variables
@@ -209,12 +210,7 @@ class KBaseMC : public KBase {
 		
 		//functions for histo creation
 		virtual void Build(); //implemented in KBuilder.h to avoid circular dependency
-		//in case of normalization to yield or other scaling
-		virtual void Normalize(double nn, bool toYield=true){
-			double simyield = htmp->Integral(0,htmp->GetNbinsX()+1);
-			if(toYield) htmp->Scale(nn/simyield);
-			else htmp->Scale(nn);
-		}
+
 };
 
 //-------------------------------------------
