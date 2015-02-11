@@ -5,7 +5,6 @@
 #include "KMap.h"
 #include "KLegend.h"
 #include "KBase.h"
-#include "KHelper.h"
 
 //ROOT headers
 #include <TROOT.h>

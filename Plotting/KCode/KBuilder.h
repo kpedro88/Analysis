@@ -4,7 +4,8 @@
 
 //custom headers
 #include "KMap.h"
-#include "KHelper.h"
+#include "KMath.h"
+#include "KParser.h"
 #include "KBase.h"
 #include "TreeClass.h"
 
@@ -524,7 +525,7 @@ class KBuilder : public TreeClass {
 					htmp = sit->second;
 					//split up histo variable names
 					vector<string> vars;
-					KText::process(stmp,'_',vars);
+					KParser::process(stmp,'_',vars);
 					vector<KValue> values(vars.size());
 					//if(jentry%10000==0) cout << stmp << " TH" << vars.size() << " " << jentry;
 				

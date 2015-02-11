@@ -2,6 +2,7 @@
 #define KMANAGER_H
 
 //custom headers
+#include "KParser.h"
 #include "KSet.h"
 #include "KPlot.h"
 #include "KLegend.h"
@@ -20,17 +21,37 @@
 
 using namespace std;
 
-//forward declaration of parser
-class KParser;
-
 //------------------------------------------
 //class to manage all objects and draw plots
 class KManager {
 	public:
-		friend class KParser;
 		//constructor
-		KManager() : input(""),treedir("tree"),MyParser(0),MyRatio(0),globalOpt(0),s_numer(""),s_denom(""),s_yieldref(""),numer(0),denom(0),yieldref(0),doPrint(false),varbins(0),nbins(0),parsed(false) {}
-		KManager(string in, string dir="tree"); //implemented in KParser.h to avoid circular dependency
+		KManager() : input(""),treedir("tree"),MyRatio(0),globalOpt(0),s_numer(""),s_denom(""),s_yieldref(""),numer(0),denom(0),yieldref(0),doPrint(false),varbins(0),nbins(0),parsed(false) {}
+		KManager(string in, string dir="tree")  : input(in),treedir(dir),globalOpt(0),numer(0),denom(0),yieldref(0),doPrint(false),varbins(0),nbins(0),parsed(false) {
+			//parse most initializations based on text input
+			globalOpt = new OptionMap();
+			//store treedir in global options
+			globalOpt->Set("treedir",treedir);
+			Parse();
+			
+			//final checks and initializations
+			int prcsn;
+			if(globalOpt->Get("yieldprecision",prcsn)) cout << fixed << setprecision(prcsn);
+			MyRatio = new KSetRatio(NULL,globalOpt);
+			if(globalOpt->Get("calcfaketau",false)) FakeTauEstimationInit();
+			//store correction root files centrally
+			//todo: make file location and histo name configurable
+			if(globalOpt->Get("pucorr",true)) {
+				TFile* pufile = new TFile("corrections/puWeightsLQ.root","READ"); //puWeights
+				TH1F* puWeights = (TH1F*)pufile->Get("pileup");
+				globalOpt->Set("puWeights",puWeights);
+			}
+			if(globalOpt->Get("mucorr",true)) {
+				TFile* mufile = new TFile("corrections/muIDTight.root","READ"); //puWeights
+				TH1F* muIDTight = (TH1F*)mufile->Get("muIDTight");
+				globalOpt->Set("muIDTight",muIDTight);
+			}
+		}
 		//destructor
 		virtual ~KManager() {}
 		virtual void FakeTauEstimationInit(){
@@ -47,6 +68,100 @@ class KManager {
 				globalOpt->Set("tfr_mc",tfr_mc);
 			}
 		}
+		//parse input file
+		bool Parse(){
+			string intype;
+			string line;
+			ifstream infile(input.c_str());
+			if(infile.is_open()){
+				while(getline(infile,line)){
+					//skip commented lines
+					if(line[0]=='#') continue;
+					//skip blank lines
+					if(line.size()<2) continue;
+					
+					//check for carriage returns (not allowed)
+					if(line[line.size()-1]=='\r') {
+						cout << "Carriage return detected. Please run:" << endl;
+						cout << "dos2unix " << input << endl;
+						cout << "and then try again." << endl;
+						return false;
+					}
+					
+					//check for input type
+					if(line.compare(0,6,"OPTION")==0) { intype = "OPTION"; continue; }
+					else if(line.compare(0,3,"SET")==0) { intype = "SET"; continue; }
+					else if(line.compare(0,7,"HISTO2D")==0) { intype = "HISTO2D"; continue; }
+					else if(line.compare(0,5,"HISTO")==0) { intype = "HISTO"; continue; }
+					
+					//otherwise, process line according to input type
+					if(intype=="OPTION") KParser::processOption(line,globalOpt);
+					else if(intype=="SET") processSet(line);
+					else if(intype=="HISTO2D") processHisto(line,2);
+					else if(intype=="HISTO") processHisto(line,1);
+				}
+				parsed = true;
+			}
+			else {
+				cout << "Input error: could not open input file \"" << input << "\"." << endl;
+				parsed = false;
+			}
+			return parsed;
+		}
+		void processSet(string line){
+			//cout << line << endl;
+			int indent = 0;
+			while(line[0]=='\t'){
+				line.erase(0,1);
+				indent++;
+			}
+
+			//create set from input
+			KBase* tmp = KParser::processBase(line,globalOpt);
+			
+			//debug: print the contents of curr_sets
+			/*map<int,KBase*>::iterator dit;
+			for(dit = curr_sets.begin(); dit != curr_sets.end(); dit++){
+				cout << dit->second->GetName() << ", ";
+			}
+			cout << endl;*/
+
+			if(tmp){
+				//check corner cases for indent
+				if(indent==0 && line.compare(0,4,"base")==0){
+					cout << "Input error: base must have a parent set! This input will be ignored." << endl;
+					return;
+				}
+				else if(indent>0){
+					map<int,KBase*>::iterator it = curr_sets.find(indent-1);
+					if(it == curr_sets.end()){
+						cout << "Input error: no parent can be identified for the set " << tmp->GetName() << "! There may be too many indents, or the parent was not input properly. This input will be ignored." << endl;
+						return;
+					}
+				}
+				
+				//reset entries in the map of current sets that have higher (or equal) indents vs. current line
+				map<int,KBase*>::iterator it = curr_sets.lower_bound(indent);
+				curr_sets.erase(it,curr_sets.end());
+			
+				//store and add to parent set
+				curr_sets[indent] = tmp;
+				if(indent==0) MySets.push_back(curr_sets[indent]); //add top-level set to manager
+				else {
+					curr_sets[indent-1]->AddChild(tmp);
+					//cout << curr_sets[indent-1]->GetName() << "->AddChild(" << tmp->GetName() << ")" << endl;
+				}
+			}
+		}
+		void processHisto(string line, int dim){
+			pair<string,OptionMap*> tmp = KParser::processNamed(line);
+			
+			//keep track of histo dimension
+			tmp.second->Set("dimension",dim);
+			
+			//store local plot options for later use
+			MyPlotOptions.Add(tmp.first,tmp.second);
+		}		
 		//where the magic happens
 		void DrawPlots(){
 			//do everything
@@ -377,13 +492,10 @@ class KManager {
 				cout << it->first /*<< ": " << it->second->value*/ << endl;
 			}
 		}
-		KParser* GetParser() { return MyParser; }
-
 		
 	private:
 		//member variables
 		string input, treedir;
-		KParser* MyParser;
 		PlotMap MyPlots;
 		PlotMapMap MyPlots2D;
 		OptionMapMap MyPlotOptions;
