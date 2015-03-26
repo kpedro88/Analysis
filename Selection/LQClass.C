@@ -7,11 +7,14 @@
 #include <TMath.h>
 #include <cmath>
 #include <iostream>
+#include <iomanip>
 #include <algorithm>
 #include <sstream>
 #include <unistd.h> //for sleep
 
 using namespace std;
+
+#define nCtr 6
 
 //----------------
 //helper functions
@@ -386,7 +389,7 @@ Bool_t LQClass::MuonSelectionSecond(double pt){
 		goodMuon &= (m != theGoodMuon) //different muon
 		&& (MuonCharge->at(m) != MuonCharge->at(theGoodMuon)) //opposite charge
 		//&& (fabs(MuonBestTrackVtxDistZ->at(m) - muonZPV) < 0.2); //same vertex
-		&& (MuonVtxIndex->at(m) == MuonVtxIndex->at(theGoodMuon)); //same vertex
+		&& (MuonBestTrackVtxIndex->at(m) == MuonBestTrackVtxIndex->at(theGoodMuon)); //same vertex
 		
 		//if it passed, store it
 		if(goodMuon) goodMuons.push_back(m);
@@ -632,7 +635,7 @@ Bool_t LQClass::GenSelectionB(){
 	return true;
 }
 
-Bool_t LQClass::Cut()
+Bool_t LQClass::Cut(int s)
 {
 // This function may be called from Loop. It uses whatever tree entry is currently loaded.
 // returns true if entry is accepted.
@@ -658,12 +661,12 @@ Bool_t LQClass::Cut()
 	
 	//selType is a member variable of the class, set in Loop() before calling Cut()
 	if(selType=="main") { //preselection/main selection
-		goodEvent = HLTSelection()
-				 && MuonSelection()
-				 && MuonVetoOS()
-				 && VertexQuality()
-				 && ElectronVeto()
-				 && TauSelection(1)
+		goodEvent = (HLTSelection() && ++ctr[s][0])
+				 && (MuonSelection() && ++ctr[s][1])
+				 && (MuonVetoOS() && ++ctr[s][2])
+				 && (VertexQuality() && ++ctr[s][3])
+				 && (ElectronVeto() && ++ctr[s][4])
+				 && (TauSelection(1) && ++ctr[s][5])
 				 && JetSelection()
 				 && GenSelection();
 	}
@@ -709,11 +712,11 @@ Bool_t LQClass::Cut()
 				 && GenSelection();
 	}
 	else if(selType=="zjets") { //z+jet selection for tau fake rate
-		goodEvent = HLTSelection()
-				 && MuonSelection()
-				 && VertexQuality()
-				 && MuonSelectionSecond() //select a second OS muon for Z->mumu
-				 && TauSelection(-1,0) //tau isolation not required, use either-sign events
+		goodEvent = (HLTSelection() && ++ctr[s][0])
+				 && (MuonSelection() && ++ctr[s][1])
+				 && (MuonSelectionSecond() && ++ctr[s][2]) //select a second OS muon for Z->mumu
+				 && (VertexQuality() && ++ctr[s][3])
+				 && (TauSelection(-1,0) && ++ctr[s][5]) //tau isolation not required, use either-sign events
 				 && JetSelection(-1) //check jet separation from ALL good taus
 				 && GenSelection();
 	}
@@ -727,13 +730,13 @@ Bool_t LQClass::Cut()
 				 && GenSelection();
 	}
 	else if(selType=="anti-iso"){ //anti-isolated sample for fake tau yield
-		goodEvent = HLTSelection()
-				 && MuonSelection()
-				 && MuonVetoOS()
-				 && VertexQuality()
-				 && ElectronVeto()
+		goodEvent = (HLTSelection() && ++ctr[s][0])
+				 && (MuonSelection() && ++ctr[s][1])
+				 && (MuonVetoOS() && ++ctr[s][2])
+				 && (VertexQuality() && ++ctr[s][3])
+				 && (ElectronVeto() && ++ctr[s][4])
 				 && TauSelection(-1) //no iso req for taus (anti-iso req applied when plotting)
-				 && TauIsoVeto()
+				 && (TauIsoVeto() && ++ctr[s][5])
 				 && JetSelection(-1) //check jet separation from ALL good taus
 				 && GenSelection();
 	}
@@ -887,6 +890,9 @@ void LQClass::Loop()
 	double           s_MassMuonJet;
 	double           s_PtMuonJet;	
 	
+	//setup ctr
+	ctr = vector<vector<int> >(selTypes.size(),vector<int>(nCtr,0));
+	
 	//open file and output tree
 	vector<TFile*> out_file(outNames.size(),NULL);
 	vector<TTree*> s_tree(selTypes.size(),NULL);
@@ -989,7 +995,7 @@ void LQClass::Loop()
 			if(fields.size()>1) uncType = fields[1];
 			else uncType = "";
 			
-			cutResult[s] = Cut();
+			cutResult[s] = Cut(s);
 			if(!cutResult[s]) continue;
 			
 			//-------------------------------------------------------
@@ -1181,6 +1187,14 @@ void LQClass::Loop()
 		if(nEventProc) nEventProc->Write();
 		s_tree[s]->Write();
 		out_file[s]->Close();
+		
+		//output yields
+		string yieldnames[nCtr] = {"HLT","Muon","SecondMuonVeto","Vertex","ElectronVeto","Tau"};
+		cout << selTypes[s] << ":" << endl;
+		cout << fixed << setprecision(2);
+		for(int i = 0; i < nCtr; i++){
+			cout << yieldnames[i] << ": " << ((double)ctr[s][i])/((double)nentries)*100 << endl;
+		}
 	}
 	
 	if(doBatch) sleep(30);

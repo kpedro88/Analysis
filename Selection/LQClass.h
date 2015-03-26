@@ -43,6 +43,7 @@ class LQClass : public NtupleClass {
 		vector<double> PFJetEnergyOrig;
 		vector<double> HPSTauPtOrig;
 		double         s_MuonMass, s_TauMass;
+		vector<vector<int> > ctr;
 		
 		LQClass(TTree* tree, TH1* nEventProc_, int motherId_) : NtupleClass(tree), nEventProc(nEventProc_), doBatch(false), motherId(motherId_) { 
 			//PDG mass values in GeV
@@ -50,7 +51,7 @@ class LQClass : public NtupleClass {
 			double s_TauMass = 1.77682;	
 		}
 		virtual ~LQClass() {}
-		Bool_t Cut();
+		Bool_t Cut(int s);
 		void StoreOrigVars();
 		void RestoreOrigVars();
 		void TauES(bool up);

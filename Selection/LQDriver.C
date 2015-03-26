@@ -33,7 +33,8 @@ void LQDriver(string infile, string treedir="tree",string selType="",bool doBatc
 	//open input file, get tree and nevents histo
 	string fpre = "";
 	if(infile.substr(0,7)!="rpvstop") fpre = "skim_";
-	string fname = "~/hadoop/LQ2012-v4/" + fpre + infile + ".root";
+//	string fname = "~/hadoop/LQ2012-v4/" + fpre + infile + ".root";
+	string fname = "/uscms_data/d3/pedrok/LQ2012/ntuple/" + fpre + infile + ".root";
 	TFile *file;
 	file = TFile::Open(fname.c_str());
 	if (!file || !file->IsOpen()) {
