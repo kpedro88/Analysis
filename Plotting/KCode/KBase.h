@@ -49,7 +49,7 @@ class KBase {
 			if(localOpt->Get("filename",filename)){
 				if(globalOpt->Get("treedir",treedir)) { //get directory from global
 					filename = treedir + "/" + filename;
-					localOpt->Set("filename",filename); //store full filename for future use
+					//localOpt->Set("filename",filename); //*don't* store full filename for future use
 				}
 				//open file
 				file = TFile::Open(filename.c_str());
@@ -272,6 +272,40 @@ class KBaseExt : public KBase {
 	private:
 		//member variables
 		bool add_ext;
+};
+
+//-------------------------------------------
+//extension of base class for skimmer
+class KBaseSkim : public KBase {
+	public:
+		//constructors
+		KBaseSkim() : KBase() {}
+		KBaseSkim(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KBase(name_, localOpt_, globalOpt_), nEventHist(0) {
+			//check for alternative root object location in file after base constructor runs (if file is open)
+			if(!file) return;
+			else if(tree){
+				nEventHist = (TH1F*)file->Get("nEventProc");
+			}
+			else {
+				TDirectory* td = 0;
+				file->GetObject("rootTupleTree",td);
+				if(td) { td->GetObject("tree",tree); td->GetObject("nEventProc",nEventHist); }
+			}			
+		}
+		
+		//extra accessors
+		TTree* GetTree() { return tree; }
+		TFile* GetFile() { return file; }
+		string GetFileName() {
+			string filename = "";
+			localOpt->Get("filename",filename);
+			return filename;
+		}
+		TH1F* GetNEventHist() { return (TH1F*)file->Get("nEventProc"); }
+		
+	private:
+		//member variables
+		TH1F* nEventHist;
 };
 
 //------------------------------------------------

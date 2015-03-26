@@ -153,7 +153,7 @@ namespace KParser {
 			else if(type=="color" || type=="c") addOption<Color_t>(option,name,val,isvector);
 		}
 	}
-	pair<string,OptionMap*> processNamed(string line){
+	KNamed processNamed(string line){
 		//tab separated input
 		vector<string> fields;
 		process(line,'\t',fields);

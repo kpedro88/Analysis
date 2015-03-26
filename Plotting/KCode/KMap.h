@@ -10,13 +10,10 @@
 //STL headers
 #include <string>
 #include <map>
+#include <vector>
+#include <utility>
 
 using namespace std;
-
-//------------------------------------------------------
-//unimplemented default for special map class
-//template <class T>
-//class KMap;
 
 //------------------------------------------------------
 //special map class with key=string and optimized insert
@@ -166,14 +163,18 @@ class OptionMap : public KMap<KOpt*> {
 
 
 class KPlot;
-class KPlot2D;
+class KSelector;
+class KSelection;
+class KVariation;
+typedef pair<string, OptionMap*> KNamed;
 typedef map<string,KOpt*>::iterator OMit;
 typedef map<string,TH1*>::iterator HMit;
 typedef map<string,THStack*>::iterator SMit;
 typedef map<string,TGraphAsymmErrors*>::iterator EMit;
 typedef map<string,KPlot*>::iterator PMit;
 typedef map<string,OptionMap*>::iterator OMMit;
-typedef map<string,KPlot2D*>::iterator P2Mit;
+typedef map<string,KSelector*>::iterator SrMit;
+typedef map<string,KSelection*>::iterator SnMit;
 typedef KMap<TH1*> HistoMap;
 typedef KMap<THStack*> StackMap;
 typedef KMap<TGraphAsymmErrors*> ErrorMap;
@@ -181,5 +182,8 @@ typedef KMap<KPlot*> PlotMap;
 typedef KMap<OptionMap*> OptionMapMap;
 typedef KMap<PlotMap*> PlotMapMap;
 typedef map<string,PlotMap*>::iterator PMMit;
+typedef KMap<string,KSelector*> SelectorMap;
+typedef KMap<string,KSelection*> SelectionMap;
+typedef KMap<string,KVariation*> VariationMap;
 
 #endif

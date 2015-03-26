@@ -589,6 +589,7 @@ namespace KParser {
 			if(subtype=="ext") tmp = new KBaseExt(name,omap,globalOpt);
 			else if(subtype=="data") tmp = new KBaseData(name,omap,globalOpt); 
 			else if(subtype=="mc") tmp = new KBaseMC(name,omap,globalOpt);
+			else if(subtype=="skim") tmp = new KBaseSkim(name,omap,globalOpt);
 		}
 		else {
 			if(type=="hist" && subtype=="data") tmp = new KSetData(name,omap,globalOpt);

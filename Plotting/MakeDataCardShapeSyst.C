@@ -2,7 +2,7 @@
 #include <TFile.h>
 #include <TH1.h>
 
-#include "KDriverShapeSyst.C"
+#include "KPlotDriverShapeSyst.C"
 
 #include <string>
 #include <sstream>
@@ -105,7 +105,7 @@ void AllSyst(bool do_rpv=0){
 		if(syst[i].size()>0) us = "_";
 		string dir = "tree_main" + us + syst[i];
 		string oname = opre + us + syst[i];
-		KDriverShapeSyst(dir,inFile,oname);
+		KPlotDriverShapeSyst(dir,inFile,oname);
 		
 		string fname = oname + ".root";
 		MakeDataCardShapeSyst(fname,dirname,syst[i],do_rpv);
