@@ -33,7 +33,6 @@ class KMap {
 			//key_comp: false if name >= key, true if name < key
 			if(lb != table.end() && !(table.key_comp()(name,lb->first))){
 				//overwrite existing object
-				delete lb->second;
 				lb->second = obj;
 			}
 			else{
@@ -182,8 +181,6 @@ typedef KMap<KPlot*> PlotMap;
 typedef KMap<OptionMap*> OptionMapMap;
 typedef KMap<PlotMap*> PlotMapMap;
 typedef map<string,PlotMap*>::iterator PMMit;
-typedef KMap<string,KSelector*> SelectorMap;
-typedef KMap<string,KSelection*> SelectionMap;
-typedef KMap<string,KVariation*> VariationMap;
+typedef KMap<KSelector*> SelectorMap;
 
 #endif

@@ -20,17 +20,17 @@ class KSkimmer;
 class KVariator {
 	public:
 		//constructor
-		KVariator() : name(""), localOpt(0), skimmer(0) {
+		KVariator() : name(""), localOpt(0), sk(0) {
 			//must always have local option map
 			if(localOpt==0) localOpt = new OptionMap();
 		}
-		KVariator(string name_, OptionMap* localOpt_) : name(name_), localOpt(localOpt_), skimmer(0) {
+		KVariator(string name_, OptionMap* localOpt_) : name(name_), localOpt(localOpt_), sk(0) {
 			//must always have local option map
 			if(localOpt==0) localOpt = new OptionMap();
 		}
 		//accessors
 		string GetName() { return name; }
-		void SetSkimmer(KSkimmer* skimmer_) { skimmer = skimmer_; }
+		void SetSkimmer(KSkimmer* sk_) { sk = sk_; }
 		//functions
 		virtual void DoVariation() {}
 		virtual void UndoVariation() {}
@@ -39,7 +39,7 @@ class KVariator {
 		//member variables
 		string name;
 		OptionMap* localOpt;
-		KSkimmer* skimmer;
+		KSkimmer* sk;
 };
 
 //----------------------------------------------------------------
@@ -56,10 +56,15 @@ class KVariation {
 		void AddVariator(KVariator* var_){
 			variatorList.push_back(var_);
 			for(unsigned s = 0; s < variatorList.size(); s++){
-				variatorList[s]->SetSkimmer(skimmer_);
+				variatorList[s]->SetSkimmer(skimmer);
 			}
 		}
-		void SetSkimmer(KSkimmer* skimmer_){ skimmer = skimmer_; }
+		void SetSkimmer(KSkimmer* skimmer_){ 
+			skimmer = skimmer_;
+			for(unsigned v = 0; v < variatorList.size(); v++){
+				variatorList[v]->SetSkimmer(skimmer_);
+			}
+		}
 		void DoVariation() {
 			for(unsigned v = 0; v < variatorList.size(); v++){
 				variatorList[v]->DoVariation();

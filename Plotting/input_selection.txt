@@ -11,12 +11,12 @@ int:yieldprecision[2]
 SELECTION
 main
 	EventInfo
-	HLT
+	HLT	s:HLTLine[HLT_IsoMu24]
 	Muon
 	SecondMuon	b:dummy[1]
 	SecondMuonVeto	b:OppositeSign[1]
 	Vertex
-	ElectronVeto
+	ElectronVeto	b:OppositeSign[1]
 	Tau
 	Jet
 	GenTau
@@ -24,60 +24,59 @@ main
 	MET
 ttbar
 	EventInfo
-	HLT
+	HLT	s:HLTLine[HLT_IsoMu24]
 	Muon
 	SecondMuon	b:dummy[1]
 	SecondMuonVeto	b:OppositeSign[1]
 	Vertex
-	ElectronVeto
-	Tau	i:IsoOption[-1] i:ChargeSign[1]
+	ElectronVeto	b:OppositeSign[1]
+	Tau	i:IsoOption[-1]	i:ChargeSign[1]
 	Jet
 	GenTau
 	GenChargino
 	MET
 zjets
 	EventInfo
-	HLT
+	HLT	s:HLTLine[HLT_IsoMu24]
 	Muon
 	SecondMuon
 	Vertex
-	ElectronVeto
-	Tau	i:IsoOption[-1] i:ChargeSign[0]
-	Jet i:nTau[-1]
+	Tau	i:IsoOption[-1]	i:ChargeSign[0]
+	Jet	i:nTau[-1]
 	GenTau
 	GenChargino
 	MET
 anti-iso
 	EventInfo
-	HLT
+	HLT	s:HLTLine[HLT_IsoMu24]
 	Muon
 	SecondMuon	b:dummy[1]
 	SecondMuonVeto	b:OppositeSign[1]
 	Vertex
-	ElectronVeto
-	Tau	i:IsoOption[-1] b:IsoVeto[1]
-	Jet i:nTau[-1]
+	ElectronVeto	b:OppositeSign[1]
+	Tau	i:IsoOption[-1]	b:IsoVeto[1]
+	Jet	i:nTau[-1]
 	GenTau
 	GenChargino
 	MET
 
 VARIATION
 TauESUp
-	TauES b:up[1]
+	TauES	b:up[1]
 TauESDown
-	TauES b:up[0]
+	TauES	b:up[0]
 TauERUp
-	TauER b:up[1]
+	TauER	b:up[1]
 TauERDown
-	TauER b:up[0]
+	TauER	b:up[0]
 JESUp
-	JetES b:up[1]
+	JetES	b:up[1]
 JESDown
-	JetES b:up[0]
+	JetES	b:up[0]
 JERUp
-	JetER b:up[1]
+	JetER	b:up[1]
 JERDown
-	JetER b:up[0]
+	JetER	b:up[0]
 
 SET
 base	skim	SingleMu_A	s:filename[skim_SingleMu_A_190456_208686_muTau.root]

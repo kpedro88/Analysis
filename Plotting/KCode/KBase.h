@@ -158,6 +158,10 @@ class KBase {
 		virtual void AddChild(KBase* ch) {}
 		virtual void SetAddExt(bool ae) {}
 		virtual void Build(TH1* hrat_) {}
+		virtual TTree* GetTree() { return (TTree*)NULL; }
+		virtual TFile* GetFile() { return (TFile*)NULL; }
+		virtual string GetFileName() { return ""; }
+		virtual TH1F* GetNEventHist() { return (TH1F*)NULL; }
 		
 	protected:
 		//member variables
@@ -301,7 +305,7 @@ class KBaseSkim : public KBase {
 			localOpt->Get("filename",filename);
 			return filename;
 		}
-		TH1F* GetNEventHist() { return (TH1F*)file->Get("nEventProc"); }
+		TH1F* GetNEventHist() { return nEventHist; }
 		
 	private:
 		//member variables

@@ -17,7 +17,7 @@ using namespace std;
 
 //----------------------------------------------------
 //variation of tau energy scale
-KTauESVariator : public KVariator {
+class KTauESVariator : public KVariator {
 	public:
 		//constructor
 		KTauESVariator() : KVariator() { }
@@ -30,7 +30,7 @@ KTauESVariator : public KVariator {
 		//functions
 		virtual void DoVariation() {
 			delete HPSTauPt; HPSTauPt = new vector<double>();
-			HPSTauPt.reserve(sk->HPSTauPt->size());
+			HPSTauPt->reserve(sk->HPSTauPt->size());
 			double unc = 0.03;
 			
 			for(unsigned t = 0; t < sk->HPSTauPt->size(); t++){
@@ -61,7 +61,7 @@ KTauESVariator : public KVariator {
 
 //----------------------------------------------------
 //variation of tau energy resolution
-KTauERVariator : public KVariator {
+class KTauERVariator : public KVariator {
 	public:
 		//constructor
 		KTauERVariator() : KVariator() { }
@@ -74,7 +74,8 @@ KTauERVariator : public KVariator {
 		//functions
 		virtual void DoVariation() {			
 			delete HPSTauPt; HPSTauPt = new vector<double>();
-			HPSTauPt.reserve(sk->HPSTauPt->size());
+			HPSTauPt->reserve(sk->HPSTauPt->size());
+			double unc = 0.1;
 			
 			for(unsigned t = 0; t < sk->HPSTauPt->size(); t++){
 				//store original values
@@ -122,7 +123,7 @@ KTauERVariator : public KVariator {
 
 //----------------------------------------------------
 //variation of jet energy scale
-KJetESVariator : public KVariator {
+class KJetESVariator : public KVariator {
 	public:
 		//constructor
 		KJetESVariator() : KVariator() { }
@@ -135,9 +136,9 @@ KJetESVariator : public KVariator {
 		//functions
 		virtual void DoVariation() {
 			delete PFJetPt; PFJetPt = new vector<double>();
-			PFJetPt.reserve(sk->PFJetPt->size());
+			PFJetPt->reserve(sk->PFJetPt->size());
 			delete PFJetEnergy; PFJetEnergy = new vector<double>();
-			PFJetEnergy.reserve(sk->PFJetEnergy->size());
+			PFJetEnergy->reserve(sk->PFJetEnergy->size());
 			
 			for(unsigned j = 0; j < sk->PFJetPt->size(); j++){
 				//store original values
@@ -170,7 +171,7 @@ KJetESVariator : public KVariator {
 
 //----------------------------------------------------
 //variation of jet energy resolution
-KJetERVariator : public KVariator {
+class KJetERVariator : public KVariator {
 	public:
 		//constructor
 		KJetERVariator() : KVariator() { }
@@ -183,9 +184,9 @@ KJetERVariator : public KVariator {
 		//functions
 		virtual void DoVariation() {
 			delete PFJetPt; PFJetPt = new vector<double>();
-			PFJetPt.reserve(sk->PFJetPt->size());
+			PFJetPt->reserve(sk->PFJetPt->size());
 			delete PFJetEnergy; PFJetEnergy = new vector<double>();
-			PFJetEnergy.reserve(sk->PFJetEnergy->size());
+			PFJetEnergy->reserve(sk->PFJetEnergy->size());
 			
 			for(unsigned j = 0; j < sk->PFJetPt->size(); j++){
 				//store original values
@@ -198,7 +199,7 @@ KJetERVariator : public KVariator {
 				int index_gen = -1;
 
 				for (unsigned g = 0; g < sk->GenJetPt->size(); g++){
-					double dR = DeltaR(sk->PFJetPhi->at(j),sk->PFJetEta->at(j),sk->GenJetPhi->at(g),sk->GenJetEta->at(g));
+					double dR = KMath::DeltaR(sk->PFJetPhi->at(j),sk->PFJetEta->at(j),sk->GenJetPhi->at(g),sk->GenJetEta->at(g));
 					if(dR < min_dR) {
 						min_dR = dR;
 						index_gen = g;
@@ -211,7 +212,7 @@ KJetERVariator : public KVariator {
 					vj.SetPtEtaPhiE(sk->PFJetPt->at(j),sk->PFJetEta->at(j),sk->PFJetPhi->at(j),sk->PFJetEnergy->at(j));
 					vg.SetPtEtaPhiE(sk->GenJetPt->at(index_gen),sk->GenJetEta->at(index_gen),sk->GenJetPhi->at(index_gen),sk->GenJetEnergy->at(index_gen));
 					
-					vj = SmearJER(vj,vg,up);
+					vj = SmearJER(vj,vg);
 					sk->PFJetPt->at(j) = vj.Pt();
 					sk->PFJetEnergy->at(j) = vj.E();
 				}
@@ -247,19 +248,19 @@ KJetERVariator : public KVariator {
 };
 
 namespace KParser {
-	KVariator* processVariator(KNamed& tmp){
+	KVariator* processVariator(KNamed* tmp){
 		KVariator* vtmp = 0;
-		string vname = tmp.first;
-		OptionMap* omap = tmp.second;
+		string vname = tmp->first;
+		OptionMap* omap = tmp->second;
 		
 		//check for all known variators
-		if(uncType=="TauES") vtmp = new KTauESVariator(vname,omap);
-		else if(uncType=="TauER") vtmp = new KTauERVariator(vname,omap);
-		else if(uncType=="JES") vtmp = new KJetESVariator(vname,omap);
-		else if(uncType=="JER") vtmp = new KJetERVariator(vname,omap);
+		if(vname=="TauES") vtmp = new KTauESVariator(vname,omap);
+		else if(vname=="TauER") vtmp = new KTauERVariator(vname,omap);
+		else if(vname=="JES") vtmp = new KJetESVariator(vname,omap);
+		else if(vname=="JER") vtmp = new KJetERVariator(vname,omap);
 		else {} //skip unknown variators
 		
-		if(!vtmp) cout << "Input error: unknown variator " << sname << ". This variator will be skipped." << endl;
+		if(!vtmp) cout << "Input error: unknown variator " << vname << ". This variator will be skipped." << endl;
 
 		return vtmp;
 	}

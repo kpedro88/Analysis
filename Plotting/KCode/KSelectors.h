@@ -65,7 +65,7 @@ class KEventInfoSelector : public KSelector {
 	public:
 		//constructor
 		KEventInfoSelector() : KSelector() { }
-		KEventInfoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		KEventInfoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { canfail = false; }
 		
 		//accessors
 		virtual void SetTree(TTree* tree_) { 
@@ -81,11 +81,13 @@ class KEventInfoSelector : public KSelector {
 		}
 		
 		//set variable values for tree
-		virtual void Store() {
+		virtual bool Cut() {
 			run = sk->run;
 			ls = sk->ls;
 			event = sk->event;
 			trueNInteraction = sk->trueNInteraction;
+			
+			return true;
 		}
 		
 		//member variables
@@ -104,7 +106,7 @@ class KLeptonBaseSelector : public KSelector {
 		//ID functions
 		
 		//relative PF isolation
-		bool MuonIso(int m){
+		double MuonIso(int m){
 			return (sk->MuonPFIsoR04ChargedHadron->at(m) + max(sk->MuonPFIsoR04Photon->at(m) + sk->MuonPFIsoR04NeutralHadron->at(m) - 0.5*sk->MuonPFIsoR04PU->at(m),0.))/sk->MuonPt->at(m);
 		}		
 		
@@ -161,6 +163,7 @@ class KLeptonBaseSelector : public KSelector {
 		}
 		
 		//member variables
+		int theGoodLepton;
 		double Energy, Eta, Phi, Pt;
 		int Charge, VtxIndex, Multiplicity;
 		TLorentzVector LorentzVector;
@@ -196,40 +199,36 @@ class KMuonSelector : public KLeptonBaseSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() { 
-			theGoodMuons.clear(); theGoodMuon = -1;
+			theGoodLeptons.clear(); theGoodLepton = -1;
 			for(unsigned m = 0; m < sk->MuonPt->size(); m++){
 				//boolean to check requirements
 				bool goodMuon = MuonIDTight(m,30);
 				if(LooseNotTight) goodMuon = !goodMuon && MuonIDLoose(m,30);
 				
 				//if it passed, store it
-				if(goodMuon) theGoodMuons.push_back(m);
+				if(goodMuon) theGoodLeptons.push_back(m);
 			}
 			//skip event if there is not at least one good muon
-			if(theGoodMuons.size()<1) return false;
+			if(theGoodLeptons.size()<1) return false;
+			
+			//store leading muon (lowest index) and observables
+			theGoodLepton = theGoodLeptons[0];
+			Energy = sk->MuonEnergy->at(theGoodLepton);
+			Eta = sk->MuonEta->at(theGoodLepton);
+			Phi = sk->MuonPhi->at(theGoodLepton);
+			Pt = sk->MuonPt->at(theGoodLepton);
+			PFRelIsoTight = MuonIso(theGoodLepton);
+			Charge = sk->MuonCharge->at(theGoodLepton);
+			Multiplicity = theGoodLeptons.size();
+			VtxIndex = sk->MuonBestTrackVtxIndex->at(theGoodLepton);
+			LorentzVector.SetPtEtaPhiM(Pt,Eta,Phi,sk->MuonMass);
 			
 			return true;
 		}
 		
-		//set variable values for tree
-		virtual void Store() {
-			//store leading muon (lowest index) and observables
-			theGoodMuon = theGoodMuons[0];
-			Energy = sk->MuonEnergy->at(theGoodMuon);
-			Eta = sk->MuonEta->at(theGoodMuon);
-			Phi = sk->MuonPhi->at(theGoodMuon);
-			Pt = sk->MuonPt->at(theGoodMuon);
-			PFRelIsoTight = MuonIso(theGoodMuon);
-			Charge = sk->MuonCharge->at(theGoodMuon);
-			Multiplicity = theGoodMuons.size();
-			VtxIndex = sk->MuonBestTrackVtxIndex->at(theGoodMuon);
-			LorentzVector.SetPtEtaPhiM(Pt,Eta,Phi,sk->MuonMass);
-		}
-		
 		//member variables
 		bool LooseNotTight;
-		vector<int> theGoodMuons;
-		int theGoodMuon;
+		vector<int> theGoodLeptons;
 		double PFRelIsoTight;
 };
 
@@ -260,7 +259,7 @@ class KSecondMuonSelector : public KLeptonBaseSelector {
 		virtual void SetSelection(KSelection* sel_) {
 			sel = sel_;
 			//set dependencies here
-			FirstMuon = sel->Get("Muon");
+			FirstMuon = sel->Get<KLeptonBaseSelector*>("Muon");
 		} 
 		
 		//used for non-dummy selectors
@@ -268,48 +267,44 @@ class KSecondMuonSelector : public KLeptonBaseSelector {
 			//the first muon selector must be present for this to work
 			if(!FirstMuon) return false;
 			
-			theGoodMuons.clear(); theGoodMuon = -1;
+			theGoodLeptons.clear(); theGoodLepton = -1;
 			for(unsigned m = 0; m < sk->MuonPt->size(); m++){
 				//boolean to check requirements
-				bool goodMuon = MuonIDLoose(m,20);
+				bool goodMuon = MuonIDLoose(m,25);
 				
 				//comparison with leading muon
-				goodMuon &= (m != FirstMuon->theGoodMuon) //different muon
-				&& (sk->MuonCharge->at(m) != FirstMuon->Charge)) //opposite charge
+				goodMuon &= (m != FirstMuon->theGoodLepton) //different muon
+				&& (sk->MuonCharge->at(m) != FirstMuon->Charge) //opposite charge
 				&& (sk->MuonBestTrackVtxIndex->at(m) == FirstMuon->VtxIndex); //same vertex
 				
 				//if it passed, store it
-				if(goodMuon) theGoodMuons.push_back(m);
+				if(goodMuon) theGoodLeptons.push_back(m);
 			}
 			//skip event if there is not at least one good muon
-			if(theGoodMuons.size()<1) return false;
+			if(theGoodLeptons.size()<1) return false;
 			
-			return true;
-		}
-		
-		//set variable values for tree
-		virtual void Store() {
 			//store second muon (lowest index) and observables
-			theGoodMuon = theGoodMuons[0];
-			Energy = sk->MuonEnergy->at(theGoodMuon);
-			Eta = sk->MuonEta->at(theGoodMuon);
-			Phi = sk->MuonPhi->at(theGoodMuon);
-			Pt = sk->MuonPt->at(theGoodMuon);
-			PFRelIsoTight = MuonIso(theGoodMuon);
-			Charge = sk->MuonCharge->at(theGoodMuon);
-			Multiplicity = theGoodMuons.size();
+			theGoodLepton = theGoodLeptons[0];
+			Energy = sk->MuonEnergy->at(theGoodLepton);
+			Eta = sk->MuonEta->at(theGoodLepton);
+			Phi = sk->MuonPhi->at(theGoodLepton);
+			Pt = sk->MuonPt->at(theGoodLepton);
+			PFRelIsoTight = MuonIso(theGoodLepton);
+			Charge = sk->MuonCharge->at(theGoodLepton);
+			Multiplicity = theGoodLeptons.size();
 			
 			//store invariant mass of lepton system
 			LorentzVector.SetPtEtaPhiM(Pt,Eta,Phi,sk->MuonMass);
 			TLorentzVector v_mumu;
 			v_mumu = FirstMuon->LorentzVector + LorentzVector; //sum up
 			Mass = v_mumu.M();
+			
+			return true;
 		}
-		
+
 		//member variables
 		KLeptonBaseSelector* FirstMuon;
-		vector<int> theGoodMuons;
-		int theGoodMuon;
+		vector<int> theGoodLeptons;
 		double PFRelIsoTight, Mass;
 };
 
@@ -329,7 +324,7 @@ class KSecondMuonVetoSelector : public KLeptonBaseSelector {
 		virtual void SetSelection(KSelection* sel_) {
 			sel = sel_;
 			//set dependencies here
-			FirstMuon = sel->Get("Muon");
+			FirstMuon = sel->Get<KLeptonBaseSelector*>("Muon");
 		} 
 		
 		//used for non-dummy selectors
@@ -337,7 +332,7 @@ class KSecondMuonVetoSelector : public KLeptonBaseSelector {
 			//the first muon selector must be present for this to work
 			if(!FirstMuon) return false;
 			
-			for(unsigned m = 0; m < MuonPt->size(); m++){
+			for(unsigned m = 0; m < sk->MuonPt->size(); m++){
 				//boolean to check requirements
 				bool looseMuon = MuonIDLoose(m,20);
 				if(OppositeSign) looseMuon &= (FirstMuon->Charge != sk->MuonCharge->at(m));
@@ -370,7 +365,7 @@ class KMuonVetoSelector : public KLeptonBaseSelector {
 		virtual void SetSelection(KSelection* sel_) {
 			sel = sel_;
 			//set dependencies here
-			FirstElectron = sel->Get("Electron");
+			FirstElectron = sel->Get<KLeptonBaseSelector*>("Electron");
 		} 
 		
 		//used for non-dummy selectors
@@ -378,11 +373,11 @@ class KMuonVetoSelector : public KLeptonBaseSelector {
 			//the first electron selector must be present for this to work
 			if(!FirstElectron) return false;
 			
-			for(unsigned m = 0; m < MuonPt->size(); m++){
+			for(unsigned m = 0; m < sk->MuonPt->size(); m++){
 				//boolean to check requirements
 				bool goodMuon;
-				if(LooseID) goodMuon = MuonIDLoose(e,20);
-				else goodMuon = MuonIDTight(e,30);
+				if(LooseID) goodMuon = MuonIDLoose(m,20);
+				else goodMuon = MuonIDTight(m,30);
 
 				if(OppositeSign) goodMuon &= (FirstElectron->Charge != sk->MuonCharge->at(m));
 				
@@ -424,37 +419,33 @@ class KElectronSelector : public KLeptonBaseSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() { 
-			theGoodElectrons.clear(); theGoodElectron = -1;
+			theGoodLeptons.clear(); theGoodLepton = -1;
 			for(unsigned e = 0; e < sk->ElectronPt->size(); e++){
 				//boolean to check requirements
 				bool goodElectron = ElectronIDMedium(e,30);
 				
 				//if it passed, store it
-				if(goodElectron) theGoodElectrons.push_back(e);
+				if(goodElectron) theGoodLeptons.push_back(e);
 			}
 			//skip event if there is not at least one good muon
-			if(theGoodElectrons.size()<1) return false;
+			if(theGoodLeptons.size()<1) return false;
+			
+			//store leading electron (lowest index) and observables
+			theGoodLepton = theGoodLeptons[0];
+			Energy = sk->ElectronEnergy->at(theGoodLepton);
+			Eta = sk->ElectronEta->at(theGoodLepton);
+			Phi = sk->ElectronPhi->at(theGoodLepton);
+			Pt = sk->ElectronPt->at(theGoodLepton);
+			Charge = sk->ElectronCharge->at(theGoodLepton);
+			Multiplicity = theGoodLeptons.size();
+			VtxIndex = sk->ElectronVtxIndex->at(theGoodLepton);
+			LorentzVector.SetPtEtaPhiM(Pt,Eta,Phi,sk->ElectronMass);
 			
 			return true;
 		}
 		
-		//set variable values for tree
-		virtual void Store() {
-			//store leading electron (lowest index) and observables
-			theGoodElectron = theGoodElectrons[0];
-			Energy = sk->ElectronEnergy->at(theGoodElectron);
-			Eta = sk->ElectronEta->at(theGoodElectron);
-			Phi = sk->ElectronPhi->at(theGoodElectron);
-			Pt = sk->ElectronPt->at(theGoodElectron);
-			Charge = sk->ElectronCharge->at(theGoodElectron);
-			Multiplicity = theGoodElectrons.size();
-			VtxIndex = sk->ElectronVtxIndex->at(theGoodElectron);
-			LorentzVector.SetPtEtaPhiM(Pt,Eta,Phi,sk->ElectronMass);
-		}
-		
 		//member variables
-		vector<int> theGoodElectrons;
-		int theGoodElectron;
+		vector<int> theGoodLeptons;
 };
 
 //----------------------------------------------------
@@ -483,7 +474,7 @@ class KSecondElectronSelector : public KLeptonBaseSelector {
 		virtual void SetSelection(KSelection* sel_) {
 			sel = sel_;
 			//set dependencies here
-			FirstElectron = sel->Get("Electron");
+			FirstElectron = sel->Get<KLeptonBaseSelector*>("Electron");
 		} 
 		
 		//used for non-dummy selectors
@@ -491,47 +482,43 @@ class KSecondElectronSelector : public KLeptonBaseSelector {
 			//the first electron selector must be present for this to work
 			if(!FirstElectron) return false;
 			
-			theGoodElectrons.clear(); theGoodElectron = -1;
+			theGoodLeptons.clear(); theGoodLepton = -1;
 			for(unsigned e = 0; e < sk->ElectronPt->size(); e++){
 				//boolean to check requirements
 				bool goodElectron = ElectronIDLoose(e,20);
 				
 				//comparison with leading electron
-				goodElectron &= (e != FirstElectron->theGoodElectron) //different muon
-				&& (sk->ElectronCharge->at(e) != FirstElectron->Charge)) //opposite charge
+				goodElectron &= (e != FirstElectron->theGoodLepton) //different muon
+				&& (sk->ElectronCharge->at(e) != FirstElectron->Charge) //opposite charge
 				&& (sk->ElectronVtxIndex->at(e) == FirstElectron->VtxIndex); //same vertex
 				
 				//if it passed, store it
-				if(goodElectron) theGoodElectrons.push_back(e);
+				if(goodElectron) theGoodLeptons.push_back(e);
 			}
 			//skip event if there is not at least one good muon
-			if(theGoodElectrons.size()<1) return false;
+			if(theGoodLeptons.size()<1) return false;
 			
-			return true;
-		}
-		
-		//set variable values for tree
-		virtual void Store() {
 			//store second electron (lowest index) and observables
-			theGoodElectron = theGoodElectrons[0];
-			Energy = sk->ElectronEnergy->at(theGoodElectron);
-			Eta = sk->ElectronEta->at(theGoodElectron);
-			Phi = sk->ElectronPhi->at(theGoodElectron);
-			Pt = sk->ElectronPt->at(theGoodElectron);
-			Charge = sk->ElectronCharge->at(theGoodElectron);
-			Multiplicity = theGoodElectrons.size();
+			theGoodLepton = theGoodLeptons[0];
+			Energy = sk->ElectronEnergy->at(theGoodLepton);
+			Eta = sk->ElectronEta->at(theGoodLepton);
+			Phi = sk->ElectronPhi->at(theGoodLepton);
+			Pt = sk->ElectronPt->at(theGoodLepton);
+			Charge = sk->ElectronCharge->at(theGoodLepton);
+			Multiplicity = theGoodLeptons.size();
 			
 			//store invariant mass of lepton system
 			LorentzVector.SetPtEtaPhiM(Pt,Eta,Phi,sk->ElectronMass);
 			TLorentzVector v_elel;
 			v_elel = FirstElectron->LorentzVector + LorentzVector; //sum up
 			Mass = v_elel.M();
+			
+			return true;
 		}
 		
 		//member variables
 		KLeptonBaseSelector* FirstElectron;
-		vector<int> theGoodElectrons;
-		int theGoodElectron;
+		vector<int> theGoodLeptons;
 		double Mass;
 };
 
@@ -551,7 +538,7 @@ class KSecondElectronVetoSelector : public KLeptonBaseSelector {
 		virtual void SetSelection(KSelection* sel_) {
 			sel = sel_;
 			//set dependencies here
-			FirstElectron = sel->Get("Electron");
+			FirstElectron = sel->Get<KLeptonBaseSelector*>("Electron");
 		} 
 		
 		//used for non-dummy selectors
@@ -559,7 +546,7 @@ class KSecondElectronVetoSelector : public KLeptonBaseSelector {
 			//the first electron selector must be present for this to work
 			if(!FirstElectron) return false;
 			
-			for(unsigned e = 0; e < ElectronPt->size(); e++){
+			for(unsigned e = 0; e < sk->ElectronPt->size(); e++){
 				//boolean to check requirements
 				bool looseElectron = ElectronIDLoose(e,20);
 				if(OppositeSign) looseElectron &= (FirstElectron->Charge != sk->ElectronCharge->at(e));
@@ -592,7 +579,7 @@ class KElectronVetoSelector : public KLeptonBaseSelector {
 		virtual void SetSelection(KSelection* sel_) {
 			sel = sel_;
 			//set dependencies here
-			FirstMuon = sel->Get("Muon");
+			FirstMuon = sel->Get<KLeptonBaseSelector*>("Muon");
 		} 
 		
 		//used for non-dummy selectors
@@ -600,7 +587,7 @@ class KElectronVetoSelector : public KLeptonBaseSelector {
 			//the first muon selector must be present for this to work
 			if(!FirstMuon) return false;
 			
-			for(unsigned e = 0; e < ElectronPt->size(); e++){
+			for(unsigned e = 0; e < sk->ElectronPt->size(); e++){
 				//boolean to check requirements
 				bool goodElectron;
 				if(LooseID) goodElectron = ElectronIDLoose(e,20);
@@ -639,8 +626,8 @@ class KVertexSelector : public KSelector {
 		virtual void SetSelection(KSelection* sel_) {
 			sel = sel_;
 			//set dependencies here
-			FirstLepton = sel->Get("Muon");
-			if(!FirstLepton) FirstLepton = sel->Get("Electron");
+			FirstLepton = sel->Get<KLeptonBaseSelector*>("Muon");
+			if(!FirstLepton) FirstLepton = sel->Get<KLeptonBaseSelector*>("Electron");
 		}
 		
 		//used for non-dummy selectors
@@ -668,7 +655,6 @@ class KVertexSelector : public KSelector {
 			else if(!goodVtx) return false;
 			else return true;
 		}
-		//tree variable already stored
 		
 		//member variables
 		KLeptonBaseSelector* FirstLepton;
@@ -721,10 +707,10 @@ class KTauSelector : public KSelector {
 			sel = sel_;
 			//set dependencies here
 			FirstLeptonIsMuon = true;
-			FirstLepton = sel->Get("Muon");
-			if(!FirstLepton) { FirstLepton = sel->Get("Electron"); FirstLeptonIsMuon = false; }
-			SecondLepton = sel->Get("SecondMuon");
-			if(!SecondLepton) SecondLepton = sel->Get("SecondElectron");
+			FirstLepton = sel->Get<KLeptonBaseSelector*>("Muon");
+			if(!FirstLepton) { FirstLepton = sel->Get<KLeptonBaseSelector*>("Electron"); FirstLeptonIsMuon = false; }
+			SecondLepton = sel->Get<KLeptonBaseSelector*>("SecondMuon");
+			if(!SecondLepton) SecondLepton = sel->Get<KLeptonBaseSelector*>("SecondElectron");
 		} 
 		
 		//used for non-dummy selectors
@@ -735,7 +721,7 @@ class KTauSelector : public KSelector {
 			theGoodTaus.clear();
 			for(unsigned t = 0; t < sk->HPSTauPt->size(); t++){
 				double dR = KMath::DeltaR(FirstLepton->Phi,FirstLepton->Eta,sk->HPSTauPhi->at(t),sk->HPSTauEta->at(t));
-				double dR2 = (SecondLepton) ? KMath::DeltaR(SecondLepton->Phi,SecondLepton->Eta,sk->HPSTauPhi->at(t),sk->HPSTauEta->at(t)) : 100;
+				double dR2 = (SecondLepton && !SecondLepton->Dummy()) ? KMath::DeltaR(SecondLepton->Phi,SecondLepton->Eta,sk->HPSTauPhi->at(t),sk->HPSTauEta->at(t)) : 100;
 				
 				//boolean to check requirements
 				bool goodTau = (sk->HPSTauPt->at(t)>30) //pT cut in GeV
@@ -744,7 +730,7 @@ class KTauSelector : public KSelector {
 				&& ((IsoOption==-1 || sk->HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(t)==IsoOption)) //require loose isolation: 3Hits -> lower fake rate
 				&& (sk->HPSTauagainstElectronLooseMVA3->at(t)==1) //require loose electron-tau discrimination: MVA3 -> lower fake rate
 				//require tight (version 2) muon-tau discrimination for muons, loose (version 2) for electrons
-				&& ( (FirstLeptonIsMuon && sk->HPSTauagainstMuonTight2->at(t)==1) || (!FirstLeptonIsMuon && k->HPSTauagainstMuonLoose2->at(t)==1) )
+				&& ( (FirstLeptonIsMuon && sk->HPSTauagainstMuonTight2->at(t)==1) || (!FirstLeptonIsMuon && sk->HPSTauagainstMuonLoose2->at(t)==1) )
 				//comparison of leading lepton and tau
 				&& (dR > 0.5) //require dR > 0.5 with leading lepton
 				&& (dR2 > 0.5) //require dR > 0.5 with second lepton (if selected)
@@ -755,17 +741,12 @@ class KTauSelector : public KSelector {
 				if(goodTau){
 					//first check iso veto (for anti-iso region)
 					if(IsoVeto && sk->HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits->at(t)) return false;
-					goodTaus.push_back(t);
+					theGoodTaus.push_back(t);
 				}
 			}
 			//skip event if there is not at least one good tau
-			if(goodTaus.size()<1) return false;
+			if(theGoodTaus.size()<1) return false;
 			
-			return true;
-		}
-		
-		//set variable values for tree
-		virtual void Store() {
 			//reset variables
 			delete Et; Et = new vector<double>();
 			delete Eta; Eta = new vector<double>();
@@ -793,8 +774,10 @@ class KTauSelector : public KSelector {
 			v_tot = FirstLepton->LorentzVector + LorentzVector; //sum up
 			MassLepTau = v_tot.M();
 			PtLepTau = v_tot.Pt();
+			
+			return true;
 		}
-		
+
 		//member variables
 		int IsoOption, ChargeSign;
 		bool IsoVeto, FirstLeptonIsMuon;
@@ -814,7 +797,7 @@ class KGenTauSelector : public KSelector {
 	public:
 		//constructor
 		KGenTauSelector() : KSelector() { }
-		KGenTauSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		KGenTauSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { canfail = false; }
 		
 		//accessors
 		virtual void SetTree(TTree* tree_) { 
@@ -830,7 +813,7 @@ class KGenTauSelector : public KSelector {
 		virtual void SetSelection(KSelection* sel_) {
 			sel = sel_;
 			//set dependencies here
-			TheTau = sel->Get("Tau");
+			TheTau = sel->Get<KTauSelector*>("Tau");
 		}
 		virtual void SetSkimmer(KSkimmer* sk_) {
 			sk = sk_;
@@ -892,7 +875,7 @@ class KGenTauSelector : public KSelector {
 								FakeJet->at(t) = FakeBJet->at(t) = true; FakeLep->at(t) = Real->at(t) = false;
 							}
 							//check for tau PDGID
-							else if(fabs(GenParticlePdgId->at(goodGens[g]))==15){
+							else if(fabs(sk->GenParticlePdgId->at(goodGens[g]))==15){
 								Real->at(t) = true; FakeLep->at(t) = FakeJet->at(t) = FakeBJet->at(t) = false;
 							} 
 							//if none of these conditions are met, default assumption of jet faking tau will be kept
@@ -916,8 +899,8 @@ class KGenTauSelector : public KSelector {
 class KGenCharginoSelector : public KSelector {
 	public:
 		//constructor
-		KGenTauSelector() : KSelector() { }
-		KGenTauSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		KGenCharginoSelector() : KSelector() { }
+		KGenCharginoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { canfail = false; }
 		
 		//accessors
 		virtual void SetTree(TTree* tree_) { 
@@ -945,7 +928,6 @@ class KGenCharginoSelector : public KSelector {
 			
 			return true;
 		}
-		//tree variable already stored
 		
 		//member variables
 		int mother;
@@ -958,7 +940,7 @@ class KMETSelector : public KSelector {
 	public:
 		//constructor
 		KMETSelector() : KSelector() { }
-		KMETSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		KMETSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { canfail = false; }
 		
 		//accessors
 		virtual void SetTree(TTree* tree_) { 
@@ -973,11 +955,13 @@ class KMETSelector : public KSelector {
 		}
 		
 		//set variable values for tree
-		virtual void Store() {
-			PFMET = PFMET->at(0);
-			PFMETPatType1 = PFMETPatType1->at(0);
-			PFMETPhi = PFMETPhi->at(0);
-			PFMETPhiPatType1 = PFMETPhiPatType1->at(0);
+		virtual bool Cut() {
+			PFMET = sk->PFMET->at(0);
+			PFMETPatType1 = sk->PFMETPatType1->at(0);
+			PFMETPhi = sk->PFMETPhi->at(0);
+			PFMETPhiPatType1 = sk->PFMETPhiPatType1->at(0);
+			
+			return true;
 		}
 		
 		//member variables
@@ -992,7 +976,8 @@ class KJetSelector : public KSelector {
 	public:
 		//constructor
 		KJetSelector() : KSelector() { }
-		KJetSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { 
+		KJetSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
+			canfail = false;
 			//check options
 			nTau = 1;
 			localOpt->Get("nTau",nTau);
@@ -1030,7 +1015,7 @@ class KJetSelector : public KSelector {
 				tree->Branch("PtElectronJet",&PtLepJet,"PtLepJet/D");
 			}
 			//default values for variables
-			Et = Eta = Phi = Pt = CSVBTag = PartonFlavour = NULL;
+			Energy = Eta = Phi = Pt = CSVBTag = PartonFlavour = NULL;
 			VtxIndex = NULL;
 			Multiplicity = IndexTauJet = IndexLepJet = 0;
 			MassTauJet = PtTauJet = MassLepJet = PtLepJet = 0.0;
@@ -1040,11 +1025,11 @@ class KJetSelector : public KSelector {
 		virtual void SetSelection(KSelection* sel_) {
 			sel = sel_;
 			//set dependencies here
-			FirstLepton = sel->Get("Muon");
-			if(!FirstLepton) FirstLepton = sel->Get("Electron");
-			SecondLepton = sel->Get("SecondMuon");
-			if(!SecondLepton) SecondLepton = sel->Get("SecondElectron");
-			TheTau = sel->Get("Tau");
+			FirstLepton = sel->Get<KLeptonBaseSelector*>("Muon");
+			if(!FirstLepton) FirstLepton = sel->Get<KLeptonBaseSelector*>("Electron");
+			SecondLepton = sel->Get<KLeptonBaseSelector*>("SecondMuon");
+			if(!SecondLepton) SecondLepton = sel->Get<KLeptonBaseSelector*>("SecondElectron");
+			TheTau = sel->Get<KTauSelector*>("Tau");
 		} 
 		
 		//used for non-dummy selectors
@@ -1057,37 +1042,33 @@ class KJetSelector : public KSelector {
 			theMainBJet = -1;
 			for(unsigned j = 0; j < sk->PFJetPt->size(); j++){
 				double dRl = KMath::DeltaR(FirstLepton->Phi,FirstLepton->Eta,sk->PFJetPhi->at(j),sk->PFJetEta->at(j));
-				double dRl2 = (SecondLepton) ? KMath::DeltaR(SecondLepton->Phi,SecondLepton->Eta,sk->PFJetPhi->at(j),sk->PFJetEta->at(j)) : 100;
+				double dRl2 = (SecondLepton && !SecondLepton->Dummy()) ? KMath::DeltaR(SecondLepton->Phi,SecondLepton->Eta,sk->PFJetPhi->at(j),sk->PFJetEta->at(j)) : 100;
 				
 				bool goodJet = (sk->PFJetPt->at(j)>30) //pT cut
-				&& (sk->fabs(PFJetEta->at(j))<2.4) //eta cut
+				&& (fabs(sk->PFJetEta->at(j))<2.4) //eta cut
 				&& sk->PFJetPassLooseID->at(j) //loose ID
 				&& (dRl > 0.5) //separation from lepton
 				&& (dRl2 > 0.5); //separation from second lepton (if selected)
 				
 				//separation from leading good tau or all good taus
-				if(ntau==-1) ntau = TheTau->theGoodTaus.size();
-				for(int t = 0; t < ntau; t++){
-					double dRt = DeltaR(TheTau->Phi->at(theGoodTaus[t]),TheTau->Eta->at(theGoodTaus[t]),sk->PFJetPhi->at(j),sk->PFJetEta->at(j));
+				int nTau_ = nTau;
+				if(nTau==-1) nTau_ = TheTau->theGoodTaus.size();
+				for(int t = 0; t < nTau_; t++){
+					double dRt = KMath::DeltaR(TheTau->Phi->at(t),TheTau->Eta->at(t),sk->PFJetPhi->at(j),sk->PFJetEta->at(j));
 					goodJet &= (dRt > 0.5); 
 				}
 				
 				//if it passed, store it
 				if(goodJet){
-					goodJets.push_back(j); //jets vector *does* contain the main 2 jets
+					theGoodJets.push_back(j); //jets vector *does* contain the main 2 jets
 				
-					if(theMainBJet==-1 && PFJetCombinedSecondaryVertexBTag->at(j)>0.244) theMainBJet = j;
+					if(theMainBJet==-1 && sk->PFJetCombinedSecondaryVertexBTag->at(j)>0.244) theMainBJet = j;
 					else if(theMainJet==-1) theMainJet = j;
 				}
 			}
 			
-			return true;
-		}
-
-		//set variable values for tree
-		virtual void Store() {
 			//reset variables
-			delete Et; Et = new vector<double>();
+			delete Energy; Energy = new vector<double>();
 			delete Eta; Eta = new vector<double>();
 			delete Phi; Phi = new vector<double>();
 			delete Pt; Pt = new vector<double>();
@@ -1096,7 +1077,7 @@ class KJetSelector : public KSelector {
 			delete VtxIndex; VtxIndex = new vector<int>();
 			MainPt[0] = MainEnergy[0] = MainPhi[0] = MainEta[0] = MainCSVBTag[0] = MainPartonFlavour[0] = 0; //jet
 			MainPt[1] = MainEnergy[1] = MainPhi[1] = MainEta[1] = MainCSVBTag[1] = MainPartonFlavour[1] = 0; //bjet
-			IndexTauJet = IndexMuonJet = 0;
+			IndexTauJet = IndexLepJet = 0;
 			MassTauJet = PtTauJet = MassLepJet = PtLepJet = 0.0;
 			
 			//store tau observables
@@ -1149,6 +1130,8 @@ class KJetSelector : public KSelector {
 				MassLepJet = v_lepjet[IndexLepJet].M();
 				PtLepJet = v_lepjet[IndexLepJet].Pt();
 			}
+			
+			return true;
 		}
 		
 		//member variables
@@ -1156,7 +1139,7 @@ class KJetSelector : public KSelector {
 		KLeptonBaseSelector *FirstLepton, *SecondLepton;
 		KTauSelector *TheTau;
 		vector<int> theGoodJets;
-		vector<double> *Et, *Eta, *Phi, *Pt, *CSVBTag, *PartonFlavour;
+		vector<double> *Energy, *Eta, *Phi, *Pt, *CSVBTag, *PartonFlavour;
 		vector<int> *VtxIndex;
 		int theMainJet, theMainBJet;
 		double MainPt[2], MainEnergy[2], MainEta[2], MainPhi[2], MainCSVBTag[2], MainPartonFlavour[2];
@@ -1167,10 +1150,10 @@ class KJetSelector : public KSelector {
 //-------------------------------------------------------------
 //addition to KParser to create selectors
 namespace KParser {
-	KSelector* processSelector(KNamed& tmp){
+	KSelector* processSelector(KNamed* tmp){
 		KSelector* srtmp = 0;
-		string sname = tmp.first;
-		OptionMap* omap = tmp.second;
+		string sname = tmp->first;
+		OptionMap* omap = tmp->second;
 		
 		//check for all known selectors
 		if(sname=="EventInfo") srtmp = new KEventInfoSelector(sname,omap);

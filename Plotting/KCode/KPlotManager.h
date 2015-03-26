@@ -32,7 +32,7 @@ class KPlotManager {
 			globalOpt = new OptionMap();
 			//store treedir in global options
 			globalOpt->Set("treedir",treedir);
-			parsed = Parse();
+			parsed = Parse(input);
 			
 			//final checks and initializations
 			int prcsn;
@@ -53,7 +53,7 @@ class KPlotManager {
 			}
 		}
 		//destructor
-		virtual ~KManager() {}
+		virtual ~KPlotManager() {}
 		virtual void FakeTauEstimationInit(){
 			string tfr_name = "";
 			TFile* tfr_file = 0;
@@ -69,11 +69,11 @@ class KPlotManager {
 			}
 		}
 		//parse input file
-		bool Parse(){
+		bool Parse(string inname){
 			bool parsed_ = true;
 			string intype;
 			string line;
-			ifstream infile(input.c_str());
+			ifstream infile(inname.c_str());
 			if(infile.is_open()){
 				while(getline(infile,line)){
 					//skip commented lines
@@ -161,10 +161,10 @@ class KPlotManager {
 			}
 		}
 		void processHisto(string line, int dim){
-			KNamed tmp = KParser::processNamed(line);
+			KNamed* tmp = KParser::processNamed(line);
 			
 			//keep track of histo dimension
-			tmp.second->Set("dimension",dim);
+			tmp->second->Set("dimension",dim);
 			
 			//store local plot options for later use
 			MyPlotOptions.push_back(tmp);
@@ -217,21 +217,21 @@ class KPlotManager {
 			//in 2D case, one plot for each top-level set
 			for(unsigned p = 0; p < MyPlotOptions.size(); p++){
 				KNamed* ntmp = MyPlotOptions[p];
-				if(ntmp.second->Get("ratio",true) && !ratio_allowed){ //ratios turned on by default
-					ntmp.second->Set("ratio",false); //disable ratios if components not available
-					cout << "Input error: ratio requested for histo " << ntmp.first << ", but ";
+				if(ntmp->second->Get("ratio",true) && !ratio_allowed){ //ratios turned on by default
+					ntmp->second->Set("ratio",false); //disable ratios if components not available
+					cout << "Input error: ratio requested for histo " << ntmp->first << ", but ";
 					if(!numer && !denom) cout << "numer and denom ";
 					else if(!numer) cout << "numer ";
 					else if(!denom) cout << "denom ";
 					cout << "not set. Ratio will not be drawn." << endl;
 				}
 				int dim = 0;
-				ntmp.second->Get("dimension",dim);
+				ntmp->second->Get("dimension",dim);
 				if(dim==1){
-					KPlot* ptmp = new KPlot(ntmp.first,ntmp.second,globalOpt);
-					if(ptmp->Initialize()) MyPlots.Add(ntmp.first,ptmp);
+					KPlot* ptmp = new KPlot(ntmp->first,ntmp->second,globalOpt);
+					if(ptmp->Initialize()) MyPlots.Add(ntmp->first,ptmp);
 					else {
-						cout << "Input error: unable to build histo " << ntmp.first << ". Check binning options." << endl;
+						cout << "Input error: unable to build histo " << ntmp->first << ". Check binning options." << endl;
 						delete ptmp;
 					}
 				}
@@ -240,22 +240,22 @@ class KPlotManager {
 					for(unsigned s = 0; s < MySets.size()+1; s++){
 						KBase* theSet;
 						if(s>=MySets.size()){ //add ratio set at the end of loop if enabled
-							if(ntmp.second->Get("ratio",true)) theSet = MyRatio;
+							if(ntmp->second->Get("ratio",true)) theSet = MyRatio;
 							else continue;
 						}
 						else theSet = MySets[s];
 						
-						KPlot* ptmp = new KPlot2D(ntmp.first,theSet,ntmp.second,globalOpt);
+						KPlot* ptmp = new KPlot2D(ntmp->first,theSet,ntmp->second,globalOpt);
 						if(ptmp->Initialize()) p2map->Add(theSet->GetName(),ptmp);
 						else {
-							cout << "Input error: unable to build 2D histo " << ntmp.first << " for set " << theSet->GetName() << ". Check binning options." << endl;
+							cout << "Input error: unable to build 2D histo " << ntmp->first << " for set " << theSet->GetName() << ". Check binning options." << endl;
 							delete ptmp;
 						}
 					}
 					
-					if(p2map->GetTable().begin() != p2map->GetTable().end()) MyPlots2D.Add(ntmp.first,p2map);
+					if(p2map->GetTable().begin() != p2map->GetTable().end()) MyPlots2D.Add(ntmp->first,p2map);
 					else {
-						cout << "Input error: unable to build any 2D histos " << ntmp.first << ". Check binning options." << endl;
+						cout << "Input error: unable to build any 2D histos " << ntmp->first << ". Check binning options." << endl;
 						delete p2map;
 					}
 				}
@@ -505,7 +505,7 @@ class KPlotManager {
 		string input, treedir;
 		PlotMap MyPlots;
 		PlotMapMap MyPlots2D;
-		vector<KNamed> MyPlotOptions;
+		vector<KNamed*> MyPlotOptions;
 		vector<KBase*> MySets;
 		KSetRatio* MyRatio;
 		OptionMap* globalOpt;

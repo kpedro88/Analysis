@@ -1,12 +1,11 @@
-#include "KCode/KManager.h"
-#include "KCode/KParser.h"
+#include "KCode/KPlotManager.h"
 
 using namespace std;
 
 //how to run:
-//root -l 'KDriverSyst.C++("tree_main","input_final_syst.txt","btagSFunc",1)'
-void KDriverSyst(string dir, string inFile, string syst_opt, int syst_val, bool doPrint = false){
-	KManager k(inFile,dir);
+//root -l 'KPlotDriverSyst.C+("tree_main","input_final_syst.txt","btagSFunc",1)'
+void KPlotDriverSyst(string dir, string inFile, string syst_opt, int syst_val, bool doPrint = false){
+	KPlotManager k(inFile,dir);
 	k.SetPrint(doPrint);
 	
 	//additional options for RPV

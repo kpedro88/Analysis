@@ -153,7 +153,7 @@ namespace KParser {
 			else if(type=="color" || type=="c") addOption<Color_t>(option,name,val,isvector);
 		}
 	}
-	KNamed processNamed(string line){
+	KNamed* processNamed(string line){
 		//tab separated input
 		vector<string> fields;
 		process(line,'\t',fields);
@@ -166,10 +166,12 @@ namespace KParser {
 		}
 		
 		//return local options for later use
-		return make_pair(name,omap);
+		KNamed* tmp = new pair<string,OptionMap*>(name,omap);
+		return tmp;
 	}
 }
 
-//NOTE: namespace also includes processBase() defined in KSet.h
+//NOTE: namespace also includes:
+// processBase() defined in KSet.h, processSelector() defined in KSelectors.h, processVariator() defined in KVariators.h
 
 #endif
