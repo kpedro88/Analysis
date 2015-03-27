@@ -2,7 +2,7 @@
 #define KSKIMMANAGER_H
 
 //custom headers
-#include "KParser.h"
+#include "KManager.h"
 #include "KSet.h"
 #include "KVariators.h"
 #include "KSelectors.h"
@@ -24,34 +24,23 @@
 
 using namespace std;
 
-//------------------------------------------
-//class to manage all objects and draw plots
-class KSkimManager {
+//----------------------------------------------------------
+//class to manage all selections and variations for skimming
+class KSkimManager : public KManager {
 	public:
 		//constructor
-		KSkimManager() : input(""), setname(""), seltypes(""), indir(""), outdir(""), skimmer(0), MyBase(0), curr_var(0), parsed(false) {
+		KSkimManager() : KManager(), setname(""), seltypes(""), outdir(""), skimmer(0), MyBase(0) {}
+		KSkimManager(string input_, string setname_, string seltypes_, string indir_, string outdir_) : 
+			KManager(input_, indir_), setname(setname_), seltypes(seltypes_), outdir(outdir_), skimmer(0), MyBase(0)
+		{
 			//initialize iterators
 			curr_sel = allSelections.GetTable().end();
 			curr_var = allVariations.GetTable().end();
-			//must always have an option map
-			globalOpt = new OptionMap();
-		}
-		KSkimManager(string input_, string setname_, string seltypes_, string indir_, string outdir_) : 
-			input(input_), setname(setname_), seltypes(seltypes_), indir(indir_), outdir(outdir_), skimmer(0), MyBase(0), curr_var(0), parsed(false) 
-		{
-			//initialize iterator
-			curr_sel = allSelections.GetTable().end();
 			//parse most initializations based on text input
-			globalOpt = new OptionMap();
-			//store treedir in global options
-			globalOpt->Set("treedir",indir);
-			parsed = Parse(input);
-			if(!parsed) return;
-			
-			int prcsn;
-			if(globalOpt->Get("yieldprecision",prcsn)) cout << fixed << setprecision(prcsn);
+			Initialize(input_);
 			
 			//initialize skimmer after parsing
+			if(!parsed) return;
 			int mother = -1;
 			MyBase->GetLocalOpt()->Get("mother",mother);
 			globalOpt->Set("mother",mother);
@@ -59,53 +48,6 @@ class KSkimManager {
 		}
 		//destructor
 		virtual ~KSkimManager() {}
-		//parse input file
-		bool Parse(string inname){
-			bool parsed_ = true;
-			string intype;
-			string line;
-			ifstream infile(inname.c_str());
-			if(infile.is_open()){
-				while(getline(infile,line)){
-					//skip commented lines
-					if(line[0]=='#') continue;
-					//skip blank lines
-					if(line.size()<2) continue;
-					
-					//check for carriage returns (not allowed)
-					if(line[line.size()-1]=='\r') {
-						cout << "Carriage return detected. Please run:" << endl;
-						cout << "dos2unix " << input << endl;
-						cout << "and then try again." << endl;
-						return false;
-					}
-					
-					//check for input type
-					if(line.compare(0,6,"OPTION")==0) { intype = "OPTION"; continue; }
-					else if(line.compare(0,3,"SET")==0) { intype = "SET"; continue; }
-					else if(line.compare(0,10,"VARIATION")==0) { intype = "VARIATION"; continue; }
-					else if(line.compare(0,9,"SELECTION")==0) { intype = "SELECTION"; continue; }
-					else if(line.compare(0,5,"INPUT")==0) {
-						//another input file to parse on next line
-						getline(infile,line);
-						parsed_ &= Parse(line);
-						continue;
-					}
-					
-					//otherwise, process line according to input type
-					if(intype=="OPTION") KParser::processOption(line,globalOpt);
-					else if(intype=="SET") processSet(line);
-					else if(intype=="VARIATION") processVariation(line);
-					else if(intype=="SELECTION") processSelection(line);
-				}
-				parsed_ &= true;
-			}
-			else {
-				cout << "Input error: could not open input file \"" << input << "\"." << endl;
-				parsed_ &= false;
-			}
-			return parsed_;
-		}
 		void processSet(string line){
 			//tab separated input
 			vector<string> fields;
@@ -220,25 +162,14 @@ class KSkimManager {
 			//if(globalOpt->Get("doBatch",false)) sleep(30);
 		}
 		
-		//accessors
-		OptionMap* GetGlobalOpt() { return globalOpt; }
-		void ListOptions() {
-			OMit it;
-			for(it = globalOpt->GetTable().begin(); it != globalOpt->GetTable().end(); it++){
-				cout << it->first /*<< ": " << it->second->value*/ << endl;
-			}
-		}
-		
 	private:
 		//member variables
-		string input, setname, seltypes, indir, outdir;
+		string setname, seltypes, outdir;
 		bool doBatch, doClone;
 		KSkimmer* skimmer;
 		KBase* MyBase;
-		OptionMap* globalOpt;
 		KMap<vector<KNamed*> > allSelections, allVariations;
 		map<string,vector<KNamed*> >::iterator curr_sel, curr_var;
-		bool parsed;
 };
 
 

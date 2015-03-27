@@ -2,7 +2,7 @@
 #define KPLOTMANAGER_H
 
 //custom headers
-#include "KParser.h"
+#include "KManager.h"
 #include "KSet.h"
 #include "KPlot.h"
 #include "KLegend.h"
@@ -23,20 +23,15 @@ using namespace std;
 
 //------------------------------------------
 //class to manage all objects and draw plots
-class KPlotManager {
+class KPlotManager : public KManager {
 	public:
 		//constructor
-		KPlotManager() : input(""),treedir("tree"),MyRatio(0),globalOpt(0),s_numer(""),s_denom(""),s_yieldref(""),numer(0),denom(0),yieldref(0),doPrint(false),parsed(false) {}
-		KPlotManager(string in, string dir="tree")  : input(in),treedir(dir),globalOpt(0),numer(0),denom(0),yieldref(0),doPrint(false),parsed(false) {
+		KPlotManager() : KManager(),MyRatio(0),s_numer(""),s_denom(""),s_yieldref(""),numer(0),denom(0),yieldref(0),doPrint(false) {}
+		KPlotManager(string input_, string treedir_="tree") : KManager(input_,treedir_),numer(0),denom(0),yieldref(0),doPrint(false) {
 			//parse most initializations based on text input
-			globalOpt = new OptionMap();
-			//store treedir in global options
-			globalOpt->Set("treedir",treedir);
-			parsed = Parse(input);
+			Initialize(input_);
 			
 			//final checks and initializations
-			int prcsn;
-			if(globalOpt->Get("yieldprecision",prcsn)) cout << fixed << setprecision(prcsn);
 			MyRatio = new KSetRatio(NULL,globalOpt);
 			if(globalOpt->Get("calcfaketau",false)) FakeTauEstimationInit();
 			//store correction root files centrally
@@ -67,53 +62,6 @@ class KPlotManager {
 				globalOpt->Set("tfr_data",tfr_data);
 				globalOpt->Set("tfr_mc",tfr_mc);
 			}
-		}
-		//parse input file
-		bool Parse(string inname){
-			bool parsed_ = true;
-			string intype;
-			string line;
-			ifstream infile(inname.c_str());
-			if(infile.is_open()){
-				while(getline(infile,line)){
-					//skip commented lines
-					if(line[0]=='#') continue;
-					//skip blank lines
-					if(line.size()<2) continue;
-					
-					//check for carriage returns (not allowed)
-					if(line[line.size()-1]=='\r') {
-						cout << "Carriage return detected. Please run:" << endl;
-						cout << "dos2unix " << input << endl;
-						cout << "and then try again." << endl;
-						return false;
-					}
-					
-					//check for input type
-					if(line.compare(0,6,"OPTION")==0) { intype = "OPTION"; continue; }
-					else if(line.compare(0,3,"SET")==0) { intype = "SET"; continue; }
-					else if(line.compare(0,7,"HISTO2D")==0) { intype = "HISTO2D"; continue; }
-					else if(line.compare(0,5,"HISTO")==0) { intype = "HISTO"; continue; }
-					else if(line.compare(0,5,"INPUT")==0) {
-						//another input file to parse on next line
-						getline(infile,line);
-						parsed_ &= Parse(line);
-						continue;
-					}
-					
-					//otherwise, process line according to input type
-					if(intype=="OPTION") KParser::processOption(line,globalOpt);
-					else if(intype=="SET") processSet(line);
-					else if(intype=="HISTO2D") processHisto(line,2);
-					else if(intype=="HISTO") processHisto(line,1);
-				}
-				parsed_ &= true;
-			}
-			else {
-				cout << "Input error: could not open input file \"" << input << "\"." << endl;
-				parsed_ &= false;
-			}
-			return parsed_;
 		}
 		void processSet(string line){
 			//cout << line << endl;
@@ -492,28 +440,18 @@ class KPlotManager {
 				}
 			}
 		}
-		OptionMap* GetGlobalOpt() { return globalOpt; }
-		void ListOptions() {
-			OMit it;
-			for(it = globalOpt->GetTable().begin(); it != globalOpt->GetTable().end(); it++){
-				cout << it->first /*<< ": " << it->second->value*/ << endl;
-			}
-		}
 		
 	private:
 		//member variables
-		string input, treedir;
 		PlotMap MyPlots;
 		PlotMapMap MyPlots2D;
 		vector<KNamed*> MyPlotOptions;
 		vector<KBase*> MySets;
 		KSetRatio* MyRatio;
-		OptionMap* globalOpt;
 		string s_numer, s_denom, s_yieldref; //names for special sets
 		KBase *numer, *denom, *yieldref; //pointers to special sets
 		bool doPrint;
 		map<int,KBase*> curr_sets;
-		bool parsed;
 };
 
 
