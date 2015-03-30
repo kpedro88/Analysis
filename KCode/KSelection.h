@@ -26,11 +26,11 @@ class KSkimmer;
 class KSelector {
 	public:
 		//constructor
-		KSelector() : name(""), localOpt(0), sel(0), sk(0), tree(0), counter(0), dummy(0), canfail(1) {
+		KSelector() : name(""), localOpt(0), sel(0), sk(0), tree(0), counter(0), dummy(0), canfail(1), depfailed(0) {
 			//must always have local option map
 			if(localOpt==0) localOpt = new OptionMap();
 		}
-		KSelector(string name_, OptionMap* localOpt_) : name(name_), localOpt(localOpt_), sel(0), sk(0), tree(0), counter(0), dummy(0), canfail(1) {
+		KSelector(string name_, OptionMap* localOpt_) : name(name_), localOpt(localOpt_), sel(0), sk(0), tree(0), counter(0), dummy(0), canfail(1), depfailed(0) {
 			//must always have local option map
 			if(localOpt==0) localOpt = new OptionMap();
 			dummy = localOpt->Get("dummy",false);
@@ -45,6 +45,7 @@ class KSelector {
 		int GetCounter() { return counter; }
 		bool Dummy() { return dummy; }
 		bool CanFail() { return canfail; }
+		bool FailedDependency() { return depfailed; }
 		//selection function, checks dummy first
 		virtual bool Select(){
 			bool result = dummy || Cut();
@@ -62,7 +63,7 @@ class KSelector {
 		KSkimmer* sk;
 		TTree* tree;
 		int counter;
-		bool dummy, canfail;
+		bool dummy, canfail, depfailed;
 };
 
 //----------------------------------------------------------------

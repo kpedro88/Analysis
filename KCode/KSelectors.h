@@ -260,12 +260,20 @@ class KSecondMuonSelector : public KLeptonBaseSelector {
 			sel = sel_;
 			//set dependencies here
 			FirstMuon = sel->Get<KLeptonBaseSelector*>("Muon");
+			if(!FirstMuon){
+				cout << "Input error: dependency Muon failed in SecondMuon!" << endl;
+				depfailed = true;
+			}
+			else if(FirstMuon->Dummy()){
+				cout << "Input error: dependency Muon is dummy in SecondMuon!" << endl;
+				depfailed = true;
+			}
 		} 
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			//the first muon selector must be present for this to work
-			if(!FirstMuon) return false;
+			if(depfailed) return false;
 			
 			theGoodLeptons.clear(); theGoodLepton = -1;
 			for(unsigned m = 0; m < sk->MuonPt->size(); m++){
@@ -325,12 +333,20 @@ class KSecondMuonVetoSelector : public KLeptonBaseSelector {
 			sel = sel_;
 			//set dependencies here
 			FirstMuon = sel->Get<KLeptonBaseSelector*>("Muon");
+			if(!FirstMuon){
+				cout << "Input error: dependency Muon failed in SecondMuonVeto!" << endl;
+				depfailed = true;
+			}
+			else if(FirstMuon->Dummy()){
+				cout << "Input error: dependency Muon is dummy in SecondMuonVeto!" << endl;
+				depfailed = true;
+			}
 		} 
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			//the first muon selector must be present for this to work
-			if(!FirstMuon) return false;
+			if(depfailed) return false;
 			
 			for(unsigned m = 0; m < sk->MuonPt->size(); m++){
 				//boolean to check requirements
@@ -366,12 +382,20 @@ class KMuonVetoSelector : public KLeptonBaseSelector {
 			sel = sel_;
 			//set dependencies here
 			FirstElectron = sel->Get<KLeptonBaseSelector*>("Electron");
+			if(!FirstElectron){
+				cout << "Input error: dependency Electron failed in MuonVeto!" << endl;
+				depfailed = true;
+			}
+			else if(FirstElectron->Dummy()){
+				cout << "Input error: dependency Electron is dummy in MuonVeto!" << endl;
+				depfailed = true;
+			}
 		} 
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			//the first electron selector must be present for this to work
-			if(!FirstElectron) return false;
+			if(depfailed) return false;
 			
 			for(unsigned m = 0; m < sk->MuonPt->size(); m++){
 				//boolean to check requirements
@@ -475,12 +499,20 @@ class KSecondElectronSelector : public KLeptonBaseSelector {
 			sel = sel_;
 			//set dependencies here
 			FirstElectron = sel->Get<KLeptonBaseSelector*>("Electron");
+			if(!FirstElectron){
+				cout << "Input error: dependency Electron failed in SecondElectron!" << endl;
+				depfailed = true;
+			}
+			else if(FirstElectron->Dummy()){
+				cout << "Input error: dependency Electron is dummy in SecondElectron!" << endl;
+				depfailed = true;
+			}
 		} 
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			//the first electron selector must be present for this to work
-			if(!FirstElectron) return false;
+			if(depfailed) return false;
 			
 			theGoodLeptons.clear(); theGoodLepton = -1;
 			for(unsigned e = 0; e < sk->ElectronPt->size(); e++){
@@ -539,12 +571,20 @@ class KSecondElectronVetoSelector : public KLeptonBaseSelector {
 			sel = sel_;
 			//set dependencies here
 			FirstElectron = sel->Get<KLeptonBaseSelector*>("Electron");
+			if(!FirstElectron){
+				cout << "Input error: dependency Electron failed in SecondElectronVeto!" << endl;
+				depfailed = true;
+			}
+			else if(FirstElectron->Dummy()){
+				cout << "Input error: dependency Electron is dummy in SecondElectronVeto!" << endl;
+				depfailed = true;
+			}
 		} 
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			//the first electron selector must be present for this to work
-			if(!FirstElectron) return false;
+			if(depfailed) return false;
 			
 			for(unsigned e = 0; e < sk->ElectronPt->size(); e++){
 				//boolean to check requirements
@@ -580,12 +620,20 @@ class KElectronVetoSelector : public KLeptonBaseSelector {
 			sel = sel_;
 			//set dependencies here
 			FirstMuon = sel->Get<KLeptonBaseSelector*>("Muon");
+			if(!FirstMuon){
+				cout << "Input error: dependency Muon failed in ElectronVeto!" << endl;
+				depfailed = true;
+			}
+			else if(FirstMuon->Dummy()){
+				cout << "Input error: dependency Muon is dummy in ElectronVeto!" << endl;
+				depfailed = true;
+			}
 		} 
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			//the first muon selector must be present for this to work
-			if(!FirstMuon) return false;
+			if(depfailed) return false;
 			
 			for(unsigned e = 0; e < sk->ElectronPt->size(); e++){
 				//boolean to check requirements
@@ -628,12 +676,20 @@ class KVertexSelector : public KSelector {
 			//set dependencies here
 			FirstLepton = sel->Get<KLeptonBaseSelector*>("Muon");
 			if(!FirstLepton) FirstLepton = sel->Get<KLeptonBaseSelector*>("Electron");
+			if(!FirstLepton){
+				cout << "Input error: dependency Lepton failed in Vertex!" << endl;
+				depfailed = true;
+			}
+			else if(FirstLepton->Dummy()){
+				cout << "Input error: dependency Lepton is dummy in Vertex!" << endl;
+				depfailed = true;
+			}
 		}
 		
 		//used for non-dummy selectors
 		virtual bool Cut() { 
 			//some first lepton selector must be present for this to work
-			if(!FirstLepton) return false;
+			if(depfailed) return false;
 		
 			unsigned assocVtxIndex = FirstLepton->VtxIndex;
 			bool goodVtx = false;
@@ -677,7 +733,7 @@ class KTauSelector : public KSelector {
 		}
 		
 		//accessors
-		virtual void SetTree(TTree* tree_) { 
+		virtual void SetTree(TTree* tree_) {
 			tree = tree_;
 			//set tree branches here
 			tree->Branch("HPSTauEt","std::vector<double>",&Et);
@@ -688,13 +744,15 @@ class KTauSelector : public KSelector {
 			tree->Branch("HPSTauCharge","std::vector<int>",&Charge);
 			tree->Branch("HPSTauDecayMode","std::vector<int>",&DecayMode);
 			tree->Branch("HPSTaubyLooseCombinedIsolationDeltaBetaCorr3Hits","std::vector<bool>",&byLooseCombinedIsolationDeltaBetaCorr3Hits);
-			if(FirstLepton->GetName()=="Muon") {
-				tree->Branch("MassMuonTau",&MassLepTau,"MassLepTau/D");
-				tree->Branch("PtMuonTau",&PtLepTau,"PtLepTau/D");
-			}
-			else {
-				tree->Branch("MassElectronTau",&MassLepTau,"MassLepTau/D");
-				tree->Branch("PtElectronTau",&PtLepTau,"PtLepTau/D");
+			if(!depfailed){
+				if(FirstLepton->GetName()=="Muon") {
+					tree->Branch("MassMuonTau",&MassLepTau,"MassLepTau/D");
+					tree->Branch("PtMuonTau",&PtLepTau,"PtLepTau/D");
+				}
+				else {
+					tree->Branch("MassElectronTau",&MassLepTau,"MassLepTau/D");
+					tree->Branch("PtElectronTau",&PtLepTau,"PtLepTau/D");
+				}
 			}
 			//default values for variables
 			Et = Eta = Phi = Pt = NULL;
@@ -709,6 +767,16 @@ class KTauSelector : public KSelector {
 			FirstLeptonIsMuon = true;
 			FirstLepton = sel->Get<KLeptonBaseSelector*>("Muon");
 			if(!FirstLepton) { FirstLepton = sel->Get<KLeptonBaseSelector*>("Electron"); FirstLeptonIsMuon = false; }
+			
+			if(!FirstLepton){
+				cout << "Input error: dependency Lepton failed in Tau!" << endl;
+				depfailed = true;
+			}
+			else if(FirstLepton->Dummy()){
+				cout << "Input error: dependency Lepton is dummy in Tau!" << endl;
+				depfailed = true;
+			}
+			
 			SecondLepton = sel->Get<KLeptonBaseSelector*>("SecondMuon");
 			if(!SecondLepton) SecondLepton = sel->Get<KLeptonBaseSelector*>("SecondElectron");
 		} 
@@ -716,7 +784,7 @@ class KTauSelector : public KSelector {
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			//some first lepton selector must be present for this to work
-			if(!FirstLepton) return false;
+			if(depfailed) return false;
 			
 			theGoodTaus.clear();
 			for(unsigned t = 0; t < sk->HPSTauPt->size(); t++){
@@ -814,6 +882,14 @@ class KGenTauSelector : public KSelector {
 			sel = sel_;
 			//set dependencies here
 			TheTau = sel->Get<KTauSelector*>("Tau");
+			if(!TheTau){
+				cout << "Input error: dependency Tau failed in GenTau!" << endl;
+				depfailed = true;
+			}
+			else if(TheTau->Dummy()){
+				cout << "Input error: dependency Tau is dummy in GenTau!" << endl;
+				depfailed = true;
+			}
 		}
 		virtual void SetSkimmer(KSkimmer* sk_) {
 			sk = sk_;
@@ -824,7 +900,7 @@ class KGenTauSelector : public KSelector {
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			//the tau selector must be present for this to work
-			if(!TheTau) return false;
+			if(depfailed) return false;
 			
 			//reset variables
 			delete FakeJet; FakeJet = new vector<bool>(); FakeJet->resize(TheTau->theGoodTaus.size());
@@ -1004,15 +1080,17 @@ class KJetSelector : public KSelector {
 			tree->Branch("IndexTauJet",&IndexTauJet,"IndexTauJet/I");
 			tree->Branch("MassTauJet",&MassTauJet,"MassTauJet/D");
 			tree->Branch("PtTauJet",&PtTauJet,"PtTauJet/D");
-			if(FirstLepton->GetName()=="Muon") {
-				tree->Branch("IndexMuonJet",&IndexLepJet,"IndexLepJet/I");
-				tree->Branch("MassMuonJet",&MassLepJet,"MassLepJet/D");
-				tree->Branch("PtMuonJet",&PtLepJet,"PtLepJet/D");
-			}
-			else {
-				tree->Branch("IndexElectronJet",&IndexLepJet,"IndexLepJet/I");
-				tree->Branch("MassElectronJet",&MassLepJet,"MassLepJet/D");
-				tree->Branch("PtElectronJet",&PtLepJet,"PtLepJet/D");
+			if(!depfailed){
+				if(FirstLepton->GetName()=="Muon") {
+					tree->Branch("IndexMuonJet",&IndexLepJet,"IndexLepJet/I");
+					tree->Branch("MassMuonJet",&MassLepJet,"MassLepJet/D");
+					tree->Branch("PtMuonJet",&PtLepJet,"PtLepJet/D");
+				}
+				else {
+					tree->Branch("IndexElectronJet",&IndexLepJet,"IndexLepJet/I");
+					tree->Branch("MassElectronJet",&MassLepJet,"MassLepJet/D");
+					tree->Branch("PtElectronJet",&PtLepJet,"PtLepJet/D");
+				}
 			}
 			//default values for variables
 			Energy = Eta = Phi = Pt = CSVBTag = PartonFlavour = NULL;
@@ -1027,15 +1105,35 @@ class KJetSelector : public KSelector {
 			//set dependencies here
 			FirstLepton = sel->Get<KLeptonBaseSelector*>("Muon");
 			if(!FirstLepton) FirstLepton = sel->Get<KLeptonBaseSelector*>("Electron");
+			
+			if(!FirstLepton){
+				cout << "Input error: dependency Lepton failed in Jet!" << endl;
+				depfailed = true;
+			}
+			else if(FirstLepton->Dummy()){
+				cout << "Input error: dependency Lepton is dummy in Jet!" << endl;
+				depfailed = true;
+			}
+			
 			SecondLepton = sel->Get<KLeptonBaseSelector*>("SecondMuon");
 			if(!SecondLepton) SecondLepton = sel->Get<KLeptonBaseSelector*>("SecondElectron");
+			
 			TheTau = sel->Get<KTauSelector*>("Tau");
+			
+			if(!TheTau){
+				cout << "Input error: dependency Tau failed in Jet!" << endl;
+				depfailed = true;
+			}
+			else if(TheTau->Dummy()){
+				cout << "Input error: dependency Tau is dummy in Jet!" << endl;
+				depfailed = true;
+			}
 		} 
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			//first lepton and tau selectors must be present for this to work
-			if(!FirstLepton || !TheTau) return false;
+			if(depfailed) return false;
 			
 			theGoodJets.clear();
 			theMainJet = -1;
