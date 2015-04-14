@@ -57,9 +57,7 @@ class KPlot{
 			TH1::SetDefaultSumw2(kTRUE);
 		}
 		//initialization
-		virtual bool Initialize(){
-			if(isInit) return isInit;
-			
+		virtual void CreateHist(){
 			//construct histogram		
 			vector<double> xbins;
 			int xnum;
@@ -74,20 +72,28 @@ class KPlot{
 			}
 			else { //no/incomplete binning information, build failed
 				isInit = false;
-				return isInit;
+				return;
 			}
 			string xtitle, ytitle;
 			localOpt->Get("xtitle",xtitle);
 			localOpt->Get("ytitle",ytitle);
 			histo->GetXaxis()->SetTitle(xtitle.c_str());
 			histo->GetYaxis()->SetTitle(ytitle.c_str());
+		}
+		virtual bool Initialize(TH1* histo_=NULL){
+			if(isInit) return isInit;
+			
+			histo = histo_;
+			if(!histo) CreateHist();
+			if(!histo) return isInit; //histo creation failed
+			//todo: expand CreateHist to handle TProfiles as well
 			
 			//plotting with ratio enabled by default
 			if(localOpt->Get("ratio",true)) {
 				canvasH += marginM1 + marginM2 + 125;
 				//can = new TCanvas(histo->GetName(),histo->GetName(),700,700);
 				//account for window frame: 2+2px width, 2+26px height
-				can = new TCanvas(histo->GetName(),histo->GetName(),canvasW,canvasH);
+				can = new TCanvas(name.c_str(),name.c_str(),canvasW,canvasH);
 				//500/(5/7) = 700
 
 				//setup histo and ratio areas for canvas
@@ -141,7 +147,7 @@ class KPlot{
 			else {
 				//can = new TCanvas(histo->GetName(),histo->GetName(),700,550);
 				//account for window frame: 2+2px width, 2+26px height
-				can = new TCanvas(histo->GetName(),histo->GetName(),canvasW,canvasH);
+				can = new TCanvas(name.c_str(),name.c_str(),canvasW,canvasH);
 			
 				pad1 = new TPad("graph","",0,0,1,1);
 				pad1W = pad1->GetWw()*pad1->GetAbsWNDC();
@@ -353,10 +359,8 @@ class KPlot2D: public KPlot {
 		//constructor
 		KPlot2D() : KPlot(), MySet(0) {}
 		KPlot2D(string name_, KBase* MySet_, OptionMap* localOpt_, OptionMap* globalOpt_) : KPlot(name_,localOpt_,globalOpt_), MySet(MySet_) {}
-				//initialization
-		virtual bool Initialize(){
-			if(isInit) return isInit;
-			
+		//initialization
+		virtual void CreateHist(){
 			//construct histogram		
 			vector<double> xbins, ybins;
 			int xnum, ynum;
@@ -372,7 +376,7 @@ class KPlot2D: public KPlot {
 				}
 				else { //no/incomplete binning information, build failed
 					isInit = false;
-					return isInit;
+					return;
 				}
 			}
 			else if(localOpt->Get("xnum",xnum) && localOpt->Get("xmin",xmin) && localOpt->Get("xmax",xmax)){ //standard x-binning case
@@ -386,12 +390,12 @@ class KPlot2D: public KPlot {
 				}
 				else { //no/incomplete binning information, build failed
 					isInit = false;
-					return isInit;
+					return;
 				}
 			}
 			else { //no/incomplete binning information, build failed
 				isInit = false;
-				return isInit;
+				return;
 			}
 			string xtitle, ytitle, ztitle;
 			localOpt->Get("xtitle",xtitle);
@@ -408,14 +412,20 @@ class KPlot2D: public KPlot {
 			else { //include name of set in z title
 				histo->GetZaxis()->SetTitle((MySet->GetName() + ": " + ztitle).c_str());
 			}
+		}
+		virtual bool Initialize(TH1* histo_=NULL){
+			if(isInit) return isInit;
 			
+			histo = histo_;
+			if(!histo) CreateHist();
+			if(!histo) return isInit; //histo creation failed
 			
 			//extra space for z axis palette
 			canvasW += 150 - marginR;
 			marginR = 150;
 			//can = new TCanvas(histo->GetName(),histo->GetName(),850,550);
 			//account for window frame: 2+2px width, 2+26px height
-			string cname = histo->GetName();
+			string cname = name;
 			cname = cname + "_" + MySet->GetName();
 			can = new TCanvas(cname.c_str(),cname.c_str(),canvasW,canvasH);
 		
