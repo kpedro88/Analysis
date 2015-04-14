@@ -24,9 +24,15 @@ using namespace std;
 
 class KLegend{
 	public:
+		//position enums
+		enum Horz { left, center, right };
+		enum Vert { top, middle, bottom };
+	
 		//constructor
 		KLegend(TPad* pad_, OptionMap* localOpt_, OptionMap* globalOpt_) : 
-			pad(pad_), localOpt(localOpt_), globalOpt(globalOpt_), legwidth(0), legheight(0), leg(0), ymin(0), ymax(0), manual_ymin(false) 
+			pad(pad_), localOpt(localOpt_), globalOpt(globalOpt_), legwidth(0), legheight(0), 
+			lbound(0), rbound(0), tbound(0), bbound(0), umin(0), umax(0), vmin(0), vmax(0),
+			leg(0), ymin(0), ymax(0), manual_ymin(false) 
 		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
@@ -49,11 +55,56 @@ class KLegend{
 		virtual ~KLegend() {}
 		
 		//functions
+		void Build(Horz hdir, Vert vdir){
+			//boundaries of plot area
+			double ytick = (hists.size()>0) ? hists[0]->GetYaxis()->GetTickLength() : 0;
+			double xtick = (hists.size()>0) ? hists[0]->GetXaxis()->GetTickLength() : 0;
+			lbound = pad->GetLeftMargin() + ytick;
+			rbound = 1 - (pad->GetRightMargin() + ytick);
+			tbound = 1 - (pad->GetTopMargin() + xtick);
+			bbound = 1 - (pad->GetTopMargin() + xtick);
+			
+			//symbol box takes up fMargin = 0.25 by default
+			legwidth /= 0.75;
+			//add a little padding for each line
+			legheight *= 1.2;
+			
+			if(hdir==left) {
+				umin = lbound;
+				umax = umin + legwidth;
+			}
+			else if (hdir==right){
+				umax = rbound;
+				umin = rbound - legwidth;
+			}
+			else if(hdir==center){
+				umin = (lbound + rbound)/2. - legwidth/2.;
+				umax = (lbound + rbound)/2. + legwidth/2.;
+			}
+			
+			if(vdir==top){
+				vmax = tbound;
+				vmin = vmax - legheight;
+			}
+			else if(vdir==bottom){
+				vmin = bbound;
+				vmax = vmin + legheight;
+			}
+			else if(vdir==middle){
+				vmin = (tbound + bbound)/2. - legheight/2.;
+				vmax = (tbound + bbound)/2. + legheight/2.;
+			}
+			
+			//initialize legend with determined coords
+			leg = new TLegend(umin,vmin,umax,vmax);
+			leg->SetFillColor(0);
+			leg->SetBorderSize(0);
+			leg->SetTextSize(legentry);
+			leg->SetTextFont(42);
+		}
 		void Build(){
 			bool logy = pad->GetLogy();
 			bool logx = pad->GetLogx();
-			double ytick = (hists.size()>0) ? hists[0]->GetYaxis()->GetTickLength() : 0;
-			double xtick = (hists.size()>0) ? hists[0]->GetXaxis()->GetTickLength() : 0;
 		
 			//step 1: determine the highest peak
 			int p = 1; //bin number of peak
@@ -70,33 +121,10 @@ class KLegend{
 			}
 			
 			//step 2: determine appropriate legend coords
-			double umin, umax, vmin, vmax;
-			double lbound = pad->GetLeftMargin() + ytick;
-			double rbound = 1 - (pad->GetRightMargin() + ytick);
-			
-			//symbol box takes up fMargin = 0.25 by default
-			legwidth /= 0.75;
-			//add a little padding for each line
-			legheight *= 1.2;
-			
-			if(p > nbins/2) {
-				umin = lbound;
-				umax = umin + legwidth;
-			}
-			else {
-				umax = rbound;
-				umin = umax - legwidth;
-			}
-			
-			vmax = 1 - (pad->GetTopMargin() + xtick);
-			vmin = vmax - legheight;		
-
-			//initialize legend with determined coords
-			leg = new TLegend(umin,vmin,umax,vmax);
-			leg->SetFillColor(0);
-			leg->SetBorderSize(0);
-			leg->SetTextSize(legentry);
-			leg->SetTextFont(42);
+			Horz hdir;
+			if(p > nbins/2) hdir = left;
+			else hdir = right;
+			Build(hdir,top);
 			
 			//step 3: determine ymin (to show low-statistics bins if logy)
 			//loop over histos
@@ -214,6 +242,8 @@ class KLegend{
 		OptionMap* localOpt;
 		OptionMap* globalOpt;
 		double legwidth, legheight;
+		double lbound, rbound, tbound, bbound;
+		double umin, umax, vmin, vmax;
 		double padH, legentry;
 		vector<TH1F*> hists;
 		TLegend* leg;
