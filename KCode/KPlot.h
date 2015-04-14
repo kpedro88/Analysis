@@ -188,7 +188,10 @@ class KPlot{
 			//setup prelim text
 			//todo: add option to enable/disable/change
 			double sizePextra = sizeP - 3; //smaller
-			TLatex width_test_extra(0,0," Preliminary");
+			string prelim_text = " Preliminary";
+			globalOpt->Get("prelim_text",prelim_text);
+			if(prelim_text[0] != ' ') prelim_text = " " + prelim_text;
+			TLatex width_test_extra(0,0,prelim_text.c_str());
 			width_test_extra.SetTextSize(sizePextra/pad1H);
 			double uminExtra = umaxCMS;
 			double umaxExtra = uminExtra + width_test_extra.GetXsize();
@@ -197,7 +200,7 @@ class KPlot{
 			paveExtra->SetBorderSize(0);
 			paveExtra->SetTextFont(52);
 			paveExtra->SetTextSize(sizePextra/pad1H);
-			paveExtra->AddText(" Preliminary");
+			paveExtra->AddText(prelim_text.c_str());
 			
 			//setup lumi text
 			double intlumi = 0;
@@ -205,6 +208,7 @@ class KPlot{
 			stringstream fbname_;
 			fbname_ << fixed << setprecision(1) << intlumi/1000 << " fb^{-1} (8 TeV)";
 			string fbname = fbname_.str();
+			globalOpt->Get("lumi_text",fbname);
 			TLatex width_test_lumi(0,0,fbname.c_str());
 			width_test_lumi.SetTextSize(sizeP/pad1H);
 			double umaxLumi = 1-marginR/pad1W;
