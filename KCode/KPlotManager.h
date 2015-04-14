@@ -193,7 +193,7 @@ class KPlotManager : public KManager {
 						}
 						else theSet = MySets[s];
 						
-						KPlot* ptmp = new KPlot2D(ntmp->first,theSet,ntmp->second,globalOpt);
+						KPlot* ptmp = new KPlot2D(ntmp->first,theSet->GetName(),ntmp->second,globalOpt);
 						if(ptmp->Initialize()) p2map->Add(theSet->GetName(),ptmp);
 						else {
 							cout << "Input error: unable to build 2D histo " << ntmp->first << " for set " << theSet->GetName() << ". Check binning options." << endl;

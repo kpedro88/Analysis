@@ -357,8 +357,8 @@ class KPlot{
 class KPlot2D: public KPlot {
 	public:
 		//constructor
-		KPlot2D() : KPlot(), MySet(0) {}
-		KPlot2D(string name_, KBase* MySet_, OptionMap* localOpt_, OptionMap* globalOpt_) : KPlot(name_,localOpt_,globalOpt_), MySet(MySet_) {}
+		KPlot2D() : KPlot(), setname("") {}
+		KPlot2D(string name_, string setname_, OptionMap* localOpt_, OptionMap* globalOpt_) : KPlot(name_,localOpt_,globalOpt_), setname(setname_) {}
 		//initialization
 		virtual void CreateHist(){
 			//construct histogram		
@@ -404,13 +404,13 @@ class KPlot2D: public KPlot {
 			histo->GetXaxis()->SetTitle(xtitle.c_str());
 			histo->GetYaxis()->SetTitle(ytitle.c_str());
 			//include name of set in z title
-			if(MySet->GetName()=="ratio"){
+			if(setname=="ratio"){
 				string rationame2D = "";
 				globalOpt->Get("rationame2D",rationame2D); //set in KManager
 				histo->GetZaxis()->SetTitle(rationame2D.c_str());
 			}
 			else { //include name of set in z title
-				histo->GetZaxis()->SetTitle((MySet->GetName() + ": " + ztitle).c_str());
+				histo->GetZaxis()->SetTitle((setname + ": " + ztitle).c_str());
 			}
 		}
 		virtual bool Initialize(TH1* histo_=NULL){
@@ -426,7 +426,7 @@ class KPlot2D: public KPlot {
 			//can = new TCanvas(histo->GetName(),histo->GetName(),850,550);
 			//account for window frame: 2+2px width, 2+26px height
 			string cname = name;
-			cname = cname + "_" + MySet->GetName();
+			cname = cname + "_" + setname;
 			can = new TCanvas(cname.c_str(),cname.c_str(),canvasW,canvasH);
 		
 			pad1 = new TPad("graph","",0,0,1,1);
@@ -434,7 +434,7 @@ class KPlot2D: public KPlot {
 			pad1H = pad1->GetWh()*pad1->GetAbsHNDC();
 			pad1->SetMargin(marginL/pad1W,marginR/pad1W,marginB/pad1H,marginT/pad1H);
 			pad1->SetTicks(1,1);
-			if(localOpt->Get("logz",true) && MySet->GetName()!="ratio") pad1->SetLogz(); //logz on by default (i.e. linz off by default); except for ratio, which never has logz
+			if(localOpt->Get("logz",true) && setname!="ratio") pad1->SetLogz(); //logz on by default (i.e. linz off by default); except for ratio, which never has logz
 			if(localOpt->Get("logy",false)) pad1->SetLogy(); //logy off by default (i.e. liny on by default)
 			if(localOpt->Get("logx",false)) pad1->SetLogx(); //logx off by default (i.e. linx on by default)
 			pad1->Draw();
@@ -455,15 +455,11 @@ class KPlot2D: public KPlot {
 		}
 		
 		//accessors
-		string GetNameX() { return namex; }
-		string GetNameY() { return namey; }
-		KBase* GetMySet() { return MySet; }
-		void SetMySet(KBase* MySet_) { MySet = MySet_; }
+		string GetSetName() { return setname; }
 		
 	protected:
 		//member variables
-		KBase* MySet;
-		string namex, namey;
+		string setname;
 };
 
 #endif
