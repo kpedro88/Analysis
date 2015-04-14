@@ -1,6 +1,9 @@
 #ifndef KLEGEND_H
 #define KLEGEND_H
 
+//custom headers
+#include "KMap.h"
+
 //ROOT headers
 #include <TROOT.h>
 #include <TLegend.h>
@@ -22,12 +25,25 @@ using namespace std;
 class KLegend{
 	public:
 		//constructor
-		KLegend(TPad* pad_, string chan_label_="") : pad(pad_), legwidth(0), legheight(0), leg(0), ymin(0), ymax(0), manual_ymin(false), chan_label(chan_label_) {
+		KLegend(TPad* pad_, OptionMap* localOpt_, OptionMap* globalOpt_) : 
+			pad(pad_), localOpt(localOpt_), globalOpt(globalOpt_), legwidth(0), legheight(0), leg(0), ymin(0), ymax(0), manual_ymin(false) 
+		{
+			//must always have local & global option maps
+			if(localOpt==0) localOpt = new OptionMap();
+			if(globalOpt==0) globalOpt = new OptionMap();
+			
 			padH = pad->GetWh()*pad->GetAbsHNDC();
 			legentry = 26/padH; //line height for each entry
-			//todo: allow multiple lines of text at top of legend?
-			if(chan_label.size()>0) CheckSize(chan_label); //will be added to top of legend
-			//chan_label = "#mu#tau channel";
+			
+			//allow multiple lines of text at top of legend
+			globalOpt->Get("extra_text",extra_text);
+			//will be added to top of legend
+			for(unsigned t = 0; t < extra_text.size(); t++){
+				CheckSize(extra_text[t]); 
+			}
+			
+			double ymin_ = 1;
+			if(globalOpt->Get("ymin",ymin_)) SetManualYmin(ymin_);
 		}
 		//destructor
 		virtual ~KLegend() {}
@@ -166,7 +182,9 @@ class KLegend{
 			}
 			ymax = max(ymax_[0],ymax_[1]);
 			
-			if(chan_label.size()>0) leg->AddEntry((TObject*)NULL,chan_label.c_str(),"");
+			for(unsigned t = 0; t < extra_text.size(); t++){
+				leg->AddEntry((TObject*)NULL,extra_text[t].c_str(),"");
+			}
 		}
 		void Draw(){
 			pad->cd();
@@ -185,17 +203,23 @@ class KLegend{
 		TLegend* GetLegend() { return leg; }
 		pair<double,double> GetRange(){ return make_pair(ymin,ymax); }
 		void SetManualYmin(double ym) { ymin = ym; manual_ymin = true; }
+		OptionMap* GetLocalOpt() { return localOpt; }
+		void SetLocalOpt(OptionMap* opt) { localOpt = opt; if(localOpt==0) localOpt = new OptionMap(); } //must always have an option map
+		OptionMap* GetGlobalOpt() { return globalOpt; }
+		void SetGlobalOpt(OptionMap* opt) { globalOpt = opt; if(globalOpt==0) globalOpt = new OptionMap(); } //must always have an option map
 
 	protected:
 		//member variables
 		TPad* pad;
+		OptionMap* localOpt;
+		OptionMap* globalOpt;
 		double legwidth, legheight;
 		double padH, legentry;
 		vector<TH1F*> hists;
 		TLegend* leg;
 		double ymin, ymax;
 		bool manual_ymin;
-		string chan_label;
+		vector<string> extra_text;
 };
 
 #endif

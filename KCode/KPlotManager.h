@@ -250,13 +250,8 @@ class KPlotManager : public KManager {
 				TCanvas* can = p->second->GetCanvas();
 				TPad* pad1 = p->second->GetPad1();
 				
-				//create legend
-				string chan_label = "";
-				globalOpt->Get("chan_label",chan_label);
-				KLegend* kleg = new KLegend(pad1,chan_label);
-				double ymin = 1;
-				if(globalOpt->Get("ymin",ymin)) kleg->SetManualYmin(ymin);
-				p->second->SetLegend(kleg);
+				//get legend
+				KLegend* kleg = p->second->GetLegend();
 				
 				//select current histogram in sets
 				for(unsigned s = 0; s < MySets.size(); s++){

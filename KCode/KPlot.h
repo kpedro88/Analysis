@@ -164,6 +164,9 @@ class KPlot{
 			
 			InitializePaves();
 			
+			//create legend
+			leg = new KLegend(pad1,localOpt,globalOpt);
+			
 			return isInit;
 		}
 		void InitializePaves(){
