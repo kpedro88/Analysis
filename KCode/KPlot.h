@@ -45,8 +45,10 @@ class KPlot{
 		//universal size values set in initialization list
 		KPlot(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : name(name_), localOpt(localOpt_), globalOpt(globalOpt_), histo(0), ratio(0), exec(0), isInit(false),
 																	   can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0),
-																	   canvasW(704), canvasH(578), ratioH(150), marginL(95), marginR(35), marginB(75), marginT(35), marginM1(15), marginM2(10), 
-																	   sizeT(32), sizeL(28), sizeP(26), sizeTick(12), sizeLoff(5), posP(0), epsilon(2), pad1W(0), pad1H(0), pad2W(0), pad2H(0)
+																	   canvasW(700), canvasH(550), canvasWextra(4), canvasHextra(28), ratioH(136),
+																	   marginL(95), marginR(35), marginB(75), marginT(35), marginM1(15), marginM2(10),
+																	   sizeT(32), sizeL(28), sizeP(26), sizeTick(12), sizeLoff(5), posP(0), epsilon(2),
+																	   pad1W(0), pad1H(0), pad2W(0), pad2H(0)
 		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
@@ -89,10 +91,12 @@ class KPlot{
 			
 			//plotting with ratio enabled by default
 			if(localOpt->Get("ratio",true)) {
+				//automatic calculation of ratioH to ensure plot area on pad1 equal to non-ratio case, given 5/7 for pad1, 2/7 for pad2
+				ratioH = canvasH*2./5.+(marginM1-marginB)*7./5.;
 				canvasH += ratioH;
 				//can = new TCanvas(histo->GetName(),histo->GetName(),700,700);
 				//account for window frame: 2+2px width, 2+26px height
-				can = new TCanvas(name.c_str(),name.c_str(),canvasW,canvasH);
+				can = new TCanvas(name.c_str(),name.c_str(),canvasW+canvasWextra,canvasH+canvasHextra);
 				//500/(5/7) = 700
 
 				//setup histo and ratio areas for canvas
@@ -146,7 +150,7 @@ class KPlot{
 			else {
 				//can = new TCanvas(histo->GetName(),histo->GetName(),700,550);
 				//account for window frame: 2+2px width, 2+26px height
-				can = new TCanvas(name.c_str(),name.c_str(),canvasW,canvasH);
+				can = new TCanvas(name.c_str(),name.c_str(),canvasW+canvasWextra,canvasH+canvasHextra);
 			
 				pad1 = new TPad("graph","",0,0,1,1);
 				pad1W = pad1->GetWw()*pad1->GetAbsWNDC();
@@ -352,7 +356,9 @@ class KPlot{
 		TPaveText* paveExtra;
 		TPaveText* paveLumi;
 		TLine* line;
-		double canvasW, canvasH, ratioH, marginL, marginR, marginB, marginT, marginM1, marginM2, sizeT, sizeL, sizeP, sizeTick, sizeLoff, posP, epsilon;
+		double canvasW, canvasH, canvasWextra, canvasHextra, ratioH;
+		double marginL, marginR, marginB, marginT, marginM1, marginM2;
+		double sizeT, sizeL, sizeP, sizeTick, sizeLoff, posP, epsilon;
 		double pad1W, pad1H, pad2W, pad2H;
 };
 
