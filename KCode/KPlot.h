@@ -225,7 +225,7 @@ class KPlot{
 		virtual void DrawHist(){
 			pad1->cd();
 			//get y axis range of histo from KLegend
-			histo->GetYaxis()->SetRangeUser(leg->GetRange().first,leg->GetRange().second);
+			if(leg->UseRange()) histo->GetYaxis()->SetRangeUser(leg->GetRange().first,leg->GetRange().second);
 			histo->Draw("hist");
 			//horizontal error bars for histograms are DISABLED by default
 			//but auto-enabled for variable-binned histograms (per CMS style guidelines)

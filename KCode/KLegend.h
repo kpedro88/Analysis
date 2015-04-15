@@ -57,7 +57,7 @@ class KLegend{
 		KLegend(TPad* pad_, OptionMap* localOpt_, OptionMap* globalOpt_) : 
 			pad(pad_), localOpt(localOpt_), globalOpt(globalOpt_), legwidth(0), legheight(0), 
 			lbound(0), rbound(0), tbound(0), bbound(0), umin(0), umax(0), vmin(0), vmax(0),
-			leg(0), ymin(0), ymax(0), manual_ymin(false) 
+			leg(0), ymin(0), ymax(0), userange(false), manual_ymin(false) 
 		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
@@ -241,6 +241,7 @@ class KLegend{
 				ymax_[i] = logy ? ymin*pow(bh[i]/ymin, gy/(vcmin[i] - pad->GetBottomMargin() - eps)) : ymin + gy*(bh[i] - ymin)/(vcmin[i] - pad->GetBottomMargin() - eps);
 			}
 			ymax = max(ymax_[0],ymax_[1]);
+			userange = true;
 		}
 		void Draw(){
 			pad->cd();
@@ -262,6 +263,7 @@ class KLegend{
 		//accessors
 		void AddHist(TH1* h) { hists.push_back(h); }
 		TLegend* GetLegend() { return leg; }
+		bool UseRange() { return userange; }
 		pair<double,double> GetRange(){ return make_pair(ymin,ymax); }
 		void SetManualYmin(double ym) { ymin = ym; manual_ymin = true; }
 		OptionMap* GetLocalOpt() { return localOpt; }
@@ -282,6 +284,7 @@ class KLegend{
 		vector<TH1*> hists;
 		TLegend* leg;
 		double ymin, ymax;
+		bool userange;
 		bool manual_ymin;
 		vector<string> extra_text;
 };
