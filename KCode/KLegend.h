@@ -25,8 +25,8 @@ using namespace std;
 class KLegend{
 	public:
 		//position enums
-		enum Horz { left, center, right };
-		enum Vert { top, middle, bottom };
+		enum Horz { hdefault, left, center, right };
+		enum Vert { vdefault, top, middle, bottom };
 	
 		//constructor
 		KLegend(TPad* pad_, OptionMap* localOpt_, OptionMap* globalOpt_) : 
@@ -102,7 +102,7 @@ class KLegend{
 			leg->SetTextSize(legentry);
 			leg->SetTextFont(42);
 		}
-		void Build(){
+		void Build(Horz hdir=hdefault){
 			bool logy = pad->GetLogy();
 			bool logx = pad->GetLogx();
 		
@@ -121,9 +121,10 @@ class KLegend{
 			}
 			
 			//step 2: determine appropriate legend coords
-			Horz hdir;
-			if(p > nbins/2) hdir = left;
-			else hdir = right;
+			if(hdir==hdefault){
+				if(p > nbins/2) hdir = left;
+				else hdir = right;
+			}
 			Build(hdir,top);
 			
 			//step 3: determine ymin (to show low-statistics bins if logy)
@@ -158,7 +159,7 @@ class KLegend{
 			double ucmin[2], ucmax[2], vcmin[2]; //[0] is legend side, [1] is other side
 			ucmin[0] = umin;
 			ucmax[0] = umax;
-			if(p > nbins/2) {
+			if(hdir==left) {
 				ucmin[1] = ucmax[0];
 				ucmax[1] = rbound;
 			}
@@ -171,6 +172,7 @@ class KLegend{
 			
 			//loop over histos
 			double bh[2]; //height of highest bin + error (legend)
+			bool checkerr = globalOpt->Get("checkerr",true);
 			bh[0] = bh[1] = 0;
 			for(unsigned s = 0; s < hists.size(); s++){
 				TAxis* x1 = hists[s]->GetXaxis();
@@ -194,7 +196,8 @@ class KLegend{
 					//set range for search
 					x1->SetRange(xbmin,xbmax);
 					int b_ = hists[s]->GetMaximumBin();
-					double bh_ = hists[s]->GetBinContent(b_) + hists[s]->GetBinError(b_);
+					double bh_ = hists[s]->GetBinContent(b_);
+					if(checkerr) bh_ += hists[s]->GetBinError(b_);
 					//check height
 					if(bh_ > bh[i]) bh[i] = bh_;
 					
