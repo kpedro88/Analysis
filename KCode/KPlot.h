@@ -188,9 +188,8 @@ class KPlot{
 			//setup prelim text
 			//todo: add option to enable/disable/change
 			double sizePextra = sizeP - 3; //smaller
-			string prelim_text = " Preliminary";
+			string prelim_text = "Preliminary";
 			globalOpt->Get("prelim_text",prelim_text);
-			if(prelim_text[0] != ' ') prelim_text = " " + prelim_text;
 			TLatex width_test_extra(0,0,prelim_text.c_str());
 			width_test_extra.SetTextSize(sizePextra/pad1H);
 			double uminExtra = umaxCMS;
