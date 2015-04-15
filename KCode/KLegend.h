@@ -260,6 +260,7 @@ class KLegend{
 		}
 		
 		//accessors
+		void AddHist(TH1* h) { hists.push_back(h); }
 		TLegend* GetLegend() { return leg; }
 		pair<double,double> GetRange(){ return make_pair(ymin,ymax); }
 		void SetManualYmin(double ym) { ymin = ym; manual_ymin = true; }
