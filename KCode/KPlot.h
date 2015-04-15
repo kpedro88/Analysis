@@ -34,21 +34,20 @@ using namespace std;
 class KPlot{
 	public:
 		//constructor
-		KPlot() : name(""), localOpt(0), globalOpt(0), histo(0), ratio(0), exec(0), isInit(false), can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0),
-				  canvasW(0), canvasH(0), marginL(0), marginR(0), marginB(0), marginT(0), marginM1(0), marginM2(0), sizeT(0), sizeL(0), sizeP(0), sizeTick(0), sizeLoff(0), 
+		KPlot() : name(""), localOpt(0), globalOpt(0), histo(0), ratio(0), exec(0), isInit(false), 
+				  can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0),
 				  posP(0), epsilon(0), pad1W(0), pad1H(0), pad2W(0), pad2H(0)
 		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
 			if(globalOpt==0) globalOpt = new OptionMap();
+			
+			SetStyle();
 		}
 		//universal size values set in initialization list
 		KPlot(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : name(name_), localOpt(localOpt_), globalOpt(globalOpt_), histo(0), ratio(0), exec(0), isInit(false),
 																	   can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0),
-																	   canvasW(700), canvasH(550), canvasWextra(4), canvasHextra(28), ratioH(136),
-																	   marginL(95), marginR(35), marginB(75), marginT(35), marginM1(15), marginM2(10),
-																	   sizeT(32), sizeL(28), sizeP(26), sizeTick(12), sizeLoff(5), posP(0), epsilon(2),
-																	   pad1W(0), pad1H(0), pad2W(0), pad2H(0)
+																	   posP(0), epsilon(2), pad1W(0), pad1H(0), pad2W(0), pad2H(0)
 		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
@@ -56,8 +55,40 @@ class KPlot{
 			
 			//enable histo errors
 			TH1::SetDefaultSumw2(kTRUE);
+			
+			SetStyle();
 		}
 		//initialization
+		virtual void SetStyle(){
+			//canvas sizes
+			canvasW = 700; globalOpt->Get("canvasW",canvasW);
+			canvasH = 550; globalOpt->Get("canvasH",canvasH);
+			canvasWextra = 4;
+			canvasHextra = 28;
+			
+			//margins
+			marginL = 95; globalOpt->Get("marginL",marginL);
+			marginR = 35; globalOpt->Get("marginR",marginR);
+			marginB = 75; globalOpt->Get("marginB",marginB);
+			marginT = 35; globalOpt->Get("marginT",marginT);
+			marginM1 = 15; globalOpt->Get("marginM1",marginM1);
+			marginM2 = 10; globalOpt->Get("marginM2",marginM2);
+			
+			//automatic calculation of ratio extension height
+			//to ensure plot area on pad1 equal to non-ratio case, given 5/7 for pad1, 2/7 for pad2
+			ratioH = canvasH*2./5.+(marginM1-marginB)*7./5.;
+			
+			//todo: make relative size of pad2 vs pad1 configurable
+			
+			//font sizes
+			sizeT = 32; globalOpt->Get("sizeT",sizeT);
+			sizeL = 28; globalOpt->Get("sizeL",sizeL);
+			sizeP = 26; globalOpt->Get("sizeP",sizeP);
+			sizeTick = 12; globalOpt->Get("sizeTick",sizeTick);
+			sizeLoff = 5; globalOpt->Get("sizeLoff",sizeLoff);
+			
+			//todo: font types
+		}
 		virtual void CreateHist(){
 			//construct histogram		
 			vector<double> xbins;
@@ -91,8 +122,7 @@ class KPlot{
 			
 			//plotting with ratio enabled by default
 			if(localOpt->Get("ratio",true)) {
-				//automatic calculation of ratioH to ensure plot area on pad1 equal to non-ratio case, given 5/7 for pad1, 2/7 for pad2
-				ratioH = canvasH*2./5.+(marginM1-marginB)*7./5.;
+				
 				canvasH += ratioH;
 				//can = new TCanvas(histo->GetName(),histo->GetName(),700,700);
 				//account for window frame: 2+2px width, 2+26px height

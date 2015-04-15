@@ -64,7 +64,9 @@ class KLegend{
 			if(globalOpt==0) globalOpt = new OptionMap();
 			
 			padH = pad->GetWh()*pad->GetAbsHNDC();
-			legentry = 26/padH; //line height for each entry
+			sizeLeg = 26; globalOpt->Get("sizeLeg",sizeLeg);
+			legentry = sizeLeg/padH; //line height for each entry
+			//todo: configurable font type
 			
 			//allow multiple lines of text at top of legend
 			globalOpt->Get("extra_text",extra_text);
@@ -279,7 +281,7 @@ class KLegend{
 		double legwidth, legheight;
 		double lbound, rbound, tbound, bbound;
 		double umin, umax, vmin, vmax;
-		double padH, legentry;
+		double padH, sizeLeg, legentry;
 		vector<KLegendEntry> entries;
 		vector<TH1*> hists;
 		TLegend* leg;
