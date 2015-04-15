@@ -126,6 +126,10 @@ class KLegend{
 			leg->SetBorderSize(0);
 			leg->SetTextSize(legentry);
 			leg->SetTextFont(42);
+			
+			for(unsigned e = 0; e < entries.size(); e++){
+				leg->AddEntry(entries[e].GetObj(),entries[e].GetLabel().c_str(),entries[e].GetOption().c_str());
+			}
 		}
 		void Build(Horz hdir=hdefault){
 			bool logy = pad->GetLogy();
@@ -237,10 +241,6 @@ class KLegend{
 				ymax_[i] = logy ? ymin*pow(bh[i]/ymin, gy/(vcmin[i] - pad->GetBottomMargin() - eps)) : ymin + gy*(bh[i] - ymin)/(vcmin[i] - pad->GetBottomMargin() - eps);
 			}
 			ymax = max(ymax_[0],ymax_[1]);
-			
-			for(unsigned e = 0; e < entries.size(); e++){
-				leg->AddEntry(entries[e].GetObj(),entries[e].GetLabel().c_str(),entries[e].GetOption().c_str());
-			}
 		}
 		void Draw(){
 			pad->cd();
