@@ -265,7 +265,7 @@ class KPlotManager : public KManager {
 				//BEFORE division by bin width if requested
 				//then pass current histogram to legend
 				//AFTER bindivide if requested
-				//and calculate legend size
+				//and add to legend
 				double yield = 0;
 				if(yieldref) yield = yieldref->GetYield();
 				if(globalOpt->Get("printyield",false)) cout << p->first << " yield:" << endl;
@@ -273,8 +273,7 @@ class KPlotManager : public KManager {
 					if(yieldref && p->second->GetLocalOpt()->Get("yieldnorm",false) && yield>0 && MySets[s] != yieldref) MySets[s]->Normalize(yield);
 					if(globalOpt->Get("printyield",false)) MySets[s]->PrintYield();
 					if(p->second->GetLocalOpt()->Get("bindivide",false)) MySets[s]->BinDivide();
-					kleg->AddHist((TH1F*)MySets[s]->GetHisto());
-					MySets[s]->GetLegendInfo(kleg);
+					MySets[s]->AddToLegend(kleg);
 				}
 				if(globalOpt->Get("printyield",false)) cout << endl;
 				if(p->second->GetLocalOpt()->Get("yieldnorm",false) && !yieldref){
@@ -283,12 +282,7 @@ class KPlotManager : public KManager {
 				
 				//build legend
 				kleg->Build();
-				
-				//add sets to legend, after building
-				for(unsigned s = 0; s < MySets.size(); s++){
-					MySets[s]->AddToLegend(kleg->GetLegend());
-				}
-				
+
 				//draw blank histo for axes
 				p->second->DrawHist();
 				//draw sets (reverse order, so first set is on top)

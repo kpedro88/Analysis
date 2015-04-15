@@ -72,8 +72,6 @@ class KSet : public KBase {
 			}
 			else return NULL; //do not reset if the histo does not exist
 		}
-		//provides size of entries for the legend
-		virtual void GetLegendInfo(KLegend* kleg) { kleg->CheckSize(name); }
 		virtual void CloseFile(){
 			for(unsigned c = 0; c < children.size(); c++){
 				children[c]->CloseFile();
@@ -144,13 +142,13 @@ class KSetData: public KSet {
 			return htmp;
 		}
 		//adds histo to legend
-		void AddToLegend(TLegend* leg) {
+		void AddToLegend(KLegend* kleg) {
 			//only draw horizontal line if horizontal error bar is enabled
 			if(globalOpt->Get("horizerrbars",false) || htmp->GetXaxis()->IsVariableBinSize()){
-				leg->AddEntry(htmp,name.c_str(),"pel");
+				kleg->AddEntry(htmp,name,"pel");
 			}
 			//note: this setting only works in ROOT 5.34.11+
-			else leg->AddEntry(htmp,name.c_str(),"pe");
+			else kleg->AddEntry(htmp,name,"pe");
 		}
 		//draw function
 		void Draw(TPad* pad) {
@@ -250,8 +248,8 @@ class KSetMC: public KSet {
 			return htmp;
 		}
 		//adds histo to legend
-		void AddToLegend(TLegend* leg) {
-			leg->AddEntry(htmp,name.c_str(),"l");
+		void AddToLegend(KLegend* kleg) {
+			kleg->AddEntry(htmp,name,"l");
 		}
 		//draw function
 		void Draw(TPad* pad) {
@@ -349,15 +347,8 @@ class KSetMCStack : public KSet {
 			}
 			else return NULL; //do not reset if the histo does not exist
 		}
-		//provides size of entries for the legend
-		void GetLegendInfo(KLegend* kleg) {
-			for(unsigned c = 0; c < children.size(); c++){
-				children[c]->GetLegendInfo(kleg);
-			}
-			if(globalOpt->Get("errband",true)) kleg->CheckSize("uncertainty");
-		}
 		//adds child histos to legend
-		void AddToLegend(TLegend* leg) {
+		void AddToLegend(KLegend* kleg) {
 			//sort vector of children according to current histo - BEFORE adding to legend
 			if(!globalOpt->Get("nosort",false)) sort(children.begin(),children.end(),KComp());	
 		
@@ -365,10 +356,10 @@ class KSetMCStack : public KSet {
 			for(int c = children.size()-1; c >= 0; c--){
 				TH1* ctmp = children[c]->GetHisto();
 				string cname = children[c]->GetName();
-				leg->AddEntry(ctmp,cname.c_str(),"f");
+				kleg->AddEntry(ctmp,cname,"f");
 			}
 			//error band enabled by default
-			if(globalOpt->Get("errband",true)) leg->AddEntry(etmp,"uncertainty","f");
+			if(globalOpt->Get("errband",true)) kleg->AddEntry(etmp,"uncertainty","f");
 			//this assumes it has already been created previously... a little unsafe, but a pain in the ass otherwise
 		}
 		//draw function

@@ -7,7 +7,7 @@
 //ROOT headers
 #include <TROOT.h>
 #include <TLegend.h>
-#include <TH1F.h>
+#include <TH1.h>
 #include <TLatex.h>
 #include <TPad.h>
 
@@ -22,6 +22,31 @@
 
 using namespace std;
 
+//----------------------------------------------------------------------------------------------
+//little class to store legend entry info before legend construction
+class KLegendEntry {
+	public:
+		//constructor
+		KLegendEntry() : obj(NULL), label(""), option("") {}
+		KLegendEntry(TObject* obj_, string label_, string option_) : obj(obj_), label(label_), option(option_) {}
+		
+		//accessors
+		TObject* GetObj() { return obj; }
+		string GetLabel() { return label; }
+		string GetOption() { return option; }
+		TH1* GetHist() {
+			if(obj && obj->InheritsFrom("TH1")) return (TH1*)obj;
+			else return NULL;
+		}
+		
+	protected:
+		//member variables
+		TObject* obj;
+		string label, option;
+};
+
+//----------------------------------------------------------------------------------------------
+//class for automatic legend construction and placement
 class KLegend{
 	public:
 		//position enums
@@ -45,7 +70,7 @@ class KLegend{
 			globalOpt->Get("extra_text",extra_text);
 			//will be added to top of legend
 			for(unsigned t = 0; t < extra_text.size(); t++){
-				CheckSize(extra_text[t]); 
+				AddEntry((TObject*)NULL,extra_text[t],"");
 			}
 			
 			double ymin_ = 1;
@@ -213,24 +238,28 @@ class KLegend{
 			}
 			ymax = max(ymax_[0],ymax_[1]);
 			
-			for(unsigned t = 0; t < extra_text.size(); t++){
-				leg->AddEntry((TObject*)NULL,extra_text[t].c_str(),"");
+			for(unsigned e = 0; e < entries.size(); e++){
+				leg->AddEntry(entries[e].GetObj(),entries[e].GetLabel().c_str(),entries[e].GetOption().c_str());
 			}
 		}
 		void Draw(){
 			pad->cd();
 			if(leg) leg->Draw("same");
 		}
-		void CheckSize(string line){
+		void AddEntry(TObject* obj, string label, string option){
+			//size check
 			pad->cd();
-			TLatex size_test(0,0,line.c_str());
+			TLatex size_test(0,0,label.c_str());
 			size_test.SetTextSize(legentry);
 			legheight += size_test.GetYsize();
 			if(size_test.GetXsize() > legwidth) legwidth = size_test.GetXsize();
+			
+			entries.push_back(KLegendEntry(obj,label,option));
+			TH1* htest = entries.back().GetHist();
+			if(htest) hists.push_back(htest);
 		}
 		
 		//accessors
-		void AddHist(TH1F* h) { hists.push_back(h); }
 		TLegend* GetLegend() { return leg; }
 		pair<double,double> GetRange(){ return make_pair(ymin,ymax); }
 		void SetManualYmin(double ym) { ymin = ym; manual_ymin = true; }
@@ -248,7 +277,8 @@ class KLegend{
 		double lbound, rbound, tbound, bbound;
 		double umin, umax, vmin, vmax;
 		double padH, legentry;
-		vector<TH1F*> hists;
+		vector<KLegendEntry> entries;
+		vector<TH1*> hists;
 		TLegend* leg;
 		double ymin, ymax;
 		bool manual_ymin;
