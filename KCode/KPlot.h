@@ -45,7 +45,7 @@ class KPlot{
 		//universal size values set in initialization list
 		KPlot(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : name(name_), localOpt(localOpt_), globalOpt(globalOpt_), histo(0), ratio(0), exec(0), isInit(false),
 																	   can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0),
-																	   canvasW(704), canvasH(578), marginL(95), marginR(35), marginB(75), marginT(35), marginM1(15), marginM2(10), 
+																	   canvasW(704), canvasH(578), ratioH(150), marginL(95), marginR(35), marginB(75), marginT(35), marginM1(15), marginM2(10), 
 																	   sizeT(32), sizeL(28), sizeP(26), sizeTick(12), sizeLoff(5), posP(0), epsilon(2), pad1W(0), pad1H(0), pad2W(0), pad2H(0)
 		{
 			//must always have local & global option maps
@@ -89,7 +89,7 @@ class KPlot{
 			
 			//plotting with ratio enabled by default
 			if(localOpt->Get("ratio",true)) {
-				canvasH += marginM1 + marginM2 + 125;
+				canvasH += ratioH;
 				//can = new TCanvas(histo->GetName(),histo->GetName(),700,700);
 				//account for window frame: 2+2px width, 2+26px height
 				can = new TCanvas(name.c_str(),name.c_str(),canvasW,canvasH);
@@ -352,7 +352,7 @@ class KPlot{
 		TPaveText* paveExtra;
 		TPaveText* paveLumi;
 		TLine* line;
-		double canvasW, canvasH, marginL, marginR, marginB, marginT, marginM1, marginM2, sizeT, sizeL, sizeP, sizeTick, sizeLoff, posP, epsilon;
+		double canvasW, canvasH, ratioH, marginL, marginR, marginB, marginT, marginM1, marginM2, sizeT, sizeL, sizeP, sizeTick, sizeLoff, posP, epsilon;
 		double pad1W, pad1H, pad2W, pad2H;
 };
 
