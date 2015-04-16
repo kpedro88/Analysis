@@ -88,6 +88,11 @@ class KPlot{
 			sizeLoff = 5; globalOpt->Get("sizeLoff",sizeLoff);
 			
 			//todo: font types
+			
+			//axis divisions
+			NdivX = 507; globalOpt->Get("NdivX",NdivX);
+			NdivYhisto = 510; globalOpt->Get("NdivYhisto",NdivYhisto);
+			NdivYratio = 503; globalOpt->Get("NdivYratio",NdivYratio);
 		}
 		virtual void CreateHist(){
 			//construct histogram		
@@ -153,7 +158,6 @@ class KPlot{
 				ratio->SetMarkerColor(kBlack);
 				ratio->SetLineColor(kBlack);
 				FormatHist(pad2,ratio);
-				ratio->GetYaxis()->SetNdivisions(503);
 				ratio->GetYaxis()->SetRangeUser(0.45,1.55);
 				
 				string rationame = "Data/MC";
@@ -341,7 +345,9 @@ class KPlot{
 			hist->GetXaxis()->SetLabelSize(sizeL/padH);
 			hist->GetXaxis()->SetLabelOffset(sizeLoff/padH);
 			hist->GetXaxis()->SetTickLength(sizeTick/tickScaleX);
-			hist->GetXaxis()->SetNdivisions(507);
+			hist->GetXaxis()->SetNdivisions(NdivX);
+			if(hist==ratio) hist->GetYaxis()->SetNdivisions(NdivYratio);
+			else if(hist==histo) hist->GetYaxis()->SetNdivisions(NdivYhisto);
 			
 			//format z axis just in case
 			hist->GetZaxis()->SetTitleSize(sizeT/padH);
@@ -389,6 +395,7 @@ class KPlot{
 		double canvasW, canvasH, canvasWextra, canvasHextra, ratioH;
 		double marginL, marginR, marginB, marginT, marginM1, marginM2;
 		double sizeT, sizeL, sizeP, sizeTick, sizeLoff, posP, epsilon;
+		double NdivX, NdivYhisto, NdivYratio;
 		double pad1W, pad1H, pad2W, pad2H;
 };
 
