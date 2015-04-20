@@ -95,6 +95,15 @@ class KSet : public KBase {
 			//then do current histo
 			KBase::Normalize(nn,toYield);
 		}
+		//used by various KSet derived classes
+		virtual void AddExtraTextToLegend(KLegend* kleg){
+			vector<string> extra_text;
+			if(localOpt->Get("extra_text",extra_text)){
+				for(unsigned t = 0; t < extra_text.size(); t++){
+					kleg->AddEntry((TObject*)NULL,extra_text[t],"");
+				}
+			}
+		}
 		
 	protected:
 		//member variables
@@ -142,13 +151,16 @@ class KSetData: public KSet {
 			return htmp;
 		}
 		//adds histo to legend
-		void AddToLegend(KLegend* kleg) {
+		void AddToLegend(KLegend* kleg, string option="") {
+			if(option.size()>0) kleg->AddEntry(htmp,name,option);
 			//only draw horizontal line if horizontal error bar is enabled
-			if(globalOpt->Get("horizerrbars",false) || htmp->GetXaxis()->IsVariableBinSize()){
+			else if(globalOpt->Get("horizerrbars",false) || htmp->GetXaxis()->IsVariableBinSize()){
 				kleg->AddEntry(htmp,name,"pel");
 			}
 			//note: this setting only works in ROOT 5.34.11+
 			else kleg->AddEntry(htmp,name,"pe");
+			
+			AddExtraTextToLegend(kleg);
 		}
 		//draw function
 		void Draw(TPad* pad) {
@@ -248,8 +260,11 @@ class KSetMC: public KSet {
 			return htmp;
 		}
 		//adds histo to legend
-		void AddToLegend(KLegend* kleg) {
-			kleg->AddEntry(htmp,name,"l");
+		void AddToLegend(KLegend* kleg, string option="") {
+			if(option.size()>0) kleg->AddEntry(htmp,name,option);
+			else kleg->AddEntry(htmp,name,"l");
+			
+			AddExtraTextToLegend(kleg);
 		}
 		//draw function
 		void Draw(TPad* pad) {
@@ -348,15 +363,13 @@ class KSetMCStack : public KSet {
 			else return NULL; //do not reset if the histo does not exist
 		}
 		//adds child histos to legend
-		void AddToLegend(KLegend* kleg) {
+		void AddToLegend(KLegend* kleg, string option="") {
 			//sort vector of children according to current histo - BEFORE adding to legend
 			if(!globalOpt->Get("nosort",false)) sort(children.begin(),children.end(),KComp());	
 		
 			//add to legend in reverse order so largest is first
 			for(int c = children.size()-1; c >= 0; c--){
-				TH1* ctmp = children[c]->GetHisto();
-				string cname = children[c]->GetName();
-				kleg->AddEntry(ctmp,cname,"f");
+				children[c]->AddToLegend(kleg,"f");
 			}
 			//error band enabled by default
 			if(globalOpt->Get("errband",true)) kleg->AddEntry(etmp,"uncertainty","f");
