@@ -55,7 +55,7 @@ class KLegend{
 	
 		//constructor
 		KLegend(TPad* pad_, OptionMap* localOpt_, OptionMap* globalOpt_) : 
-			pad(pad_), localOpt(localOpt_), globalOpt(globalOpt_), legwidth(0), legheight(0), 
+			pad(pad_), localOpt(localOpt_), globalOpt(globalOpt_), panel_ctr(0), legwidth(0), legheight(0), 
 			lbound(0), rbound(0), tbound(0), bbound(0), umin(0), umax(0), vmin(0), vmax(0),
 			leg(0), ymin(0), ymax(0), userange(false), manual_ymin(false) 
 		{
@@ -68,11 +68,30 @@ class KLegend{
 			legentry = sizeLeg/padH; //line height for each entry
 			//todo: configurable font type
 			
+			//get panel setting (global overrides local)
+			npanel = 1;
+			localOpt->Get("npanel",npanel);
+			globalOpt->Get("npanel",npanel);
+			legheights.resize(npanel,0.);
+			entries.resize(npanel,vector<KLegendEntry>());
+			
 			//allow multiple lines of text at top of legend
+			vector<string> extra_text;
 			globalOpt->Get("extra_text",extra_text);
+			vector<int> extra_text_panels;
+			bool set_panels = globalOpt->Get("extra_text_panels",extra_text_panels);
 			//will be added to top of legend
 			for(unsigned t = 0; t < extra_text.size(); t++){
-				AddEntry((TObject*)NULL,extra_text[t],"");
+				int panel_tmp = -1;
+				if(extra_text_panels.size()>t) panel_tmp = extra_text_panels[t];
+				AddEntry((TObject*)NULL,extra_text[t],"",panel_tmp);
+			}
+			//keep extra text and real legend entries separate
+			//only when entries are being automatically split between panels
+			if(!set_panels){
+				for(unsigned t = 0; t < extra_text.size()%npanel; t++){
+					AddEntry((TObject*)NULL,"","");
+				}
 			}
 			
 			double ymin_ = 1;
@@ -91,10 +110,18 @@ class KLegend{
 			tbound = 1 - (pad->GetTopMargin() + xtick);
 			bbound = 1 - (pad->GetTopMargin() + xtick);
 			
+			//account for npanel
+			unsigned max_panel_entries = 0;
+			double max_legheight = 0;
+			for(int p = 0; p < npanel; p++){
+				if(entries[p].size()>max_panel_entries) max_panel_entries = entries[p].size();
+				if(legheights[p]>max_legheight) max_legheight = legheights[p];
+			}
+			
 			//symbol box takes up fMargin = 0.25 by default
-			legwidth /= 0.75;
+			legwidth = legwidth*npanel/0.75;
 			//add a little padding for each line
-			legheight *= 1.2;
+			legheight = max_legheight*1.2;
 			
 			if(hdir==left) {
 				umin = lbound;
@@ -128,9 +155,13 @@ class KLegend{
 			leg->SetBorderSize(0);
 			leg->SetTextSize(legentry);
 			leg->SetTextFont(42);
+			leg->SetNColumns(npanel);
 			
-			for(unsigned e = 0; e < entries.size(); e++){
-				leg->AddEntry(entries[e].GetObj(),entries[e].GetLabel().c_str(),entries[e].GetOption().c_str());
+			for(unsigned e = 0; e < max_panel_entries; e++){
+				for(int p = 0; p < npanel; p++){
+					if(entries[p].size()<=e) leg->AddEntry((TObject*)NULL,"",""); //dummy entry to keep things aligned
+					else leg->AddEntry(entries[p][e].GetObj(),entries[p][e].GetLabel().c_str(),entries[p][e].GetOption().c_str());
+				}
 			}
 		}
 		void Build(Horz hdir=hdefault){
@@ -249,17 +280,24 @@ class KLegend{
 			pad->cd();
 			if(leg) leg->Draw("same");
 		}
-		void AddEntry(TObject* obj, string label, string option){
+		void AddEntry(TObject* obj, string label, string option, int panel=-1){
+			if(panel==-2) --panel_ctr;
+			if(panel_ctr%npanel==0) panel_ctr = 0;
+			//-1 increments, -2 uses counter but doesn't increment
+			if(panel<0) panel = panel_ctr;
+			
 			//size check
 			pad->cd();
 			TLatex size_test(0,0,label.c_str());
 			size_test.SetTextSize(legentry);
-			legheight += size_test.GetYsize();
+			legheights[panel_ctr] += size_test.GetYsize();
 			if(size_test.GetXsize() > legwidth) legwidth = size_test.GetXsize();
 			
-			entries.push_back(KLegendEntry(obj,label,option));
-			TH1* htest = entries.back().GetHist();
+			entries[panel_ctr].push_back(KLegendEntry(obj,label,option));
+			TH1* htest = entries[panel_ctr].back().GetHist();
 			if(htest) hists.push_back(htest);
+			
+			++panel_ctr;
 		}
 		
 		//accessors
@@ -278,17 +316,18 @@ class KLegend{
 		TPad* pad;
 		OptionMap* localOpt;
 		OptionMap* globalOpt;
+		int npanel, panel_ctr;
 		double legwidth, legheight;
+		vector<double> legheights;
 		double lbound, rbound, tbound, bbound;
 		double umin, umax, vmin, vmax;
 		double padH, sizeLeg, legentry;
-		vector<KLegendEntry> entries;
+		vector<vector<KLegendEntry> > entries;
 		vector<TH1*> hists;
 		TLegend* leg;
 		double ymin, ymax;
 		bool userange;
 		bool manual_ymin;
-		vector<string> extra_text;
 };
 
 #endif

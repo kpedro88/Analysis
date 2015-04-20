@@ -98,9 +98,11 @@ class KSet : public KBase {
 		//used by various KSet derived classes
 		virtual void AddExtraTextToLegend(KLegend* kleg){
 			vector<string> extra_text;
+			int panel_tmp = -2;
+			localOpt->Get("panel",panel_tmp);
 			if(localOpt->Get("extra_text",extra_text)){
 				for(unsigned t = 0; t < extra_text.size(); t++){
-					kleg->AddEntry((TObject*)NULL,extra_text[t],"");
+					kleg->AddEntry((TObject*)NULL,extra_text[t],"",panel_tmp);
 				}
 			}
 		}
@@ -152,13 +154,15 @@ class KSetData: public KSet {
 		}
 		//adds histo to legend
 		void AddToLegend(KLegend* kleg, string option="") {
-			if(option.size()>0) kleg->AddEntry(htmp,name,option);
+			int panel_tmp = -1;
+			localOpt->Get("panel",panel_tmp);
+			if(option.size()>0) kleg->AddEntry(htmp,name,option,panel_tmp);
 			//only draw horizontal line if horizontal error bar is enabled
 			else if(globalOpt->Get("horizerrbars",false) || htmp->GetXaxis()->IsVariableBinSize()){
-				kleg->AddEntry(htmp,name,"pel");
+				kleg->AddEntry(htmp,name,"pel",panel_tmp);
 			}
 			//note: this setting only works in ROOT 5.34.11+
-			else kleg->AddEntry(htmp,name,"pe");
+			else kleg->AddEntry(htmp,name,"pe",panel_tmp);
 			
 			AddExtraTextToLegend(kleg);
 		}
@@ -261,8 +265,10 @@ class KSetMC: public KSet {
 		}
 		//adds histo to legend
 		void AddToLegend(KLegend* kleg, string option="") {
-			if(option.size()>0) kleg->AddEntry(htmp,name,option);
-			else kleg->AddEntry(htmp,name,"l");
+			int panel_tmp = -1;
+			localOpt->Get("panel",panel_tmp);
+			if(option.size()>0) kleg->AddEntry(htmp,name,option,panel_tmp);
+			else kleg->AddEntry(htmp,name,"l",panel_tmp);
 			
 			AddExtraTextToLegend(kleg);
 		}
