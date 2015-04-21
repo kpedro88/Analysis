@@ -154,7 +154,6 @@ class KBase {
 		//other virtual functions (unimplemented at this level)
 		virtual void Draw(TPad* pad) {}
 		virtual void AddToLegend(KLegend* kleg, string option="") {}
-		virtual void AddExtraTextToLegend(KLegend* kleg) {}
 		virtual void AddChild(KBase* ch) {}
 		virtual void SetAddExt(bool ae) {}
 		virtual void Build(TH1* hrat_) {}
