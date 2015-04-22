@@ -16,6 +16,7 @@
 #include <TROOT.h>
 #include <TFile.h>
 #include <TH1.h>
+#include <TProfile.h>
 #include <TH2.h>
 #include <TStyle.h>
 #include <TLorentzVector.h>
@@ -905,21 +906,30 @@ class KBuilder : public TreeClass {
 						}
 					}
 					else if(vars.size()==2){
-						TH2* htmp2 = (TH2*)htmp; //need to cast to TH2 in order to use Fill(x,y,w)
+						//need to cast in order to use Fill(x,y,w)
 						//these three cases allow for various x vs. y comparisons: same # entries per event, or 1 vs. N per event
 						if(values[0].GetSize()==values[1].GetSize()) {
 							for(int i = 0; i < values[0].GetSize(); i++){
-								htmp2->Fill(values[0].GetValue(i), values[1].GetValue(i), values[0].GetWeight(i)); //pick the x weight by default
+								if(htmp->GetDimension()==1)
+									static_cast<TProfile*>(htmp)->Fill(values[0].GetValue(i), values[1].GetValue(i), values[0].GetWeight(i)); //pick the x weight by default
+								else if(htmp->GetDimension()==2)
+									static_cast<TH2*>(htmp)->Fill(values[0].GetValue(i), values[1].GetValue(i), values[0].GetWeight(i)); //pick the x weight by default
 							}
 						}
 						else if(values[0].GetSize()==1){
 							for(int iy = 0; iy < values[1].GetSize(); iy++){
-								htmp2->Fill(values[0].GetValue(0), values[1].GetValue(iy), values[1].GetWeight(iy));
+								if(htmp->GetDimension()==1)
+									static_cast<TProfile*>(htmp)->Fill(values[0].GetValue(0), values[1].GetValue(iy), values[1].GetWeight(iy));
+								else if(htmp->GetDimension()==2)
+									static_cast<TH2*>(htmp)->Fill(values[0].GetValue(0), values[1].GetValue(iy), values[1].GetWeight(iy));
 							}
 						}
 						else if(values[1].GetSize()==1){
 							for(int ix = 0; ix < values[0].GetSize(); ix++){
-								htmp2->Fill(values[0].GetValue(ix), values[1].GetValue(0), values[0].GetWeight(ix));
+								if(htmp->GetDimension()==1)
+									static_cast<TProfile*>(htmp)->Fill(values[0].GetValue(ix), values[1].GetValue(0), values[0].GetWeight(ix));
+								else if(htmp->GetDimension()==2)
+									static_cast<TH2*>(htmp)->Fill(values[0].GetValue(ix), values[1].GetValue(0), values[0].GetWeight(ix));
 							}
 						}
 					}
@@ -935,7 +945,9 @@ class KBuilder : public TreeClass {
 					stmp = sit->first;
 					htmp = sit->second;
 					
-					if(htmp->GetDimension()==2) continue; //not implemented for 2D histos yet
+					vector<string> vars;
+					KParser::process(stmp,'_',vars);
+					if(vars.size()==2) continue; //not implemented for 2D histos or profiles yet
 					
 					//temporary histo to calculate error correctly when adding overflow bin to last bin
 					TH1* otmp = (TH1*)htmp->Clone();
@@ -955,7 +967,7 @@ class KBuilder : public TreeClass {
 					delete otmp;
 				}
 			}
-		}		
+		}	
 
 	protected:
 		//member variables

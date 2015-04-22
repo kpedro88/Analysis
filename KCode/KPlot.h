@@ -4,6 +4,7 @@
 //custom headers
 #include "KMap.h"
 #include "KLegend.h"
+#include "KParser.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -11,6 +12,7 @@
 #include <TPaveText.h>
 #include <TH1.h>
 #include <TH1F.h>
+#include <TProfile.h>
 #include <TH2.h>
 #include <TH2F.h>
 #include <TCanvas.h>
@@ -95,16 +97,22 @@ class KPlot{
 			NdivYratio = 503; globalOpt->Get("NdivYratio",NdivYratio);
 		}
 		virtual void CreateHist(){
+			//check for TProfile case
+			vector<string> vars;
+			KParser::process(name,'_',vars);
+			
 			//construct histogram		
 			vector<double> xbins;
 			int xnum;
 			double xmin, xmax;
 			if(localOpt->Get("xbins",xbins)){ //variable binning case
-				histo = new TH1F(name.c_str(),"",xbins.size()-1,&xbins[0]);
+				if(vars.size()==2) histo = new TProfile(name.c_str(),"",xbins.size()-1,&xbins[0]);
+				else histo = new TH1F(name.c_str(),"",xbins.size()-1,&xbins[0]);
 				isInit = true;
 			}
 			else if(localOpt->Get("xnum",xnum) && localOpt->Get("xmin",xmin) && localOpt->Get("xmax",xmax)){ //standard binning case
-				histo = new TH1F(name.c_str(),"",xnum,xmin,xmax);
+				if(vars.size()==2) histo = new TProfile(name.c_str(),"",xnum,xmin,xmax);
+				else histo = new TH1F(name.c_str(),"",xnum,xmin,xmax);
 				isInit = true;
 			}
 			else { //no/incomplete binning information, build failed
