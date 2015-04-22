@@ -26,8 +26,8 @@ using namespace std;
 class KPlotManager : public KManager {
 	public:
 		//constructor
-		KPlotManager() : KManager(),MyRatio(0),s_numer(""),s_denom(""),s_yieldref(""),numer(0),denom(0),yieldref(0),doPrint(false) {}
-		KPlotManager(string input_, string treedir_="tree") : KManager(input_,treedir_),numer(0),denom(0),yieldref(0),doPrint(false) {
+		KPlotManager() : KManager(),MyRatio(0),numer(0),denom(0),yieldref(0),doPrint(false),out_file(0) {}
+		KPlotManager(string input_, string treedir_="tree") : KManager(input_,treedir_),numer(0),denom(0),yieldref(0),doPrint(false),out_file(0) {
 			//parse most initializations based on text input
 			Initialize(input_);
 			
@@ -123,7 +123,6 @@ class KPlotManager : public KManager {
 			if(!parsed) return;
 			
 			//setup root output file if requested
-			TFile* out_file = 0;
 			string rootfilename = "";
 			if(globalOpt->Get<string>("rootfile",rootfilename)) out_file = TFile::Open((rootfilename+".root").c_str(),"RECREATE");
 			
@@ -141,16 +140,38 @@ class KPlotManager : public KManager {
 			}
 			
 			//get special status options
+			string s_numer, s_denom, s_yieldref; //names for special sets
+			s_numer = s_denom = s_yieldref = "";
 			globalOpt->Get("numer",s_numer);
 			globalOpt->Get("denom",s_denom);
 			globalOpt->Get("yieldref",s_yieldref);
+			vector<string> s_roc_sig, s_roc_bkg; //vectors of names of roc sets
+			globalOpt->Get("roc_sig",s_roc_sig);
+			globalOpt->Get("roc_bkg",s_roc_bkg);
 			
 			//check for special status sets
 			for(unsigned s = 0; s < MySets.size(); s++){
 				if(s_numer.size()>0 && numer==0 && MySets[s]->GetName()==s_numer) numer = MySets[s];
 				if(s_denom.size()>0 && denom==0 && MySets[s]->GetName()==s_denom) denom = MySets[s];
 				if(s_yieldref.size()>0 && yieldref==0 && MySets[s]->GetName()==s_yieldref) yieldref = MySets[s];
+				
+				//only find each roc set once
+				for(int r = 0; r < s_roc_sig.size(); r++){
+					if(MySets[s]->GetName()==s_roc_sig[r]){
+						roc_sig.push_back(MySets[s]);
+						s_roc_sig.erase(s_roc_sig.begin()+r);
+						break;
+					}
+				}
+				for(int r = 0; r < s_roc_bkg.size(); r++){
+					if(MySets[s]->GetName()==s_roc_bkg[r]){
+						roc_bkg.push_back(MySets[s]);
+						s_roc_bkg.erase(s_roc_bkg.begin()+r);
+						break;
+					}
+				}
 			}
+			
 			bool ratio_allowed = numer && denom;
 			if(ratio_allowed){
 				//add children to ratio
@@ -167,11 +188,13 @@ class KPlotManager : public KManager {
 				KNamed* ntmp = MyPlotOptions[p];
 				if(ntmp->second->Get("ratio",true) && !ratio_allowed){ //ratios turned on by default
 					ntmp->second->Set("ratio",false); //disable ratios if components not available
-					cout << "Input error: ratio requested for histo " << ntmp->first << ", but ";
-					if(!numer && !denom) cout << "numer and denom ";
-					else if(!numer) cout << "numer ";
-					else if(!denom) cout << "denom ";
-					cout << "not set. Ratio will not be drawn." << endl;
+					if(!globalOpt->Get("roc",false)){
+						cout << "Input error: ratio requested for histo " << ntmp->first << ", but ";
+						if(!numer && !denom) cout << "numer and denom";
+						else if(!numer) cout << "numer";
+						else if(!denom) cout << "denom";
+						cout << " not set. Ratio will not be drawn." << endl;
+					}
 				}
 				int dim = 0;
 				ntmp->second->Get("dimension",dim);
@@ -242,6 +265,17 @@ class KPlotManager : public KManager {
 				int prcsn;
 				if(globalOpt->Get("yieldprecision",prcsn)) cout << fixed << setprecision(prcsn);
 				cout << "fake tau norm = " << ft_norm << " +/- " << ft_err << endl;
+			}
+			
+			//skip all the histo drawing in roc curve mode
+			if(globalOpt->Get("roc",false)) {
+				//close canvases
+				for(p = MyPlots.GetTable().begin(); p != MyPlots.GetTable().end(); p++){
+					TCanvas* can = p->second->GetCanvas();
+					can->Close();
+				}
+				DrawROC();
+				return;
 			}
 			
 			//draw each plot - normalization, legend, ratio
@@ -405,12 +439,107 @@ class KPlotManager : public KManager {
 			}
 			
 			//close all root files
-			if(globalOpt->Get("closefiles",false)){
-				out_file->Close();
-				for(unsigned s = 0; s < MySets.size(); s++){
-					MySets[s]->CloseFile();
+			CloseFiles();
+		}
+		//where the ROC happens
+		void DrawROC(){
+			if(roc_sig.size()==0 || roc_bkg.size()==0){
+				cout << "Input error: ROC curves requested, but ";
+				if(roc_sig.size()==0 && roc_bkg.size()==0) cout << "roc_sig and roc_bkg";
+				else if(roc_sig.size()==0) cout << "roc_sig";
+				else if(roc_sig.size()==0) cout << "roc_bkg";
+				cout << " not set. ROC curves will not be drawn." << endl;
+				return;
+			}
+			
+			//draw curves for each sig vs each bkg
+			for(int s = 0; s < roc_sig.size(); s++){
+				for(int b = 0; b < roc_bkg.size(); b++){
+					//specific qtys not included in roc_name right now
+					//anything desired should be specified in printsuffix option
+					string roc_name = "roc_" + roc_sig[s]->GetName() + "_vs_" + roc_bkg[b]->GetName();
+					
+					//make base histo: 0..1 on both axes
+					TH1F* h_base = new TH1F(roc_name.c_str(),"",10,0.,1.);
+					h_base->GetYaxis()->SetRangeUser(0.,1.);
+					h_base->GetXaxis()->SetTitle(("#varepsilon_{sig} (" + roc_sig[s]->GetName() + ")").c_str());
+					h_base->GetYaxis()->SetTitle(("#varepsilon_{bkg} (" + roc_bkg[b]->GetName() + ")").c_str());
+					
+					//make plot
+					KPlot* p_roc = new KPlot(roc_name,NULL,globalOpt);
+					p_roc->GetLocalOpt()->Set("ratio",false);
+					p_roc->GetLocalOpt()->Set("logx",false);
+					p_roc->GetLocalOpt()->Set("logy",false);
+					p_roc->Initialize(h_base);
+					
+					//get drawing objects from KPlot
+					TCanvas* can = p_roc->GetCanvas();
+					TPad* pad1 = p_roc->GetPad1();
+					
+					//get legend
+					KLegend* kleg = p_roc->GetLegend();
+					kleg->AddHist(p_roc->GetHisto());
+					
+					//loop over histos and make graphs
+					vector<TGraph*> graphs;
+					PMit p;
+					for(p = MyPlots.GetTable().begin(); p != MyPlots.GetTable().end(); p++){
+						//select current histogram in sets
+						TH1F* h_sig = (TH1F*)(roc_sig[s]->GetHisto(p->first));
+						TH1F* h_bkg = (TH1F*)(roc_bkg[b]->GetHisto(p->first));
+						
+						//get efficiencies
+						//(cached results will be returned if the calculation was already done)
+						double* eff_sig = roc_sig[s]->GetEff();
+						double* eff_bkg = roc_bkg[b]->GetEff();
+
+						//create graph
+						TGraph* gtmp = new TGraph(h_sig->GetNbinsX()+2,eff_sig,eff_bkg);
+						gtmp->SetName(p->first.c_str());
+						gtmp->SetTitle("");
+						
+						//format graph using KPlot local options for this histo/qty
+						gtmp->SetLineWidth(2);
+						Color_t gcol = kBlack;
+						p->second->GetLocalOpt()->Get("color",gcol);
+						gtmp->SetLineColor(gcol);
+						
+						//add to legend using histo x-name & panel
+						int panel_tmp = 0;
+						p->second->GetLocalOpt()->Get("panel",panel_tmp);
+						kleg->AddEntry(gtmp,h_sig->GetXaxis()->GetTitle(),"l",panel_tmp);
+						
+						//store graph
+						graphs.push_back(gtmp);
+					}
+						
+					//build legend: specified quadrant, no smart resizing
+					kleg->Build(KLegend::left, KLegend::top);
+
+					//draw blank histo for axes
+					p_roc->DrawHist();
+					//draw sets (reverse order, so first set is on top)
+					pad1->cd();
+					for(unsigned g = 0; g < graphs.size(); g++){
+						graphs[g]->Draw("l same"); //should this be "c" instead for smooth curve?
+						
+						//save graphs in root file if requested
+						if(out_file){
+							out_file->cd();
+							string oname = string(graphs[g]->GetName()) + "_" + roc_name;
+							graphs[g]->Write(oname.c_str());
+						}
+					}
+					p_roc->GetHisto()->Draw("sameaxis"); //draw again so axes on top
+					p_roc->DrawText();
+					
+					//if printing not enabled, does nothing
+					PrintCanvas(roc_name,can);			
 				}
 			}
+			
+			//close all root files
+			CloseFiles();
 		}
 		
 		//accessors
@@ -429,6 +558,14 @@ class KPlotManager : public KManager {
 				}
 			}
 		}
+		void CloseFiles(){
+			if(globalOpt->Get("closefiles",false)){
+				out_file->Close();
+				for(unsigned s = 0; s < MySets.size(); s++){
+					MySets[s]->CloseFile();
+				}
+			}
+		}
 		
 	private:
 		//member variables
@@ -437,10 +574,11 @@ class KPlotManager : public KManager {
 		vector<KNamed*> MyPlotOptions;
 		vector<KBase*> MySets;
 		KSetRatio* MyRatio;
-		string s_numer, s_denom, s_yieldref; //names for special sets
 		KBase *numer, *denom, *yieldref; //pointers to special sets
+		vector<KBase*> roc_sig, roc_bkg;
 		bool doPrint;
 		map<int,KBase*> curr_sets;
+		TFile* out_file;
 };
 
 

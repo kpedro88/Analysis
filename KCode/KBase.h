@@ -113,12 +113,28 @@ class KBase {
 		virtual TH1* GetHisto(string hname) {
 			TH1* hist = MyHistos.Get(hname);
 			etmp = MyErrorBands.Get(hname); //it's okay for etmp to be null
+			efftmp = MyEffs.Get(hname); //will be calculated later if needed
 			if(hist) {
 				stmp = hname;
 				htmp = hist;
 				return htmp;
 			}
 			else return NULL; //do not reset if the histo does not exist
+		}
+		//returns efficiency for cut on current histo qty
+		//does calculation and stores result if necessary
+		virtual double* GetEff(){
+			if(efftmp) return efftmp;
+			
+			//calculate efficiencies: yield(i,nbins)/yield(0,nbins)
+			efftmp = new double[htmp->GetNbinsX()+2];
+			double ydenom = htmp->Integral(0,htmp->GetNbinsX()+1);
+			for(int b = 0; b <= htmp->GetNbinsX()+1; b++){
+				efftmp[b] = htmp->Integral(b,htmp->GetNbinsX()+1)/ydenom;
+			}
+			
+			MyEffs.Add(stmp,efftmp);
+			return efftmp;
 		}
 		virtual map<string,TH1*>& GetTable() { return MyHistos.GetTable(); }
 		KBase* GetParent() { return parent; }
@@ -173,9 +189,11 @@ class KBase {
 		KBuilder* MyBuilder;
 		HistoMap MyHistos;
 		ErrorMap MyErrorBands;
+		KMap<double*> MyEffs;
 		string stmp;
 		TH1* htmp;
 		TGraphAsymmErrors* etmp;
+		double* efftmp;
 		bool isBuilt;
 };
 

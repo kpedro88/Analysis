@@ -62,6 +62,7 @@ class KSet : public KBase {
 		virtual TH1* GetHisto(string hname){
 			TH1* hist = MyHistos.Get(hname);
 			etmp = MyErrorBands.Get(hname); //it's okay for etmp to be null
+			efftmp = MyEffs.Get(hname); //will be calculated later if needed
 			if(hist) {
 				stmp = hname;
 				htmp = hist;
@@ -345,6 +346,7 @@ class KSetMCStack : public KSet {
 		TH1* GetHisto(string hname) {
 			THStack* stk = MyStacks.Get(hname);
 			etmp = MyErrorBands.Get(hname); //it's okay for etmp to be null
+			efftmp = MyEffs.Get(hname); //will be calculated later if needed
 			if(stk) {
 				stmp = hname;
 				shtmp = stk;
