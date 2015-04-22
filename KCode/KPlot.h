@@ -38,7 +38,7 @@ class KPlot{
 		//constructor
 		KPlot() : name(""), localOpt(0), globalOpt(0), histo(0), ratio(0), exec(0), isInit(false), 
 				  can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0),
-				  posP(0), epsilon(0), pad1W(0), pad1H(0), pad2W(0), pad2H(0)
+				  pad1W(0), pad1H(0), pad2W(0), pad2H(0)
 		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
@@ -49,7 +49,7 @@ class KPlot{
 		//universal size values set in initialization list
 		KPlot(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : name(name_), localOpt(localOpt_), globalOpt(globalOpt_), histo(0), ratio(0), exec(0), isInit(false),
 																	   can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0),
-																	   posP(0), epsilon(2), pad1W(0), pad1H(0), pad2W(0), pad2H(0)
+																	   pad1W(0), pad1H(0), pad2W(0), pad2H(0)
 		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
@@ -61,7 +61,7 @@ class KPlot{
 			SetStyle();
 		}
 		//initialization
-		virtual void SetStyle(){
+		void SetStyle(){
 			//canvas sizes
 			canvasW = 700; globalOpt->Get("canvasW",canvasW);
 			canvasH = 550; globalOpt->Get("canvasH",canvasH);
@@ -75,6 +75,7 @@ class KPlot{
 			marginT = 35; globalOpt->Get("marginT",marginT);
 			marginM1 = 15; globalOpt->Get("marginM1",marginM1);
 			marginM2 = 10; globalOpt->Get("marginM2",marginM2);
+			marginPal = 0; //only used in KPlot2D for palette axis
 			
 			//automatic calculation of ratio extension height
 			//to ensure plot area on pad1 equal to non-ratio case, given 5/7 for pad1, 2/7 for pad2
@@ -88,6 +89,7 @@ class KPlot{
 			sizeP = 26; globalOpt->Get("sizeP",sizeP);
 			sizeTick = 12; globalOpt->Get("sizeTick",sizeTick);
 			sizeLoff = 5; globalOpt->Get("sizeLoff",sizeLoff);
+			epsilon = 2; globalOpt->Get("epsilon",epsilon);
 			
 			//todo: font types
 			
@@ -221,7 +223,7 @@ class KPlot{
 			//setup CMS text
 			TLatex width_test_cms(0,0,"CMS");
 			width_test_cms.SetTextSize(sizeP/pad1H);
-			posP = 1-(marginT-1)/pad1H;
+			double posP = 1-(marginT-1)/pad1H;
 			double uminCMS = marginL/pad1W;
 			double umaxCMS = marginL/pad1W + width_test_cms.GetXsize();
 			paveCMS = new TPaveText(uminCMS,posP,umaxCMS,1.0,"NDC");
@@ -324,11 +326,10 @@ class KPlot{
 				//need to scale title height value from pad height to pad width for z palette axis
 				//(acts like y axis)
 				Theight *= padH/padW;
-				Toff = (marginL/padW - epsilon/padW - Theight/2.)/(1.6*sizeT/padH);
+				Toff = ((marginR-marginPal)/padW - epsilon/padW - Theight/2.)/(1.6*sizeT/padH);
 			}
 			
 			axis->SetTitleOffset(Toff);
-			
 		}
 		virtual void FormatHist(TPad* pad, TH1* hist){
 			double padW, padH;
@@ -401,8 +402,8 @@ class KPlot{
 		TPaveText* paveLumi;
 		TLine* line;
 		double canvasW, canvasH, canvasWextra, canvasHextra, ratioH;
-		double marginL, marginR, marginB, marginT, marginM1, marginM2;
-		double sizeT, sizeL, sizeP, sizeTick, sizeLoff, posP, epsilon;
+		double marginL, marginR, marginB, marginT, marginM1, marginM2, marginPal;
+		double sizeT, sizeL, sizeP, sizeTick, sizeLoff, epsilon;
 		double NdivX, NdivYhisto, NdivYratio;
 		double pad1W, pad1H, pad2W, pad2H;
 };
@@ -414,8 +415,18 @@ class KPlot2D: public KPlot {
 	public:
 		//constructor
 		KPlot2D() : KPlot(), setname("") {}
-		KPlot2D(string name_, string setname_, OptionMap* localOpt_, OptionMap* globalOpt_) : KPlot(name_,localOpt_,globalOpt_), setname(setname_) {}
+		KPlot2D(string name_, string setname_, OptionMap* localOpt_, OptionMap* globalOpt_) : KPlot(name_,localOpt_,globalOpt_), setname(setname_) {
+			SetStyle();
+		}
 		//initialization
+		void SetStyle(){
+			//2D changes
+			//extra space for z axis palette
+			//palette width calc from THistPainter::PaintPalette(): mPal = 0.045*padW
+			canvasW = 1./0.95*(canvasW + marginL - marginR);
+			marginPal = 0.05*canvasW;
+			marginR = marginL + marginPal;
+		}
 		virtual void CreateHist(){
 			//construct histogram		
 			vector<double> xbins, ybins;
@@ -476,14 +487,9 @@ class KPlot2D: public KPlot {
 			if(!histo) CreateHist();
 			if(!histo) return isInit; //histo creation failed
 			
-			//extra space for z axis palette
-			canvasW += 150 - marginR;
-			marginR = 150;
-			//can = new TCanvas(histo->GetName(),histo->GetName(),850,550);
-			//account for window frame: 2+2px width, 2+26px height
 			string cname = name;
 			cname = cname + "_" + setname;
-			can = new TCanvas(cname.c_str(),cname.c_str(),canvasW,canvasH);
+			can = new TCanvas(cname.c_str(),cname.c_str(),canvasW+canvasWextra,canvasH+canvasHextra);
 		
 			pad1 = new TPad("graph","",0,0,1,1);
 			pad1W = pad1->GetWw()*pad1->GetAbsWNDC();
