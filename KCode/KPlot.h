@@ -133,7 +133,6 @@ class KPlot{
 			histo = histo_;
 			if(!histo) CreateHist();
 			if(!histo) return isInit; //histo creation failed
-			//todo: expand CreateHist to handle TProfiles as well
 			
 			//plotting with ratio enabled by default
 			if(localOpt->Get("ratio",true)) {
