@@ -118,7 +118,7 @@ class KLegend{
 			//keep extra text and real legend entries separate
 			//only when entries are being automatically split between panels
 			if(!set_panels){
-				for(unsigned t = 0; t < npanel - extra_text.size()%npanel; t++){
+				for(unsigned t = 0; t < (npanel - extra_text.size()%npanel)%npanel; t++){
 					if(panel_ctr%npanel==0) panel_ctr = 0;
 					AddEntry((TObject*)NULL,"","",panel_ctr);
 					panel_ctr++;
