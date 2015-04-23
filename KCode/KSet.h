@@ -11,6 +11,8 @@
 #include <TROOT.h>
 #include <TFile.h>
 #include <TH1.h>
+#include <TH2.h>
+#include <TProfile.h>
 #include <THStack.h>
 
 //STL headers
@@ -497,7 +499,11 @@ class KSetRatio: public KSet {
 					hsim0->SetBinError(b,0);
 				}
 				
-				hrat->Divide(hdata,hsim0);
+				if(hrat->InheritsFrom(TProfile::Class())) {
+					hrat = static_cast<TProfile*>(hrat)->ProjectionX();
+					hrat->Divide(static_cast<TProfile*>(hdata)->ProjectionX(),static_cast<TProfile*>(hsim0)->ProjectionX());
+				}
+				else hrat->Divide(hdata,hsim0);
 				Color_t color;
 				localOpt->Get("color",color);
 				//formatting
