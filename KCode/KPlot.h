@@ -285,6 +285,52 @@ class KPlot{
 		}
 		void DrawText(){
 			pad1->cd();
+			pad1->Update();
+			
+			//draw cut lines BEFORE legend/text
+			vector<double> xcuts, ycuts;
+			vector<Color_t> xcut_colors, ycut_colors;
+			
+			//x cuts, use pad y-range
+			double y1 = pad1->GetLogy() ? pow(10,pad1->GetUymin()) : pad1->GetUymin();
+			double y2 = pad1->GetLogy() ? pow(10,pad1->GetUymax()) : pad1->GetUymax();
+			localOpt->Get("xcuts",xcuts);
+			localOpt->Get("xcut_colors",xcut_colors);
+			bool use_xcut_colors = (xcuts.size()==xcut_colors.size());
+			if(!use_xcut_colors && xcut_colors.size()>0){
+				cout << "Input error: in histo " << name << ", vector lengths of xcuts and xcut_colors do not match!";
+				cout << " xcut_colors will be ignored." << endl;
+			}
+			for(int c = 0; c < xcuts.size(); c++){
+				TLine* tmp = new TLine(xcuts[c],y1,xcuts[c],y2);
+				tmp->SetLineStyle(7);
+				tmp->SetLineWidth(2);
+				if(use_xcut_colors) tmp->SetLineColor(xcut_colors[c]);
+				else tmp->SetLineColor(kBlack);
+				tmp->Draw("same");
+				xcut_lines.push_back(tmp);
+			}
+			
+			//y cuts, use pad x-range
+			double x1 = pad1->GetLogx() ? pow(10,pad1->GetUxmin()) : pad1->GetUxmin();
+			double x2 = pad1->GetLogx() ? pow(10,pad1->GetUxmax()) : pad1->GetUxmax();
+			localOpt->Get("ycuts",ycuts);
+			localOpt->Get("ycut_colors",ycut_colors);
+			bool use_ycut_colors = (ycuts.size()==ycut_colors.size());
+			if(!use_ycut_colors && ycut_colors.size()>0){
+				cout << "Input error: in histo " << name << ", vector lengths of ycuts and ycut_colors do not match!";
+				cout << " ycut_colors will be ignored." << endl;
+			}
+			for(int c = 0; c < ycuts.size(); c++){
+				TLine* tmp = new TLine(x1,ycuts[c],x2,ycuts[c]);
+				tmp->SetLineStyle(7);
+				tmp->SetLineWidth(2);
+				if(use_ycut_colors) tmp->SetLineColor(ycut_colors[c]);
+				else tmp->SetLineColor(kBlack);
+				tmp->Draw("same");
+				ycut_lines.push_back(tmp);
+			}
+			
 			if(leg) leg->Draw();
 			paveCMS->Draw("same");
 			paveExtra->Draw("same");
@@ -297,6 +343,19 @@ class KPlot{
 		}
 		void DrawLine(){
 			pad2->cd();
+			pad2->Update();
+			
+			//copy x cuts, use pad y-range
+			double y1 = pad2->GetLogy() ? pow(10,pad2->GetUymin()) : pad2->GetUymin();
+			double y2 = pad2->GetLogy() ? pow(10,pad2->GetUymax()) : pad2->GetUymax();
+			for(int c = 0; c < xcut_lines.size(); c++){
+				TLine* tmp = (TLine*)xcut_lines[c]->Clone();
+				tmp->SetY1(y1);
+				tmp->SetY2(y2);
+				tmp->Draw("same");
+				xcut_ratio_lines.push_back(tmp);
+			}
+			
 			line->Draw("same");
 		}
 
@@ -400,6 +459,7 @@ class KPlot{
 		TPaveText* paveExtra;
 		TPaveText* paveLumi;
 		TLine* line;
+		vector<TLine*> xcut_lines, ycut_lines, xcut_ratio_lines;
 		double canvasW, canvasH, canvasWextra, canvasHextra, ratioH;
 		double marginL, marginR, marginB, marginT, marginM1, marginM2, marginPal;
 		double sizeT, sizeL, sizeP, sizeTick, sizeLoff, epsilon;
