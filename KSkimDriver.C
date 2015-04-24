@@ -21,6 +21,10 @@ void process(string line, char delim, vector<string>& fields){
 //to run interactively:
 //root -b -q -l 'KSkimDriver.C+("input_selection.txt","LQ500_tb","main,zjets,anti-iso,main_TauESUp","/uscms_data/d3/pedrok/LQ2012/ntuple","/uscms_data/d3/pedrok/LQ2012/tree_test")'
 void KSkimDriver(string input="", string setname="", string selTypes="", string indir="", string outdir="tree"){
+	if(input.size()==0){
+		cout << "Recompiled KSkimDriver, exiting." << endl;
+		return;
+	}
 	KSkimManager k(input,setname,selTypes,indir,outdir);
 	k.Skim();
 }
