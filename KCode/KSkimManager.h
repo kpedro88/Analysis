@@ -44,7 +44,7 @@ class KSkimManager : public KManager {
 			int mother = -1;
 			MyBase->GetLocalOpt()->Get("mother",mother);
 			globalOpt->Set("mother",mother);
-			if(MyBase->GetTree()==NULL) return; //safety check
+			if(MyBase->GetTree()==NULL) { parsed = false; return; }//safety check
 			skimmer = new KSkimmer(MyBase->GetTree(),MyBase->GetNEventHist(),globalOpt);
 		}
 		//destructor
@@ -144,7 +144,7 @@ class KSkimManager : public KManager {
 					sntmp->SetSkimmer(skimmer); //also sets skimmer for selectors
 					
 					//setup output tree
-					sntmp->MakeTree(outdir,MyBase->GetFileName(), (globalOpt->Get("doClone",false) ? skimmer->fChain : NULL));
+					sntmp->MakeTree(outdir,MyBase->GetName(), (globalOpt->Get("doClone",false) ? skimmer->fChain : NULL));
 
 					//add to list
 					skimmer->AddSelection(sntmp);

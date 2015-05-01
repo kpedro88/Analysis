@@ -7,137 +7,44 @@
 
 OPTION
 int:yieldprecision[2]
+bool:doClone[1]
 
 SELECTION
 main
-	EventInfo
-	HLT	s:HLTLine[HLT_IsoMu24]
-	Muon
-	SecondMuon	b:dummy[1]
-	SecondMuonVeto	b:OppositeSign[1]
-	Vertex
-	ElectronVeto	b:OppositeSign[1]
-	Tau
-	Jet
-	GenTau
-	GenChargino
-	MET
-ttbar
-	EventInfo
-	HLT	s:HLTLine[HLT_IsoMu24]
-	Muon
-	SecondMuon	b:dummy[1]
-	SecondMuonVeto	b:OppositeSign[1]
-	Vertex
-	ElectronVeto	b:OppositeSign[1]
-	Tau	i:IsoOption[-1]	i:ChargeSign[1]
-	Jet
-	GenTau
-	GenChargino
-	MET
-zjets
-	EventInfo
-	HLT	s:HLTLine[HLT_IsoMu24]
-	Muon
-	SecondMuon
-	Vertex
-	Tau	i:IsoOption[-1]	i:ChargeSign[0]
-	Jet	i:nTau[-1]
-	GenTau
-	GenChargino
-	MET
-anti-iso
-	EventInfo
-	HLT	s:HLTLine[HLT_IsoMu24]
-	Muon
-	SecondMuon	b:dummy[1]
-	SecondMuonVeto	b:OppositeSign[1]
-	Vertex
-	ElectronVeto	b:OppositeSign[1]
-	Tau	i:IsoOption[-1]	b:IsoVeto[1]
-	Jet	i:nTau[-1]
-	GenTau
-	GenChargino
-	MET
+	NJet	i:njet[4]
+	HT	d:HTmin[500]
+	MHT	d:MHTmin[200]
+	MuonVeto
+	ElectronVeto
+	MinDeltaPhiN	d:minDeltaPhiN[4]
+	IsoTrackVeto	
+	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 
 VARIATION
-TauESUp
-	TauES	b:up[1]
-TauESDown
-	TauES	b:up[0]
-TauERUp
-	TauER	b:up[1]
-TauERDown
-	TauER	b:up[0]
-JESUp
-	JetES	b:up[1]
-JESDown
-	JetES	b:up[0]
-JERUp
-	JetER	b:up[1]
-JERDown
-	JetER	b:up[0]
 
 SET
-base	skim	SingleMu_A	s:filename[skim_SingleMu_A_190456_208686_muTau.root]
-base	skim	SingleMu_B_0	s:filename[skim_SingleMu_B_190456_208686_muTau_0.root]
-base	skim	SingleMu_B_1	s:filename[skim_SingleMu_B_190456_208686_muTau_1.root]
-base	skim	SingleMu_C_0	s:filename[skim_SingleMu_C_190456_208686_muTau_0.root]
-base	skim	SingleMu_C_1	s:filename[skim_SingleMu_C_190456_208686_muTau_1.root]
-base	skim	SingleMu_C_2	s:filename[skim_SingleMu_C_190456_208686_muTau_2.root]
-base	skim	SingleMu_C_3	s:filename[skim_SingleMu_C_190456_208686_muTau_3.root]
-base	skim	SingleMu_D_0	s:filename[skim_SingleMu_D_190456_208686_muTau_0.root]
-base	skim	SingleMu_D_1	s:filename[skim_SingleMu_D_190456_208686_muTau_1.root]
-base	skim	SingleMu_D_2	s:filename[skim_SingleMu_D_190456_208686_muTau_2.root]
-base	skim	SingleMu_D_3	s:filename[skim_SingleMu_D_190456_208686_muTau_3.root]
-base	skim	WZ	s:filename[skim_WZ_muTau.root]	i:mother[23]
-base	skim	WW	s:filename[skim_WW_muTau.root]	i:mother[24]
-base	skim	ZZ	s:filename[skim_ZZ_muTau.root]	i:mother[23]
-base	skim	T_tWchan	s:filename[skim_T_tWchan_muTau.root]	i:mother[24]
-base	skim	Tbar_tWchan	s:filename[skim_Tbar_tWchan_muTau.root]	i:mother[24]
-base	skim	T_tchan	s:filename[skim_T_tchan_muTau.root]	i:mother[24]
-base	skim	Tbar_tchan	s:filename[skim_Tbar_tchan_muTau.root]	i:mother[24]
-base	skim	T_schan	s:filename[skim_T_schan_muTau.root]	i:mother[24]
-base	skim	Tbar_schan	s:filename[skim_Tbar_schan_muTau.root]	i:mother[24]
-base	skim	TTbarJets	s:filename[skim_TTbarJets_muTau.root]	i:mother[24]
-base	skim	TTbarJets_2l	s:filename[skim_TTbarJets_2l_muTau.root]	i:mother[24]
-base	skim	TTbarJetsSl1	s:filename[skim_TTbarJetsSemiLep_1_muTau.root]	i:mother[24]
-base	skim	TTbarJetsSl2	s:filename[skim_TTbarJetsSemiLep_2_muTau.root]	i:mother[24]
-base	skim	TTbarJetsSl3	s:filename[skim_TTbarJetsSemiLep_3_muTau.root]	i:mother[24]
-base	skim	TTbarJetsSl4	s:filename[skim_TTbarJetsSemiLep_4_muTau.root]	i:mother[24]
-base	skim	TTbarJetsSl5	s:filename[skim_TTbarJetsSemiLep_5_muTau.root]	i:mother[24]
-base	skim	WJets_ln	s:filename[skim_WJets_ln_muTau.root]	i:mother[24]
-base	skim	W1Jets_ln	s:filename[skim_W1Jets_ln_muTau.root]	i:mother[24]
-base	skim	W2Jets_ln	s:filename[skim_W2Jets_ln_muTau.root]	i:mother[24]
-base	skim	W3Jets_ln	s:filename[skim_W3Jets_ln_muTau.root]	i:mother[24]
-base	skim	W4Jets_ln	s:filename[skim_W4Jets_ln_muTau.root]	i:mother[24]
-base	skim	ZJets_2l	s:filename[skim_ZJets_2l_muTau.root]	i:mother[23]
-base	skim	Z1Jets_2l	s:filename[skim_Z1Jets_2l_muTau.root]	i:mother[23]
-base	skim	Z2Jets_2l	s:filename[skim_Z2Jets_2l_muTau.root]	i:mother[23]
-base	skim	Z3Jets_2l	s:filename[skim_Z3Jets_2l_muTau.root]	i:mother[23]
-base	skim	Z4Jets_2l	s:filename[skim_Z4Jets_2l_muTau.root]	i:mother[23]
-base	skim	LQ200_tb	s:filename[skim_LQ200_tb_muTau.root]	i:mother[42]
-base	skim	LQ250_tb	s:filename[skim_LQ250_tb_muTau.root]	i:mother[42]
-base	skim	LQ300_tb	s:filename[skim_LQ300_tb_muTau.root]	i:mother[42]
-base	skim	LQ350_tb	s:filename[skim_LQ350_tb_muTau.root]	i:mother[42]
-base	skim	LQ400_tb	s:filename[skim_LQ400_tb_muTau.root]	i:mother[42]
-base	skim	LQ450_tb	s:filename[skim_LQ450_tb_muTau.root]	i:mother[42]
-base	skim	LQ500_tb	s:filename[skim_LQ500_tb_muTau.root]	i:mother[42]
-base	skim	LQ550_tb	s:filename[skim_LQ550_tb_muTau.root]	i:mother[42]
-base	skim	LQ600_tb	s:filename[skim_LQ600_tb_muTau.root]	i:mother[42]
-base	skim	LQ650_tb	s:filename[skim_LQ650_tb_muTau.root]	i:mother[42]
-base	skim	LQ700_tb	s:filename[skim_LQ700_tb_muTau.root]	i:mother[42]
-base	skim	LQ750_tb	s:filename[skim_LQ750_tb_muTau.root]	i:mother[42]
-base	skim	LQ800_tb	s:filename[skim_LQ800_tb_muTau.root]	i:mother[42]
-base	skim	LQ850_tb	s:filename[skim_LQ850_tb_muTau.root]	i:mother[42]
-base	skim	LQ900_tb	s:filename[skim_LQ900_tb_muTau.root]	i:mother[42]
-base	skim	LQ950_tb	s:filename[skim_LQ950_tb_muTau.root]	i:mother[42]
-base	skim	LQ1000_tb	s:filename[skim_LQ1000_tb_muTau.root]	i:mother[42]
-base	skim	Stop200	s:filename[rpvstop_LQD321_Stop200_chargino.root]	i:mother[1000006]
-base	skim	Stop300	s:filename[rpvstop_LQD321_Stop300_chargino.root]	i:mother[1000006]
-base	skim	Stop400	s:filename[rpvstop_LQD321_Stop400_chargino.root]	i:mother[1000006]
-base	skim	Stop500	s:filename[rpvstop_LQD321_Stop500_chargino.root]	i:mother[1000006]
-base	skim	Stop600	s:filename[rpvstop_LQD321_Stop600_chargino.root]	i:mother[1000006]
-base	skim	Stop700	s:filename[rpvstop_LQD321_Stop700_chargino.root]	i:mother[1000006]
-base	skim	Stop800	s:filename[rpvstop_LQD321_Stop800_chargino.root]	i:mother[1000006]
-base	skim	Stop900	s:filename[rpvstop_LQD321_Stop900_chargino.root]	i:mother[1000006]
+base	skim	T1bbbb_1000_900	b:chain[1]	s:filepre[PHYS14.SMS-T1bbbb_2J_mGl-1000_mLSP-900_Tune4C_13TeV-madgraph-tauola_]	vi:filerange[0,3]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[1000021]
+base	skim	T1bbbb_1500_100	b:chain[1]	s:filepre[PHYS14.SMS-T1bbbb_2J_mGl-1500_mLSP-100_Tune4C_13TeV-madgraph-tauola_]	vi:filerange[0,3]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[1000021]
+base	skim	T1qqqq_1000_800	b:chain[1]	s:filepre[PHYS14.SMS-T1qqqq_2J_mGl-1000_mLSP-800_Tune4C_13TeV-madgraph-tauola_]	vi:filerange[0,3]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[1000021]
+base	skim	T1qqqq_1400_100	b:chain[1]	s:filepre[PHYS14.SMS-T1qqqq_2J_mGl-1400_mLSP-100_Tune4C_13TeV-madgraph-tauola_]	vi:filerange[0,3]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[1000021]
+base	skim	T1tttt_1200_800	b:chain[1]	s:filepre[PHYS14.SMS-T1tttt_2J_mGl-1200_mLSP-800_Tune4C_13TeV-madgraph-tauola_]	vi:filerange[0,3]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[1000021]
+base	skim	T1tttt_1500_100	b:chain[1]	s:filepre[PHYS14.SMS-T1tttt_2J_mGl-1500_mLSP-100_Tune4C_13TeV-madgraph-tauola_]	vi:filerange[0,2]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[1000021]
+base	skim	DYJetsToLL_M-50_HT-400to600	b:chain[1]	s:filepre[PHYS14.DYJetsToLL_M-50_HT-400to600_Tune4C_13TeV-madgraph-tauola_]	vi:filerange[0,114]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[23]
+base	skim	DYJetsToLL_M-50_HT-600toInf	b:chain[1]	s:filepre[PHYS14.DYJetsToLL_M-50_HT-600toInf_Tune4C_13TeV-madgraph-tauola_]	vi:filerange[0,107]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[23]
+base	skim	GJets_HT-400to600	b:chain[1]	s:filepre[PHYS14.GJets_HT-400to600_Tune4C_13TeV-madgraph-tauola_]	vi:filerange[0,109]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[22]
+base	skim	GJets_HT-600toInf	b:chain[1]	s:filepre[PHYS14.GJets_HT-600toInf_Tune4C_13TeV-madgraph-tauola_]	vi:filerange[0,93]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[22]
+base	skim	QCD_HT-500to1000	b:chain[1]	s:filepre[PHYS14.QCD_HT-500To1000_13TeV-madgraph_]	vi:filerange[0,17]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	QCD_HT-500to1000_ext1	b:chain[1]	s:filepre[PHYS14.QCD_HT-500To1000_13TeV-madgraph_ext1_]	vi:filerange[0,72]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	QCD_HT-1000toInf	b:chain[1]	s:filepre[PHYS14.QCD_HT_1000ToInf_13TeV-madgraph_]	vi:filerange[0,13]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	QCD_HT-1000toInf_ext1	b:chain[1]	s:filepre[PHYS14.QCD_HT_1000ToInf_13TeV-madgraph_ext1_]	vi:filerange[0,21]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	TTJets_part1	b:chain[1]	s:filepre[PHYS14.TTJets_MSDecaysCKM_central_Tune4C_13TeV-madgraph-tauola_]	vi:filerange[0,110]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[24]
+base	skim	TTJets_part2	b:chain[1]	s:filepre[PHYS14.TTJets_MSDecaysCKM_central_Tune4C_13TeV-madgraph-tauola_]	vi:filerange[111,220]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[24]
+base	skim	TTJets_part3	b:chain[1]	s:filepre[PHYS14.TTJets_MSDecaysCKM_central_Tune4C_13TeV-madgraph-tauola_]	vi:filerange[221,330]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[24]
+base	skim	TTJets_part4	b:chain[1]	s:filepre[PHYS14.TTJets_MSDecaysCKM_central_Tune4C_13TeV-madgraph-tauola_]	vi:filerange[331,440]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[24]
+base	skim	TTJets_part5	b:chain[1]	s:filepre[PHYS14.TTJets_MSDecaysCKM_central_Tune4C_13TeV-madgraph-tauola_]	vi:filerange[441,551]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[24]
+base	skim	WJetsToLNu_HT-400to600	b:chain[1]	s:filepre[PHYS14.WJetsToLNu_HT-400to600_Tune4C_13TeV-madgraph-tauola_]	vi:filerange[0,96]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[24]
+base	skim	WJetsToLNu_HT-600toInf_part1	b:chain[1]	s:filepre[PHYS14.WJetsToLNu_HT-600toInf_Tune4C_13TeV-madgraph-tauola_]	vi:filerange[0,117]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[24]
+base	skim	WJetsToLNu_HT-600toInf_part2	b:chain[1]	s:filepre[PHYS14.WJetsToLNu_HT-600toInf_Tune4C_13TeV-madgraph-tauola_]	vi:filerange[118,234]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[24]
+base	skim	WJetsToLNu_HT-600toInf_part3	b:chain[1]	s:filepre[PHYS14.WJetsToLNu_HT-600toInf_Tune4C_13TeV-madgraph-tauola_]	vi:filerange[234,351]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[24]
+base	skim	ZJetsToNuNu_HT-400to600	b:chain[1]	s:filepre[PHYS14.ZJetsToNuNu_HT-400to600_Tune4C_13TeV-madgraph-tauola_]	vi:filerange[0,101]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[23]
+base	skim	ZJetsToNuNu_HT-600toInf	b:chain[1]	s:filepre[PHYS14.ZJetsToNuNu_HT-600toInf_Tune4C_13TeV-madgraph-tauola_]	vi:filerange[0,103]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[23]

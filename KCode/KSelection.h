@@ -54,6 +54,16 @@ class KSelector {
 		}
 		//used for non-dummy selectors
 		virtual bool Cut() { return true; }
+		virtual void PrintEfficiency(vector<int>& widths, string sname, int prev_counter, int nentries){
+			if(dummy || !canfail) return;
+			cout << left << setw(widths[0]) << sname;
+			cout << "  " << left << setw(widths[1]) << name;
+			cout << "  " << right << setw(widths[2]) << counter;
+			cout << "  " << right << setw(widths[3]) << ((double)counter/(double)nentries)*100;
+			//no rel. eff. for first selector
+			if(prev_counter>0) cout  << "  " << right << setw(widths[4]) << ((double)counter/(double)prev_counter)*100;
+			cout << endl;
+		}
 		
 	protected:
 		//member variables
@@ -72,8 +82,8 @@ class KSelector {
 class KSelection {
 	public:
 		//constructor
-		KSelection() : name(""), variation(0), skimmer(0), file(0), tree(0), width2(0) {}
-		KSelection(string name_) : name(name_), variation(0), skimmer(0), file(0), tree(0), width2(0) {}
+		KSelection() : name(""), variation(0), skimmer(0), file(0), tree(0), widths(5,0), width2s(0) {}
+		KSelection(string name_) : name(name_), variation(0), skimmer(0), file(0), tree(0), widths(5,0), width2s(0) {}
 		//destructor
 		virtual ~KSelection() {}
 		//accessors
@@ -83,9 +93,9 @@ class KSelection {
 			selectorList.push_back(sel_);
 			selectors.Add(sel_->GetName(),sel_);
 			sel_->SetSelection(this);
-			if(!sel_->Dummy() && sel_->CanFail() && sel_->GetName().size()>width2) width2 = sel_->GetName().size();
+			if(!sel_->Dummy() && sel_->CanFail() && sel_->GetName().size()>width2s) width2s = sel_->GetName().size();
 		}
-		int GetSelectorWidth() { return width2; }
+		int GetSelectorWidth() { return width2s; }
 		void SetSkimmer(KSkimmer* skimmer_){
 			skimmer = skimmer_;
 			for(unsigned s = 0; s < selectorList.size(); s++){
@@ -104,17 +114,16 @@ class KSelection {
 			string syscmd = "mkdir -p " + treefolder;
 			system(syscmd.c_str());
 			
-			//remove "skim_" from filename if present
-			if(filename.compare(0,5,"skim_")==0) filename.erase(0,5);
-			
 			//create output file
-			string oname = treefolder + "/tree_" + filename;
+			string oname = treefolder + "/tree_" + filename + ".root";
 			file = new TFile(oname.c_str(), "RECREATE");
 			
 			//create output tree
 			if(clone){ //option to preserve all branches from input ntuple
 				string treedesc = "all observables, " + name;
 				tree = clone->CloneTree(0);
+				tree->SetName("tree");
+				tree->SetTitle(treedesc.c_str());
 			}
 			else{ //only add non-cloned trees to Selectors
 				string treedesc = "selected observables, " + name;
@@ -142,24 +151,21 @@ class KSelection {
 			
 			return result;
 		}
-		void PrintEfficiency(int width1, int width2m, int nentries=1){
+		void PrintEfficiency(int width1, int width2, int nentries=1){
 			//width1 set by skimmer when adding selections
-			//width2 set when adding selectors, width2m set by skimmer to consider all selectors in all selections
-			int width3 = 13, width4 = 13;
+			//width2s set when adding selectors, width2 set by skimmer to consider all selectors in all selections
+			widths[0] = width1; widths[1] = width2; widths[2] = widths[3] = widths[4] = 13;
 			bool started = false;
 			
-			cout << string(width1+width2m+width3+width4+2*3,'-') << endl;
-			cout << left << setw(width1) << "Selection" << "  " << left << setw(width2m) << "Selector" << "  " << "Abs. Eff. (%)" << "  " << "Rel. Eff. (%)" << endl;
+			cout << string(widths[0]+widths[1]+widths[2]+widths[3]+widths[4]+widths[5]+2*(widths.size()-1),'-') << endl;
+			cout << left << setw(width1) << "Selection" << "  " << left << setw(width2) << "Selector" << "  " << " Raw # Events" << "  " << "Abs. Eff. (%)" << "  " << "Rel. Eff. (%)" << endl;
 			for(unsigned s = 0; s < selectorList.size(); s++){
-				if(selectorList[s]->Dummy() || !selectorList[s]->CanFail()) continue;
-				
 				//only print selection name the first time
-				if(!started) { cout << left << setw(width1) << name << "  "; started = true; }
-				else cout << string(width1,' ') << "  ";
-				cout << left << setw(width2m) << selectorList[s]->GetName() << "  " << right << setw(width3) << (selectorList[s]->GetCounter()/((double)nentries))*100;
-				//no rel. eff. for first selector
-				if(s>0) cout  << "  " << right << setw(width4) << ((double)(selectorList[s]->GetCounter())/(double)(selectorList[s-1]->GetCounter()))*100;
-				cout << endl;
+				string sname = "";
+				if(!started) { sname = name; started = true; }
+				int prev_counter = 0;
+				if(s>0) prev_counter = selectorList[s-1]->GetCounter();
+				selectorList[s]->PrintEfficiency(widths,sname,prev_counter,nentries);
 			}
 		}
 		void Finalize(TH1F* nEventHist=NULL){
@@ -180,7 +186,8 @@ class KSelection {
 		SelectorMap selectors;
 		TFile* file;
 		TTree* tree;
-		int width2;
+		vector<int> widths;
+		int width2s;
 };
 
 #endif

@@ -19,7 +19,7 @@ void process(string line, char delim, vector<string>& fields){
 //to recompile:
 //root -b -q -l 'KSkimDriver.C++()'
 //to run interactively:
-//root -b -q -l 'KSkimDriver.C+("input_selection.txt","LQ500_tb","main,zjets,anti-iso,main_TauESUp","/uscms_data/d3/pedrok/LQ2012/ntuple","/uscms_data/d3/pedrok/LQ2012/tree_test")'
+//root -b -q -l 'KSkimDriver.C+("input_selection.txt","T1tttt_1500_100","main","root://cmseos.fnal.gov//store/user/awhitbe1/photonTestingV3","/uscms_data/d3/pedrok/SUSY2015/crab/CMSSW_7_3_1_patch2/src/Analysis/tree_test")'
 void KSkimDriver(string input="", string setname="", string selTypes="", string indir="", string outdir="tree"){
 	if(input.size()==0){
 		cout << "Recompiled KSkimDriver, exiting." << endl;

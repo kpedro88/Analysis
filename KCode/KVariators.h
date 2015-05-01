@@ -15,6 +15,7 @@ using namespace std;
 
 //base class for variators is in KVariation.h
 
+/*
 //----------------------------------------------------
 //variation of tau energy scale
 class KTauESVariator : public KVariator {
@@ -246,20 +247,21 @@ class KJetERVariator : public KVariator {
 		bool up;
 		vector<double> *PFJetPt, *PFJetEnergy;
 };
+*/
 
 namespace KParser {
 	KVariator* processVariator(KNamed* tmp){
 		KVariator* vtmp = 0;
 		string vname = tmp->first;
 		OptionMap* omap = tmp->second;
-		
+		/*
 		//check for all known variators
 		if(vname=="TauES") vtmp = new KTauESVariator(vname,omap);
 		else if(vname=="TauER") vtmp = new KTauERVariator(vname,omap);
 		else if(vname=="JES") vtmp = new KJetESVariator(vname,omap);
 		else if(vname=="JER") vtmp = new KJetERVariator(vname,omap);
 		else {} //skip unknown variators
-		
+		*/
 		if(!vtmp) cout << "Input error: unknown variator " << vname << ". This variator will be skipped." << endl;
 
 		return vtmp;

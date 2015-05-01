@@ -46,7 +46,7 @@ class KSkimmer : public NtupleClass {
 			}
 
 			//loop over ntuple tree
-			nentries = fChain->GetEntriesFast();
+			nentries = fChain->GetEntries();
 			//if(nentries>10000) nentries = 10000;
 			
 			Long64_t nbytes = 0, nb = 0;
@@ -54,10 +54,17 @@ class KSkimmer : public NtupleClass {
 				Long64_t ientry = LoadTree(jentry);
 				if (ientry < 0) break;
 				nb = fChain->GetEntry(jentry);   nbytes += nb;
+				if(jentry % 10000 == 0) cout << "Skimming " << jentry << "/" << nentries << endl;
 				
 				for(unsigned s = 0; s < theSelections.size(); s++){
 					theSelections[s]->DoSelection();
 				}
+			}
+			
+			//create nEventProc if necessary
+			if(!nEventHist){
+				nEventHist = new TH1F("nEventProc","",1,0,1);
+				nEventHist->SetBinContent(1,fChain->GetEntries());
 			}
 			
 			//final steps
@@ -65,7 +72,6 @@ class KSkimmer : public NtupleClass {
 				theSelections[s]->PrintEfficiency(width1,width2,nentries);
 				theSelections[s]->Finalize(nEventHist);
 			}
-			
 		}
 		void AddSelection(KSelection* sel) { 
 			theSelections.push_back(sel);

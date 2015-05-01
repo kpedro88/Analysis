@@ -9,6 +9,7 @@
 #include <TROOT.h>
 #include <TFile.h>
 #include <TTree.h>
+#include <TChain.h>
 #include <TH1.h>
 #include <TH1F.h>
 #include <TPad.h>
@@ -31,26 +32,93 @@ class KBuilder;
 class KBase {
 	public:
 		//constructors
-		KBase() : name(""), parent(0), localOpt(0), globalOpt(0), file(0), tree(0), MyBuilder(0), stmp(""), htmp(0), etmp(0), isBuilt(false) {
+		KBase() : name(""), parent(0), localOpt(0), globalOpt(0), file(0), tree(0), nEventHist(0), MyBuilder(0), stmp(""), htmp(0), etmp(0), isBuilt(false) {
 			//enable histo errors
 			TH1::SetDefaultSumw2(kTRUE);
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
 			if(globalOpt==0) globalOpt = new OptionMap();
 		}
-		KBase(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : name(name_), parent(0), localOpt(localOpt_), globalOpt(globalOpt_), file(0), tree(0), MyBuilder(0), stmp(""), 
-																	htmp(0), etmp(0), isBuilt(false) {
+		KBase(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : 
+			name(name_), parent(0), localOpt(localOpt_), globalOpt(globalOpt_), file(0), tree(0), nEventHist(0), MyBuilder(0), stmp(""), htmp(0), etmp(0), isBuilt(false)
+		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
 			if(globalOpt==0) globalOpt = new OptionMap();
 			
 			string filename;
 			string treedir;
-			if(localOpt->Get("filename",filename)){
-				if(globalOpt->Get("treedir",treedir)) { //get directory from global
-					filename = treedir + "/" + filename;
-					//localOpt->Set("filename",filename); //*don't* store full filename for future use
+			bool use_treedir = globalOpt->Get("treedir",treedir);
+			if(localOpt->Get("chain",false)){
+				vector<string> filenames;
+				if(!localOpt->Get("filenames",filenames)){
+					//if explicit list of filenames is not provided, construct it from filepre, filerange, filesuff
+					string filepre = "", filesuff = ".root";
+					localOpt->Get("filepre",filepre);
+					localOpt->Get("filesuff",filesuff);
+					vector<int> filerange;
+					localOpt->Get("filerange",filerange);
+					
+					//check for improper ranges
+					if(filerange.size()!=2) {
+						cout << "Input error: filerange specified incorrectly with size = " << filerange.size() << ". Object " << name << " will not be initialized." << endl;
+						return;
+					}
+					else if(filerange[0]>filerange[1]){
+						cout << "Input error: filerange specified incorrectly with min > max. Object " << name << " will not be initialized." << endl;
+						return;
+					}
+					
+					//loop over ranges
+					//todo: add option to exclude certain files?
+					filenames.reserve(filerange[1]-filerange[0]);
+					for(int f = filerange[0]; f <= filerange[1]; f++){
+						stringstream fs;
+						fs << filepre << f << filesuff;
+						filenames.push_back(fs.str());
+					}
 				}
+				
+				//add filenames to chain
+				tree = new TChain(("tree_"+name).c_str());
+				string chainsuff = "";
+				localOpt->Get("chainsuff",chainsuff);
+				//store this value (number of events processed) at the beginning so histo only has to be accessed once
+				int nEventProc = 0;
+				for(unsigned f = 0; f < filenames.size(); f++){
+					string filename = filenames[f];
+					if(treedir.size()>0) filename = treedir + "/" + filename;
+					
+					TFile* ftmp = TFile::Open(filename.c_str());
+					if(!ftmp) {
+						cout << "Input error: file " << filename << " cannot be found or opened. Object " << name << " will not be fully initialized." << endl;
+						continue;
+					}
+					
+					static_cast<TChain*>(tree)->Add((filename+chainsuff).c_str());
+					TH1F* nEventHistTmp = (TH1F*)ftmp->Get("nEventProc");
+					//sum up nEventProc histos
+					if(nEventHistTmp) {
+						if(nEventHist) nEventHist->Add(nEventHistTmp);
+						else {
+							nEventHist = (TH1F*)nEventHistTmp->Clone("nEventProc");
+							nEventHist->SetDirectory(0);
+						}
+					}
+					ftmp->Close();
+				}
+				if(tree->GetEntries()==0){
+					cout << "Input error: no files could be opened. Object " << name << " will not be initialized." << endl;
+					delete tree;
+					tree = NULL;
+					return;
+				}
+				if(nEventHist) nEventProc = nEventHist->GetBinContent(1);
+				localOpt->Set("nEventProc",max(nEventProc,1));
+			}
+			else if(localOpt->Get("filename",filename)){
+				//get directory from global
+				if(use_treedir) filename = treedir + "/" + filename;
 				//open file
 				file = TFile::Open(filename.c_str());
 				if(!file) {
@@ -61,7 +129,7 @@ class KBase {
 				tree = (TTree*)file->Get("tree");
 				//store this value (number of events processed) at the beginning so histo only has to be accessed once
 				int nEventProc = 1;
-				TH1F* nEventHist = (TH1F*)file->Get("nEventProc");
+				nEventHist = (TH1F*)file->Get("nEventProc");
 				if(nEventHist) nEventProc = nEventHist->GetBinContent(1);
 				localOpt->Set("nEventProc",nEventProc);
 			}
@@ -152,7 +220,7 @@ class KBase {
 			cout << name << ": " << hint << " +/- " << err << endl;
 		}
 		virtual double GetYield() { return htmp->Integral(0,htmp->GetNbinsX()+1); }
-		virtual void CloseFile() { file->Close(); }
+		virtual void CloseFile() { if(file) file->Close(); }
 		//divide current histo by bin width, default implementation
 		virtual void BinDivide(){
 			for(int b = 1; b <= htmp->GetNbinsX(); b++){
@@ -173,10 +241,8 @@ class KBase {
 		virtual void AddChild(KBase* ch) {}
 		virtual void SetAddExt(bool ae) {}
 		virtual void Build(TH1* hrat_) {}
-		virtual TTree* GetTree() { return (TTree*)NULL; }
-		virtual TFile* GetFile() { return (TFile*)NULL; }
-		virtual string GetFileName() { return ""; }
-		virtual TH1F* GetNEventHist() { return (TH1F*)NULL; }
+		virtual TTree* GetTree() { return tree; }
+		virtual TH1F* GetNEventHist() { return nEventHist; }
 		
 	protected:
 		//member variables
@@ -186,6 +252,7 @@ class KBase {
 		OptionMap* globalOpt;
 		TFile* file;
 		TTree* tree;
+		TH1F* nEventHist;
 		KBuilder* MyBuilder;
 		HistoMap MyHistos;
 		ErrorMap MyErrorBands;
@@ -297,36 +364,13 @@ class KBaseExt : public KBase {
 
 //-------------------------------------------
 //extension of base class for skimmer
+//currently it doesn't do anything special
+//but it might in the future
 class KBaseSkim : public KBase {
 	public:
 		//constructors
 		KBaseSkim() : KBase() {}
-		KBaseSkim(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KBase(name_, localOpt_, globalOpt_), nEventHist(0) {
-			//check for alternative root object location in file after base constructor runs (if file is open)
-			if(!file) return;
-			else if(tree){
-				nEventHist = (TH1F*)file->Get("nEventProc");
-			}
-			else {
-				TDirectory* td = 0;
-				file->GetObject("rootTupleTree",td);
-				if(td) { td->GetObject("tree",tree); td->GetObject("nEventProc",nEventHist); }
-			}			
-		}
-		
-		//extra accessors
-		TTree* GetTree() { return tree; }
-		TFile* GetFile() { return file; }
-		string GetFileName() {
-			string filename = "";
-			localOpt->Get("filename",filename);
-			return filename;
-		}
-		TH1F* GetNEventHist() { return nEventHist; }
-		
-	private:
-		//member variables
-		TH1F* nEventHist;
+		KBaseSkim(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KBase(name_, localOpt_, globalOpt_) { }
 };
 
 //------------------------------------------------
