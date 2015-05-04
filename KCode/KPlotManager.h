@@ -33,9 +33,10 @@ class KPlotManager : public KManager {
 			
 			//final checks and initializations
 			MyRatio = new KSetRatio(NULL,globalOpt);
-			if(globalOpt->Get("calcfaketau",false)) FakeTauEstimationInit();
 			//store correction root files centrally
 			//todo: make file location and histo name configurable
+			//(*disabled* until 2015 data is available)
+			/*
 			if(globalOpt->Get("pucorr",true)) {
 				TFile* pufile = new TFile("corrections/puWeightsLQ.root","READ"); //puWeights
 				TH1F* puWeights = (TH1F*)pufile->Get("pileup");
@@ -46,23 +47,10 @@ class KPlotManager : public KManager {
 				TH1F* muIDTight = (TH1F*)mufile->Get("muIDTight");
 				globalOpt->Set("muIDTight",muIDTight);
 			}
+			*/
 		}
 		//destructor
 		virtual ~KPlotManager() {}
-		virtual void FakeTauEstimationInit(){
-			string tfr_name = "";
-			TFile* tfr_file = 0;
-			if(globalOpt->Get("tfr_file",tfr_name)) tfr_file = TFile::Open(tfr_name.c_str(),"READ");
-			if(tfr_file) {
-				TGraphAsymmErrors* tfr_data = (TGraphAsymmErrors*)tfr_file->Get("data");
-				TGraphAsymmErrors* tfr_mc = 0;
-				if(globalOpt->Get("wjet_tfr",false)) tfr_mc = (TGraphAsymmErrors*)tfr_file->Get("W + jets");
-				else if(globalOpt->Get("ttbar_tfr",false)) tfr_mc = (TGraphAsymmErrors*)tfr_file->Get("ttbar");
-				else tfr_mc = (TGraphAsymmErrors*)tfr_file->Get("Z + jets");
-				globalOpt->Set("tfr_data",tfr_data);
-				globalOpt->Set("tfr_mc",tfr_mc);
-			}
-		}
 		void processSet(string line){
 			//cout << line << endl;
 			int indent = 0;

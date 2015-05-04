@@ -252,7 +252,7 @@ class KPlot{
 			double intlumi = 0;
 			globalOpt->Get<double>("luminorm",intlumi);
 			stringstream fbname_;
-			fbname_ << fixed << setprecision(1) << intlumi/1000 << " fb^{-1} (8 TeV)";
+			fbname_ << fixed << setprecision(1) << intlumi/1000 << " fb^{-1} (13 TeV)";
 			string fbname = fbname_.str();
 			globalOpt->Get("lumi_text",fbname);
 			TLatex width_test_lumi(0,0,fbname.c_str());

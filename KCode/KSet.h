@@ -250,7 +250,9 @@ class KSetMC: public KSet {
 			htmp->SetFillColor(0);
 			htmp->SetLineColor(color);
 			htmp->SetMarkerColor(color);
-			htmp->SetLineStyle(1);
+			int linestyle = 1;
+			localOpt->Get("linestyle",linestyle);
+			htmp->SetLineStyle(linestyle);
 			htmp->SetLineWidth(2);
 			
 			return htmp;
