@@ -58,12 +58,12 @@ void TreeClass::Loop() {}
 class KBuilder : public TreeClass {
 	public:
 		//constructors
-		KBuilder() : TreeClass(), MyBase(0), localOpt(0), globalOpt(0), stmp(""), htmp(0) {
+		KBuilder() : TreeClass(), MyBase(0), localOpt(0), globalOpt(0) {
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
 			if(globalOpt==0) globalOpt = new OptionMap();
 		}
-		KBuilder(KBase* MyBase_, TTree* tree_) : TreeClass(tree_), MyBase(MyBase_), localOpt(MyBase->GetLocalOpt()), globalOpt(MyBase->GetGlobalOpt()), stmp(""), htmp(0) {
+		KBuilder(KBase* MyBase_, TTree* tree_) : TreeClass(tree_), MyBase(MyBase_), localOpt(MyBase->GetLocalOpt()), globalOpt(MyBase->GetGlobalOpt()) {
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
 			if(globalOpt==0) globalOpt = new OptionMap();
@@ -126,6 +126,21 @@ class KBuilder : public TreeClass {
 		virtual void Loop() {
 			if (fChain == 0) return;
 			
+			//initial loop to get histo variables
+			int table_size = MyBase->GetTable().size();
+			vector<vector<string> > vars; vars.reserve(table_size);
+			vector<TH1*> htmp; htmp.reserve(table_size);
+			HMit sit;
+			for(sit = MyBase->GetTable().begin(); sit != MyBase->GetTable().end(); sit++){
+				//get histo name
+				string stmp = sit->first;
+				htmp.push_back(sit->second);
+				//split up histo variable names
+				vector<string> vars_tmp;
+				KParser::process(stmp,'_',vars_tmp);
+				vars.push_back(vars_tmp);
+			}
+			
 			//loop over ntuple tree
 			Long64_t nentries = fChain->GetEntries();
 			bool debugloop = MyBase->GetGlobalOpt()->Get("debugloop",false);
@@ -143,50 +158,43 @@ class KBuilder : public TreeClass {
 				
 				double w = Weight();
 				
-				HMit sit;
-				for(sit = MyBase->GetTable().begin(); sit != MyBase->GetTable().end(); sit++){
-					//get histo name
-					stmp = sit->first;
-					htmp = sit->second;
-					//split up histo variable names
-					vector<string> vars;
-					KParser::process(stmp,'_',vars);
-					vector<KValue> values(vars.size());
+				for(int h = 0; h < htmp.size(); h++){
+					vector<KValue> values(vars[h].size());
 					//if(jentry%10000==0) cout << stmp << " TH" << vars.size() << " " << jentry;
 				
 					for(int i = 0; i < vars.size(); i++){
 						//list of cases for histo calculation and filling
-						if(vars[i]=="RA2bin"){//plot yield vs. bin of RA2 search
+						if(vars[h][i]=="RA2bin"){//plot yield vs. bin of RA2 search
 							values[i].Fill(RA2_bin,w);
 						}
-						else if(vars[i]=="njets"){//jet multiplicity
+						else if(vars[h][i]=="njets"){//jet multiplicity
 							values[i].Fill(NJets,w);
 						}
-						else if(vars[i]=="nbjets"){//b-jet multiplicity
+						else if(vars[h][i]=="nbjets"){//b-jet multiplicity
 							values[i].Fill(BTags,w);
 						}
-						else if(vars[i]=="ht"){//sum of jet pt
+						else if(vars[h][i]=="ht"){//sum of jet pt
 							values[i].Fill(HT,w);
 						}
-						else if(vars[i]=="mht"){//missing hadronic energy
+						else if(vars[h][i]=="mht"){//missing hadronic energy
 							values[i].Fill(MHT,w);
 						}
-						else if(vars[i]=="mindeltaphiN"){//min normalized deltaphi between jets and MET
+						else if(vars[h][i]=="mindeltaphiN"){//min normalized deltaphi between jets and MET
 							values[i].Fill(minDeltaPhiN,w);
 						}
-						else if(vars[i]=="nleptons"){//# leptons (mu or ele)
+						else if(vars[h][i]=="nleptons"){//# leptons (mu or ele)
 							values[i].Fill(Leptons,w);
 						}
-						else if(vars[i]=="nelectrons"){//# electrons
+						else if(vars[h][i]=="nelectrons"){//# electrons
 							values[i].Fill(ElectronsNum,w);
 						}
-						else if(vars[i]=="nmuons"){//# muons
+						else if(vars[h][i]=="nmuons"){//# muons
 							values[i].Fill(MuonsNum,w);
 						}
-						else if(vars[i]=="nisotrack"){//# iso tracks
+						else if(vars[h][i]=="nisotrack"){//# iso tracks
 							values[i].Fill(isoTracks,w);
 						}
-						else if(vars[i]=="nvertex"){//# good vertices
+						else if(vars[h][i]=="nvertex"){//# good vertices
 							values[i].Fill(NVtx,w);
 						}
 						else { //if it's a histogram with no known variable or calculation, do nothing
@@ -194,36 +202,36 @@ class KBuilder : public TreeClass {
 					}
 					
 					//now fill the histogram
-					if(vars.size()==1){
+					if(vars[h].size()==1){
 						for(int ix = 0; ix < values[0].GetSize(); ix++){
-							htmp->Fill(values[0].GetValue(ix), values[0].GetWeight(ix));
+							htmp[h]->Fill(values[0].GetValue(ix), values[0].GetWeight(ix));
 						}
 					}
-					else if(vars.size()==2){
+					else if(vars[h].size()==2){
 						//need to cast in order to use Fill(x,y,w)
 						//these three cases allow for various x vs. y comparisons: same # entries per event, or 1 vs. N per event
 						if(values[0].GetSize()==values[1].GetSize()) {
 							for(int i = 0; i < values[0].GetSize(); i++){
-								if(htmp->GetDimension()==1)
-									static_cast<TProfile*>(htmp)->Fill(values[0].GetValue(i), values[1].GetValue(i), values[0].GetWeight(i)); //pick the x weight by default
-								else if(htmp->GetDimension()==2)
-									static_cast<TH2*>(htmp)->Fill(values[0].GetValue(i), values[1].GetValue(i), values[0].GetWeight(i)); //pick the x weight by default
+								if(htmp[h]->GetDimension()==1)
+									static_cast<TProfile*>(htmp[h])->Fill(values[0].GetValue(i), values[1].GetValue(i), values[0].GetWeight(i)); //pick the x weight by default
+								else if(htmp[h]->GetDimension()==2)
+									static_cast<TH2*>(htmp[h])->Fill(values[0].GetValue(i), values[1].GetValue(i), values[0].GetWeight(i)); //pick the x weight by default
 							}
 						}
 						else if(values[0].GetSize()==1){
 							for(int iy = 0; iy < values[1].GetSize(); iy++){
-								if(htmp->GetDimension()==1)
-									static_cast<TProfile*>(htmp)->Fill(values[0].GetValue(0), values[1].GetValue(iy), values[1].GetWeight(iy));
-								else if(htmp->GetDimension()==2)
-									static_cast<TH2*>(htmp)->Fill(values[0].GetValue(0), values[1].GetValue(iy), values[1].GetWeight(iy));
+								if(htmp[h]->GetDimension()==1)
+									static_cast<TProfile*>(htmp[h])->Fill(values[0].GetValue(0), values[1].GetValue(iy), values[1].GetWeight(iy));
+								else if(htmp[h]->GetDimension()==2)
+									static_cast<TH2*>(htmp[h])->Fill(values[0].GetValue(0), values[1].GetValue(iy), values[1].GetWeight(iy));
 							}
 						}
 						else if(values[1].GetSize()==1){
 							for(int ix = 0; ix < values[0].GetSize(); ix++){
-								if(htmp->GetDimension()==1)
-									static_cast<TProfile*>(htmp)->Fill(values[0].GetValue(ix), values[1].GetValue(0), values[0].GetWeight(ix));
-								else if(htmp->GetDimension()==2)
-									static_cast<TH2*>(htmp)->Fill(values[0].GetValue(ix), values[1].GetValue(0), values[0].GetWeight(ix));
+								if(htmp[h]->GetDimension()==1)
+									static_cast<TProfile*>(htmp[h])->Fill(values[0].GetValue(ix), values[1].GetValue(0), values[0].GetWeight(ix));
+								else if(htmp[h]->GetDimension()==2)
+									static_cast<TH2*>(htmp[h])->Fill(values[0].GetValue(ix), values[1].GetValue(0), values[0].GetWeight(ix));
 							}
 						}
 					}
@@ -233,30 +241,23 @@ class KBuilder : public TreeClass {
 			}
 			
 			if(globalOpt->Get("plotoverflow",false)){
-				HMit sit;
-				for(sit = MyBase->GetTable().begin(); sit != MyBase->GetTable().end(); sit++){
-					//get histo name
-					stmp = sit->first;
-					htmp = sit->second;
-					
-					vector<string> vars;
-					KParser::process(stmp,'_',vars);
-					if(vars.size()==2) continue; //not implemented for 2D histos or profiles yet
+				for(int h = 0; h < htmp.size(); h++){
+					if(vars[h].size()==2) continue; //not implemented for 2D histos or profiles yet
 					
 					//temporary histo to calculate error correctly when adding overflow bin to last bin
-					TH1* otmp = (TH1*)htmp->Clone();
+					TH1* otmp = (TH1*)htmp[h]->Clone();
 					otmp->Reset("ICEM");
-					int ovbin = htmp->GetNbinsX()+1;
+					int ovbin = htmp[h]->GetNbinsX()+1;
 					double err = 0.;
-					otmp->SetBinContent(ovbin-1,htmp->IntegralAndError(ovbin,ovbin,err));
+					otmp->SetBinContent(ovbin-1,htmp[h]->IntegralAndError(ovbin,ovbin,err));
 					otmp->SetBinError(ovbin-1,err);
 					
 					//add overflow bin to last bin
-					htmp->Add(otmp);
+					htmp[h]->Add(otmp);
 					
-					//remove overflow bin from htmp (for consistent integral/yield)
-					htmp->SetBinContent(ovbin,0);
-					htmp->SetBinError(ovbin,0);
+					//remove overflow bin from htmp[h] (for consistent integral/yield)
+					htmp[h]->SetBinContent(ovbin,0);
+					htmp[h]->SetBinError(ovbin,0);
 					
 					delete otmp;
 				}
@@ -269,8 +270,6 @@ class KBuilder : public TreeClass {
 		OptionMap* localOpt;
 		OptionMap* globalOpt;
 		map<pair<int,int>,int> countmap;
-		string stmp;
-		TH1* htmp;
 		
 		//extra variables
 		double NJet_bin, NBJet_bin, HT_bin, RA2_bin;
