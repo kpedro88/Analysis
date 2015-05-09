@@ -8,6 +8,7 @@
 #include "KParser.h"
 #include "KBase.h"
 #include "TreeClass.h"
+#include "RA2bin.h"
 
 //custom headers for weighting
 #include "../btag/GetBtagScale.C"
@@ -88,43 +89,25 @@ class KBuilder : public TreeClass {
 			//check for double counting
 			//if (CheckDoubleCount()) return false;
 			
-			//calculate njet bin: 4-6, 7-8, 9+
-			int max_NJet_bin = 3;
-			if(NJets>=4 && NJets<=6) NJet_bin = 1;
-			else if(NJets>=7 && NJets<=8) NJet_bin = 2;
-			else if(NJets>=9) NJet_bin = 3;
-			
-			//calculate nbjet bin: 0, 1, 2, 3+
-			int max_NBJet_bin = 4;
-			NBJet_bin = BTags;
-			if(NBJet_bin > 3) NBJet_bin = 3;
-			
-			//calculate (M)HT bin
-			int max_HT_bin = 6;
-			if(MHT>200 && MHT<=500){
-				if(HT>500 && HT<=800) HT_bin = 1;
-				else if(HT>800 && HT<=1200) HT_bin = 2;
-				else if(HT>1200) HT_bin = 3;
+			//get RA2 bin (other bins could also be retrieved here)
+			if(binner){
+				RA2bin = binner->GetBinNumber(NJets,BTags,MHT,HT);
 			}
-			else if(MHT>500 && MHT<=750){
-				if(HT>500 && HT<=1200) HT_bin = 4;
-				else if(HT>1200) HT_bin = 5;
-			}
-			else if(MHT>750 && HT>800) HT_bin = 6;
-
-			//calculate RA2 bin
-			RA2_bin = ((NJet_bin - 1)*max_NBJet_bin*max_HT_bin) + (NBJet_bin * max_HT_bin) + HT_bin;
 			
-			int filter = -1;
-			if(globalOpt->Get<int>("filter",filter)){
-				//check appropriate filter conditions
-			}
+			//int filter = -1;
+			//if(globalOpt->Get<int>("filter",filter)){
+			//	//check appropriate filter conditions
+			//}
 		
 			return goodEvent;
 		}
 		virtual double Weight() { return 1.; }
 		virtual void Loop() {
 			if (fChain == 0) return;
+			
+			//check for RA2 binning
+			binner = NULL;
+			globalOpt->Get("RA2binner",binner);
 			
 			//initial loop to get histo variables
 			int table_size = MyBase->GetTable().size();
@@ -152,7 +135,7 @@ class KBuilder : public TreeClass {
 				if(debugloop && jentry % 10000 == 0) cout << MyBase->GetName() << " " << jentry << "/" << nentries << endl;
 				
 				//clear event variables
-				NJet_bin = NBJet_bin = HT_bin = RA2_bin = 0;
+				RA2bin = 0;
 				
 				if(!Cut()) continue;
 				
@@ -165,7 +148,7 @@ class KBuilder : public TreeClass {
 					for(int i = 0; i < vars.size(); i++){
 						//list of cases for histo calculation and filling
 						if(vars[h][i]=="RA2bin"){//plot yield vs. bin of RA2 search
-							values[i].Fill(RA2_bin,w);
+							values[i].Fill(RA2bin,w);
 						}
 						else if(vars[h][i]=="njets"){//jet multiplicity
 							values[i].Fill(NJets,w);
@@ -272,7 +255,8 @@ class KBuilder : public TreeClass {
 		map<pair<int,int>,int> countmap;
 		
 		//extra variables
-		double NJet_bin, NBJet_bin, HT_bin, RA2_bin;
+		RA2binner* binner;
+		unsigned RA2bin;
 };
 
 void KBase::Build(){
