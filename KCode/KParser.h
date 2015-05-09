@@ -137,17 +137,25 @@ namespace KParser {
 		}
 		
 		//currently anticipated option types: full/abbrev.
-		//bool/b, int/i, double/d, string/s, color/c,
-		//vbool/vb, vint/vi, vdouble/vd, vstring/vs, vcolor/vc (vectors)
+		//bool/b, int/i, uint/u, float/f, double/d, string/s, color/c,
+		//vbool/vb, vint/vi, vuint/vu, vfloat/vf, vdouble/vd, vstring/vs, vcolor/vc (vectors)
 		//others could easily be added...
 		if(fields.size()>=3){
 			string type = fields[0]; string name = fields[1]; string val = fields[2];
+			
+			//remove whitespace from front
+			while(type[0]==' '){
+				type.erase(0,1);
+			}
+			
 			bool isvector = type[0]=='v';
 			if(isvector) type.erase(0,1);
 			
 			//match strings to types
 			if(type=="bool" || type=="b") addOption<bool>(option,name,val,isvector);
 			else if(type=="int" || type=="i") addOption<int>(option,name,val,isvector);
+			else if(type=="uint" || type=="u") addOption<unsigned>(option,name,val,isvector);
+			else if(type=="float" || type=="f") addOption<float>(option,name,val,isvector);
 			else if(type=="double" || type=="d") addOption<double>(option,name,val,isvector);
 			else if(type=="string" || type=="s") addOption<string>(option,name,val,isvector);
 			else if(type=="color" || type=="c") addOption<Color_t>(option,name,val,isvector);
