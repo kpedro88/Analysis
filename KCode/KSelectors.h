@@ -99,7 +99,7 @@ class KMuonVetoSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return sk->MuonsNum==0;
+			return sk->Muons->size()==0;
 		}
 		
 		//member variables
@@ -117,7 +117,7 @@ class KElectronVetoSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return sk->ElectronsNum==0;
+			return sk->Electrons->size()==0;
 		}
 		
 		//member variables
@@ -129,7 +129,7 @@ class KMinDeltaPhiNSelector : public KSelector {
 	public:
 		//constructor
 		KMinDeltaPhiNSelector() : KSelector() { }
-		KMinDeltaPhiNSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), minDeltaPhiN(4.) { 
+		KMinDeltaPhiNSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), minDeltaPhiN(6.) { 
 			//check for option
 			localOpt->Get("minDeltaPhiN",minDeltaPhiN);
 		}
@@ -146,18 +146,72 @@ class KMinDeltaPhiNSelector : public KSelector {
 };
 
 //-------------------------------------------------------------
-//vetos events with isolated tracks
-class KIsoTrackVetoSelector : public KSelector {
+//vetos events with isolated electron tracks
+class KIsoElectronTrackVetoSelector : public KSelector {
 	public:
 		//constructor
-		KIsoTrackVetoSelector() : KSelector() { }
-		KIsoTrackVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		KIsoElectronTrackVetoSelector() : KSelector() { }
+		KIsoElectronTrackVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return sk->isoTracks==0;
+			return sk->isoElectronTracks==0;
+		}
+		
+		//member variables
+};
+
+//-------------------------------------------------------------
+//vetos events with isolated muon tracks
+class KIsoMuonTrackVetoSelector : public KSelector {
+	public:
+		//constructor
+		KIsoMuonTrackVetoSelector() : KSelector() { }
+		KIsoMuonTrackVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return sk->isoMuonTracks==0;
+		}
+		
+		//member variables
+};
+
+//-------------------------------------------------------------
+//vetos events with isolated charged hadron tracks
+class KIsoPionTrackVetoSelector : public KSelector {
+	public:
+		//constructor
+		KIsoPionTrackVetoSelector() : KSelector() { }
+		KIsoPionTrackVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return sk->isoPionTracks==0;
+		}
+		
+		//member variables
+};
+
+//-------------------------------------------------------------
+//vetos events with bad jets (including PFJetID & PBNR)
+class KEventCleaningSelector : public KSelector {
+	public:
+		//constructor
+		KEventCleaningSelector() : KSelector() { }
+		KEventCleaningSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return sk->JetID==1;
 		}
 		
 		//member variables
@@ -264,8 +318,11 @@ namespace KParser {
 		else if(sname=="MHT") srtmp = new KMHTSelector(sname,omap);
 		else if(sname=="MuonVeto") srtmp = new KMuonVetoSelector(sname,omap);
 		else if(sname=="ElectronVeto") srtmp = new KElectronVetoSelector(sname,omap);
-		else if(sname=="IsoTrackVeto") srtmp = new KIsoTrackVetoSelector(sname,omap);
+		else if(sname=="IsoElectronTrackVeto") srtmp = new KIsoElectronTrackVetoSelector(sname,omap);
+		else if(sname=="IsoMuonTrackVeto") srtmp = new KIsoMuonTrackVetoSelector(sname,omap);
+		else if(sname=="IsoPionTrackVeto") srtmp = new KIsoPionTrackVetoSelector(sname,omap);
 		else if(sname=="MinDeltaPhiN") srtmp = new KMinDeltaPhiNSelector(sname,omap);
+		else if(sname=="EventCleaning") srtmp = new KEventCleaningSelector(sname,omap);
 		else if(sname=="NBJetBin") srtmp = new KNBJetBinSelector(sname,omap);
 		else {} //skip unknown selectors
 		

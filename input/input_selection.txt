@@ -16,8 +16,11 @@ main
 	MHT	d:MHTmin[200]
 	MuonVeto
 	ElectronVeto
-	MinDeltaPhiN	d:minDeltaPhiN[4]
-	IsoTrackVeto	
+	IsoElectronTrackVeto
+	IsoMuonTrackVeto
+	IsoPionTrackVeto
+	MinDeltaPhiN	d:minDeltaPhiN[6]
+	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 
 VARIATION
