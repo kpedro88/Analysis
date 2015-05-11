@@ -97,6 +97,7 @@ class KLegend{
 			globalOpt->Get("npanel",npanel);
 			entries.resize(npanel,vector<KLegendEntry>());
 			legheights.resize(npanel,0.);
+			legwidths.resize(npanel,0.);
 			
 			//allow multiple lines of text at top of legend
 			vector<string> extra_text;
@@ -181,6 +182,7 @@ class KLegend{
 					if(debug) cout << "panel " << p << ": " << e_min << ", " << min_index_legheight[p] << endl;
 					for(unsigned e = e_min; e <= min_index_legheight[p]; e++){
 						legheights[p] += multi_entries[e].GetHeight();
+						if(multi_entries[e].GetWidth()>legwidths[p]) legwidths[p] = multi_entries[e].GetWidth();
 						entries[p].insert(entries[p].end(),multi_entries[e].GetEntries().begin(),multi_entries[e].GetEntries().end());
 					}
 				}
@@ -189,16 +191,17 @@ class KLegend{
 			
 			//account for npanel
 			unsigned max_panel_entries = 0;
-			double max_legheight = 0;
+			legwidth = legheight = 0;
 			for(unsigned p = 0; p < npanel; p++){
 				if(entries[p].size()>max_panel_entries) max_panel_entries = entries[p].size();
-				if(legheights[p]>max_legheight) max_legheight = legheights[p];
+				if(legheights[p]>legheight) legheight = legheights[p];
+				legwidth += legwidths[p];
 			}
 			
 			//symbol box takes up fMargin = 0.25 by default
-			legwidth = legwidth*npanel/0.75;
+			legwidth /= 0.75;
 			//add a little padding for each line
-			legheight = max_legheight*1.2;
+			legheight *= 1.2;
 			
 			if(hdir==left) {
 				umin = lbound;
@@ -382,9 +385,7 @@ class KLegend{
 				if(balance_panels) multi.push_back(KLegendEntry((TObject*)NULL,extra_text[t],""));
 				else entries[panel].push_back(KLegendEntry((TObject*)NULL,extra_text[t],""));
 			}
-			
-			//always check overall width
-			if(e_legsize.first > legwidth) legwidth = e_legsize.first;
+
 			//store multi
 			if(balance_panels){
 				multi.SetSize(e_legsize.first,e_legsize.second);
@@ -393,6 +394,7 @@ class KLegend{
 			//set size
 			else {
 				legheights[panel] += e_legsize.second;
+				if(e_legsize.first>legwidths[panel]) legwidths[panel] = e_legsize.first;
 			}
 			
 		}
@@ -423,7 +425,7 @@ class KLegend{
 		int npanel;
 		bool balance_panels;
 		double legwidth, legheight;
-		vector<double> legheights;
+		vector<double> legwidths, legheights;
 		double lbound, rbound, tbound, bbound;
 		double umin, umax, vmin, vmax;
 		double padH, sizeLeg, legentry;
