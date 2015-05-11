@@ -292,9 +292,9 @@ class KNBJetBinSelector : public KSelector {
 			return goodB;
 		}
 		
-		virtual void PrintEfficiency(vector<int>& widths, string sname, int prev_counter, int nentries){
+		virtual void PrintEfficiency(vector<int>& widths, int prev_counter, int nentries){
 			for(unsigned b = 0; b < bjet_sel.size(); b++){
-				bjet_sel[b]->PrintEfficiency(widths,sname,prev_counter,nentries);
+				bjet_sel[b]->PrintEfficiency(widths,prev_counter,nentries);
 			}
 		}
 		

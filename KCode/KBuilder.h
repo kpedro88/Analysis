@@ -92,6 +92,7 @@ class KBuilder : public TreeClass {
 			//get RA2 bin (other bins could also be retrieved here)
 			if(binner){
 				RA2bin = binner->GetBinNumber(NJets,BTags,MHT,HT);
+				if(RA2bin==0) goodEvent &= false;
 			}
 			
 			//int filter = -1;

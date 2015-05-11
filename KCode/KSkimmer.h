@@ -26,7 +26,7 @@ class KSkimmer : public NtupleClass {
 	public :
 		//constructor
 		KSkimmer(TTree* tree, TH1F* nEventHist_, OptionMap* globalOpt_) : 
-			NtupleClass(tree), nEventHist(nEventHist_), globalOpt(globalOpt_), nentries(0), width1(9), width2(0)
+			NtupleClass(tree), nEventHist(nEventHist_), globalOpt(globalOpt_), nentries(0), width1(0)
 		{ 
 			//must always have an option map
 			if(!globalOpt) globalOpt = new OptionMap();
@@ -69,14 +69,13 @@ class KSkimmer : public NtupleClass {
 			
 			//final steps
 			for(unsigned s = 0; s < theSelections.size(); s++){
-				theSelections[s]->PrintEfficiency(width1,width2,nentries);
+				theSelections[s]->PrintEfficiency(width1,nentries);
 				theSelections[s]->Finalize(nEventHist);
 			}
 		}
 		void AddSelection(KSelection* sel) { 
 			theSelections.push_back(sel);
-			if(sel->GetName().size()>width1) width1 = sel->GetName().size();
-			if(sel->GetSelectorWidth()>width2) width2 = sel->GetSelectorWidth();
+			if(sel->GetSelectorWidth()>width1) width1 = sel->GetSelectorWidth();
 		}
 		
 		//member variables
@@ -85,7 +84,7 @@ class KSkimmer : public NtupleClass {
 		OptionMap* globalOpt;
 		Long64_t nentries;
 		double  MuonMass, ElectronMass, TauMass;
-		int width1, width2;
+		int width1;
 
 };
 
