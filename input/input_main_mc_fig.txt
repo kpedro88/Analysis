@@ -20,7 +20,7 @@ int:npanel[2]
 bool:balance_panels[0]
 
 HISTO
-ht	i:xnum[100]	d:xmin[9999]	d:xmax[99999]	s:xtitle[H_{T} [GeV]]	s:ytitle[number of events]	b:ratio[0]
+ht	i:xnum[20]	d:xmin[0]	d:xmax[4000]	s:xtitle[H_{T} [GeV]]	s:ytitle[number of events]	b:ratio[0]
 
 SET
 hist	mc	T1bbbb (1500/100)	c:color[kRed]	i:panel[0]
