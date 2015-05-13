@@ -1,0 +1,12 @@
+OPTION
+vstring:printformat[png]
+double:luminorm[4000]
+bool:printyield[1]
+int:yieldprecision[2]
+bool:debugloop[1]
+#bool:nosort[1]
+bool:bgline[1]
+bool:plotoverflow[1]
+string:denom[mc]
+int:npanel[2]
+bool:balance_panels[0]

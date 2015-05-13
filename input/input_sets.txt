@@ -1,34 +1,3 @@
-#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
-#option format is: type:name[val] or vtype:name[val1,val2,...]
-#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
-#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
-#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
-#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
-#for datasets, child-parent relationships are indicated by tab-indentation
-
-OPTION
-vstring:printformat[png]
-double:luminorm[4000]
-bool:printyield[1]
-int:yieldprecision[2]
-bool:debugloop[1]
-#bool:nosort[1]
-bool:bgline[1]
-bool:plotoverflow[1]
-string:denom[mc]
-vstring:extra_text[#color[2]{n_{j} bin},#color[4]{n_{b} bin}]
-int:npanel[2]
-bool:balance_panels[0]
-double:sizeLeg[22]
-double:canvasW[1200]
-double:NdivX[518]
-
-INPUT
-input/input_RA2bin.txt
-
-HISTO
-RA2bin	i:xnum[72]	d:xmin[0.5]	d:xmax[72.5]	s:xtitle[RA2 bin [^{}n_{j},^{}n_{b},^{}#slash{H}_{T},^{}H_{T}]]	s:ytitle[number of events]	b:ratio[0]	vd:xcuts[6.5,12.5,18.5,24.5,48.5]	vc:xcut_colors[kBlue,kBlue,kBlue,kRed,kRed]
-
 SET
 hist	mc	T1bbbb (1500/100)	c:color[kRed]	i:panel[0]
 	base	mc	T1bbbb_1500_100	s:filename[tree_T1bbbb_1500_100.root]	d:xsection[0.014]
