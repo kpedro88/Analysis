@@ -170,13 +170,13 @@ class KBuilder : public TreeClass {
 							values[i].Fill(Leptons,w);
 						}
 						else if(vars[h][i]=="nelectrons"){//# electrons
-							values[i].Fill(ElectronsNum,w);
+							values[i].Fill(Electrons->size(),w);
 						}
 						else if(vars[h][i]=="nmuons"){//# muons
-							values[i].Fill(MuonsNum,w);
+							values[i].Fill(Muons->size(),w);
 						}
 						else if(vars[h][i]=="nisotrack"){//# iso tracks
-							values[i].Fill(isoTracks,w);
+							values[i].Fill(isoElectronTracks+isoMuonTracks+isoPionTracks,w);
 						}
 						else if(vars[h][i]=="nvertex"){//# good vertices
 							values[i].Fill(NVtx,w);
