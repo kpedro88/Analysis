@@ -12,6 +12,7 @@
 #include <TROOT.h>
 #include <TFile.h>
 #include <TTree.h>
+#include <TLorentzVector.h>
 
 //STL headers
 #include <string>

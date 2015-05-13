@@ -123,26 +123,106 @@ class KElectronVetoSelector : public KSelector {
 		//member variables
 };
 
+//------------------------------------------------------
+//single muon selector
+class KMuonSelector : public KSelector {
+	public:
+		//constructor
+		KMuonSelector() : KSelector() { }
+		KMuonSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			if(sk->Muons->size()!=1) return false;
+			double mT = sqrt(2*sk->METPt*sk->Muons->at(0).Pt()*(1-cos(KMath::DeltaPhi(sk->Muons->at(0).Phi(),sk->METPhi))));
+			return mT<100;
+		}
+		
+		//member variables
+};
+
+//------------------------------------------------------
+//single electron selector
+class KElectronSelector : public KSelector {
+	public:
+		//constructor
+		KElectronSelector() : KSelector() { }
+		KElectronSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			if(sk->Electrons->size()!=1) return false;
+			double mT = sqrt(2*sk->METPt*sk->Electrons->at(0).Pt()*(1-cos(KMath::DeltaPhi(sk->Electrons->at(0).Phi(),sk->METPhi))));
+			return mT<100;
+		}
+		
+		//member variables
+};
+
+//------------------------------------------------------
+//single photon selector
+class KPhotonSelector : public KSelector {
+	public:
+		//constructor
+		KPhotonSelector() : KSelector() { }
+		KPhotonSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return sk->NumPhotons==1;
+		}
+		
+		//member variables
+};
+
+//------------------------------------------------------
+//dimuon selector
+class KDiMuonSelector : public KSelector {
+	public:
+		//constructor
+		KDiMuonSelector() : KSelector() { }
+		KDiMuonSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			//todo: add charge, mass cuts
+			return sk->Muons->size() == 2;
+		}
+		
+		//member variables
+};
+
 //----------------------------------------------------
 //selects events based on minDeltaPhiN value
 class KMinDeltaPhiNSelector : public KSelector {
 	public:
 		//constructor
 		KMinDeltaPhiNSelector() : KSelector() { }
-		KMinDeltaPhiNSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), minDeltaPhiN(6.) { 
+		KMinDeltaPhiNSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), minDeltaPhiN(6.), invert(false) { 
 			//check for option
 			localOpt->Get("minDeltaPhiN",minDeltaPhiN);
+			invert = localOpt->Get("invert",false);
 		}
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return sk->minDeltaPhiN > minDeltaPhiN;
+			if(invert) return sk->minDeltaPhiN < minDeltaPhiN;
+			else return sk->minDeltaPhiN > minDeltaPhiN;
 		}
 		
 		//member variables
 		double minDeltaPhiN;
+		bool invert;
 };
 
 //-------------------------------------------------------------
@@ -318,6 +398,10 @@ namespace KParser {
 		else if(sname=="MHT") srtmp = new KMHTSelector(sname,omap);
 		else if(sname=="MuonVeto") srtmp = new KMuonVetoSelector(sname,omap);
 		else if(sname=="ElectronVeto") srtmp = new KElectronVetoSelector(sname,omap);
+		else if(sname=="Muon") srtmp = new KMuonSelector(sname,omap);
+		else if(sname=="Electron") srtmp = new KElectronSelector(sname,omap);
+		else if(sname=="Photon") srtmp = new KPhotonSelector(sname,omap);
+		else if(sname=="DiMuon") srtmp = new KDiMuonSelector(sname,omap);
 		else if(sname=="IsoElectronTrackVeto") srtmp = new KIsoElectronTrackVetoSelector(sname,omap);
 		else if(sname=="IsoMuonTrackVeto") srtmp = new KIsoMuonTrackVetoSelector(sname,omap);
 		else if(sname=="IsoPionTrackVeto") srtmp = new KIsoPionTrackVetoSelector(sname,omap);
