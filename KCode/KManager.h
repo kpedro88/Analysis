@@ -35,6 +35,9 @@ class KManager {
 			globalOpt = new OptionMap();
 			//store treedir in global options
 			globalOpt->Set("treedir",treedir_);
+			//initialize iterators
+			curr_sel = allSelections.GetTable().end();
+			curr_var = allVariations.GetTable().end();
 		}
 		//destructor
 		virtual ~KManager() {}
@@ -106,8 +109,38 @@ class KManager {
 		//virtual input processing functions
 		virtual void processSet(string line) {}
 		virtual void processHisto(string line, int dim) {}
-		virtual void processVariation(string line) {}
-		virtual void processSelection(string line) {}
+		//wait to construct variations until we know which are desired and with which selections to use them
+		//for now, just store the lines for each defined variation in a vector, and construct variators with them later
+		virtual void processVariation(string line){
+			if(line[0]=='\t'){ //variator
+				line.erase(0,1);
+				KNamed* tmp = KParser::processNamed(line);
+				if(curr_var==allVariations.GetTable().end()){
+					cout << "Input error: no variation for variator:" << endl << line << endl << "Check the indents. This input will be skipped." << endl;
+					return;
+				}
+				curr_var->second.push_back(tmp);
+			}
+			else { //variation
+				curr_var = allVariations.Add(line,vector<KNamed*>());
+			}
+		}
+		//wait to construct selections until we know which are desired and what systematic variations to use
+		//for now, just store the lines for each defined selection in a vector, and construct selectors with them later
+		virtual void processSelection(string line){
+			if(line[0]=='\t'){ //selector
+				line.erase(0,1);
+				KNamed* tmp = KParser::processNamed(line);
+				if(curr_sel==allSelections.GetTable().end()){
+					cout << "Input error: no selection for selector:" << endl << line << endl << "Check the indents. This input will be skipped." << endl;
+					return;
+				}
+				curr_sel->second.push_back(tmp);
+			}
+			else { //selection
+				curr_sel = allSelections.Add(line,vector<KNamed*>());
+			}
+		}
 		//generalized function to make selection
 		template <class T>
 		KSelection<T>* makeSelection(string sel, vector<KNamed*>& selectorLines, string unc, vector<KNamed*>& variatorLines, T* looper){
@@ -152,6 +185,8 @@ class KManager {
 		OptionMap* globalOpt;
 		bool parsed;
 		set<string> inputs;
+		KMap<vector<KNamed*> > allSelections, allVariations;
+		map<string,vector<KNamed*> >::iterator curr_sel, curr_var;
 };
 
 #endif
