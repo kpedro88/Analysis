@@ -143,7 +143,7 @@ class KManager {
 		}
 		//generalized function to make selection
 		template <class T>
-		KSelection<T>* makeSelection(string selection, T* looper){
+		KSelection<T>* makeSelection(string selection){
 			//check for systematic
 			vector<string> sel_unc;
 			KParser::process(selection,'_',sel_unc);
@@ -179,8 +179,6 @@ class KManager {
 					KSelector<T>* srtmp = KParser::processSelector<T>(selectorLines[s]);
 					if(srtmp) sntmp->AddSelector(srtmp);
 				}
-				
-				sntmp->SetLooper(looper); //also sets looper for selectors, variation, variators
 				
 				return sntmp;
 			}

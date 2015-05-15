@@ -74,7 +74,8 @@ class KSkimmer : public NtupleClass {
 				theSelections[s]->Finalize(nEventHist);
 			}
 		}
-		void AddSelection(KSelection<KSkimmer>* sel) { 
+		void AddSelection(KSelection<KSkimmer>* sel) {
+			sel->SetLooper(this); //also sets looper for selectors, variation, variators
 			theSelections.push_back(sel);
 			if(sel->GetSelectorWidth()>width1) width1 = sel->GetSelectorWidth();
 		}

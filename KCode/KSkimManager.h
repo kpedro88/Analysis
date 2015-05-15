@@ -70,7 +70,7 @@ class KSkimManager : public KManager {
 			//construct requested selections
 			for(unsigned i = 0; i < fields.size(); i++){
 				//make selection
-				KSelection<KSkimmer>* sntmp = makeSelection<KSkimmer>(fields[i],skimmer);
+				KSelection<KSkimmer>* sntmp = makeSelection<KSkimmer>(fields[i]);
 				
 				if(sntmp){
 					//setup output tree
