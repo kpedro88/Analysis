@@ -14,7 +14,6 @@ vstring:extra_text[#color[2]{n_{j} bin},#color[4]{n_{b} bin}]
 double:sizeLeg[22]
 double:canvasW[1200]
 double:NdivX[518]
-bool:doRA2bin[1]
 vint:NJetBinMin[4,7,9]
 vint:NJetBinMax[6,8,99]
 vint:NBJetBinMin[0,1,2,3]
@@ -27,11 +26,13 @@ vfloat:HTBinMax[800,1200,9999,1200,9999,9999]
 vuint:NBJetBins[0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,3,3,0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,3,3,0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,3,3]
   vuint:MHTBins[0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2]
    vuint:HTBins[0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5]
+string:selection[ra2bin]
 
 SELECTION
-default
+ra2bin
+	RA2Bin
 	Histo
-   
+
 HISTO
 RA2bin	i:xnum[72]	d:xmin[0.5]	d:xmax[72.5]	s:xtitle[RA2 bin [^{}n_{j},^{}n_{b},^{}#slash{H}_{T},^{}H_{T}]]	s:ytitle[number of events]	b:ratio[0]	vd:xcuts[6.5,12.5,18.5,24.5,48.5]	vc:xcut_colors[kBlue,kBlue,kBlue,kRed,kRed]
 

@@ -7,7 +7,6 @@
 #include "KPlot.h"
 #include "KLegend.h"
 #include "KBuilderSelectors.h"
-#include "RA2bin.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -35,7 +34,6 @@ class KPlotManager : public KManager {
 			
 			//final checks and initializations
 			MyRatio = new KSetRatio(NULL,globalOpt);
-			if(globalOpt->Get("doRA2bin",false)) InitializeRA2binning();
 			//store correction root files centrally
 			//todo: make file location and histo name configurable
 			//(*disabled* until 2015 data is available)
@@ -55,42 +53,6 @@ class KPlotManager : public KManager {
 		//destructor
 		virtual ~KPlotManager() {}
 		//helpers
-		void InitializeRA2binning(){
-			//get objects
-			vector<int> NJetBinMin, NJetBinMax, NBJetBinMin, NBJetBinMax;
-			vector<float> MHTBinMin, MHTBinMax, HTBinMin, HTBinMax;
-			vector<unsigned> NJetBins, NBJetBins, MHTBins, HTBins;
-			globalOpt->Get("NJetBinMin",NJetBinMin); globalOpt->Get("NJetBinMax",NJetBinMax);
-			globalOpt->Get("NBJetBinMin",NBJetBinMin); globalOpt->Get("NBJetBinMax",NBJetBinMax);
-			globalOpt->Get("MHTBinMin",MHTBinMin); globalOpt->Get("MHTBinMax",MHTBinMax);
-			globalOpt->Get("HTBinMin",HTBinMin); globalOpt->Get("HTBinMax",HTBinMax);
-			globalOpt->Get("NJetBins",NJetBins); globalOpt->Get("NBJetBins",NBJetBins);
-			globalOpt->Get("MHTBins",MHTBins); globalOpt->Get("HTBins",HTBins);
-			
-			//safety checks
-			bool minmax_lengths = NJetBinMin.size()==NJetBinMax.size() && NBJetBinMin.size()==NBJetBinMax.size() && MHTBinMin.size()==MHTBinMax.size() && HTBinMin.size()==HTBinMax.size();
-			if(!minmax_lengths) {
-				cout << "Input error: vector length mismatches in RA2 min and max specification. RA2 binning will not be computed." << endl;
-				return;
-			}
-			bool binning_lengths = NJetBins.size()==NBJetBins.size() && NJetBins.size()==MHTBins.size() && NJetBins.size()==HTBins.size();
-			if(!binning_lengths) {
-				cout << "Input error: vector length mismatches in RA2 bins specification. RA2 binning will not be computed." << endl;
-				return;
-			}
-			
-			//create map of RA2 bin IDs to bin numbers
-			map<unsigned, unsigned> IDtoBinNumber;
-			for(unsigned b = 0; b < NJetBins.size(); b++){
-				IDtoBinNumber[RA2binID(NJetBins[b],NBJetBins[b],MHTBins[b],HTBins[b]).raw()] = b+1; //bin numbers start at 1
-			}
-			
-			//create binner
-			RA2binner* binner = new RA2binner(IDtoBinNumber, NJetBinMin, NJetBinMax, NBJetBinMin, NBJetBinMax, MHTBinMin, MHTBinMax, HTBinMin, HTBinMax);
-			
-			//store binner with options
-			globalOpt->Set<RA2binner*>("RA2binner",binner);
-		}
 		void processSet(string line){
 			//cout << line << endl;
 			int indent = 0;

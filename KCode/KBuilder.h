@@ -9,7 +9,6 @@
 #include "KBase.h"
 #include "TreeClass.h"
 #include "KSelection.h"
-#include "RA2bin.h"
 
 //custom headers for weighting
 #include "../btag/GetBtagScale.C"
@@ -56,27 +55,12 @@ class KBuilder : public TreeClass {
 		//functions for histo creation
 		virtual bool Cut() { //this implements the set of cuts common between data and MC
 			bool goodEvent = true;
-			
-			//get RA2 bin (other bins could also be retrieved here)
-			if(binner){
-				RA2bin = binner->GetBinNumber(NJets,BTags,MHT,HT);
-				if(RA2bin==0) goodEvent &= false;
-			}
-			
-			//int filter = -1;
-			//if(globalOpt->Get<int>("filter",filter)){
-			//	//check appropriate filter conditions
-			//}
 		
 			return (goodEvent && MySelection->DoSelection());
 		}
 		virtual double Weight() { return 1.; }
 		virtual void Loop() {
 			if (fChain == 0) return;
-			
-			//check for RA2 binning
-			binner = NULL;
-			globalOpt->Get("RA2binner",binner);
 			
 			//initial loop to get histo variables
 			int table_size = MyBase->GetTable().size();
@@ -102,9 +86,6 @@ class KBuilder : public TreeClass {
 				if (ientry < 0) break;
 				nb = fChain->GetEntry(jentry);   nbytes += nb;
 				if(debugloop && jentry % 10000 == 0) cout << MyBase->GetName() << " " << jentry << "/" << nentries << endl;
-				
-				//clear event variables
-				RA2bin = 0;
 				
 				Cut();
 			}
@@ -144,10 +125,6 @@ class KBuilder : public TreeClass {
 		KSelection<KBuilder>* MySelection;
 		vector<vector<string> > vars;
 		vector<TH1*> htmp;
-		
-		//extra variables
-		RA2binner* binner;
-		unsigned RA2bin;
 };
 
 void KBase::Build(){

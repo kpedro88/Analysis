@@ -23,6 +23,154 @@ using namespace std;
 //base class for Selectors is in KSelection.h
 
 //---------------------------------------------------------------
+//class to build RA2 bin IDs
+class RA2binID {
+	public:
+		//constructors
+		RA2binID() : id(0) {}
+		RA2binID(unsigned id_) : id(id_) {}
+		RA2binID(unsigned NJetBin, unsigned NBJetBin, unsigned MHTBin, unsigned HTBin) : 
+			id(NJetBin + 100*NBJetBin + 10000*MHTBin + 1000000*HTBin) {}
+		//destructor
+		~RA2binID() {}
+		
+		//accessors
+		unsigned raw() { return id; }
+		unsigned NJetBin() { return id%100; }
+		unsigned NBJetBin() { return (id/100)%100; }
+		unsigned MHTBin() { return (id/10000)%100; }
+		unsigned HTBin() { return (id/1000000)%100; }
+	
+	private:
+		//member variables
+		unsigned id;
+};
+
+//---------------------------------------------------------------
+//class to store and apply RA2 binning
+class KRA2BinSelector : public KSelector<KBuilder> {
+	public:
+		typedef map<unsigned, unsigned>::iterator BNit;
+	
+		//constructor
+		KRA2BinSelector() : KSelector<KBuilder>() { }
+		KRA2BinSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), initialized(false), RA2bin(0) { }
+		void Initialize(){
+			if(initialized) return;
+			
+			//get objects
+			vector<unsigned> NJetBins, NBJetBins, MHTBins, HTBins;
+			looper->globalOpt->Get("NJetBinMin",NJetMin); looper->globalOpt->Get("NJetBinMax",NJetMax);
+			looper->globalOpt->Get("NBJetBinMin",NBJetMin); looper->globalOpt->Get("NBJetBinMax",NBJetMax);
+			looper->globalOpt->Get("MHTBinMin",MHTMin); looper->globalOpt->Get("MHTBinMax",MHTMax);
+			looper->globalOpt->Get("HTBinMin",HTMin); looper->globalOpt->Get("HTBinMax",HTMax);
+			looper->globalOpt->Get("NJetBins",NJetBins); looper->globalOpt->Get("NBJetBins",NBJetBins);
+			looper->globalOpt->Get("MHTBins",MHTBins); looper->globalOpt->Get("HTBins",HTBins);
+			
+			//safety checks
+			bool minmax_lengths = NJetMin.size()==NJetMax.size() && NBJetMin.size()==NBJetMax.size() && MHTMin.size()==MHTMax.size() && HTMin.size()==HTMax.size();
+			if(!minmax_lengths) {
+				cout << "Input error: vector length mismatches in RA2 min and max specification. RA2 binning will not be computed." << endl;
+				depfailed = true;
+				return;
+			}
+			bool binning_lengths = NJetBins.size()==NBJetBins.size() && NJetBins.size()==MHTBins.size() && NJetBins.size()==HTBins.size();
+			if(!binning_lengths) {
+				cout << "Input error: vector length mismatches in RA2 bins specification. RA2 binning will not be computed." << endl;
+				depfailed = true;
+				return;
+			}
+			
+			//create map of RA2 bin IDs to bin numbers (if not already created)
+			if(!(looper->globalOpt->Get("IDtoBinNumber",IDtoBinNumber))){
+				for(unsigned b = 0; b < NJetBins.size(); b++){
+					IDtoBinNumber[RA2binID(NJetBins[b],NBJetBins[b],MHTBins[b],HTBins[b]).raw()] = b+1; //bin numbers start at 1
+				}
+				
+				//store map with global options
+				looper->globalOpt->Set<map<unsigned,unsigned> >("IDtoBinNumber",IDtoBinNumber);
+			}
+			initialized = true;
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			if(depfailed) return false;
+			Initialize();
+			
+			RA2bin = GetBinNumber(looper->NJets,looper->BTags,looper->MHT,looper->HT);
+			
+			return RA2bin!=0;
+		}
+		
+		//functions
+		unsigned GetBinNumber(int& NJetVal, int& NBJetVal, float& MHTVal, float& HTVal) {
+			vector<unsigned> NJetBins = GetNJetBins(NJetVal);
+			vector<unsigned> NBJetBins = GetNBJetBins(NBJetVal);
+			vector<unsigned> MHTBins = GetMHTBins(MHTVal);
+			vector<unsigned> HTBins = GetHTBins(HTVal);
+			
+			//skip loop if no bin was found for a value
+			if(NJetBins.size()==0 || NBJetBins.size()==0 || MHTBins.size()==0 || HTBins.size()==0) return 0;
+			
+			//find the correct combination of bin numbers that exists in the map
+			for(unsigned nj = 0; nj < NJetBins.size(); nj++){
+				for(unsigned nb = 0; nb < NBJetBins.size(); nb++){
+					for(unsigned nm = 0; nm < MHTBins.size(); nm++){
+						for(unsigned nh = 0; nh < HTBins.size(); nh++){
+							unsigned raw = RA2binID(NJetBins[nm],NBJetBins[nb],MHTBins[nm],HTBins[nh]).raw();
+							BNit it = IDtoBinNumber.find(raw);
+							//exit loop as soon as an existing bin is found
+							if(it != IDtoBinNumber.end()){
+								return it->second;
+							}
+						}
+					}
+				}
+			}
+			
+			//if no bins are were found, return default
+			return 0;
+		}
+		vector<unsigned> GetNJetBins(int& NJetVal){
+			vector<unsigned> bins;
+			for(unsigned n = 0; n < NJetMin.size(); ++n){
+				if(NJetVal >= NJetMin[n] && NJetVal <= NJetMax[n]) bins.push_back(n);
+			}
+			return bins;
+		}
+		vector<unsigned> GetNBJetBins(int& NBJetVal){
+			vector<unsigned> bins;
+			for(unsigned n = 0; n < NBJetMin.size(); ++n){
+				if(NBJetVal >= NBJetMin[n] && NBJetVal <= NBJetMax[n]) bins.push_back(n);
+			}
+			return bins;
+		}
+		vector<unsigned> GetMHTBins(float& MHTVal){
+			vector<unsigned> bins;
+			for(unsigned n = 0; n < MHTMin.size(); ++n){
+				if(MHTVal > MHTMin[n] && MHTVal <= MHTMax[n]) bins.push_back(n);
+			}
+			return bins;
+		}
+		vector<unsigned> GetHTBins(float& HTVal){
+			vector<unsigned> bins;
+			for(unsigned n = 0; n < HTMin.size(); ++n){
+				if(HTVal > HTMin[n] && HTVal <= HTMax[n]) bins.push_back(n);
+			}
+			return bins;
+		}
+		
+	public:
+		//member variables
+		bool initialized;
+		int RA2bin;
+		map<unsigned, unsigned> IDtoBinNumber;
+		vector<int> NJetMin, NJetMax, NBJetMin, NBJetMax;
+		vector<float> MHTMin, MHTMax, HTMin, HTMax;
+};
+
+//---------------------------------------------------------------
 //checks for double-counted events
 class KDoubleCountSelector : public KSelector<KBuilder> {
 	public:
@@ -76,6 +224,12 @@ class KHistoSelector : public KSelector<KBuilder> {
 		KHistoSelector() : KSelector<KBuilder>() { }
 		KHistoSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_) { canfail = false; }
 		
+		virtual void SetSelection(KSelection<KBuilder>* sel_) {
+			sel = sel_;
+			//set dependencies here
+			RA2Bin = sel->Get<KRA2BinSelector*>("RA2Bin");
+		} 
+		
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			double w = looper->Weight();
@@ -87,8 +241,8 @@ class KHistoSelector : public KSelector<KBuilder> {
 				for(int i = 0; i < vsize; i++){
 					string vname = looper->vars[h][i];
 					//list of cases for histo calculation and filling
-					if(vname=="RA2bin"){//plot yield vs. bin of RA2 search
-						values[i].Fill(looper->RA2bin,w);
+					if(vname=="RA2bin" && RA2Bin){//plot yield vs. bin of RA2 search -> depends on RA2Bin selector
+						values[i].Fill(RA2Bin->RA2bin,w);
 					}
 					else if(vname=="njets"){//jet multiplicity
 						values[i].Fill(looper->NJets,w);
@@ -165,7 +319,9 @@ class KHistoSelector : public KSelector<KBuilder> {
 			
 			return true;
 		}
-
+		
+		//member variables
+		KRA2BinSelector* RA2Bin;
 };
 
 //-------------------------------------------------------------
@@ -180,6 +336,7 @@ namespace KParser {
 		//check for all known selectors
 		if(sname=="Histo") srtmp = new KHistoSelector(sname,omap);
 		if(sname=="DoubleCount") srtmp = new KDoubleCountSelector(sname,omap);
+		if(sname=="RA2Bin") srtmp = new KRA2BinSelector(sname,omap);
 		else {} //skip unknown selectors
 		
 		if(!srtmp) cout << "Input error: unknown selector " << sname << ". This selector will be skipped." << endl;
