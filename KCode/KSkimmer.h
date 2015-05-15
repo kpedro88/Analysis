@@ -74,14 +74,14 @@ class KSkimmer : public NtupleClass {
 				theSelections[s]->Finalize(nEventHist);
 			}
 		}
-		void AddSelection(KSelection* sel) { 
+		void AddSelection(KSelection<KSkimmer>* sel) { 
 			theSelections.push_back(sel);
 			if(sel->GetSelectorWidth()>width1) width1 = sel->GetSelectorWidth();
 		}
 		
 		//member variables
 		TH1F *nEventHist;
-		vector<KSelection*> theSelections;
+		vector<KSelection<KSkimmer>*> theSelections;
 		OptionMap* globalOpt;
 		Long64_t nentries;
 		double  MuonMass, ElectronMass, TauMass;

@@ -4,9 +4,9 @@
 //custom headers
 #include "KManager.h"
 #include "KSet.h"
-#include "KVariators.h"
-#include "KSelectors.h"
 #include "KSkimmer.h"
+#include "KSkimmerVariators.h"
+#include "KSkimmerSelectors.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -114,34 +114,22 @@ class KSkimManager : public KManager {
 				//check in full list (selections may be repeated with different systematics, so never remove things from the full list)
 				if(allSelections.Has(sel)){
 					//first check for existence of variation if requested
-					KVariation* vntmp = 0;
+					vector<KNamed*> variatorLines;
 					if(unc.size()>0) {
 						if(!allVariations.Has(unc)) {
 							cout << "Input error: variation " << unc << " is not defined. This request will be ignored." << endl;
 							continue;
 						}
-						vntmp = new KVariation(unc);
 						
-						//create variators for variation
-						vector<KNamed*> variatorLines = allVariations.Get(unc);
-						for(unsigned v = 0; v < variatorLines.size(); v++){
-							KVariator* vrtmp = KParser::processVariator(variatorLines[v]);
-							if(vrtmp) vntmp->AddVariator(vrtmp);
-						}
-						vntmp->SetSkimmer(skimmer); //also sets skimmer for variators
+						//get variators info
+						variatorLines = allVariations.Get(unc);
 					}
 					
-					//create selection using full name (sel + unc)
-					KSelection* sntmp = new KSelection(fields[i]);
-					if(vntmp) sntmp->SetVariation(vntmp);
-					
-					//create selectors for selection
+					//get selectors info
 					vector<KNamed*> selectorLines = allSelections.Get(sel);
-					for(unsigned s = 0; s < selectorLines.size(); s++){
-						KSelector* srtmp = KParser::processSelector(selectorLines[s]);
-						if(srtmp) sntmp->AddSelector(srtmp);
-					}
-					sntmp->SetSkimmer(skimmer); //also sets skimmer for selectors
+					
+					//make selection
+					KSelection<KSkimmer>* sntmp = makeSelection<KSkimmer>(sel,selectorLines,unc,variatorLines,skimmer);
 					
 					//setup output tree
 					sntmp->MakeTree(outdir,MyBase->GetName(), (globalOpt->Get("doClone",false) ? skimmer->fChain : NULL));

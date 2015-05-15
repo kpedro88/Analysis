@@ -1,5 +1,5 @@
-#ifndef KSELECTORS_H
-#define KSELECTORS_H
+#ifndef KSKIMMERSELECTORS_H
+#define KSKIMMERSELECTORS_H
 
 //custom headers
 #include "KSelection.h"
@@ -23,11 +23,11 @@ using namespace std;
 
 //----------------------------------------------------
 //selects events based on number of jets
-class KNJetSelector : public KSelector {
+class KNJetSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
-		KNJetSelector() : KSelector() { }
-		KNJetSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), njet(4) { 
+		KNJetSelector() : KSelector<KSkimmer>() { }
+		KNJetSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), njet(4) { 
 			//check for option
 			localOpt->Get("njet",njet);
 		}
@@ -36,7 +36,7 @@ class KNJetSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return sk->NJets >= njet;
+			return looper->NJets >= njet;
 		}
 		
 		//member variables
@@ -45,11 +45,11 @@ class KNJetSelector : public KSelector {
 
 //----------------------------------------------------
 //selects events based on HT value
-class KHTSelector : public KSelector {
+class KHTSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
-		KHTSelector() : KSelector() { }
-		KHTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), HTmin(500) { 
+		KHTSelector() : KSelector<KSkimmer>() { }
+		KHTSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), HTmin(500) { 
 			//check for option
 			localOpt->Get("HTmin",HTmin);
 		}
@@ -58,7 +58,7 @@ class KHTSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return sk->HT > HTmin;
+			return looper->HT > HTmin;
 		}
 		
 		//member variables
@@ -67,11 +67,11 @@ class KHTSelector : public KSelector {
 
 //----------------------------------------------------
 //selects events based on MHT value
-class KMHTSelector : public KSelector {
+class KMHTSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
-		KMHTSelector() : KSelector() { }
-		KMHTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), MHTmin(200) { 
+		KMHTSelector() : KSelector<KSkimmer>() { }
+		KMHTSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), MHTmin(200) { 
 			//check for option
 			localOpt->Get("MHTmin",MHTmin);
 		}
@@ -80,7 +80,7 @@ class KMHTSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return sk->MHT > MHTmin;
+			return looper->MHT > MHTmin;
 		}
 		
 		//member variables
@@ -89,17 +89,17 @@ class KMHTSelector : public KSelector {
 
 //-------------------------------------------------------------
 //vetos events with muons
-class KMuonVetoSelector : public KSelector {
+class KMuonVetoSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
-		KMuonVetoSelector() : KSelector() { }
-		KMuonVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		KMuonVetoSelector() : KSelector<KSkimmer>() { }
+		KMuonVetoSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return sk->Muons->size()==0;
+			return looper->Muons->size()==0;
 		}
 		
 		//member variables
@@ -107,17 +107,17 @@ class KMuonVetoSelector : public KSelector {
 
 //-------------------------------------------------------------
 //vetos events with electrons
-class KElectronVetoSelector : public KSelector {
+class KElectronVetoSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
-		KElectronVetoSelector() : KSelector() { }
-		KElectronVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		KElectronVetoSelector() : KSelector<KSkimmer>() { }
+		KElectronVetoSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return sk->Electrons->size()==0;
+			return looper->Electrons->size()==0;
 		}
 		
 		//member variables
@@ -125,18 +125,18 @@ class KElectronVetoSelector : public KSelector {
 
 //------------------------------------------------------
 //single muon selector
-class KMuonSelector : public KSelector {
+class KMuonSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
-		KMuonSelector() : KSelector() { }
-		KMuonSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		KMuonSelector() : KSelector<KSkimmer>() { }
+		KMuonSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			if(sk->Muons->size()!=1) return false;
-			double mT = sqrt(2*sk->METPt*sk->Muons->at(0).Pt()*(1-cos(KMath::DeltaPhi(sk->Muons->at(0).Phi(),sk->METPhi))));
+			if(looper->Muons->size()!=1) return false;
+			double mT = sqrt(2*looper->METPt*looper->Muons->at(0).Pt()*(1-cos(KMath::DeltaPhi(looper->Muons->at(0).Phi(),looper->METPhi))));
 			return mT<100;
 		}
 		
@@ -145,18 +145,18 @@ class KMuonSelector : public KSelector {
 
 //------------------------------------------------------
 //single electron selector
-class KElectronSelector : public KSelector {
+class KElectronSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
-		KElectronSelector() : KSelector() { }
-		KElectronSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		KElectronSelector() : KSelector<KSkimmer>() { }
+		KElectronSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			if(sk->Electrons->size()!=1) return false;
-			double mT = sqrt(2*sk->METPt*sk->Electrons->at(0).Pt()*(1-cos(KMath::DeltaPhi(sk->Electrons->at(0).Phi(),sk->METPhi))));
+			if(looper->Electrons->size()!=1) return false;
+			double mT = sqrt(2*looper->METPt*looper->Electrons->at(0).Pt()*(1-cos(KMath::DeltaPhi(looper->Electrons->at(0).Phi(),looper->METPhi))));
 			return mT<100;
 		}
 		
@@ -165,17 +165,17 @@ class KElectronSelector : public KSelector {
 
 //------------------------------------------------------
 //single photon selector
-class KPhotonSelector : public KSelector {
+class KPhotonSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
-		KPhotonSelector() : KSelector() { }
-		KPhotonSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		KPhotonSelector() : KSelector<KSkimmer>() { }
+		KPhotonSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return sk->NumPhotons==1;
+			return looper->NumPhotons==1;
 		}
 		
 		//member variables
@@ -183,18 +183,18 @@ class KPhotonSelector : public KSelector {
 
 //------------------------------------------------------
 //dimuon selector
-class KDiMuonSelector : public KSelector {
+class KDiMuonSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
-		KDiMuonSelector() : KSelector() { }
-		KDiMuonSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		KDiMuonSelector() : KSelector<KSkimmer>() { }
+		KDiMuonSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			//todo: add charge, mass cuts
-			return sk->Muons->size() == 2;
+			return looper->Muons->size() == 2;
 		}
 		
 		//member variables
@@ -202,11 +202,11 @@ class KDiMuonSelector : public KSelector {
 
 //----------------------------------------------------
 //selects events based on minDeltaPhiN value
-class KMinDeltaPhiNSelector : public KSelector {
+class KMinDeltaPhiNSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
-		KMinDeltaPhiNSelector() : KSelector() { }
-		KMinDeltaPhiNSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), minDeltaPhiN(6.), invert(false) { 
+		KMinDeltaPhiNSelector() : KSelector<KSkimmer>() { }
+		KMinDeltaPhiNSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), minDeltaPhiN(6.), invert(false) { 
 			//check for option
 			localOpt->Get("minDeltaPhiN",minDeltaPhiN);
 			invert = localOpt->Get("invert",false);
@@ -216,8 +216,8 @@ class KMinDeltaPhiNSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			if(invert) return sk->minDeltaPhiN < minDeltaPhiN;
-			else return sk->minDeltaPhiN > minDeltaPhiN;
+			if(invert) return looper->minDeltaPhiN < minDeltaPhiN;
+			else return looper->minDeltaPhiN > minDeltaPhiN;
 		}
 		
 		//member variables
@@ -227,17 +227,17 @@ class KMinDeltaPhiNSelector : public KSelector {
 
 //-------------------------------------------------------------
 //vetos events with isolated electron tracks
-class KIsoElectronTrackVetoSelector : public KSelector {
+class KIsoElectronTrackVetoSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
-		KIsoElectronTrackVetoSelector() : KSelector() { }
-		KIsoElectronTrackVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		KIsoElectronTrackVetoSelector() : KSelector<KSkimmer>() { }
+		KIsoElectronTrackVetoSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return sk->isoElectronTracks==0;
+			return looper->isoElectronTracks==0;
 		}
 		
 		//member variables
@@ -245,17 +245,17 @@ class KIsoElectronTrackVetoSelector : public KSelector {
 
 //-------------------------------------------------------------
 //vetos events with isolated muon tracks
-class KIsoMuonTrackVetoSelector : public KSelector {
+class KIsoMuonTrackVetoSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
-		KIsoMuonTrackVetoSelector() : KSelector() { }
-		KIsoMuonTrackVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		KIsoMuonTrackVetoSelector() : KSelector<KSkimmer>() { }
+		KIsoMuonTrackVetoSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return sk->isoMuonTracks==0;
+			return looper->isoMuonTracks==0;
 		}
 		
 		//member variables
@@ -263,17 +263,17 @@ class KIsoMuonTrackVetoSelector : public KSelector {
 
 //-------------------------------------------------------------
 //vetos events with isolated charged hadron tracks
-class KIsoPionTrackVetoSelector : public KSelector {
+class KIsoPionTrackVetoSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
-		KIsoPionTrackVetoSelector() : KSelector() { }
-		KIsoPionTrackVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		KIsoPionTrackVetoSelector() : KSelector<KSkimmer>() { }
+		KIsoPionTrackVetoSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return sk->isoPionTracks==0;
+			return looper->isoPionTracks==0;
 		}
 		
 		//member variables
@@ -281,17 +281,17 @@ class KIsoPionTrackVetoSelector : public KSelector {
 
 //-------------------------------------------------------------
 //vetos events with bad jets (including PFJetID & PBNR)
-class KEventCleaningSelector : public KSelector {
+class KEventCleaningSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
-		KEventCleaningSelector() : KSelector() { }
-		KEventCleaningSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		KEventCleaningSelector() : KSelector<KSkimmer>() { }
+		KEventCleaningSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return sk->JetID==1;
+			return looper->JetID==1;
 		}
 		
 		//member variables
@@ -299,11 +299,11 @@ class KEventCleaningSelector : public KSelector {
 
 //----------------------------------------------------
 //selects events based on number of b-jets
-class KNBJetSelector : public KSelector {
+class KNBJetSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
-		KNBJetSelector() : KSelector() { }
-		KNBJetSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), nbjet_min(-1), nbjet_max(-1) { 
+		KNBJetSelector() : KSelector<KSkimmer>() { }
+		KNBJetSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), nbjet_min(-1), nbjet_max(-1) { 
 			//check for option
 			localOpt->Get("nbjet_min",nbjet_min);
 			localOpt->Get("nbjet_max",nbjet_max);
@@ -313,7 +313,7 @@ class KNBJetSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return ( (nbjet_min==-1 || sk->BTags >= nbjet_min) && (nbjet_max==-1 || sk->BTags <= nbjet_max) );
+			return ( (nbjet_min==-1 || looper->BTags >= nbjet_min) && (nbjet_max==-1 || looper->BTags <= nbjet_max) );
 		}
 		
 		//member variables
@@ -322,11 +322,11 @@ class KNBJetSelector : public KSelector {
 
 //----------------------------------------------------
 //chains together several inclusive b-tag bins
-class KNBJetBinSelector : public KSelector {
+class KNBJetBinSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
-		KNBJetBinSelector() : KSelector() { }
-		KNBJetBinSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), initialized(false) { 
+		KNBJetBinSelector() : KSelector<KSkimmer>() { }
+		KNBJetBinSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), initialized(false) { 
 			//check for option
 			localOpt->Get("nbjet_min",nbjet_min);
 			localOpt->Get("nbjet_max",nbjet_max);
@@ -349,9 +349,9 @@ class KNBJetBinSelector : public KSelector {
 				else if(nbjet_max[b]>-1&&nbjet_min[b]>-1) sb << nbjet_min[b] << "-" << nbjet_max[b];
 				else {}
 				
-				KSelector* srtmp = new KNBJetSelector(sb.str(),omap);
+				KSelector<KSkimmer>* srtmp = new KNBJetSelector(sb.str(),omap);
 				srtmp->SetSelection(sel);
-				srtmp->SetSkimmer(sk);
+				srtmp->SetLooper(looper);
 				bjet_sel.push_back(srtmp);
 			}
 			
@@ -381,14 +381,15 @@ class KNBJetBinSelector : public KSelector {
 		//member variables
 		bool initialized;
 		vector<int> nbjet_min, nbjet_max;
-		vector<KSelector*> bjet_sel;
+		vector<KSelector<KSkimmer>*> bjet_sel;
 };
 
 //-------------------------------------------------------------
 //addition to KParser to create selectors
 namespace KParser {
-	KSelector* processSelector(KNamed* tmp){
-		KSelector* srtmp = 0;
+	template <>
+	KSelector<KSkimmer>* processSelector<KSkimmer>(KNamed* tmp){
+		KSelector<KSkimmer>* srtmp = 0;
 		string sname = tmp->first;
 		OptionMap* omap = tmp->second;
 		

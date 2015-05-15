@@ -16,6 +16,12 @@
 #include <iomanip>
 #include <utility>
 
+//forward declaration
+template <class T>
+class KVariator;
+template <class T>
+class KSelector;
+
 namespace KParser {
 	//generalization for processing a line
 	void process(string line, char delim, vector<string>& fields){
@@ -176,6 +182,15 @@ namespace KParser {
 		//return local options for later use
 		KNamed* tmp = new pair<string,OptionMap*>(name,omap);
 		return tmp;
+	}
+	//general function templates for processing selectors and variators: specializations defined elsewhere
+	template <class T>
+	KVariator<T>* processVariator(KNamed* tmp){
+		return NULL;
+	}
+	template <class T>
+	KSelector<T>* processSelector(KNamed* tmp){
+		return NULL;
 	}
 }
 

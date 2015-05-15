@@ -18,19 +18,20 @@
 using namespace std;
 
 //forward declaration
+template <class T>
 class KSelection;
-class KSkimmer;
 
 //----------------------------------------------------------------
 //base class for Selectors, has standard functions defined
+template <class T>
 class KSelector {
 	public:
 		//constructor
-		KSelector() : name(""), localOpt(0), sel(0), sk(0), tree(0), counter(0), dummy(0), canfail(1), depfailed(0) {
+		KSelector() : name(""), localOpt(0), sel(0), looper(0), tree(0), counter(0), dummy(0), canfail(1), depfailed(0) {
 			//must always have local option map
 			if(localOpt==0) localOpt = new OptionMap();
 		}
-		KSelector(string name_, OptionMap* localOpt_) : name(name_), localOpt(localOpt_), sel(0), sk(0), tree(0), counter(0), dummy(0), canfail(1), depfailed(0) {
+		KSelector(string name_, OptionMap* localOpt_) : name(name_), localOpt(localOpt_), sel(0), looper(0), tree(0), counter(0), dummy(0), canfail(1), depfailed(0) {
 			//must always have local option map
 			if(localOpt==0) localOpt = new OptionMap();
 			dummy = localOpt->Get("dummy",false);
@@ -39,8 +40,8 @@ class KSelector {
 		virtual ~KSelector() {}
 		//accessors
 		string GetName() { return name; }
-		virtual void SetSelection(KSelection* sel_) { sel = sel_; } //set dependencies here if desired
-		virtual void SetSkimmer(KSkimmer* sk_) { sk = sk_; }
+		virtual void SetSelection(KSelection<T>* sel_) { sel = sel_; } //set dependencies here if desired
+		virtual void SetLooper(T* looper_) { looper = looper_; }
 		virtual void SetTree(TTree* tree_) { tree = tree_; } //set tree branches here if desired
 		int GetCounter() { return counter; }
 		bool Dummy() { return dummy; }
@@ -68,8 +69,8 @@ class KSelector {
 		//member variables
 		string name;
 		OptionMap* localOpt;
-		KSelection* sel;
-		KSkimmer* sk;
+		KSelection<T>* sel;
+		T* looper;
 		TTree* tree;
 		int counter;
 		bool dummy, canfail, depfailed;
@@ -78,34 +79,34 @@ class KSelector {
 //----------------------------------------------------------------
 //class to keep track of a list of Selectors
 //has a vector for an ordered list and a map for a searchable list
+template <class T>
 class KSelection {
 	public:
 		//constructor
-		KSelection() : name(""), variation(0), skimmer(0), file(0), tree(0), widths(5,0), width1s(10) {}
-		KSelection(string name_) : name(name_), variation(0), skimmer(0), file(0), tree(0), widths(5,0), width1s(0) {}
+		KSelection() : name(""), variation(0), looper(0), file(0), tree(0), widths(5,0), width1s(10) {}
+		KSelection(string name_) : name(name_), variation(0), looper(0), file(0), tree(0), widths(5,0), width1s(0) {}
 		//destructor
 		virtual ~KSelection() {}
 		//accessors
 		string GetName() { return name; }
-		void SetVariation(KVariation* varn) { variation = varn; }
-		void AddSelector(KSelector* sel_){
+		void SetVariation(KVariation<T>* varn) { variation = varn; }
+		void AddSelector(KSelector<T>* sel_){
 			selectorList.push_back(sel_);
 			selectors.Add(sel_->GetName(),sel_);
 			sel_->SetSelection(this);
 			if(!sel_->Dummy() && sel_->CanFail() && sel_->GetName().size()>width1s) width1s = sel_->GetName().size();
 		}
 		int GetSelectorWidth() { return width1s; }
-		void SetSkimmer(KSkimmer* skimmer_){
-			skimmer = skimmer_;
+		void SetLooper(T* looper_){
+			looper = looper_;
 			for(unsigned s = 0; s < selectorList.size(); s++){
-				selectorList[s]->SetSkimmer(skimmer_);
+				selectorList[s]->SetLooper(looper_);
 			}
-			if(variation) variation->SetSkimmer(skimmer_);
+			if(variation) variation->SetLooper(looper_);
 		}
 		void DoVariation() { if(variation) variation->DoVariation(); }
 		void UndoVariation() { if(variation) variation->UndoVariation(); }
-		KSelector* operator[](int x){ return selectorList[x]; }
-		template <class T> T Get(string name_){	return static_cast<T>(selectors.Get(name_)); }
+		template <class S> S Get(string name_){	return static_cast<S>(selectors.Get(name_)); }
 		//setup output tree
 		void MakeTree(string outdir, string filename, TTree* clone=NULL){
 			//make sure the folder exists
@@ -178,10 +179,10 @@ class KSelection {
 	private:
 		//member variables
 		string name;
-		KVariation* variation;
-		KSkimmer* skimmer;
-		vector<KSelector*> selectorList;
-		SelectorMap selectors;
+		KVariation<T>* variation;
+		T* looper;
+		vector<KSelector<T>*> selectorList;
+		KMap<KSelector<T>*> selectors;
 		TFile* file;
 		TTree* tree;
 		vector<int> widths;

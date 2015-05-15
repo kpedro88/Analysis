@@ -12,25 +12,23 @@
 
 using namespace std;
 
-//forward declaration
-class KSkimmer;
-
 //----------------------------------------------------------------
 //base class for Variators, has standard functions defined
+template <class T>
 class KVariator {
 	public:
 		//constructor
-		KVariator() : name(""), localOpt(0), sk(0) {
+		KVariator() : name(""), localOpt(0), looper(0) {
 			//must always have local option map
 			if(localOpt==0) localOpt = new OptionMap();
 		}
-		KVariator(string name_, OptionMap* localOpt_) : name(name_), localOpt(localOpt_), sk(0) {
+		KVariator(string name_, OptionMap* localOpt_) : name(name_), localOpt(localOpt_), looper(0) {
 			//must always have local option map
 			if(localOpt==0) localOpt = new OptionMap();
 		}
 		//accessors
 		string GetName() { return name; }
-		void SetSkimmer(KSkimmer* sk_) { sk = sk_; }
+		void SetLooper(T* looper_) { looper = looper_; }
 		//functions
 		virtual void DoVariation() {}
 		virtual void UndoVariation() {}
@@ -39,30 +37,28 @@ class KVariator {
 		//member variables
 		string name;
 		OptionMap* localOpt;
-		KSkimmer* sk;
+		T* looper;
 };
 
 //----------------------------------------------------------------
 //class to keep track of a list of Variators
+template <class T>
 class KVariation {
 	public:
 		//constructor
-		KVariation() : name(""), skimmer(0) {}
-		KVariation(string name_) : name(name_), skimmer(0) {}
+		KVariation() : name(""), looper(0) {}
+		KVariation(string name_) : name(name_), looper(0) {}
 		//destructor
 		virtual ~KVariation() {}
 		//accessors
 		string GetName() { return name; }
-		void AddVariator(KVariator* var_){
+		void AddVariator(KVariator<T>* var_){
 			variatorList.push_back(var_);
-			for(unsigned s = 0; s < variatorList.size(); s++){
-				variatorList[s]->SetSkimmer(skimmer);
-			}
 		}
-		void SetSkimmer(KSkimmer* skimmer_){ 
-			skimmer = skimmer_;
+		void SetLooper(T* looper_){ 
+			looper = looper_;
 			for(unsigned v = 0; v < variatorList.size(); v++){
-				variatorList[v]->SetSkimmer(skimmer_);
+				variatorList[v]->SetLooper(looper_);
 			}
 		}
 		void DoVariation() {
@@ -79,8 +75,8 @@ class KVariation {
 	protected:
 		//member variables
 		string name;
-		KSkimmer* skimmer;
-		vector<KVariator*> variatorList;
+		T* looper;
+		vector<KVariator<T>*> variatorList;
 };
 
 #endif

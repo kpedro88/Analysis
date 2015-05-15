@@ -4,6 +4,8 @@
 //custom headers
 #include "KParser.h"
 #include "KMap.h"
+#include "KVariation.h"
+#include "KSelection.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -106,6 +108,36 @@ class KManager {
 		virtual void processHisto(string line, int dim) {}
 		virtual void processVariation(string line) {}
 		virtual void processSelection(string line) {}
+		//generalized function to make selection
+		template <class T>
+		KSelection<T>* makeSelection(string sel, vector<KNamed*>& selectorLines, string unc, vector<KNamed*>& variatorLines, T* looper){
+			KVariation<T>* vntmp = 0;
+			string fullname = sel;
+			if(unc.size()>0) {
+				vntmp = new KVariation<T>(unc);
+				fullname += "_" + unc;
+				
+				//create variators for variation
+				for(unsigned v = 0; v < variatorLines.size(); v++){
+					KVariator<T>* vrtmp = KParser::processVariator<T>(variatorLines[v]);
+					if(vrtmp) vntmp->AddVariator(vrtmp);
+				}
+			}
+			
+			//create selection using full name (sel + unc)
+			KSelection<T>* sntmp = new KSelection<T>(fullname);
+			if(vntmp) sntmp->SetVariation(vntmp);
+			
+			//create selectors for selection
+			for(unsigned s = 0; s < selectorLines.size(); s++){
+				KSelector<T>* srtmp = KParser::processSelector<T>(selectorLines[s]);
+				if(srtmp) sntmp->AddSelector(srtmp);
+			}
+			
+			sntmp->SetLooper(looper); //also sets looper for selectors, variation, variators
+			
+			return sntmp;
+		}
 		//accessors
 		OptionMap* GetGlobalOpt() { return globalOpt; }
 		void ListOptions() {
