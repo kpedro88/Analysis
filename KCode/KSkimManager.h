@@ -69,33 +69,10 @@ class KSkimManager : public KManager {
 			
 			//construct requested selections
 			for(unsigned i = 0; i < fields.size(); i++){
-				//check for systematic
-				vector<string> sel_unc;
-				KParser::process(fields[i],'_',sel_unc);
-				string sel = sel_unc[0];
-				string unc = "";
-				if(sel_unc.size()>1) unc = sel_unc[1];
+				//make selection
+				KSelection<KSkimmer>* sntmp = makeSelection<KSkimmer>(fields[i],skimmer);
 				
-				//check in full list (selections may be repeated with different systematics, so never remove things from the full list)
-				if(allSelections.Has(sel)){
-					//first check for existence of variation if requested
-					vector<KNamed*> variatorLines;
-					if(unc.size()>0) {
-						if(!allVariations.Has(unc)) {
-							cout << "Input error: variation " << unc << " is not defined. This request will be ignored." << endl;
-							continue;
-						}
-						
-						//get variators info
-						variatorLines = allVariations.Get(unc);
-					}
-					
-					//get selectors info
-					vector<KNamed*> selectorLines = allSelections.Get(sel);
-					
-					//make selection
-					KSelection<KSkimmer>* sntmp = makeSelection<KSkimmer>(sel,selectorLines,unc,variatorLines,skimmer);
-					
+				if(sntmp){
 					//setup output tree
 					sntmp->MakeTree(outdir,MyBase->GetName(), (globalOpt->Get("doClone",false) ? skimmer->fChain : NULL));
 
@@ -103,7 +80,6 @@ class KSkimManager : public KManager {
 					skimmer->AddSelection(sntmp);
 				}
 				else {
-					cout << "Input error: selection " << sel << " is not defined. This request will be ignored." << endl;
 					continue;
 				}
 			}

@@ -143,33 +143,51 @@ class KManager {
 		}
 		//generalized function to make selection
 		template <class T>
-		KSelection<T>* makeSelection(string sel, vector<KNamed*>& selectorLines, string unc, vector<KNamed*>& variatorLines, T* looper){
-			KVariation<T>* vntmp = 0;
-			string fullname = sel;
-			if(unc.size()>0) {
-				vntmp = new KVariation<T>(unc);
-				fullname += "_" + unc;
-				
-				//create variators for variation
-				for(unsigned v = 0; v < variatorLines.size(); v++){
-					KVariator<T>* vrtmp = KParser::processVariator<T>(variatorLines[v]);
-					if(vrtmp) vntmp->AddVariator(vrtmp);
+		KSelection<T>* makeSelection(string selection, T* looper){
+			//check for systematic
+			vector<string> sel_unc;
+			KParser::process(selection,'_',sel_unc);
+			string sel = sel_unc[0];
+			string unc = "";
+			if(sel_unc.size()>1) unc = sel_unc[1];
+			
+			//check in full list (selections may be repeated with different systematics, so never remove things from the full list)
+			if(allSelections.Has(sel)){
+				KVariation<T>* vntmp = 0;
+				if(unc.size()>0) {
+					if(!allVariations.Has(unc)) {
+						cout << "Input error: variation " << unc << " is not defined. This request will be ignored." << endl;
+						return NULL;
+					}
+					vntmp = new KVariation<T>(unc);
+					
+					//create variators for variation
+					vector<KNamed*> variatorLines = allVariations.Get(unc);
+					for(unsigned v = 0; v < variatorLines.size(); v++){
+						KVariator<T>* vrtmp = KParser::processVariator<T>(variatorLines[v]);
+						if(vrtmp) vntmp->AddVariator(vrtmp);
+					}
 				}
+			
+				//create selection using full name (sel + unc)
+				KSelection<T>* sntmp = new KSelection<T>(selection);
+				if(vntmp) sntmp->SetVariation(vntmp);
+				
+				//create selectors for selection
+				vector<KNamed*> selectorLines = allSelections.Get(sel);
+				for(unsigned s = 0; s < selectorLines.size(); s++){
+					KSelector<T>* srtmp = KParser::processSelector<T>(selectorLines[s]);
+					if(srtmp) sntmp->AddSelector(srtmp);
+				}
+				
+				sntmp->SetLooper(looper); //also sets looper for selectors, variation, variators
+				
+				return sntmp;
 			}
-			
-			//create selection using full name (sel + unc)
-			KSelection<T>* sntmp = new KSelection<T>(fullname);
-			if(vntmp) sntmp->SetVariation(vntmp);
-			
-			//create selectors for selection
-			for(unsigned s = 0; s < selectorLines.size(); s++){
-				KSelector<T>* srtmp = KParser::processSelector<T>(selectorLines[s]);
-				if(srtmp) sntmp->AddSelector(srtmp);
+			else {
+				cout << "Input error: selection " << sel << " is not defined. This request will be ignored." << endl;
+				return NULL;
 			}
-			
-			sntmp->SetLooper(looper); //also sets looper for selectors, variation, variators
-			
-			return sntmp;
 		}
 		//accessors
 		OptionMap* GetGlobalOpt() { return globalOpt; }
