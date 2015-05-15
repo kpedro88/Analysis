@@ -4,6 +4,7 @@
 //custom headers
 #include "KMap.h"
 #include "KLegend.h"
+#include "KSelection.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -32,7 +33,7 @@ class KBuilder;
 class KBase {
 	public:
 		//constructors
-		KBase() : name(""), parent(0), localOpt(0), globalOpt(0), file(0), tree(0), nEventHist(0), MyBuilder(0), stmp(""), htmp(0), etmp(0), isBuilt(false) {
+		KBase() : name(""), parent(0), localOpt(0), globalOpt(0), file(0), tree(0), nEventHist(0), MyBuilder(0), MySelection(0), stmp(""), htmp(0), etmp(0), isBuilt(false) {
 			//enable histo errors
 			TH1::SetDefaultSumw2(kTRUE);
 			//must always have local & global option maps
@@ -40,7 +41,7 @@ class KBase {
 			if(globalOpt==0) globalOpt = new OptionMap();
 		}
 		KBase(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : 
-			name(name_), parent(0), localOpt(localOpt_), globalOpt(globalOpt_), file(0), tree(0), nEventHist(0), MyBuilder(0), stmp(""), htmp(0), etmp(0), isBuilt(false)
+			name(name_), parent(0), localOpt(localOpt_), globalOpt(globalOpt_), file(0), tree(0), nEventHist(0), MyBuilder(0), MySelection(0), stmp(""), htmp(0), etmp(0), isBuilt(false)
 		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
@@ -86,8 +87,8 @@ class KBase {
 				//store this value (number of events processed) at the beginning so histo only has to be accessed once
 				int nEventProc = 0;
 				for(unsigned f = 0; f < filenames.size(); f++){
-					string filename = filenames[f];
-					if(treedir.size()>0) filename = treedir + "/" + filename;
+					filename = filenames[f];
+					if(use_treedir) filename = treedir + "/" + filename;
 					
 					TFile* ftmp = TFile::Open(filename.c_str());
 					if(!ftmp) {
@@ -164,6 +165,7 @@ class KBase {
 		//accessors
 		string GetName() { return name; }
 		void SetName(string n) { name = n; }
+		void SetSelection(KSelection<KBuilder>* sel_) { MySelection = sel_; }
 		//add a blank histo for future building
 		virtual TH1* AddHisto(string s, TH1* h){
 			//sets current name and histo
@@ -254,6 +256,7 @@ class KBase {
 		TTree* tree;
 		TH1F* nEventHist;
 		KBuilder* MyBuilder;
+		KSelection<KBuilder>* MySelection;
 		HistoMap MyHistos;
 		ErrorMap MyErrorBands;
 		KMap<double*> MyEffs;

@@ -8,6 +8,7 @@
 #include "KParser.h"
 #include "KBase.h"
 #include "TreeClass.h"
+#include "KSelection.h"
 #include "RA2bin.h"
 
 //custom headers for weighting
@@ -30,28 +31,6 @@
 
 using namespace std;
 
-//---------------------------------------------------------------
-//little class to store value & weight pairs for filling histos
-class KValue {
-	public:
-		//constructor
-		KValue() : values(0), weights(0) {}
-		//accessors
-		void Fill(double v, double w=1){
-			values.push_back(v);
-			weights.push_back(w);
-		}
-		double & GetValue(int iv) { return values[iv]; }
-		double & GetWeight(int iw) { return weights[iw]; }
-		int GetSize() { return values.size(); }
-		
-	protected:
-		//member variables
-		vector<double> values;
-		vector<double> weights;
-	
-};
-
 void TreeClass::Loop() {}
 
 //---------------------------------------------------------------
@@ -59,35 +38,24 @@ void TreeClass::Loop() {}
 class KBuilder : public TreeClass {
 	public:
 		//constructors
-		KBuilder() : TreeClass(), MyBase(0), localOpt(0), globalOpt(0) {
+		KBuilder() : TreeClass(), MyBase(0), localOpt(0), globalOpt(0), MySelection(0) {
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
 			if(globalOpt==0) globalOpt = new OptionMap();
 		}
-		KBuilder(KBase* MyBase_, TTree* tree_) : TreeClass(tree_), MyBase(MyBase_), localOpt(MyBase->GetLocalOpt()), globalOpt(MyBase->GetGlobalOpt()) {
+		KBuilder(KBase* MyBase_, TTree* tree_, KSelection<KBuilder>* sel_) : TreeClass(tree_), MyBase(MyBase_), localOpt(MyBase->GetLocalOpt()), globalOpt(MyBase->GetGlobalOpt()), MySelection(sel_) {
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
 			if(globalOpt==0) globalOpt = new OptionMap();
+			//pass self to selection; also sets looper for selectors, variation, variators
+			MySelection->SetLooper(this); 
 		}
 		//destructor
 		virtual ~KBuilder() {}
-		
-		bool CheckDoubleCount(){
-			pair<int,int> tmp(RunNum,EvtNum);
-			map<pair<int,int>,int>::iterator cmit = countmap.find(tmp);
-			if(cmit!=countmap.end()) return true; //returns true if it finds a double count
-			else {
-				countmap[tmp] = 1;
-				return false;
-			}
-		}
 
 		//functions for histo creation
 		virtual bool Cut() { //this implements the set of cuts common between data and MC
 			bool goodEvent = true;
-			
-			//check for double counting
-			//if (CheckDoubleCount()) return false;
 			
 			//get RA2 bin (other bins could also be retrieved here)
 			if(binner){
@@ -100,7 +68,7 @@ class KBuilder : public TreeClass {
 			//	//check appropriate filter conditions
 			//}
 		
-			return goodEvent;
+			return (goodEvent && MySelection->DoSelection());
 		}
 		virtual double Weight() { return 1.; }
 		virtual void Loop() {
@@ -112,8 +80,8 @@ class KBuilder : public TreeClass {
 			
 			//initial loop to get histo variables
 			int table_size = MyBase->GetTable().size();
-			vector<vector<string> > vars; vars.reserve(table_size);
-			vector<TH1*> htmp; htmp.reserve(table_size);
+			vars.clear(); vars.reserve(table_size);
+			htmp.clear(); htmp.reserve(table_size);
 			HMit sit;
 			for(sit = MyBase->GetTable().begin(); sit != MyBase->GetTable().end(); sit++){
 				//get histo name
@@ -127,7 +95,7 @@ class KBuilder : public TreeClass {
 			
 			//loop over ntuple tree
 			Long64_t nentries = fChain->GetEntries();
-			bool debugloop = MyBase->GetGlobalOpt()->Get("debugloop",false);
+			bool debugloop = globalOpt->Get("debugloop",false);
 			Long64_t nbytes = 0, nb = 0;
 			for (Long64_t jentry=0; jentry<nentries;jentry++) {
 				Long64_t ientry = LoadTree(jentry);
@@ -138,91 +106,11 @@ class KBuilder : public TreeClass {
 				//clear event variables
 				RA2bin = 0;
 				
-				if(!Cut()) continue;
-				
-				double w = Weight();
-				
-				for(int h = 0; h < htmp.size(); h++){
-					vector<KValue> values(vars[h].size());
-					//if(jentry%10000==0) cout << stmp << " TH" << vars.size() << " " << jentry;
-				
-					for(int i = 0; i < vars.size(); i++){
-						//list of cases for histo calculation and filling
-						if(vars[h][i]=="RA2bin"){//plot yield vs. bin of RA2 search
-							values[i].Fill(RA2bin,w);
-						}
-						else if(vars[h][i]=="njets"){//jet multiplicity
-							values[i].Fill(NJets,w);
-						}
-						else if(vars[h][i]=="nbjets"){//b-jet multiplicity
-							values[i].Fill(BTags,w);
-						}
-						else if(vars[h][i]=="ht"){//sum of jet pt
-							values[i].Fill(HT,w);
-						}
-						else if(vars[h][i]=="mht"){//missing hadronic energy
-							values[i].Fill(MHT,w);
-						}
-						else if(vars[h][i]=="mindeltaphiN"){//min normalized deltaphi between jets and MET
-							values[i].Fill(minDeltaPhiN,w);
-						}
-						else if(vars[h][i]=="nleptons"){//# leptons (mu or ele)
-							values[i].Fill(Leptons,w);
-						}
-						else if(vars[h][i]=="nelectrons"){//# electrons
-							values[i].Fill(Electrons->size(),w);
-						}
-						else if(vars[h][i]=="nmuons"){//# muons
-							values[i].Fill(Muons->size(),w);
-						}
-						else if(vars[h][i]=="nisotrack"){//# iso tracks
-							values[i].Fill(isoElectronTracks+isoMuonTracks+isoPionTracks,w);
-						}
-						else if(vars[h][i]=="nvertex"){//# good vertices
-							values[i].Fill(NVtx,w);
-						}
-						else { //if it's a histogram with no known variable or calculation, do nothing
-						}
-					}
-					
-					//now fill the histogram
-					if(vars[h].size()==1){
-						for(int ix = 0; ix < values[0].GetSize(); ix++){
-							htmp[h]->Fill(values[0].GetValue(ix), values[0].GetWeight(ix));
-						}
-					}
-					else if(vars[h].size()==2){
-						//need to cast in order to use Fill(x,y,w)
-						//these three cases allow for various x vs. y comparisons: same # entries per event, or 1 vs. N per event
-						if(values[0].GetSize()==values[1].GetSize()) {
-							for(int i = 0; i < values[0].GetSize(); i++){
-								if(htmp[h]->GetDimension()==1)
-									static_cast<TProfile*>(htmp[h])->Fill(values[0].GetValue(i), values[1].GetValue(i), values[0].GetWeight(i)); //pick the x weight by default
-								else if(htmp[h]->GetDimension()==2)
-									static_cast<TH2*>(htmp[h])->Fill(values[0].GetValue(i), values[1].GetValue(i), values[0].GetWeight(i)); //pick the x weight by default
-							}
-						}
-						else if(values[0].GetSize()==1){
-							for(int iy = 0; iy < values[1].GetSize(); iy++){
-								if(htmp[h]->GetDimension()==1)
-									static_cast<TProfile*>(htmp[h])->Fill(values[0].GetValue(0), values[1].GetValue(iy), values[1].GetWeight(iy));
-								else if(htmp[h]->GetDimension()==2)
-									static_cast<TH2*>(htmp[h])->Fill(values[0].GetValue(0), values[1].GetValue(iy), values[1].GetWeight(iy));
-							}
-						}
-						else if(values[1].GetSize()==1){
-							for(int ix = 0; ix < values[0].GetSize(); ix++){
-								if(htmp[h]->GetDimension()==1)
-									static_cast<TProfile*>(htmp[h])->Fill(values[0].GetValue(ix), values[1].GetValue(0), values[0].GetWeight(ix));
-								else if(htmp[h]->GetDimension()==2)
-									static_cast<TH2*>(htmp[h])->Fill(values[0].GetValue(ix), values[1].GetValue(0), values[0].GetWeight(ix));
-							}
-						}
-					}
-					else { //no support for other # of vars
-					}
-				}
+				Cut();
 			}
+			
+			//final steps
+			if(globalOpt->Get("debugcut",false)) MySelection->PrintEfficiency(MySelection->GetSelectorWidth(),nentries);
 			
 			if(globalOpt->Get("plotoverflow",false)){
 				for(int h = 0; h < htmp.size(); h++){
@@ -248,12 +136,14 @@ class KBuilder : public TreeClass {
 			}
 		}	
 
-	protected:
+	public:
 		//member variables
 		KBase* MyBase;
 		OptionMap* localOpt;
 		OptionMap* globalOpt;
-		map<pair<int,int>,int> countmap;
+		KSelection<KBuilder>* MySelection;
+		vector<vector<string> > vars;
+		vector<TH1*> htmp;
 		
 		//extra variables
 		RA2binner* binner;
@@ -262,7 +152,7 @@ class KBuilder : public TreeClass {
 
 void KBase::Build(){
 	if(!isBuilt) {
-		if(MyBuilder==0) MyBuilder = new KBuilder(this,tree);
+		if(MyBuilder==0) MyBuilder = new KBuilder(this,tree,MySelection);
 		MyBuilder->Loop(); //loop over tree to build histograms
 		isBuilt = true;
 	}
@@ -274,13 +164,13 @@ class KBuilderData : public KBuilder {
 	public:
 		//constructors
 		KBuilderData() : KBuilder() { }
-		KBuilderData(KBase* MyBase_, TTree* tree_) : KBuilder(MyBase_,tree_) {}
+		KBuilderData(KBase* MyBase_, TTree* tree_, KSelection<KBuilder>* sel_) : KBuilder(MyBase_,tree_,sel_) {}
 		//destructor
 		virtual ~KBuilderData() {}
 		
 		//functions for histo creation
 		bool Cut(){
-			bool goodEvent = KBuilder::Cut();
+			bool goodEvent = true;
 			
 			//special blinding option for data (disabled by default)
 			if(globalOpt->Get("blind",false)){
@@ -288,13 +178,14 @@ class KBuilderData : public KBuilder {
 				//could make this setting into a double value for variable blinding...
 			}
 			
-			return goodEvent;
+			//KBuilder::Cut() comes *last* because it includes histo filling selector
+			return (goodEvent && KBuilder::Cut());
 		}
 };
 
 void KBaseData::Build(){
 	if(!isBuilt) {
-		if(MyBuilder==0) MyBuilder = new KBuilderData(this,tree);
+		if(MyBuilder==0) MyBuilder = new KBuilderData(this,tree,MySelection);
 		MyBuilder->Loop(); //loop over tree to build histograms
 		isBuilt = true;
 	}
@@ -306,19 +197,20 @@ class KBuilderMC : public KBuilder {
 	public:
 		//constructors
 		KBuilderMC() : KBuilder() { }
-		KBuilderMC(KBase* MyBase_, TTree* tree_) : KBuilder(MyBase_,tree_) { }
+		KBuilderMC(KBase* MyBase_, TTree* tree_, KSelection<KBuilder>* sel_) : KBuilder(MyBase_,tree_,sel_) { }
 		//destructor
 		virtual ~KBuilderMC() {}
 		
 		//functions for histo creation
 		bool Cut(){
-			bool goodEvent = KBuilder::Cut();
+			bool goodEvent = true;
 			
 			//check normalization type here
 			string normtype = "";
 			localOpt->Get("normtype",normtype);
 		
-			return goodEvent;
+			//KBuilder::Cut() comes *last* because it includes histo filling selector
+			return (goodEvent && KBuilder::Cut());
 		}
 		double Weight(){
 			double w = 1.;
@@ -361,7 +253,7 @@ class KBuilderMC : public KBuilder {
 
 void KBaseMC::Build(){
 	if(!isBuilt) {
-		if(MyBuilder==0) MyBuilder = new KBuilderMC(this,tree);
+		if(MyBuilder==0) MyBuilder = new KBuilderMC(this,tree,MySelection);
 		MyBuilder->Loop(); //loop over tree to build histograms
 		isBuilt = true;
 	}

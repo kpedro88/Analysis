@@ -6,6 +6,7 @@
 #include "KSet.h"
 #include "KPlot.h"
 #include "KLegend.h"
+#include "KBuilderSelectors.h"
 #include "RA2bin.h"
 
 //ROOT headers
@@ -121,6 +122,9 @@ class KPlotManager : public KManager {
 						return;
 					}
 				}
+				
+				//keep a separate list of "base" objects, so selections can be added later
+				if(line.compare(0,4,"base")==0) MyBases.push_back(tmp);
 				
 				//reset entries in the map of current sets that have higher (or equal) indents vs. current line
 				map<int,KBase*>::iterator it = curr_sets.lower_bound(indent);
@@ -275,23 +279,18 @@ class KPlotManager : public KManager {
 				}
 			}
 			
+			//make selections for base builders
+			string selection = "";
+			globalOpt->Get("selection",selection);
+			for(unsigned b = 0; b < MyBases.size(); b++){
+				//make selection
+				KSelection<KBuilder>* sntmp = makeSelection<KBuilder>(selection);
+				if(sntmp) MyBases[b]->SetSelection(sntmp);
+			}
+			
 			//build everything
 			for(unsigned s = 0; s < MySets.size(); s++){
 				MySets[s]->Build();
-			}
-			
-			//fake tau estimation is calculated during build
-			if(globalOpt->Get("calcfaketau",false)){
-				double ft_norm = 0;
-				globalOpt->Get("ft_norm",ft_norm);
-				double ft_err = 0;
-				globalOpt->Get("ft_err",ft_err);
-				//finish error calc
-				ft_err = sqrt(ft_err);
-				
-				int prcsn;
-				if(globalOpt->Get("yieldprecision",prcsn)) cout << fixed << setprecision(prcsn);
-				cout << "fake tau norm = " << ft_norm << " +/- " << ft_err << endl;
 			}
 			
 			//skip all the histo drawing in roc curve mode
@@ -600,6 +599,7 @@ class KPlotManager : public KManager {
 		PlotMapMap MyPlots2D;
 		vector<KNamed*> MyPlotOptions;
 		vector<KBase*> MySets;
+		vector<KBase*> MyBases;
 		KSetRatio* MyRatio;
 		KBase *numer, *denom, *yieldref; //pointers to special sets
 		vector<KBase*> roc_sig, roc_bkg;

@@ -144,7 +144,7 @@ class KSelection {
 			}
 			
 			//tree output
-			if(result) tree->Fill();
+			if(result && tree) tree->Fill();
 
 			//reset event
 			if(variation) variation->UndoVariation();

@@ -10,3 +10,8 @@ bool:plotoverflow[1]
 string:denom[mc]
 int:npanel[2]
 bool:balance_panels[0]
+string:selection[default]
+
+SELECTION
+default
+	Histo
