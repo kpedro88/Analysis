@@ -7,6 +7,7 @@
 #include "KPlot.h"
 #include "KLegend.h"
 #include "KBuilderSelectors.h"
+#include "KBuilderVariators.h"
 
 //ROOT headers
 #include <TROOT.h>
