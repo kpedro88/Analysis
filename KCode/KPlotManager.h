@@ -542,6 +542,14 @@ class KPlotManager : public KManager {
 					string pformat = printformat[j];
 					string suff = "";
 					if(globalOpt->Get("printsuffix",suff)) oname += "_" + suff;
+					if(globalOpt->Get("treesuffix",false)){
+						//use only the tree directory name as additional suffix
+						string treedir = "";
+						globalOpt->Get("treedir",treedir);
+						vector<string> dirs;
+						KParser::process(treedir,'/',dirs);
+						oname += "_" + dirs.back();
+					}
 					oname += "." + pformat;
 					can->Print(oname.c_str(),pformat.c_str());
 				}

@@ -1,5 +1,6 @@
 OPTION
 vstring:printformat[png]
+bool:treesuffix[1]
 double:luminorm[4000]
 bool:printyield[1]
 int:yieldprecision[2]
