@@ -28,6 +28,8 @@ vuint:RA2Var2Bins[0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,
 vuint:RA2Var3Bins[0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5]
 string:selection[ra2bin]
 vstring:extra_text[#color[2]{n_{j} bin},#color[4]{n_{b} bin}]
+vstring:disable_branches[*]
+vstring:enable_branches[NJets,BTags,MHT,HT]
 
 SELECTION
 ra2bin
