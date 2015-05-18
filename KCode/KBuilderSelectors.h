@@ -50,7 +50,7 @@ class RA2binID {
 //class to store and apply RA2 binning
 class KRA2BinSelector : public KSelector<KBuilder> {
 	public:
-		typedef map<unsigned, unsigned>::iterator BNit;
+		typedef map<vector<unsigned>, unsigned>::iterator BNit;
 	
 		//constructor
 		KRA2BinSelector() : KSelector<KBuilder>() { }
@@ -58,38 +58,71 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 		void Initialize(){
 			if(initialized) return;
 			
-			//get objects
-			vector<unsigned> NJetBins, NBJetBins, MHTBins, HTBins;
-			looper->globalOpt->Get("NJetBinMin",NJetMin); looper->globalOpt->Get("NJetBinMax",NJetMax);
-			looper->globalOpt->Get("NBJetBinMin",NBJetMin); looper->globalOpt->Get("NBJetBinMax",NBJetMax);
-			looper->globalOpt->Get("MHTBinMin",MHTMin); looper->globalOpt->Get("MHTBinMax",MHTMax);
-			looper->globalOpt->Get("HTBinMin",HTMin); looper->globalOpt->Get("HTBinMax",HTMax);
-			looper->globalOpt->Get("NJetBins",NJetBins); looper->globalOpt->Get("NBJetBins",NBJetBins);
-			looper->globalOpt->Get("MHTBins",MHTBins); looper->globalOpt->Get("HTBins",HTBins);
-			
-			//safety checks
-			bool minmax_lengths = NJetMin.size()==NJetMax.size() && NBJetMin.size()==NBJetMax.size() && MHTMin.size()==MHTMax.size() && HTMin.size()==HTMax.size();
-			if(!minmax_lengths) {
-				cout << "Input error: vector length mismatches in RA2 min and max specification. RA2 binning will not be computed." << endl;
-				depfailed = true;
-				return;
-			}
-			bool binning_lengths = NJetBins.size()==NBJetBins.size() && NJetBins.size()==MHTBins.size() && NJetBins.size()==HTBins.size();
-			if(!binning_lengths) {
-				cout << "Input error: vector length mismatches in RA2 bins specification. RA2 binning will not be computed." << endl;
-				depfailed = true;
-				return;
-			}
-			
-			//create map of RA2 bin IDs to bin numbers (if not already created)
-			if(!(looper->globalOpt->Get("IDtoBinNumber",IDtoBinNumber))){
-				for(unsigned b = 0; b < NJetBins.size(); b++){
-					IDtoBinNumber[RA2binID(NJetBins[b],NBJetBins[b],MHTBins[b],HTBins[b]).raw()] = b+1; //bin numbers start at 1
+			//check if initial reading of input has already been done
+			if(looper->globalOpt->Get("prepared_RA2bin",false)){
+				//if the initial reading failed, abort
+				if(looper->globalOpt->Get("failed_RA2bin",false)){
+					depfailed = true;
+					return;
 				}
 				
-				//store map with global options
-				looper->globalOpt->Set<map<unsigned,unsigned> >("IDtoBinNumber",IDtoBinNumber);
+				//otherwise grab assembled member vars
+				looper->globalOpt->Get("IDtoBinNumber",IDtoBinNumber);
+				looper->globalOpt->Get("RA2VarNames",RA2VarNames);
+				looper->globalOpt->Get("RA2VarMin",RA2VarMin);
+				looper->globalOpt->Get("RA2VarMax",RA2VarMax);
 			}
+			else { //assemble member vars from user input
+				looper->globalOpt->Get("RA2VarNames",RA2VarNames);
+				
+				vector<vector<unsigned> > all_bins;
+				for(unsigned q = 0; q < RA2VarNames.size(); ++q){
+					stringstream pre;
+					pre << "RA2Var" << q;
+					
+					vector<float> min, max;
+					looper->globalOpt->Get(pre.str()+"Min",min);
+					looper->globalOpt->Get(pre.str()+"Max",max);
+					if(min.size() != max.size()){
+						cout << "Input error: vector length mismatches in " << pre.str() << " min and max specification. RA2 binning will not be computed." << endl;
+						depfailed = true;
+						looper->globalOpt->Set<bool>("prepared_RA2bin",true);
+						looper->globalOpt->Set<bool>("failed_RA2bin",true);
+						return;
+					}
+					
+					vector<unsigned> bins;
+					looper->globalOpt->Get(pre.str()+"Bins",bins);
+					if(q>0 && bins.size()!=all_bins[0].size()){
+						cout << "Input error: vector length mismatches in " << pre.str() << " bins specification. RA2 binning will not be computed." << endl;
+						depfailed = true;
+						looper->globalOpt->Set<bool>("prepared_RA2bin",true);
+						looper->globalOpt->Set<bool>("failed_RA2bin",true);
+						return;	
+					}
+					
+					//store member vars
+					RA2VarMin.push_back(min);
+					RA2VarMax.push_back(max);
+					all_bins.push_back(bins);
+				}
+				
+				//create map of RA2 bin IDs to bin numbers
+				for(unsigned b = 0; b < all_bins[0].size(); ++b){
+					vector<unsigned> bin_id;
+					bin_id.reserve(all_bins.size());
+					for(unsigned q = 0; q < all_bins.size(); ++q){
+						bin_id.push_back(all_bins[q][b]);
+					}
+					IDtoBinNumber[bin_id] = b+1; //bin numbers start at 1
+				}
+				
+				//store assembled member vars with global options
+				looper->globalOpt->Set<map<vector<unsigned>,unsigned> >("IDtoBinNumber",IDtoBinNumber);
+				looper->globalOpt->Set<vector<vector<float> > >("RA2VarMin",RA2VarMin);
+				looper->globalOpt->Set<vector<vector<float> > >("RA2VarMax",RA2VarMax);
+			}
+
 			initialized = true;
 		}
 		
@@ -98,65 +131,61 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 			if(depfailed) return false;
 			Initialize();
 			
-			RA2bin = GetBinNumber(looper->NJets,looper->BTags,looper->MHT,looper->HT);
+			RA2bin = GetBinNumber();
 			
 			return RA2bin!=0;
 		}
 		
 		//functions
-		unsigned GetBinNumber(int& NJetVal, int& NBJetVal, float& MHTVal, float& HTVal) {
-			vector<unsigned> NJetBins = GetNJetBins(NJetVal);
-			vector<unsigned> NBJetBins = GetNBJetBins(NBJetVal);
-			vector<unsigned> MHTBins = GetMHTBins(MHTVal);
-			vector<unsigned> HTBins = GetHTBins(HTVal);
+		unsigned GetBinNumber() {
+			vector<vector<unsigned> > bins;
+			for(int q = 0; q < RA2VarNames.size(); ++q){
+				bins.push_back(GetBins(q));
+				
+				//skip loop if no bin was found for a value
+				if(bins.back().size()==0) return 0;
+			}
 			
-			//skip loop if no bin was found for a value
-			if(NJetBins.size()==0 || NBJetBins.size()==0 || MHTBins.size()==0 || HTBins.size()==0) return 0;
-			
-			//find the correct combination of bin numbers that exists in the map
-			for(unsigned nj = 0; nj < NJetBins.size(); nj++){
-				for(unsigned nb = 0; nb < NBJetBins.size(); nb++){
-					for(unsigned nm = 0; nm < MHTBins.size(); nm++){
-						for(unsigned nh = 0; nh < HTBins.size(); nh++){
-							unsigned raw = RA2binID(NJetBins[nm],NBJetBins[nb],MHTBins[nm],HTBins[nh]).raw();
-							BNit it = IDtoBinNumber.find(raw);
-							//exit loop as soon as an existing bin is found
-							if(it != IDtoBinNumber.end()){
-								return it->second;
-							}
-						}
+			//set up for variable # of for loops
+			vector<unsigned> indices(RA2VarNames.size(),0);
+			vector<unsigned> bin_num(RA2VarNames.size(),0);
+			return FindBin(indices,bins,0,bin_num);
+		}
+		//recursive function to implement variable # of for loops
+		//ref: http://stackoverflow.com/questions/9555864/variable-nested-for-loops
+		unsigned FindBin(vector<unsigned>& indices, vector<vector<unsigned> >& bins, unsigned pos, vector<unsigned>& bin_num){
+			for(indices[pos] = 0; indices[pos] < bins[pos].size(); indices[pos]++){
+				bin_num[pos] = bins[pos][indices[pos]];
+				if(pos == indices.size()-1){
+					BNit it = IDtoBinNumber.find(bin_num);
+					//exit loop as soon as an existing bin is found
+					if(it != IDtoBinNumber.end()){
+						return it->second;
 					}
+				}
+				else {
+					unsigned tmp = FindBin(indices,bins,pos+1,bin_num);
+					if(tmp!=0) return tmp;
 				}
 			}
 			
 			//if no bins are were found, return default
 			return 0;
 		}
-		vector<unsigned> GetNJetBins(int& NJetVal){
+		
+		vector<unsigned> GetBins(unsigned qty){
+			//assume all values are floats
+			float val = 0;
+			if(RA2VarNames[qty]=="NJets") val = looper->NJets;
+			else if(RA2VarNames[qty]=="BTags") val = looper->BTags;
+			else if(RA2VarNames[qty]=="MHT") val = looper->MHT;
+			else if(RA2VarNames[qty]=="HT") val = looper->HT;
+			else if(RA2VarNames[qty]=="ak1p2Jets_sumJetMass") val = looper->ak1p2Jets_sumJetMass;
+			else {}			
+			
 			vector<unsigned> bins;
-			for(unsigned n = 0; n < NJetMin.size(); ++n){
-				if(NJetVal >= NJetMin[n] && NJetVal <= NJetMax[n]) bins.push_back(n);
-			}
-			return bins;
-		}
-		vector<unsigned> GetNBJetBins(int& NBJetVal){
-			vector<unsigned> bins;
-			for(unsigned n = 0; n < NBJetMin.size(); ++n){
-				if(NBJetVal >= NBJetMin[n] && NBJetVal <= NBJetMax[n]) bins.push_back(n);
-			}
-			return bins;
-		}
-		vector<unsigned> GetMHTBins(float& MHTVal){
-			vector<unsigned> bins;
-			for(unsigned n = 0; n < MHTMin.size(); ++n){
-				if(MHTVal > MHTMin[n] && MHTVal <= MHTMax[n]) bins.push_back(n);
-			}
-			return bins;
-		}
-		vector<unsigned> GetHTBins(float& HTVal){
-			vector<unsigned> bins;
-			for(unsigned n = 0; n < HTMin.size(); ++n){
-				if(HTVal > HTMin[n] && HTVal <= HTMax[n]) bins.push_back(n);
+			for(unsigned n = 0; n < RA2VarMin[qty].size(); ++n){
+				if(val > RA2VarMin[qty][n] && val <= RA2VarMax[qty][n]) bins.push_back(n);
 			}
 			return bins;
 		}
@@ -165,9 +194,9 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 		//member variables
 		bool initialized;
 		int RA2bin;
-		map<unsigned, unsigned> IDtoBinNumber;
-		vector<int> NJetMin, NJetMax, NBJetMin, NBJetMax;
-		vector<float> MHTMin, MHTMax, HTMin, HTMax;
+		map<vector<unsigned>, unsigned> IDtoBinNumber;
+		vector<string> RA2VarNames;
+		vector<vector<float> > RA2VarMin, RA2VarMax;
 };
 
 //---------------------------------------------------------------
