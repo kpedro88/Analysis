@@ -153,7 +153,10 @@ class KBuilderData : public KBuilder {
 	public:
 		//constructors
 		KBuilderData() : KBuilder() { }
-		KBuilderData(KBase* MyBase_, TTree* tree_, KSelection<KBuilder>* sel_) : KBuilder(MyBase_,tree_,sel_) {}
+		KBuilderData(KBase* MyBase_, TTree* tree_, KSelection<KBuilder>* sel_) : KBuilder(MyBase_,tree_,sel_) {
+			//get options
+			blind = globalOpt->Get("blind",false);
+		}
 		//destructor
 		virtual ~KBuilderData() {}
 		
@@ -162,7 +165,7 @@ class KBuilderData : public KBuilder {
 			bool goodEvent = true;
 			
 			//special blinding option for data (disabled by default)
-			if(globalOpt->Get("blind",false)){
+			if(blind){
 				//do not look at signal region
 				//could make this setting into a double value for variable blinding...
 			}
@@ -170,6 +173,9 @@ class KBuilderData : public KBuilder {
 			//KBuilder::Cut() comes *last* because it includes histo filling selector
 			return (goodEvent && KBuilder::Cut());
 		}
+		
+		//member variables
+		bool blind;
 };
 
 void KBaseData::Build(){
@@ -186,7 +192,14 @@ class KBuilderMC : public KBuilder {
 	public:
 		//constructors
 		KBuilderMC() : KBuilder() { }
-		KBuilderMC(KBase* MyBase_, TTree* tree_, KSelection<KBuilder>* sel_) : KBuilder(MyBase_,tree_,sel_) { }
+		KBuilderMC(KBase* MyBase_, TTree* tree_, KSelection<KBuilder>* sel_) : KBuilder(MyBase_,tree_,sel_) { 
+			//get options
+			normtype = ""; localOpt->Get("normtype",normtype);
+			nEventProc = 0; got_nEventProc = localOpt->Get("nEventProc",nEventProc);
+			xsection = 0; got_xsection = localOpt->Get("xsection",xsection);
+			norm = 0; got_luminorm = globalOpt->Get("luminorm",norm);
+			
+		}
 		//destructor
 		virtual ~KBuilderMC() {}
 		
@@ -195,8 +208,6 @@ class KBuilderMC : public KBuilder {
 			bool goodEvent = true;
 			
 			//check normalization type here
-			string normtype = "";
-			localOpt->Get("normtype",normtype);
 		
 			//KBuilder::Cut() comes *last* because it includes histo filling selector
 			return (goodEvent && KBuilder::Cut());
@@ -226,18 +237,19 @@ class KBuilderMC : public KBuilder {
 			
 			//now do scaling: norm*xsection/nevents
 			//should this be a separate function using Scale()?
-			int nEventProc = 0;
-			double xsection = 0;
-			if(localOpt->Get("nEventProc",nEventProc) && nEventProc>0 && localOpt->Get("xsection",xsection)) w *= xsection/nEventProc;
+			if(got_nEventProc && nEventProc>0 && got_xsection) w *= xsection/nEventProc;			
 			
-			//get norm from options
-			double norm = 0;
 			//use lumi norm (default)
-			if(globalOpt->Get("luminorm",norm)) w *= norm;
+			if(got_luminorm) w *= norm;
 			
 			return w;
 		}
 
+		//member variables
+		bool got_nEventProc, got_xsection, got_luminorm;
+		string normtype;
+		int nEventProc;
+		double xsection, norm;
 };
 
 void KBaseMC::Build(){
