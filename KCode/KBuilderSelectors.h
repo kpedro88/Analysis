@@ -139,6 +139,7 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 		//functions
 		unsigned GetBinNumber() {
 			vector<vector<unsigned> > bins;
+			bins.reserve(RA2VarNames.size());
 			for(int q = 0; q < RA2VarNames.size(); ++q){
 				bins.push_back(GetBins(q));
 				
