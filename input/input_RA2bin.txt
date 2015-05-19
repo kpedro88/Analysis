@@ -37,7 +37,7 @@ ra2bin
 	Histo
 
 HISTO
-RA2bin	i:xnum[72]	d:xmin[0.5]	d:xmax[72.5]	s:xtitle[RA2 bin [^{}n_{j},^{}n_{b},^{}#slash{H}_{T},^{}H_{T}]]	s:ytitle[number of events]	b:ratio[0]	b:xbinlabel[1]	vd:xcuts[6.5,12.5,18.5,24.5,48.5]	vc:xcut_colors[kBlue,kBlue,kBlue,kRed,kRed]
+RA2bin	i:xnum[72]	d:xmin[0.5]	d:xmax[72.5]	s:xtitle[RA2 bin [^{}n_{j},^{}n_{b},^{}#slash{H}_{T},^{}H_{T}]]	s:ytitle[number of events]	b:ratio[0]	vd:xcuts[6.5,12.5,18.5,24.5,48.5]	vc:xcut_colors[kBlue,kBlue,kBlue,kRed,kRed]
 
 INPUT
 input/input_sets.txt
