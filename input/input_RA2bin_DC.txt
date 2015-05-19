@@ -13,21 +13,20 @@ OPTION
 double:sizeLeg[22]
 double:canvasW[1200]
 double:NdivX[518]
-vstring:RA2VarNames[NJets,BTags,MHT,ak1p2Jets_sumJetMass]
+vstring:RA2VarNames[NJets,BTags,MHT,HT]
 vfloat:RA2Var0Min[3,6,8]
 vfloat:RA2Var0Max[6,8,99]
 vfloat:RA2Var1Min[-1,0,1,2]
 vfloat:RA2Var1Max[0,1,2,99]
-vfloat:RA2Var2Min[200,450,650]
-vfloat:RA2Var2Max[450,650,9999]
-vfloat:RA2Var3Min[100,600]
-vfloat:RA2Var3Max[600,9999]
+vfloat:RA2Var2Min[200,500,750]
+vfloat:RA2Var2Max[500,750,9999]
+vfloat:RA2Var3Min[500,800,1200,500,1200,800]
+vfloat:RA2Var3Max[800,1200,9999,1200,9999,9999]
 vuint:RA2Var0Bins[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]
 vuint:RA2Var1Bins[0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,3,3,0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,3,3,0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,3,3]
-vuint:RA2Var2Bins[0,0,1,1,2,2,0,0,1,1,2,2,0,0,1,1,2,2,0,0,1,1,2,2,0,0,1,1,2,2,0,0,1,1,2,2,0,0,1,1,2,2,0,0,1,1,2,2,0,0,1,1,2,2,0,0,1,1,2,2,0,0,1,1,2,2,0,0,1,1,2,2]
-vuint:RA2Var3Bins[0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1]
+vuint:RA2Var2Bins[0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2]
+vuint:RA2Var3Bins[0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5]
 string:selection[ra2bin]
-vstring:extra_text[#color[2]{n_{j} bin},#color[4]{n_{b} bin}]
 vstring:disable_branches[*]
 vstring:enable_branches[NJets,BTags,MHT,HT]
 
@@ -37,7 +36,7 @@ ra2bin
 	Histo
 
 HISTO
-RA2bin	i:xnum[72]	d:xmin[0.5]	d:xmax[72.5]	s:xtitle[RA2 bin [^{}n_{j},^{}n_{b},^{}#slash{H}_{T},^{}#SigmaM_{j}]]	s:ytitle[number of events]	b:ratio[0]	vd:xcuts[6.5,12.5,18.5,24.5,48.5]	vc:xcut_colors[kBlue,kBlue,kBlue,kRed,kRed]
+RA2bin	i:xnum[72]	d:xmin[0.5]	d:xmax[72.5]	s:xtitle[RA2 bin [^{}n_{j},^{}n_{b},^{}#slash{H}_{T},^{}H_{T}]]	s:ytitle[number of events]	b:ratio[0]	b:xbinlabel[1]
 
 INPUT
-input/input_sets_test.txt
+input/input_sets_DC.txt

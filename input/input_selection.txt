@@ -10,7 +10,7 @@ int:yieldprecision[2]
 bool:doClone[1]
 
 SELECTION
-main
+signal
 	NJet	i:njet[4]
 	HT	d:HTmin[500]
 	MHT	d:MHTmin[200]
