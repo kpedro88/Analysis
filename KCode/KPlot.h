@@ -131,7 +131,7 @@ class KPlot{
 			if(localOpt->Get("xbinlabel",false)){
 				vector<string> labels;
 				//check both option maps
-				bool has_labels = localOpt->Get(vars[0]+"_labels",labels) || globalOpt->Get(vars[0]+"_labels",labels);
+				bool has_labels = localOpt->Get("xlabels",labels) || globalOpt->Get(vars[0]+"_labels",labels);
 				if(has_labels){
 					histo->LabelsOption("v","X");
 					for(unsigned b = 0; b < labels.size(); b++){
