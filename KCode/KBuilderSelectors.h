@@ -23,57 +23,31 @@ using namespace std;
 //base class for Selectors is in KSelection.h
 
 //---------------------------------------------------------------
-//class to build RA2 bin IDs
-class RA2binID {
-	public:
-		//constructors
-		RA2binID() : id(0) {}
-		RA2binID(unsigned id_) : id(id_) {}
-		RA2binID(unsigned NJetBin, unsigned NBJetBin, unsigned MHTBin, unsigned HTBin) : 
-			id(NJetBin + 100*NBJetBin + 10000*MHTBin + 1000000*HTBin) {}
-		//destructor
-		~RA2binID() {}
-		
-		//accessors
-		unsigned raw() { return id; }
-		unsigned NJetBin() { return id%100; }
-		unsigned NBJetBin() { return (id/100)%100; }
-		unsigned MHTBin() { return (id/10000)%100; }
-		unsigned HTBin() { return (id/1000000)%100; }
-	
-	private:
-		//member variables
-		unsigned id;
-};
-
-//---------------------------------------------------------------
 //class to store and apply RA2 binning
 class KRA2BinSelector : public KSelector<KBuilder> {
 	public:
-		typedef map<vector<unsigned>, unsigned>::iterator BNit;
-	
 		//constructor
 		KRA2BinSelector() : KSelector<KBuilder>() { }
-		KRA2BinSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), initialized(false), RA2bin(0) { }
-		void Initialize(){
-			if(initialized) return;
-			
+		KRA2BinSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), RA2bin(0) { }
+		virtual void SetSelection(KSelection<KBuilder>* sel_) {
+			sel = sel_;
+
 			//check if initial reading of input has already been done
-			if(looper->globalOpt->Get("prepared_RA2bin",false)){
+			if(sel->GetGlobalOpt()->Get("prepared_RA2bin",false)){
 				//if the initial reading failed, abort
-				if(looper->globalOpt->Get("failed_RA2bin",false)){
+				if(sel->GetGlobalOpt()->Get("failed_RA2bin",false)){
 					depfailed = true;
 					return;
 				}
 				
 				//otherwise grab assembled member vars
-				looper->globalOpt->Get("IDtoBinNumber",IDtoBinNumber);
-				looper->globalOpt->Get("RA2VarNames",RA2VarNames);
-				looper->globalOpt->Get("RA2VarMin",RA2VarMin);
-				looper->globalOpt->Get("RA2VarMax",RA2VarMax);
+				sel->GetGlobalOpt()->Get("IDtoBinNumber",IDtoBinNumber);
+				sel->GetGlobalOpt()->Get("RA2VarNames",RA2VarNames);
+				sel->GetGlobalOpt()->Get("RA2VarMin",RA2VarMin);
+				sel->GetGlobalOpt()->Get("RA2VarMax",RA2VarMax);
 			}
 			else { //assemble member vars from user input
-				looper->globalOpt->Get("RA2VarNames",RA2VarNames);
+				sel->GetGlobalOpt()->Get("RA2VarNames",RA2VarNames);
 				
 				vector<vector<unsigned> > all_bins;
 				for(unsigned q = 0; q < RA2VarNames.size(); ++q){
@@ -81,23 +55,23 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 					pre << "RA2Var" << q;
 					
 					vector<float> min, max;
-					looper->globalOpt->Get(pre.str()+"Min",min);
-					looper->globalOpt->Get(pre.str()+"Max",max);
+					sel->GetGlobalOpt()->Get(pre.str()+"Min",min);
+					sel->GetGlobalOpt()->Get(pre.str()+"Max",max);
 					if(min.size() != max.size()){
 						cout << "Input error: vector length mismatches in " << pre.str() << " min and max specification. RA2 binning will not be computed." << endl;
 						depfailed = true;
-						looper->globalOpt->Set<bool>("prepared_RA2bin",true);
-						looper->globalOpt->Set<bool>("failed_RA2bin",true);
+						sel->GetGlobalOpt()->Set<bool>("prepared_RA2bin",true);
+						sel->GetGlobalOpt()->Set<bool>("failed_RA2bin",true);
 						return;
 					}
 					
 					vector<unsigned> bins;
-					looper->globalOpt->Get(pre.str()+"Bins",bins);
+					sel->GetGlobalOpt()->Get(pre.str()+"Bins",bins);
 					if(q>0 && bins.size()!=all_bins[0].size()){
 						cout << "Input error: vector length mismatches in " << pre.str() << " bins specification. RA2 binning will not be computed." << endl;
 						depfailed = true;
-						looper->globalOpt->Set<bool>("prepared_RA2bin",true);
-						looper->globalOpt->Set<bool>("failed_RA2bin",true);
+						sel->GetGlobalOpt()->Set<bool>("prepared_RA2bin",true);
+						sel->GetGlobalOpt()->Set<bool>("failed_RA2bin",true);
 						return;	
 					}
 					
@@ -125,19 +99,16 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 				}
 				
 				//store assembled member vars with global options
-				looper->globalOpt->Set<map<vector<unsigned>,unsigned> >("IDtoBinNumber",IDtoBinNumber);
-				looper->globalOpt->Set<vector<vector<float> > >("RA2VarMin",RA2VarMin);
-				looper->globalOpt->Set<vector<vector<float> > >("RA2VarMax",RA2VarMax);
-				looper->globalOpt->Set<vector<string> >("RA2bin_labels",labels);
+				sel->GetGlobalOpt()->Set<map<vector<unsigned>,unsigned> >("IDtoBinNumber",IDtoBinNumber);
+				sel->GetGlobalOpt()->Set<vector<vector<float> > >("RA2VarMin",RA2VarMin);
+				sel->GetGlobalOpt()->Set<vector<vector<float> > >("RA2VarMax",RA2VarMax);
+				sel->GetGlobalOpt()->Set<vector<string> >("RA2bin_labels",labels);
 			}
-
-			initialized = true;
 		}
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			if(depfailed) return false;
-			Initialize();
 			
 			RA2bin = GetBinNumber();
 			
@@ -166,7 +137,7 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 			for(indices[pos] = 0; indices[pos] < bins[pos].size(); indices[pos]++){
 				bin_num[pos] = bins[pos][indices[pos]];
 				if(pos == indices.size()-1){
-					BNit it = IDtoBinNumber.find(bin_num);
+					map<vector<unsigned>, unsigned>::iterator it = IDtoBinNumber.find(bin_num);
 					//exit loop as soon as an existing bin is found
 					if(it != IDtoBinNumber.end()){
 						return it->second;
@@ -201,7 +172,6 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 		
 	public:
 		//member variables
-		bool initialized;
 		int RA2bin;
 		map<vector<unsigned>, unsigned> IDtoBinNumber;
 		vector<string> RA2VarNames;

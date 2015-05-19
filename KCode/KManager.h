@@ -170,7 +170,7 @@ class KManager {
 				}
 			
 				//create selection using full name (sel + unc)
-				KSelection<T>* sntmp = new KSelection<T>(selection);
+				KSelection<T>* sntmp = new KSelection<T>(selection,globalOpt);
 				if(vntmp) sntmp->SetVariation(vntmp);
 				
 				//create selectors for selection

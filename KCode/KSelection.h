@@ -84,11 +84,15 @@ class KSelection {
 	public:
 		//constructor
 		KSelection() : name(""), variation(0), looper(0), file(0), tree(0), widths(5,0), width1s(10) {}
-		KSelection(string name_) : name(name_), variation(0), looper(0), file(0), tree(0), widths(5,0), width1s(0) {}
+		KSelection(string name_, OptionMap* globalOpt_) : name(name_), globalOpt(globalOpt_), variation(0), looper(0), file(0), tree(0), widths(5,0), width1s(0) {
+			//must always have option map
+			if(globalOpt==0) globalOpt = new OptionMap();
+		}
 		//destructor
 		virtual ~KSelection() {}
 		//accessors
 		string GetName() { return name; }
+		OptionMap* GetGlobalOpt() { return globalOpt; }
 		void SetVariation(KVariation<T>* varn) { variation = varn; }
 		void AddSelector(KSelector<T>* sel_){
 			selectorList.push_back(sel_);
@@ -179,6 +183,7 @@ class KSelection {
 	private:
 		//member variables
 		string name;
+		OptionMap* globalOpt;
 		KVariation<T>* variation;
 		T* looper;
 		vector<KSelector<T>*> selectorList;
