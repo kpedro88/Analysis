@@ -176,6 +176,16 @@ class KPlotManager : public KManager {
 				globalOpt->Set("rationame2D",rationame2D);
 			}			
 			
+			//make selections for base builders
+			//BEFORE creating plots, in order to create bin labels in global opt for certain cases
+			string selection = "";
+			globalOpt->Get("selection",selection);
+			for(unsigned b = 0; b < MyBases.size(); b++){
+				//make selection
+				KSelection<KBuilder>* sntmp = makeSelection<KBuilder>(selection);
+				if(sntmp) MyBases[b]->SetSelection(sntmp);
+			}
+			
 			//create plots from local options
 			//in 2D case, one plot for each top-level set
 			for(unsigned p = 0; p < MyPlotOptions.size(); p++){
@@ -242,14 +252,7 @@ class KPlotManager : public KManager {
 				}
 			}
 			
-			//make selections for base builders
-			string selection = "";
-			globalOpt->Get("selection",selection);
-			for(unsigned b = 0; b < MyBases.size(); b++){
-				//make selection
-				KSelection<KBuilder>* sntmp = makeSelection<KBuilder>(selection);
-				if(sntmp) MyBases[b]->SetSelection(sntmp);
-			}
+			
 			
 			//build everything
 			for(unsigned s = 0; s < MySets.size(); s++){

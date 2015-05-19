@@ -108,19 +108,27 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 				}
 				
 				//create map of RA2 bin IDs to bin numbers
+				//and associated bin labels (in case they are requested)
+				vector<string> labels;
+				labels.reserve(all_bins[0].size());
 				for(unsigned b = 0; b < all_bins[0].size(); ++b){
 					vector<unsigned> bin_id;
 					bin_id.reserve(all_bins.size());
+					stringstream label;
 					for(unsigned q = 0; q < all_bins.size(); ++q){
 						bin_id.push_back(all_bins[q][b]);
+						label << all_bins[q][b]; //the specific bin label: currently just the bin number
+						if(q<all_bins.size()-1) label << ",";
 					}
 					IDtoBinNumber[bin_id] = b+1; //bin numbers start at 1
+					labels.push_back(label.str());
 				}
 				
 				//store assembled member vars with global options
 				looper->globalOpt->Set<map<vector<unsigned>,unsigned> >("IDtoBinNumber",IDtoBinNumber);
 				looper->globalOpt->Set<vector<vector<float> > >("RA2VarMin",RA2VarMin);
 				looper->globalOpt->Set<vector<vector<float> > >("RA2VarMax",RA2VarMax);
+				looper->globalOpt->Set<vector<string> >("RA2bin_labels",labels);
 			}
 
 			initialized = true;

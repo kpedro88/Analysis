@@ -126,6 +126,19 @@ class KPlot{
 			localOpt->Get("ytitle",ytitle);
 			histo->GetXaxis()->SetTitle(xtitle.c_str());
 			histo->GetYaxis()->SetTitle(ytitle.c_str());
+			
+			//assign bin labels if requested
+			if(localOpt->Get("xbinlabel",false)){
+				vector<string> labels;
+				//check both option maps
+				bool has_labels = localOpt->Get(vars[0]+"_labels",labels) || globalOpt->Get(vars[0]+"_labels",labels);
+				if(has_labels){
+					histo->LabelsOption("v","X");
+					for(unsigned b = 0; b < labels.size(); b++){
+						histo->GetXaxis()->SetBinLabel(b+1,labels[b].c_str());
+					}
+				}
+			}
 		}
 		virtual bool Initialize(TH1* histo_=NULL){
 			if(isInit) return isInit;
