@@ -91,8 +91,8 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 					stringstream label;
 					for(unsigned q = 0; q < all_bins.size(); ++q){
 						bin_id.push_back(all_bins[q][b]);
-						label << all_bins[q][b]; //the specific bin label: currently just the bin number
-						if(q<all_bins.size()-1) label << ",";
+						label << RA2VarNames[q] << all_bins[q][b]; //the specific bin label: currently just the bin number
+						if(q<all_bins.size()-1) label << "_";
 					}
 					IDtoBinNumber[bin_id] = b+1; //bin numbers start at 1
 					labels.push_back(label.str());

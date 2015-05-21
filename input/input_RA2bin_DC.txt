@@ -12,6 +12,7 @@ input/input_global.txt
 OPTION
 double:sizeLeg[22]
 double:canvasW[1200]
+double:marginB[300]
 double:NdivX[518]
 vstring:RA2VarNames[NJets,BTags,MHT,HT]
 vfloat:RA2Var0Min[3,6,8]
