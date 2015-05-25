@@ -15,14 +15,14 @@ using namespace std;
 void MakeAllDC(){
 	string indir = "root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/";
 	string inpre = "tree_";
-	string input = "input/input_RA2bin_DC.txt";
 	string outdir = "datacards/";
 	string outpre = "RA2bin_";
+	string input[nRegions] = {"input/input_RA2bin_DC.txt","input/input_RA2bin_DC.txt","input/input_RA2bin_DC.txt","input/input_RA2bin_DC.txt","input/input_RA2bin-SP_DC.txt"};
 	string regions[nRegions] = {"signal","LDP","SLe","SLm","GJet_NoPhotonVars"};
 	
 	for(unsigned i = 0; i < nRegions; ++i){
 		cout << regions[i] << endl;
-		KPlotDriverDC(indir+inpre+regions[i],input,outdir+outpre+regions[i]);
+		KPlotDriverDC(indir+inpre+regions[i],input[i],outdir+outpre+regions[i]);
 	}
 	
 	//add up SL regions
