@@ -41,7 +41,6 @@ SLm
 	Muon
 	ElectronVeto
 	IsoElectronTrackVeto
-	IsoMuonTrackVeto
 	IsoPionTrackVeto
 	MinDeltaPhiN	d:minDeltaPhiN[6]
 	EventCleaning
@@ -52,7 +51,6 @@ SLe
 	MHT	d:MHTmin[200]
 	MuonVeto
 	Electron
-	IsoElectronTrackVeto
 	IsoMuonTrackVeto
 	IsoPionTrackVeto
 	MinDeltaPhiN	d:minDeltaPhiN[6]
@@ -78,7 +76,6 @@ DYm
 	DiMuon
 	ElectronVeto
 	IsoElectronTrackVeto
-	IsoMuonTrackVeto
 	IsoPionTrackVeto
 	MinDeltaPhiN	d:minDeltaPhiN[6]
 	EventCleaning
@@ -89,7 +86,6 @@ DYe
 	MHT	d:MHTmin[200]
 	MuonVeto
 	DiElectron
-	IsoElectronTrackVeto
 	IsoMuonTrackVeto
 	IsoPionTrackVeto
 	MinDeltaPhiN	d:minDeltaPhiN[6]
