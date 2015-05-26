@@ -136,7 +136,7 @@ class KMuonSelector : public KSelector<KSkimmer> {
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			if(looper->Muons->size()!=1) return false;
-			double mT = sqrt(2*looper->METPt*looper->Muons->at(0).Pt()*(1-cos(KMath::DeltaPhi(looper->Muons->at(0).Phi(),looper->METPhi))));
+			double mT = KMath::TransverseMass(looper->METPt,looper->METPhi,looper->Muons->at(0).Pt(),looper->Muons->at(0).Phi());
 			return mT<100;
 		}
 		
@@ -156,7 +156,7 @@ class KElectronSelector : public KSelector<KSkimmer> {
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			if(looper->Electrons->size()!=1) return false;
-			double mT = sqrt(2*looper->METPt*looper->Electrons->at(0).Pt()*(1-cos(KMath::DeltaPhi(looper->Electrons->at(0).Phi(),looper->METPhi))));
+			double mT = KMath::TransverseMass(looper->METPt,looper->METPhi,looper->Electrons->at(0).Pt(),looper->Electrons->at(0).Phi());
 			return mT<100;
 		}
 		

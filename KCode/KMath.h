@@ -35,6 +35,9 @@ namespace KMath {
 		double dR2 = dphi*dphi + deta*deta;
 		return sqrt(dR2);
 	}
+	double TransverseMass(double pt1, double phi1, double pt2, double phi2){
+		return sqrt(2*pt1*pt2*(1-cos(DeltaPhi(phi1,phi2))));
+	}
 }
 
 #endif
