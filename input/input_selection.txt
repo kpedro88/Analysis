@@ -83,7 +83,19 @@ DYm
 	MinDeltaPhiN	d:minDeltaPhiN[6]
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
-
+DYe
+	NJet	i:njet[4]
+	HT	d:HTmin[500]
+	MHT	d:MHTmin[200]
+	MuonVeto
+	DiElectron
+	IsoElectronTrackVeto
+	IsoMuonTrackVeto
+	IsoPionTrackVeto
+	MinDeltaPhiN	d:minDeltaPhiN[6]
+	EventCleaning
+	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
+	
 VARIATION
 NoPhotonVars
 	NoPhoton

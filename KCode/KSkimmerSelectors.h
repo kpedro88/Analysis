@@ -193,8 +193,27 @@ class KDiMuonSelector : public KSelector<KSkimmer> {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			//todo: add charge, mass cuts
-			return looper->Muons->size() == 2;
+			//todo: add mass cut?
+			return looper->Muons->size() == 2 && looper->MuonCharge->at(0) != looper->MuonCharge->at(1);
+		}
+		
+		//member variables
+};
+
+//------------------------------------------------------
+//dielectron selector
+class KDiElectronSelector : public KSelector<KSkimmer> {
+	public:
+		//constructor
+		KDiElectronSelector() : KSelector<KSkimmer>() { }
+		KDiElectronSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			//todo: add mass cut?
+			return looper->Electrons->size() == 2 && looper->ElectronCharge->at(0) != looper->ElectronCharge->at(1);
 		}
 		
 		//member variables
@@ -403,6 +422,7 @@ namespace KParser {
 		else if(sname=="Electron") srtmp = new KElectronSelector(sname,omap);
 		else if(sname=="Photon") srtmp = new KPhotonSelector(sname,omap);
 		else if(sname=="DiMuon") srtmp = new KDiMuonSelector(sname,omap);
+		else if(sname=="DiElectron") srtmp = new KDiElectronSelector(sname,omap);
 		else if(sname=="IsoElectronTrackVeto") srtmp = new KIsoElectronTrackVetoSelector(sname,omap);
 		else if(sname=="IsoMuonTrackVeto") srtmp = new KIsoMuonTrackVetoSelector(sname,omap);
 		else if(sname=="IsoPionTrackVeto") srtmp = new KIsoPionTrackVetoSelector(sname,omap);
