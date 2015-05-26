@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <iostream>
 
-#define nRegions 5
+#define nRegions 7
 
 using namespace std;
 
@@ -17,8 +17,8 @@ void MakeAllDC(){
 	string inpre = "tree_";
 	string outdir = "datacards/";
 	string outpre = "RA2bin_";
-	string input[nRegions] = {"input/input_RA2bin_DC.txt","input/input_RA2bin_DC.txt","input/input_RA2bin_DC.txt","input/input_RA2bin_DC.txt","input/input_RA2bin-SP_DC.txt"};
-	string regions[nRegions] = {"signal","LDP","SLe","SLm","GJet_NoPhotonVars"};
+	string input[nRegions] = {"input/input_RA2bin_DC.txt","input/input_RA2bin_DC.txt","input/input_RA2bin_DC.txt","input/input_RA2bin_DC.txt","input/input_RA2bin-SP_DC.txt","input/input_RA2bin_DC.txt","input/input_RA2bin_DC.txt"};
+	string regions[nRegions] = {"signal","LDP","SLe","SLm","GJet_NoPhotonVars","DYe","DYm"};
 	
 	for(unsigned i = 0; i < nRegions; ++i){
 		cout << regions[i] << endl;
@@ -27,4 +27,7 @@ void MakeAllDC(){
 	
 	//add up SL regions
 	system(("hadd -f "+outdir+outpre+"SL.root "+outdir+outpre+"SLe.root "+outdir+outpre+"SLm.root").c_str());
+	
+	//add up DY regions
+	system(("hadd -f "+outdir+outpre+"DY.root "+outdir+outpre+"DYe.root "+outdir+outpre+"DYm.root").c_str());
 }
