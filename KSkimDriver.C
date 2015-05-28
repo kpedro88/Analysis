@@ -7,15 +7,6 @@
 
 using namespace std;
 
-//generalization for processing a line
-void process(string line, char delim, vector<string>& fields){
-	stringstream ss(line);
-	string field;
-	while(getline(ss,field,delim)){
-		fields.push_back(field);
-	}
-}
-
 //to recompile:
 //root -b -q -l 'KSkimDriver.C++()'
 //to run interactively:
