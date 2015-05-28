@@ -89,6 +89,7 @@ class KLegend{
 			
 			padH = pad->GetWh()*pad->GetAbsHNDC();
 			sizeLeg = 26; globalOpt->Get("sizeLeg",sizeLeg);
+			sizeSymb = 0.25; globalOpt->Get("sizeSymb",sizeSymb);
 			legentry = sizeLeg/padH; //line height for each entry
 			//todo: configurable font type
 			
@@ -198,8 +199,8 @@ class KLegend{
 				legwidth += legwidths[p];
 			}
 			
-			//symbol box takes up fMargin = 0.25 by default
-			legwidth /= 0.75;
+			//symbol box takes up fMargin = 0.25 by default (now configurable)
+			legwidth /= (1-sizeSymb);
 			//add a little padding for each line
 			legheight *= 1.2;
 			
@@ -236,6 +237,7 @@ class KLegend{
 			leg->SetTextSize(legentry);
 			leg->SetTextFont(42);
 			leg->SetNColumns(npanel);
+			leg->SetMargin(sizeSymb);
 			
 			for(unsigned e = 0; e < max_panel_entries; e++){
 				for(unsigned p = 0; p < npanel; p++){
@@ -428,7 +430,7 @@ class KLegend{
 		vector<double> legwidths, legheights;
 		double lbound, rbound, tbound, bbound;
 		double umin, umax, vmin, vmax;
-		double padH, sizeLeg, legentry;
+		double padH, sizeLeg, legentry, sizeSymb;
 		vector<KLegendMultiEntry> multi_entries;
 		vector<vector<KLegendEntry> > entries;
 		vector<TH1*> hists;
