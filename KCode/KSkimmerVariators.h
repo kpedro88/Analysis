@@ -146,77 +146,46 @@ class KJetERVariator : public KVariator {
 
 //----------------------------------------------------
 //set hadronic variables to NoPhotons version
-class KNoPhotonVariator : public KVariator<KSkimmer> {
+class KCleanVariator : public KVariator<KSkimmer> {
 	public:
 		//constructor
-		KNoPhotonVariator() : KVariator<KSkimmer>() { }
-		KNoPhotonVariator(string name_, OptionMap* localOpt_) : KVariator<KSkimmer>(name_,localOpt_), ak4Jets(NULL) { }
+		KCleanVariator() : KVariator<KSkimmer>() { }
+		KCleanVariator(string name_, OptionMap* localOpt_) : KVariator<KSkimmer>(name_,localOpt_) { }
 		//functions
-		virtual void DoVariation() {
-			//initialize
-			ak4Jets = new vector<TLorentzVector>();
-			
+		virtual void DoVariation() {			
 			//store original values
 			NJets = looper->NJets;
+			BTags = looper->BTags;
 			HT = looper->HT;
 			MHT = looper->MHT;
-			DeltaPhi1 = looper->DeltaPhi1;
-			DeltaPhi2 = looper->DeltaPhi2;
-			DeltaPhi3 = looper->DeltaPhi3;
 			minDeltaPhiN = looper->minDeltaPhiN;
-			DeltaPhiN1 = looper->DeltaPhiN1;
-			DeltaPhiN2 = looper->DeltaPhiN2;
-			DeltaPhiN3 = looper->DeltaPhiN3;
 			METPt = looper->METPt;
-			METPhi = looper->METPhi;
-			*ak4Jets = *(looper->ak4Jets);
 			
-			//set to noPhotons vars
-			looper->NJets = looper->NJetsNoPhotons;
-			looper->HT = looper->HTnoPhotons;
-			looper->MHT = looper->MHTnoPhotons;
-			looper->DeltaPhi1 = looper->DeltaPhi1noPhotons;
-			looper->DeltaPhi2 = looper->DeltaPhi2noPhotons;
-			looper->DeltaPhi3 = looper->DeltaPhi3noPhotons;
-			looper->minDeltaPhiN = looper->minDeltaPhiNnoPhotons;
-			looper->DeltaPhiN1 = looper->DeltaPhiN1noPhotons;
-			looper->DeltaPhiN2 = looper->DeltaPhiN2noPhotons;
-			looper->DeltaPhiN3 = looper->DeltaPhiN3noPhotons;
-			looper->METPt = looper->METnoPhotonsPt;
-			looper->METPhi = looper->METnoPhotonsPhi;
-			*(looper->ak4Jets) = *(looper->ak4JetsNoPhotons);
+			//set to clean vars
+			looper->NJets = looper->NJetsclean;
+			looper->BTags = looper->BTagsclean;
+			looper->HT = looper->HTclean;
+			looper->MHT = looper->MHTclean;
+			looper->minDeltaPhiN = looper->minDeltaPhiNclean;
+			looper->METPt = looper->METPtclean;
 		}
 		virtual void UndoVariation() {
 			//restore original values
 			looper->NJets = NJets;
+			looper->BTags = BTags;
 			looper->HT = HT;
 			looper->MHT = MHT;
-			looper->DeltaPhi1 = DeltaPhi1;
-			looper->DeltaPhi2 = DeltaPhi2;
-			looper->DeltaPhi3 = DeltaPhi3;
 			looper->minDeltaPhiN = minDeltaPhiN;
-			looper->DeltaPhiN1 = DeltaPhiN1;
-			looper->DeltaPhiN2 = DeltaPhiN2;
-			looper->DeltaPhiN3 = DeltaPhiN3;
 			looper->METPt = METPt;
-			looper->METPhi = METPhi;
-			*(looper->ak4Jets) = *ak4Jets;
 		}
 		
 		//member variables
 		Int_t           NJets;
+		Int_t           BTags;
 		Float_t         HT;
 		Float_t         MHT;
-		Float_t         DeltaPhi1;
-		Float_t         DeltaPhi2;
-		Float_t         DeltaPhi3;
 		Float_t         minDeltaPhiN;
-		Float_t         DeltaPhiN1;
-		Float_t         DeltaPhiN2;
-		Float_t         DeltaPhiN3;
 		Float_t         METPt;
-		Float_t         METPhi;
-		vector<TLorentzVector> *ak4Jets;
 };
 
 namespace KParser {
@@ -227,7 +196,7 @@ namespace KParser {
 		OptionMap* omap = tmp->second;
 		
 		//check for all known variators
-		if(vname=="NoPhoton") vtmp = new KNoPhotonVariator(vname,omap);
+		if(vname=="Clean") vtmp = new KCleanVariator(vname,omap);
 		//else if(vname=="JES") vtmp = new KJetESVariator(vname,omap);
 		//else if(vname=="JER") vtmp = new KJetERVariator(vname,omap);
 		else {} //skip unknown variators
