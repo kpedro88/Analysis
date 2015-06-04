@@ -16,8 +16,8 @@ signal
 	MHT	d:MHTmin[200]
 	MuonVeto
 	ElectronVeto
-	IsoElectronTrackVeto
 	IsoMuonTrackVeto
+	IsoElectronTrackVeto
 	IsoPionTrackVeto
 	MinDeltaPhiN	d:minDeltaPhiN[6]
 	EventCleaning
@@ -28,8 +28,8 @@ LDP
 	MHT	d:MHTmin[200]
 	MuonVeto
 	ElectronVeto
-	IsoElectronTrackVeto
 	IsoMuonTrackVeto
+	IsoElectronTrackVeto
 	IsoPionTrackVeto
 	MinDeltaPhiN	d:minDeltaPhiN[6]	b:invert[1]
 	EventCleaning
@@ -63,8 +63,8 @@ GJet
 	Photon
 	MuonVeto
 	ElectronVeto
-	IsoElectronTrackVeto
 	IsoMuonTrackVeto
+	IsoElectronTrackVeto
 	IsoPionTrackVeto
 	MinDeltaPhiN	d:minDeltaPhiN[6]
 	EventCleaning
