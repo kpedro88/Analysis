@@ -18,7 +18,7 @@ void MakeAllDC(){
 	string outdir = "datacards/";
 	string outpre = "RA2bin_";
 	string input[nRegions] = {"input/input_RA2bin_DC.txt","input/input_RA2bin_DC.txt","input/input_RA2bin_DC.txt","input/input_RA2bin_DC.txt","input/input_RA2bin-SP_DC.txt","input/input_RA2bin_DC.txt","input/input_RA2bin_DC.txt"};
-	string regions[nRegions] = {"signal","LDP","SLe","SLm","GJet_NoPhotonVars","DYe","DYm"};
+	string regions[nRegions] = {"signal","LDP","SLe","SLm","GJet_CleanVars","DYe_CleanVars","DYm_CleanVars"};
 	
 	for(unsigned i = 0; i < nRegions; ++i){
 		cout << regions[i] << endl;
@@ -29,5 +29,5 @@ void MakeAllDC(){
 	system(("hadd -f "+outdir+outpre+"SL.root "+outdir+outpre+"SLe.root "+outdir+outpre+"SLm.root").c_str());
 	
 	//add up DY regions
-	system(("hadd -f "+outdir+outpre+"DY.root "+outdir+outpre+"DYe.root "+outdir+outpre+"DYm.root").c_str());
+	system(("hadd -f "+outdir+outpre+"DY_CleanVars.root "+outdir+outpre+"DYe_CleanVars.root "+outdir+outpre+"DYm_CleanVars.root").c_str());
 }

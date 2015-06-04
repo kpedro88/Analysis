@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Wed May 13 16:55:37 2015 by ROOT version 5.34/18
-// from TTree tree/all observables, main
-// found on file: root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/tree_main/tree_T1tttt_1500_100.root
+// Wed Jun  3 22:30:24 2015 by ROOT version 5.34/18
+// from TTree tree/all observables, signal
+// found on file: root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/tree_signal/tree_T1tttt_1500_100.root
 //////////////////////////////////////////////////////////
 
 #ifndef TreeClass_h
@@ -36,8 +36,9 @@ public :
    Int_t           LeptonsNoMiniIsolation;
    Int_t           NJets;
    Int_t           BTags;
+   Int_t           NJetsclean;
+   Int_t           BTagsclean;
    Int_t           NumPhotons;
-   Int_t           NJetsNoPhotons;
    Float_t         Weight;
    Float_t         HT;
    Float_t         MHT;
@@ -50,17 +51,11 @@ public :
    Float_t         DeltaPhiN3;
    Float_t         METPt;
    Float_t         METPhi;
-   Float_t         HTnoPhotons;
-   Float_t         MHTnoPhotons;
-   Float_t         DeltaPhi1noPhotons;
-   Float_t         DeltaPhi2noPhotons;
-   Float_t         DeltaPhi3noPhotons;
-   Float_t         DeltaPhiN1noPhotons;
-   Float_t         DeltaPhiN2noPhotons;
-   Float_t         DeltaPhiN3noPhotons;
-   Float_t         minDeltaPhiNnoPhotons;
-   Float_t         METnoPhotonsPt;
-   Float_t         METnoPhotonsPhi;
+   Float_t         HTclean;
+   Float_t         MHTclean;
+   Float_t         minDeltaPhiNclean;
+   Float_t         METPtclean;
+   Float_t         rho;
    Float_t         ak1p2Jets_sumJetMass;
    Float_t         ak1p2JetsPt15Reclust_sumJetMass;
    Float_t         ak1p2JetsPt20Reclust_sumJetMass;
@@ -99,7 +94,6 @@ public :
    vector<TLorentzVector> *genParticles;
    vector<TLorentzVector> *photonCands;
    vector<TLorentzVector> *bestPhoton;
-   vector<TLorentzVector> *ak4JetsNoPhotons;
    vector<TLorentzVector> *ak1p2Jets;
    vector<TLorentzVector> *ak1p2JetsPt15Reclust;
    vector<TLorentzVector> *ak1p2JetsPt20Reclust;
@@ -120,8 +114,9 @@ public :
    TBranch        *b_LeptonsNoMiniIsolation;   //!
    TBranch        *b_NJets;   //!
    TBranch        *b_BTags;   //!
+   TBranch        *b_NJetsclean;   //!
+   TBranch        *b_BTagsclean;   //!
    TBranch        *b_NumPhotons;   //!
-   TBranch        *b_NJetsNoPhotons;   //!
    TBranch        *b_Weight;   //!
    TBranch        *b_HT;   //!
    TBranch        *b_MHT;   //!
@@ -134,17 +129,11 @@ public :
    TBranch        *b_DeltaPhiN3;   //!
    TBranch        *b_METPt;   //!
    TBranch        *b_METPhi;   //!
-   TBranch        *b_HTnoPhotons;   //!
-   TBranch        *b_MHTnoPhotons;   //!
-   TBranch        *b_DeltaPhi1noPhotons;   //!
-   TBranch        *b_DeltaPhi2noPhotons;   //!
-   TBranch        *b_DeltaPhi3noPhotons;   //!
-   TBranch        *b_DeltaPhiN1noPhotons;   //!
-   TBranch        *b_DeltaPhiN2noPhotons;   //!
-   TBranch        *b_DeltaPhiN3noPhotons;   //!
-   TBranch        *b_minDeltaPhiNnoPhotons;   //!
-   TBranch        *b_METnoPhotonsPt;   //!
-   TBranch        *b_METnoPhotonsPhi;   //!
+   TBranch        *b_HTclean;   //!
+   TBranch        *b_MHTclean;   //!
+   TBranch        *b_minDeltaPhiNclean;   //!
+   TBranch        *b_METPtclean;   //!
+   TBranch        *b_rho;   //!
    TBranch        *b_ak1p2Jets_sumJetMass;   //!
    TBranch        *b_ak1p2JetsPt15Reclust_sumJetMass;   //!
    TBranch        *b_ak1p2JetsPt20Reclust_sumJetMass;   //!
@@ -183,7 +172,6 @@ public :
    TBranch        *b_genParticles;   //!
    TBranch        *b_photonCands;   //!
    TBranch        *b_bestPhoton;   //!
-   TBranch        *b_ak4JetsNoPhotons;   //!
    TBranch        *b_ak1p2Jets;   //!
    TBranch        *b_ak1p2JetsPt15Reclust;   //!
    TBranch        *b_ak1p2JetsPt20Reclust;   //!
@@ -211,9 +199,9 @@ TreeClass::TreeClass(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/tree_main/tree_T1tttt_1500_100.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/tree_signal/tree_T1tttt_1500_100.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/tree_main/tree_T1tttt_1500_100.root");
+         f = new TFile("root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/tree_signal/tree_T1tttt_1500_100.root");
       }
       f->GetObject("tree",tree);
 
@@ -290,7 +278,6 @@ void TreeClass::Init(TTree *tree)
    genParticles = 0;
    photonCands = 0;
    bestPhoton = 0;
-   ak4JetsNoPhotons = 0;
    ak1p2Jets = 0;
    ak1p2JetsPt15Reclust = 0;
    ak1p2JetsPt20Reclust = 0;
@@ -315,8 +302,9 @@ void TreeClass::Init(TTree *tree)
    fChain->SetBranchAddress("LeptonsNoMiniIsolation", &LeptonsNoMiniIsolation, &b_LeptonsNoMiniIsolation);
    fChain->SetBranchAddress("NJets", &NJets, &b_NJets);
    fChain->SetBranchAddress("BTags", &BTags, &b_BTags);
+   fChain->SetBranchAddress("NJetsclean", &NJetsclean, &b_NJetsclean);
+   fChain->SetBranchAddress("BTagsclean", &BTagsclean, &b_BTagsclean);
    fChain->SetBranchAddress("NumPhotons", &NumPhotons, &b_NumPhotons);
-   fChain->SetBranchAddress("NJetsNoPhotons", &NJetsNoPhotons, &b_NJetsNoPhotons);
    fChain->SetBranchAddress("Weight", &Weight, &b_Weight);
    fChain->SetBranchAddress("HT", &HT, &b_HT);
    fChain->SetBranchAddress("MHT", &MHT, &b_MHT);
@@ -329,17 +317,11 @@ void TreeClass::Init(TTree *tree)
    fChain->SetBranchAddress("DeltaPhiN3", &DeltaPhiN3, &b_DeltaPhiN3);
    fChain->SetBranchAddress("METPt", &METPt, &b_METPt);
    fChain->SetBranchAddress("METPhi", &METPhi, &b_METPhi);
-   fChain->SetBranchAddress("HTnoPhotons", &HTnoPhotons, &b_HTnoPhotons);
-   fChain->SetBranchAddress("MHTnoPhotons", &MHTnoPhotons, &b_MHTnoPhotons);
-   fChain->SetBranchAddress("DeltaPhi1noPhotons", &DeltaPhi1noPhotons, &b_DeltaPhi1noPhotons);
-   fChain->SetBranchAddress("DeltaPhi2noPhotons", &DeltaPhi2noPhotons, &b_DeltaPhi2noPhotons);
-   fChain->SetBranchAddress("DeltaPhi3noPhotons", &DeltaPhi3noPhotons, &b_DeltaPhi3noPhotons);
-   fChain->SetBranchAddress("DeltaPhiN1noPhotons", &DeltaPhiN1noPhotons, &b_DeltaPhiN1noPhotons);
-   fChain->SetBranchAddress("DeltaPhiN2noPhotons", &DeltaPhiN2noPhotons, &b_DeltaPhiN2noPhotons);
-   fChain->SetBranchAddress("DeltaPhiN3noPhotons", &DeltaPhiN3noPhotons, &b_DeltaPhiN3noPhotons);
-   fChain->SetBranchAddress("minDeltaPhiNnoPhotons", &minDeltaPhiNnoPhotons, &b_minDeltaPhiNnoPhotons);
-   fChain->SetBranchAddress("METnoPhotonsPt", &METnoPhotonsPt, &b_METnoPhotonsPt);
-   fChain->SetBranchAddress("METnoPhotonsPhi", &METnoPhotonsPhi, &b_METnoPhotonsPhi);
+   fChain->SetBranchAddress("HTclean", &HTclean, &b_HTclean);
+   fChain->SetBranchAddress("MHTclean", &MHTclean, &b_MHTclean);
+   fChain->SetBranchAddress("minDeltaPhiNclean", &minDeltaPhiNclean, &b_minDeltaPhiNclean);
+   fChain->SetBranchAddress("METPtclean", &METPtclean, &b_METPtclean);
+   fChain->SetBranchAddress("rho", &rho, &b_rho);
    fChain->SetBranchAddress("ak1p2Jets_sumJetMass", &ak1p2Jets_sumJetMass, &b_ak1p2Jets_sumJetMass);
    fChain->SetBranchAddress("ak1p2JetsPt15Reclust_sumJetMass", &ak1p2JetsPt15Reclust_sumJetMass, &b_ak1p2JetsPt15Reclust_sumJetMass);
    fChain->SetBranchAddress("ak1p2JetsPt20Reclust_sumJetMass", &ak1p2JetsPt20Reclust_sumJetMass, &b_ak1p2JetsPt20Reclust_sumJetMass);
@@ -378,7 +360,6 @@ void TreeClass::Init(TTree *tree)
    fChain->SetBranchAddress("genParticles", &genParticles, &b_genParticles);
    fChain->SetBranchAddress("photonCands", &photonCands, &b_photonCands);
    fChain->SetBranchAddress("bestPhoton", &bestPhoton, &b_bestPhoton);
-   fChain->SetBranchAddress("ak4JetsNoPhotons", &ak4JetsNoPhotons, &b_ak4JetsNoPhotons);
    fChain->SetBranchAddress("ak1p2Jets", &ak1p2Jets, &b_ak1p2Jets);
    fChain->SetBranchAddress("ak1p2JetsPt15Reclust", &ak1p2JetsPt15Reclust, &b_ak1p2JetsPt15Reclust);
    fChain->SetBranchAddress("ak1p2JetsPt20Reclust", &ak1p2JetsPt20Reclust, &b_ak1p2JetsPt20Reclust);
