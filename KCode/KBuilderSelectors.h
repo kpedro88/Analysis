@@ -28,7 +28,7 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 	public:
 		//constructor
 		KRA2BinSelector() : KSelector<KBuilder>() { }
-		KRA2BinSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), RA2bin(0) { }
+		KRA2BinSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), RA2Exclusive(true) { }
 		virtual void SetSelection(KSelection<KBuilder>* sel_) {
 			sel = sel_;
 
@@ -104,53 +104,54 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 				sel->GetGlobalOpt()->Set<vector<vector<float> > >("RA2VarMax",RA2VarMax);
 				sel->GetGlobalOpt()->Set<vector<string> >("RA2bin_labels",labels);
 			}
+			
+			//check exclusive binning option
+			RA2Exclusive = sel->GetGlobalOpt()->Get("RA2Exclusive",true);
 		}
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			if(depfailed) return false;
 			
-			RA2bin = GetBinNumber();
+			RA2bins = GetBinNumbers();
 			
-			return RA2bin!=0;
+			return RA2bins.size()!=0;
 		}
 		
 		//functions
-		unsigned GetBinNumber() {
+		vector<unsigned> GetBinNumbers() {
 			vector<vector<unsigned> > bins;
 			bins.reserve(RA2VarNames.size());
 			for(int q = 0; q < RA2VarNames.size(); ++q){
 				bins.push_back(GetBins(q));
 				
 				//skip loop if no bin was found for a value
-				if(bins.back().size()==0) return 0;
+				if(bins.back().size()==0) return vector<unsigned>();
 			}
 			
 			//set up for variable # of for loops
 			vector<unsigned> indices(RA2VarNames.size(),0);
 			vector<unsigned> bin_num(RA2VarNames.size(),0);
-			return FindBin(indices,bins,0,bin_num);
+			vector<unsigned> found_bins;
+			FindBin(indices,bins,0,bin_num,found_bins);
+			return found_bins;
 		}
 		//recursive function to implement variable # of for loops
 		//ref: http://stackoverflow.com/questions/9555864/variable-nested-for-loops
-		unsigned FindBin(vector<unsigned>& indices, vector<vector<unsigned> >& bins, unsigned pos, vector<unsigned>& bin_num){
+		void FindBin(vector<unsigned>& indices, vector<vector<unsigned> >& bins, unsigned pos, vector<unsigned>& bin_num, vector<unsigned>& found_bins){
 			for(indices[pos] = 0; indices[pos] < bins[pos].size(); indices[pos]++){
 				bin_num[pos] = bins[pos][indices[pos]];
 				if(pos == indices.size()-1){
 					map<vector<unsigned>, unsigned>::iterator it = IDtoBinNumber.find(bin_num);
 					//exit loop as soon as an existing bin is found
 					if(it != IDtoBinNumber.end()){
-						return it->second;
+						found_bins.push_back(it->second);
 					}
 				}
 				else {
-					unsigned tmp = FindBin(indices,bins,pos+1,bin_num);
-					if(tmp!=0) return tmp;
+					FindBin(indices,bins,pos+1,bin_num,found_bins);
 				}
 			}
-			
-			//if no bins are were found, return default
-			return 0;
 		}
 		
 		vector<unsigned> GetBins(unsigned qty){
@@ -172,7 +173,8 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 		
 	public:
 		//member variables
-		int RA2bin;
+		bool RA2Exclusive;
+		vector<unsigned> RA2bins;
 		map<vector<unsigned>, unsigned> IDtoBinNumber;
 		vector<string> RA2VarNames;
 		vector<vector<float> > RA2VarMin, RA2VarMax;
@@ -250,7 +252,12 @@ class KHistoSelector : public KSelector<KBuilder> {
 					string vname = looper->vars[h][i];
 					//list of cases for histo calculation and filling
 					if(vname=="RA2bin" && RA2Bin){//plot yield vs. bin of RA2 search -> depends on RA2Bin selector
-						values[i].Fill(RA2Bin->RA2bin,w);
+						if(RA2Bin->RA2Exclusive) values[i].Fill(RA2Bin->RA2bins[0],w);
+						else {
+							for(int b = 0; b < RA2Bin->RA2bins.size(); b++){
+								values[i].Fill(RA2Bin->RA2bins[b],w);
+							}
+						}
 					}
 					else if(vname=="njets"){//jet multiplicity
 						values[i].Fill(looper->NJets,w);
