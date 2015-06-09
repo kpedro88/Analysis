@@ -190,49 +190,6 @@ class KSetMC: public KSet {
 				for(unsigned c = 0; c < children.size(); c++){ //include option to subtract histos
 					htmp->Add(children[c]->GetHisto(), children[c]->GetLocalOpt()->Get("subtract",false) ? -1 : 1);
 				}
-				
-				//use alternative data-driven normalizations (fake tau, real ttbar) if everything is enabled
-				double simerr = 0;
-				double simyield = htmp->IntegralAndError(0,htmp->GetNbinsX()+1,simerr);
-				double norm = 0;
-				double normerr = 0;
-				bool do_err_prop = false;
-				TH1* htmp2 = 0;
-				string normtype = "";
-				if(localOpt->Get("normtype",normtype) && normtype=="faketau" && globalOpt->Get("dofaketau",false) && globalOpt->Get<double>("faketaunorm",norm)){
-					if(globalOpt->Get<double>("faketauerr",normerr)) {
-						do_err_prop = true;
-						htmp2 = (TH1*)htmp->Clone();
-					}
-					htmp->Scale(norm/simyield);
-				}
-				else if(localOpt->Get("normtype",normtype) && normtype=="ttbar" && globalOpt->Get("dottbar",false) && globalOpt->Get<double>("ttbarnorm",norm)){
-					if(globalOpt->Get<double>("ttbarerr",normerr)) {
-						do_err_prop = true;
-						htmp2 = (TH1*)htmp->Clone();
-					}
-					htmp->Scale(norm/simyield);
-				}
-				//don't bother scaling child histos...
-				
-				//replace bin errors using error propagation:
-				//B' = B*C/I = B*C/(A+B)
-				if(do_err_prop){
-					for(int i = 1; i <= htmp->GetNbinsX()+1; i++){
-						double sBn = 0;
-						double B = htmp2->GetBinContent(i);
-						double sB = htmp2->GetBinError(i);
-						double I = simyield;
-						double A = I - B;
-						double sA = sqrt(simerr*simerr - sB*sB);
-						double C = norm;
-						double sC = normerr;
-						
-						sBn = 1./I*sqrt( A*A*C*C/(I*I)*sB*sB + B*B*C*C/(I*I)*sA*sA + B*B*sC*sC );
-						htmp->SetBinError(i,sBn);
-					}
-					delete htmp2; htmp2 = 0;
-				}
 			}
 		}		
 		//add function - does formatting
