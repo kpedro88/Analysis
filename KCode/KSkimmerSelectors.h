@@ -244,6 +244,59 @@ class KMinDeltaPhiNSelector : public KSelector<KSkimmer> {
 		bool invert;
 };
 
+//----------------------------------------------------
+//selects events based on minDeltaPhi value
+class KMinDeltaPhiSelector : public KSelector<KSkimmer> {
+	public:
+		//constructor
+		KMinDeltaPhiSelector() : KSelector<KSkimmer>() { }
+		KMinDeltaPhiSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), minDeltaPhi(0.4), invert(false) { 
+			//check for option
+			localOpt->Get("minDeltaPhi",minDeltaPhi);
+			invert = localOpt->Get("invert",false);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			//min delta phi needs to be defined
+			double looperMinDeltaPhi = min(looper->DeltaPhi1,min(looper->DeltaPhi2,looper->DeltaPhi3));
+			if(invert) return looperMinDeltaPhi < minDeltaPhi;
+			else return looperMinDeltaPhi > minDeltaPhi;
+		}
+		
+		//member variables
+		double minDeltaPhi;
+		bool invert;
+};
+
+//----------------------------------------------------
+//selects events based on DeltaPhi values
+class KDeltaPhiSelector : public KSelector<KSkimmer> {
+	public:
+		//constructor
+		KDeltaPhiSelector() : KSelector<KSkimmer>() { }
+		KDeltaPhiSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), DeltaPhi(3,0), invert(false) { 
+			//check for option
+			DeltaPhi[0] = 0.5; DeltaPhi[1] = 0.5; DeltaPhi[2] = 0.3;
+			localOpt->Get("DeltaPhi",DeltaPhi);
+			invert = localOpt->Get("invert",false);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			if(invert) return looper->DeltaPhi1 < DeltaPhi[0] || looper->DeltaPhi2 < DeltaPhi[1] || looper->DeltaPhi3 < DeltaPhi[2];
+			else return looper->DeltaPhi1 > DeltaPhi[0] && looper->DeltaPhi2 > DeltaPhi[1] && looper->DeltaPhi3 > DeltaPhi[2];
+		}
+		
+		//member variables
+		vector<double> DeltaPhi;
+		bool invert;
+};
+
 //-------------------------------------------------------------
 //vetos events with isolated electron tracks
 class KIsoElectronTrackVetoSelector : public KSelector<KSkimmer> {
@@ -427,6 +480,8 @@ namespace KParser {
 		else if(sname=="IsoMuonTrackVeto") srtmp = new KIsoMuonTrackVetoSelector(sname,omap);
 		else if(sname=="IsoPionTrackVeto") srtmp = new KIsoPionTrackVetoSelector(sname,omap);
 		else if(sname=="MinDeltaPhiN") srtmp = new KMinDeltaPhiNSelector(sname,omap);
+		else if(sname=="MinDeltaPhi") srtmp = new KMinDeltaPhiSelector(sname,omap);
+		else if(sname=="DeltaPhi") srtmp = new KDeltaPhiSelector(sname,omap);
 		else if(sname=="EventCleaning") srtmp = new KEventCleaningSelector(sname,omap);
 		else if(sname=="NBJetBin") srtmp = new KNBJetBinSelector(sname,omap);
 		else {} //skip unknown selectors
