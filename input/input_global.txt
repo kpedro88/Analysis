@@ -1,7 +1,7 @@
 OPTION
 vstring:printformat[png]
 bool:treesuffix[1]
-double:luminorm[4000]
+double:luminorm[10000]
 bool:printyield[1]
 int:yieldprecision[2]
 #bool:debugloop[1]
