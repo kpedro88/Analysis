@@ -312,7 +312,7 @@ class KBaseExt : public KBase {
 		KBaseExt() : KBase(), add_ext(false) {}
 		KBaseExt(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KBase(name_, localOpt_, globalOpt_), add_ext(false) {
 			string filename;
-			if(localOpt->Get("filename",filename)){
+			if(localOpt->Get("extfilename",filename)){
 				//open file
 				file = TFile::Open(filename.c_str());
 				//check for specific histos to import
