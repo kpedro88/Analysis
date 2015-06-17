@@ -48,6 +48,8 @@ class KSkimmer : public NtupleClass {
 
 			//loop over ntuple tree
 			nentries = fChain->GetEntries();
+			int maxevents = 0;
+			if(globalOpt->Get("maxevents",maxevents) && maxevents < nentries) nentries = maxevents;
 			//if(nentries>10000) nentries = 10000;
 			
 			Long64_t nbytes = 0, nb = 0;
@@ -65,7 +67,7 @@ class KSkimmer : public NtupleClass {
 			//create nEventProc if necessary
 			if(!nEventHist){
 				nEventHist = new TH1F("nEventProc","",1,0,1);
-				nEventHist->SetBinContent(1,fChain->GetEntries());
+				nEventHist->SetBinContent(1,nentries);
 			}
 			
 			//final steps
