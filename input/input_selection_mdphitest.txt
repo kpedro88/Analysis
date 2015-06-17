@@ -94,7 +94,7 @@ DYe
 
 VARIATION
 CleanVars
-	Clean	b:cleanDeltaPhi[1]	d:minPt[30]	d:maxEta[5]	d:muonR[0.4]	d:electronR[0.4]	d:photonR[0.4]
+	Clean	b:cleanDeltaPhi[1]	d:minPtMHT[30]	d:maxEtaMHT[5]	d:minPtHT[30]	d:maxEtaHT[2.4]	d:muonR[0.4]	d:electronR[0.4]	d:photonR[0.4]
 
 SET
 base	skim	T1bbbb_1000_900	b:chain[1]	s:filepre[PHYS14.SMS-T1bbbb_2J_mGl-1000_mLSP-900_Tune4C_13TeV-madgraph-tauola_]	vi:filerange[0,3]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[1000021]
