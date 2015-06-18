@@ -204,6 +204,41 @@ class KDoubleCountSelector : public KSelector<KBuilder> {
 };
 
 //---------------------------------------------------------------
+//applies photon ID to candidates
+class KPhotonIDSelector : public KSelector<KBuilder> {
+	public:
+		//constructor
+		KPhotonIDSelector() : KSelector<KBuilder>() { }
+		KPhotonIDSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_) { 
+			//check for option
+			best = localOpt->Get("best",false);
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			goodPhotons.clear();
+			for(unsigned p = 0; p < looper->photonCands->size(); ++p){
+				bool goodPhoton = abs(looper->photonCands->at(p).Eta())<1.4442 || ((abs(looper->photonCands->at(p).Eta())>1.566 && abs(looper->photonCands->at(p).Eta())<2.5))
+									&& looper->photonCands->at(p).Pt()>100.
+									&& ((looper->photon_hadTowOverEM->at(p)<0.028 && !looper->photon_hasPixelSeed->at(p) && looper->photon_isEB->at(p)) 
+										|| (looper->photon_hadTowOverEM->at(p)<0.093 && !looper->photon_hasPixelSeed->at(p) && !looper->photon_isEB->at(p)))
+									&& looper->photon_pfChargedIsoRhoCorr->at(p)<(2.67*looper->photon_isEB->at(p) + 1.79*!looper->photon_isEB->at(p))
+									&& looper->photon_pfGammaIsoRhoCorr->at(p)<((2.11+0.0014*looper->photonCands->at(p).Pt())*looper->photon_isEB->at(p)
+																					+ (3.09+0.0091*looper->photonCands->at(p).Pt())*!looper->photon_isEB->at(p))
+									&& looper->photon_pfNeutralIsoRhoCorr->at(p)<((7.23+exp(0.0028*looper->photonCands->at(p).Pt()+0.5408))*looper->photon_isEB->at(p)
+																					+ (8.89+0.01725*looper->photonCands->at(p).Pt())*!looper->photon_isEB->at(p));
+				if(best) goodPhoton &= looper->bestPhoton->size()>0 && KMath::DeltaR(looper->bestPhoton->at(0).Phi(),looper->bestPhoton->at(0).Eta(),looper->photonCands->at(p).Phi(),looper->photonCands->at(p).Eta()) < 0.15;
+				if(goodPhoton) goodPhotons.push_back(p);
+			}
+			return true;
+		}
+		
+		//member variables
+		bool best;
+		vector<unsigned> goodPhotons;
+};
+
+//---------------------------------------------------------------
 //little class to store value & weight pairs for filling histos
 class KValue {
 	public:
@@ -232,12 +267,13 @@ class KHistoSelector : public KSelector<KBuilder> {
 	public:
 		//constructor
 		KHistoSelector() : KSelector<KBuilder>() { }
-		KHistoSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_) { canfail = false; }
+		KHistoSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), RA2Bin(NULL), PhotonID(NULL) { canfail = false; }
 		
 		virtual void SetSelection(KSelection<KBuilder>* sel_) {
 			sel = sel_;
 			//set dependencies here
 			RA2Bin = sel->Get<KRA2BinSelector*>("RA2Bin");
+			PhotonID = sel->Get<KPhotonIDSelector*>("PhotonID");
 		} 
 		
 		//used for non-dummy selectors
@@ -289,6 +325,18 @@ class KHistoSelector : public KSelector<KBuilder> {
 					else if(vname=="nvertex"){//# good vertices
 						values[i].Fill(looper->NVtx,w);
 					}
+					else if(vname=="sigmaietaieta"){//sigma ieta ieta variable for all photon candidates
+						if(PhotonID){
+							for(unsigned p = 0; p < PhotonID->goodPhotons.size(); ++p){
+								values[i].Fill(looper->photon_sigmaIetaIeta->at(PhotonID->goodPhotons[p]),w);
+							}
+						}
+						else { //if no ID applied, just plot everything
+							for(unsigned p = 0; p < looper->photon_sigmaIetaIeta->size(); ++p){
+								values[i].Fill(looper->photon_sigmaIetaIeta->at(p),w);
+							}
+						}
+					}
 					else { //if it's a histogram with no known variable or calculation, do nothing
 					}
 				}
@@ -337,6 +385,7 @@ class KHistoSelector : public KSelector<KBuilder> {
 		
 		//member variables
 		KRA2BinSelector* RA2Bin;
+		KPhotonIDSelector* PhotonID;
 };
 
 //-------------------------------------------------------------
@@ -352,6 +401,7 @@ namespace KParser {
 		if(sname=="Histo") srtmp = new KHistoSelector(sname,omap);
 		if(sname=="DoubleCount") srtmp = new KDoubleCountSelector(sname,omap);
 		if(sname=="RA2Bin") srtmp = new KRA2BinSelector(sname,omap);
+		if(sname=="PhotonID") srtmp = new KPhotonIDSelector(sname,omap);
 		else {} //skip unknown selectors
 		
 		if(!srtmp) cout << "Input error: unknown selector " << sname << ". This selector will be skipped." << endl;

@@ -1,0 +1,35 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+INPUT
+input/input_global.txt
+
+OPTION
+string:selection[photon]
+vstring:disable_branches[*]
+vstring:enable_branches[photon_isEB,photon_genMatched,photon_hadTowOverEM,photon_hasPixelSeed,photon_pfChargedIso,photon_pfChargedIsoRhoCorr,photon_pfGammaIso,photon_pfGammaIsoRhoCorr,photon_pfNeutralIso,photon_pfNeutralIsoRhoCorr,photon_sigmaIetaIeta,photonCands,bestPhoton]
+int:npanel[1]
+vstring:extra_text[single photon region]
+
+SELECTION
+photon
+	PhotonID	b:best[1]
+	Histo
+
+HISTO
+sigmaietaieta	i:xnum[100]	d:xmin[0.0]	d:xmax[0.07]	s:xtitle[#sigma_{i#etai#eta}]	s:ytitle[number of events]	b:ratio[0]
+
+SET
+hist	mc	QCD	c:color[kRed]	i:panel[1]
+	base	mc	QCD_HT-500to1000	s:filename[tree_QCD_HT-500to1000.root]	d:xsection[26740]
+	base	mc	QCD_HT-500to1000_ext1	s:filename[tree_QCD_HT-500to1000_ext1.root]	d:xsection[26740]
+	base	mc	QCD_HT-1000toInf	s:filename[tree_QCD_HT-1000toInf.root]	d:xsection[769.7]
+	base	mc	QCD_HT-1000toInf_ext1	s:filename[tree_QCD_HT-1000toInf_ext1.root]	d:xsection[769.7]
+hist	mc	#gamma+jets	c:color[kBlue]	i:panel[1]
+	base	mc	GJets_HT-400to600	s:filename[tree_GJets_HT-400to600.root]	d:xsection[62.05]
+	base	mc	GJets_HT-600toInf	s:filename[tree_GJets_HT-600toInf.root]	d:xsection[20.87]
