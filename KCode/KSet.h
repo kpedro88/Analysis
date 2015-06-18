@@ -191,6 +191,15 @@ class KSetMC: public KSet {
 					htmp->Add(children[c]->GetHisto(), children[c]->GetLocalOpt()->Get("subtract",false) ? -1 : 1);
 				}
 			}
+			
+			//build error band, disabled by default
+			if(localOpt->Get("errband",false)) {
+				BuildErrorBand();
+				//style
+				Color_t color = kBlack;
+				localOpt->Get("color",color);
+				etmp->SetFillColor(color);
+			}
 		}		
 		//add function - does formatting
 		TH1* AddHisto(string s, TH1* h){
@@ -222,11 +231,21 @@ class KSetMC: public KSet {
 			localOpt->Get("extra_text",extra_text);
 			if(option.size()>0) kleg->AddEntry(htmp,name,option,panel_tmp,extra_text);
 			else kleg->AddEntry(htmp,name,"l",panel_tmp,extra_text);
+			
+			//check if error band needs to be added
+			if(localOpt->Get("errband",false)) {
+				//this assumes it has already been created previously... a little unsafe, but a pain in the ass otherwise
+				kleg->AddEntry(etmp,"uncertainty","f",panel_tmp);
+			}
 		}
 		//draw function
 		void Draw(TPad* pad) {
 			pad->cd();
-			if(htmp->GetDimension()==1) htmp->Draw("hist same");
+			if(htmp->GetDimension()==1) {
+				htmp->Draw("hist same");
+				//disabled by default
+				if(localOpt->Get("errband",false)) etmp->Draw("2 same");
+			}
 			else if(htmp->GetDimension()==2) htmp->Draw("colz same");
 		}
 		
@@ -296,8 +315,8 @@ class KSetMCStack : public KSet {
 				
 				//fill in htmp now that shtmp is built
 				htmp = (TH1*)shtmp->GetStack()->Last();
-				//build error band, enabled by default
-				if(globalOpt->Get("errband",true)) BuildErrorBand();
+				//build error band, enabled by default for stack
+				if(localOpt->Get("errband",true)) BuildErrorBand();
 				
 				//add stacked signal histo after calculating error band
 				if(c_sigstack > -1) shtmp->Add(children[c_sigstack]->GetHisto());				
@@ -332,7 +351,7 @@ class KSetMCStack : public KSet {
 			//error band enabled by default
 			int panel_tmp = 0;
 			localOpt->Get("panel",panel_tmp);
-			if(globalOpt->Get("errband",true)) kleg->AddEntry(etmp,"uncertainty","f",panel_tmp);
+			if(localOpt->Get("errband",true)) kleg->AddEntry(etmp,"uncertainty","f",panel_tmp);
 			//this assumes it has already been created previously... a little unsafe, but a pain in the ass otherwise
 		}
 		//draw function
@@ -341,8 +360,8 @@ class KSetMCStack : public KSet {
 			if(htmp->GetDimension()==1){
 				shtmp->Draw("hist same");
 				
-				//error band enabled by default
-				if(globalOpt->Get("errband",true)) etmp->Draw("2 same");
+				//error band enabled by default for stack
+				if(localOpt->Get("errband",true)) etmp->Draw("2 same");
 				
 				if(globalOpt->Get("bgline",false)&&htmp){
 					TH1* hoverlay = (TH1*)htmp->Clone();

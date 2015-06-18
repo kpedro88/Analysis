@@ -25,11 +25,11 @@ HISTO
 sigmaietaieta	i:xnum[100]	d:xmin[0.0]	d:xmax[0.07]	s:xtitle[#sigma_{i#etai#eta}]	s:ytitle[number of events]	b:ratio[0]
 
 SET
-hist	mc	QCD	c:color[kRed]	i:panel[1]
+hist	mc	QCD	c:color[kRed]	i:panel[1]	b:errband[1]
 	base	mc	QCD_HT-500to1000	s:filename[tree_QCD_HT-500to1000.root]	d:xsection[26740]
 	base	mc	QCD_HT-500to1000_ext1	s:filename[tree_QCD_HT-500to1000_ext1.root]	d:xsection[26740]
 	base	mc	QCD_HT-1000toInf	s:filename[tree_QCD_HT-1000toInf.root]	d:xsection[769.7]
 	base	mc	QCD_HT-1000toInf_ext1	s:filename[tree_QCD_HT-1000toInf_ext1.root]	d:xsection[769.7]
-hist	mc	#gamma+jets	c:color[kBlue]	i:panel[1]
+hist	mc	#gamma+jets	c:color[kBlue]	i:panel[1]	b:errband[1]
 	base	mc	GJets_HT-400to600	s:filename[tree_GJets_HT-400to600.root]	d:xsection[62.05]
 	base	mc	GJets_HT-600toInf	s:filename[tree_GJets_HT-600toInf.root]	d:xsection[20.87]
