@@ -123,6 +123,24 @@ class KElectronVetoSelector : public KSelector<KSkimmer> {
 		//member variables
 };
 
+//-------------------------------------------------------------
+//vetos events with photons
+class KPhotonVetoSelector : public KSelector<KSkimmer> {
+	public:
+		//constructor
+		KPhotonVetoSelector() : KSelector<KSkimmer>() { }
+		KPhotonVetoSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return looper->bestPhoton->size()==0;
+		}
+		
+		//member variables
+};
+
 //------------------------------------------------------
 //single muon selector
 class KMuonSelector : public KSelector<KSkimmer> {
@@ -471,6 +489,7 @@ namespace KParser {
 		else if(sname=="MHT") srtmp = new KMHTSelector(sname,omap);
 		else if(sname=="MuonVeto") srtmp = new KMuonVetoSelector(sname,omap);
 		else if(sname=="ElectronVeto") srtmp = new KElectronVetoSelector(sname,omap);
+		else if(sname=="PhotonVeto") srtmp = new KPhotonVetoSelector(sname,omap);
 		else if(sname=="Muon") srtmp = new KMuonSelector(sname,omap);
 		else if(sname=="Electron") srtmp = new KElectronSelector(sname,omap);
 		else if(sname=="Photon") srtmp = new KPhotonSelector(sname,omap);
