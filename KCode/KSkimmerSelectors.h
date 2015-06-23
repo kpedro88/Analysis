@@ -135,7 +135,7 @@ class KPhotonVetoSelector : public KSelector<KSkimmer> {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return looper->bestPhoton->size()==0;
+			return looper->NumPhotons==0;
 		}
 		
 		//member variables
