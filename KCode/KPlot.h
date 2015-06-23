@@ -417,13 +417,20 @@ class KPlot{
 			}
 			tickScaleX = (padW - marginL - marginR)/padW*padH;
 
+			//fix log-scale label offsets (not final)
+			double offX, offY, offZ;
+			offX = offY = offZ = 1.0;
+			if(pad1->GetLogx()) offX = 0.5;
+			if(pad1->GetLogy()) offY = 0.5;
+			if(pad1->GetLogz()) offZ = 0.5;
+			
 			hist->GetYaxis()->SetTitleSize(sizeT/padH);
 			hist->GetYaxis()->SetLabelSize(sizeL/padH);
-			hist->GetYaxis()->SetLabelOffset(sizeLoff/padW);
+			hist->GetYaxis()->SetLabelOffset(offY*sizeLoff/padW);
 			hist->GetYaxis()->SetTickLength(sizeTick/tickScaleY);
 			hist->GetXaxis()->SetTitleSize(sizeT/padH);
 			hist->GetXaxis()->SetLabelSize(sizeL/padH);
-			hist->GetXaxis()->SetLabelOffset(sizeLoff/padH);
+			hist->GetXaxis()->SetLabelOffset(offX*sizeLoff/padH);
 			hist->GetXaxis()->SetTickLength(sizeTick/tickScaleX);
 			hist->GetXaxis()->SetNdivisions(NdivX);
 			if(hist==ratio) hist->GetYaxis()->SetNdivisions(NdivYratio);
@@ -432,7 +439,7 @@ class KPlot{
 			//format z axis just in case
 			hist->GetZaxis()->SetTitleSize(sizeT/padH);
 			hist->GetZaxis()->SetLabelSize(sizeL/padH);
-			hist->GetZaxis()->SetLabelOffset(sizeLoff/padW);
+			hist->GetZaxis()->SetLabelOffset(offZ*sizeLoff/padW);
 			hist->GetZaxis()->SetTickLength(sizeTick/tickScaleY);
 		}
 		
