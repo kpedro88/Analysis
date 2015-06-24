@@ -183,6 +183,9 @@ class KCleanVariator : public KVariator<KSkimmer> {
 			looper->minDeltaPhiN = looper->minDeltaPhiNclean;
 			looper->METPt = looper->METPtclean;
 			
+			//keep uncleaned MHT
+			looper->MHTclean = MHT;
+			
 			if(cleanDeltaPhi){
 				DeltaPhi1 = looper->DeltaPhi1;
 				DeltaPhi2 = looper->DeltaPhi2;

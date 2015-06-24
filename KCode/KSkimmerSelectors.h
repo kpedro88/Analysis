@@ -87,6 +87,28 @@ class KMHTSelector : public KSelector<KSkimmer> {
 		double MHTmin;
 };
 
+//----------------------------------------------------
+//low MHT selection for single photon test
+class KLowMHTSelector : public KSelector<KSkimmer> {
+	public:
+		//constructor
+		KLowMHTSelector() : KSelector<KSkimmer>() { }
+		KLowMHTSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), MHTmax(200) { 
+			//check for option
+			localOpt->Get("MHTmax",MHTmax);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return looper->MHTclean < MHTmax;
+		}
+		
+		//member variables
+		double MHTmax;
+};
+
 //-------------------------------------------------------------
 //vetos events with muons
 class KMuonVetoSelector : public KSelector<KSkimmer> {
@@ -487,6 +509,7 @@ namespace KParser {
 		if(sname=="NJet") srtmp = new KNJetSelector(sname,omap);
 		else if(sname=="HT") srtmp = new KHTSelector(sname,omap);
 		else if(sname=="MHT") srtmp = new KMHTSelector(sname,omap);
+		else if(sname=="LowMHT") srtmp = new KLowMHTSelector(sname,omap);
 		else if(sname=="MuonVeto") srtmp = new KMuonVetoSelector(sname,omap);
 		else if(sname=="ElectronVeto") srtmp = new KElectronVetoSelector(sname,omap);
 		else if(sname=="PhotonVeto") srtmp = new KPhotonVetoSelector(sname,omap);
