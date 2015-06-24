@@ -497,6 +497,253 @@ class KNBJetBinSelector : public KSelector<KSkimmer> {
 };
 
 //-------------------------------------------------------------
+//special version of selector class for object sync
+class KSyncSelector : public KSelector<KSkimmer> {
+	public:
+		//constructor
+		KSyncSelector() : KSelector<KSkimmer>() { }
+		KSyncSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), depname(""), prevSel(NULL), obj_counter(0) { 
+			//check for option
+			localOpt->Get("dep",depname);
+		}
+		
+		//override accessors
+		virtual void SetSelection(KSelection<KSkimmer>* sel_) {
+			sel = sel_;
+			//set dependencies here
+			if(depname.size()>0){
+				prevSel = sel->Get<KSyncSelector*>(depname);
+				if(!prevSel){
+					cout << "Input error: dependency " << depname << " failed in " << name << "!" << endl;
+					depfailed = true;
+				}
+			}
+		}
+		virtual bool Select(){
+			if(depfailed) return false;
+			bool result = dummy || Cut();
+			if(result) counter++;
+			return result;
+		}
+		virtual void PrintEfficiency(vector<int>& widths, int prev_counter, int nentries){
+			if(dummy || !canfail) return;
+			cout << left << setw(widths[0]) << name;
+			cout << "  " << right << setw(widths[1]) << counter;
+			cout << "  " << right << setw(widths[2]) << ((double)counter/(double)nentries)*100;
+			//no rel. eff. for first selector
+			if(prev_counter>0) cout << "  " << right << setw(widths[3]) << ((double)counter/(double)prev_counter)*100;
+			else cout << "  " << right << setw(widths[3]) << " ";
+			//# of objects
+			stringstream sobj;
+			sobj << "(" << obj_counter << ")";
+			cout << "  " << right << setw(widths[3]) << sobj.str();
+			cout << endl;
+		}
+		
+		//member variables
+		vector<unsigned> goodObjects;
+		string depname;
+		KSyncSelector* prevSel;
+		
+	protected:
+		//member variables
+		int obj_counter;
+};
+
+//-------------------------------------------------------------
+//photon all selector for object sync
+class KPhotonAllSelector : public KSyncSelector {
+	public:
+		//constructor
+		KPhotonAllSelector() : KSyncSelector() { }
+		KPhotonAllSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_) { }
+
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			goodObjects.clear();
+			for(unsigned p = 0; p < looper->photonCands->size(); ++p){
+				goodObjects.push_back(p);
+				++obj_counter;
+			}
+			if(goodObjects.size()==0) return false;
+			else return true;
+		}
+		
+		//member variables
+};
+
+//-------------------------------------------------------------
+//photon eta selector for object sync
+class KPhotonEtaSelector : public KSyncSelector {
+	public:
+		//constructor
+		KPhotonEtaSelector() : KSyncSelector() { }
+		KPhotonEtaSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_) { }
+
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			goodObjects.clear();
+			for(unsigned p = 0; p < looper->photonCands->size(); ++p){
+				unsigned pp = prevSel->goodObjects[p];
+				bool goodPhoton = abs(looper->photonCands->at(pp).Eta())<1.4442 || ((abs(looper->photonCands->at(pp).Eta())>1.566 && abs(looper->photonCands->at(pp).Eta())<2.5));
+				if(goodPhoton) {
+					goodObjects.push_back(pp);
+					++obj_counter;
+				}
+			}
+			if(goodObjects.size()==0) return false;
+			else return true;
+		}
+		
+		//member variables
+};
+
+//-------------------------------------------------------------
+//photon pt selector for object sync
+class KPhotonPtSelector : public KSyncSelector {
+	public:
+		//constructor
+		KPhotonPtSelector() : KSyncSelector() { }
+		KPhotonPtSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_) { }
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			goodObjects.clear();
+			for(unsigned p = 0; p < prevSel->goodObjects.size(); ++p){
+				unsigned pp = prevSel->goodObjects[p];
+				bool goodPhoton = looper->photonCands->at(pp).Pt() > 100;
+				if(goodPhoton) {
+					goodObjects.push_back(pp);
+					++obj_counter;
+				}
+			}
+			if(goodObjects.size()==0) return false;
+			else return true;
+		}
+};
+
+//-------------------------------------------------------------
+//photon ID selector for object sync
+class KPhotonIDSelector : public KSyncSelector {
+	public:
+		//constructor
+		KPhotonIDSelector() : KSyncSelector() { }
+		KPhotonIDSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_) { }
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			goodObjects.clear();
+			for(unsigned p = 0; p < prevSel->goodObjects.size(); ++p){
+				unsigned pp = prevSel->goodObjects[p];
+				//common cut
+				bool goodPhoton = !looper->photon_hasPixelSeed->at(pp);
+				if(looper->photon_isEB->at(pp)){ //barrel cuts
+					goodPhoton &= looper->photon_hadTowOverEM->at(pp) < 0.028 && looper->photon_sigmaIetaIeta->at(pp) < 0.0107;
+				}
+				else { //endcap cuts
+					goodPhoton &= looper->photon_hadTowOverEM->at(pp) < 0.093 && looper->photon_sigmaIetaIeta->at(pp) < 0.0272;
+				}
+				if(goodPhoton) {
+					goodObjects.push_back(pp);
+					++obj_counter;
+				}
+			}
+			if(goodObjects.size()==0) return false;
+			else return true;
+		}
+};
+
+//-------------------------------------------------------------
+//photon CH iso selector for object sync
+class KPhotonCHIsoSelector : public KSyncSelector {
+	public:
+		//constructor
+		KPhotonCHIsoSelector() : KSyncSelector() { }
+		KPhotonCHIsoSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_) { }
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			goodObjects.clear();
+			for(unsigned p = 0; p < prevSel->goodObjects.size(); ++p){
+				unsigned pp = prevSel->goodObjects[p];
+				bool goodPhoton = false;
+				if(looper->photon_isEB->at(pp)){ //barrel cuts
+					goodPhoton = looper->photon_pfChargedIsoRhoCorr->at(pp) < 2.67;
+				}
+				else { //endcap cuts
+					goodPhoton = looper->photon_pfChargedIsoRhoCorr->at(pp) < 1.79;
+				}
+				if(goodPhoton) {
+					goodObjects.push_back(pp);
+					++obj_counter;
+				}
+			}
+			if(goodObjects.size()==0) return false;
+			else return true;
+		}
+};
+
+//-------------------------------------------------------------
+//photon NH iso selector for object sync
+class KPhotonNHIsoSelector : public KSyncSelector {
+	public:
+		//constructor
+		KPhotonNHIsoSelector() : KSyncSelector() { }
+		KPhotonNHIsoSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_) { }
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			goodObjects.clear();
+			for(unsigned p = 0; p < prevSel->goodObjects.size(); ++p){
+				unsigned pp = prevSel->goodObjects[p];
+				bool goodPhoton = false;
+				if(looper->photon_isEB->at(pp)){ //barrel cuts
+					goodPhoton = looper->photon_pfNeutralIsoRhoCorr->at(pp) < 7.23 + exp(0.0028*looper->photonCands->at(pp).Pt()+0.5408);
+				}
+				else { //endcap cuts
+					goodPhoton = looper->photon_pfNeutralIsoRhoCorr->at(pp) < 8.89 + 0.01725*looper->photonCands->at(pp).Pt();
+				}
+				if(goodPhoton) {
+					goodObjects.push_back(pp);
+					++obj_counter;
+				}
+			}
+			if(goodObjects.size()==0) return false;
+			else return true;
+		}
+};
+
+//-------------------------------------------------------------
+//photon PH iso selector for object sync
+class KPhotonPHIsoSelector : public KSyncSelector {
+	public:
+		//constructor
+		KPhotonPHIsoSelector() : KSyncSelector() { }
+		KPhotonPHIsoSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_) { }
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			goodObjects.clear();
+			for(unsigned p = 0; p < prevSel->goodObjects.size(); ++p){
+				unsigned pp = prevSel->goodObjects[p];
+				bool goodPhoton = false;
+				if(looper->photon_isEB->at(pp)){ //barrel cuts
+					goodPhoton = looper->photon_pfGammaIsoRhoCorr->at(pp) < 2.11 + 0.0014*looper->photonCands->at(pp).Pt();
+				}
+				else { //endcap cuts
+					goodPhoton = looper->photon_pfGammaIsoRhoCorr->at(pp) < 3.09 + 0.0091*looper->photonCands->at(pp).Pt();
+				}
+				if(goodPhoton) {
+					goodObjects.push_back(pp);
+					++obj_counter;
+				}
+			}
+			if(goodObjects.size()==0) return false;
+			else return true;
+		}
+};
+
+//-------------------------------------------------------------
 //addition to KParser to create selectors
 namespace KParser {
 	template <>
@@ -526,6 +773,13 @@ namespace KParser {
 		else if(sname=="DeltaPhi") srtmp = new KDeltaPhiSelector(sname,omap);
 		else if(sname=="EventCleaning") srtmp = new KEventCleaningSelector(sname,omap);
 		else if(sname=="NBJetBin") srtmp = new KNBJetBinSelector(sname,omap);
+		else if(sname=="PhotonAll") srtmp = new KPhotonAllSelector(sname,omap);
+		else if(sname=="PhotonEta") srtmp = new KPhotonEtaSelector(sname,omap);
+		else if(sname=="PhotonPt") srtmp = new KPhotonPtSelector(sname,omap);
+		else if(sname=="PhotonID") srtmp = new KPhotonIDSelector(sname,omap);
+		else if(sname=="PhotonCHIso") srtmp = new KPhotonCHIsoSelector(sname,omap);
+		else if(sname=="PhotonNHIso") srtmp = new KPhotonNHIsoSelector(sname,omap);
+		else if(sname=="PhotonPHIso") srtmp = new KPhotonPHIsoSelector(sname,omap);
 		else {} //skip unknown selectors
 		
 		if(!srtmp) cout << "Input error: unknown selector " << sname << ". This selector will be skipped." << endl;

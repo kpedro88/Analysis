@@ -69,6 +69,20 @@ GJet
 	MinDeltaPhiN	d:minDeltaPhiN[6]
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
+GJet-LowMHT
+	NJet	i:njet[4]
+	HT	d:HTmin[500]
+	MHT	d:MHTmin[200]
+	LowMHT	d:MHTmax[200]
+	Photon
+	MuonVeto
+	ElectronVeto
+	IsoMuonTrackVeto
+	IsoElectronTrackVeto
+	IsoPionTrackVeto
+	MinDeltaPhiN	d:minDeltaPhiN[6]
+	EventCleaning
+	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 DYm
 	NJet	i:njet[4]
 	HT	d:HTmin[500]
@@ -91,6 +105,14 @@ DYe
 	MinDeltaPhiN	d:minDeltaPhiN[6]
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
+PhotonSync
+	PhotonAll
+	PhotonEta	s:dep[PhotonAll]
+	PhotonPt	s:dep[PhotonEta]
+	PhotonID	s:dep[PhotonPt]
+	PhotonCHIso	s:dep[PhotonID]
+	PhotonNHIso	s:dep[PhotonCHIso]
+	PhotonPHIso	s:dep[PhotonNHIso]
 	
 VARIATION
 CleanVars
