@@ -97,6 +97,10 @@ class KPlot{
 			NdivX = 507; globalOpt->Get("NdivX",NdivX);
 			NdivYhisto = 510; globalOpt->Get("NdivYhisto",NdivYhisto);
 			NdivYratio = 503; globalOpt->Get("NdivYratio",NdivYratio);
+			
+			//ratio range
+			ratiomin = 0.45; globalOpt->Get("ratiomin",ratiomin);
+			ratiomax = 1.55; globalOpt->Get("ratiomax",ratiomax);
 		}
 		virtual void CreateHist(){
 			//check for TProfile case
@@ -180,7 +184,7 @@ class KPlot{
 				ratio->SetMarkerColor(kBlack);
 				ratio->SetLineColor(kBlack);
 				FormatHist(pad2,ratio);
-				ratio->GetYaxis()->SetRangeUser(0.45,1.55);
+				ratio->GetYaxis()->SetRangeUser(ratiomin,ratiomax);
 				
 				string rationame = "Data/MC";
 				globalOpt->Get<string>("rationame",rationame); //ratio name could be provided by user
@@ -485,6 +489,7 @@ class KPlot{
 		double sizeT, sizeL, sizeP, sizeTick, sizeLoff, epsilon;
 		double NdivX, NdivYhisto, NdivYratio;
 		double pad1W, pad1H, pad2W, pad2H;
+		double ratiomin, ratiomax;
 };
 
 //-----------------------------------------------------------
