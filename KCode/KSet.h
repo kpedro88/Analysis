@@ -450,7 +450,7 @@ class KSetRatio: public KSet {
 	public:
 		//constructor
 		KSetRatio() : KSet() {}
-		KSetRatio(OptionMap* localOpt_, OptionMap* globalOpt_) : KSet("ratio", localOpt_, globalOpt_) { 
+		KSetRatio(OptionMap* localOpt_, OptionMap* globalOpt_) : KSet("ratio", localOpt_, globalOpt_), btmp(0) { 
 			localOpt->Set<Color_t>("color",kBlack);
 			children.resize(2); 
 		}
@@ -470,6 +470,8 @@ class KSetRatio: public KSet {
 			TH1* hdata = children[0]->GetHisto();
 			TH1* hsim = children[1]->GetHisto();
 			TH1* hsim0 = (TH1*)hsim->Clone();
+			Color_t color;
+			localOpt->Get("color",color);
 			
 			if(hrat->GetDimension()==1){ //data/mc
 				//remove sim bin errors
@@ -482,12 +484,27 @@ class KSetRatio: public KSet {
 					hrat->Divide(static_cast<TProfile*>(hdata)->ProjectionX(),static_cast<TProfile*>(hsim0)->ProjectionX());
 				}
 				else hrat->Divide(hdata,hsim0);
-				Color_t color;
-				localOpt->Get("color",color);
 				//formatting
 				hrat->SetLineColor(color);
 				hrat->SetMarkerColor(color);
 				hrat->SetMarkerStyle(20);
+				
+				//check for binomial error case
+				if(globalOpt->Get("binomial",false) && hrat->GetDimension()==1){
+					btmp = new TGraphAsymmErrors(hdata,hsim);
+					MyBinoms.Add(stmp,btmp);
+
+					//remove x errors
+					for(int b = 0; b < btmp->GetN(); b++){
+						btmp->SetPointEXlow(b,0);
+						btmp->SetPointEXhigh(b,0);
+					}
+					
+					//formatting
+					btmp->SetLineColor(color);
+					btmp->SetMarkerColor(color);
+					btmp->SetMarkerStyle(20);
+				}
 			}
 			else if(hrat->GetDimension()==2){//(data-mc)/err
 				hrat->Add(hdata,hsim,1,-1);
@@ -536,6 +553,11 @@ class KSetRatio: public KSet {
 			pad->cd();
 			//error band enabled by default
 			if(htmp->GetDimension()==1) {
+				if(globalOpt->Get("binomial",false)){
+					btmp->Draw("PZ same");
+					return;
+				}
+				
 				if(globalOpt->Get("errband",true)) etmp->Draw("2 same");
 				htmp->Draw("PE same");
 			}
@@ -543,6 +565,11 @@ class KSetRatio: public KSet {
 				htmp->Draw("colz same");
 			}
 		}
+		
+		protected:
+		//new member variables for binomial case
+		TGraphAsymmErrors* btmp;
+		ErrorMap MyBinoms;
 		
 };
 
