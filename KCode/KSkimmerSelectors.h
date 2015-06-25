@@ -497,12 +497,34 @@ class KNBJetBinSelector : public KSelector<KSkimmer> {
 };
 
 //-------------------------------------------------------------
+//look at only a specific range of events
+class KEventRangeSelector : public KSelector<KSkimmer> {
+	public:
+		//constructor
+		KEventRangeSelector() : KSelector<KSkimmer>() { }
+		KEventRangeSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), start(0), finish(0) { 
+			//check for option
+			localOpt->Get("start",start);
+			localOpt->Get("finish",finish);
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			if(finish>=start && (looper->EvtNum < start || looper->EvtNum > finish)) return false;
+			else return true;
+		}
+		
+		//member variables
+		int start, finish;
+};
+
+//-------------------------------------------------------------
 //special version of selector class for object sync
 class KSyncSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
 		KSyncSelector() : KSelector<KSkimmer>() { }
-		KSyncSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), depname(""), prevSel(NULL), obj_counter(0) { 
+		KSyncSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), depname(""), prevSel(NULL), obj_counter(0), debug(false) { 
 			//check for option
 			localOpt->Get("dep",depname);
 		}
@@ -510,6 +532,7 @@ class KSyncSelector : public KSelector<KSkimmer> {
 		//override accessors
 		virtual void SetSelection(KSelection<KSkimmer>* sel_) {
 			sel = sel_;
+			debug = sel->GetGlobalOpt()->Get("debug",false);
 			//set dependencies here
 			if(depname.size()>0){
 				prevSel = sel->Get<KSyncSelector*>(depname);
@@ -548,6 +571,7 @@ class KSyncSelector : public KSelector<KSkimmer> {
 	protected:
 		//member variables
 		int obj_counter;
+		bool debug;
 };
 
 //-------------------------------------------------------------
@@ -565,7 +589,7 @@ class KPhotonAllSelector : public KSyncSelector {
 				goodObjects.push_back(p);
 				++obj_counter;
 			}
-			if(goodObjects.size()==0) return false;
+			if(goodObjects.size()==0) { if(debug) { cout << "found 0 photons" << endl; } return false; }
 			else return true;
 		}
 		
@@ -591,7 +615,7 @@ class KPhotonEtaSelector : public KSyncSelector {
 					++obj_counter;
 				}
 			}
-			if(goodObjects.size()==0) return false;
+			if(goodObjects.size()==0) { if(debug) { cout << "found 0 photons" << endl; } return false; }
 			else return true;
 		}
 		
@@ -608,6 +632,7 @@ class KPhotonPtSelector : public KSyncSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
+			if(debug) cout << "***** event " << looper->EvtNum << " *****" << endl;
 			goodObjects.clear();
 			for(unsigned p = 0; p < prevSel->goodObjects.size(); ++p){
 				unsigned pp = prevSel->goodObjects[p];
@@ -615,9 +640,14 @@ class KPhotonPtSelector : public KSyncSelector {
 				if(goodPhoton) {
 					goodObjects.push_back(pp);
 					++obj_counter;
+					if(debug) {
+						cout << "Photon " << pp << ": pt " << looper->photonCands->at(pp).Pt() << ", eta " << looper->photonCands->at(pp).Eta() << endl;
+						cout << "sieie " << looper->photon_sigmaIetaIeta->at(pp) << ", hOverE " << looper->photon_hadTowOverEM->at(pp) << ", hasPixelSeed " << looper->photon_hasPixelSeed->at(pp) << endl;
+						cout << "CH Iso " << looper->photon_pfChargedIsoRhoCorr->at(pp) << ", NH Iso " << looper->photon_pfNeutralIsoRhoCorr->at(pp) << ", PH Iso " << looper->photon_pfGammaIsoRhoCorr->at(pp) << endl;
+					}
 				}
 			}
-			if(goodObjects.size()==0) return false;
+			if(goodObjects.size()==0) { if(debug) { cout << "found 0 photons" << endl; } return false; }
 			else return true;
 		}
 };
@@ -646,9 +676,12 @@ class KPhotonIDSelector : public KSyncSelector {
 				if(goodPhoton) {
 					goodObjects.push_back(pp);
 					++obj_counter;
+					if(debug) {
+						cout << "Photon " << pp << ": passed ID" << endl;
+					}
 				}
 			}
-			if(goodObjects.size()==0) return false;
+			if(goodObjects.size()==0) { if(debug) { cout << "found 0 photons" << endl; } return false; }
 			else return true;
 		}
 };
@@ -678,7 +711,7 @@ class KPhotonCHIsoSelector : public KSyncSelector {
 					++obj_counter;
 				}
 			}
-			if(goodObjects.size()==0) return false;
+			if(goodObjects.size()==0) { if(debug) { cout << "found 0 photons" << endl; } return false; }
 			else return true;
 		}
 };
@@ -708,7 +741,7 @@ class KPhotonNHIsoSelector : public KSyncSelector {
 					++obj_counter;
 				}
 			}
-			if(goodObjects.size()==0) return false;
+			if(goodObjects.size()==0) { if(debug) { cout << "found 0 photons" << endl; } return false; }
 			else return true;
 		}
 };
@@ -736,10 +769,13 @@ class KPhotonPHIsoSelector : public KSyncSelector {
 				if(goodPhoton) {
 					goodObjects.push_back(pp);
 					++obj_counter;
+					if(debug) {
+						cout << "Photon " << pp << ": passed isolation" << endl;
+					}
 				}
 			}
-			if(goodObjects.size()==0) return false;
-			else return true;
+			if(goodObjects.size()==0) { if(debug) { cout << "found 0 photons" << endl; } return false; }
+			else { if(debug){ cout << "found " << goodObjects.size() << " photons" << endl; } return true; }
 		}
 };
 
@@ -773,6 +809,7 @@ namespace KParser {
 		else if(sname=="DeltaPhi") srtmp = new KDeltaPhiSelector(sname,omap);
 		else if(sname=="EventCleaning") srtmp = new KEventCleaningSelector(sname,omap);
 		else if(sname=="NBJetBin") srtmp = new KNBJetBinSelector(sname,omap);
+		else if(sname=="EventRange") srtmp = new KEventRangeSelector(sname,omap);
 		else if(sname=="PhotonAll") srtmp = new KPhotonAllSelector(sname,omap);
 		else if(sname=="PhotonEta") srtmp = new KPhotonEtaSelector(sname,omap);
 		else if(sname=="PhotonPt") srtmp = new KPhotonPtSelector(sname,omap);
