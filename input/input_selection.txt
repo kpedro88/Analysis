@@ -113,6 +113,13 @@ PhotonSync
 	PhotonCHIso	s:dep[PhotonID]
 	PhotonNHIso	s:dep[PhotonCHIso]
 	PhotonPHIso	s:dep[PhotonNHIso]
+IsoElectronTrackSync
+	IsoElectronTrack
+IsoMuonTrackSync
+	IsoMuonTrack
+IsoPionTrackSync
+	IsoPionTrack
+
 	
 VARIATION
 CleanVars

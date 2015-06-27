@@ -780,6 +780,63 @@ class KPhotonPHIsoSelector : public KSyncSelector {
 };
 
 //-------------------------------------------------------------
+//selects events with isolated electron tracks (for sync)
+class KIsoElectronTrackSelector : public KSyncSelector {
+	public:
+		//constructor
+		KIsoElectronTrackSelector() : KSyncSelector() { }
+		KIsoElectronTrackSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_) { }
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			obj_counter += looper->isoElectronTracks;
+			return looper->isoElectronTracks>0;
+		}
+		
+		//member variables
+};
+
+//-------------------------------------------------------------
+//selects events with isolated muon tracks (for sync)
+class KIsoMuonTrackSelector : public KSyncSelector {
+	public:
+		//constructor
+		KIsoMuonTrackSelector() : KSyncSelector() { }
+		KIsoMuonTrackSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_) { }
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			obj_counter += looper->isoMuonTracks;
+			return looper->isoMuonTracks>0;
+		}
+		
+		//member variables
+};
+
+//-------------------------------------------------------------
+//selects events with isolated charged hadron tracks (for sync)
+class KIsoPionTrackSelector : public KSyncSelector {
+	public:
+		//constructor
+		KIsoPionTrackSelector() : KSyncSelector() { }
+		KIsoPionTrackSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_) { }
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			obj_counter += looper->isoPionTracks;
+			return looper->isoPionTracks>0;
+		}
+		
+		//member variables
+};
+
+//-------------------------------------------------------------
 //addition to KParser to create selectors
 namespace KParser {
 	template <>
@@ -817,6 +874,9 @@ namespace KParser {
 		else if(sname=="PhotonCHIso") srtmp = new KPhotonCHIsoSelector(sname,omap);
 		else if(sname=="PhotonNHIso") srtmp = new KPhotonNHIsoSelector(sname,omap);
 		else if(sname=="PhotonPHIso") srtmp = new KPhotonPHIsoSelector(sname,omap);
+		else if(sname=="IsoElectronTrack") srtmp = new KIsoElectronTrackSelector(sname,omap);
+		else if(sname=="IsoMuonTrack") srtmp = new KIsoMuonTrackSelector(sname,omap);
+		else if(sname=="IsoPionTrack") srtmp = new KIsoPionTrackSelector(sname,omap);
 		else {} //skip unknown selectors
 		
 		if(!srtmp) cout << "Input error: unknown selector " << sname << ". This selector will be skipped." << endl;
