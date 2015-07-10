@@ -915,9 +915,22 @@ class KIsoTrackPtSelector : public KSyncSelector {
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			goodObjects.clear();
+			if(debug) cout << "***** event " << looper->EvtNum << " *****" << endl;
 			for(unsigned p = 0; p < prevSel->goodObjects.size(); ++p){
 				unsigned pp = prevSel->goodObjects[p];
-				if(looper->pfcands->at(pp).Pt() < minPt) continue;
+				if(debug){ //apply separate pt cuts manually
+					if( ( (abs(looper->pfcands_id->at(pp))==11 || abs(looper->pfcands_id->at(pp))==13) && looper->pfcands->at(pp).Pt() < 5.)
+						|| (abs(looper->pfcands_id->at(pp))==211 && looper->pfcands->at(pp).Pt() < 10.) 
+						|| looper->pfcands_chg->at(pp)==0 ) continue;
+				}
+				else{
+					if(looper->pfcands->at(pp).Pt() < minPt) continue;
+				}
+				
+				if(debug) {
+					cout << fixed << "Itk " << pp << ": type=" << setprecision(0) << looper->pfcands_id->at(pp) << ", pt=" << setprecision(3) << looper->pfcands->at(pp).Pt() << ", dz=" << looper->pfcands_dzpv->at(pp) << endl;
+					cout << "    " << "mT=" << looper->pfcands_mT->at(pp) << ", rel_iso=" << looper->pfcands_trkiso->at(pp) << endl;
+				}
 				
 				goodObjects.push_back(pp);
 				++obj_counter;

@@ -8,6 +8,7 @@
 OPTION
 int:yieldprecision[2]
 bool:doClone[1]
+bool:debug[1]
 
 SELECTION
 signal
@@ -140,6 +141,11 @@ IsoTrackSyncPion
 	IsoTrackDz	d:dzCut[0.1]	s:dep[IsoTrackPt]
 	IsoTrackIso	d:isoCut[0.1]	s:dep[IsoTrackDz]
 	IsoTrackMt	d:mtCut[100] 	s:dep[IsoTrackIso]
+IsoTrackSyncPrint
+	EventRange	i:start[9106]	i:finish[9124]
+	IsoTrackPDG	i:pdg[0]
+	IsoTrackEta	d:maxEta[2.5]	s:dep[IsoTrackPDG]
+	IsoTrackPt	d:minPt[10]	s:dep[IsoTrackEta]
 
 VARIATION
 CleanVars
