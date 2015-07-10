@@ -4,6 +4,7 @@
 //ROOT headers
 #include <TROOT.h>
 #include <TMath.h>
+#include "Math/QuantFuncMathCore.h"
 
 //STL headers
 #include <string>
@@ -37,6 +38,17 @@ namespace KMath {
 	}
 	double TransverseMass(double pt1, double phi1, double pt2, double phi2){
 		return sqrt(2*pt1*pt2*(1-cos(DeltaPhi(phi1,phi2))));
+	}
+	//ref: https://twiki.cern.ch/twiki/bin/viewauth/CMS/PoissonErrorBars
+	double PoissonErrorLow(int N){
+		const double alpha = 1 - 0.6827; //1 sigma interval
+		double L = (N==0) ? 0 : (ROOT::Math::gamma_quantile(alpha/2,N,1.));
+		return N - L;
+	}
+	double PoissonErrorUp(int N){
+		const double alpha = 1 - 0.6827; //1 sigma interval
+		double U = (ROOT::Math::gamma_quantile_c(alpha/2,N+1,1.));
+		return U - N;
 	}
 }
 
