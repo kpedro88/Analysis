@@ -109,18 +109,38 @@ PhotonSync
 	PhotonAll
 	PhotonEta	s:dep[PhotonAll]
 	PhotonPt	s:dep[PhotonEta]
-	PhotonID	s:dep[PhotonPt]
+	PhotonID	s:dep[PhotonPt]	i:vetoType[1]
 	PhotonCHIso	s:dep[PhotonID]
 	PhotonNHIso	s:dep[PhotonCHIso]
 	PhotonPHIso	s:dep[PhotonNHIso]
-IsoElectronTrackSync
-	IsoElectronTrack
 IsoMuonTrackSync
 	IsoMuonTrack
+IsoElectronTrackSync
+	IsoElectronTrack
 IsoPionTrackSync
 	IsoPionTrack
+IsoTrackSyncMuon
+	IsoTrackPDG	i:pdg[13]
+	IsoTrackEta	d:maxEta[2.5]	s:dep[IsoTrackPDG]
+	IsoTrackPt	d:minPt[5]	s:dep[IsoTrackEta]
+	IsoTrackDz	d:dzCut[0.1]	s:dep[IsoTrackPt]
+	IsoTrackIso	d:isoCut[0.2]	s:dep[IsoTrackDz]
+	IsoTrackMt	d:mtCut[100]	s:dep[IsoTrackIso]
+IsoTrackSyncElectron
+	IsoTrackPDG	i:pdg[11]
+	IsoTrackEta	d:maxEta[2.5]	s:dep[IsoTrackPDG]
+	IsoTrackPt	d:minPt[5]	s:dep[IsoTrackEta]
+	IsoTrackDz	d:dzCut[0.1]	s:dep[IsoTrackPt]
+	IsoTrackIso	d:isoCut[0.2]	s:dep[IsoTrackDz]
+	IsoTrackMt	d:mtCut[100] 	s:dep[IsoTrackIso]
+IsoTrackSyncPion
+	IsoTrackPDG	i:pdg[211]
+	IsoTrackEta	d:maxEta[2.5]	s:dep[IsoTrackPDG]
+	IsoTrackPt	d:minPt[10]	s:dep[IsoTrackEta]
+	IsoTrackDz	d:dzCut[0.1]	s:dep[IsoTrackPt]
+	IsoTrackIso	d:isoCut[0.1]	s:dep[IsoTrackDz]
+	IsoTrackMt	d:mtCut[100] 	s:dep[IsoTrackIso]
 
-	
 VARIATION
 CleanVars
 	Clean

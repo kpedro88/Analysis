@@ -59,7 +59,10 @@ public :
    Float_t         ak1p2JetsPt15Reclust_sumJetMass;
    Float_t         ak1p2JetsPt20Reclust_sumJetMass;
    Float_t         ak1p2JetsPt30Reclust_sumJetMass;
+   UChar_t         GoodVtx;
    UChar_t         JetID;
+   vector<int>     *pfcands_chg;
+   vector<int>     *pfcands_id;
    vector<int>     *MuonCharge;
    vector<int>     *ElectronCharge;
    vector<int>     *genParticles_PDGid;
@@ -68,10 +71,14 @@ public :
    vector<int>     *ak4Jets_neutralHadMult;
    vector<int>     *ak4Jets_photonMult;
    vector<int>     *ak4Jets_flavor;
+   vector<double>  *pfcands_trkiso;
+   vector<double>  *pfcands_dzpv;
+   vector<double>  *pfcands_mT;
    vector<double>  *photon_isEB;
    vector<double>  *photon_genMatched;
    vector<double>  *photon_hadTowOverEM;
    vector<double>  *photon_hasPixelSeed;
+   vector<double>  *photon_passElectronVeto;
    vector<double>  *photon_pfChargedIso;
    vector<double>  *photon_pfChargedIsoRhoCorr;
    vector<double>  *photon_pfGammaIso;
@@ -88,6 +95,7 @@ public :
    vector<double>  *ak4Jets_chargeHadEfrac;
    vector<double>  *ak4Jets_neutralHadEfrac;
    vector<double>  *ak4Jets_photonEfrac;
+   vector<TLorentzVector> *pfcands;
    vector<TLorentzVector> *Muons;
    vector<TLorentzVector> *Electrons;
    vector<TLorentzVector> *genParticles;
@@ -137,7 +145,10 @@ public :
    TBranch        *b_ak1p2JetsPt15Reclust_sumJetMass;   //!
    TBranch        *b_ak1p2JetsPt20Reclust_sumJetMass;   //!
    TBranch        *b_ak1p2JetsPt30Reclust_sumJetMass;   //!
+   TBranch        *b_GoodVtx;   //!
    TBranch        *b_JetID;   //!
+   TBranch        *b_pfcands_chg;   //!
+   TBranch        *b_pfcands_id;   //!
    TBranch        *b_MuonCharge;   //!
    TBranch        *b_ElectronCharge;   //!
    TBranch        *b_genParticles_PDGid;   //!
@@ -146,10 +157,14 @@ public :
    TBranch        *b_ak4Jets_neutralHadMult;   //!
    TBranch        *b_ak4Jets_photonMult;   //!
    TBranch        *b_ak4Jets_flavor;   //!
+   TBranch        *b_pfcands_trkiso;   //!
+   TBranch        *b_pfcands_dzpv;   //!
+   TBranch        *b_pfcands_mT;   //!
    TBranch        *b_photon_isEB;   //!
    TBranch        *b_photon_genMatched;   //!
    TBranch        *b_photon_hadTowOverEM;   //!
    TBranch        *b_photon_hasPixelSeed;   //!
+   TBranch        *b_photon_passElectronVeto;   //!
    TBranch        *b_photon_pfChargedIso;   //!
    TBranch        *b_photon_pfChargedIsoRhoCorr;   //!
    TBranch        *b_photon_pfGammaIso;   //!
@@ -166,6 +181,7 @@ public :
    TBranch        *b_ak4Jets_chargeHadEfrac;   //!
    TBranch        *b_ak4Jets_neutralHadEfrac;   //!
    TBranch        *b_ak4Jets_photonEfrac;   //!
+   TBranch        *b_pfcands;   //!
    TBranch        *b_Muons;   //!
    TBranch        *b_Electrons;   //!
    TBranch        *b_genParticles;   //!
@@ -245,6 +261,8 @@ void NtupleClass::Init(TTree *tree)
    // (once per file to be processed).
 
    // Set object pointer
+   pfcands_chg = 0;
+   pfcands_id = 0;
    MuonCharge = 0;
    ElectronCharge = 0;
    genParticles_PDGid = 0;
@@ -253,10 +271,14 @@ void NtupleClass::Init(TTree *tree)
    ak4Jets_neutralHadMult = 0;
    ak4Jets_photonMult = 0;
    ak4Jets_flavor = 0;
+   pfcands_trkiso = 0;
+   pfcands_dzpv = 0;
+   pfcands_mT = 0;
    photon_isEB = 0;
    photon_genMatched = 0;
    photon_hadTowOverEM = 0;
    photon_hasPixelSeed = 0;
+   photon_passElectronVeto = 0;
    photon_pfChargedIso = 0;
    photon_pfChargedIsoRhoCorr = 0;
    photon_pfGammaIso = 0;
@@ -273,6 +295,7 @@ void NtupleClass::Init(TTree *tree)
    ak4Jets_chargeHadEfrac = 0;
    ak4Jets_neutralHadEfrac = 0;
    ak4Jets_photonEfrac = 0;
+   pfcands = 0;
    Muons = 0;
    Electrons = 0;
    genParticles = 0;
@@ -326,7 +349,10 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("ak1p2JetsPt15Reclust_sumJetMass", &ak1p2JetsPt15Reclust_sumJetMass, &b_ak1p2JetsPt15Reclust_sumJetMass);
    fChain->SetBranchAddress("ak1p2JetsPt20Reclust_sumJetMass", &ak1p2JetsPt20Reclust_sumJetMass, &b_ak1p2JetsPt20Reclust_sumJetMass);
    fChain->SetBranchAddress("ak1p2JetsPt30Reclust_sumJetMass", &ak1p2JetsPt30Reclust_sumJetMass, &b_ak1p2JetsPt30Reclust_sumJetMass);
+   fChain->SetBranchAddress("GoodVtx", &GoodVtx, &b_GoodVtx);
    fChain->SetBranchAddress("JetID", &JetID, &b_JetID);
+   fChain->SetBranchAddress("pfcands_chg", &pfcands_chg, &b_pfcands_chg);
+   fChain->SetBranchAddress("pfcands_id", &pfcands_id, &b_pfcands_id);
    fChain->SetBranchAddress("MuonCharge", &MuonCharge, &b_MuonCharge);
    fChain->SetBranchAddress("ElectronCharge", &ElectronCharge, &b_ElectronCharge);
    fChain->SetBranchAddress("genParticles_PDGid", &genParticles_PDGid, &b_genParticles_PDGid);
@@ -335,10 +361,14 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("ak4Jets_neutralHadMult", &ak4Jets_neutralHadMult, &b_ak4Jets_neutralHadMult);
    fChain->SetBranchAddress("ak4Jets_photonMult", &ak4Jets_photonMult, &b_ak4Jets_photonMult);
    fChain->SetBranchAddress("ak4Jets_flavor", &ak4Jets_flavor, &b_ak4Jets_flavor);
+   fChain->SetBranchAddress("pfcands_trkiso", &pfcands_trkiso, &b_pfcands_trkiso);
+   fChain->SetBranchAddress("pfcands_dzpv", &pfcands_dzpv, &b_pfcands_dzpv);
+   fChain->SetBranchAddress("pfcands_mT", &pfcands_mT, &b_pfcands_mT);
    fChain->SetBranchAddress("photon_isEB", &photon_isEB, &b_photon_isEB);
    fChain->SetBranchAddress("photon_genMatched", &photon_genMatched, &b_photon_genMatched);
    fChain->SetBranchAddress("photon_hadTowOverEM", &photon_hadTowOverEM, &b_photon_hadTowOverEM);
    fChain->SetBranchAddress("photon_hasPixelSeed", &photon_hasPixelSeed, &b_photon_hasPixelSeed);
+   fChain->SetBranchAddress("photon_passElectronVeto", &photon_passElectronVeto, &b_photon_passElectronVeto);
    fChain->SetBranchAddress("photon_pfChargedIso", &photon_pfChargedIso, &b_photon_pfChargedIso);
    fChain->SetBranchAddress("photon_pfChargedIsoRhoCorr", &photon_pfChargedIsoRhoCorr, &b_photon_pfChargedIsoRhoCorr);
    fChain->SetBranchAddress("photon_pfGammaIso", &photon_pfGammaIso, &b_photon_pfGammaIso);
@@ -355,6 +385,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("ak4Jets_chargeHadEfrac", &ak4Jets_chargeHadEfrac, &b_ak4Jets_chargeHadEfrac);
    fChain->SetBranchAddress("ak4Jets_neutralHadEfrac", &ak4Jets_neutralHadEfrac, &b_ak4Jets_neutralHadEfrac);
    fChain->SetBranchAddress("ak4Jets_photonEfrac", &ak4Jets_photonEfrac, &b_ak4Jets_photonEfrac);
+   fChain->SetBranchAddress("pfcands", &pfcands, &b_pfcands);
    fChain->SetBranchAddress("Muons", &Muons, &b_Muons);
    fChain->SetBranchAddress("Electrons", &Electrons, &b_Electrons);
    fChain->SetBranchAddress("genParticles", &genParticles, &b_genParticles);

@@ -658,7 +658,10 @@ class KPhotonIDSelector : public KSyncSelector {
 	public:
 		//constructor
 		KPhotonIDSelector() : KSyncSelector() { }
-		KPhotonIDSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_) { }
+		KPhotonIDSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_), vetoType(0) { 
+			//check for option
+			localOpt->Get("vetoType",vetoType);
+		}
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
@@ -666,7 +669,9 @@ class KPhotonIDSelector : public KSyncSelector {
 			for(unsigned p = 0; p < prevSel->goodObjects.size(); ++p){
 				unsigned pp = prevSel->goodObjects[p];
 				//common cut
-				bool goodPhoton = !looper->photon_hasPixelSeed->at(pp);
+				bool goodPhoton = true;
+				if(vetoType==1) goodPhoton = !looper->photon_hasPixelSeed->at(pp);
+				else if(vetoType==2) goodPhoton = looper->photon_passElectronVeto->at(pp);
 				if(looper->photon_isEB->at(pp)){ //barrel cuts
 					goodPhoton &= looper->photon_hadTowOverEM->at(pp) < 0.028 && looper->photon_sigmaIetaIeta->at(pp) < 0.0107;
 				}
@@ -684,6 +689,9 @@ class KPhotonIDSelector : public KSyncSelector {
 			if(goodObjects.size()==0) { if(debug) { cout << "found 0 photons" << endl; } return false; }
 			else return true;
 		}
+		
+		//member variables
+		int vetoType;
 };
 
 //-------------------------------------------------------------
@@ -837,6 +845,179 @@ class KIsoPionTrackSelector : public KSyncSelector {
 };
 
 //-------------------------------------------------------------
+//isotrack pdgid selector for object sync
+class KIsoTrackPDGSelector : public KSyncSelector {
+	public:
+		//constructor
+		KIsoTrackPDGSelector() : KSyncSelector() { }
+		KIsoTrackPDGSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_), pdg(0) { 
+			//check for option
+			localOpt->Get("pdg",pdg);
+		}
+
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			goodObjects.clear();
+			for(unsigned p = 0; p < looper->pfcands->size(); ++p){
+				if(pdg!=0 && abs(looper->pfcands_id->at(p)) != pdg) continue;
+				
+				goodObjects.push_back(p);
+				++obj_counter;
+			}
+			if(goodObjects.size()==0) { if(debug) { cout << "found 0 tracks" << endl; } return false; }
+			else return true;
+		}
+		
+		//member variables
+		int pdg;
+};
+
+//-------------------------------------------------------------
+//isotrack eta selector for object sync
+class KIsoTrackEtaSelector : public KSyncSelector {
+	public:
+		//constructor
+		KIsoTrackEtaSelector() : KSyncSelector() { }
+		KIsoTrackEtaSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_), maxEta(2.5) { 
+			//check for option
+			localOpt->Get("maxEta",maxEta);
+		}
+
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			goodObjects.clear();
+			for(unsigned p = 0; p < prevSel->goodObjects.size(); ++p){
+				unsigned pp = prevSel->goodObjects[p];
+				if(fabs(looper->pfcands->at(pp).Eta()) > maxEta) continue;
+				
+				goodObjects.push_back(pp);
+				++obj_counter;
+			}
+			if(goodObjects.size()==0) { if(debug) { cout << "found 0 tracks" << endl; } return false; }
+			else return true;
+		}
+		
+		//member variables
+		double maxEta;
+};
+
+//-------------------------------------------------------------
+//isotrack pt selector for object sync
+class KIsoTrackPtSelector : public KSyncSelector {
+	public:
+		//constructor
+		KIsoTrackPtSelector() : KSyncSelector() { }
+		KIsoTrackPtSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_), minPt(5) { 
+			//check for option
+			localOpt->Get("minPt",minPt);
+		}
+
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			goodObjects.clear();
+			for(unsigned p = 0; p < prevSel->goodObjects.size(); ++p){
+				unsigned pp = prevSel->goodObjects[p];
+				if(looper->pfcands->at(pp).Pt() < minPt) continue;
+				
+				goodObjects.push_back(pp);
+				++obj_counter;
+			}
+			if(goodObjects.size()==0) { if(debug) { cout << "found 0 tracks" << endl; } return false; }
+			else return true;
+		}
+		
+		//member variables
+		double minPt;
+};
+
+//-------------------------------------------------------------
+//isotrack dz selector for object sync
+class KIsoTrackDzSelector : public KSyncSelector {
+	public:
+		//constructor
+		KIsoTrackDzSelector() : KSyncSelector() { }
+		KIsoTrackDzSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_), dzCut(0.1) { 
+			//check for option
+			localOpt->Get("dzCut",dzCut);
+		}
+
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			goodObjects.clear();
+			for(unsigned p = 0; p < prevSel->goodObjects.size(); ++p){
+				unsigned pp = prevSel->goodObjects[p];
+				if(fabs(looper->pfcands_dzpv->at(pp)) > dzCut) continue;
+				
+				goodObjects.push_back(pp);
+				++obj_counter;
+			}
+			if(goodObjects.size()==0) { if(debug) { cout << "found 0 tracks" << endl; } return false; }
+			else return true;
+		}
+		
+		//member variables
+		double dzCut;
+};
+
+//-------------------------------------------------------------
+//isotrack iso selector for object sync
+class KIsoTrackIsoSelector : public KSyncSelector {
+	public:
+		//constructor
+		KIsoTrackIsoSelector() : KSyncSelector() { }
+		KIsoTrackIsoSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_), isoCut(0.2) { 
+			//check for option
+			localOpt->Get("isoCut",isoCut);
+		}
+
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			goodObjects.clear();
+			for(unsigned p = 0; p < prevSel->goodObjects.size(); ++p){
+				unsigned pp = prevSel->goodObjects[p];
+				if(looper->pfcands_trkiso->at(pp)/looper->pfcands->at(pp).Pt() > isoCut) continue;
+				
+				goodObjects.push_back(pp);
+				++obj_counter;
+			}
+			if(goodObjects.size()==0) { if(debug) { cout << "found 0 tracks" << endl; } return false; }
+			else return true;
+		}
+		
+		//member variables
+		double isoCut;
+};
+
+//-------------------------------------------------------------
+//isotrack mT selector for object sync
+class KIsoTrackMtSelector : public KSyncSelector {
+	public:
+		//constructor
+		KIsoTrackMtSelector() : KSyncSelector() { }
+		KIsoTrackMtSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_), mtCut(100) { 
+			//check for option
+			localOpt->Get("mtCut",mtCut);
+		}
+
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			goodObjects.clear();
+			for(unsigned p = 0; p < prevSel->goodObjects.size(); ++p){
+				unsigned pp = prevSel->goodObjects[p];
+				if(mtCut > 0.01 && looper->pfcands_mT->at(pp) > mtCut) continue;
+				
+				goodObjects.push_back(pp);
+				++obj_counter;
+			}
+			if(goodObjects.size()==0) { if(debug) { cout << "found 0 tracks" << endl; } return false; }
+			else return true;
+		}
+		
+		//member variables
+		double mtCut;
+};
+
+//-------------------------------------------------------------
 //addition to KParser to create selectors
 namespace KParser {
 	template <>
@@ -877,6 +1058,12 @@ namespace KParser {
 		else if(sname=="IsoElectronTrack") srtmp = new KIsoElectronTrackSelector(sname,omap);
 		else if(sname=="IsoMuonTrack") srtmp = new KIsoMuonTrackSelector(sname,omap);
 		else if(sname=="IsoPionTrack") srtmp = new KIsoPionTrackSelector(sname,omap);
+		else if(sname=="IsoTrackPDG") srtmp = new KIsoTrackPDGSelector(sname,omap);
+		else if(sname=="IsoTrackEta") srtmp = new KIsoTrackEtaSelector(sname,omap);
+		else if(sname=="IsoTrackPt") srtmp = new KIsoTrackPtSelector(sname,omap);
+		else if(sname=="IsoTrackDz") srtmp = new KIsoTrackDzSelector(sname,omap);
+		else if(sname=="IsoTrackIso") srtmp = new KIsoTrackIsoSelector(sname,omap);
+		else if(sname=="IsoTrackMt") srtmp = new KIsoTrackMtSelector(sname,omap);
 		else {} //skip unknown selectors
 		
 		if(!srtmp) cout << "Input error: unknown selector " << sname << ". This selector will be skipped." << endl;
