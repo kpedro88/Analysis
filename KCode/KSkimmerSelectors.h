@@ -22,6 +22,46 @@ using namespace std;
 //base class for Selectors is in KSelection.h
 
 //----------------------------------------------------
+//selects events based on HLT line
+class KHLTSelector : public KSelector<KSkimmer> {
+	public:
+		//constructor
+		KHLTSelector() : KSelector<KSkimmer>() { }
+		KHLTSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { 
+			//get selected line from options
+			localOpt->Get("HLTLines",HLTLines);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			//skip if no line provided
+			if(HLTLines.size()==0) return true;
+			
+			//loop over trigger names
+			bool goodTrigger = false;
+			for(unsigned t = 0; t < looper->TriggerNames->size(); t++){
+				for(unsigned h = 0; h < HLTLines.size(); h++){
+					//check:
+					//1) if the current line matches the current trigger name
+					//2) if the decision was true (the line fired)
+					//3) if the line was not prescaled
+					if(looper->TriggerNames->at(t).compare(0,HLTLines[h].size(),HLTLines[h])==0 && looper->PassTrigger->at(t)) {
+						goodTrigger = true;
+						break;
+					}
+				}
+			}
+			//skip event if finished searching and no HLT lines found
+			return goodTrigger;
+		}
+		
+		//member variables
+		vector<string> HLTLines;
+};
+
+//----------------------------------------------------
 //selects events based on number of jets
 class KNJetSelector : public KSelector<KSkimmer> {
 	public:
@@ -71,20 +111,57 @@ class KMHTSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
 		KMHTSelector() : KSelector<KSkimmer>() { }
-		KMHTSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), MHTmin(200) { 
+		KMHTSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), MHTmin(200), debug(false), minPtMHT(30.), maxEtaMHT(5.) { 
 			//check for option
 			localOpt->Get("MHTmin",MHTmin);
+			debug = localOpt->Get("debug",false);
+			localOpt->Get("minPtMHT",minPtMHT);
+			localOpt->Get("maxEtaMHT",maxEtaMHT);
 		}
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return looper->MHT > MHTmin;
+			bool good = looper->MHT > MHTmin;
+			
+			/*
+			//if(debug && good && (looper->EvtNum==9774 || looper->EvtNum==14027 || looper->EvtNum==14052)){
+			//if(debug && good){
+			if(debug && !good && 
+				( (looper->EvtNum==109247 && looper->LumiBlockNum==3093) ||
+				  (looper->EvtNum==12650 && looper->LumiBlockNum==2127)  ||
+				  (looper->EvtNum==125279 && looper->LumiBlockNum==3253) ||
+				  (looper->EvtNum==15687 && looper->LumiBlockNum==157) )
+			  ){
+				TLorentzVector mhtLorentz; mhtLorentz.SetPtEtaPhiE(0,0,0,0);
+				int jet_ctr = 0;
+				cout << "***** event " << looper->EvtNum << " " << looper->LumiBlockNum << " *****" << endl;
+				//cout << looper->EvtNum << endl;
+				for(unsigned j = 0; j < looper->ak4Jets->size(); ++j){
+					//MHTJets cuts
+					if(looper->ak4Jets->at(j).Pt()<=minPtMHT) continue;
+					if(looper->ak4Jets->at(j).Eta()>=maxEtaMHT) continue;
+					
+					//jet has passed all cuts
+					mhtLorentz -= looper->ak4Jets->at(j);
+					cout << fixed << setprecision(2) << "Jet " << jet_ctr << ", pt " << looper->ak4Jets->at(j).Pt() << ", eta " << looper->ak4Jets->at(j).Eta() << endl;
+					++jet_ctr;
+				}
+				double MHTPhi = mhtLorentz.Phi();
+				double MHTPt = mhtLorentz.Pt();
+				cout << "MHT " << MHTPt << endl;
+			}
+			//if(debug && !good) cout << looper->RunNum << " " << looper->EvtNum << " " << looper->LumiBlockNum << ", " << looper->MHT << endl;
+			*/
+			
+			return good;
 		}
 		
 		//member variables
 		double MHTmin;
+		bool debug;
+		double minPtMHT, maxEtaMHT;
 };
 
 //----------------------------------------------------
@@ -1040,7 +1117,8 @@ namespace KParser {
 		OptionMap* omap = tmp->second;
 		
 		//check for all known selectors
-		if(sname=="NJet") srtmp = new KNJetSelector(sname,omap);
+		if(sname=="HLT") srtmp = new KHLTSelector(sname,omap);
+		else if(sname=="NJet") srtmp = new KNJetSelector(sname,omap);
 		else if(sname=="HT") srtmp = new KHTSelector(sname,omap);
 		else if(sname=="MHT") srtmp = new KMHTSelector(sname,omap);
 		else if(sname=="LowMHT") srtmp = new KLowMHTSelector(sname,omap);

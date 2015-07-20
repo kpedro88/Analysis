@@ -1,6 +1,5 @@
 #ifndef KSKIMMER_H
 #define KSKIMMER_H
-#define NtupleClass_cxx
 
 //custom headers
 #include "NtupleClass.h"
@@ -21,7 +20,10 @@
 
 using namespace std;
 
+#ifndef NtupleClass_cxx
+#define NtupleClass_cxx
 void NtupleClass::Loop() {}
+#endif
 
 class KSkimmer : public NtupleClass {
 	public :

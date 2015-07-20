@@ -161,7 +161,7 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 			else if(RA2VarNames[qty]=="BTags") val = looper->BTags;
 			else if(RA2VarNames[qty]=="MHT") val = looper->MHT;
 			else if(RA2VarNames[qty]=="HT") val = looper->HT;
-			else if(RA2VarNames[qty]=="ak1p2Jets_sumJetMass") val = looper->ak1p2Jets_sumJetMass;
+			//else if(RA2VarNames[qty]=="ak1p2Jets_sumJetMass") val = looper->ak1p2Jets_sumJetMass;
 			else {}			
 			
 			vector<unsigned> bins;
@@ -399,9 +399,9 @@ namespace KParser {
 		
 		//check for all known selectors
 		if(sname=="Histo") srtmp = new KHistoSelector(sname,omap);
-		if(sname=="DoubleCount") srtmp = new KDoubleCountSelector(sname,omap);
-		if(sname=="RA2Bin") srtmp = new KRA2BinSelector(sname,omap);
-		if(sname=="PhotonID") srtmp = new KPhotonIDSelector(sname,omap);
+		else if(sname=="DoubleCount") srtmp = new KDoubleCountSelector(sname,omap);
+		else if(sname=="RA2Bin") srtmp = new KRA2BinSelector(sname,omap);
+		else if(sname=="PhotonID") srtmp = new KPhotonIDSelector(sname,omap);
 		else {} //skip unknown selectors
 		
 		if(!srtmp) cout << "Input error: unknown selector " << sname << ". This selector will be skipped." << endl;

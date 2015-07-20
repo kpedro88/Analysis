@@ -1,13 +1,13 @@
 #ifndef KBUILDER_H
 #define KBUILDER_H
-#define TreeClass_cxx
+
 
 //custom headers
 #include "KMap.h"
 #include "KMath.h"
 #include "KParser.h"
 #include "KBase.h"
-#include "TreeClass.h"
+#include "NtupleClass.h"
 #include "KSelection.h"
 
 //custom headers for weighting
@@ -30,19 +30,22 @@
 
 using namespace std;
 
-void TreeClass::Loop() {}
+#ifndef NtupleClass_cxx
+#define NtupleClass_cxx
+void NtupleClass::Loop() {}
+#endif
 
 //---------------------------------------------------------------
 //histo builder class - loops over tree to fill histos for a base
-class KBuilder : public TreeClass {
+class KBuilder : public NtupleClass {
 	public:
 		//constructors
-		KBuilder() : TreeClass(), MyBase(0), localOpt(0), globalOpt(0), MySelection(0) {
+		KBuilder() : NtupleClass(), MyBase(0), localOpt(0), globalOpt(0), MySelection(0) {
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
 			if(globalOpt==0) globalOpt = new OptionMap();
 		}
-		KBuilder(KBase* MyBase_, TTree* tree_, KSelection<KBuilder>* sel_) : TreeClass(tree_), MyBase(MyBase_), localOpt(MyBase->GetLocalOpt()), globalOpt(MyBase->GetGlobalOpt()), MySelection(sel_) {
+		KBuilder(KBase* MyBase_, TTree* tree_, KSelection<KBuilder>* sel_) : NtupleClass(tree_), MyBase(MyBase_), localOpt(MyBase->GetLocalOpt()), globalOpt(MyBase->GetGlobalOpt()), MySelection(sel_) {
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
 			if(globalOpt==0) globalOpt = new OptionMap();

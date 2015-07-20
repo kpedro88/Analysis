@@ -8,11 +8,9 @@
 OPTION
 int:yieldprecision[2]
 bool:doClone[1]
-bool:debug[1]
 
 SELECTION
 signal
-	EventCleaning
 	NJet	i:njet[4]
 	HT	d:HTmin[500]
 	MHT	d:MHTmin[200]
@@ -21,7 +19,8 @@ signal
 	IsoMuonTrackVeto
 	IsoElectronTrackVeto
 	IsoPionTrackVeto
-	MinDeltaPhiN	d:minDeltaPhiN[6]
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3]
+	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 LDP
 	NJet	i:njet[4]
@@ -32,7 +31,7 @@ LDP
 	IsoMuonTrackVeto
 	IsoElectronTrackVeto
 	IsoPionTrackVeto
-	MinDeltaPhiN	d:minDeltaPhiN[6]	b:invert[1]
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3]	b:invert[1]
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 SLm
@@ -43,7 +42,7 @@ SLm
 	ElectronVeto
 	IsoElectronTrackVeto
 	IsoPionTrackVeto
-	MinDeltaPhiN	d:minDeltaPhiN[6]
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3]
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 SLe
@@ -54,7 +53,7 @@ SLe
 	Electron
 	IsoMuonTrackVeto
 	IsoPionTrackVeto
-	MinDeltaPhiN	d:minDeltaPhiN[6]
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3]
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 GJet
@@ -67,21 +66,7 @@ GJet
 	IsoMuonTrackVeto
 	IsoElectronTrackVeto
 	IsoPionTrackVeto
-	MinDeltaPhiN	d:minDeltaPhiN[6]
-	EventCleaning
-	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
-GJet-LowMHT
-	NJet	i:njet[4]
-	HT	d:HTmin[500]
-	MHT	d:MHTmin[200]
-	LowMHT	d:MHTmax[200]
-	Photon
-	MuonVeto
-	ElectronVeto
-	IsoMuonTrackVeto
-	IsoElectronTrackVeto
-	IsoPionTrackVeto
-	MinDeltaPhiN	d:minDeltaPhiN[6]
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3]
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 DYm
@@ -92,7 +77,7 @@ DYm
 	ElectronVeto
 	IsoElectronTrackVeto
 	IsoPionTrackVeto
-	MinDeltaPhiN	d:minDeltaPhiN[6]
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3]
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 DYe
@@ -103,49 +88,10 @@ DYe
 	DiElectron
 	IsoMuonTrackVeto
 	IsoPionTrackVeto
-	MinDeltaPhiN	d:minDeltaPhiN[6]
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3]
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
-PhotonSync
-	PhotonAll
-	PhotonEta	s:dep[PhotonAll]
-	PhotonPt	s:dep[PhotonEta]
-	PhotonID	s:dep[PhotonPt]	i:vetoType[1]
-	PhotonCHIso	s:dep[PhotonID]
-	PhotonNHIso	s:dep[PhotonCHIso]
-	PhotonPHIso	s:dep[PhotonNHIso]
-IsoMuonTrackSync
-	IsoMuonTrack
-IsoElectronTrackSync
-	IsoElectronTrack
-IsoPionTrackSync
-	IsoPionTrack
-IsoTrackSyncMuon
-	IsoTrackPDG	i:pdg[13]
-	IsoTrackEta	d:maxEta[2.5]	s:dep[IsoTrackPDG]
-	IsoTrackPt	d:minPt[5]	s:dep[IsoTrackEta]
-	IsoTrackDz	d:dzCut[0.1]	s:dep[IsoTrackPt]
-	IsoTrackIso	d:isoCut[0.2]	s:dep[IsoTrackDz]
-	IsoTrackMt	d:mtCut[100]	s:dep[IsoTrackIso]
-IsoTrackSyncElectron
-	IsoTrackPDG	i:pdg[11]
-	IsoTrackEta	d:maxEta[2.5]	s:dep[IsoTrackPDG]
-	IsoTrackPt	d:minPt[5]	s:dep[IsoTrackEta]
-	IsoTrackDz	d:dzCut[0.1]	s:dep[IsoTrackPt]
-	IsoTrackIso	d:isoCut[0.2]	s:dep[IsoTrackDz]
-	IsoTrackMt	d:mtCut[100] 	s:dep[IsoTrackIso]
-IsoTrackSyncPion
-	IsoTrackPDG	i:pdg[211]
-	IsoTrackEta	d:maxEta[2.5]	s:dep[IsoTrackPDG]
-	IsoTrackPt	d:minPt[10]	s:dep[IsoTrackEta]
-	IsoTrackDz	d:dzCut[0.1]	s:dep[IsoTrackPt]
-	IsoTrackIso	d:isoCut[0.1]	s:dep[IsoTrackDz]
-	IsoTrackMt	d:mtCut[100] 	s:dep[IsoTrackIso]
-IsoTrackSyncPrint
-	EventRange	i:start[9106]	i:finish[9124]
-	IsoTrackPDG	i:pdg[0]
-	IsoTrackEta	d:maxEta[2.5]	s:dep[IsoTrackPDG]
-	IsoTrackPt	d:minPt[10]	s:dep[IsoTrackEta]
+
 
 VARIATION
 CleanVars

@@ -31,13 +31,6 @@ namespace KParser {
 			fields.push_back(field);
 		}
 	}
-	//finds the first location of a given char in a string
-	int searchLine(string line, char val){
-		for(int i = 0; i < line.size(); i++){
-			if(line[i]==val) return i;
-		}
-		return -1;
-	}
 	//turns text input into ROOT colors: kXXX +/- #
 	Color_t processColor(string line){
 		//color input is space-separated
@@ -77,16 +70,16 @@ namespace KParser {
 	//splits option format into three components: type:name[value]
 	bool splitOption(string line, vector<string>& fields){
 		//first component: type
-		int colon = searchLine(line, ':');
-		if(colon>-1) {
+		int colon = line.find(':');
+		if(colon!=string::npos) {
 			fields.push_back(line.substr(0,colon));
 			line.erase(0,colon+1);
 		}
 		else return false;
 		
 		//second component: name
-		int lbracket = searchLine(line, '[');
-		if(lbracket>-1){
+		int lbracket = line.find('[');
+		if(lbracket!=string::npos){
 			fields.push_back(line.substr(0,lbracket));
 			line.erase(0,lbracket+1);
 		}

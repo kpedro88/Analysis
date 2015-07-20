@@ -150,21 +150,7 @@ class KCleanVariator : public KVariator<KSkimmer> {
 	public:
 		//constructor
 		KCleanVariator() : KVariator<KSkimmer>() { }
-		KCleanVariator(string name_, OptionMap* localOpt_) : KVariator<KSkimmer>(name_,localOpt_), 
-		cleanDeltaPhi(false), minPtMHT(30.), maxEtaMHT(5.), minPtHT(30.), maxEtaHT(2.4), muonR(0.4), electronR(0.4), photonR(0.4)
-		{ 
-			//check for options
-			cleanDeltaPhi = localOpt->Get("cleanDeltaPhi",false);
-			if(cleanDeltaPhi){
-				localOpt->Get("minPtMHT",minPtMHT);
-				localOpt->Get("maxEtaMHT",maxEtaMHT);
-				localOpt->Get("minPtHT",minPtHT);
-				localOpt->Get("maxEtaHT",maxEtaHT);
-				localOpt->Get("muonR",muonR);
-				localOpt->Get("electronR",electronR);
-				localOpt->Get("photonR",photonR);
-			}
-		}
+		KCleanVariator(string name_, OptionMap* localOpt_) : KVariator<KSkimmer>(name_,localOpt_) {}
 		//functions
 		virtual void DoVariation() {			
 			//store original values
@@ -174,6 +160,9 @@ class KCleanVariator : public KVariator<KSkimmer> {
 			MHT = looper->MHT;
 			minDeltaPhiN = looper->minDeltaPhiN;
 			METPt = looper->METPt;
+			DeltaPhi1 = looper->DeltaPhi1;
+			DeltaPhi2 = looper->DeltaPhi2;
+			DeltaPhi3 = looper->DeltaPhi3;
 			
 			//set to clean vars
 			looper->NJets = looper->NJetsclean;
@@ -182,59 +171,9 @@ class KCleanVariator : public KVariator<KSkimmer> {
 			looper->MHT = looper->MHTclean;
 			looper->minDeltaPhiN = looper->minDeltaPhiNclean;
 			looper->METPt = looper->METPtclean;
-			
-			//keep uncleaned MHT
-			looper->MHTclean = MHT;
-			
-			if(cleanDeltaPhi){
-				DeltaPhi1 = looper->DeltaPhi1;
-				DeltaPhi2 = looper->DeltaPhi2;
-				DeltaPhi3 = looper->DeltaPhi3;
-				
-				//we have to clean DeltaPhi by hand...
-				//first recalculate cleaned MHT to get MHTPhi variable
-				vector<TLorentzVector> htjets;
-				TLorentzVector mhtLorentz; mhtLorentz.SetPtEtaPhiE(0,0,0,0);
-				for(unsigned j = 0; j < looper->ak4Jets->size(); ++j){
-					//MHTJets cuts
-					if(looper->ak4Jets->at(j).Pt()<=minPtMHT) continue;
-					if(looper->ak4Jets->at(j).Eta()>=maxEtaMHT) continue;
-					
-					//object cleaning
-					bool overlap = false;
-					for(unsigned m = 0; m < looper->Muons->size(); ++m){
-						if(KMath::DeltaR(looper->Muons->at(m).Phi(),looper->Muons->at(m).Eta(),looper->ak4Jets->at(j).Phi(),looper->ak4Jets->at(j).Eta())<muonR) { overlap = true; break; }
-					}
-					if(overlap) continue;
-					for(unsigned e = 0; e < looper->Electrons->size(); ++e){
-						if(KMath::DeltaR(looper->Electrons->at(e).Phi(),looper->Electrons->at(e).Eta(),looper->ak4Jets->at(j).Phi(),looper->ak4Jets->at(j).Eta())<electronR) { overlap = true; break; }
-					}
-					if(overlap) continue;
-					for(unsigned g = 0; g < looper->bestPhoton->size(); ++g){
-						if(KMath::DeltaR(looper->bestPhoton->at(g).Phi(),looper->bestPhoton->at(g).Eta(),looper->ak4Jets->at(j).Phi(),looper->ak4Jets->at(j).Eta())<photonR) { overlap = true; break; }
-					}
-					if(overlap) continue;
-					
-					//jet has passed all cuts
-					mhtLorentz -= looper->ak4Jets->at(j);
-					
-					//HTJets cuts for actual deltaphi calc
-					if(looper->ak4Jets->at(j).Pt()>minPtHT && looper->ak4Jets->at(j).Eta()<maxEtaHT) htjets.push_back(looper->ak4Jets->at(j));
-				}
-			
-				double MHTPhiclean = mhtLorentz.Phi();
-				//test MHT clean calc
-				//cout << "delta MHT clean = " << mhtLorentz.Pt() - looper->MHTclean << endl;
-				
-				//reset vars
-				looper->DeltaPhi1 = looper->DeltaPhi2 = looper->DeltaPhi3 = 0;
-				for(unsigned j = 0; j < min((unsigned)3,(unsigned)htjets.size()); ++j){
-					//recalc delta phi
-					if(j==0) looper->DeltaPhi1 = abs(KMath::DeltaPhi(htjets.at(j).Phi(),MHTPhiclean));
-					else if(j==1) looper->DeltaPhi2 = abs(KMath::DeltaPhi(htjets.at(j).Phi(),MHTPhiclean));
-					else if(j==2) looper->DeltaPhi3 = abs(KMath::DeltaPhi(htjets.at(j).Phi(),MHTPhiclean));
-				}
-			}
+			looper->DeltaPhi1 = looper->DeltaPhi1clean;
+			looper->DeltaPhi2 = looper->DeltaPhi2clean;
+			looper->DeltaPhi3 = looper->DeltaPhi3clean;
 		}
 		virtual void UndoVariation() {
 			//restore original values
@@ -244,16 +183,12 @@ class KCleanVariator : public KVariator<KSkimmer> {
 			looper->MHT = MHT;
 			looper->minDeltaPhiN = minDeltaPhiN;
 			looper->METPt = METPt;
-			if(cleanDeltaPhi){
-				looper->DeltaPhi1 = DeltaPhi1;
-				looper->DeltaPhi2 = DeltaPhi2;
-				looper->DeltaPhi3 = DeltaPhi3;
-			}
+			looper->DeltaPhi1 = DeltaPhi1;
+			looper->DeltaPhi2 = DeltaPhi2;
+			looper->DeltaPhi3 = DeltaPhi3;
 		}
 		
 		//member variables
-		bool cleanDeltaPhi;
-		double minPtMHT, maxEtaMHT, minPtHT, maxEtaHT, muonR, electronR, photonR;
 		Int_t           NJets;
 		Int_t           BTags;
 		Float_t         HT;
