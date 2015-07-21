@@ -13,5 +13,5 @@ for SAMPLE in T1bbbb_1000_900 T1bbbb_1500_100 T1qqqq_1000_800 T1qqqq_1400_100 T1
 
 for SAMPLE in DoubleEG DoubleMuon EGamma HTMHT MET SingleElectron SingleMu SingleMuon SinglePhoton
   do
-    ./SKtemp.sh ${JOBDIR} input/input_selection_data.txt ${SAMPLE} signal,LDP,SLm,SLe,GJet_CleanVars,DYm_CleanVars,DYe_CleanVars root://cmseos.fnal.gov//store/user/awhitbe1/Run2015B-PromptReco_July17 tree ${STORE}
+    ./SKtemp.sh ${JOBDIR} input/input_selection_hlt.txt ${SAMPLE} signal,LDP,SLm,SLe,GJet_CleanVars,DYm_CleanVars,DYe_CleanVars root://cmseos.fnal.gov//store/user/awhitbe1/Run2015B-PromptReco_July17 tree ${STORE}
   done
