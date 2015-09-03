@@ -23,13 +23,16 @@
 using namespace std;
 
 //----------------------------------------------------------------------------------------------
-//little class to store legend entry info before legend construction
+//little class to store legend entry info before legend construction, automatically checks size
 class KLegendEntry {
 	public:
 		//constructor
-		KLegendEntry() : obj(NULL), label(""), option("") {}
-		KLegendEntry(TObject* obj_, string label_, string option_) : 
-					obj(obj_), label(label_), option(option_) {}
+		KLegendEntry() : obj(NULL), label(""), option(""), legwidth(0.), legheight(0.) {}
+		KLegendEntry(TObject* obj_, string label_, string option_, TPad* pad_=NULL, double legentry_=0.) : 
+					obj(obj_), label(label_), option(option_), legwidth(0.), legheight(0.)
+		{
+			if(pad_) CheckSize(pad_,legentry_);
+		}
 		
 		//accessors
 		TObject* GetObj() { return obj; }
@@ -39,11 +42,21 @@ class KLegendEntry {
 			if(obj && obj->InheritsFrom("TH1")) return (TH1*)obj;
 			else return NULL;
 		}
+		void CheckSize(TPad* pad, double legentry){
+			pad->cd();
+			TLatex size_test(0,0,label.c_str());
+			size_test.SetTextSize(legentry);
+			legwidth = size_test.GetXsize();
+			legheight = size_test.GetYsize();
+		}
+		double GetWidth() { return legwidth; }
+		double GetHeight() { return legheight; }
 		
 	protected:
 		//member variables
 		TObject* obj;
 		string label, option;
+		double legwidth, legheight;
 };
 
 //----------------------------------------------------------------------------------------------
@@ -54,12 +67,23 @@ class KLegendMultiEntry {
 		KLegendMultiEntry() : entries(), legwidth(0.), legheight(0.) {}
 		
 		//accessors
-		void push_back(KLegendEntry ent) { entries.push_back(ent); }
-		void SetSize(double legw, double legh) { legwidth = legw; legheight = legh; }
+		void push_back(KLegendEntry ent) { 
+			entries.push_back(ent);
+			//check width and height
+			if(ent.GetWidth() > legwidth) legwidth = ent.GetWidth();
+			legheight += ent.GetHeight();
+		}
+		void push_back(KLegendMultiEntry& multi){
+			for(unsigned e = 0; e < multi.entries.size(); ++e){
+				push_back(multi.entries[e]);
+			}
+		}
+		unsigned size() { return entries.size(); }
+		KLegendEntry& back() { return entries.back(); }
 		vector<KLegendEntry>& GetEntries() { return entries; }
+		KLegendEntry& operator[](unsigned e) { return entries[e]; }
 		double GetWidth() { return legwidth; }
 		double GetHeight() { return legheight; }
-		int GetLines() { return entries.size(); }
 		
 	protected:
 		//member variables
@@ -96,9 +120,7 @@ class KLegend{
 			//get panel setting (global overrides local)
 			localOpt->Get("npanel",npanel);
 			globalOpt->Get("npanel",npanel);
-			entries.resize(npanel,vector<KLegendEntry>());
-			legheights.resize(npanel,0.);
-			legwidths.resize(npanel,0.);
+			entries.resize(npanel,KLegendMultiEntry());
 			
 			//allow multiple lines of text at top of legend
 			vector<string> extra_text;
@@ -150,7 +172,7 @@ class KLegend{
 			tbound = 1 - (pad->GetTopMargin() + xtick);
 			bbound = 1 - (pad->GetTopMargin() + xtick);
 			
-			//balancing algorithm, puts MultiEntry entries into simple entries vector(s)
+			//balancing algorithm, puts MultiEntry entries into panel entries vector(s)
 			if(balance_panels){
 				//sum up heights
 				vector<double> multi_legheights(multi_entries.size(),0.);
@@ -182,9 +204,7 @@ class KLegend{
 					if(p>0) e_min = min_index_legheight[p-1]+1;
 					if(debug) cout << "panel " << p << ": " << e_min << ", " << min_index_legheight[p] << endl;
 					for(unsigned e = e_min; e <= min_index_legheight[p]; e++){
-						legheights[p] += multi_entries[e].GetHeight();
-						if(multi_entries[e].GetWidth()>legwidths[p]) legwidths[p] = multi_entries[e].GetWidth();
-						entries[p].insert(entries[p].end(),multi_entries[e].GetEntries().begin(),multi_entries[e].GetEntries().end());
+						entries[p].push_back(multi_entries[e]);
 					}
 				}
 				
@@ -195,8 +215,8 @@ class KLegend{
 			legwidth = legheight = 0;
 			for(unsigned p = 0; p < npanel; p++){
 				if(entries[p].size()>max_panel_entries) max_panel_entries = entries[p].size();
-				if(legheights[p]>legheight) legheight = legheights[p];
-				legwidth += legwidths[p];
+				if(entries[p].GetHeight()>legheight) legheight = entries[p].GetHeight();
+				legwidth += entries[p].GetWidth();
 			}
 			
 			//symbol box takes up fMargin = 0.25 by default (now configurable)
@@ -362,49 +382,22 @@ class KLegend{
 			pad->cd();
 			if(leg) leg->Draw("same");
 		}
-		void AddEntry(TObject* obj, string label, string option, unsigned panel=0, const vector<string>& extra_text=vector<string>()){
+		void AddEntry(TObject* obj, string label, string option, unsigned panel=0, const vector<string>& extra_text=vector<string>(), bool addToPrev=false){
 			if(panel>=npanel) panel = npanel - 1;
 		
-			KLegendMultiEntry multi;
-		
-			//check size of each entry, add to multi
-			pair<double,double> e_legsize = CheckSize(label);
-			TH1* htest = NULL;
-			if(balance_panels) {
-				multi.push_back(KLegendEntry(obj,label,option));
-				htest = multi.GetEntries().back().GetHist();
-			}
-			else {
-				entries[panel].push_back(KLegendEntry(obj,label,option));
-				htest = entries[panel].back().GetHist();
-			}
-			if(htest) hists.push_back(htest);
-			for(unsigned t = 0; t < extra_text.size(); t++){
-				pair<double,double> e_tmp = CheckSize(extra_text[t]);
-				if(e_tmp.first > e_legsize.first) e_legsize.first = e_tmp.first;
-				e_legsize.second += e_tmp.second;
-				
-				if(balance_panels) multi.push_back(KLegendEntry((TObject*)NULL,extra_text[t],""));
-				else entries[panel].push_back(KLegendEntry((TObject*)NULL,extra_text[t],""));
-			}
-
-			//store multi
-			if(balance_panels){
-				multi.SetSize(e_legsize.first,e_legsize.second);
-				multi_entries.push_back(multi);
-			}
-			//set size
-			else {
-				legheights[panel] += e_legsize.second;
-				if(e_legsize.first>legwidths[panel]) legwidths[panel] = e_legsize.first;
-			}
+			if(balance_panels && (!addToPrev || multi_entries.size()==0)) multi_entries.push_back(KLegendMultiEntry());
 			
-		}
-		pair<double,double> CheckSize(string text){
-			pad->cd();
-			TLatex size_test(0,0,text.c_str());
-			size_test.SetTextSize(legentry);
-			return make_pair(size_test.GetXsize(), size_test.GetYsize());
+			KLegendMultiEntry& multi = balance_panels ? multi_entries.back() : entries[panel];
+		
+			//add entry to multi & check histo
+			TH1* htest = NULL;
+			multi.push_back(KLegendEntry(obj,label,option,pad,legentry));
+			htest = multi.back().GetHist();
+			if(htest) hists.push_back(htest);
+			//add extra text to multi
+			for(unsigned t = 0; t < extra_text.size(); t++){				
+				multi.push_back(KLegendEntry((TObject*)NULL,extra_text[t],"",pad,legentry));
+			}
 		}
 		
 		//accessors
@@ -427,12 +420,11 @@ class KLegend{
 		int npanel;
 		bool balance_panels;
 		double legwidth, legheight;
-		vector<double> legwidths, legheights;
 		double lbound, rbound, tbound, bbound;
 		double umin, umax, vmin, vmax;
 		double padH, sizeLeg, legentry, sizeSymb;
 		vector<KLegendMultiEntry> multi_entries;
-		vector<vector<KLegendEntry> > entries;
+		vector<KLegendMultiEntry> entries;
 		vector<TH1*> hists;
 		TLegend* leg;
 		double ymin, ymax;
