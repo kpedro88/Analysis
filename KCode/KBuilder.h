@@ -1,6 +1,8 @@
 #ifndef KBUILDER_H
 #define KBUILDER_H
 
+#ifndef NtupleClass_cxx
+#define NtupleClass_cxx
 
 //custom headers
 #include "KMap.h"
@@ -30,10 +32,7 @@
 
 using namespace std;
 
-#ifndef NtupleClass_cxx
-#define NtupleClass_cxx
 void NtupleClass::Loop() {}
-#endif
 
 //---------------------------------------------------------------
 //histo builder class - loops over tree to fill histos for a base
@@ -263,4 +262,5 @@ void KBaseMC::Build(){
 	}
 }
 
+#endif
 #endif

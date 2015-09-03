@@ -6,6 +6,7 @@
 #include "KSet.h"
 #include "KPlot.h"
 #include "KLegend.h"
+#include "KBuilder.h"
 #include "KBuilderSelectors.h"
 #include "KBuilderVariators.h"
 

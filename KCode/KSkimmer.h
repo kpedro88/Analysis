@@ -1,6 +1,9 @@
 #ifndef KSKIMMER_H
 #define KSKIMMER_H
 
+#ifndef NtupleClass_cxx
+#define NtupleClass_cxx
+
 //custom headers
 #include "NtupleClass.h"
 #include "KMap.h"
@@ -20,10 +23,7 @@
 
 using namespace std;
 
-#ifndef NtupleClass_cxx
-#define NtupleClass_cxx
 void NtupleClass::Loop() {}
-#endif
 
 class KSkimmer : public NtupleClass {
 	public :
@@ -94,4 +94,10 @@ class KSkimmer : public NtupleClass {
 
 };
 
+//fake implementations of unneeded KBase classes
+void KBase::Build() {}
+void KBaseData::Build() {}
+void KBaseMC::Build() {}
+
+#endif
 #endif
