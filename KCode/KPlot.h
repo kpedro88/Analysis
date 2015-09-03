@@ -176,6 +176,7 @@ class KPlot{
 				can->cd();
 				pad2->SetMargin(marginL/pad2W,marginR/pad2W,marginB/pad2H,marginM2/pad2H);
 				pad2->SetTicks(1,1);
+				if(localOpt->Get("logx",false)) pad2->SetLogx(); //logx off by default (i.e. linx on by default)
 				pad2->Draw();
 			
 				//format ratio histo
