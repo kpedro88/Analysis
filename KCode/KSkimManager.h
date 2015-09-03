@@ -20,7 +20,6 @@
 #include <iomanip>
 #include <cmath>
 #include <utility>
-#include <unistd.h> //for sleep
 
 using namespace std;
 
@@ -89,13 +88,12 @@ class KSkimManager : public KManager {
 			
 			//final stuff
 			MyBase->CloseFile();
-			//if(globalOpt->Get("doBatch",false)) sleep(30);
 		}
 		
 	private:
 		//member variables
 		string setname, seltypes, outdir;
-		bool doBatch, doClone;
+		bool doClone;
 		KSkimmer* skimmer;
 		KBase* MyBase;
 };

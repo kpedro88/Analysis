@@ -253,8 +253,6 @@ class KPlotManager : public KManager {
 				}
 			}
 			
-			
-			
 			//build everything
 			for(unsigned s = 0; s < MySets.size(); s++){
 				MySets[s]->Build();
