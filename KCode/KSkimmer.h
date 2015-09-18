@@ -28,17 +28,8 @@ void NtupleClass::Loop() {}
 class KSkimmer : public NtupleClass {
 	public :
 		//constructor
-		KSkimmer(TTree* tree, TH1F* nEventHist_, OptionMap* globalOpt_) : 
-			NtupleClass(tree), nEventHist(nEventHist_), globalOpt(globalOpt_), nentries(0), width1(0)
-		{ 
-			//must always have an option map
-			if(!globalOpt) globalOpt = new OptionMap();
-			
-			//PDG mass values in GeV
-			MuonMass = 0.1056583715;
-			ElectronMass = 0.000510998928;
-			TauMass = 1.77682;	
-		}
+		KSkimmer(TTree* tree, TH1F* nEventHist_, TH1F* nEventNegHist_, OptionMap* globalOpt_) : 
+			NtupleClass(tree), nEventHist(nEventHist_), nEventNegHist(nEventNegHist_), globalOpt(globalOpt_ ? globalOpt_ : new OptionMap()), nentries(0), width1(0) { }
 		//destructor
 		virtual ~KSkimmer() {}
 		//functions
@@ -54,6 +45,15 @@ class KSkimmer : public NtupleClass {
 			if(globalOpt->Get("maxevents",maxevents) && maxevents < nentries) nentries = maxevents;
 			//if(nentries>10000) nentries = 10000;
 			
+			//create nEventProc if necessary
+			if(!nEventHist){
+				nEventHist = new TH1F("nEventProc","",1,0,1);
+				nEventHist->SetBinContent(1,nentries);
+			}
+			if(!nEventNegHist){
+				nEventNegHist = new TH1F("nEventNeg","",1,0,1);
+			}
+			
 			Long64_t nbytes = 0, nb = 0;
 			for (Long64_t jentry=0; jentry<nentries;jentry++) {
 				Long64_t ientry = LoadTree(jentry);
@@ -61,21 +61,17 @@ class KSkimmer : public NtupleClass {
 				nb = fChain->GetEntry(jentry);   nbytes += nb;
 				if(jentry % 10000 == 0) cout << "Skimming " << jentry << "/" << nentries << endl;
 				
+				if(GetEventSign()==-1) nEventNegHist->AddBinContent(1);
+				
 				for(unsigned s = 0; s < theSelections.size(); s++){
 					theSelections[s]->DoSelection();
 				}
 			}
 			
-			//create nEventProc if necessary
-			if(!nEventHist){
-				nEventHist = new TH1F("nEventProc","",1,0,1);
-				nEventHist->SetBinContent(1,nentries);
-			}
-			
 			//final steps
 			for(unsigned s = 0; s < theSelections.size(); s++){
 				theSelections[s]->PrintEfficiency(width1,nentries);
-				theSelections[s]->Finalize(nEventHist);
+				theSelections[s]->Finalize(nEventHist,nEventNegHist);
 			}
 		}
 		void AddSelection(KSelection<KSkimmer>* sel) {
@@ -83,13 +79,14 @@ class KSkimmer : public NtupleClass {
 			theSelections.push_back(sel);
 			if(sel->GetSelectorWidth()>width1) width1 = sel->GetSelectorWidth();
 		}
+		//implemented in KSkimmerSelectors for future reasons
+		int GetEventSign();
 		
 		//member variables
-		TH1F *nEventHist;
+		TH1F *nEventHist, *nEventNegHist;
 		vector<KSelection<KSkimmer>*> theSelections;
 		OptionMap* globalOpt;
 		Long64_t nentries;
-		double  MuonMass, ElectronMass, TauMass;
 		int width1;
 
 };

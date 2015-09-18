@@ -1,9 +1,17 @@
 #!/bin/bash
 
+#helper function
+contains(){
+	for name in $1; do
+		[[ "$name" == $2 ]] && return 0
+	done
+	return 1
+}
+
 #assumptions in this script:
 #all .jdl and .condor files are in the same directory, JOBDIR
 #all .jdl files are named jobExecCondor_JOBNAME.jdl
-#all .condor files are named JOBNAME_$(Cluster)_$(Process).condor
+#all .condor files are named JOBNAME_$(Cluster).condor
 #one .jdl file per JOBNAME (i.e. only "Queue 1" is used)
 
 JOBDIR=$1
@@ -31,17 +39,18 @@ echo "cd ${JOBDIR}" >> ${OUTNAME}
 joblist=""
 
 #search for "return value" in condor logs newer than TIME - denotes finished job
-for file in $(grep -lw "return value" $(find ${JOBDIR}/*.condor -newermt "${TIME}")); do
+#or "condor_rm" - denotes removed job
+for file in $(grep -lw "return value\|condor_rm" $(find ${JOBDIR}/*.condor -newermt "${TIME}")); do
 	#skip job if it finished successfully - return value 0
 	success=$(grep -lw "return value 0" ${file})
 	if [[ -n "$success" ]]; then
 		continue
 	fi
 	
-	base=$(echo $(basename ${file}) | rev | cut -d'_' -f1-2 --complement | rev)
+	base=$(echo $(basename ${file}) | rev | cut -d'_' -f1-1 --complement | rev)
 	
 	#skip job if it has already been checked
-	if [[ "$joblist" == *$base* ]]; then
+	if contains "$joblist" $base; then
 		continue
 	fi
 	

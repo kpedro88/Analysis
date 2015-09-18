@@ -70,9 +70,9 @@ class KBase {
 						return;
 					}
 					
-					//loop over ranges
+					//loop over ranges (inclusive)
 					//todo: add option to exclude certain files?
-					filenames.reserve(filerange[1]-filerange[0]);
+					filenames.reserve(filerange[1]-filerange[0]+1);
 					for(int f = filerange[0]; f <= filerange[1]; f++){
 						stringstream fs;
 						fs << filepre << f << filesuff;
@@ -84,8 +84,7 @@ class KBase {
 				tree = new TChain(("tree_"+name).c_str());
 				string chainsuff = "";
 				localOpt->Get("chainsuff",chainsuff);
-				//store this value (number of events processed) at the beginning so histo only has to be accessed once
-				int nEventProc = 0;
+
 				for(unsigned f = 0; f < filenames.size(); f++){
 					filename = filenames[f];
 					if(use_treedir) filename = treedir + "/" + filename;
@@ -106,6 +105,15 @@ class KBase {
 							nEventHist->SetDirectory(0);
 						}
 					}
+					TH1F* nEventNegHistTmp = (TH1F*)ftmp->Get("nEventNeg");
+					//sum up nEventNeg histos
+					if(nEventNegHistTmp) {
+						if(nEventNegHist) nEventNegHist->Add(nEventNegHistTmp);
+						else {
+							nEventNegHist = (TH1F*)nEventNegHistTmp->Clone("nEventNeg");
+							nEventNegHist->SetDirectory(0);
+						}
+					}
 					ftmp->Close();
 				}
 				if(tree->GetEntries()==0){
@@ -114,8 +122,6 @@ class KBase {
 					tree = NULL;
 					return;
 				}
-				if(nEventHist) nEventProc = nEventHist->GetBinContent(1);
-				localOpt->Set("nEventProc",max(nEventProc,1));
 			}
 			else if(localOpt->Get("filename",filename)){
 				//get directory from global
@@ -128,12 +134,19 @@ class KBase {
 				}
 				//get tree
 				tree = (TTree*)file->Get("tree");
-				//store this value (number of events processed) at the beginning so histo only has to be accessed once
-				int nEventProc = 1;
+				
 				nEventHist = (TH1F*)file->Get("nEventProc");
-				if(nEventHist) nEventProc = nEventHist->GetBinContent(1);
-				localOpt->Set("nEventProc",nEventProc);
+				nEventNegHist = (TH1F*)file->Get("nEventNeg");
 			}
+
+			//store this value (number of events processed) at the beginning so histo only has to be accessed once
+			int nEventProc = 0;
+			if(nEventHist) {
+				nEventProc = nEventHist->GetBinContent(1);
+				//for samples with negative weights, Neff = Npos - Nneg = Ntot - 2*Nneg
+				if(nEventNegHist) nEventProc -= 2*(nEventNegHist->GetBinContent(1));
+			}
+			localOpt->Set("nEventProc",max(nEventProc,1));
 		}
 		//destructor
 		virtual ~KBase() {}
@@ -236,15 +249,16 @@ class KBase {
 			if(toYield) htmp->Scale(nn/simyield);
 			else htmp->Scale(nn);
 		}
-
+		virtual TTree* GetTree() { return tree; }
+		virtual TH1F* GetNEventHist() { return nEventHist; }
+		virtual TH1F* GetNEventNegHist() { return nEventNegHist; }
+		
 		//other virtual functions (unimplemented at this level)
 		virtual void Draw(TPad* pad) {}
 		virtual void AddToLegend(KLegend* kleg, string option="") {}
 		virtual void AddChild(KBase* ch) {}
 		virtual void SetAddExt(bool ae) {}
 		virtual void Build(TH1* hrat_) {}
-		virtual TTree* GetTree() { return tree; }
-		virtual TH1F* GetNEventHist() { return nEventHist; }
 		
 	protected:
 		//member variables
@@ -254,7 +268,7 @@ class KBase {
 		OptionMap* globalOpt;
 		TFile* file;
 		TTree* tree;
-		TH1F* nEventHist;
+		TH1F *nEventHist, *nEventNegHist;
 		KBuilder* MyBuilder;
 		KSelection<KBuilder>* MySelection;
 		HistoMap MyHistos;

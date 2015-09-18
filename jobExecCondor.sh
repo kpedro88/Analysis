@@ -39,10 +39,19 @@ cd src/Analysis
 echo "run: root -b -q -l 'KSkimDriver.C+("$INPUT","$SAMPLE","$SELTYPE","$INDIR","$OUTDIR")' 2>&1"
 root -b -q -l 'KSkimDriver.C+("'$INPUT'","'$SAMPLE'","'$SELTYPE'","'$INDIR'","'$OUTDIR'")' 2>&1
 
-# copy output to eos
-echo "xrdcp output for condor"
-for TREEDIR in ${OUTDIR}*/
-  do
-    xrdcp -R -f ${TREEDIR} ${STORE}/${TREEDIR}
-	rm -r ${TREEDIR}
-  done
+ROOTEXIT=$?
+
+if [[ $ROOTEXIT -ne 0 ]]; then
+  echo "exit code $ROOTEXIT, skipping xrdcp"
+  return $ROOTEXIT
+else
+  # copy output to eos
+  echo "xrdcp output for condor"
+  for TREEDIR in ${OUTDIR}*/
+    do
+      xrdcp -R -f ${TREEDIR} ${STORE}/${TREEDIR}
+      rm -r ${TREEDIR}
+    done
+fi
+
+

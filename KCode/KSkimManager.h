@@ -41,7 +41,7 @@ class KSkimManager : public KManager {
 			MyBase->GetLocalOpt()->Get("mother",mother);
 			globalOpt->Set("mother",mother);
 			if(MyBase->GetTree()==NULL) { parsed = false; return; }//safety check
-			skimmer = new KSkimmer(MyBase->GetTree(),MyBase->GetNEventHist(),globalOpt);
+			skimmer = new KSkimmer(MyBase->GetTree(),MyBase->GetNEventHist(),MyBase->GetNEventNegHist(),globalOpt);
 		}
 		//destructor
 		virtual ~KSkimManager() {}

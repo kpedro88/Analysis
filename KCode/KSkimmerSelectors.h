@@ -19,6 +19,12 @@
 
 using namespace std;
 
+//implementation of NtupleClass-member-dependent KSkimmer function
+int KSkimmer::GetEventSign() {
+	if(Weight<0) return -1;
+	else return 1;
+}
+
 //base class for Selectors is in KSelection.h
 
 //----------------------------------------------------
@@ -46,8 +52,8 @@ class KHLTSelector : public KSelector<KSkimmer> {
 					//check:
 					//1) if the current line matches the current trigger name
 					//2) if the decision was true (the line fired)
-					//3) if the line was not prescaled
-					if(looper->TriggerNames->at(t).compare(0,HLTLines[h].size(),HLTLines[h])==0 && looper->PassTrigger->at(t)) {
+					//3) if the line was not prescaled (currently ignored)
+					if(looper->TriggerNames->at(t).compare(0,HLTLines[h].size(),HLTLines[h])==0 && looper->TriggerPass->at(t)) {
 						goodTrigger = true;
 						break;
 					}
@@ -123,39 +129,7 @@ class KMHTSelector : public KSelector<KSkimmer> {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			bool good = looper->MHT > MHTmin;
-			
-			/*
-			//if(debug && good && (looper->EvtNum==9774 || looper->EvtNum==14027 || looper->EvtNum==14052)){
-			//if(debug && good){
-			if(debug && !good && 
-				( (looper->EvtNum==109247 && looper->LumiBlockNum==3093) ||
-				  (looper->EvtNum==12650 && looper->LumiBlockNum==2127)  ||
-				  (looper->EvtNum==125279 && looper->LumiBlockNum==3253) ||
-				  (looper->EvtNum==15687 && looper->LumiBlockNum==157) )
-			  ){
-				TLorentzVector mhtLorentz; mhtLorentz.SetPtEtaPhiE(0,0,0,0);
-				int jet_ctr = 0;
-				cout << "***** event " << looper->EvtNum << " " << looper->LumiBlockNum << " *****" << endl;
-				//cout << looper->EvtNum << endl;
-				for(unsigned j = 0; j < looper->ak4Jets->size(); ++j){
-					//MHTJets cuts
-					if(looper->ak4Jets->at(j).Pt()<=minPtMHT) continue;
-					if(looper->ak4Jets->at(j).Eta()>=maxEtaMHT) continue;
-					
-					//jet has passed all cuts
-					mhtLorentz -= looper->ak4Jets->at(j);
-					cout << fixed << setprecision(2) << "Jet " << jet_ctr << ", pt " << looper->ak4Jets->at(j).Pt() << ", eta " << looper->ak4Jets->at(j).Eta() << endl;
-					++jet_ctr;
-				}
-				double MHTPhi = mhtLorentz.Phi();
-				double MHTPt = mhtLorentz.Pt();
-				cout << "MHT " << MHTPt << endl;
-			}
-			//if(debug && !good) cout << looper->RunNum << " " << looper->EvtNum << " " << looper->LumiBlockNum << ", " << looper->MHT << endl;
-			*/
-			
-			return good;
+			return looper->MHT > MHTmin;
 		}
 		
 		//member variables
@@ -921,6 +895,9 @@ class KIsoPionTrackSelector : public KSyncSelector {
 		//member variables
 };
 
+/*
+//isotrack sync selectors currently not used
+
 //-------------------------------------------------------------
 //isotrack pdgid selector for object sync
 class KIsoTrackPDGSelector : public KSyncSelector {
@@ -1107,6 +1084,8 @@ class KIsoTrackMtSelector : public KSyncSelector {
 		double mtCut;
 };
 
+*/
+
 //-------------------------------------------------------------
 //addition to KParser to create selectors
 namespace KParser {
@@ -1149,12 +1128,12 @@ namespace KParser {
 		else if(sname=="IsoElectronTrack") srtmp = new KIsoElectronTrackSelector(sname,omap);
 		else if(sname=="IsoMuonTrack") srtmp = new KIsoMuonTrackSelector(sname,omap);
 		else if(sname=="IsoPionTrack") srtmp = new KIsoPionTrackSelector(sname,omap);
-		else if(sname=="IsoTrackPDG") srtmp = new KIsoTrackPDGSelector(sname,omap);
-		else if(sname=="IsoTrackEta") srtmp = new KIsoTrackEtaSelector(sname,omap);
-		else if(sname=="IsoTrackPt") srtmp = new KIsoTrackPtSelector(sname,omap);
-		else if(sname=="IsoTrackDz") srtmp = new KIsoTrackDzSelector(sname,omap);
-		else if(sname=="IsoTrackIso") srtmp = new KIsoTrackIsoSelector(sname,omap);
-		else if(sname=="IsoTrackMt") srtmp = new KIsoTrackMtSelector(sname,omap);
+		//else if(sname=="IsoTrackPDG") srtmp = new KIsoTrackPDGSelector(sname,omap);
+		//else if(sname=="IsoTrackEta") srtmp = new KIsoTrackEtaSelector(sname,omap);
+		//else if(sname=="IsoTrackPt") srtmp = new KIsoTrackPtSelector(sname,omap);
+		//else if(sname=="IsoTrackDz") srtmp = new KIsoTrackDzSelector(sname,omap);
+		//else if(sname=="IsoTrackIso") srtmp = new KIsoTrackIsoSelector(sname,omap);
+		//else if(sname=="IsoTrackMt") srtmp = new KIsoTrackMtSelector(sname,omap);
 		else {} //skip unknown selectors
 		
 		if(!srtmp) cout << "Input error: unknown selector " << sname << ". This selector will be skipped." << endl;

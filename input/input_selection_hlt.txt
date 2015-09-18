@@ -99,10 +99,9 @@ DYe
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 
-
 VARIATION
 CleanVars
 	Clean
 
 INPUT
-input/input_sets_skim_2015B.txt
+input/input_sets_skim_data.txt

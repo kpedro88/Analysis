@@ -171,10 +171,11 @@ class KSelection {
 				selectorList[s]->PrintEfficiency(widths,prev_counter,nentries);
 			}
 		}
-		void Finalize(TH1F* nEventHist=NULL){
+		void Finalize(TH1F* nEventHist=NULL, TH1F* nEventNegHist=NULL){
 			if(file){
 				file->cd();
 				if(nEventHist) nEventHist->Write();
+				if(nEventNegHist) nEventNegHist->Write();
 				if(tree) tree->Write();
 				file->Close();
 			}
