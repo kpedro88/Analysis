@@ -85,36 +85,46 @@ class KBase {
 				string chainsuff = "";
 				localOpt->Get("chainsuff",chainsuff);
 
-				for(unsigned f = 0; f < filenames.size(); f++){
-					filename = filenames[f];
-					if(use_treedir) filename = treedir + "/" + filename;
-					
-					TFile* ftmp = TFile::Open(filename.c_str());
-					if(!ftmp) {
-						cout << "Input error: file " << filename << " cannot be found or opened. Object " << name << " will not be fully initialized." << endl;
-						continue;
+				bool quickchain = globalOpt->Get("quickchain",false);
+				if(quickchain){
+					for(unsigned f = 0; f < filenames.size(); f++){
+						filename = filenames[f];
+						if(use_treedir) filename = treedir + "/" + filename;
+						static_cast<TChain*>(tree)->Add((filename+chainsuff).c_str());
 					}
-					
-					static_cast<TChain*>(tree)->Add((filename+chainsuff).c_str());
-					TH1F* nEventHistTmp = (TH1F*)ftmp->Get("nEventProc");
-					//sum up nEventProc histos
-					if(nEventHistTmp) {
-						if(nEventHist) nEventHist->Add(nEventHistTmp);
-						else {
-							nEventHist = (TH1F*)nEventHistTmp->Clone("nEventProc");
-							nEventHist->SetDirectory(0);
+				}
+				else {
+					for(unsigned f = 0; f < filenames.size(); f++){
+						filename = filenames[f];
+						if(use_treedir) filename = treedir + "/" + filename;
+						
+						TFile* ftmp = TFile::Open(filename.c_str());
+						if(!ftmp) {
+							cout << "Input error: file " << filename << " cannot be found or opened. Object " << name << " will not be fully initialized." << endl;
+							continue;
 						}
-					}
-					TH1F* nEventNegHistTmp = (TH1F*)ftmp->Get("nEventNeg");
-					//sum up nEventNeg histos
-					if(nEventNegHistTmp) {
-						if(nEventNegHist) nEventNegHist->Add(nEventNegHistTmp);
-						else {
-							nEventNegHist = (TH1F*)nEventNegHistTmp->Clone("nEventNeg");
-							nEventNegHist->SetDirectory(0);
+						
+						static_cast<TChain*>(tree)->Add((filename+chainsuff).c_str());
+						TH1F* nEventHistTmp = (TH1F*)ftmp->Get("nEventProc");
+						//sum up nEventProc histos
+						if(nEventHistTmp) {
+							if(nEventHist) nEventHist->Add(nEventHistTmp);
+							else {
+								nEventHist = (TH1F*)nEventHistTmp->Clone("nEventProc");
+								nEventHist->SetDirectory(0);
+							}
 						}
+						TH1F* nEventNegHistTmp = (TH1F*)ftmp->Get("nEventNeg");
+						//sum up nEventNeg histos
+						if(nEventNegHistTmp) {
+							if(nEventNegHist) nEventNegHist->Add(nEventNegHistTmp);
+							else {
+								nEventNegHist = (TH1F*)nEventNegHistTmp->Clone("nEventNeg");
+								nEventNegHist->SetDirectory(0);
+							}
+						}
+						ftmp->Close();
 					}
-					ftmp->Close();
 				}
 				if(tree->GetEntries()==0){
 					cout << "Input error: no files could be opened. Object " << name << " will not be initialized." << endl;
