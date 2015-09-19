@@ -177,7 +177,7 @@ class KBuilderData : public KBuilder {
 			}
 			
 			//KBuilder::Cut() comes *last* because it includes histo filling selector
-			return (goodEvent && KBuilder::Cut());
+			return goodEvent ? KBuilder::Cut() : goodEvent;
 		}
 		
 		//member variables
@@ -229,7 +229,7 @@ class KBuilderMC : public KBuilder {
 			else if(NTenum==ttbarHighHT) { goodEvent &= genHT >= 600; }
 		
 			//KBuilder::Cut() comes *last* because it includes histo filling selector
-			return (goodEvent && KBuilder::Cut());
+			return goodEvent ? KBuilder::Cut() : goodEvent;
 		}
 		double GetWeight(){
 			double w = 1.;
