@@ -278,7 +278,7 @@ class KHistoSelector : public KSelector<KBuilder> {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			double w = looper->Weight();
+			double w = looper->GetWeight();
 			
 			for(int h = 0; h < looper->htmp.size(); h++){
 				unsigned vsize = looper->vars[h].size();
@@ -324,6 +324,9 @@ class KHistoSelector : public KSelector<KBuilder> {
 					}
 					else if(vname=="nvertex"){//# good vertices
 						values[i].Fill(looper->NVtx,w);
+					}
+					else if(vname=="genht"){//# gen HT
+						values[i].Fill(looper->genHT,w);
 					}
 					else if(vname=="sigmaietaieta"){//sigma ieta ieta variable for all photon candidates
 						if(PhotonID){

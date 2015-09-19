@@ -60,7 +60,7 @@ class KBuilder : public NtupleClass {
 		
 			return (goodEvent && MySelection->DoSelection());
 		}
-		virtual double Weight() { return 1.; }
+		virtual double GetWeight() { return 1.; }
 		virtual void Loop() {
 			if (fChain == 0) return;
 			
@@ -90,6 +90,8 @@ class KBuilder : public NtupleClass {
 			for(unsigned b = 0; b < enable_branches.size(); ++b){
 				fChain->SetBranchStatus(enable_branches[b].c_str(),1);
 			}
+			//check for any necessary branches
+			CheckBranches();
 			
 			//loop over ntuple tree
 			Long64_t nentries = fChain->GetEntries();
@@ -129,7 +131,9 @@ class KBuilder : public NtupleClass {
 					delete otmp;
 				}
 			}
-		}	
+		}
+		//unimplemented
+		virtual void CheckBranches() {}
 
 	public:
 		//member variables
@@ -196,25 +200,38 @@ class KBuilderMC : public KBuilder {
 		KBuilderMC() : KBuilder() { }
 		KBuilderMC(KBase* MyBase_, TTree* tree_, KSelection<KBuilder>* sel_) : KBuilder(MyBase_,tree_,sel_) { 
 			//get options
-			normtype = ""; localOpt->Get("normtype",normtype);
+			normtype = ""; localOpt->Get("normtype",normtype); GetNormTypeEnum();
+			useTreeWeight = globalOpt->Get("useTreeWeight",false);
 			nEventProc = 0; got_nEventProc = localOpt->Get("nEventProc",nEventProc);
 			xsection = 0; got_xsection = localOpt->Get("xsection",xsection);
 			norm = 0; got_luminorm = globalOpt->Get("luminorm",norm);
-			
 		}
 		//destructor
 		virtual ~KBuilderMC() {}
 		
 		//functions for histo creation
+		virtual void CheckBranches(){
+			//force enable branches needed for cuts/weights/etc.
+			if(useTreeWeight) fChain->SetBranchStatus("Weight",1);
+			if(NTenum==ttbarLowHT || NTenum==ttbarLowHThad || NTenum==ttbarHighHT) fChain->SetBranchStatus("genHT",1);
+			if(NTenum==ttbarLowHThad){
+				fChain->SetBranchStatus("GenEls",1);
+				fChain->SetBranchStatus("GenMus",1);
+				fChain->SetBranchStatus("GenTaus",1);
+			}
+		}
 		bool Cut(){
 			bool goodEvent = true;
 			
 			//check normalization type here
+			if(NTenum==ttbarLowHT) { goodEvent &= genHT < 600; }
+			else if(NTenum==ttbarLowHThad) { goodEvent &= genHT < 600 && GenEls->size()==0 && GenMus->size()==0 && GenTaus->size()==0; }
+			else if(NTenum==ttbarHighHT) { goodEvent &= genHT >= 600; }
 		
 			//KBuilder::Cut() comes *last* because it includes histo filling selector
 			return (goodEvent && KBuilder::Cut());
 		}
-		double Weight(){
+		double GetWeight(){
 			double w = 1.;
 			
 			//check option in case correction types are disabled globally
@@ -238,18 +255,30 @@ class KBuilderMC : public KBuilder {
 			*/
 			
 			//now do scaling: norm*xsection/nevents
-			//should this be a separate function using Scale()?
-			if(got_nEventProc && nEventProc>0 && got_xsection) w *= xsection/nEventProc;			
+			if(useTreeWeight) w *= Weight;
+			else if(got_nEventProc && nEventProc>0 && got_xsection) w *= xsection/nEventProc;
 			
 			//use lumi norm (default)
 			if(got_luminorm) w *= norm;
 			
 			return w;
 		}
+		
+		//enum for normtypes
+		enum normtypes { NoNT=0, ttbarLowHT=1, ttbarLowHThad=2, ttbarHighHT=3 };
+		//convert normtype from string to enum for quicker compares
+		void GetNormTypeEnum(){
+			if(normtype=="ttbarLowHT") NTenum = ttbarLowHT;
+			else if(normtype=="ttbarLowHThad") NTenum = ttbarLowHThad;
+			else if(normtype=="ttbarHighHT") NTenum = ttbarHighHT;
+			else NTenum = NoNT;
+		}
 
 		//member variables
 		bool got_nEventProc, got_xsection, got_luminorm;
 		string normtype;
+		normtypes NTenum;
+		bool useTreeWeight;
 		int nEventProc;
 		double xsection, norm;
 };
