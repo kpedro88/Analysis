@@ -6,7 +6,7 @@
 
 To run interactively, applying the "signal" selection to the "T1tttt\_1500\_100" sample and writing output trees to a folder "tree\_test\_${SELECTION}":
 ```
-root -b -q -l 'KSkimDriver.C+("input/input_selection.txt","T1tttt_1500_100","signal","root://cmseos.fnal.gov//store/user/awhitbe1/PHYS14productionV12","tree_test")'
+root -b -q -l 'KSkimDriver.C+("input/input_selection.txt","T1tttt_1500_100","signal","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV1","tree_test")'
 ```
 
 To recompile the driver without running (preparing for batch submission):
@@ -23,7 +23,7 @@ To submit jobs to Condor:
 
 To plot yields vs. RA2 bin (where the binning can be defined in the input file) in the signal region and save the plot as an image:
 ```
-root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/tree_signal","input/input_RA2bin.txt",1)'
+root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV1/tree_signal","input/input_RA2bin.txt",1)'
 ```
 Omitting the last argument will display the plot without saving it.
 
