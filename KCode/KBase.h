@@ -143,7 +143,9 @@ class KBase {
 					return;
 				}
 				//get tree
-				tree = (TTree*)file->Get("tree");
+				string treename = "tree";
+				localOpt->Get("treename",treename);
+				tree = (TTree*)file->Get(treename.c_str());
 				
 				nEventHist = (TH1F*)file->Get("nEventProc");
 				nEventNegHist = (TH1F*)file->Get("nEventNeg");
