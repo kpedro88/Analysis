@@ -43,7 +43,7 @@ ROOTEXIT=$?
 
 if [[ $ROOTEXIT -ne 0 ]]; then
   echo "exit code $ROOTEXIT, skipping xrdcp"
-  return $ROOTEXIT
+  exit $ROOTEXIT
 else
   # copy output to eos
   echo "xrdcp output for condor"
