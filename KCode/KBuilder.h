@@ -205,6 +205,7 @@ class KBuilderMC : public KBuilder {
 			nEventProc = 0; got_nEventProc = localOpt->Get("nEventProc",nEventProc);
 			xsection = 0; got_xsection = localOpt->Get("xsection",xsection);
 			norm = 0; got_luminorm = globalOpt->Get("luminorm",norm);
+			debugWeight = globalOpt->Get("debugWeight",false); didDebugWeight = false;
 		}
 		//destructor
 		virtual ~KBuilderMC() {}
@@ -212,7 +213,7 @@ class KBuilderMC : public KBuilder {
 		//functions for histo creation
 		virtual void CheckBranches(){
 			//force enable branches needed for cuts/weights/etc.
-			if(useTreeWeight) fChain->SetBranchStatus("Weight",1);
+			fChain->SetBranchStatus("Weight",1); //needed for negative weights even if useTreeWeight==false
 			if(NTenum==ttbarLowHT || NTenum==ttbarLowHThad || NTenum==ttbarHighHT) fChain->SetBranchStatus("genHT",1);
 			if(NTenum==ttbarLowHThad){
 				fChain->SetBranchStatus("GenEls",1);
@@ -256,7 +257,21 @@ class KBuilderMC : public KBuilder {
 			
 			//now do scaling: norm*xsection/nevents
 			if(useTreeWeight) w *= Weight;
-			else if(got_nEventProc && nEventProc>0 && got_xsection) w *= xsection/nEventProc;
+			else if(got_nEventProc && nEventProc>0 && got_xsection){
+				w *= xsection/nEventProc;
+				//account for negative weight events
+				if(Weight<0) w *= -1;
+				
+				//debugging
+				if(debugWeight && !didDebugWeight){
+					int oldprec = cout.precision(20);
+					cout << MyBase->GetName() << endl;
+					cout << "TreeMaker: " << fabs(Weight) << endl;
+					cout << "    KCode: " << xsection/nEventProc << " = " << xsection << " / " << nEventProc << endl;
+					didDebugWeight = true;
+					cout.precision(oldprec);
+				}
+			}
 			
 			//use lumi norm (default)
 			if(got_luminorm) w *= norm;
@@ -275,10 +290,9 @@ class KBuilderMC : public KBuilder {
 		}
 
 		//member variables
-		bool got_nEventProc, got_xsection, got_luminorm;
+		bool got_nEventProc, got_xsection, got_luminorm, useTreeWeight, debugWeight, didDebugWeight;
 		string normtype;
 		normtypes NTenum;
-		bool useTreeWeight;
 		int nEventProc;
 		double xsection, norm;
 };

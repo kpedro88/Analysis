@@ -30,6 +30,8 @@ string:selection[ra2bin]
 vstring:extra_text[#color[2]{n_{j} bin},#color[4]{n_{b} bin}]
 vstring:disable_branches[*]
 vstring:enable_branches[NJets,BTags,MHT,HT]
+#bool:useTreeWeight[1]
+bool:debugWeight[1]
 
 SELECTION
 ra2bin

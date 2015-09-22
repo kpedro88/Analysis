@@ -50,8 +50,11 @@ class KSkimmer : public NtupleClass {
 				nEventHist = new TH1F("nEventProc","",1,0,1);
 				nEventHist->SetBinContent(1,nentries);
 			}
+			bool fillNeg = false;
+			int negevents = 0;
 			if(!nEventNegHist){
 				nEventNegHist = new TH1F("nEventNeg","",1,0,1);
+				fillNeg = true;
 			}
 			
 			Long64_t nbytes = 0, nb = 0;
@@ -61,12 +64,14 @@ class KSkimmer : public NtupleClass {
 				nb = fChain->GetEntry(jentry);   nbytes += nb;
 				if(jentry % 10000 == 0) cout << "Skimming " << jentry << "/" << nentries << endl;
 				
-				if(GetEventSign()==-1) nEventNegHist->AddBinContent(1);
+				if(GetEventSign()==-1) ++negevents;
 				
 				for(unsigned s = 0; s < theSelections.size(); s++){
 					theSelections[s]->DoSelection();
 				}
 			}
+			
+			if(fillNeg) nEventNegHist->SetBinContent(1,negevents);
 			
 			//final steps
 			for(unsigned s = 0; s < theSelections.size(); s++){

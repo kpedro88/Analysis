@@ -158,6 +158,9 @@ namespace KParser {
 			else if(type=="double" || type=="d") addOption<double>(option,name,val,isvector);
 			else if(type=="string" || type=="s") addOption<string>(option,name,val,isvector);
 			else if(type=="color" || type=="c") addOption<Color_t>(option,name,val,isvector);
+			else {
+				cout << "Unknown option type: " << line << endl;
+			}
 		}
 	}
 	KNamed* processNamed(string line){
