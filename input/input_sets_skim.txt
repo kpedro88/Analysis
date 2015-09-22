@@ -63,11 +63,11 @@ base	skim	TTJets_HT-800to1200	b:chain[1]	s:filepre[Spring15.TTJets_HT-800to1200_
 base	skim	TTJets_HT-1200to2500	b:chain[1]	s:filepre[Spring15.TTJets_HT-1200to2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_]	vi:filerange[0,35]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[24]
 base	skim	TTJets_HT-2500toInf	b:chain[1]	s:filepre[Spring15.TTJets_HT-2500toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_]	vi:filerange[0,24]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[24]
 #singletop
-base	skim	ST_s-channel	b:chain[1]	s:filepre[Spring15.ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1_]	vi:filerange[0,33]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[24]
-base	skim	ST_t-channel_top	b:chain[1]	s:filepre[Spring15.ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1_]	vi:filerange[0,33]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[24]
-base	skim	ST_t-channel_antitop	b:chain[1]	s:filepre[Spring15.ST_t-channel_top_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1_]	vi:filerange[0,81]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[24]
-base	skim	ST_tW_top	b:chain[1]	s:filepre[Spring15.ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1_]	vi:filerange[0,46]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[24]
-base	skim	ST_tW_antitop	b:chain[1]	s:filepre[Spring15.ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1_]	vi:filerange[0,30]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[24]
+base	skim	ST_s-channel	b:chain[1]	s:filepre[Spring15.ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1_]	vi:filerange[0,30]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[24]
+base	skim	ST_t-channel_top	b:chain[1]	s:filepre[Spring15.ST_t-channel_top_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1_]	vi:filerange[0,81]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[24]
+base	skim	ST_t-channel_antitop	b:chain[1]	s:filepre[Spring15.ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1_]	vi:filerange[0,46]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[24]
+base	skim	ST_tW_top	b:chain[1]	s:filepre[Spring15.ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1_]	vi:filerange[0,31]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[24]
+base	skim	ST_tW_antitop	b:chain[1]	s:filepre[Spring15.ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1_]	vi:filerange[0,31]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[24]
 #diboson
 base	skim	WWToLNuQQ	b:chain[1]	s:filepre[Spring15.WWToLNuQQ_13TeV-powheg_]	vi:filerange[0,56]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[24]
 base	skim	WWTo2L2Nu	b:chain[1]	s:filepre[Spring15.WWTo2L2Nu_13TeV-powheg_]	vi:filerange[0,46]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[24]

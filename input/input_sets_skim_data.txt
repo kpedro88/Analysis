@@ -1,0 +1,23 @@
+SET
+#data: 2015B
+base	skim	DoubleEG_2015B	b:chain[1]	s:filepre[Run2015B-PromptReco-v1.DoubleEG_]	vi:filerange[0,20]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	DoubleMuon_2015B	b:chain[1]	s:filepre[Run2015B-PromptReco-v1.DoubleMuon_]	vi:filerange[0,15]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	HTMHT_2015B	b:chain[1]	s:filepre[Run2015B-PromptReco-v1.HTMHT_]	vi:filerange[0,14]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	SingleElectron_2015B	b:chain[1]	s:filepre[Run2015B-PromptReco-v1.SingleElectron_]	vi:filerange[0,34]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	SingleMuon_2015B	b:chain[1]	s:filepre[Run2015B-PromptReco-v1.SingleMuon_]	vi:filerange[0,26]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	SinglePhoton_2015B	b:chain[1]	s:filepre[Run2015B-PromptReco-v1.SinglePhoton_]	vi:filerange[0,21]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+#data: re2015B
+base	skim	DoubleEG_re2015B	b:chain[1]	s:filepre[Run2015B-17Jul2015-v1.DoubleEG_]	vi:filerange[0,105]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	DoubleMuon_re2015B	b:chain[1]	s:filepre[Run2015B-17Jul2015-v1.DoubleMuon_]	vi:filerange[0,10]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	EGamma_re2015B	b:chain[1]	s:filepre[Run2015B-17Jul2015-v1.DoubleMuon_]	vi:filerange[0,0]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	HTMHT_re2015B	b:chain[1]	s:filepre[Run2015B-17Jul2015-v1.HTMHT_]	vi:filerange[0,3]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	SingleElectron_re2015B	b:chain[1]	s:filepre[Run2015B-17Jul2015-v1.SingleElectron_]	vi:filerange[0,23]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	SingleMuon_re2015B	b:chain[1]	s:filepre[Run2015B-17Jul2015-v1.SingleMuon_]	vi:filerange[0,23]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	SinglePhoton_re2015B	b:chain[1]	s:filepre[Run2015B-17Jul2015-v1.SinglePhoton_]	vi:filerange[0,7]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+#data: 2015C
+base	skim	DoubleEG_2015C	b:chain[1]	s:filepre[Run2015C-PromptReco-v1.DoubleEG_]	vi:filerange[0,297]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	DoubleMuon_2015C	b:chain[1]	s:filepre[Run2015C-PromptReco-v1.DoubleMuon_]	vi:filerange[0,186]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	HTMHT_2015C	b:chain[1]	s:filepre[Run2015C-PromptReco-v1.HTMHT_]	vi:filerange[0,84]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	SingleElectron_2015C	b:chain[1]	s:filepre[Run2015C-PromptReco-v1.SingleElectron_]	vi:filerange[0,136]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	SingleMuon_2015C	b:chain[1]	s:filepre[Run2015C-PromptReco-v1.SingleMuon_]	vi:filerange[0,219]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	SinglePhoton_2015C	b:chain[1]	s:filepre[Run2015C-PromptReco-v1.SinglePhoton_]	vi:filerange[0,129]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
