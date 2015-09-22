@@ -31,7 +31,7 @@ Omitting the last argument will display the plot without saving it.
 
 To save the individual histograms for each signal and background process to a ROOT file, for the creation of datacards for limit setting:
 ```
-root -b -l -q MakeAllDC.C+
+root -b -l -q 'MakeAllDC.C+("root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV1")'
 ```
 This macro calls the macro `KPlotDriverDC.C`, which is a modification of the macro from the previous section
 that includes an extra input argument to specify the name of the output ROOT file.

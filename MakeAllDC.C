@@ -12,8 +12,8 @@ using namespace std;
 
 //run in batch mode:
 //root -b -l -q MakeAllDC.C+
-void MakeAllDC(){
-	string indir = "root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/";
+void MakeAllDC(string indir="root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/"){
+	if(indir[indir.size()-1] != '/') indir = indir + "/";
 	string inpre = "tree_";
 	string outdir = "datacards/";
 	string outpre = "RA2bin_";
