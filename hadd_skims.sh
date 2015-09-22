@@ -2,7 +2,7 @@
 
 STDIR=/eos/uscms/store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV1
 
-./FScheck.sh keep
+./SKcheck.sh keep
 
 SAMPLES="
 TTJets_SingleLeptFromT \
@@ -13,9 +13,10 @@ ttHJetTobb_M125
 
 for SAMPLE in ${SAMPLES}; do
   for TREEDIR in ${STDIR}/tree*/; do
-  
-    ALLFILES=""
-    for FILE in ${TREEDIR}/tree_${SAMPLE}*.root; do
+
+    XRDIR=`echo $TREEDIR | sed 's~/eos/uscms~root://cmseos.fnal.gov/~'`
+    ALLFILES=${XRDIR}/tree_${SAMPLE}.root
+    for FILE in ${TREEDIR}/tree_${SAMPLE}_*.root; do
       ALLFILES="${ALLFILES} ${XRDIR}/`basename ${FILE}`"
     done
 
@@ -23,12 +24,12 @@ for SAMPLE in ${SAMPLES}; do
     hadd tree_${SAMPLE}.root ${ALLFILES}
 
     #remove original files
-    for FILE in ${TREEDIR}/tree_${SAMPLE}*.root; do
+	rm ${TREEDIR}/tree_${SAMPLE}.root
+    for FILE in ${TREEDIR}/tree_${SAMPLE}_*.root; do
       rm ${FILE}
     done
 
     #copy hadded file to eos
-    XRDIR=`echo $TREEDIR | sed 's~/eos/uscms~root://cmseos.fnal.gov/~'`
     xrdcp -f tree_${SAMPLE}.root ${XRDIR}/
 
     #remove tmp file
