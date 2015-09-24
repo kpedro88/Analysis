@@ -137,6 +137,17 @@ class KSelection {
 				}
 			}
 		}
+		//alternate output tree setup for scanning
+		void ScanTree(TTree* clone){
+			//create output file
+			file = new TFile((name+".root").c_str(), "RECREATE");
+			
+			//create output tree, preserve all branches from input ntuple
+			string treedesc = "all observables, " + name;
+			tree = clone->CloneTree(0);
+			tree->SetName("tree");
+			tree->SetTitle(treedesc.c_str());
+		}
 		//perform all variations and selections on current event from skimmer
 		bool DoSelection(){
 			if(variation) variation->DoVariation();
@@ -179,6 +190,10 @@ class KSelection {
 				if(tree) tree->Write();
 				file->Close();
 			}
+		}
+		//manually fill tree
+		void FillTree(){
+			if(tree) tree->Fill();
 		}
 		
 	private:

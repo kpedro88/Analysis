@@ -19,6 +19,20 @@ To submit jobs to Condor:
 ./SKsub.sh
 ```
 
+### Scanning
+
+The SUSY FastSim signal samples contain multiple model points per file. Before skimming, these samples should be scanned to separate each model point into a separate file.
+
+To run the scanner interactively:
+```
+root -b -q -l 'KScanDriver.C+("input/input_scan.txt","T1bbbb_mGluino-1000-1025_mLSP-1to975-1000","root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Ntuples/RA2sync_Sept23_2015")'
+```
+
+To recompile the driver without running (preparing for batch submission):
+```
+root -b -q -l 'KScanDriver.C++()'
+```
+
 ## Plotting
 
 To plot yields vs. RA2 bin (where the binning can be defined in the input file) in the signal region and save the plot as an image:
