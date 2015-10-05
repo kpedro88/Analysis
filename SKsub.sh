@@ -2,11 +2,11 @@
 
 KEEPTAR=$1
 JOBDIR=batch
-STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV1
+STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV2
 
 ./SKcheck.sh "$KEEPTAR" "$JOBDIR"
 
-SAMPLES="
+SAMPLES=(
 T1bbbb_1000_900 \
 T1bbbb_1500_100 \
 T1qqqq_1000_800 \
@@ -74,11 +74,11 @@ ttHJetTobb_M125 \
 ttHJetTobb_M125_ext1 \
 ttHJetTobb_M125_ext2 \
 ttHJetTobb_M125_ext3
-"
+)
 
-for SAMPLE in ${SAMPLES}
+for SAMPLE in ${SAMPLES[@]}
   do
-    ./SKtemp.sh ${JOBDIR} input/input_selection.txt ${SAMPLE} signal,LDP,SLm,SLe,GJet_CleanVars,DYm_CleanVars,DYe_CleanVars root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV1 tree ${STORE}
+    ./SKtemp.sh ${JOBDIR} input/input_selection.txt ${SAMPLE} signal,LDP,SLm,SLe,GJet_CleanVars,DYm_CleanVars,DYe_CleanVars root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV2 tree ${STORE}
   done
 
 #currently not available:
