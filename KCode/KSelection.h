@@ -55,7 +55,7 @@ class KSelector {
 		}
 		//used for non-dummy selectors
 		virtual bool Cut() { return true; }
-		virtual void PrintEfficiency(vector<int>& widths, int prev_counter, int nentries){
+		virtual void PrintEfficiency(vector<unsigned>& widths, int prev_counter, int nentries){
 			if(dummy || !canfail) return;
 			cout << left << setw(widths[0]) << name;
 			cout << "  " << right << setw(widths[1]) << counter;
@@ -100,7 +100,7 @@ class KSelection {
 			sel_->SetSelection(this);
 			if(!sel_->Dummy() && sel_->CanFail() && sel_->GetName().size()>width1s) width1s = sel_->GetName().size();
 		}
-		int GetSelectorWidth() { return width1s; }
+		unsigned GetSelectorWidth() { return width1s; }
 		void SetLooper(T* looper_){
 			looper = looper_;
 			for(unsigned s = 0; s < selectorList.size(); s++){
@@ -166,11 +166,10 @@ class KSelection {
 			
 			return result;
 		}
-		void PrintEfficiency(int width1, int nentries=1){
+		void PrintEfficiency(unsigned width1, int nentries=1){
 			//width1s set when adding selectors, width1 set by skimmer to consider all selectors in all selections
 			//default for width1s is 10 for "NEventProc"
 			widths[0] = width1; widths[1] = widths[2] = widths[3] = 13;
-			bool started = false;
 			
 			cout << string(widths[0]+widths[1]+widths[2]+widths[3]+widths[4]+2*(widths.size()-1),'-') << endl;
 			cout << "Selection: " << name << endl;
@@ -206,8 +205,8 @@ class KSelection {
 		KMap<KSelector<T>*> selectors;
 		TFile* file;
 		TTree* tree;
-		vector<int> widths;
-		int width1s;
+		vector<unsigned> widths;
+		unsigned width1s;
 };
 
 #endif

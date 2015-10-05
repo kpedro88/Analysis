@@ -30,7 +30,7 @@ class KManager {
 	public:
 		//constructor
 		KManager() : globalOpt(0),parsed(false) {}
-		KManager(string input_, string treedir_) : globalOpt(0),parsed(false) {
+		KManager(string treedir_) : globalOpt(0),parsed(false) {
 			//must always have an option map
 			globalOpt = new OptionMap();
 			//store treedir in global options
@@ -107,8 +107,8 @@ class KManager {
 			return parsed_;
 		}
 		//virtual input processing functions
-		virtual void processSet(string line) {}
-		virtual void processHisto(string line, int dim) {}
+		virtual void processSet(string) {}
+		virtual void processHisto(string, int) {}
 		//wait to construct variations until we know which are desired and with which selections to use them
 		//for now, just store the lines for each defined variation in a vector, and construct variators with them later
 		virtual void processVariation(string line){

@@ -535,7 +535,7 @@ class KNBJetBinSelector : public KSelector<KSkimmer> {
 			return goodB;
 		}
 		
-		virtual void PrintEfficiency(vector<int>& widths, int prev_counter, int nentries){
+		virtual void PrintEfficiency(vector<unsigned>& widths, int prev_counter, int nentries){
 			for(unsigned b = 0; b < bjet_sel.size(); b++){
 				bjet_sel[b]->PrintEfficiency(widths,prev_counter,nentries);
 			}
@@ -566,7 +566,7 @@ class KEventRangeSelector : public KSelector<KSkimmer> {
 		}
 		
 		//member variables
-		int start, finish;
+		unsigned start, finish;
 };
 
 //-------------------------------------------------------------
@@ -599,7 +599,7 @@ class KSyncSelector : public KSelector<KSkimmer> {
 			if(result) counter++;
 			return result;
 		}
-		virtual void PrintEfficiency(vector<int>& widths, int prev_counter, int nentries){
+		virtual void PrintEfficiency(vector<unsigned>& widths, int prev_counter, int nentries){
 			if(dummy || !canfail) return;
 			cout << left << setw(widths[0]) << name;
 			cout << "  " << right << setw(widths[1]) << counter;

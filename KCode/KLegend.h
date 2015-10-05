@@ -187,8 +187,8 @@ class KLegend{
 				//check for closest height to total_legheight/npanel, ... etc.
 				double total_legheight = multi_legheights.back();
 				vector<double> min_delta_legheight(npanel,1e10);
-				vector<int> min_index_legheight(npanel,-1);
-				for(unsigned p = 0; p < npanel; p++){
+				vector<unsigned> min_index_legheight(npanel,-1);
+				for(int p = 0; p < npanel; p++){
 					if(debug) cout << "panel " << p << ": ";
 					for(unsigned e = 0; e < multi_entries.size(); e++){
 						double delta_tmp = fabs(multi_legheights[e]/total_legheight - ((double)(p+1)/(double)npanel));
@@ -199,7 +199,7 @@ class KLegend{
 				}
 				
 				//fill in entries vector with balanced panel assignments
-				for(unsigned p = 0; p < npanel; p++){
+				for(int p = 0; p < npanel; p++){
 					unsigned e_min = 0;
 					if(p>0) e_min = min_index_legheight[p-1]+1;
 					if(debug) cout << "panel " << p << ": " << e_min << ", " << min_index_legheight[p] << endl;
@@ -213,7 +213,7 @@ class KLegend{
 			//account for npanel
 			unsigned max_panel_entries = 0;
 			legwidth = legheight = 0;
-			for(unsigned p = 0; p < npanel; p++){
+			for(int p = 0; p < npanel; p++){
 				if(entries[p].size()>max_panel_entries) max_panel_entries = entries[p].size();
 				if(entries[p].GetHeight()>legheight) legheight = entries[p].GetHeight();
 				legwidth += entries[p].GetWidth();
@@ -260,7 +260,7 @@ class KLegend{
 			leg->SetMargin(sizeSymb);
 			
 			for(unsigned e = 0; e < max_panel_entries; e++){
-				for(unsigned p = 0; p < npanel; p++){
+				for(int p = 0; p < npanel; p++){
 					if(entries[p].size()<=e) leg->AddEntry((TObject*)NULL,"",""); //dummy entry to keep things aligned
 					else leg->AddEntry(entries[p][e].GetObj(),entries[p][e].GetLabel().c_str(),entries[p][e].GetOption().c_str());
 				}
@@ -382,7 +382,7 @@ class KLegend{
 			pad->cd();
 			if(leg) leg->Draw("same");
 		}
-		void AddEntry(TObject* obj, string label, string option, unsigned panel=0, const vector<string>& extra_text=vector<string>(), bool addToPrev=false){
+		void AddEntry(TObject* obj, string label, string option, int panel=0, const vector<string>& extra_text=vector<string>(), bool addToPrev=false){
 			if(panel>=npanel) panel = npanel - 1;
 		
 			if(balance_panels && (!addToPrev || multi_entries.size()==0)) multi_entries.push_back(KLegendMultiEntry());

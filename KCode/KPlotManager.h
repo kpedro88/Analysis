@@ -29,8 +29,10 @@ using namespace std;
 class KPlotManager : public KManager {
 	public:
 		//constructor
-		KPlotManager() : KManager(),MyRatio(0),numer(0),denom(0),yieldref(0),doPrint(false),out_file(0) {}
-		KPlotManager(string input_, string treedir_="tree") : KManager(input_,treedir_),numer(0),denom(0),yieldref(0),doPrint(false),out_file(0) {
+		KPlotManager() : KManager(), MyRatio(0), numer(0), denom(0), yieldref(0), doPrint(false), out_file(0) {}
+		KPlotManager(string input_, string treedir_="tree") : 
+			KManager(treedir_), numer(0), denom(0), yieldref(0), doPrint(false), out_file(0)
+		{
 			//parse most initializations based on text input
 			Initialize(input_);
 			

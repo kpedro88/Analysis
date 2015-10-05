@@ -30,7 +30,7 @@ class KSkimManager : public KManager {
 		//constructor
 		KSkimManager() : KManager(), setname(""), seltypes(""), outdir(""), skimmer(0), MyBase(0) {}
 		KSkimManager(string input_, string setname_, string seltypes_, string indir_, string outdir_) : 
-			KManager(input_, indir_), setname(setname_), seltypes(seltypes_), outdir(outdir_), skimmer(0), MyBase(0)
+			KManager(indir_), setname(setname_), seltypes(seltypes_), outdir(outdir_), skimmer(0), MyBase(0)
 		{
 			//parse most initializations based on text input
 			Initialize(input_);

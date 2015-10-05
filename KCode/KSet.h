@@ -45,6 +45,7 @@ class KSet : public KBase {
 		KBase* GetParent() { return parent; }
 		void SetParent(KBase* p) { parent = p; }
 		//default build for sets
+		using KBase::Build;
 		virtual void Build(){
 			//first, all children build
 			for(unsigned c = 0; c < children.size(); c++){
@@ -60,6 +61,7 @@ class KSet : public KBase {
 			}
 		}
 		//resetting current histo propagates to children for consistency
+		using KBase::GetHisto;
 		virtual TH1* GetHisto(string hname){
 			TH1* hist = MyHistos.Get(hname);
 			etmp = MyErrorBands.Get(hname); //it's okay for etmp to be null
@@ -133,7 +135,7 @@ class KSetData: public KSet {
 				children[c]->AddHisto(s,h);
 			}
 			
-			Color_t color;
+			Color_t color = kBlack;
 			localOpt->Get("color",color);
 			//formatting
 			htmp->SetLineColor(color);
@@ -177,6 +179,7 @@ class KSetMC: public KSet {
 		virtual ~KSetMC() {}
 
 		//build for MC sets
+		using KBase::Build;
 		virtual void Build(){
 			//first, all children build
 			for(unsigned c = 0; c < children.size(); c++){
@@ -209,7 +212,7 @@ class KSetMC: public KSet {
 				children[c]->AddHisto(s,h);
 			}
 			
-			Color_t color;
+			Color_t color = kBlack;
 			localOpt->Get("color",color);
 			//formatting
 			htmp->SetFillColor(0);
@@ -270,7 +273,7 @@ class KSetMCStack : public KSet {
 			for(unsigned c = 0; c < children.size(); c++){
 				TH1* ctmp = children[c]->AddHisto(s,h);
 				//fix formatting of ctmp for stack
-				Color_t color;
+				Color_t color = kBlack;
 				children[c]->GetLocalOpt()->Get("color",color);
 				ctmp->SetFillColor(color);
 				ctmp->SetLineColor(color);
@@ -289,6 +292,7 @@ class KSetMCStack : public KSet {
 		}
 		
 		//polymorphic build for stacks
+		using KBase::Build;
 		void Build(){
 			//first, all children build
 			for(unsigned c = 0; c < children.size(); c++){
@@ -322,6 +326,7 @@ class KSetMCStack : public KSet {
 			}
 		}
 		//polymorphic GetHisto for stacks
+		using KBase::GetHisto;
 		TH1* GetHisto(string hname) {
 			THStack* stk = MyStacks.Get(hname);
 			etmp = MyErrorBands.Get(hname); //it's okay for etmp to be null
@@ -340,12 +345,13 @@ class KSetMCStack : public KSet {
 		}
 		//adds child histos to legend
 		void AddToLegend(KLegend* kleg, string option="") {
+			if(option.empty()) option = "f";
 			//sort vector of children according to current histo - BEFORE adding to legend
 			if(!globalOpt->Get("nosort",false)) sort(children.begin(),children.end(),KComp());	
 		
 			//add to legend in reverse order so largest is first
 			for(int c = children.size()-1; c >= 0; c--){
-				children[c]->AddToLegend(kleg,"f");
+				children[c]->AddToLegend(kleg,option);
 			}
 			//error band enabled by default
 			int panel_tmp = 0;
@@ -382,7 +388,7 @@ class KSetMCStack : public KSet {
 			
 			//scale stack histos
 			TObjArray* stack_array = shtmp->GetStack();
-			for(unsigned s = 0; s < stack_array->GetSize(); s++){
+			for(int s = 0; s < stack_array->GetSize(); s++){
 				TH1* hist = (TH1*)stack_array->At(s);
 				if(hist){
 					if(toYield) hist->Scale(nn/simyield);
@@ -403,7 +409,7 @@ class KSetMCStack : public KSet {
 		void BinDivide(){
 			//scale stack histos
 			TObjArray* stack_array = shtmp->GetStack();
-			for(unsigned s = 0; s < stack_array->GetSize(); s++){
+			for(int s = 0; s < stack_array->GetSize(); s++){
 				TH1* hist = (TH1*)stack_array->At(s);
 				for(int b = 1; b <= htmp->GetNbinsX(); b++){
 					hist->SetBinContent(b,hist->GetBinContent(b)/hist->GetBinWidth(b));
@@ -463,6 +469,7 @@ class KSetRatio: public KSet {
 		//ratio class acts a little differently:
 		//only builds from the current histo of numer and denom
 		//(since some histos might not want ratios, and also has to wait for possible norm to yield)
+		using KBase::Build;
 		void Build(TH1* hrat_){
 			stmp = children[0]->GetHistoName();
 			TH1* hrat = (TH1*)hrat_->Clone();
@@ -592,7 +599,7 @@ namespace KParser {
 		
 		OptionMap* omap = new OptionMap(); //for local options
 		//process local options before constructing objects
-		for(int i = 3; i < fields.size(); i++){
+		for(unsigned i = 3; i < fields.size(); i++){
 			processOption(fields[i],omap);
 		}
 		

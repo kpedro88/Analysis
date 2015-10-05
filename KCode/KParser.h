@@ -70,7 +70,7 @@ namespace KParser {
 	//splits option format into three components: type:name[value]
 	bool splitOption(string line, vector<string>& fields){
 		//first component: type
-		int colon = line.find(':');
+		string::size_type colon = line.find(':');
 		if(colon!=string::npos) {
 			fields.push_back(line.substr(0,colon));
 			line.erase(0,colon+1);
@@ -78,7 +78,7 @@ namespace KParser {
 		else return false;
 		
 		//second component: name
-		int lbracket = line.find('[');
+		string::size_type lbracket = line.find('[');
 		if(lbracket!=string::npos){
 			fields.push_back(line.substr(0,lbracket));
 			line.erase(0,lbracket+1);
@@ -114,7 +114,7 @@ namespace KParser {
 			//comma-separated values
 			vector<string> fields;
 			process(val,',',fields);
-			for(int i = 0; i < fields.size(); i++){
+			for(unsigned i = 0; i < fields.size(); i++){
 				vtmp.push_back(getOptionValue<O>(fields[i]));
 			}
 			option->Set(name,vtmp);
@@ -171,7 +171,7 @@ namespace KParser {
 		OptionMap* omap = new OptionMap();
 		
 		//everything after the name is an option
-		for(int i = 1; i < fields.size(); i++){
+		for(unsigned i = 1; i < fields.size(); i++){
 			processOption(fields[i],omap);
 		}
 		

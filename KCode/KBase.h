@@ -266,11 +266,11 @@ class KBase {
 		virtual TH1F* GetNEventNegHist() { return nEventNegHist; }
 		
 		//other virtual functions (unimplemented at this level)
-		virtual void Draw(TPad* pad) {}
-		virtual void AddToLegend(KLegend* kleg, string option="") {}
-		virtual void AddChild(KBase* ch) {}
-		virtual void SetAddExt(bool ae) {}
-		virtual void Build(TH1* hrat_) {}
+		virtual void Draw(TPad*) {}
+		virtual void AddToLegend(KLegend*, string="") {}
+		virtual void AddChild(KBase*) {}
+		virtual void SetAddExt(bool) {}
+		virtual void Build(TH1*) {}
 		
 	protected:
 		//member variables
@@ -306,6 +306,7 @@ class KBaseData : public KBase {
 		virtual ~KBaseData() {}
 
 		//functions for histo creation
+		using KBase::Build;
 		virtual void Build(); //implemented in KBuilder.h to avoid circular dependency
 };
 
@@ -326,6 +327,7 @@ class KBaseMC : public KBase {
 		virtual ~KBaseMC() {}
 		
 		//functions for histo creation
+		using KBase::Build;
 		virtual void Build(); //implemented in KBuilder.h to avoid circular dependency
 
 };
@@ -352,9 +354,9 @@ class KBaseExt : public KBase {
 				}
 				else{
 					add_ext = true;
-					for(int i = 0; i < exthisto_in.size(); i++){
-						TH1* htmp = (TH1*)file->Get(exthisto_in[i].c_str());
-						AddHisto(exthisto_out[i],htmp);
+					for(unsigned i = 0; i < exthisto_in.size(); i++){
+						TH1* extmp = (TH1*)file->Get(exthisto_in[i].c_str());
+						AddHisto(exthisto_out[i],extmp);
 					}
 					add_ext = false;
 				}
@@ -384,6 +386,7 @@ class KBaseExt : public KBase {
 		}
 		
 		//external histos do not need to build
+		using KBase::Build;
 		virtual void Build() {}
 		
 	private:

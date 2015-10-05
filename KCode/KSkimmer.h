@@ -92,7 +92,7 @@ class KSkimmer : public NtupleClass {
 		vector<KSelection<KSkimmer>*> theSelections;
 		OptionMap* globalOpt;
 		Long64_t nentries;
-		int width1;
+		unsigned width1;
 
 };
 
