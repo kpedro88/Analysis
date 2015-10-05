@@ -368,9 +368,9 @@ class KDeltaPhiSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
 		KDeltaPhiSelector() : KSelector<KSkimmer>() { }
-		KDeltaPhiSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), DeltaPhi(3,0), invert(false) { 
+		KDeltaPhiSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), DeltaPhi(4,0), invert(false) { 
 			//check for option
-			DeltaPhi[0] = 0.5; DeltaPhi[1] = 0.5; DeltaPhi[2] = 0.3;
+			DeltaPhi[0] = 0.5; DeltaPhi[1] = 0.5; DeltaPhi[2] = 0.3; DeltaPhi[3] = 0.3;
 			localOpt->Get("DeltaPhi",DeltaPhi);
 			invert = localOpt->Get("invert",false);
 		}
@@ -379,8 +379,8 @@ class KDeltaPhiSelector : public KSelector<KSkimmer> {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			if(invert) return looper->DeltaPhi1 < DeltaPhi[0] || looper->DeltaPhi2 < DeltaPhi[1] || looper->DeltaPhi3 < DeltaPhi[2];
-			else return looper->DeltaPhi1 > DeltaPhi[0] && looper->DeltaPhi2 > DeltaPhi[1] && looper->DeltaPhi3 > DeltaPhi[2];
+			if(invert) return looper->DeltaPhi1 < DeltaPhi[0] || looper->DeltaPhi2 < DeltaPhi[1] || looper->DeltaPhi3 < DeltaPhi[2] || looper->DeltaPhi4 < DeltaPhi[3];
+			else return looper->DeltaPhi1 > DeltaPhi[0] && looper->DeltaPhi2 > DeltaPhi[1] && looper->DeltaPhi3 > DeltaPhi[2] && looper->DeltaPhi4 > DeltaPhi[3];
 		}
 		
 		//member variables

@@ -15,7 +15,6 @@ SingleMuon_2015B \
 SinglePhoton_2015B \
 DoubleEG_re2015B \
 DoubleMuon_re2015B \
-EGamma_re2015B \
 HTMHT_re2015B \
 SingleElectron_re2015B \
 SingleMuon_re2015B \
@@ -35,7 +34,7 @@ JetHT_2015D \
 MET_2015D \
 SingleElectron_2015D \
 SingleMuon_2015D \
-SinglePhoton_2015D \
+SinglePhoton_2015D
 "
 
 for SAMPLE in ${SAMPLES}

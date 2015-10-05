@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Thu Sep 24 16:48:52 2015 by ROOT version 5.34/18
+// Mon Oct  5 11:23:27 2015 by ROOT version 5.34/18
 // from TTree PreSelection/PreSelection
-// found on file: root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Ntuples/RA2sync_Sept23_2015/Spring15.SMS-T1bbbb_mGluino-1000_mLSP-900_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
+// found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV2/Spring15.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
 //////////////////////////////////////////////////////////
 
 #ifndef NtupleClass_h
@@ -125,6 +125,7 @@ public :
    vector<double>  *photon_hadTowOverEM;
    vector<double>  *photon_hasPixelSeed;
    vector<double>  *photon_isEB;
+   vector<bool>    *photon_nonPrompt;
    vector<double>  *photon_passElectronVeto;
    vector<double>  *photon_pfChargedIso;
    vector<double>  *photon_pfChargedIsoRhoCorr;
@@ -140,10 +141,12 @@ public :
    vector<int>     *RJetMinDeltaPhiIndexEta24;
    vector<int>     *RJetMinDeltaPhiIndexEta5;
    vector<TLorentzVector> *selectedIDElectrons;
+   vector<bool>    *selectedIDElectrons_mediumID;
    vector<double>  *selectedIDElectrons_MiniIso;
    vector<double>  *selectedIDElectrons_MT2Activity;
    vector<double>  *selectedIDElectrons_MTW;
    vector<double>  *selectedIDElectrons_RA2Activity;
+   vector<bool>    *selectedIDIsoElectrons_mediumID;
    vector<double>  *selectedIDIsoElectrons_MT2Activity;
    vector<double>  *selectedIDIsoElectrons_MTW;
    vector<double>  *selectedIDIsoElectrons_PTW;
@@ -273,6 +276,7 @@ public :
    TBranch        *b_photon_hadTowOverEM;   //!
    TBranch        *b_photon_hasPixelSeed;   //!
    TBranch        *b_photon_isEB;   //!
+   TBranch        *b_photon_nonPrompt;   //!
    TBranch        *b_photon_passElectronVeto;   //!
    TBranch        *b_photon_pfChargedIso;   //!
    TBranch        *b_photon_pfChargedIsoRhoCorr;   //!
@@ -288,10 +292,12 @@ public :
    TBranch        *b_RJetMinDeltaPhiIndexEta24;   //!
    TBranch        *b_RJetMinDeltaPhiIndexEta5;   //!
    TBranch        *b_selectedIDElectrons;   //!
+   TBranch        *b_selectedIDElectrons_mediumID;   //!
    TBranch        *b_selectedIDElectrons_MiniIso;   //!
    TBranch        *b_selectedIDElectrons_MT2Activity;   //!
    TBranch        *b_selectedIDElectrons_MTW;   //!
    TBranch        *b_selectedIDElectrons_RA2Activity;   //!
+   TBranch        *b_selectedIDIsoElectrons_mediumID;   //!
    TBranch        *b_selectedIDIsoElectrons_MT2Activity;   //!
    TBranch        *b_selectedIDIsoElectrons_MTW;   //!
    TBranch        *b_selectedIDIsoElectrons_PTW;   //!
@@ -338,11 +344,11 @@ NtupleClass::NtupleClass(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Ntuples/RA2sync_Sept23_2015/Spring15.SMS-T1bbbb_mGluino-1000_mLSP-900_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV2/Spring15.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Ntuples/RA2sync_Sept23_2015/Spring15.SMS-T1bbbb_mGluino-1000_mLSP-900_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
+         f = new TFile("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV2/Spring15.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
       }
-      TDirectory * dir = (TDirectory*)f->Get("root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Ntuples/RA2sync_Sept23_2015/Spring15.SMS-T1bbbb_mGluino-1000_mLSP-900_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root:/TreeMaker2");
+      TDirectory * dir = (TDirectory*)f->Get("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV2/Spring15.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root:/TreeMaker2");
       dir->GetObject("PreSelection",tree);
 
    }
@@ -440,6 +446,7 @@ void NtupleClass::Init(TTree *tree)
    photon_hadTowOverEM = 0;
    photon_hasPixelSeed = 0;
    photon_isEB = 0;
+   photon_nonPrompt = 0;
    photon_passElectronVeto = 0;
    photon_pfChargedIso = 0;
    photon_pfChargedIsoRhoCorr = 0;
@@ -455,10 +462,12 @@ void NtupleClass::Init(TTree *tree)
    RJetMinDeltaPhiIndexEta24 = 0;
    RJetMinDeltaPhiIndexEta5 = 0;
    selectedIDElectrons = 0;
+   selectedIDElectrons_mediumID = 0;
    selectedIDElectrons_MiniIso = 0;
    selectedIDElectrons_MT2Activity = 0;
    selectedIDElectrons_MTW = 0;
    selectedIDElectrons_RA2Activity = 0;
+   selectedIDIsoElectrons_mediumID = 0;
    selectedIDIsoElectrons_MT2Activity = 0;
    selectedIDIsoElectrons_MTW = 0;
    selectedIDIsoElectrons_PTW = 0;
@@ -587,6 +596,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("photon_hadTowOverEM", &photon_hadTowOverEM, &b_photon_hadTowOverEM);
    fChain->SetBranchAddress("photon_hasPixelSeed", &photon_hasPixelSeed, &b_photon_hasPixelSeed);
    fChain->SetBranchAddress("photon_isEB", &photon_isEB, &b_photon_isEB);
+   fChain->SetBranchAddress("photon_nonPrompt", &photon_nonPrompt, &b_photon_nonPrompt);
    fChain->SetBranchAddress("photon_passElectronVeto", &photon_passElectronVeto, &b_photon_passElectronVeto);
    fChain->SetBranchAddress("photon_pfChargedIso", &photon_pfChargedIso, &b_photon_pfChargedIso);
    fChain->SetBranchAddress("photon_pfChargedIsoRhoCorr", &photon_pfChargedIsoRhoCorr, &b_photon_pfChargedIsoRhoCorr);
@@ -602,10 +612,12 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("RJetMinDeltaPhiIndexEta24", &RJetMinDeltaPhiIndexEta24, &b_RJetMinDeltaPhiIndexEta24);
    fChain->SetBranchAddress("RJetMinDeltaPhiIndexEta5", &RJetMinDeltaPhiIndexEta5, &b_RJetMinDeltaPhiIndexEta5);
    fChain->SetBranchAddress("selectedIDElectrons", &selectedIDElectrons, &b_selectedIDElectrons);
+   fChain->SetBranchAddress("selectedIDElectrons_mediumID", &selectedIDElectrons_mediumID, &b_selectedIDElectrons_mediumID);
    fChain->SetBranchAddress("selectedIDElectrons_MiniIso", &selectedIDElectrons_MiniIso, &b_selectedIDElectrons_MiniIso);
    fChain->SetBranchAddress("selectedIDElectrons_MT2Activity", &selectedIDElectrons_MT2Activity, &b_selectedIDElectrons_MT2Activity);
    fChain->SetBranchAddress("selectedIDElectrons_MTW", &selectedIDElectrons_MTW, &b_selectedIDElectrons_MTW);
    fChain->SetBranchAddress("selectedIDElectrons_RA2Activity", &selectedIDElectrons_RA2Activity, &b_selectedIDElectrons_RA2Activity);
+   fChain->SetBranchAddress("selectedIDIsoElectrons_mediumID", &selectedIDIsoElectrons_mediumID, &b_selectedIDIsoElectrons_mediumID);
    fChain->SetBranchAddress("selectedIDIsoElectrons_MT2Activity", &selectedIDIsoElectrons_MT2Activity, &b_selectedIDIsoElectrons_MT2Activity);
    fChain->SetBranchAddress("selectedIDIsoElectrons_MTW", &selectedIDIsoElectrons_MTW, &b_selectedIDIsoElectrons_MTW);
    fChain->SetBranchAddress("selectedIDIsoElectrons_PTW", &selectedIDIsoElectrons_PTW, &b_selectedIDIsoElectrons_PTW);

@@ -163,6 +163,7 @@ class KCleanVariator : public KVariator<KSkimmer> {
 			DeltaPhi1 = looper->DeltaPhi1;
 			DeltaPhi2 = looper->DeltaPhi2;
 			DeltaPhi3 = looper->DeltaPhi3;
+			DeltaPhi4 = looper->DeltaPhi4;
 			
 			//set to clean vars
 			looper->NJets = looper->NJetsclean;
@@ -174,6 +175,7 @@ class KCleanVariator : public KVariator<KSkimmer> {
 			looper->DeltaPhi1 = looper->DeltaPhi1clean;
 			looper->DeltaPhi2 = looper->DeltaPhi2clean;
 			looper->DeltaPhi3 = looper->DeltaPhi3clean;
+			looper->DeltaPhi4 = looper->DeltaPhi4clean;
 		}
 		virtual void UndoVariation() {
 			//restore original values
@@ -186,6 +188,7 @@ class KCleanVariator : public KVariator<KSkimmer> {
 			looper->DeltaPhi1 = DeltaPhi1;
 			looper->DeltaPhi2 = DeltaPhi2;
 			looper->DeltaPhi3 = DeltaPhi3;
+			looper->DeltaPhi4 = DeltaPhi4;
 		}
 		
 		//member variables
@@ -198,6 +201,7 @@ class KCleanVariator : public KVariator<KSkimmer> {
 		Float_t         DeltaPhi1;
 		Float_t         DeltaPhi2;
 		Float_t         DeltaPhi3;
+		Float_t         DeltaPhi4;
 };
 
 namespace KParser {

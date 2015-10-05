@@ -20,7 +20,7 @@ signal
 	IsoMuonTrackVeto
 	IsoElectronTrackVeto
 	IsoPionTrackVeto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3]
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 LDP
@@ -32,7 +32,7 @@ LDP
 	IsoMuonTrackVeto
 	IsoElectronTrackVeto
 	IsoPionTrackVeto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3]	b:invert[1]
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]	b:invert[1]
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 SLm
@@ -43,7 +43,7 @@ SLm
 	ElectronVeto
 	IsoElectronTrackVeto
 	IsoPionTrackVeto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3]
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 SLe
@@ -54,7 +54,7 @@ SLe
 	Electron
 	IsoMuonTrackVeto
 	IsoPionTrackVeto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3]
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 GJet
@@ -67,7 +67,7 @@ GJet
 	IsoMuonTrackVeto
 	IsoElectronTrackVeto
 	IsoPionTrackVeto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3]
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 DYm
@@ -78,7 +78,7 @@ DYm
 	ElectronVeto
 	IsoElectronTrackVeto
 	IsoPionTrackVeto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3]
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 DYe
@@ -89,7 +89,7 @@ DYe
 	DiElectron
 	IsoMuonTrackVeto
 	IsoPionTrackVeto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3]
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 
