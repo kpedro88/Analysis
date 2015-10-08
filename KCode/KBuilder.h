@@ -198,6 +198,7 @@ class KBuilderMC : public KBuilder {
 		KBuilderMC(KBase* MyBase_, TTree* tree_, KSelection<KBuilder>* sel_) : KBuilder(MyBase_,tree_,sel_) { 
 			//get options
 			normtype = ""; localOpt->Get("normtype",normtype); GetNormTypeEnum();
+			unweighted = localOpt->Get("unweighted",false);
 			useTreeWeight = globalOpt->Get("useTreeWeight",false);
 			nEventProc = 0; got_nEventProc = localOpt->Get("nEventProc",nEventProc);
 			xsection = 0; got_xsection = localOpt->Get("xsection",xsection);
@@ -244,7 +245,8 @@ class KBuilderMC : public KBuilder {
 			*/
 			
 			//now do scaling: norm*xsection/nevents
-			if(useTreeWeight) w *= Weight;
+			if(unweighted) {} // do nothing
+			else if(useTreeWeight) w *= Weight;
 			else if(got_nEventProc && nEventProc>0 && got_xsection){
 				w *= xsection/nEventProc;
 				//account for negative weight events
@@ -262,7 +264,8 @@ class KBuilderMC : public KBuilder {
 			}
 			
 			//use lumi norm (default)
-			if(got_luminorm) w *= norm;
+			if(unweighted) {} //do nothing
+			else if(got_luminorm) w *= norm;
 			
 			return w;
 		}
@@ -278,7 +281,7 @@ class KBuilderMC : public KBuilder {
 		}
 
 		//member variables
-		bool got_nEventProc, got_xsection, got_luminorm, useTreeWeight, debugWeight, didDebugWeight;
+		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, debugWeight, didDebugWeight;
 		string normtype;
 		normtypes NTenum;
 		int nEventProc;
