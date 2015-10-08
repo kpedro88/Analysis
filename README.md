@@ -4,9 +4,9 @@
 
 [input\_selection.txt](input/input\_selection.txt) defines all the available selections, variations, and samples, as well as common global options.
 
-To run interactively, applying the "signal" selection to the "T1tttt\_1500\_100" sample and writing output trees to a folder "tree\_test\_${SELECTION}":
+To run interactively, applying the "signal" selection to the "T1tttt\_1500\_100" sample and writing output trees to a folder "tree\_test/tree\_${SELECTION}":
 ```
-root -b -q -l 'KSkimDriver.C+("input/input_selection.txt","T1tttt_1500_100","signal","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV1","tree_test")'
+root -b -q -l 'KSkimDriver.C+("input/input_selection.txt","T1tttt_1500_100","signal","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV2","tree_test/tree")'
 ```
 
 To recompile the driver without running (preparing for batch submission):
