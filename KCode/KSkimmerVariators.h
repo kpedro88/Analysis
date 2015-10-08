@@ -4,9 +4,11 @@
 //custom headers
 #include "KVariation.h"
 #include "KSkimmer.h"
+#include "KMath.h"
 
 //ROOT headers
 #include <TLorentzVector.h>
+#include <TMath.h>
 
 //STL headers
 #include <string>
@@ -152,7 +154,7 @@ class KCleanVariator : public KVariator<KSkimmer> {
 		KCleanVariator() : KVariator<KSkimmer>() { }
 		KCleanVariator(string name_, OptionMap* localOpt_) : KVariator<KSkimmer>(name_,localOpt_) {}
 		//functions
-		virtual void DoVariation() {			
+		virtual void DoVariation() {
 			//store original values
 			NJets = looper->NJets;
 			BTags = looper->BTags;
@@ -204,6 +206,160 @@ class KCleanVariator : public KVariator<KSkimmer> {
 		Float_t         DeltaPhi4;
 };
 
+//----------------------------------------------------------
+//manually calculate NoPhotons version of hadronic variables
+//(for photon ID studies)
+class KManualCleanVariator : public KVariator<KSkimmer> {
+	public:
+		//constructor
+		KManualCleanVariator() : KVariator<KSkimmer>() { }
+		KManualCleanVariator(string name_, OptionMap* localOpt_) : KVariator<KSkimmer>(name_,localOpt_),
+			minPtMHT(30.), maxEtaMHT(5.), minPtHT(30.), maxEtaHT(2.4), muonR(0.4), electronR(0.4), photonR(0.4)
+		{
+			localOpt->Get("minPtMHT",minPtMHT);
+			localOpt->Get("maxEtaMHT",maxEtaMHT);
+			localOpt->Get("minPtHT",minPtHT);
+			localOpt->Get("maxEtaHT",maxEtaHT);
+			localOpt->Get("muonR",muonR);
+			localOpt->Get("electronR",electronR);
+			localOpt->Get("photonR",photonR);
+		}
+		//functions
+		virtual void DoVariation() {
+			//initialize
+			bestPhoton = new vector<TLorentzVector>();
+			
+			//store original values
+			*(bestPhoton) = *(looper->bestPhoton);
+			NJets = looper->NJets;
+			BTags = looper->BTags;
+			HT = looper->HT;
+			MHT = looper->MHT;
+			minDeltaPhiN = looper->minDeltaPhiN;
+			METPt = looper->METPt;
+			DeltaPhi1 = looper->DeltaPhi1;
+			DeltaPhi2 = looper->DeltaPhi2;
+			DeltaPhi3 = looper->DeltaPhi3;
+			DeltaPhi4 = looper->DeltaPhi4;
+			
+			//modified photon ID - do not apply sigma_ieta_ieta_, charged hadron isolation cuts
+			double best_pt = 0;
+			int bestPhotonIndex = -1;
+			for(unsigned p = 0; p < looper->photonCands->size(); ++p){
+				bool isBarrelPhoton = fabs(looper->photonCands->at(p).Eta()) < 1.4442;
+				bool isEndcapPhoton = fabs(looper->photonCands->at(p).Eta()) > 1.566 && fabs(looper->photonCands->at(p).Eta()) < 2.5;
+				bool passAcc = isBarrelPhoton || isEndcapPhoton;
+				//no sigma_ieta_ieta cuts in ID
+				bool passID =  (isBarrelPhoton && looper->photon_hadTowOverEM->at(p) < 0.028 && looper->photon_passElectronVeto->at(p))
+							|| (isEndcapPhoton && looper->photon_hadTowOverEM->at(p) < 0.093 && looper->photon_passElectronVeto->at(p));
+				//no charged iso cuts in iso
+				bool passIso = (isBarrelPhoton && looper->photon_pfNeutralIsoRhoCorr->at(p) < (7.23 + TMath::Exp(0.0028*(looper->photonCands->at(p).Pt()+0.5408))) && looper->photon_pfGammaIsoRhoCorr->at(p) < (2.11 + 0.0014*looper->photonCands->at(p).Pt()))
+							|| (isEndcapPhoton && looper->photon_pfNeutralIsoRhoCorr->at(p) < (8.89 + 0.01725*looper->photonCands->at(p).Pt()) && looper->photon_pfGammaIsoRhoCorr->at(p) < (3.09 + 0.0091*looper->photonCands->at(p).Pt()));
+				bool goodPhoton = passAcc && passID && passIso && looper->photonCands->at(p).Pt() > 100.0;
+				if(goodPhoton && looper->photonCands->at(p).Pt() > best_pt){
+					best_pt = looper->photonCands->at(p).Pt();
+					bestPhotonIndex = p;
+				}
+			}
+			
+			//reassign best photon if found
+			if(bestPhotonIndex!=-1){
+				vector<TLorentzVector>* bestPhotonClean = new vector<TLorentzVector>();
+				bestPhotonClean->push_back(looper->photonCands->at(bestPhotonIndex));
+				*(looper->bestPhoton) = *(bestPhotonClean);		
+			}
+			
+			//recalculate jet-based quantities, cleaning out new bestPhoton
+			vector<TLorentzVector> htjetsClean;
+			TLorentzVector mhtLorentzClean; mhtLorentzClean.SetPtEtaPhiE(0,0,0,0);
+			double HTClean = 0.0;
+			int NJetsClean = 0;
+			int BTagsClean = 0;
+			for(unsigned j = 0; j < looper->Jets->size(); ++j){
+				//MHTJets cuts
+				if(looper->Jets->at(j).Pt()<=minPtMHT || fabs(looper->Jets->at(j).Eta())>=maxEtaMHT) continue;
+				
+				//object cleaning
+				bool overlap = false;
+				for(unsigned m = 0; m < looper->Muons->size(); ++m){
+					if(KMath::DeltaR(looper->Muons->at(m).Phi(),looper->Muons->at(m).Eta(),looper->Jets->at(j).Phi(),looper->Jets->at(j).Eta())<muonR) { overlap = true; break; }
+				}
+				if(overlap) continue;
+				for(unsigned e = 0; e < looper->Electrons->size(); ++e){
+					if(KMath::DeltaR(looper->Electrons->at(e).Phi(),looper->Electrons->at(e).Eta(),looper->Jets->at(j).Phi(),looper->Jets->at(j).Eta())<electronR) { overlap = true; break; }
+				}
+				if(overlap) continue;
+				for(unsigned g = 0; g < looper->bestPhoton->size(); ++g){
+					if(KMath::DeltaR(looper->bestPhoton->at(g).Phi(),looper->bestPhoton->at(g).Eta(),looper->Jets->at(j).Phi(),looper->Jets->at(j).Eta())<photonR) { overlap = true; break; }
+				}
+				if(overlap) continue;
+				
+				//jet has passed all cuts
+				mhtLorentzClean -= looper->Jets->at(j);
+				
+				//HTJets cuts
+				if(looper->Jets->at(j).Pt()>minPtHT && looper->Jets->at(j).Eta()<maxEtaHT) {
+					htjetsClean.push_back(looper->Jets->at(j));
+					HTClean += looper->Jets->at(j).Pt();
+					++NJetsClean;
+					if(looper->Jets_bDiscriminatorCSV->at(j) > 0.890) ++BTagsClean;
+				}
+			}
+			
+			//set to clean vars
+			looper->NJets = NJetsClean;
+			looper->BTags = BTagsClean;
+			looper->HT = HTClean;
+			looper->MHT = mhtLorentzClean.Pt();
+
+			double MHTPhiClean = mhtLorentzClean.Phi();
+			//test MHT clean calc
+			//cout << "delta MHT clean = " << mhtLorentzClean.Pt() - looper->MHTclean << endl;
+			
+			//reset vars
+			looper->DeltaPhi1 = looper->DeltaPhi2 = looper->DeltaPhi3 = looper->DeltaPhi4 = 0;
+			for(unsigned j = 0; j < min((unsigned)4,(unsigned)htjetsClean.size()); ++j){
+				//recalc delta phi
+				if(j==0) looper->DeltaPhi1 = abs(KMath::DeltaPhi(htjetsClean.at(j).Phi(),MHTPhiClean));
+				else if(j==1) looper->DeltaPhi2 = abs(KMath::DeltaPhi(htjetsClean.at(j).Phi(),MHTPhiClean));
+				else if(j==2) looper->DeltaPhi3 = abs(KMath::DeltaPhi(htjetsClean.at(j).Phi(),MHTPhiClean));
+				else if(j==3) looper->DeltaPhi4 = abs(KMath::DeltaPhi(htjetsClean.at(j).Phi(),MHTPhiClean));
+			}
+			
+			//too lazy to recalculate these
+			looper->minDeltaPhiN = looper->minDeltaPhiNclean;
+			looper->METPt = looper->METPtclean;
+		}
+		virtual void UndoVariation() {
+			//restore original values
+			*(looper->bestPhoton) = *(bestPhoton);
+			looper->NJets = NJets;
+			looper->BTags = BTags;
+			looper->HT = HT;
+			looper->MHT = MHT;
+			looper->minDeltaPhiN = minDeltaPhiN;
+			looper->METPt = METPt;
+			looper->DeltaPhi1 = DeltaPhi1;
+			looper->DeltaPhi2 = DeltaPhi2;
+			looper->DeltaPhi3 = DeltaPhi3;
+			looper->DeltaPhi4 = DeltaPhi4;
+		}
+		
+		//member variables
+		double minPtMHT, maxEtaMHT, minPtHT, maxEtaHT, muonR, electronR, photonR;
+		vector<TLorentzVector> *bestPhoton;
+		Int_t           NJets;
+		Int_t           BTags;
+		Float_t         HT;
+		Float_t         MHT;
+		Float_t         minDeltaPhiN;
+		Float_t         METPt;
+		Float_t         DeltaPhi1;
+		Float_t         DeltaPhi2;
+		Float_t         DeltaPhi3;
+		Float_t         DeltaPhi4;
+};
+
 namespace KParser {
 	template <>
 	KVariator<KSkimmer>* processVariator<KSkimmer>(KNamed* tmp){
@@ -213,6 +369,7 @@ namespace KParser {
 		
 		//check for all known variators
 		if(vname=="Clean") vtmp = new KCleanVariator(vname,omap);
+		else if(vname=="ManualClean") vtmp = new KManualCleanVariator(vname,omap);
 		//else if(vname=="JES") vtmp = new KJetESVariator(vname,omap);
 		//else if(vname=="JER") vtmp = new KJetERVariator(vname,omap);
 		else {} //skip unknown variators
