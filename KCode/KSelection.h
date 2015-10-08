@@ -53,6 +53,8 @@ class KSelector {
 			if(result) counter++;
 			return result;
 		}
+		//to allow selectors to add objects to the file
+		virtual void Finalize(TFile*) { }
 		//used for non-dummy selectors
 		virtual bool Cut() { return true; }
 		virtual void PrintEfficiency(vector<unsigned>& widths, int prev_counter, int nentries){
@@ -187,6 +189,12 @@ class KSelection {
 				if(nEventHist) nEventHist->Write();
 				if(nEventNegHist) nEventNegHist->Write();
 				if(tree) tree->Write();
+				
+				//just in case selectors have something to add
+				for(unsigned s = 0; s < selectorList.size(); s++){
+					selectorList[s]->Finalize(file);
+				}
+				
 				file->Close();
 			}
 		}

@@ -60,6 +60,8 @@ class KPlot{
 			
 			SetStyle();
 		}
+		//destructor
+		virtual ~KPlot() {}
 		//initialization
 		void SetStyle(){
 			//canvas sizes
@@ -506,6 +508,8 @@ class KPlot2D: public KPlot {
 		KPlot2D(string name_, string setname_, OptionMap* localOpt_, OptionMap* globalOpt_) : KPlot(name_,localOpt_,globalOpt_), setname(setname_) {
 			SetStyle();
 		}
+		//destructor
+		virtual ~KPlot2D() {}
 		//initialization
 		void SetStyle(){
 			//2D changes

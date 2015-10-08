@@ -12,9 +12,6 @@
 #include "NtupleClass.h"
 #include "KSelection.h"
 
-//custom headers for weighting
-#include "../btag/GetBtagScale.C"
-
 //ROOT headers
 #include <TROOT.h>
 #include <TFile.h>
@@ -243,15 +240,6 @@ class KBuilderMC : public KBuilder {
 				TH1F* puWeights;
 				globalOpt->Get("puWeights",puWeights);
 				w *= puWeights->GetBinContent(puWeights->GetXaxis()->FindBin(trueNInteraction));
-			}
-			
-			if(globalOpt->Get("btagcorr",false)) {
-				int bSF = 0;
-				int mSF = 0;
-				globalOpt->Get("btagSFunc",bSF);
-				globalOpt->Get("mistagSFunc",mSF);
-				//todo: add dependence on # btags
-				w *= GetBtagScale(PFJetPt,PFJetEta,PFJetPartonFlavour,bSF,mSF);
 			}
 			*/
 			

@@ -5,6 +5,7 @@
 #include "KSelection.h"
 #include "KSkimmer.h"
 #include "KMath.h"
+#include "KPlot.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -545,6 +546,81 @@ class KNBJetBinSelector : public KSelector<KSkimmer> {
 		bool initialized;
 		vector<int> nbjet_min, nbjet_max;
 		vector<KSelector<KSkimmer>*> bjet_sel;
+};
+
+//----------------------------------------------------
+//calculate b-tagging & mistagging efficiencies
+class KBTagEfficiencySelector : public KSelector<KSkimmer> {
+	public:
+		//constructor
+		KBTagEfficiencySelector() : KSelector<KSkimmer>() { }
+		KBTagEfficiencySelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) {
+			canfail = false;
+			//initialize histograms using KPlot2D::CreateHist() method
+			KPlot2D* ptmp = new KPlot2D("n_eff_b","",localOpt,NULL);
+			ptmp->CreateHist();
+			n_eff_b = (TH2F*)ptmp->GetHisto();
+			delete ptmp;
+			//reset z-title
+			n_eff_b->GetZaxis()->SetTitle("");
+			//clone histo
+			n_eff_c = (TH2F*)n_eff_b->Clone("n_eff_c");
+			n_eff_udsg = (TH2F*)n_eff_b->Clone("n_eff_udsg");
+			d_eff_b = (TH2F*)n_eff_b->Clone("d_eff_b");
+			d_eff_c = (TH2F*)n_eff_b->Clone("d_eff_c");
+			d_eff_udsg = (TH2F*)n_eff_b->Clone("d_eff_udsg");
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			//loop over jets
+			for(unsigned ja = 0; ja < looper->Jets->size(); ++ja){
+				//HT jet cuts
+				if(looper->Jets->at(ja).Pt() <= 30 || fabs(looper->Jets->at(ja).Eta()) >= 2.4) continue;
+				
+				//fill by flavor
+				int flav = looper->Jets_flavor->at(ja);
+				double csv = looper->Jets_bDiscriminatorCSV->at(ja);
+				double pt = looper->Jets->at(ja).Pt();
+				double eta = looper->Jets->at(ja).Eta();
+				if(flav==5){
+					d_eff_b->Fill(pt,eta);
+					if(csv > 0.890) n_eff_b->Fill(pt,eta);
+				}
+				else if(flav==4){
+					d_eff_c->Fill(pt,eta);
+					if(csv > 0.890) n_eff_c->Fill(pt,eta);
+				}
+				else if(flav<4 || flav==21){
+					d_eff_udsg->Fill(pt,eta);
+					if(csv > 0.890) n_eff_udsg->Fill(pt,eta);
+				}
+			}
+			
+			return true;
+		}
+		
+		virtual void Finalize(TFile* file){
+			//calculate efficiency from numer and denom
+			TH2F* h_eff_b = (TH2F*)n_eff_b->Clone("h_eff_b");
+			TH2F* h_eff_c = (TH2F*)n_eff_c->Clone("h_eff_c");
+			TH2F* h_eff_udsg = (TH2F*)n_eff_udsg->Clone("h_eff_udsg");
+			h_eff_b->Divide(d_eff_b);
+			h_eff_c->Divide(d_eff_c);
+			h_eff_udsg->Divide(d_eff_udsg);
+			
+			//write to file
+			file->cd();
+			h_eff_b->Write();
+			h_eff_c->Write();
+			h_eff_udsg->Write();
+		}
+		
+		//member variables
+		TH2F *n_eff_b, *n_eff_c, *n_eff_udsg;
+		TH2F *d_eff_b, *d_eff_c, *d_eff_udsg;
 };
 
 //-------------------------------------------------------------
@@ -1117,6 +1193,7 @@ namespace KParser {
 		else if(sname=="DeltaPhi") srtmp = new KDeltaPhiSelector(sname,omap);
 		else if(sname=="EventCleaning") srtmp = new KEventCleaningSelector(sname,omap);
 		else if(sname=="NBJetBin") srtmp = new KNBJetBinSelector(sname,omap);
+		else if(sname=="BTagEfficiency") srtmp = new KBTagEfficiencySelector(sname,omap);
 		else if(sname=="EventRange") srtmp = new KEventRangeSelector(sname,omap);
 		else if(sname=="PhotonAll") srtmp = new KPhotonAllSelector(sname,omap);
 		else if(sname=="PhotonEta") srtmp = new KPhotonEtaSelector(sname,omap);

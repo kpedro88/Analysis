@@ -5,6 +5,7 @@
 #include "KSelection.h"
 #include "KBuilder.h"
 #include "KMath.h"
+#include "../btag/BTagCalibrationStandalone.cc"
 
 //ROOT headers
 #include <TROOT.h>
@@ -28,7 +29,7 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 	public:
 		//constructor
 		KRA2BinSelector() : KSelector<KBuilder>() { }
-		KRA2BinSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), RA2Exclusive(true) { }
+		KRA2BinSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), RA2Exclusive(true), DoBTagSF(false) { }
 		virtual void SetSelection(KSelection<KBuilder>* sel_) {
 			sel = sel_;
 
@@ -105,21 +106,22 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 				sel->GetGlobalOpt()->Set<vector<string> >("RA2bin_labels",labels);
 			}
 			
-			//check exclusive binning option
+			//check other options
 			RA2Exclusive = sel->GetGlobalOpt()->Get("RA2Exclusive",true);
+			DoBTagSF = sel->GetGlobalOpt()->Get("btagcorr",false);
 		}
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			if(depfailed) return false;
 			
-			RA2bins = GetBinNumbers();
+			RA2bins = GetBinNumbers(RA2binVec);
 			
 			return RA2bins.size()!=0;
 		}
 		
 		//functions
-		vector<unsigned> GetBinNumbers() {
+		vector<unsigned> GetBinNumbers(vector<vector<unsigned> >& bin_vec) {
 			vector<vector<unsigned> > bins;
 			bins.reserve(RA2VarNames.size());
 			for(int q = 0; q < RA2VarNames.size(); ++q){
@@ -133,48 +135,68 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 			vector<unsigned> indices(RA2VarNames.size(),0);
 			vector<unsigned> bin_num(RA2VarNames.size(),0);
 			vector<unsigned> found_bins;
-			FindBin(indices,bins,0,bin_num,found_bins);
+			vector<vector<unsigned> > found_bin_nums;
+			FindBin(indices,bins,0,bin_num,found_bins,found_bin_nums);
+			bin_vec = found_bin_nums;
 			return found_bins;
 		}
 		//recursive function to implement variable # of for loops
 		//ref: http://stackoverflow.com/questions/9555864/variable-nested-for-loops
-		void FindBin(vector<unsigned>& indices, vector<vector<unsigned> >& bins, unsigned pos, vector<unsigned>& bin_num, vector<unsigned>& found_bins){
+		void FindBin(vector<unsigned>& indices, vector<vector<unsigned> >& bins, unsigned pos, vector<unsigned>& bin_num, vector<unsigned>& found_bins, vector<vector<unsigned> >& found_bin_nums){
 			for(indices[pos] = 0; indices[pos] < bins[pos].size(); indices[pos]++){
 				bin_num[pos] = bins[pos][indices[pos]];
 				if(pos == indices.size()-1){
 					map<vector<unsigned>, unsigned>::iterator it = IDtoBinNumber.find(bin_num);
-					//exit loop as soon as an existing bin is found
 					if(it != IDtoBinNumber.end()){
 						found_bins.push_back(it->second);
+						found_bin_nums.push_back(bin_num);
 					}
 				}
 				else {
-					FindBin(indices,bins,pos+1,bin_num,found_bins);
+					FindBin(indices,bins,pos+1,bin_num,found_bins,found_bin_nums);
 				}
 			}
 		}
 		
 		vector<unsigned> GetBins(unsigned qty){
 			//assume all values are floats
-			float val = 0;
-			if(RA2VarNames[qty]=="NJets") val = looper->NJets;
-			else if(RA2VarNames[qty]=="BTags") val = looper->BTags;
-			else if(RA2VarNames[qty]=="MHT") val = looper->MHT;
-			else if(RA2VarNames[qty]=="HT") val = looper->HT;
-			//else if(RA2VarNames[qty]=="ak1p2Jets_sumJetMass") val = looper->ak1p2Jets_sumJetMass;
+			vector<float> val;
+			if(RA2VarNames[qty]=="NJets") val.push_back(looper->NJets);
+			else if(RA2VarNames[qty]=="BTags") {
+				if(DoBTagSF){
+					//put this event into all btag bins
+					for(unsigned b = 0; b < RA2VarMax[qty].size(); ++b){
+						val.push_back(RA2VarMax[qty][b]);
+					}
+				}
+				else val.push_back(looper->BTags);
+			}
+			else if(RA2VarNames[qty]=="MHT") val.push_back(looper->MHT);
+			else if(RA2VarNames[qty]=="HT") val.push_back(looper->HT);
+			//else if(RA2VarNames[qty]=="ak1p2Jets_sumJetMass") val.push_back(looper->ak1p2Jets_sumJetMass);
 			else {}			
 			
 			vector<unsigned> bins;
-			for(unsigned n = 0; n < RA2VarMin[qty].size(); ++n){
-				if(val > RA2VarMin[qty][n] && val <= RA2VarMax[qty][n]) bins.push_back(n);
+			for(unsigned v = 0; v < val.size(); ++v){
+				for(unsigned n = 0; n < RA2VarMin[qty].size(); ++n){
+					if(val[v] > RA2VarMin[qty][n] && val[v] <= RA2VarMax[qty][n]) bins.push_back(n);
+				}
 			}
 			return bins;
 		}
 		
+		unsigned GetBin(string qty_name, const vector<unsigned>& bin_num){
+			for(int q = 0; q < RA2VarNames.size(); ++q){
+				if(RA2VarNames[q]==qty_name) return bin_num[q];
+			}
+			return -1;
+		}
+		
 	public:
 		//member variables
-		bool RA2Exclusive;
+		bool RA2Exclusive, DoBTagSF;
 		vector<unsigned> RA2bins;
+		vector<vector<unsigned> > RA2binVec;
 		map<vector<unsigned>, unsigned> IDtoBinNumber;
 		vector<string> RA2VarNames;
 		vector<vector<float> > RA2VarMin, RA2VarMax;
@@ -210,6 +232,7 @@ class KPhotonIDSelector : public KSelector<KBuilder> {
 		//constructor
 		KPhotonIDSelector() : KSelector<KBuilder>() { }
 		KPhotonIDSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_) { 
+			canfail = false;
 			//check for option
 			best = localOpt->Get("best",false);
 		}
@@ -236,6 +259,148 @@ class KPhotonIDSelector : public KSelector<KBuilder> {
 		//member variables
 		bool best;
 		vector<unsigned> goodPhotons;
+};
+
+//---------------------------------------------------------------
+//calculates btag scale factors
+class KBTagSFSelector : public KSelector<KBuilder> {
+	public:
+		//constructor
+		KBTagSFSelector() : KSelector<KBuilder>() { }
+		KBTagSFSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), SFvar(0), h_eff_b(NULL), h_eff_c(NULL), h_eff_udsg(NULL) { 
+			canfail = false;
+			
+			//check for option
+			localOpt->Get("btagvar",SFvar);
+			
+			//initialize btag helper classes
+			calib = BTagCalibration("csvv1","btag/CSVSLV1.csv");
+			reader = BTagCalibrationReader(&calib, BTagEntry::OP_MEDIUM, "comb", "central");
+			readerUp = BTagCalibrationReader(&calib, BTagEntry::OP_MEDIUM, "comb", "up");
+			readerDown = BTagCalibrationReader(&calib, BTagEntry::OP_MEDIUM, "comb", "down");
+		}
+		virtual void SetSelection(KSelection<KBuilder>* sel_) {
+			sel = sel_;
+			
+			//get efficiency histograms
+			TFile* file = looper->MyBase->GetFile();
+			h_eff_b = (TH2F*)file->Get("h_eff_b");
+			h_eff_c = (TH2F*)file->Get("h_eff_c");
+			h_eff_udsg = (TH2F*)file->Get("h_eff_udsg");
+			
+			if(!h_eff_b || !h_eff_c || !h_eff_udsg){
+				cout << "Input error: b-tag efficiency histograms missing!" << endl;
+				depfailed = true;
+			}
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			//reset probabilities
+			prob = vector<double>(4,0.0);
+			prob[0] = 1.0;
+			
+			//first loop over jets
+			vector<vector<double> > sfEffLists = vector<vector<double> >(looper->Jets->size(),vector<double>());
+			for(unsigned ja = 0; ja < looper->Jets->size(); ++ja){
+				//HT jet cuts
+				if(looper->Jets->at(ja).Pt() <= 30 || fabs(looper->Jets->at(ja).Eta()) >= 2.4) continue;
+				
+				//get sf and eff values (checks if already calculated)
+				InitSFEff(looper->Jets->at(ja).Pt(), looper->Jets->at(ja).Eta(), looper->Jets_flavor->at(ja), sfEffLists[ja]);
+				double eps_a = sfEffLists[ja][0]*sfEffLists[ja][1];
+				
+				//calculate prob(0 b-tags)
+				prob[0] *= (1-eps_a);
+				
+				//sub-probabilities for following calculations
+				double subprob1 = 1.0;
+				double subprob2 = 1.0;
+				
+				//second loop over jets
+				for(unsigned jb = 0; jb < looper->Jets->size(); ++jb){
+					//skip the same jet
+					if(jb==ja) continue;
+					
+					//HT jet cuts
+					if(looper->Jets->at(jb).Pt() <= 30 || fabs(looper->Jets->at(jb).Eta()) >= 2.4) continue;
+					
+					//get sf and eff values (checks if already calculated)
+					InitSFEff(looper->Jets->at(jb).Pt(), looper->Jets->at(jb).Eta(), looper->Jets_flavor->at(jb), sfEffLists[jb]);
+					double eps_b = sfEffLists[jb][0]*sfEffLists[jb][1];
+					
+					//calculate prob(1 b-tag)
+					subprob1 *= (1-eps_b);
+					
+					//sub-sub-probability for following calculations
+					double subsubprob2 = 1.0;
+					
+					//third loop over jets (only for jb>ja)
+					if(jb<ja) continue;
+					for(unsigned jc = 0; jc < looper->Jets->size(); ++jc){
+						//skip the same jet
+						if(jc==jb || jc==ja) continue;
+						
+						//HT jet cuts
+						if(looper->Jets->at(jc).Pt() <= 30 || fabs(looper->Jets->at(jc).Eta()) >= 2.4) continue;
+						
+						//get sf and eff values (checks if already calculated)
+						InitSFEff(looper->Jets->at(jc).Pt(), looper->Jets->at(jc).Eta(), looper->Jets_flavor->at(jc), sfEffLists[jc]);
+						double eps_c = sfEffLists[jc][0]*sfEffLists[jc][1];
+						
+						//calculate prob(2 b-tags)
+						subsubprob2 *= (1-eps_c);
+					}
+					
+					//add up sub-sub-prob
+					subprob2 += eps_b*subsubprob2;
+				}
+				
+				//add up sub-probs
+				prob[1] += eps_a*subprob1;
+				prob[2] += eps_a*subprob2;
+			}
+			
+			//conserve probability
+			prob[3] = 1 - prob[0] - prob[1] - prob[2];
+			
+			return true;
+		}
+		
+		//helper functions
+		void InitSFEff(double pt, double eta, int flav, vector<double>& sfEffList){
+			//avoid rerunning this
+			if(sfEffList.size()>0) return;
+			
+			sfEffList = vector<double>(2,1.0); //eff, sf (central, up, or down)
+			
+			if(flav==5){
+				sfEffList[0] = h_eff_b->GetBinContent(h_eff_b->FindBin(pt,eta));
+				sfEffList[1] = (SFvar==0 ? reader.eval(BTagEntry::FLAV_B,eta,pt) :
+							   (SFvar==1 ? readerUp.eval(BTagEntry::FLAV_B,eta,pt) :
+							               readerDown.eval(BTagEntry::FLAV_B,eta,pt) ) );
+			}
+			else if(flav==4){ //charm mistag unc taken to be 2x b-tag unc
+				sfEffList[0] = h_eff_b->GetBinContent(h_eff_b->FindBin(pt,eta));
+				double sf = reader.eval(BTagEntry::FLAV_B,eta,pt);
+				sfEffList[1] = (SFvar==0 ? sf :
+							   (SFvar==1 ? 2*readerUp.eval(BTagEntry::FLAV_B,eta,pt) - sf :
+							               2*readerDown.eval(BTagEntry::FLAV_B,eta,pt) - sf ) );
+			}
+			else {
+				sfEffList[0] = h_eff_b->GetBinContent(h_eff_b->FindBin(pt,eta));
+				sfEffList[1] = (SFvar==0 ? reader.eval(BTagEntry::FLAV_UDSG,eta,pt) :
+							   (SFvar==1 ? readerUp.eval(BTagEntry::FLAV_UDSG,eta,pt) :
+							               readerDown.eval(BTagEntry::FLAV_UDSG,eta,pt) ) );
+			}
+		}
+		
+		//member variables
+		int SFvar;
+		BTagCalibration calib;
+		BTagCalibrationReader reader, readerUp, readerDown;
+		TH2F *h_eff_b, *h_eff_c, *h_eff_udsg;
+		vector<double> prob;
 };
 
 //---------------------------------------------------------------
@@ -267,13 +432,17 @@ class KHistoSelector : public KSelector<KBuilder> {
 	public:
 		//constructor
 		KHistoSelector() : KSelector<KBuilder>() { }
-		KHistoSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), RA2Bin(NULL), PhotonID(NULL) { canfail = false; }
+		KHistoSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), RA2Bin(NULL), PhotonID(NULL), BTagSF(NULL) { 
+			canfail = false;
+		}
 		
 		virtual void SetSelection(KSelection<KBuilder>* sel_) {
 			sel = sel_;
 			//set dependencies here
 			RA2Bin = sel->Get<KRA2BinSelector*>("RA2Bin");
 			PhotonID = sel->Get<KPhotonIDSelector*>("PhotonID");
+			bool DoBTagSF = sel->GetGlobalOpt()->Get("btagcorr",false);
+			if(DoBTagSF) BTagSF = sel->Get<KBTagSFSelector*>("BTagSF");
 		} 
 		
 		//used for non-dummy selectors
@@ -287,11 +456,14 @@ class KHistoSelector : public KSelector<KBuilder> {
 				for(int i = 0; i < vsize; i++){
 					string vname = looper->vars[h][i];
 					//list of cases for histo calculation and filling
-					if(vname=="RA2bin" && RA2Bin){//plot yield vs. bin of RA2 search -> depends on RA2Bin selector
+					if(vname=="RA2bin" && RA2Bin){ //plot yield vs. bin of RA2 search -> depends on RA2Bin selector
 						if(RA2Bin->RA2Exclusive) values[i].Fill(RA2Bin->RA2bins[0],w);
 						else {
 							for(int b = 0; b < RA2Bin->RA2bins.size(); b++){
-								values[i].Fill(RA2Bin->RA2bins[b],w);
+								double wb = w;
+								//weight by btag scale factor probability if available
+								if(BTagSF) wb *= BTagSF->prob[RA2Bin->GetBin("BTag",RA2Bin->RA2binVec[b])];
+								values[i].Fill(RA2Bin->RA2bins[b],wb);
 							}
 						}
 					}
@@ -389,6 +561,7 @@ class KHistoSelector : public KSelector<KBuilder> {
 		//member variables
 		KRA2BinSelector* RA2Bin;
 		KPhotonIDSelector* PhotonID;
+		KBTagSFSelector* BTagSF;
 };
 
 //-------------------------------------------------------------
@@ -405,6 +578,7 @@ namespace KParser {
 		else if(sname=="DoubleCount") srtmp = new KDoubleCountSelector(sname,omap);
 		else if(sname=="RA2Bin") srtmp = new KRA2BinSelector(sname,omap);
 		else if(sname=="PhotonID") srtmp = new KPhotonIDSelector(sname,omap);
+		else if(sname=="BTagSF") srtmp = new KBTagSFSelector(sname,omap);
 		else {} //skip unknown selectors
 		
 		if(!srtmp) cout << "Input error: unknown selector " << sname << ". This selector will be skipped." << endl;
