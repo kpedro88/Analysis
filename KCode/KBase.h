@@ -33,7 +33,7 @@ class KBuilder;
 class KBase {
 	public:
 		//constructors
-		KBase() : name(""), parent(0), localOpt(0), globalOpt(0), file(0), tree(0), nEventHist(0), MyBuilder(0), MySelection(0), stmp(""), htmp(0), etmp(0), isBuilt(false) {
+		KBase() : name(""), parent(0), localOpt(0), globalOpt(0), file(0), tree(0), nEventHist(0), nEventNegHist(0), MyBuilder(0), MySelection(0), stmp(""), htmp(0), etmp(0), isBuilt(false) {
 			//enable histo errors
 			TH1::SetDefaultSumw2(kTRUE);
 			//must always have local & global option maps
@@ -41,7 +41,7 @@ class KBase {
 			if(globalOpt==0) globalOpt = new OptionMap();
 		}
 		KBase(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : 
-			name(name_), parent(0), localOpt(localOpt_), globalOpt(globalOpt_), file(0), tree(0), nEventHist(0), MyBuilder(0), MySelection(0), stmp(""), htmp(0), etmp(0), isBuilt(false)
+			name(name_), parent(0), localOpt(localOpt_), globalOpt(globalOpt_), file(0), tree(0), nEventHist(0), nEventNegHist(0), MyBuilder(0), MySelection(0), stmp(""), htmp(0), etmp(0), isBuilt(false)
 		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
@@ -247,6 +247,7 @@ class KBase {
 			cout << name << ": " << hint << " +/- " << err << endl;
 		}
 		virtual double GetYield() { return htmp->Integral(0,htmp->GetNbinsX()+1); }
+		TFile* GetFile() { return file; }
 		virtual void CloseFile() { if(file) file->Close(); }
 		//divide current histo by bin width, default implementation
 		virtual void BinDivide(){
