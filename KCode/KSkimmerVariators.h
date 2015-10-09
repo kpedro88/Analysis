@@ -231,6 +231,7 @@ class KManualCleanVariator : public KVariator<KSkimmer> {
 			
 			//store original values
 			*(bestPhoton) = *(looper->bestPhoton);
+			NumPhotons = looper->NumPhotons;
 			NJets = looper->NJets;
 			BTags = looper->BTags;
 			HT = looper->HT;
@@ -243,8 +244,9 @@ class KManualCleanVariator : public KVariator<KSkimmer> {
 			DeltaPhi4 = looper->DeltaPhi4;
 			
 			//modified photon ID - do not apply sigma_ieta_ieta_, charged hadron isolation cuts
-			double best_pt = 0;
+			double bestPhotonPt = 0;
 			int bestPhotonIndex = -1;
+			int newNumPhotons = 0;
 			for(unsigned p = 0; p < looper->photonCands->size(); ++p){
 				bool isBarrelPhoton = fabs(looper->photonCands->at(p).Eta()) < 1.4442;
 				bool isEndcapPhoton = fabs(looper->photonCands->at(p).Eta()) > 1.566 && fabs(looper->photonCands->at(p).Eta()) < 2.5;
@@ -256,9 +258,12 @@ class KManualCleanVariator : public KVariator<KSkimmer> {
 				bool passIso = (isBarrelPhoton && looper->photon_pfNeutralIsoRhoCorr->at(p) < (7.23 + TMath::Exp(0.0028*(looper->photonCands->at(p).Pt()+0.5408))) && looper->photon_pfGammaIsoRhoCorr->at(p) < (2.11 + 0.0014*looper->photonCands->at(p).Pt()))
 							|| (isEndcapPhoton && looper->photon_pfNeutralIsoRhoCorr->at(p) < (8.89 + 0.01725*looper->photonCands->at(p).Pt()) && looper->photon_pfGammaIsoRhoCorr->at(p) < (3.09 + 0.0091*looper->photonCands->at(p).Pt()));
 				bool goodPhoton = passAcc && passID && passIso && looper->photonCands->at(p).Pt() > 100.0;
-				if(goodPhoton && looper->photonCands->at(p).Pt() > best_pt){
-					best_pt = looper->photonCands->at(p).Pt();
-					bestPhotonIndex = p;
+				if(goodPhoton){
+					++newNumPhotons;
+					if(looper->photonCands->at(p).Pt() > bestPhotonPt){
+						bestPhotonPt = looper->photonCands->at(p).Pt();
+						bestPhotonIndex = p;
+					}
 				}
 			}
 			
@@ -266,8 +271,9 @@ class KManualCleanVariator : public KVariator<KSkimmer> {
 			if(bestPhotonIndex!=-1){
 				vector<TLorentzVector>* bestPhotonClean = new vector<TLorentzVector>();
 				bestPhotonClean->push_back(looper->photonCands->at(bestPhotonIndex));
-				*(looper->bestPhoton) = *(bestPhotonClean);		
+				*(looper->bestPhoton) = *(bestPhotonClean);
 			}
+			looper->NumPhotons = newNumPhotons;
 			
 			//recalculate jet-based quantities, cleaning out new bestPhoton
 			vector<TLorentzVector> htjetsClean;
@@ -333,6 +339,7 @@ class KManualCleanVariator : public KVariator<KSkimmer> {
 		virtual void UndoVariation() {
 			//restore original values
 			*(looper->bestPhoton) = *(bestPhoton);
+			looper->NumPhotons = NumPhotons;
 			looper->NJets = NJets;
 			looper->BTags = BTags;
 			looper->HT = HT;
@@ -348,6 +355,7 @@ class KManualCleanVariator : public KVariator<KSkimmer> {
 		//member variables
 		double minPtMHT, maxEtaMHT, minPtHT, maxEtaHT, muonR, electronR, photonR;
 		vector<TLorentzVector> *bestPhoton;
+		Int_t           NumPhotons;
 		Int_t           NJets;
 		Int_t           BTags;
 		Float_t         HT;
