@@ -357,7 +357,10 @@ class KBaseExt : public KBase {
 					add_ext = true;
 					for(unsigned i = 0; i < exthisto_in.size(); i++){
 						TH1* extmp = (TH1*)file->Get(exthisto_in[i].c_str());
-						AddHisto(exthisto_out[i],extmp);
+						if(extmp) AddHisto(exthisto_out[i],extmp);
+						else {
+							cout << "Input error: could not open histo " << exthisto_in[i] << " in file " << filename << "!" << endl;
+						}
 					}
 					add_ext = false;
 				}
