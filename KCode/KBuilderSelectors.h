@@ -538,6 +538,16 @@ class KHistoSelector : public KSelector<KBuilder> {
 							}
 						}
 					}
+					else if(vname=="bestsigmaietaieta"){//sigma ieta ieta variable for best photon
+						if(looper->bestPhoton->size()==0) continue;
+						int bestIndex = -1;
+						for(unsigned p = 0; p < looper->photonCands->size(); ++p){
+							if(looper->bestPhoton->at(0)==looper->photonCands->at(p) && looper->photon_isEB->at(p)){
+								values[i].Fill(looper->photon_sigmaIetaIeta->at(p),w);
+								break;
+							}
+						}
+					}
 					else { //if it's a histogram with no known variable or calculation, do nothing
 					}
 				}
