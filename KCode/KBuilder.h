@@ -92,6 +92,8 @@ class KBuilder : public NtupleClass {
 			
 			//loop over ntuple tree
 			Long64_t nentries = fChain->GetEntries();
+			int maxevents = 0;
+			if(globalOpt->Get("maxevents",maxevents) && maxevents < nentries) nentries = maxevents;
 			bool debugloop = globalOpt->Get("debugloop",false);
 			Long64_t nbytes = 0, nb = 0;
 			for (Long64_t jentry=0; jentry<nentries;jentry++) {
