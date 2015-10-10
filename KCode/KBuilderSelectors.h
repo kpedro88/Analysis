@@ -267,11 +267,11 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 	public:
 		//constructor
 		KBTagSFSelector() : KSelector<KBuilder>() { }
-		KBTagSFSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), SFvar(0), h_eff_b(NULL), h_eff_c(NULL), h_eff_udsg(NULL) { 
+		KBTagSFSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), debug(false), SFvar(0), h_eff_b(NULL), h_eff_c(NULL), h_eff_udsg(NULL) { 
 			canfail = false;
 			
 			//check for option
-			localOpt->Get("btagvar",SFvar);
+			debug = localOpt->Get("debug",false);
 			
 			//initialize btag helper classes
 			calib = BTagCalibration("csvv1","btag/CSVSLV1.csv");
@@ -279,9 +279,12 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 			readerUp = BTagCalibrationReader(&calib, BTagEntry::OP_MEDIUM, "comb", "up");
 			readerDown = BTagCalibrationReader(&calib, BTagEntry::OP_MEDIUM, "comb", "down");
 		}
-		virtual void SetSelection(KSelection<KBuilder>* sel_) {
-			sel = sel_;
+		virtual void SetLooper(KBuilder* looper_) {
+			looper = looper_;
 			
+			//check for option
+			looper->globalOpt->Get("btagSFunc",SFvar);
+
 			//get efficiency histograms
 			TFile* file = looper->MyBase->GetFile();
 			h_eff_b = (TH2F*)file->Get("h_eff_b");
@@ -310,12 +313,16 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 				InitSFEff(looper->Jets->at(ja).Pt(), looper->Jets->at(ja).Eta(), looper->Jets_flavor->at(ja), sfEffLists[ja]);
 				double eps_a = sfEffLists[ja][0]*sfEffLists[ja][1];
 				
+				//jet index, pt, eta, flavor, eff, sf
+				if(debug) cout << "Jet " << ja << ": " << looper->Jets->at(ja).Pt() << ", " << fabs(looper->Jets->at(ja).Eta()) << ", " << abs(looper->Jets_flavor->at(ja)) 
+								<< ", " << sfEffLists[ja][0] << ", " << sfEffLists[ja][1] << endl;
+				
 				//calculate prob(0 b-tags)
 				prob[0] *= (1-eps_a);
 				
 				//sub-probabilities for following calculations
 				double subprob1 = 1.0;
-				double subprob2 = 1.0;
+				double subprob2 = 0.0;
 				
 				//second loop over jets
 				for(unsigned jb = 0; jb < looper->Jets->size(); ++jb){
@@ -328,6 +335,10 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 					//get sf and eff values (checks if already calculated)
 					InitSFEff(looper->Jets->at(jb).Pt(), looper->Jets->at(jb).Eta(), looper->Jets_flavor->at(jb), sfEffLists[jb]);
 					double eps_b = sfEffLists[jb][0]*sfEffLists[jb][1];
+					
+					//jet index, pt, eta, flavor, eff, sf
+					if(debug) cout << "\tJet " << jb << ": " << looper->Jets->at(jb).Pt() << ", " << fabs(looper->Jets->at(jb).Eta()) << ", " << abs(looper->Jets_flavor->at(jb)) 
+									<< ", " << sfEffLists[jb][0] << ", " << sfEffLists[jb][1] << endl;
 					
 					//calculate prob(1 b-tag)
 					subprob1 *= (1-eps_b);
@@ -348,6 +359,10 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 						InitSFEff(looper->Jets->at(jc).Pt(), looper->Jets->at(jc).Eta(), looper->Jets_flavor->at(jc), sfEffLists[jc]);
 						double eps_c = sfEffLists[jc][0]*sfEffLists[jc][1];
 						
+						//jet index, pt, eta, flavor, eff, sf
+						if(debug) cout << "\t\tJet " << jc << ": " << looper->Jets->at(jc).Pt() << ", " << fabs(looper->Jets->at(jc).Eta()) << ", " << abs(looper->Jets_flavor->at(jc)) 
+										<< ", " << sfEffLists[jc][0] << ", " << sfEffLists[jc][1] << endl;
+						
 						//calculate prob(2 b-tags)
 						subsubprob2 *= (1-eps_c);
 					}
@@ -363,6 +378,7 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 			
 			//conserve probability
 			prob[3] = 1 - prob[0] - prob[1] - prob[2];
+			if(debug) cout << prob[0] << ", " << prob[1] << ", " << prob[2] << ", " << prob[3] << endl;
 			
 			return true;
 		}
@@ -371,6 +387,11 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 		void InitSFEff(double pt, double eta, int flav, vector<double>& sfEffList){
 			//avoid rerunning this
 			if(sfEffList.size()>0) return;
+			
+			//use abs(eta) for now
+			eta = fabs(eta);
+			//use abs(flav) always
+			flav = abs(flav);
 			
 			sfEffList = vector<double>(2,1.0); //eff, sf (central, up, or down)
 			
@@ -381,14 +402,14 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 							               readerDown.eval(BTagEntry::FLAV_B,eta,pt) ) );
 			}
 			else if(flav==4){ //charm mistag unc taken to be 2x b-tag unc
-				sfEffList[0] = h_eff_b->GetBinContent(h_eff_b->FindBin(pt,eta));
+				sfEffList[0] = h_eff_c->GetBinContent(h_eff_c->FindBin(pt,eta));
 				double sf = reader.eval(BTagEntry::FLAV_B,eta,pt);
 				sfEffList[1] = (SFvar==0 ? sf :
 							   (SFvar==1 ? 2*readerUp.eval(BTagEntry::FLAV_B,eta,pt) - sf :
 							               2*readerDown.eval(BTagEntry::FLAV_B,eta,pt) - sf ) );
 			}
-			else {
-				sfEffList[0] = h_eff_b->GetBinContent(h_eff_b->FindBin(pt,eta));
+			else if(flav<4 || flav==21){
+				sfEffList[0] = h_eff_udsg->GetBinContent(h_eff_udsg->FindBin(pt,eta));
 				sfEffList[1] = (SFvar==0 ? reader.eval(BTagEntry::FLAV_UDSG,eta,pt) :
 							   (SFvar==1 ? readerUp.eval(BTagEntry::FLAV_UDSG,eta,pt) :
 							               readerDown.eval(BTagEntry::FLAV_UDSG,eta,pt) ) );
@@ -396,6 +417,7 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 		}
 		
 		//member variables
+		bool debug;
 		int SFvar;
 		BTagCalibration calib;
 		BTagCalibrationReader reader, readerUp, readerDown;
@@ -462,7 +484,11 @@ class KHistoSelector : public KSelector<KBuilder> {
 							for(int b = 0; b < RA2Bin->RA2bins.size(); b++){
 								double wb = w;
 								//weight by btag scale factor probability if available
-								if(BTagSF) wb *= BTagSF->prob[RA2Bin->GetBin("BTag",RA2Bin->RA2binVec[b])];
+								if(BTagSF) {
+									int nb = RA2Bin->GetBin("BTags",RA2Bin->RA2binVec[b]);
+									if(nb>=0 && nb<BTagSF->prob.size()) wb *= BTagSF->prob[nb];
+									else wb = 0; //btag sf failed
+								}
 								values[i].Fill(RA2Bin->RA2bins[b],wb);
 							}
 						}
