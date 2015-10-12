@@ -78,7 +78,7 @@ ttHJetTobb_M125_ext3
 
 for SAMPLE in ${SAMPLES[@]}
   do
-    ./SKtemp.sh ${JOBDIR} input/input_selection.txt ${SAMPLE} signal,LDP,SLm,SLe,GJet_CleanVars,DYm_CleanVars,DYe_CleanVars root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV2 tree ${STORE}
+    ./SKtemp.sh ${JOBDIR} input/input_selection.txt ${SAMPLE} signal,LDP,SLm,SLe,GJet_CleanVars,DYm_CleanVars,DYe_CleanVars,GJetLDP_CleanVars root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV2 tree ${STORE}
   done
 
 #currently not available:

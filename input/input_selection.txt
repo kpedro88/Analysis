@@ -93,7 +93,19 @@ DYe
 	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
-
+GJetLDP
+	NJet	i:njet[4]
+	HT	d:HTmin[500]
+	MHT	d:MHTmin[200]
+	Photon
+	MuonVeto
+	ElectronVeto
+	IsoMuonTrackVeto
+	IsoElectronTrackVeto
+	IsoPionTrackVeto
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]	b:invert[1]
+	EventCleaning
+	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 
 VARIATION
 CleanVars
