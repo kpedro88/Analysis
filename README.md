@@ -52,3 +52,15 @@ that includes an extra input argument to specify the name of the output ROOT fil
 These macros use modified input files that split up each background process (rather than stacking them together, as done for plotting).
 The W+jets and ttbar processes are added together in the input file. The macro adds together the two single-lepton control region files
 after they are generated.
+
+### Signal systematics
+
+To save the individual histograms for the signal processes to a ROOT file for each different variation of systematic uncertainty:
+```
+root -b -l -q 'MakeAllDCsyst.C+("root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV2")'
+```
+This macro calls the macro `KPlotDriverDCsyst.C`, which is a modification of the macro from the previous section
+that includes extra input arguments to specify the name and direction of the systematic variation (up or down).
+Currently available uncertainties:
+* b-tagging scale factors
+* mistagging scale factors
