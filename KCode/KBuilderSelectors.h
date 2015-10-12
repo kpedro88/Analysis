@@ -267,7 +267,7 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 	public:
 		//constructor
 		KBTagSFSelector() : KSelector<KBuilder>() { }
-		KBTagSFSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), debug(false), SFvar(0), h_eff_b(NULL), h_eff_c(NULL), h_eff_udsg(NULL) { 
+		KBTagSFSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), debug(false), btagSFunc(0), mistagSFunc(0), h_eff_b(NULL), h_eff_c(NULL), h_eff_udsg(NULL) { 
 			canfail = false;
 			
 			//check for option
@@ -283,7 +283,8 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 			looper = looper_;
 			
 			//check for option
-			looper->globalOpt->Get("btagSFunc",SFvar);
+			looper->globalOpt->Get("btagSFunc",btagSFunc);
+			looper->globalOpt->Get("mistagSFunc",mistagSFunc);
 
 			//get efficiency histograms
 			TFile* file = looper->MyBase->GetFile();
@@ -397,28 +398,28 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 			
 			if(flav==5){
 				sfEffList[0] = h_eff_b->GetBinContent(h_eff_b->FindBin(pt,eta));
-				sfEffList[1] = (SFvar==0 ? reader.eval(BTagEntry::FLAV_B,eta,pt) :
-							   (SFvar==1 ? readerUp.eval(BTagEntry::FLAV_B,eta,pt) :
+				sfEffList[1] = (btagSFunc==0 ? reader.eval(BTagEntry::FLAV_B,eta,pt) :
+							   (btagSFunc==1 ? readerUp.eval(BTagEntry::FLAV_B,eta,pt) :
 							               readerDown.eval(BTagEntry::FLAV_B,eta,pt) ) );
 			}
 			else if(flav==4){ //charm mistag unc taken to be 2x b-tag unc
 				sfEffList[0] = h_eff_c->GetBinContent(h_eff_c->FindBin(pt,eta));
 				double sf = reader.eval(BTagEntry::FLAV_B,eta,pt);
-				sfEffList[1] = (SFvar==0 ? sf :
-							   (SFvar==1 ? 2*readerUp.eval(BTagEntry::FLAV_B,eta,pt) - sf :
+				sfEffList[1] = (btagSFunc==0 ? sf :
+							   (btagSFunc==1 ? 2*readerUp.eval(BTagEntry::FLAV_B,eta,pt) - sf :
 							               2*readerDown.eval(BTagEntry::FLAV_B,eta,pt) - sf ) );
 			}
 			else if(flav<4 || flav==21){
 				sfEffList[0] = h_eff_udsg->GetBinContent(h_eff_udsg->FindBin(pt,eta));
-				sfEffList[1] = (SFvar==0 ? reader.eval(BTagEntry::FLAV_UDSG,eta,pt) :
-							   (SFvar==1 ? readerUp.eval(BTagEntry::FLAV_UDSG,eta,pt) :
+				sfEffList[1] = (mistagSFunc==0 ? reader.eval(BTagEntry::FLAV_UDSG,eta,pt) :
+							   (mistagSFunc==1 ? readerUp.eval(BTagEntry::FLAV_UDSG,eta,pt) :
 							               readerDown.eval(BTagEntry::FLAV_UDSG,eta,pt) ) );
 			}
 		}
 		
 		//member variables
 		bool debug;
-		int SFvar;
+		int btagSFunc, mistagSFunc;
 		BTagCalibration calib;
 		BTagCalibrationReader reader, readerUp, readerDown;
 		TH2F *h_eff_b, *h_eff_c, *h_eff_udsg;
