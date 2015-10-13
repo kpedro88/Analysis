@@ -2,6 +2,10 @@
 
 KEEPTAR=$1
 JOBDIR=batch
+INPUT=input/input_selection.txt
+SELTYPE=signal,LDP,SLm,SLe,GJet_CleanVars,DYm_CleanVars,DYe_CleanVars,GJetLDP_CleanVars
+INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV2
+OUTDIR=tree
 STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV2
 
 ./SKcheck.sh "$KEEPTAR" "$JOBDIR"
@@ -39,5 +43,5 @@ SinglePhoton_2015D
 
 for SAMPLE in ${SAMPLES[@]}
   do
-    ./SKtemp.sh ${JOBDIR} input/input_selection.txt ${SAMPLE} signal,LDP,SLm,SLe,GJet_CleanVars,DYm_CleanVars,DYe_CleanVars,GJetLDP_CleanVars root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV2 tree ${STORE}
+    ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} ${SELTYPE} ${INDIR} ${OUTDIR} ${STORE}
   done
