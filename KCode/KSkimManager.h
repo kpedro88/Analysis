@@ -35,8 +35,14 @@ class KSkimManager : public KManager {
 			//parse most initializations based on text input
 			Initialize(input_);
 			
-			//initialize skimmer after parsing
+			//safety checks
 			if(!parsed) return;
+			if(!MyBase){
+				cout << "Input error: set " << setname << " was not found in " << input_ << "!" << endl;
+				return;
+			}
+			
+			//initialize skimmer after parsing
 			int mother = -1;
 			MyBase->GetLocalOpt()->Get("mother",mother);
 			globalOpt->Set("mother",mother);
