@@ -57,10 +57,15 @@ after they are generated.
 
 To save the individual histograms for the signal processes to a ROOT file for each different variation of systematic uncertainty:
 ```
-root -b -l -q 'MakeAllDCsyst.C+("root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV2")'
+root -b -l -q 'MakeAllDCsyst.C+(0,"root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV2")'
 ```
 This macro calls the macro `KPlotDriverDCsyst.C`, which is a modification of the macro from the previous section
 that includes extra input arguments to specify the name and direction of the systematic variation (up or down).
+To run over fastsim signal samples, change the first argument to `1`.
+
 Currently available uncertainties:
 * b-tagging scale factors
 * mistagging scale factors
+* b-tagging correction factors (fastsim only)
+* c-tagging correction factors (fastsim only)
+* mistagging correction factors (fastsim only)

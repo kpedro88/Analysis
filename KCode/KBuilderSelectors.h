@@ -268,16 +268,6 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 		//constructor
 		KMETFilterSelector() : KSelector<KBuilder>() { }
 		KMETFilterSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_) { }
-
-		//turn on necessary branches
-		virtual void SetLooper(KBuilder* looper_) {
-			looper = looper_;
-			
-			looper->fChain->SetBranchStatus("NVtx",1);
-			looper->fChain->SetBranchStatus("eeBadScFilter",1);
-			looper->fChain->SetBranchStatus("HBHENoiseFilter",1);
-			looper->fChain->SetBranchStatus("JetID",1);
-		}
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
@@ -291,7 +281,9 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 	public:
 		//constructor
 		KBTagSFSelector() : KSelector<KBuilder>() { }
-		KBTagSFSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), debug(false), btagSFunc(0), mistagSFunc(0), h_eff_b(NULL), h_eff_c(NULL), h_eff_udsg(NULL) { 
+		KBTagSFSelector(string name_, OptionMap* localOpt_) : 
+			KSelector<KBuilder>(name_,localOpt_), debug(false), fastsim(false), btagSFunc(0), mistagSFunc(0), btagCFunc(0), ctagCFunc(0), mistagCFunc(0), h_eff_b(NULL), h_eff_c(NULL), h_eff_udsg(NULL)
+		{ 
 			canfail = false;
 			
 			//check for option
@@ -320,6 +312,22 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 				cout << "Input error: b-tag efficiency histograms missing!" << endl;
 				depfailed = true;
 			}
+			
+			//check fastsim stuff
+			fastsim = looper->globalOpt->Get("fastsim",false);
+			if(fastsim){
+				//read CFs
+				//todo: check the sample name and choose the appropriate CFs (once available)
+				calibFast = BTagCalibration("csvv1","btag/CSV_13TEV_TTJets_12_10_2015_prelimUnc.csv");
+				readerFast = BTagCalibrationReader(&calibFast, BTagEntry::OP_MEDIUM, "fastsim", "central");
+				readerFastUp = BTagCalibrationReader(&calibFast, BTagEntry::OP_MEDIUM, "fastsim", "up");
+				readerFastDown = BTagCalibrationReader(&calibFast, BTagEntry::OP_MEDIUM, "fastsim", "down");
+				
+				//check for option
+				looper->globalOpt->Get("btagCFunc",btagCFunc);
+				looper->globalOpt->Get("ctagCFunc",ctagCFunc);
+				looper->globalOpt->Get("mistagCFunc",mistagCFunc);
+			}
 		}
 		
 		//used for non-dummy selectors
@@ -336,11 +344,11 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 				
 				//get sf and eff values (checks if already calculated)
 				InitSFEff(looper->Jets->at(ja).Pt(), looper->Jets->at(ja).Eta(), looper->Jets_flavor->at(ja), sfEffLists[ja]);
-				double eps_a = sfEffLists[ja][0]*sfEffLists[ja][1];
+				double eps_a = sfEffLists[ja][0]*sfEffLists[ja][1]*sfEffLists[ja][2];
 				
-				//jet index, pt, eta, flavor, eff, sf
+				//jet index, pt, eta, flavor, eff, sf, cf
 				if(debug) cout << "Jet " << ja << ": " << looper->Jets->at(ja).Pt() << ", " << fabs(looper->Jets->at(ja).Eta()) << ", " << abs(looper->Jets_flavor->at(ja)) 
-								<< ", " << sfEffLists[ja][0] << ", " << sfEffLists[ja][1] << endl;
+								<< ", " << sfEffLists[ja][0] << ", " << sfEffLists[ja][1] << ", " << sfEffLists[ja][2] << endl;
 				
 				//calculate prob(0 b-tags)
 				prob[0] *= (1-eps_a);
@@ -359,11 +367,11 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 					
 					//get sf and eff values (checks if already calculated)
 					InitSFEff(looper->Jets->at(jb).Pt(), looper->Jets->at(jb).Eta(), looper->Jets_flavor->at(jb), sfEffLists[jb]);
-					double eps_b = sfEffLists[jb][0]*sfEffLists[jb][1];
+					double eps_b = sfEffLists[jb][0]*sfEffLists[jb][1]*sfEffLists[jb][2];
 					
-					//jet index, pt, eta, flavor, eff, sf
+					//jet index, pt, eta, flavor, eff, sf, cf
 					if(debug) cout << "\tJet " << jb << ": " << looper->Jets->at(jb).Pt() << ", " << fabs(looper->Jets->at(jb).Eta()) << ", " << abs(looper->Jets_flavor->at(jb)) 
-									<< ", " << sfEffLists[jb][0] << ", " << sfEffLists[jb][1] << endl;
+									<< ", " << sfEffLists[jb][0] << ", " << sfEffLists[jb][1] << ", " << sfEffLists[jb][2] << endl;
 					
 					//calculate prob(1 b-tag)
 					subprob1 *= (1-eps_b);
@@ -382,11 +390,11 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 						
 						//get sf and eff values (checks if already calculated)
 						InitSFEff(looper->Jets->at(jc).Pt(), looper->Jets->at(jc).Eta(), looper->Jets_flavor->at(jc), sfEffLists[jc]);
-						double eps_c = sfEffLists[jc][0]*sfEffLists[jc][1];
+						double eps_c = sfEffLists[jc][0]*sfEffLists[jc][1]*sfEffLists[jc][2];
 						
-						//jet index, pt, eta, flavor, eff, sf
+						//jet index, pt, eta, flavor, eff, sf, cf
 						if(debug) cout << "\t\tJet " << jc << ": " << looper->Jets->at(jc).Pt() << ", " << fabs(looper->Jets->at(jc).Eta()) << ", " << abs(looper->Jets_flavor->at(jc)) 
-										<< ", " << sfEffLists[jc][0] << ", " << sfEffLists[jc][1] << endl;
+										<< ", " << sfEffLists[jc][0] << ", " << sfEffLists[jc][1] << ", " << sfEffLists[jc][2] << endl;
 						
 						//calculate prob(2 b-tags)
 						subsubprob2 *= (1-eps_c);
@@ -418,34 +426,45 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 			//use abs(flav) always
 			flav = abs(flav);
 			
-			sfEffList = vector<double>(2,1.0); //eff, sf (central, up, or down)
+			sfEffList = vector<double>(3,1.0); //eff, sf (central, up, or down), cf (central, up, or down)
 			
 			if(flav==5){
 				sfEffList[0] = h_eff_b->GetBinContent(h_eff_b->FindBin(pt,eta));
 				sfEffList[1] = (btagSFunc==0 ? reader.eval(BTagEntry::FLAV_B,eta,pt) :
 							   (btagSFunc==1 ? readerUp.eval(BTagEntry::FLAV_B,eta,pt) :
-							               readerDown.eval(BTagEntry::FLAV_B,eta,pt) ) );
+											   readerDown.eval(BTagEntry::FLAV_B,eta,pt) ) );
+				sfEffList[2] = (btagCFunc==0 ? readerFast.eval(BTagEntry::FLAV_B,eta,pt) :
+							   (btagCFunc==1 ? readerFastUp.eval(BTagEntry::FLAV_B,eta,pt) :
+											   readerFastDown.eval(BTagEntry::FLAV_B,eta,pt) ) );
 			}
 			else if(flav==4){ //charm mistag unc taken to be 2x b-tag unc
 				sfEffList[0] = h_eff_c->GetBinContent(h_eff_c->FindBin(pt,eta));
 				double sf = reader.eval(BTagEntry::FLAV_B,eta,pt);
 				sfEffList[1] = (btagSFunc==0 ? sf :
 							   (btagSFunc==1 ? 2*readerUp.eval(BTagEntry::FLAV_B,eta,pt) - sf :
-							               2*readerDown.eval(BTagEntry::FLAV_B,eta,pt) - sf ) );
+											   2*readerDown.eval(BTagEntry::FLAV_B,eta,pt) - sf ) );
+				sfEffList[2] = (ctagCFunc==0 ? readerFast.eval(BTagEntry::FLAV_C,eta,pt) :
+							   (ctagCFunc==1 ? readerFastUp.eval(BTagEntry::FLAV_C,eta,pt) :
+											   readerFastDown.eval(BTagEntry::FLAV_C,eta,pt) ) );
 			}
 			else if(flav<4 || flav==21){
 				sfEffList[0] = h_eff_udsg->GetBinContent(h_eff_udsg->FindBin(pt,eta));
 				sfEffList[1] = (mistagSFunc==0 ? reader.eval(BTagEntry::FLAV_UDSG,eta,pt) :
 							   (mistagSFunc==1 ? readerUp.eval(BTagEntry::FLAV_UDSG,eta,pt) :
-							               readerDown.eval(BTagEntry::FLAV_UDSG,eta,pt) ) );
+												 readerDown.eval(BTagEntry::FLAV_UDSG,eta,pt) ) );
+				sfEffList[2] = (mistagCFunc==0 ? readerFast.eval(BTagEntry::FLAV_UDSG,eta,pt) :
+							   (mistagCFunc==1 ? readerFastUp.eval(BTagEntry::FLAV_UDSG,eta,pt) :
+												 readerFastDown.eval(BTagEntry::FLAV_UDSG,eta,pt) ) );
 			}
 		}
 		
 		//member variables
-		bool debug;
+		bool debug, fastsim;
 		int btagSFunc, mistagSFunc;
-		BTagCalibration calib;
+		int btagCFunc, ctagCFunc, mistagCFunc;
+		BTagCalibration calib, calibFast;
 		BTagCalibrationReader reader, readerUp, readerDown;
+		BTagCalibrationReader readerFast, readerFastUp, readerFastDown;
 		TH2F *h_eff_b, *h_eff_c, *h_eff_udsg;
 		vector<double> prob;
 };
