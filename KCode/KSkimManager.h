@@ -39,14 +39,16 @@ class KSkimManager : public KManager {
 			if(!parsed) return;
 			if(!MyBase){
 				cout << "Input error: set " << setname << " was not found in " << input_ << "!" << endl;
+				parsed = false;
 				return;
 			}
+			if(MyBase->GetTree()==NULL) { parsed = false; return; }
 			
 			//initialize skimmer after parsing
 			int mother = -1;
 			MyBase->GetLocalOpt()->Get("mother",mother);
 			globalOpt->Set("mother",mother);
-			if(MyBase->GetTree()==NULL) { parsed = false; return; }//safety check
+			
 			skimmer = new KSkimmer(MyBase->GetTree(),MyBase->GetNEventHist(),MyBase->GetNEventNegHist(),globalOpt);
 		}
 		//destructor

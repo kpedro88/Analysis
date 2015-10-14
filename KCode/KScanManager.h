@@ -33,9 +33,16 @@ class KScanManager : public KManager {
 			//parse most initializations based on text input
 			Initialize(input_);
 			
-			//initialize scanner after parsing
+			//safety checks
 			if(!parsed) return;
-			if(MyBase->GetTree()==NULL) { parsed = false; return; }//safety check
+			if(!MyBase){
+				cout << "Input error: set " << setname << " was not found in " << input_ << "!" << endl;
+				parsed = false;
+				return;
+			}
+			if(MyBase->GetTree()==NULL) { parsed = false; return; }
+			
+			//initialize scanner after parsing
 			scanner = new KScanner(MyBase->GetTree(),globalOpt);
 		}
 		//destructor
