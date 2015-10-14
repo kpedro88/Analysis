@@ -1,5 +1,5 @@
 universe = vanilla
-Executable = ../jobExecCondor.sh
+Executable = ../jobExecCondorScan.sh
 Requirements = OpSys == "LINUX" && (Arch != "DUMMY" )
 request_disk = 1000000
 request_memory = 199

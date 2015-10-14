@@ -9,6 +9,13 @@ To run interactively, applying the "signal" selection to the "T1tttt\_1500\_100"
 root -b -q -l 'KSkimDriver.C+("input/input_selection.txt","T1tttt_1500_100","signal","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV2","tree_test/tree")'
 ```
 
+To remake the input list of sets automatically, for data and MC:
+```
+python makeSkimInput.py -r input/dict_skim.txt -w input/input_sets_skim.txt
+python makeSkimInput.py -r input/dict_skim_data.txt -w input/input_sets_skim_data.txt
+```
+Note: this script uses the python file lists in [TreeMaker/Production/python](https://github.com/TreeMaker/TreeMaker/tree/Run2/Production/python) to determine the number of files to chain together for each sample. Make sure to follow the [TreeMaker](https://github.com/TreeMaker/TreeMaker) installation instructions so this information is accessible.
+
 To recompile the driver without running (preparing for batch submission):
 ```
 root -b -q -l 'KSkimDriver.C++()'
@@ -17,7 +24,10 @@ root -b -q -l 'KSkimDriver.C++()'
 To submit jobs to Condor:
 ```
 ./SKsub.sh
+./SKsub_data.sh
+./SKsub_fast.sh
 ```
+Note: `SKsub_fast.sh` should only be run after the scanning step, below, is completed.
 
 ### Scanning
 
@@ -28,9 +38,25 @@ To run the scanner interactively:
 root -b -q -l 'KScanDriver.C+("input/input_scan.txt","T1bbbb_mGluino-1000-1025_mLSP-1to975-1000","root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Ntuples/RA2sync_Sept23_2015")'
 ```
 
+To make the input lists (.txt and .sh) of FastSim samples automatically:
+```
+python makeScanInput.py
+```
+Note: as above, this script uses the python file lists in [TreeMaker/Production/python](https://github.com/TreeMaker/TreeMaker/tree/Run2/Production/python).
+
 To recompile the driver without running (preparing for batch submission):
 ```
 root -b -q -l 'KScanDriver.C++()'
+```
+
+To submit jobs to Condor:
+```
+./SCsub.sh
+```
+
+To make the input lists of model points automatically for skimming, plotting, and datacards, after the scan jobs finish:
+```
+python makeFastInput.py -d /eos/uscms/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV2/scan/
 ```
 
 ## Plotting

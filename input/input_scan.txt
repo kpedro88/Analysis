@@ -12,5 +12,5 @@ bool:quickchain[1]
 string:outpre[T1bbbb_]
 string:outsuff[_fast]
 
-SET
-base	skim	T1bbbb_mGluino-1000-1025_mLSP-1to975-1000	b:chain[1]	s:filepre[Spring15Fast.SMS-T1bbbb_mGluino-1000-1025_mLSP-1to975-1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_]	vi:filerange[0,41]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[1000021]
+INPUT
+input/input_sets_scan.txt
