@@ -29,12 +29,14 @@ vuint:RA2Var2Bins[0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,
 vuint:RA2Var3Bins[0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5]
 string:selection[ra2bin]
 vstring:disable_branches[*]
-vstring:enable_branches[NJets,BTags,MHT,HT,Jets,Jets_flavor]
+vstring:enable_branches[NJets,BTags,MHT,HT,Jets,Jets_flavor,NVtx,eeBadScFilter,HBHENoiseFilter,JetID]
 bool:RA2Exclusive[0]
 bool:btagcorr[1]
+bool:trigcorr[1]
 
 SELECTION
 ra2bin
+	METFilter
 	BTagSF
 	RA2Bin
 	Histo

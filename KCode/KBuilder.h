@@ -106,7 +106,10 @@ class KBuilder : public NtupleClass {
 			}
 			
 			//final steps
-			if(globalOpt->Get("debugcut",false)) MySelection->PrintEfficiency(MySelection->GetSelectorWidth(),nentries);
+			if(globalOpt->Get("debugcut",false)) {
+				cout << MyBase->GetName() << endl;
+				MySelection->PrintEfficiency(MySelection->GetSelectorWidth(),nentries);
+			}
 			
 			if(globalOpt->Get("plotoverflow",false)){
 				for(int h = 0; h < htmp.size(); h++){
@@ -206,6 +209,8 @@ class KBuilderMC : public KBuilder {
 			xsection = 0; got_xsection = localOpt->Get("xsection",xsection);
 			norm = 0; got_luminorm = globalOpt->Get("luminorm",norm);
 			debugWeight = globalOpt->Get("debugWeight",false); didDebugWeight = false;
+			trigcorr = globalOpt->Get("trigcorr",false);
+			realMET = localOpt->Get("realMET",true);
 		}
 		//destructor
 		virtual ~KBuilderMC() {}
@@ -234,6 +239,7 @@ class KBuilderMC : public KBuilder {
 		}
 		double GetWeight(){
 			double w = 1.;
+			if(unweighted) return w;
 			
 			//check option in case correction types are disabled globally
 			//(enabled by default
@@ -246,9 +252,28 @@ class KBuilderMC : public KBuilder {
 			}
 			*/
 			
+			if(trigcorr){
+				if (realMET) {
+					if (MHT<100) w *= 0.0389;
+					else if (MHT<150) w *= 0.3208;
+					else if (MHT<200) w *= 0.8012;
+					else if (MHT<250) w *= 0.9388;
+					else if (MHT<300) w *= 0.9733;
+					else w *= 1.0;
+				} 
+				else {
+					if (MHT<100) w *= 0.0389;
+					else if (MHT<150) w *= 0.3208;
+					else if (MHT<200) w *= 0.9127;
+					else if (MHT<250) w *= 0.964;
+					else if (MHT<300) w *= 0.9734;
+					else if (MHT<400) w *= 0.9946;
+					else w *= 1.0;
+				}
+			}
+			
 			//now do scaling: norm*xsection/nevents
-			if(unweighted) {} // do nothing
-			else if(useTreeWeight) w *= Weight;
+			if(useTreeWeight) w *= Weight;
 			else if(got_nEventProc && nEventProc>0 && got_xsection){
 				w *= xsection/nEventProc;
 				//account for negative weight events
@@ -266,8 +291,7 @@ class KBuilderMC : public KBuilder {
 			}
 			
 			//use lumi norm (default)
-			if(unweighted) {} //do nothing
-			else if(got_luminorm) w *= norm;
+			if(got_luminorm) w *= norm;
 			
 			return w;
 		}
@@ -284,6 +308,7 @@ class KBuilderMC : public KBuilder {
 
 		//member variables
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, debugWeight, didDebugWeight;
+		bool trigcorr, realMET;
 		string normtype;
 		normtypes NTenum;
 		int nEventProc;

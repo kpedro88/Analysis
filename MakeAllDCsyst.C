@@ -26,10 +26,16 @@ void MakeAllDCsyst(string indir="root://cmseos.fnal.gov//store/user/pedrok/SUSY2
 	
 	//now do the variations
 	for(unsigned i = 0; i < nSyst; ++i){
-		cout << systs[i] << endl;
 		//up
+		cout << systs[i] << " up" << endl;
 		KPlotDriverDCsyst(indir+inpre+region,input,outdir+outpre+region+"_"+systs[i]+"Up",systs[i],1);
 		//down
+		cout << systs[i] << " down" << endl;
 		KPlotDriverDCsyst(indir+inpre+region,input,outdir+outpre+region+"_"+systs[i]+"Down",systs[i],-1);
 	}
+	
+	string zipname = outdir;
+	if(zipname[zipname.size()-1] == '/') zipname.erase(zipname.size()-1,1);
+	zipname += ".zip";
+	system(("zip -r "+zipname+" "+outdir).c_str());
 }

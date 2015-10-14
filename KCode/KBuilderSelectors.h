@@ -262,6 +262,30 @@ class KPhotonIDSelector : public KSelector<KBuilder> {
 };
 
 //---------------------------------------------------------------
+//applies MET filters
+class KMETFilterSelector : public KSelector<KBuilder> {
+	public:
+		//constructor
+		KMETFilterSelector() : KSelector<KBuilder>() { }
+		KMETFilterSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_) { }
+
+		//turn on necessary branches
+		virtual void SetLooper(KBuilder* looper_) {
+			looper = looper_;
+			
+			looper->fChain->SetBranchStatus("NVtx",1);
+			looper->fChain->SetBranchStatus("eeBadScFilter",1);
+			looper->fChain->SetBranchStatus("HBHENoiseFilter",1);
+			looper->fChain->SetBranchStatus("JetID",1);
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return looper->NVtx > 0 && looper->eeBadScFilter && looper->HBHENoiseFilter && looper->JetID;
+		}
+};
+
+//---------------------------------------------------------------
 //calculates btag scale factors
 class KBTagSFSelector : public KSelector<KBuilder> {
 	public:
@@ -616,6 +640,7 @@ namespace KParser {
 		else if(sname=="RA2Bin") srtmp = new KRA2BinSelector(sname,omap);
 		else if(sname=="PhotonID") srtmp = new KPhotonIDSelector(sname,omap);
 		else if(sname=="BTagSF") srtmp = new KBTagSFSelector(sname,omap);
+		else if(sname=="METFilter") srtmp = new KMETFilterSelector(sname,omap);
 		else {} //skip unknown selectors
 		
 		if(!srtmp) cout << "Input error: unknown selector " << sname << ". This selector will be skipped." << endl;
