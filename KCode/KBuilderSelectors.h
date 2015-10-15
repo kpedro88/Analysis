@@ -23,6 +23,46 @@ using namespace std;
 
 //base class for Selectors is in KSelection.h
 
+//----------------------------------------------------
+//selects events based on HLT line
+class KHLTSelector : public KSelector<KBuilder> {
+	public:
+		//constructor
+		KHLTSelector() : KSelector<KBuilder>() { }
+		KHLTSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_) { 
+			//get selected line from options
+			localOpt->Get("HLTLines",HLTLines);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			//skip if no line provided
+			if(HLTLines.size()==0) return true;
+			
+			//loop over trigger names
+			bool goodTrigger = false;
+			for(unsigned t = 0; t < looper->TriggerNames->size(); t++){
+				for(unsigned h = 0; h < HLTLines.size(); h++){
+					//check:
+					//1) if the current line matches the current trigger name
+					//2) if the decision was true (the line fired)
+					//3) if the line was not prescaled (currently ignored)
+					if(looper->TriggerNames->at(t).compare(0,HLTLines[h].size(),HLTLines[h])==0 && looper->TriggerPass->at(t)) {
+						goodTrigger = true;
+						break;
+					}
+				}
+			}
+			//skip event if finished searching and no HLT lines found
+			return goodTrigger;
+		}
+		
+		//member variables
+		vector<string> HLTLines;
+};
+
 //---------------------------------------------------------------
 //class to store and apply RA2 binning
 class KRA2BinSelector : public KSelector<KBuilder> {
@@ -660,6 +700,7 @@ namespace KParser {
 		else if(sname=="PhotonID") srtmp = new KPhotonIDSelector(sname,omap);
 		else if(sname=="BTagSF") srtmp = new KBTagSFSelector(sname,omap);
 		else if(sname=="METFilter") srtmp = new KMETFilterSelector(sname,omap);
+		else if(sname=="HLT") srtmp = new KHLTSelector(sname,omap);
 		else {} //skip unknown selectors
 		
 		if(!srtmp) cout << "Input error: unknown selector " << sname << ". This selector will be skipped." << endl;

@@ -1,0 +1,4 @@
+SET
+hist	data	data	c:color[kBlack]
+	base	data	HTMHT_2015C	s:filename[tree_HTMHT_2015C.root]
+	base	data	HTMHT_2015D	s:filename[tree_HTMHT_2015D.root]
