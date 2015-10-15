@@ -473,9 +473,11 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 				sfEffList[1] = (btagSFunc==0 ? reader.eval(BTagEntry::FLAV_B,eta,pt) :
 							   (btagSFunc==1 ? readerUp.eval(BTagEntry::FLAV_B,eta,pt) :
 											   readerDown.eval(BTagEntry::FLAV_B,eta,pt) ) );
-				sfEffList[2] = (btagCFunc==0 ? readerFast.eval(BTagEntry::FLAV_B,eta,pt) :
-							   (btagCFunc==1 ? readerFastUp.eval(BTagEntry::FLAV_B,eta,pt) :
-											   readerFastDown.eval(BTagEntry::FLAV_B,eta,pt) ) );
+				if(fastsim){
+					sfEffList[2] = (btagCFunc==0 ? readerFast.eval(BTagEntry::FLAV_B,eta,pt) :
+								   (btagCFunc==1 ? readerFastUp.eval(BTagEntry::FLAV_B,eta,pt) :
+												   readerFastDown.eval(BTagEntry::FLAV_B,eta,pt) ) );
+				}
 			}
 			else if(flav==4){ //charm mistag unc taken to be 2x b-tag unc
 				sfEffList[0] = h_eff_c->GetBinContent(h_eff_c->FindBin(pt,eta));
@@ -483,18 +485,22 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 				sfEffList[1] = (btagSFunc==0 ? sf :
 							   (btagSFunc==1 ? 2*readerUp.eval(BTagEntry::FLAV_B,eta,pt) - sf :
 											   2*readerDown.eval(BTagEntry::FLAV_B,eta,pt) - sf ) );
-				sfEffList[2] = (ctagCFunc==0 ? readerFast.eval(BTagEntry::FLAV_C,eta,pt) :
-							   (ctagCFunc==1 ? readerFastUp.eval(BTagEntry::FLAV_C,eta,pt) :
-											   readerFastDown.eval(BTagEntry::FLAV_C,eta,pt) ) );
+				if(fastsim){
+					sfEffList[2] = (ctagCFunc==0 ? readerFast.eval(BTagEntry::FLAV_C,eta,pt) :
+								   (ctagCFunc==1 ? readerFastUp.eval(BTagEntry::FLAV_C,eta,pt) :
+												   readerFastDown.eval(BTagEntry::FLAV_C,eta,pt) ) );
+				}
 			}
 			else if(flav<4 || flav==21){
 				sfEffList[0] = h_eff_udsg->GetBinContent(h_eff_udsg->FindBin(pt,eta));
 				sfEffList[1] = (mistagSFunc==0 ? reader.eval(BTagEntry::FLAV_UDSG,eta,pt) :
 							   (mistagSFunc==1 ? readerUp.eval(BTagEntry::FLAV_UDSG,eta,pt) :
 												 readerDown.eval(BTagEntry::FLAV_UDSG,eta,pt) ) );
-				sfEffList[2] = (mistagCFunc==0 ? readerFast.eval(BTagEntry::FLAV_UDSG,eta,pt) :
-							   (mistagCFunc==1 ? readerFastUp.eval(BTagEntry::FLAV_UDSG,eta,pt) :
-												 readerFastDown.eval(BTagEntry::FLAV_UDSG,eta,pt) ) );
+				if(fastsim){
+					sfEffList[2] = (mistagCFunc==0 ? readerFast.eval(BTagEntry::FLAV_UDSG,eta,pt) :
+								   (mistagCFunc==1 ? readerFastUp.eval(BTagEntry::FLAV_UDSG,eta,pt) :
+													 readerFastDown.eval(BTagEntry::FLAV_UDSG,eta,pt) ) );
+				}
 			}
 		}
 		
