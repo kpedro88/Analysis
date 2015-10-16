@@ -4,14 +4,15 @@ STDIR=/eos/uscms/store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV2
 
 ./SKcheck.sh keep
 
-SAMPLES="
+SAMPLES=(
 TTJets_SingleLeptFromT \
 TTJets_SingleLeptFromTbar \
 TTJets_DiLept \
-ttHJetTobb_M125
-"
+ttHJetTobb_M125 \
+TTTT
+)
 
-for SAMPLE in ${SAMPLES}; do
+for SAMPLE in ${SAMPLES[@]}; do
   for TREEDIR in ${STDIR}/tree*/; do
 
     XRDIR=`echo $TREEDIR | sed 's~/eos/uscms~root://cmseos.fnal.gov/~'`

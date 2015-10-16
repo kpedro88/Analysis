@@ -77,7 +77,12 @@ TTZToLLNuNu \
 ttHJetTobb_M125 \
 ttHJetTobb_M125_ext1 \
 ttHJetTobb_M125_ext2 \
-ttHJetTobb_M125_ext3
+ttHJetTobb_M125_ext3 \
+TTTT \
+TTTT_ext1 \
+WWZ \
+ZZZ \
+WZZ \
 )
 
 for SAMPLE in ${SAMPLES[@]}

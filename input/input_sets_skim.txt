@@ -66,3 +66,8 @@ base	skim	ttHJetTobb_M125	b:chain[1]	s:filepre[Spring15.ttHJetTobb_M125_13TeV_am
 base	skim	ttHJetTobb_M125_ext1	b:chain[1]	s:filepre[Spring15.ttHJetTobb_M125_13TeV_amcatnloFXFX_madspin_pythia8_ext1_]	vi:filerange[0,55]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
 base	skim	ttHJetTobb_M125_ext2	b:chain[1]	s:filepre[Spring15.ttHJetTobb_M125_13TeV_amcatnloFXFX_madspin_pythia8_ext2_]	vi:filerange[0,114]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
 base	skim	ttHJetTobb_M125_ext3	b:chain[1]	s:filepre[Spring15.ttHJetTobb_M125_13TeV_amcatnloFXFX_madspin_pythia8_ext3_]	vi:filerange[0,234]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	TTTT	b:chain[1]	s:filepre[Spring15.TTTT_TuneCUETP8M1_13TeV-amcatnlo-pythia8_]	vi:filerange[0,11]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	TTTT_ext1	b:chain[1]	s:filepre[Spring15.TTTT_TuneCUETP8M1_13TeV-amcatnlo-pythia8_ext1_]	vi:filerange[0,47]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	WWZ	b:chain[1]	s:filepre[Spring15.WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8_]	vi:filerange[0,7]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	ZZZ	b:chain[1]	s:filepre[Spring15.ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8_]	vi:filerange[0,8]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	WZZ	b:chain[1]	s:filepre[Spring15.WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8_]	vi:filerange[0,12]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
