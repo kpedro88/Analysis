@@ -41,18 +41,26 @@ class KHLTSelector : public KSelector<KBuilder> {
 			//skip if no line provided
 			if(HLTLines.size()==0) return true;
 			
+			//initial loop over trigger names to find indices (position is consistent for all events)
+			if(HLTIndices.empty()){
+				for(unsigned h = 0; h < HLTLines.size(); h++){
+					vector<string>::iterator lb = lower_bound(looper->TriggerNames->begin(),looper->TriggerNames->end(),HLTLines[h]);
+					if(lb != looper->TriggerNames->end() && *lb==HLTLines[h]){
+						HLTIndices.push_back(distance(looper->TriggerNames->begin(),lb));
+					}
+				}
+			}
+			
 			//loop over trigger names
 			bool goodTrigger = false;
-			for(unsigned t = 0; t < looper->TriggerNames->size(); t++){
-				for(unsigned h = 0; h < HLTLines.size(); h++){
-					//check:
-					//1) if the current line matches the current trigger name
-					//2) if the decision was true (the line fired)
-					//3) if the line was not prescaled (currently ignored)
-					if(looper->TriggerNames->at(t).compare(0,HLTLines[h].size(),HLTLines[h])==0 && looper->TriggerPass->at(t)) {
-						goodTrigger = true;
-						break;
-					}
+			for(unsigned h = 0; h < HLTIndices.size(); h++){
+				unsigned index = HLTIndices[h];
+				//check:
+				//1) if the decision was true (the line fired)
+				//2) if the line was not prescaled (currently ignored)
+				if(looper->TriggerPass->at(index)==1) {
+					goodTrigger = true;
+					break;
 				}
 			}
 			//skip event if finished searching and no HLT lines found
@@ -61,6 +69,7 @@ class KHLTSelector : public KSelector<KBuilder> {
 		
 		//member variables
 		vector<string> HLTLines;
+		vector<unsigned> HLTIndices;
 };
 
 //---------------------------------------------------------------
@@ -311,7 +320,7 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return looper->NVtx > 0 && looper->eeBadScFilter && looper->HBHENoiseFilter && looper->JetID;
+			return looper->NVtx > 0 && looper->eeBadScFilter==1 && looper->HBHENoiseFilter && looper->HBHEIsoNoiseFilter && looper->JetID;
 		}
 };
 
@@ -594,9 +603,6 @@ class KHistoSelector : public KSelector<KBuilder> {
 					}
 					else if(vname=="mht"){//missing hadronic energy
 						values[i].Fill(looper->MHT,w);
-					}
-					else if(vname=="mindeltaphiN"){//min normalized deltaphi between jets and MET
-						values[i].Fill(looper->minDeltaPhiN,w);
 					}
 					else if(vname=="nleptons"){//# leptons (mu or ele)
 						values[i].Fill(looper->Leptons,w);

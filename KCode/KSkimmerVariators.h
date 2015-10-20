@@ -160,8 +160,9 @@ class KCleanVariator : public KVariator<KSkimmer> {
 			BTags = looper->BTags;
 			HT = looper->HT;
 			MHT = looper->MHT;
-			minDeltaPhiN = looper->minDeltaPhiN;
+			MHT_Phi = looper->MHT_Phi;
 			METPt = looper->METPt;
+			METPhi = looper->METPhi;
 			DeltaPhi1 = looper->DeltaPhi1;
 			DeltaPhi2 = looper->DeltaPhi2;
 			DeltaPhi3 = looper->DeltaPhi3;
@@ -172,8 +173,9 @@ class KCleanVariator : public KVariator<KSkimmer> {
 			looper->BTags = looper->BTagsclean;
 			looper->HT = looper->HTclean;
 			looper->MHT = looper->MHTclean;
-			looper->minDeltaPhiN = looper->minDeltaPhiNclean;
+			looper->MHT_Phi = looper->MHT_Phiclean;
 			looper->METPt = looper->METPtclean;
+			looper->METPhi = looper->METPhiclean;
 			looper->DeltaPhi1 = looper->DeltaPhi1clean;
 			looper->DeltaPhi2 = looper->DeltaPhi2clean;
 			looper->DeltaPhi3 = looper->DeltaPhi3clean;
@@ -185,8 +187,9 @@ class KCleanVariator : public KVariator<KSkimmer> {
 			looper->BTags = BTags;
 			looper->HT = HT;
 			looper->MHT = MHT;
-			looper->minDeltaPhiN = minDeltaPhiN;
+			looper->MHT_Phi = MHT_Phi;
 			looper->METPt = METPt;
+			looper->METPhi = METPhi;
 			looper->DeltaPhi1 = DeltaPhi1;
 			looper->DeltaPhi2 = DeltaPhi2;
 			looper->DeltaPhi3 = DeltaPhi3;
@@ -198,8 +201,9 @@ class KCleanVariator : public KVariator<KSkimmer> {
 		Int_t           BTags;
 		Float_t         HT;
 		Float_t         MHT;
-		Float_t         minDeltaPhiN;
+		Float_t         MHT_Phi;
 		Float_t         METPt;
+		Float_t         METPhi;
 		Float_t         DeltaPhi1;
 		Float_t         DeltaPhi2;
 		Float_t         DeltaPhi3;
@@ -213,16 +217,9 @@ class KManualCleanVariator : public KVariator<KSkimmer> {
 	public:
 		//constructor
 		KManualCleanVariator() : KVariator<KSkimmer>() { }
-		KManualCleanVariator(string name_, OptionMap* localOpt_) : KVariator<KSkimmer>(name_,localOpt_),
-			minPtMHT(30.), maxEtaMHT(5.), minPtHT(30.), maxEtaHT(2.4), muonR(0.4), electronR(0.4), photonR(0.4)
+		KManualCleanVariator(string name_, OptionMap* localOpt_) : KVariator<KSkimmer>(name_,localOpt_), JetConeSize(0.4)
 		{
-			localOpt->Get("minPtMHT",minPtMHT);
-			localOpt->Get("maxEtaMHT",maxEtaMHT);
-			localOpt->Get("minPtHT",minPtHT);
-			localOpt->Get("maxEtaHT",maxEtaHT);
-			localOpt->Get("muonR",muonR);
-			localOpt->Get("electronR",electronR);
-			localOpt->Get("photonR",photonR);
+			localOpt->Get("JetConeSize",JetConeSize);
 		}
 		//functions
 		virtual void DoVariation() {
@@ -236,8 +233,9 @@ class KManualCleanVariator : public KVariator<KSkimmer> {
 			BTags = looper->BTags;
 			HT = looper->HT;
 			MHT = looper->MHT;
-			minDeltaPhiN = looper->minDeltaPhiN;
+			MHT_Phi = looper->MHT_Phi;
 			METPt = looper->METPt;
+			METPhi = looper->METPhi;
 			DeltaPhi1 = looper->DeltaPhi1;
 			DeltaPhi2 = looper->DeltaPhi2;
 			DeltaPhi3 = looper->DeltaPhi3;
@@ -283,20 +281,20 @@ class KManualCleanVariator : public KVariator<KSkimmer> {
 			int BTagsClean = 0;
 			for(unsigned j = 0; j < looper->Jets->size(); ++j){
 				//MHTJets cuts
-				if(looper->Jets->at(j).Pt()<=minPtMHT || fabs(looper->Jets->at(j).Eta())>=maxEtaMHT) continue;
+				if(!looper->MHTJetsMask->at(j)) continue;
 				
 				//object cleaning
 				bool overlap = false;
 				for(unsigned m = 0; m < looper->Muons->size(); ++m){
-					if(KMath::DeltaR(looper->Muons->at(m).Phi(),looper->Muons->at(m).Eta(),looper->Jets->at(j).Phi(),looper->Jets->at(j).Eta())<muonR) { overlap = true; break; }
+					if(KMath::DeltaR(looper->Muons->at(m).Phi(),looper->Muons->at(m).Eta(),looper->Jets->at(j).Phi(),looper->Jets->at(j).Eta())<JetConeSize) { overlap = true; break; }
 				}
 				if(overlap) continue;
 				for(unsigned e = 0; e < looper->Electrons->size(); ++e){
-					if(KMath::DeltaR(looper->Electrons->at(e).Phi(),looper->Electrons->at(e).Eta(),looper->Jets->at(j).Phi(),looper->Jets->at(j).Eta())<electronR) { overlap = true; break; }
+					if(KMath::DeltaR(looper->Electrons->at(e).Phi(),looper->Electrons->at(e).Eta(),looper->Jets->at(j).Phi(),looper->Jets->at(j).Eta())<JetConeSize) { overlap = true; break; }
 				}
 				if(overlap) continue;
 				for(unsigned g = 0; g < looper->bestPhoton->size(); ++g){
-					if(KMath::DeltaR(looper->bestPhoton->at(g).Phi(),looper->bestPhoton->at(g).Eta(),looper->Jets->at(j).Phi(),looper->Jets->at(j).Eta())<photonR) { overlap = true; break; }
+					if(KMath::DeltaR(looper->bestPhoton->at(g).Phi(),looper->bestPhoton->at(g).Eta(),looper->Jets->at(j).Phi(),looper->Jets->at(j).Eta())<JetConeSize) { overlap = true; break; }
 				}
 				if(overlap) continue;
 				
@@ -304,7 +302,7 @@ class KManualCleanVariator : public KVariator<KSkimmer> {
 				mhtLorentzClean -= looper->Jets->at(j);
 				
 				//HTJets cuts
-				if(looper->Jets->at(j).Pt()>minPtHT && looper->Jets->at(j).Eta()<maxEtaHT) {
+				if(looper->HTJetsMask->at(j)) {
 					htjetsClean.push_back(looper->Jets->at(j));
 					HTClean += looper->Jets->at(j).Pt();
 					++NJetsClean;
@@ -317,6 +315,7 @@ class KManualCleanVariator : public KVariator<KSkimmer> {
 			looper->BTags = BTagsClean;
 			looper->HT = HTClean;
 			looper->MHT = mhtLorentzClean.Pt();
+			looper->MHT_Phi = mhtLorentzClean.Phi();
 
 			double MHTPhiClean = mhtLorentzClean.Phi();
 			//test MHT clean calc
@@ -333,8 +332,8 @@ class KManualCleanVariator : public KVariator<KSkimmer> {
 			}
 			
 			//too lazy to recalculate these
-			looper->minDeltaPhiN = looper->minDeltaPhiNclean;
 			looper->METPt = looper->METPtclean;
+			looper->METPhi = looper->METPhiclean;
 		}
 		virtual void UndoVariation() {
 			//restore original values
@@ -344,8 +343,9 @@ class KManualCleanVariator : public KVariator<KSkimmer> {
 			looper->BTags = BTags;
 			looper->HT = HT;
 			looper->MHT = MHT;
-			looper->minDeltaPhiN = minDeltaPhiN;
+			looper->MHT_Phi = MHT_Phi;
 			looper->METPt = METPt;
+			looper->METPhi = METPhi;
 			looper->DeltaPhi1 = DeltaPhi1;
 			looper->DeltaPhi2 = DeltaPhi2;
 			looper->DeltaPhi3 = DeltaPhi3;
@@ -353,15 +353,16 @@ class KManualCleanVariator : public KVariator<KSkimmer> {
 		}
 		
 		//member variables
-		double minPtMHT, maxEtaMHT, minPtHT, maxEtaHT, muonR, electronR, photonR;
+		double JetConeSize;
 		vector<TLorentzVector> *bestPhoton;
 		Int_t           NumPhotons;
 		Int_t           NJets;
 		Int_t           BTags;
 		Float_t         HT;
 		Float_t         MHT;
-		Float_t         minDeltaPhiN;
+		Float_t         MHT_Phi;
 		Float_t         METPt;
+		Float_t         METPhi;
 		Float_t         DeltaPhi1;
 		Float_t         DeltaPhi2;
 		Float_t         DeltaPhi3;

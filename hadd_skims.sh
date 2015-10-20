@@ -1,6 +1,6 @@
 #!/bin/bash
 
-STDIR=/eos/uscms/store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV2
+STDIR=/eos/uscms/store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV3
 
 ./SKcheck.sh keep
 

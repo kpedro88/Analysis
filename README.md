@@ -6,7 +6,7 @@
 
 To run interactively, applying the "signal" selection to the "T1tttt\_1500\_100" sample and writing output trees to a folder "tree\_test/tree\_${SELECTION}":
 ```
-root -b -q -l 'KSkimDriver.C+("input/input_selection.txt","T1tttt_1500_100","signal","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV2","tree_test/tree")'
+root -b -q -l 'KSkimDriver.C+("input/input_selection.txt","T1tttt_1500_100","signal","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV3","tree_test/tree")'
 ```
 
 To remake the input list of sets automatically, for data and MC:
@@ -56,14 +56,14 @@ To submit jobs to Condor:
 
 To make the input lists of model points automatically for skimming, plotting, and datacards, after the scan jobs finish:
 ```
-python makeFastInput.py -d /eos/uscms/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV2/scan/
+python makeFastInput.py -d /eos/uscms/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV3/scan/
 ```
 
 ## Plotting
 
 To plot yields vs. RA2 bin (where the binning can be defined in the input file) in the signal region and save the plot as an image:
 ```
-root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV2/tree_signal","input/input_RA2bin.txt",1)'
+root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV3/tree_signal","input/input_RA2bin.txt",1)'
 ```
 Omitting the last argument will display the plot without saving it.
 
@@ -71,7 +71,7 @@ Omitting the last argument will display the plot without saving it.
 
 To save the individual histograms for each signal and background process to a ROOT file, for the creation of datacards for limit setting:
 ```
-root -b -l -q 'MakeAllDC.C+("root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV2")'
+root -b -l -q 'MakeAllDC.C+("root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV3")'
 ```
 This macro calls the macro `KPlotDriverDC.C`, which is a modification of the macro from the previous section
 that includes an extra input argument to specify the name of the output ROOT file.
@@ -83,7 +83,7 @@ after they are generated.
 
 To save the individual histograms for the signal processes to a ROOT file for each different variation of systematic uncertainty:
 ```
-root -b -l -q 'MakeAllDCsyst.C+(0,"root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV2")'
+root -b -l -q 'MakeAllDCsyst.C+(0,"root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV3")'
 ```
 This macro calls the macro `KPlotDriverDCsyst.C`, which is a modification of the macro from the previous section
 that includes extra input arguments to specify the name and direction of the systematic variation (up or down).

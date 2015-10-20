@@ -4,9 +4,9 @@ KEEPTAR=$1
 JOBDIR=batch
 INPUT=input/input_selection.txt
 SELTYPE=signal,LDP,SLm,SLe,GJet_CleanVars,DYm_CleanVars,DYe_CleanVars,GJetLDP_CleanVars
-INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV2
+INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV3
 OUTDIR=tree
-STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV2
+STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV3
 
 ./SKcheck.sh "$KEEPTAR" "$JOBDIR"
 

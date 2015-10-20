@@ -16,6 +16,7 @@
 //STL headers
 #include <string>
 #include <vector>
+#include <algorithm>
 #include <cstdlib>
 
 using namespace std;
@@ -46,18 +47,26 @@ class KHLTSelector : public KSelector<KSkimmer> {
 			//skip if no line provided
 			if(HLTLines.size()==0) return true;
 			
+			//initial loop over trigger names to find indices (position is consistent for all events)
+			if(HLTIndices.empty()){
+				for(unsigned h = 0; h < HLTLines.size(); h++){
+					vector<string>::iterator lb = lower_bound(looper->TriggerNames->begin(),looper->TriggerNames->end(),HLTLines[h]);
+					if(lb != looper->TriggerNames->end() && *lb==HLTLines[h]){
+						HLTIndices.push_back(distance(looper->TriggerNames->begin(),lb));
+					}
+				}
+			}
+			
 			//loop over trigger names
 			bool goodTrigger = false;
-			for(unsigned t = 0; t < looper->TriggerNames->size(); t++){
-				for(unsigned h = 0; h < HLTLines.size(); h++){
-					//check:
-					//1) if the current line matches the current trigger name
-					//2) if the decision was true (the line fired)
-					//3) if the line was not prescaled (currently ignored)
-					if(looper->TriggerNames->at(t).compare(0,HLTLines[h].size(),HLTLines[h])==0 && looper->TriggerPass->at(t)) {
-						goodTrigger = true;
-						break;
-					}
+			for(unsigned h = 0; h < HLTIndices.size(); h++){
+				unsigned index = HLTIndices[h];
+				//check:
+				//1) if the decision was true (the line fired)
+				//2) if the line was not prescaled (currently ignored)
+				if(looper->TriggerPass->at(index)==1) {
+					goodTrigger = true;
+					break;
 				}
 			}
 			//skip event if finished searching and no HLT lines found
@@ -66,6 +75,29 @@ class KHLTSelector : public KSelector<KSkimmer> {
 		
 		//member variables
 		vector<string> HLTLines;
+		vector<unsigned> HLTIndices;
+};
+
+//------------------------------------------------------
+//selects events based on run number (for blinding data)
+class KBlindSelector : public KSelector<KSkimmer> {
+	public:
+		//constructor
+		KBlindSelector() : KSelector<KSkimmer>() { }
+		KBlindSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), lastUnblindRun(257599) { 
+			//check for option
+			localOpt->Get("run",lastUnblindRun);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return looper->RunNum <= lastUnblindRun;
+		}
+		
+		//member variables
+		int lastUnblindRun;
 };
 
 //----------------------------------------------------
@@ -312,31 +344,6 @@ class KDiElectronSelector : public KSelector<KSkimmer> {
 };
 
 //----------------------------------------------------
-//selects events based on minDeltaPhiN value
-class KMinDeltaPhiNSelector : public KSelector<KSkimmer> {
-	public:
-		//constructor
-		KMinDeltaPhiNSelector() : KSelector<KSkimmer>() { }
-		KMinDeltaPhiNSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), minDeltaPhiN(6.), invert(false) { 
-			//check for option
-			localOpt->Get("minDeltaPhiN",minDeltaPhiN);
-			invert = localOpt->Get("invert",false);
-		}
-		
-		//this selector doesn't add anything to tree
-		
-		//used for non-dummy selectors
-		virtual bool Cut() {
-			if(invert) return looper->minDeltaPhiN < minDeltaPhiN;
-			else return looper->minDeltaPhiN > minDeltaPhiN;
-		}
-		
-		//member variables
-		double minDeltaPhiN;
-		bool invert;
-};
-
-//----------------------------------------------------
 //selects events based on minDeltaPhi value
 class KMinDeltaPhiSelector : public KSelector<KSkimmer> {
 	public:
@@ -444,7 +451,7 @@ class KIsoPionTrackVetoSelector : public KSelector<KSkimmer> {
 };
 
 //-------------------------------------------------------------
-//vetos events with bad jets (including PFJetID & PBNR)
+//vetos events with bad jets (using PFJetID loose WP)
 class KEventCleaningSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
@@ -455,7 +462,7 @@ class KEventCleaningSelector : public KSelector<KSkimmer> {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return looper->JetID==1;
+			return looper->JetIDloose;
 		}
 		
 		//member variables
@@ -1174,6 +1181,7 @@ namespace KParser {
 		
 		//check for all known selectors
 		if(sname=="HLT") srtmp = new KHLTSelector(sname,omap);
+		else if(sname=="Blind") srtmp = new KBlindSelector(sname,omap);
 		else if(sname=="NJet") srtmp = new KNJetSelector(sname,omap);
 		else if(sname=="HT") srtmp = new KHTSelector(sname,omap);
 		else if(sname=="MHT") srtmp = new KMHTSelector(sname,omap);
@@ -1189,7 +1197,6 @@ namespace KParser {
 		else if(sname=="IsoElectronTrackVeto") srtmp = new KIsoElectronTrackVetoSelector(sname,omap);
 		else if(sname=="IsoMuonTrackVeto") srtmp = new KIsoMuonTrackVetoSelector(sname,omap);
 		else if(sname=="IsoPionTrackVeto") srtmp = new KIsoPionTrackVetoSelector(sname,omap);
-		else if(sname=="MinDeltaPhiN") srtmp = new KMinDeltaPhiNSelector(sname,omap);
 		else if(sname=="MinDeltaPhi") srtmp = new KMinDeltaPhiSelector(sname,omap);
 		else if(sname=="DeltaPhi") srtmp = new KDeltaPhiSelector(sname,omap);
 		else if(sname=="EventCleaning") srtmp = new KEventCleaningSelector(sname,omap);
