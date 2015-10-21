@@ -40,7 +40,9 @@ class KManager {
 			curr_var = allVariations.GetTable().end();
 		}
 		//destructor
-		virtual ~KManager() {}
+		virtual ~KManager() {
+			if(globalOpt->Get("listoptions",false)) ListOptions();			
+		}
 		//parse most initializations based on text input
 		virtual void Initialize(string input_){
 			parsed = Parse(input_);
@@ -191,9 +193,7 @@ class KManager {
 		OptionMap* GetGlobalOpt() { return globalOpt; }
 		void ListOptions() {
 			OMit it;
-			for(it = globalOpt->GetTable().begin(); it != globalOpt->GetTable().end(); it++){
-				cout << it->first /*<< ": " << it->second->value*/ << endl;
-			}
+			cout << globalOpt->GetTable() << endl;
 		}
 		
 	protected:

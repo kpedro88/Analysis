@@ -12,6 +12,9 @@
 #include <map>
 #include <vector>
 #include <utility>
+#include <algorithm>
+#include <iterator>
+#include <iostream>
 
 using namespace std;
 
@@ -112,15 +115,56 @@ class KMap<T*> {
 };
 
 //-------------------------------------------------
+//overloaded operator<< for printing STL vectors
+template <typename T>
+std::ostream& operator<< (std::ostream& out, const vector<T>& v) {
+	if ( !v.empty() ) {
+		for(unsigned iv = 0; iv < v.size(); ++iv){
+			cout << v[iv];
+			if(iv < v.size()-1) cout << ",";
+		}
+	}
+	else {
+		out << "[empty vector]";
+	}
+	return out;
+}
+//overloaded operator<< for printing STL pairs
+template <typename T1, typename T2>
+std::ostream& operator<< (std::ostream& out, const pair<T1,T2>& p) {
+	out << p.first << ": " << p.second;
+	return out;
+}
+//overloaded operator<< for printing STL maps
+template <typename T1, typename T2>
+std::ostream& operator<< (std::ostream& out, const map<T1,T2>& m) {
+	if ( !m.empty() ) {
+		for(typename map<T1,T2>::const_iterator mit = m.begin(); mit != m.end(); ++mit){
+			cout << *mit << endl;
+			}
+	}
+	else {
+		out << "[empty map]";
+	}
+	return out;
+}
+
+//-------------------------------------------------
 //structs for option types (e.g. bool, int, double)
 struct KOpt {
-	
+	virtual void Print() const {}
 };
 template <class O>
 struct KOption : public KOpt {
 	KOption(O val) : value(val) {}
+	virtual void Print() const { cout << value; }
 	O value;
 };
+//overloaded operator<< for printing KOpt
+std::ostream& operator<< (std::ostream& out, const KOpt* k) {
+  k->Print();
+  return out;
+}
 
 //--------------------------------------
 //map for options with special accessors
