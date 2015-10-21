@@ -6,7 +6,7 @@ INPUT=input/input_selection.txt
 SELTYPE=signal
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV3/scan
 OUTDIR=tree
-STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV3
+STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV3/scan
 
 ./SKcheck.sh "$KEEPTAR" "$JOBDIR"
 
