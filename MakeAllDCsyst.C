@@ -23,15 +23,15 @@ void MakeAllDCsyst(bool fastsim=false, string indir="root://cmseos.fnal.gov//sto
 	if(fastsim){
 		outdir = "datacards_fast/";
 		input = "input/input_RA2bin_DC_fast_syst.txt";
-		nSyst = 5;
-		string systmp[] = {"btagSFunc","mistagSFunc","btagCFunc","ctagCFunc","mistagCFunc"};
+		nSyst = 8;
+		string systmp[] = {"puunc","trigStatUnc","trigSystUnc","btagSFunc","mistagSFunc","btagCFunc","ctagCFunc","mistagCFunc"};
 		systs = vector<string>(systmp,systmp+nSyst);
 	}
 	else {
 		outdir = "datacards/";
 		input = "input/input_RA2bin_DC_syst.txt";
-		nSyst = 2;
-		string systmp[] = {"btagSFunc","mistagSFunc"};
+		nSyst = 5;
+		string systmp[] = {"puunc","trigStatUnc","trigSystUnc","btagSFunc","mistagSFunc"};
 		systs = vector<string>(systmp,systmp+nSyst);
 	}
 	

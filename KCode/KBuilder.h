@@ -11,6 +11,7 @@
 #include "KBase.h"
 #include "NtupleClass.h"
 #include "KSelection.h"
+#include "../corrections/GetTriggerEffCorr.C"
 
 //ROOT headers
 #include <TROOT.h>
@@ -209,7 +210,11 @@ class KBuilderMC : public KBuilder {
 			xsection = 0; got_xsection = localOpt->Get("xsection",xsection);
 			norm = 0; got_luminorm = globalOpt->Get("luminorm",norm);
 			debugWeight = globalOpt->Get("debugWeight",false); didDebugWeight = false;
+			pucorr = globalOpt->Get("pucorr",false);
+			puunc = 0; globalOpt->Get("puunc",puunc);
 			trigcorr = globalOpt->Get("trigcorr",false);
+			trigStatUnc = 0; globalOpt->Get("trigStatUnc", trigStatUnc);
+			trigSystUnc = 0; globalOpt->Get("trigSystUnc", trigSystUnc);
 			realMET = localOpt->Get("realMET",true);
 		}
 		//destructor
@@ -219,6 +224,11 @@ class KBuilderMC : public KBuilder {
 		virtual void CheckBranches(){
 			//force enable branches needed for cuts/weights/etc.
 			fChain->SetBranchStatus("Weight",1); //needed for negative weights even if useTreeWeight==false
+			if(pucorr){
+				if(puunc==1) fChain->SetBranchStatus("puSysUp",1);
+				else if(puunc==-1) fChain->SetBranchStatus("puSysDown",1);
+				else fChain->SetBranchStatus("puWeight",1);
+			}
 			if(NTenum==ttbarLowHT || NTenum==ttbarLowHThad || NTenum==ttbarHighHT) fChain->SetBranchStatus("genHT",1);
 			if(NTenum==ttbarLowHThad){
 				fChain->SetBranchStatus("GenEls",1);
@@ -244,32 +254,16 @@ class KBuilderMC : public KBuilder {
 			//check option in case correction types are disabled globally
 			//(enabled by default
 			//(*disabled* until 2015 data is available)
-			/*
-			if(globalOpt->Get("pucorr",false)) {
-				TH1F* puWeights;
-				globalOpt->Get("puWeights",puWeights);
-				w *= puWeights->GetBinContent(puWeights->GetXaxis()->FindBin(trueNInteraction));
+			
+			if(pucorr) {
+				//just use TreeMaker weights for now
+				if(puunc==1) w *= puSysUp;
+				else if(puunc==-1) w *= puSysDown;
+				else w *= puWeight;
 			}
-			*/
 			
 			if(trigcorr){
-				if (realMET) {
-					if (MHT<100) w *= 0.0389;
-					else if (MHT<150) w *= 0.3208;
-					else if (MHT<200) w *= 0.8012;
-					else if (MHT<250) w *= 0.9388;
-					else if (MHT<300) w *= 0.9733;
-					else w *= 1.0;
-				} 
-				else {
-					if (MHT<100) w *= 0.0389;
-					else if (MHT<150) w *= 0.3208;
-					else if (MHT<200) w *= 0.9127;
-					else if (MHT<250) w *= 0.964;
-					else if (MHT<300) w *= 0.9734;
-					else if (MHT<400) w *= 0.9946;
-					else w *= 1.0;
-				}
+				w *= GetTriggerEffCorr(MHT, realMET, trigStatUnc, trigSystUnc);
 			}
 			
 			//now do scaling: norm*xsection/nevents
@@ -308,7 +302,8 @@ class KBuilderMC : public KBuilder {
 
 		//member variables
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, debugWeight, didDebugWeight;
-		bool trigcorr, realMET;
+		bool pucorr, trigcorr, realMET;
+		int puunc, trigStatUnc, trigSystUnc;
 		string normtype;
 		normtypes NTenum;
 		int nEventProc;
