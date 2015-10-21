@@ -23,7 +23,8 @@ QCD_HT-1000to1500 \
 QCD_HT-1500to2000 \
 QCD_HT-2000toInf \
 SinglePhoton_2015C \
-SinglePhoton_2015D
+SinglePhoton_re2015D \
+SinglePhoton_2015Db
 )
 
 for SAMPLE in ${SAMPLES[@]}
