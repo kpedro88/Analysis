@@ -12,7 +12,7 @@ dir = CMSSW_BASE + "/src/TreeMaker/Production/python/" + options.dir + "/"
 files = os.listdir(dir)
 
 wfile = open("input/dict_scan.txt",'w')
-sfile = open("exportScan.sh",'w')
+sfile = open("batch/exportScan.sh",'w')
 
 # preamble for script
 sfile.write("#!/bin/bash\n")

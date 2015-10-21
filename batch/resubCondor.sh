@@ -14,9 +14,9 @@ contains(){
 #all .condor files are named JOBNAME_$(Cluster).condor
 #one .jdl file per JOBNAME (i.e. only "Queue 1" is used)
 
-JOBDIR=$1
-TIME=$2
-OUTNAME=$3
+JOBDIR=jobs
+TIME=$1
+OUTNAME=$2
 
 #default is beginning of time
 if [ -z "$TIME" ]; then

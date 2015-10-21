@@ -1,7 +1,7 @@
 #!/bin/bash
 
 KEEPTAR=$1
-JOBDIR=batch
+JOBDIR=jobs
 INPUT=input/input_selection.txt
 SELTYPE=signal,LDP,SLm,SLe,GJet_CleanVars,DYm_CleanVars,DYe_CleanVars,GJetLDP_CleanVars
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV3

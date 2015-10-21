@@ -1,7 +1,7 @@
 #!/bin/bash
 
 KEEPTAR=$1
-JOBDIR=batch
+JOBDIR=jobs
 INPUT=input/input_selection.txt
 SELTYPE=signal
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV3/scan

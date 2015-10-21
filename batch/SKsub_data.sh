@@ -1,9 +1,9 @@
 #!/bin/bash
 
 KEEPTAR=$1
-JOBDIR=batch
+JOBDIR=jobs
 INPUT=input/input_selection.txt
-SELTYPE=GJet_ManualCleanVars,GJetLDP_ManualCleanVars
+SELTYPE=signal,LDP,SLm,SLe,GJet_CleanVars,DYm_CleanVars,DYe_CleanVars,GJetLDP_CleanVars
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV3
 OUTDIR=tree
 STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV3
@@ -11,19 +11,29 @@ STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2Prod
 ./SKcheck.sh "$KEEPTAR" "$JOBDIR"
 
 SAMPLES=(
-GJets_HT-100to200 \
-GJets_HT-200to400 \
-GJets_HT-400to600 \
-GJets_HT-600toInf \
-QCD_HT-200to300 \
-QCD_HT-300to500 \
-QCD_HT-500to700 \
-QCD_HT-700to1000 \
-QCD_HT-1000to1500 \
-QCD_HT-1500to2000 \
-QCD_HT-2000toInf \
+DoubleEG_2015C \
+DoubleMuon_2015C \
+HTMHT_2015C \
+JetHT_2015C \
+MET_2015C \
+SingleElectron_2015C \
+SingleMuon_2015C \
 SinglePhoton_2015C \
+DoubleEG_re2015D \
+DoubleMuon_re2015D \
+HTMHT_re2015D \
+JetHT_re2015D \
+MET_re2015D \
+SingleElectron_re2015D \
+SingleMuon_re2015D \
 SinglePhoton_re2015D \
+DoubleEG_2015Db \
+DoubleMuon_2015Db \
+HTMHT_2015Db \
+JetHT_2015Db \
+MET_2015Db \
+SingleElectron_2015Db \
+SingleMuon_2015Db \
 SinglePhoton_2015Db
 )
 

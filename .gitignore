@@ -38,5 +38,6 @@
 
 # Folders
 tree*/
+test*/
 datacards*/
-batch*/
+batch/jobs*/

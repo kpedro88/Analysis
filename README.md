@@ -6,7 +6,7 @@
 
 To run interactively, applying the "signal" selection to the "T1tttt\_1500\_100" sample and writing output trees to a folder "tree\_test/tree\_${SELECTION}":
 ```
-root -b -q -l 'KSkimDriver.C+("input/input_selection.txt","T1tttt_1500_100","signal","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV3","tree_test/tree")'
+root -b -q -l 'KSkimDriver.C+("input/input_selection.txt","T1tttt_1500_100","signal","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV3","test/tree")'
 ```
 
 To remake the input list of sets automatically, for data and MC:
@@ -23,11 +23,17 @@ root -b -q -l 'KSkimDriver.C++()'
 
 To submit jobs to Condor:
 ```
+cd batch
 ./SKsub.sh
 ./SKsub_data.sh
 ./SKsub_fast.sh
 ```
 Note: `SKsub_fast.sh` should only be run after the scanning step, below, is completed.
+
+After the skims finish, some may need to be hadded (split or extended samples):
+```
+./hadd_skims.sh
+```
 
 ### Scanning
 
@@ -51,6 +57,7 @@ root -b -q -l 'KScanDriver.C++()'
 
 To submit jobs to Condor:
 ```
+cd batch
 ./SCsub.sh
 ```
 
@@ -78,6 +85,11 @@ that includes an extra input argument to specify the name of the output ROOT fil
 These macros use modified input files that split up each background process (rather than stacking them together, as done for plotting).
 The W+jets and ttbar processes are added together in the input file. The macro adds together the two single-lepton control region files
 after they are generated.
+
+To save the histogram for data to a ROOT file for datacard creation:
+```
+root -b -l -q 'MakeAllDCdata.C+("root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV3")'
+```
 
 ### Signal systematics
 

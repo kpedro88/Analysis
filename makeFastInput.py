@@ -18,7 +18,7 @@ files = os.listdir(options.dir)
 xfile = open("input/dict_xsec.txt",'r')
 wfile = open("input/input_sets_skim_fast.txt",'w')
 dfile = open("input/input_sets_DC_fast.txt",'w')
-sfile = open("exportFast.sh",'w')
+sfile = open("batch/exportFast.sh",'w')
 
 # parse xsec map (taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVgluglu)
 xsec = {}
