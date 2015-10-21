@@ -32,7 +32,7 @@ eval `scramv1 runtime -sh`
 cd src/Analysis
 
 #run macro
-echo "run: root -b -q -l 'KScanDriver.C+("$INPUT","$SAMPLE","$INDIR",)' 2>&1"
+echo "run: root -b -q -l 'KScanDriver.C+("'"'$INPUT'","'$SAMPLE'","'$INDIR'"'")' 2>&1"
 root -b -q -l 'KScanDriver.C+("'$INPUT'","'$SAMPLE'","'$INDIR'")' 2>&1
 
 ROOTEXIT=$?
@@ -41,15 +41,22 @@ if [[ $ROOTEXIT -ne 0 ]]; then
   rm *.root
   echo "exit code $ROOTEXIT, skipping xrdcp"
   exit $ROOTEXIT
-else
-  # copy output to eos
-  echo "xrdcp output for condor"
-  for FILE in *.root
-    do
-      echo "xrdcp -f ${FILE} ${STORE}/${FILE}"
-      xrdcp -f ${FILE} ${STORE}/${FILE}
-      rm ${FILE}
-    done
 fi
+
+# copy output to eos
+echo "xrdcp output for condor"
+for FILE in *.root
+do
+  echo "xrdcp -f ${FILE} ${STORE}/${FILE}"
+  xrdcp -f ${FILE} ${STORE}/${FILE}
+  XRDEXIT=$?
+  if [[ $XRDEXIT -ne 0 ]]; then
+    rm *.root
+    echo "exit code $XRDEXIT, failure in xrdcp"
+    exit $XRDEXIT
+  fi
+  rm ${FILE}
+done
+
 
 

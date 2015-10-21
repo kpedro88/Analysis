@@ -36,7 +36,7 @@ eval `scramv1 runtime -sh`
 cd src/Analysis
 
 #run macro
-echo "run: root -b -q -l 'KSkimDriver.C+("$INPUT","$SAMPLE","$SELTYPE","$INDIR","$OUTDIR")' 2>&1"
+echo "run: root -b -q -l 'KSkimDriver.C+("'"'$INPUT'","'$SAMPLE'","'$SELTYPE'","'$INDIR'","'$OUTDIR'"'")' 2>&1"
 root -b -q -l 'KSkimDriver.C+("'$INPUT'","'$SAMPLE'","'$SELTYPE'","'$INDIR'","'$OUTDIR'")' 2>&1
 
 ROOTEXIT=$?
@@ -44,14 +44,21 @@ ROOTEXIT=$?
 if [[ $ROOTEXIT -ne 0 ]]; then
   echo "exit code $ROOTEXIT, skipping xrdcp"
   exit $ROOTEXIT
-else
-  # copy output to eos
-  echo "xrdcp output for condor"
-  for TREEDIR in ${OUTDIR}*/
-    do
-      xrdcp -R -f ${TREEDIR} ${STORE}/${TREEDIR}
-      rm -r ${TREEDIR}
-    done
 fi
+
+# copy output to eos
+echo "xrdcp output for condor"
+for TREEDIR in ${OUTDIR}*/
+do
+  xrdcp -R -f ${TREEDIR} ${STORE}/${TREEDIR}
+  XRDEXIT=$?
+  if [[ $XRDEXIT -ne 0 ]]; then
+    rm -r ${OUTDIR}*
+    echo "exit code $XRDEXIT, failure in xrdcp"
+    exit $XRDEXIT
+  fi
+  rm -r ${TREEDIR}
+done
+
 
 
