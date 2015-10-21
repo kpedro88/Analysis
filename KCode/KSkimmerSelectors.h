@@ -665,8 +665,7 @@ class KSyncSelector : public KSelector<KSkimmer> {
 		}
 		
 		//override accessors
-		virtual void SetSelection(KSelection<KSkimmer>* sel_) {
-			sel = sel_;
+		virtual void CheckDeps(){
 			debug = sel->GetGlobalOpt()->Get("debug",false);
 			//set dependencies here
 			if(depname.size()>0){

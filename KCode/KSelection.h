@@ -40,9 +40,9 @@ class KSelector {
 		virtual ~KSelector() {}
 		//accessors
 		string GetName() { return name; }
-		virtual void SetSelection(KSelection<T>* sel_) { sel = sel_; } //set dependencies here if desired
-		virtual void SetLooper(T* looper_) { looper = looper_; }
-		virtual void SetTree(TTree* tree_) { tree = tree_; } //set tree branches here if desired
+		virtual void SetSelection(KSelection<T>* sel_) { sel = sel_; CheckDeps(); } //set dependencies here if desired
+		virtual void SetLooper(T* looper_) { looper = looper_; CheckLooper(); }
+		virtual void SetTree(TTree* tree_) { tree = tree_; SetBranches(); } //set tree branches here if desired
 		int GetCounter() { return counter; }
 		bool Dummy() { return dummy; }
 		bool CanFail() { return canfail; }
@@ -66,6 +66,14 @@ class KSelector {
 			if(prev_counter>0) cout  << "  " << right << setw(widths[3]) << ((double)counter/(double)prev_counter)*100;
 			cout << endl;
 		}
+		//to set tree branches
+		virtual void SetBranches() {}
+		//to check dependencies on other selectors
+		virtual void CheckDeps() {}
+		//to check dependencies on the looper
+		virtual void CheckLooper() {}
+		//to allow selectors to turn on branches they need
+		virtual void CheckBranches() {}
 		
 	protected:
 		//member variables
@@ -201,6 +209,12 @@ class KSelection {
 		//manually fill tree
 		void FillTree(){
 			if(tree) tree->Fill();
+		}
+		//check branches needed for selectors
+		void CheckBranches(){
+			for(unsigned s = 0; s < selectorList.size(); s++){
+				selectorList[s]->CheckBranches();
+			}
 		}
 		
 	private:

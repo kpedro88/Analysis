@@ -33,6 +33,10 @@ class KHLTSelector : public KSelector<KBuilder> {
 			//get selected line from options
 			localOpt->Get("HLTLines",HLTLines);
 		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("TriggerNames",1);
+			looper->fChain->SetBranchStatus("TriggerPass",1);
+		}
 		
 		//this selector doesn't add anything to tree
 		
@@ -79,9 +83,7 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 		//constructor
 		KRA2BinSelector() : KSelector<KBuilder>() { }
 		KRA2BinSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), RA2Exclusive(true), DoBTagSF(false) { }
-		virtual void SetSelection(KSelection<KBuilder>* sel_) {
-			sel = sel_;
-
+		virtual void CheckDeps(){
 			//check if initial reading of input has already been done
 			if(sel->GetGlobalOpt()->Get("prepared_RA2bin",false)){
 				//if the initial reading failed, abort
@@ -158,6 +160,11 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 			//check other options
 			RA2Exclusive = sel->GetGlobalOpt()->Get("RA2Exclusive",true);
 			DoBTagSF = sel->GetGlobalOpt()->Get("btagcorr",false);
+		}
+		virtual void CheckBranches(){
+			for(int q = 0; q < RA2VarNames.size(); ++q){
+				looper->fChain->SetBranchStatus(RA2VarNames[q].c_str(),1);
+			}
 		}
 		
 		//used for non-dummy selectors
@@ -258,6 +265,10 @@ class KDoubleCountSelector : public KSelector<KBuilder> {
 		//constructor
 		KDoubleCountSelector() : KSelector<KBuilder>() { }
 		KDoubleCountSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_) { }
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("RunNum",1);
+			looper->fChain->SetBranchStatus("EvtNum",1);
+		}
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
@@ -284,6 +295,16 @@ class KPhotonIDSelector : public KSelector<KBuilder> {
 			canfail = false;
 			//check for option
 			best = localOpt->Get("best",false);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("photonCands",1);
+			looper->fChain->SetBranchStatus("photon_hadTowOverEM",1);
+			looper->fChain->SetBranchStatus("photon_hasPixelSeed",1);
+			looper->fChain->SetBranchStatus("photon_isEB",1);
+			looper->fChain->SetBranchStatus("photon_pfChargedIsoRhoCorr",1);
+			looper->fChain->SetBranchStatus("photon_pfGammaIsoRhoCorr",1);
+			looper->fChain->SetBranchStatus("photon_pfNeutralIsoRhoCorr",1);
+			looper->fChain->SetBranchStatus("bestPhoton",1);
 		}
 		
 		//used for non-dummy selectors
@@ -317,6 +338,12 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 		//constructor
 		KMETFilterSelector() : KSelector<KBuilder>() { }
 		KMETFilterSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_) { }
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("NVtx",1);
+			looper->fChain->SetBranchStatus("eeBadScFilter",1);
+			looper->fChain->SetBranchStatus("HBHENoiseFilter",1);
+			looper->fChain->SetBranchStatus("HBHEIsoNoiseFilter",1);
+		}
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
@@ -344,9 +371,11 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 			readerUp = BTagCalibrationReader(&calib, BTagEntry::OP_MEDIUM, "comb", "up");
 			readerDown = BTagCalibrationReader(&calib, BTagEntry::OP_MEDIUM, "comb", "down");
 		}
-		virtual void SetLooper(KBuilder* looper_) {
-			looper = looper_;
-			
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("Jets",1);
+			looper->fChain->SetBranchStatus("Jets_flavor",1);
+		}
+		virtual void CheckLooper(){
 			//check for option
 			looper->globalOpt->Get("btagSFunc",btagSFunc);
 			looper->globalOpt->Get("mistagSFunc",mistagSFunc);
@@ -557,8 +586,7 @@ class KHistoSelector : public KSelector<KBuilder> {
 			canfail = false;
 		}
 		
-		virtual void SetSelection(KSelection<KBuilder>* sel_) {
-			sel = sel_;
+		virtual void CheckDeps(){
 			//set dependencies here
 			RA2Bin = sel->Get<KRA2BinSelector*>("RA2Bin");
 			PhotonID = sel->Get<KPhotonIDSelector*>("PhotonID");

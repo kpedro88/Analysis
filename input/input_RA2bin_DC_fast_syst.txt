@@ -29,7 +29,6 @@ vuint:RA2Var2Bins[0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,
 vuint:RA2Var3Bins[0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5]
 string:selection[ra2bin]
 vstring:disable_branches[*]
-vstring:enable_branches[NJets,BTags,MHT,HT,Jets,Jets_flavor]
 bool:RA2Exclusive[0]
 bool:fastsim[1]
 bool:btagcorr[1]

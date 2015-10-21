@@ -90,6 +90,7 @@ class KBuilder : public NtupleClass {
 			}
 			//check for any necessary branches
 			CheckBranches();
+			MySelection->CheckBranches();
 			
 			//loop over ntuple tree
 			Long64_t nentries = fChain->GetEntries();
