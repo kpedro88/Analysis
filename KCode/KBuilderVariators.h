@@ -21,7 +21,7 @@ namespace KParser {
 	KVariator<KBuilder>* processVariator<KBuilder>(KNamed* tmp){
 		KVariator<KBuilder>* vtmp = 0;
 		string vname = tmp->first;
-		OptionMap* omap = tmp->second;
+		//OptionMap* omap = tmp->second; //unused right now
 		
 		//check for all known variators
 		//skip unknown variators

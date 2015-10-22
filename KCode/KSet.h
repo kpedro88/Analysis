@@ -476,7 +476,7 @@ class KSetRatio: public KSet {
 			TH1* hdata = children[0]->GetHisto();
 			TH1* hsim = children[1]->GetHisto();
 			TH1* hsim0 = (TH1*)hsim->Clone();
-			Color_t color;
+			Color_t color = kBlack;
 			localOpt->Get("color",color);
 			
 			if(hrat->GetDimension()==1){ //data/mc

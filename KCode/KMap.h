@@ -141,7 +141,7 @@ std::ostream& operator<< (std::ostream& out, const map<T1,T2>& m) {
 	if ( !m.empty() ) {
 		for(typename map<T1,T2>::const_iterator mit = m.begin(); mit != m.end(); ++mit){
 			cout << *mit << endl;
-			}
+		}
 	}
 	else {
 		out << "[empty map]";
@@ -152,11 +152,13 @@ std::ostream& operator<< (std::ostream& out, const map<T1,T2>& m) {
 //-------------------------------------------------
 //structs for option types (e.g. bool, int, double)
 struct KOpt {
+	virtual ~KOpt() {}
 	virtual void Print() const {}
 };
 template <class O>
 struct KOption : public KOpt {
 	KOption(O val) : value(val) {}
+	virtual ~KOption() {}
 	virtual void Print() const { cout << value; }
 	O value;
 };

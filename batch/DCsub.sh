@@ -7,9 +7,8 @@ STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Datacards/Run2
 
 ./SKcheck.sh "$KEEPTAR" "$JOBDIR"
 
-#nparts=`ls -1 ../input/fast/input_sets_DC_fast_*.txt | wc -l`
-#nparts=$(($nparts-1))
-nparts=1
+nparts=`ls -1 ../input/fast/input_sets_DC_fast_*.txt | wc -l`
+nparts=$(($nparts-1))
 
 echo "Submitting parts 0.."$nparts
 

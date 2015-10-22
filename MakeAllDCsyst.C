@@ -31,7 +31,7 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 	string input = "";
 	string setlist = "";
 	string osuff = "";
-	int nSyst = 0;
+	unsigned nSyst = 0;
 	vector<string> systs;
 	if(mode==1){
 		input = "input/input_RA2bin_DC_fast_syst.txt";

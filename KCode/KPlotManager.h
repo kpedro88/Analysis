@@ -153,14 +153,14 @@ class KPlotManager : public KManager {
 				if(s_yieldref.size()>0 && yieldref==0 && MySets[s]->GetName()==s_yieldref) yieldref = MySets[s];
 				
 				//only find each roc set once
-				for(int r = 0; r < s_roc_sig.size(); r++){
+				for(unsigned r = 0; r < s_roc_sig.size(); r++){
 					if(MySets[s]->GetName()==s_roc_sig[r]){
 						roc_sig.push_back(MySets[s]);
 						s_roc_sig.erase(s_roc_sig.begin()+r);
 						break;
 					}
 				}
-				for(int r = 0; r < s_roc_bkg.size(); r++){
+				for(unsigned r = 0; r < s_roc_bkg.size(); r++){
 					if(MySets[s]->GetName()==s_roc_bkg[r]){
 						roc_bkg.push_back(MySets[s]);
 						s_roc_bkg.erase(s_roc_bkg.begin()+r);
@@ -446,8 +446,8 @@ class KPlotManager : public KManager {
 			}
 			
 			//draw curves for each sig vs each bkg
-			for(int s = 0; s < roc_sig.size(); s++){
-				for(int b = 0; b < roc_bkg.size(); b++){
+			for(unsigned s = 0; s < roc_sig.size(); s++){
+				for(unsigned b = 0; b < roc_bkg.size(); b++){
 					//specific qtys not included in roc_name right now
 					//anything desired should be specified in printsuffix option
 					string roc_name = "roc_" + roc_sig[s]->GetName() + "_vs_" + roc_bkg[b]->GetName();
@@ -479,7 +479,7 @@ class KPlotManager : public KManager {
 					for(p = MyPlots.GetTable().begin(); p != MyPlots.GetTable().end(); p++){
 						//select current histogram in sets
 						TH1F* h_sig = (TH1F*)(roc_sig[s]->GetHisto(p->first));
-						TH1F* h_bkg = (TH1F*)(roc_bkg[b]->GetHisto(p->first));
+						//TH1F* h_bkg = (TH1F*)(roc_bkg[b]->GetHisto(p->first)); //unused right now
 						
 						//get efficiencies
 						//(cached results will be returned if the calculation was already done)
@@ -542,7 +542,7 @@ class KPlotManager : public KManager {
 			//print formats given as a vector option
 			vector<string> printformat;
 			if(doPrint && globalOpt->Get<vector<string> >("printformat",printformat)){
-				for(int j = 0; j < printformat.size(); j++){
+				for(unsigned j = 0; j < printformat.size(); j++){
 					string pformat = printformat[j];
 					string suff = "";
 					if(globalOpt->Get("printsuffix",suff)) oname += "_" + suff;

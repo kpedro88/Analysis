@@ -324,7 +324,7 @@ class KPlot{
 				cout << "Input error: in histo " << name << ", vector lengths of xcuts and xcut_colors do not match!";
 				cout << " xcut_colors will be ignored." << endl;
 			}
-			for(int c = 0; c < xcuts.size(); c++){
+			for(unsigned c = 0; c < xcuts.size(); c++){
 				TLine* tmp = new TLine(xcuts[c],y1,xcuts[c],y2);
 				tmp->SetLineStyle(7);
 				tmp->SetLineWidth(2);
@@ -344,7 +344,7 @@ class KPlot{
 				cout << "Input error: in histo " << name << ", vector lengths of ycuts and ycut_colors do not match!";
 				cout << " ycut_colors will be ignored." << endl;
 			}
-			for(int c = 0; c < ycuts.size(); c++){
+			for(unsigned c = 0; c < ycuts.size(); c++){
 				TLine* tmp = new TLine(x1,ycuts[c],x2,ycuts[c]);
 				tmp->SetLineStyle(7);
 				tmp->SetLineWidth(2);
@@ -371,7 +371,7 @@ class KPlot{
 			//copy x cuts, use pad y-range
 			double y1 = pad2->GetLogy() ? pow(10,pad2->GetUymin()) : pad2->GetUymin();
 			double y2 = pad2->GetLogy() ? pow(10,pad2->GetUymax()) : pad2->GetUymax();
-			for(int c = 0; c < xcut_lines.size(); c++){
+			for(unsigned c = 0; c < xcut_lines.size(); c++){
 				TLine* tmp = (TLine*)xcut_lines[c]->Clone();
 				tmp->SetY1(y1);
 				tmp->SetY2(y2);
@@ -388,6 +388,7 @@ class KPlot{
 			pad->cd();
 			if(pad==pad1) { padW = pad1W; padH = pad1H; }
 			else if(pad==pad2) { padW = pad2W; padH = pad2H; }
+			else return;
 			
 			TLatex height_test(0,0,axis->GetTitle());
 			height_test.SetTextSize(sizeT/padH);
@@ -425,6 +426,7 @@ class KPlot{
 				padW = pad2W; padH = pad2H;
 				tickScaleY = (padH - marginB - marginM2)/padH*padW;
 			}
+			else return;
 			tickScaleX = (padW - marginL - marginR)/padW*padH;
 
 			//fix log-scale label offsets (not final)
@@ -522,7 +524,7 @@ class KPlot2D: public KPlot {
 		virtual void CreateHist(){
 			//construct histogram		
 			vector<double> xbins, ybins;
-			int xnum, ynum;
+			int xnum = 1, ynum;
 			double xmin, xmax, ymin, ymax;
 			if(localOpt->Get("xbins",xbins)){ //variable x-binning case
 				if(localOpt->Get("ybins",ybins)) { //variable y-binning case

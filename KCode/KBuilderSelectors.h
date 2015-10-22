@@ -162,7 +162,7 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 			DoBTagSF = sel->GetGlobalOpt()->Get("btagcorr",false);
 		}
 		virtual void CheckBranches(){
-			for(int q = 0; q < RA2VarNames.size(); ++q){
+			for(unsigned q = 0; q < RA2VarNames.size(); ++q){
 				looper->fChain->SetBranchStatus(RA2VarNames[q].c_str(),1);
 			}
 		}
@@ -180,7 +180,7 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 		vector<unsigned> GetBinNumbers(vector<vector<unsigned> >& bin_vec) {
 			vector<vector<unsigned> > bins;
 			bins.reserve(RA2VarNames.size());
-			for(int q = 0; q < RA2VarNames.size(); ++q){
+			for(unsigned q = 0; q < RA2VarNames.size(); ++q){
 				bins.push_back(GetBins(q));
 				
 				//skip loop if no bin was found for a value
@@ -242,7 +242,7 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 		}
 		
 		unsigned GetBin(string qty_name, const vector<unsigned>& bin_num){
-			for(int q = 0; q < RA2VarNames.size(); ++q){
+			for(unsigned q = 0; q < RA2VarNames.size(); ++q){
 				if(RA2VarNames[q]==qty_name) return bin_num[q];
 			}
 			return -1;
@@ -311,7 +311,7 @@ class KPhotonIDSelector : public KSelector<KBuilder> {
 		virtual bool Cut() {
 			goodPhotons.clear();
 			for(unsigned p = 0; p < looper->photonCands->size(); ++p){
-				bool goodPhoton = abs(looper->photonCands->at(p).Eta())<1.4442 || ((abs(looper->photonCands->at(p).Eta())>1.566 && abs(looper->photonCands->at(p).Eta())<2.5))
+				bool goodPhoton = (abs(looper->photonCands->at(p).Eta())<1.4442 || ((abs(looper->photonCands->at(p).Eta())>1.566 && abs(looper->photonCands->at(p).Eta())<2.5)))
 									&& looper->photonCands->at(p).Pt()>100.
 									&& ((looper->photon_hadTowOverEM->at(p)<0.028 && !looper->photon_hasPixelSeed->at(p) && looper->photon_isEB->at(p)) 
 										|| (looper->photon_hadTowOverEM->at(p)<0.093 && !looper->photon_hasPixelSeed->at(p) && !looper->photon_isEB->at(p)))
@@ -622,22 +622,22 @@ class KHistoSelector : public KSelector<KBuilder> {
 		virtual bool Cut() {
 			double w = looper->GetWeight();
 			
-			for(int h = 0; h < looper->htmp.size(); h++){
+			for(unsigned h = 0; h < looper->htmp.size(); h++){
 				unsigned vsize = looper->vars[h].size();
 				vector<KValue> values(vsize);				
 			
-				for(int i = 0; i < vsize; i++){
+				for(unsigned i = 0; i < vsize; i++){
 					string vname = looper->vars[h][i];
 					//list of cases for histo calculation and filling
 					if(vname=="RA2bin" && RA2Bin){ //plot yield vs. bin of RA2 search -> depends on RA2Bin selector
 						if(RA2Bin->RA2Exclusive) values[i].Fill(RA2Bin->RA2bins[0],w);
 						else {
-							for(int b = 0; b < RA2Bin->RA2bins.size(); b++){
+							for(unsigned b = 0; b < RA2Bin->RA2bins.size(); b++){
 								double wb = w;
 								//weight by btag scale factor probability if available
 								if(BTagSF) {
 									int nb = RA2Bin->GetBin("BTags",RA2Bin->RA2binVec[b]);
-									if(nb>=0 && nb<BTagSF->prob.size()) wb *= BTagSF->prob[nb];
+									if(nb>=0 && ((unsigned)nb)<BTagSF->prob.size()) wb *= BTagSF->prob[nb];
 									else wb = 0; //btag sf failed
 								}
 								values[i].Fill(RA2Bin->RA2bins[b],wb);
@@ -688,7 +688,6 @@ class KHistoSelector : public KSelector<KBuilder> {
 					}
 					else if(vname=="bestsigmaietaieta"){//sigma ieta ieta variable for best photon
 						if(looper->bestPhoton->size()==0) continue;
-						int bestIndex = -1;
 						for(unsigned p = 0; p < looper->photonCands->size(); ++p){
 							if(looper->bestPhoton->at(0)==looper->photonCands->at(p) && looper->photon_isEB->at(p)){
 								values[i].Fill(looper->photon_sigmaIetaIeta->at(p),w);

@@ -53,6 +53,7 @@ class KBuilder : public NtupleClass {
 		virtual ~KBuilder() {}
 
 		//functions for histo creation
+		using NtupleClass::Cut;
 		virtual bool Cut() { //this implements the set of cuts common between data and MC
 			bool goodEvent = true;
 		
@@ -114,7 +115,7 @@ class KBuilder : public NtupleClass {
 			}
 			
 			if(globalOpt->Get("plotoverflow",false)){
-				for(int h = 0; h < htmp.size(); h++){
+				for(unsigned h = 0; h < htmp.size(); h++){
 					if(vars[h].size()==2) continue; //not implemented for 2D histos or profiles yet
 					
 					//temporary histo to calculate error correctly when adding overflow bin to last bin
@@ -171,6 +172,7 @@ class KBuilderData : public KBuilder {
 		virtual ~KBuilderData() {}
 		
 		//functions for histo creation
+		using NtupleClass::Cut;
 		bool Cut(){
 			bool goodEvent = true;
 			
@@ -237,6 +239,7 @@ class KBuilderMC : public KBuilder {
 				fChain->SetBranchStatus("GenTaus",1);
 			}
 		}
+		using NtupleClass::Cut;
 		bool Cut(){
 			bool goodEvent = true;
 			
