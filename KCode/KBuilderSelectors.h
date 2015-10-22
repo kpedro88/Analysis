@@ -352,6 +352,30 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 };
 
 //---------------------------------------------------------------
+//applies tighter jet ID
+class KJetIDSelector : public KSelector<KBuilder> {
+	public:
+		//constructor
+		KJetIDSelector() : KSelector<KBuilder>() { }
+		KJetIDSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_) {
+			pbnr = localOpt->Get("pbnr",true);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("JetIDtight",1);
+			looper->fChain->SetBranchStatus("PBNR",1);
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			if(pbnr) return looper->PBNR;
+			else return looper->JetIDtight;
+		}
+		
+		//member variables
+		bool pbnr;
+};
+
+//---------------------------------------------------------------
 //calculates btag scale factors
 class KBTagSFSelector : public KSelector<KBuilder> {
 	public:
@@ -741,6 +765,7 @@ namespace KParser {
 		else if(sname=="BTagSF") srtmp = new KBTagSFSelector(sname,omap);
 		else if(sname=="METFilter") srtmp = new KMETFilterSelector(sname,omap);
 		else if(sname=="HLT") srtmp = new KHLTSelector(sname,omap);
+		else if(sname=="JetID") srtmp = new KJetIDSelector(sname,omap);
 		else {} //skip unknown selectors
 		
 		if(!srtmp) cout << "Input error: unknown selector " << sname << ". This selector will be skipped." << endl;
