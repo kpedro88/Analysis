@@ -33,7 +33,7 @@ bool:RA2Exclusive[0]
 bool:fastsim[1]
 bool:btagcorr[1]
 bool:trigcorr[1]
-bool:pucorr[1]
+#bool:pucorr[1]
 
 SELECTION
 ra2bin

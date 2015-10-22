@@ -32,7 +32,7 @@ vstring:disable_branches[*]
 bool:RA2Exclusive[0]
 bool:btagcorr[1]
 bool:trigcorr[1]
-bool:pucorr[1]
+#bool:pucorr[1]
 
 SELECTION
 ra2bin
