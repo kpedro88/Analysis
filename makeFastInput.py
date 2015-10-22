@@ -9,6 +9,7 @@ def msplit(line):
 # define options
 parser = OptionParser()
 parser.add_option("-d", "--dir", dest="dir", default="/eos/uscms/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV2/scan/", help="location of python files")
+parser.add_option("-n", "--nfiles", dest="nfiles", default=0, help="number of files per part for datacard input")
 (options, args) = parser.parse_args()
 
 # find the python files
@@ -19,6 +20,14 @@ xfile = open("input/dict_xsec.txt",'r')
 wfile = open("input/input_sets_skim_fast.txt",'w')
 dfile = open("input/input_sets_DC_fast.txt",'w')
 sfile = open("batch/exportFast.sh",'w')
+
+nfiles = int(options.nfiles)
+if nfiles>0: 
+    nparts = len(files)/nfiles + int(len(files)%nfiles!=0)
+    dfiles = [open("input/fast/input_sets_DC_fast_"+str(x)+".txt",'w') for x in range(nparts)]
+    #preamble
+    for df in dfiles:
+        df.write("SET\n")
 
 # parse xsec map (taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVgluglu)
 xsec = {}
@@ -36,7 +45,7 @@ sfile.write("export SAMPLES=(\n")
 wfile.write("SET\n")
 dfile.write("SET\n")
 
-for file in files:
+for ind,file in enumerate(files):
     # parse filename: model, mMother-X, mLSP-Y, fast.root
     fsplit = file.split('_')
     mMother = msplit(fsplit[1])
@@ -48,9 +57,11 @@ for file in files:
     wfile.write(wline)
     # make set list for datacards with xsecs
     dline = "hist" + "\t" + "mc" + "\t" + short_name + "\n"
+    dline += "\t" + "base" + "\t" + "mc" + "\t" + short_name + "\t" + "s:filename[tree_" + short_name + ".root]" + "\t" + "d:xsection[" + str(xsec[mMother]) + "]" + "\n"
     dfile.write(dline)
-    dline = "\t" + "base" + "\t" + "mc" + "\t" + short_name + "\t" + "s:filename[tree_" + short_name + ".root]" + "\t" + "d:xsection[" + str(xsec[mMother]) + "]" + "\n"
-    dfile.write(dline)
+    # make split set lists
+    if nfiles>0:
+        dfiles[ind/nfiles].write(dline)
     # make script to export array of sample names
     sline = short_name + " \\\n"
     sfile.write(sline)

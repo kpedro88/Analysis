@@ -4,7 +4,7 @@
 
 [input\_selection.txt](input/input\_selection.txt) defines all the available selections, variations, and samples, as well as common global options.
 
-To run interactively, applying the "signal" selection to the "T1tttt\_1500\_100" sample and writing output trees to a folder "tree\_test/tree\_${SELECTION}":
+To run interactively, applying the "signal" selection to the "T1tttt\_1500\_100" sample and writing output trees to a folder "test/tree\_${SELECTION}":
 ```
 root -b -q -l 'KSkimDriver.C+("input/input_selection.txt","T1tttt_1500_100","signal","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV3","test/tree")'
 ```
@@ -18,7 +18,7 @@ Note: this script uses the python file lists in [TreeMaker/Production/python](ht
 
 To recompile the driver without running (preparing for batch submission):
 ```
-root -b -q -l 'KSkimDriver.C++()'
+root -b -q -l KSkimDriver.C++
 ```
 
 To submit jobs to Condor:
@@ -52,7 +52,7 @@ Note: as above, this script uses the python file lists in [TreeMaker/Production/
 
 To recompile the driver without running (preparing for batch submission):
 ```
-root -b -q -l 'KScanDriver.C++()'
+root -b -q -l KScanDriver.C++
 ```
 
 To submit jobs to Condor:
@@ -63,8 +63,9 @@ cd batch
 
 To make the input lists of model points automatically for skimming, plotting, and datacards, after the scan jobs finish:
 ```
-python makeFastInput.py -d /eos/uscms/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV3/scan/
+python makeFastInput.py -d /eos/uscms/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV3/scan/ -n 10
 ```
+The last argument splits the datacard input list into multiple lists (each containing `n` model points) for batch submission.
 
 ## Plotting
 
@@ -98,14 +99,28 @@ To save the individual histograms for the signal processes to a ROOT file for ea
 root -b -l -q 'MakeAllDCsyst.C+(0,"root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV3")'
 ```
 This macro calls the macro `KPlotDriverDCsyst.C`, which is a modification of the macro from the previous section
-that includes extra input arguments to specify the name and direction of the systematic variation (up or down).
+that includes extra input arguments to specify the list of input samples and the name and direction of the systematic variation (up or down).
 
-To run over fastsim signal samples:
+To recompile the driver without running (preparing for batch submission):
 ```
-root -b -l -q 'MakeAllDCsyst.C+(1,"root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV3/scan")'
+root -b -q -l MakeAllDCsyst.C++
 ```
+
+Because of the large number of model points in the FastSim signal samples, batch mode should be used to run over them:
+```
+cd batch
+./DCsub.sh
+```
+
+After the jobs finish, the split output files should be combined:
+```
+./hadd_DC.sh
+```
+
 
 Currently available uncertainties:
+* trigger efficiency statistical
+* trigger efficiency systematic
 * b-tagging scale factors
 * mistagging scale factors
 * b-tagging correction factors (fastsim only)
