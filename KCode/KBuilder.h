@@ -219,6 +219,7 @@ class KBuilderMC : public KBuilder {
 			trigStatUnc = 0; globalOpt->Get("trigStatUnc", trigStatUnc);
 			trigSystUnc = 0; globalOpt->Get("trigSystUnc", trigSystUnc);
 			realMET = localOpt->Get("realMET",true);
+			signal = localOpt->Get("signal",false);
 		}
 		//destructor
 		virtual ~KBuilderMC() {}
@@ -267,7 +268,7 @@ class KBuilderMC : public KBuilder {
 			}
 			
 			if(trigcorr){
-				w *= GetTriggerEffCorr(MHT, realMET, trigStatUnc, trigSystUnc);
+				w *= GetTriggerEffCorr(signal, MHT, realMET, trigStatUnc, trigSystUnc);
 			}
 			
 			//now do scaling: norm*xsection/nevents
@@ -306,7 +307,7 @@ class KBuilderMC : public KBuilder {
 
 		//member variables
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, debugWeight, didDebugWeight;
-		bool pucorr, trigcorr, realMET;
+		bool pucorr, trigcorr, realMET, signal;
 		int puunc, trigStatUnc, trigSystUnc;
 		string normtype;
 		normtypes NTenum;
