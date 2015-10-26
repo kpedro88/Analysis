@@ -119,6 +119,7 @@ After the jobs finish, the split output files should be combined:
 
 
 Currently available uncertainties:
+* PDF weights
 * trigger efficiency statistical
 * trigger efficiency systematic
 * b-tagging scale factors

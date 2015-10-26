@@ -47,14 +47,14 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 			osuff = ss.str();
 		}
 		nSyst = 8;
-		string systmp[] = {"puunc","trigStatUnc","trigSystUnc","btagSFunc","mistagSFunc","btagCFunc","ctagCFunc","mistagCFunc"};
+		string systmp[] = {"puunc","pdfunc","trigStatUnc","trigSystUnc","btagSFunc","mistagSFunc","btagCFunc","ctagCFunc","mistagCFunc"};
 		systs = vector<string>(systmp,systmp+nSyst);
 	}
 	else {
 		outdir = "datacards/";
 		setlist = "input/input_sets_DC_syst.txt";
 		nSyst = 5;
-		string systmp[] = {"puunc","trigStatUnc","trigSystUnc","btagSFunc","mistagSFunc"};
+		string systmp[] = {"puunc","pdfunc","trigStatUnc","trigSystUnc","btagSFunc","mistagSFunc"};
 		systs = vector<string>(systmp,systmp+nSyst);
 	}
 	

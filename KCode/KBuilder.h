@@ -21,6 +21,7 @@
 #include <TH2.h>
 #include <TStyle.h>
 #include <TLorentzVector.h>
+#include <TMath.h>
 
 //STL headers
 #include <vector>
@@ -220,6 +221,7 @@ class KBuilderMC : public KBuilder {
 			trigSystUnc = 0; globalOpt->Get("trigSystUnc", trigSystUnc);
 			realMET = localOpt->Get("realMET",true);
 			signal = localOpt->Get("signal",false);
+			pdfunc = 0; globalOpt->Get("pdfunc",pdfunc);
 		}
 		//destructor
 		virtual ~KBuilderMC() {}
@@ -238,6 +240,9 @@ class KBuilderMC : public KBuilder {
 				fChain->SetBranchStatus("GenEls",1);
 				fChain->SetBranchStatus("GenMus",1);
 				fChain->SetBranchStatus("GenTaus",1);
+			}
+			if(pdfunc!=0){
+				fChain->SetBranchStatus("PDFweights",1);
 			}
 		}
 		using NtupleClass::Cut;
@@ -269,6 +274,12 @@ class KBuilderMC : public KBuilder {
 			
 			if(trigcorr){
 				w *= GetTriggerEffCorr(signal, MHT, realMET, trigStatUnc, trigSystUnc);
+			}
+			
+			if(pdfunc!=0){
+				double pdfrms = TMath::RMS(PDFweights->begin(),PDFweights->end());
+				if(pdfunc==1) w *= 1.0 + pdfrms;
+				else if(pdfunc==-1) w *= 1.0 - pdfrms;
 			}
 			
 			//now do scaling: norm*xsection/nevents
@@ -308,7 +319,7 @@ class KBuilderMC : public KBuilder {
 		//member variables
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, debugWeight, didDebugWeight;
 		bool pucorr, trigcorr, realMET, signal;
-		int puunc, trigStatUnc, trigSystUnc;
+		int puunc, pdfunc, trigStatUnc, trigSystUnc;
 		string normtype;
 		normtypes NTenum;
 		int nEventProc;
