@@ -337,18 +337,29 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 	public:
 		//constructor
 		KMETFilterSelector() : KSelector<KBuilder>() { }
-		KMETFilterSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_) { }
+		KMETFilterSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), fastsim(false) { }
 		virtual void CheckBranches(){
 			looper->fChain->SetBranchStatus("NVtx",1);
 			looper->fChain->SetBranchStatus("eeBadScFilter",1);
 			looper->fChain->SetBranchStatus("HBHENoiseFilter",1);
 			looper->fChain->SetBranchStatus("HBHEIsoNoiseFilter",1);
 		}
+		virtual void CheckLooper(){
+			//check fastsim stuff
+			fastsim = looper->localOpt->Get("fastsim",false);
+			if(fastsim){
+				//disable this for fastsim
+				dummy = true;
+			}
+		}
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			return looper->NVtx > 0 && looper->eeBadScFilter==1 && looper->HBHENoiseFilter && looper->HBHEIsoNoiseFilter;
 		}
+		
+		//member variables
+		bool fastsim;
 };
 
 //---------------------------------------------------------------
@@ -416,7 +427,7 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 			}
 			
 			//check fastsim stuff
-			fastsim = looper->globalOpt->Get("fastsim",false);
+			fastsim = looper->localOpt->Get("fastsim",false);
 			if(fastsim){
 				//read CFs
 				//todo: check the sample name and choose the appropriate CFs (once available)

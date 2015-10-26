@@ -57,7 +57,7 @@ for ind,file in enumerate(files):
     wfile.write(wline)
     # make set list for datacards with xsecs
     dline = "hist" + "\t" + "mc" + "\t" + short_name + "\n"
-    dline += "\t" + "base" + "\t" + "mc" + "\t" + short_name + "\t" + "s:filename[tree_" + short_name + ".root]" + "\t" + "d:xsection[" + str(xsec[mMother]) + "]" + "\t" + "b:signal[1]" + "\n"
+    dline += "\t" + "base" + "\t" + "mc" + "\t" + short_name + "\t" + "s:filename[tree_" + short_name + ".root]" + "\t" + "d:xsection[" + str(xsec[mMother]) + "]" + "\t" + "b:signal[1]" + "\t" + "b:fastsim[1]" + "\n"
     dfile.write(dline)
     # make split set lists
     if nfiles>0:

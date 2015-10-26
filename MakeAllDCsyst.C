@@ -28,13 +28,12 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 	string region = "signal";
 	string outpre = "RA2bin_";
 	string outdir = "";
-	string input = "";
+	string input = "input/input_RA2bin_DC_syst.txt";
 	string setlist = "";
 	string osuff = "";
 	unsigned nSyst = 0;
 	vector<string> systs;
 	if(mode==1){
-		input = "input/input_RA2bin_DC_fast_syst.txt";
 		if(part==-1){
 			outdir = "datacards_fast/";
 			setlist = "input/input_sets_DC_fast.txt";
@@ -53,7 +52,6 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 	}
 	else {
 		outdir = "datacards/";
-		input = "input/input_RA2bin_DC_syst.txt";
 		setlist = "input/input_sets_DC_syst.txt";
 		nSyst = 5;
 		string systmp[] = {"puunc","trigStatUnc","trigSystUnc","btagSFunc","mistagSFunc"};

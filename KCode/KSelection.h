@@ -213,7 +213,7 @@ class KSelection {
 		//check branches needed for selectors
 		void CheckBranches(){
 			for(unsigned s = 0; s < selectorList.size(); s++){
-				selectorList[s]->CheckBranches();
+				if(!selectorList[s]->Dummy()) selectorList[s]->CheckBranches();
 			}
 		}
 		
