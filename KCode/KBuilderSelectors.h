@@ -49,7 +49,7 @@ class KHLTSelector : public KSelector<KBuilder> {
 			if(HLTIndices.empty()){
 				for(unsigned h = 0; h < HLTLines.size(); h++){
 					vector<string>::iterator lb = lower_bound(looper->TriggerNames->begin(),looper->TriggerNames->end(),HLTLines[h]);
-					if(lb != looper->TriggerNames->end() && *lb==HLTLines[h]){
+					if(lb != looper->TriggerNames->end() && lb->find(HLTLines[h]) != std::string::npos){
 						HLTIndices.push_back(distance(looper->TriggerNames->begin(),lb));
 					}
 				}
