@@ -15,7 +15,7 @@ using namespace std;
 
 //recompile:
 //root -b -l -q MakeAllDCsyst.C++
-void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV3/", int part=-1){
+void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV4/", int part=-1){
 	gErrorIgnoreLevel = kBreak;
 	
 	if(mode==-1){
@@ -46,15 +46,15 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 			ss << "_part" << part;
 			osuff = ss.str();
 		}
-		nSyst = 8;
-		string systmp[] = {"puunc","pdfunc","trigStatUnc","trigSystUnc","btagSFunc","mistagSFunc","btagCFunc","ctagCFunc","mistagCFunc"};
+		nSyst = 11;
+		string systmp[] = {"puunc","pdfunc","scaleunc","trigStatUnc","trigSystUnc","JEC","btagSFunc","mistagSFunc","btagCFunc","ctagCFunc","mistagCFunc"};
 		systs = vector<string>(systmp,systmp+nSyst);
 	}
 	else {
 		outdir = "datacards/";
 		setlist = "input/input_sets_DC_syst.txt";
-		nSyst = 5;
-		string systmp[] = {"puunc","pdfunc","trigStatUnc","trigSystUnc","btagSFunc","mistagSFunc"};
+		nSyst = 8;
+		string systmp[] = {"puunc","pdfunc","scaleunc","trigStatUnc","trigSystUnc","JEC","btagSFunc","mistagSFunc"};
 		systs = vector<string>(systmp,systmp+nSyst);
 	}
 	
@@ -67,12 +67,20 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 	
 	//now do the variations
 	for(unsigned i = 0; i < nSyst; ++i){
+		string ovar = "";
 		//up
 		cout << systs[i] << " up" << endl;
-		KPlotDriverDCsyst(indir+inpre+region,input,setlist,outdir+outpre+region+"_"+systs[i]+"Up"+osuff,systs[i],1);
+		if(systs[i]=="JEC") region = "signal_JECup";
+		else ovar = "_"+systs[i]+"Up";
+		KPlotDriverDCsyst(indir+inpre+region,input,setlist,outdir+outpre+region+ovar+osuff,systs[i],1);
 		//down
 		cout << systs[i] << " down" << endl;
-		KPlotDriverDCsyst(indir+inpre+region,input,setlist,outdir+outpre+region+"_"+systs[i]+"Down"+osuff,systs[i],-1);
+		if(systs[i]=="JEC") region = "signal_JECdown";
+		else ovar = "_"+systs[i]+"Down";
+		KPlotDriverDCsyst(indir+inpre+region,input,setlist,outdir+outpre+region+ovar+osuff,systs[i],-1);
+		
+		//reset region if altered for jet syst
+		if(systs[i]=="JEC") region = "signal";
 	}
 	
 	if(outdir.size()>0){

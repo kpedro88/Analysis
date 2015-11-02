@@ -222,6 +222,7 @@ class KBuilderMC : public KBuilder {
 			realMET = localOpt->Get("realMET",true);
 			signal = localOpt->Get("signal",false);
 			pdfunc = 0; globalOpt->Get("pdfunc",pdfunc);
+			scaleunc = 0; globalOpt->Get("scaleunc",scaleunc);
 		}
 		//destructor
 		virtual ~KBuilderMC() {}
@@ -243,6 +244,9 @@ class KBuilderMC : public KBuilder {
 			}
 			if(pdfunc!=0){
 				fChain->SetBranchStatus("PDFweights",1);
+			}
+			if(scaleunc!=0){
+				fChain->SetBranchStatus("ScaleWeights",1);
 			}
 		}
 		using NtupleClass::Cut;
@@ -282,6 +286,11 @@ class KBuilderMC : public KBuilder {
 				else if(pdfunc==-1) w *= 1.0 - pdfrms;
 			}
 			
+			if(scaleunc!=0){
+				if(scaleunc==1) w *= *(TMath::LocMax(ScaleWeights->begin(),ScaleWeights->end()));
+				else if(scaleunc==-1) w *= *(TMath::LocMin(ScaleWeights->begin(),ScaleWeights->end()));
+			}
+			
 			//now do scaling: norm*xsection/nevents
 			if(useTreeWeight) w *= Weight;
 			else if(got_nEventProc && nEventProc>0 && got_xsection){
@@ -319,7 +328,7 @@ class KBuilderMC : public KBuilder {
 		//member variables
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, debugWeight, didDebugWeight;
 		bool pucorr, trigcorr, realMET, signal;
-		int puunc, pdfunc, trigStatUnc, trigSystUnc;
+		int puunc, pdfunc, scaleunc, trigStatUnc, trigSystUnc;
 		string normtype;
 		normtypes NTenum;
 		int nEventProc;

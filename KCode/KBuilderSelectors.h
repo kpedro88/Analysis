@@ -384,6 +384,7 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 			readerDown = BTagCalibrationReader(&calib, BTagEntry::OP_MEDIUM, "comb", "down");
 		}
 		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("HTJetsMask",1);
 			looper->fChain->SetBranchStatus("Jets",1);
 			looper->fChain->SetBranchStatus("Jets_partonFlavor",1);
 		}
