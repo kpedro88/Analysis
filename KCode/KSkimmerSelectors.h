@@ -564,6 +564,7 @@ class KBTagEfficiencySelector : public KSelector<KSkimmer> {
 		KBTagEfficiencySelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) {
 			canfail = false;
 			//initialize histograms using KPlot2D::CreateHist() method
+			TH1::AddDirectory(kFALSE);
 			KPlot2D* ptmp = new KPlot2D("n_eff_b","",localOpt,NULL);
 			ptmp->CreateHist();
 			n_eff_b = (TH2F*)ptmp->GetHisto();
