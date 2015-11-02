@@ -14,7 +14,14 @@ TTTT
 
 for SAMPLE in ${SAMPLES[@]}; do
   for TREEDIR in ${STDIR}/tree*/; do
-
+    #check to see if anything needs to be hadded
+	ls ${TREEDIR}/tree_${SAMPLE}_*.root > /dev/null 2>&1
+	LSTEST=$?
+	if [[ $LSTEST -ne 0 ]]; then
+	  echo "nothing to hadd for $SAMPLE in $TREEDIR"
+	  continue
+	fi
+  
     XRDIR=`echo $TREEDIR | sed 's~/eos/uscms~root://cmseos.fnal.gov/~'`
     ALLFILES=${XRDIR}/tree_${SAMPLE}.root
     for FILE in ${TREEDIR}/tree_${SAMPLE}_*.root; do
@@ -25,7 +32,7 @@ for SAMPLE in ${SAMPLES[@]}; do
     hadd tree_${SAMPLE}.root ${ALLFILES}
 
     #remove original files
-	rm ${TREEDIR}/tree_${SAMPLE}.root
+    rm ${TREEDIR}/tree_${SAMPLE}.root
     for FILE in ${TREEDIR}/tree_${SAMPLE}_*.root; do
       rm ${FILE}
     done
