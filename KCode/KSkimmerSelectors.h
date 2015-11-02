@@ -462,7 +462,7 @@ class KEventCleaningSelector : public KSelector<KSkimmer> {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return looper->JetIDloose;
+			return looper->JetID;
 		}
 		
 		//member variables
@@ -585,10 +585,10 @@ class KBTagEfficiencySelector : public KSelector<KSkimmer> {
 			//loop over jets
 			for(unsigned ja = 0; ja < looper->Jets->size(); ++ja){
 				//HT jet cuts
-				if(looper->Jets->at(ja).Pt() <= 30 || fabs(looper->Jets->at(ja).Eta()) >= 2.4) continue;
+				if(!looper->HTJetsMask->at(ja)) continue;
 				
 				//fill by flavor
-				int flav = abs(looper->Jets_flavor->at(ja));
+				int flav = abs(looper->Jets_partonFlavor->at(ja));
 				double csv = looper->Jets_bDiscriminatorCSV->at(ja);
 				double pt = looper->Jets->at(ja).Pt();
 				//use abs(eta) for now

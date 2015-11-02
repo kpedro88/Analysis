@@ -1,0 +1,58 @@
+#sections: global options in OPTION, selections in SELECTION, variations in VARIATION, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the SELECTION, VARIATION, and SET sections must be tab-separated, with required items first, in order
+#SELECTION/VARIATION: only required item is name, selectors/variators are associated with a selection/variation by tab-indentation
+#SET: required items are type (base), subtype (skim), name (but without filenames, nothing will happen)
+
+OPTION
+int:yieldprecision[2]
+bool:doClone[1]
+bool:quickchain[1]
+
+SELECTION
+GJetLoose
+	HLT	vs:HLTLines[HLT_Photon90_CaloIdL_PFHT500_v]
+	NJet	i:njet[2]
+	HT	d:HTmin[200]
+	MHT	d:MHTmin[100]
+	Photon
+	MuonVeto
+	ElectronVeto
+	IsoMuonTrackVeto
+	IsoElectronTrackVeto
+	IsoPionTrackVeto
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
+	EventCleaning
+	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
+DYmLoose
+	HLT	vs:HLTLines[HLT_Mu15_IsoVVVL_PFHT350_v]
+	NJet	i:njet[2]
+	HT	d:HTmin[200]
+	MHT	d:MHTmin[100]
+	DiMuon
+	ElectronVeto
+	IsoElectronTrackVeto
+	IsoPionTrackVeto
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
+	EventCleaning
+	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
+DYeLoose
+	HLT	vs:HLTLines[HLT_Ele15_IsoVVVL_PFHT350_v]
+	NJet	i:njet[2]
+	HT	d:HTmin[200]
+	MHT	d:MHTmin[100]
+	MuonVeto
+	DiElectron
+	IsoMuonTrackVeto
+	IsoPionTrackVeto
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
+	EventCleaning
+	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
+
+VARIATION
+CleanVars
+	Clean
+
+INPUT
+input/input_sets_skim_data.txt

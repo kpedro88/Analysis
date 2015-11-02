@@ -3,7 +3,7 @@
 KEEPTAR=$1
 JOBDIR=jobs
 INPUT=input/input_selection.txt
-SELTYPE=GJet_ManualCleanVars,GJetLDP_ManualCleanVars
+SELTYPE=signal,signal_JECup,signal_JECdown,LDP,SLm,SLe,GJet_CleanVars,DYm_CleanVars,DYe_CleanVars,GJetLDP_CleanVars,DYmLDP_CleanVars,DYeLDP_CleanVars
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV4
 OUTDIR=tree
 STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV4
@@ -11,20 +11,12 @@ STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2Prod
 ./SKcheck.sh "$KEEPTAR" "$JOBDIR"
 
 SAMPLES=(
-GJets_HT-100to200 \
-GJets_HT-200to400 \
-GJets_HT-400to600 \
-GJets_HT-600toInf \
-QCD_HT-200to300 \
-QCD_HT-300to500 \
-QCD_HT-500to700 \
-QCD_HT-700to1000 \
-QCD_HT-1000to1500 \
-QCD_HT-1500to2000 \
-QCD_HT-2000toInf \
-SinglePhoton_re2015C \
-SinglePhoton_re2015D \
-SinglePhoton_2015Db
+T1bbbb_1000_900 \
+T1bbbb_1500_100 \
+T1qqqq_1000_800 \
+T1qqqq_1400_100 \
+T1tttt_1200_800 \
+T1tttt_1500_100 \
 )
 
 for SAMPLE in ${SAMPLES[@]}

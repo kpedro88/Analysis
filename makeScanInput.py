@@ -3,7 +3,7 @@ from optparse import OptionParser
 
 # define options
 parser = OptionParser()
-parser.add_option("-d", "--dir", dest="dir", default="Spring15Fast", help="location of python files")
+parser.add_option("-d", "--dir", dest="dir", default="Spring15Fastv2", help="location of python files")
 (options, args) = parser.parse_args()
 
 # find the python files

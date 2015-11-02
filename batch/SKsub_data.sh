@@ -4,21 +4,21 @@ KEEPTAR=$1
 JOBDIR=jobs
 INPUT=input/input_selection.txt
 SELTYPE=signal,LDP,SLm,SLe,GJet_CleanVars,DYm_CleanVars,DYe_CleanVars,GJetLDP_CleanVars,DYmLDP_CleanVars,DYeLDP_CleanVars
-INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV3
+INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV4
 OUTDIR=tree
-STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV3
+STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV4
 
 ./SKcheck.sh "$KEEPTAR" "$JOBDIR"
 
 SAMPLES=(
-DoubleEG_2015C \
-DoubleMuon_2015C \
-HTMHT_2015C \
-JetHT_2015C \
-MET_2015C \
-SingleElectron_2015C \
-SingleMuon_2015C \
-SinglePhoton_2015C \
+DoubleEG_re2015C \
+DoubleMuon_re2015C \
+HTMHT_re2015C \
+JetHT_re2015C \
+MET_re2015C \
+SingleElectron_re2015C \
+SingleMuon_re2015C \
+SinglePhoton_re2015C \
 DoubleEG_re2015D \
 DoubleMuon_re2015D \
 HTMHT_re2015D \

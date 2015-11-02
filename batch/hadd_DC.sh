@@ -1,6 +1,6 @@
 #!/bin/bash
 
-STDIR=/eos/uscms/store/user/pedrok/SUSY2015/Analysis/Datacards/Run2ProductionV3
+STDIR=/eos/uscms/store/user/pedrok/SUSY2015/Analysis/Datacards/Run2ProductionV4
 XRDIR=`echo $STDIR | sed 's~/eos/uscms~root://cmseos.fnal.gov/~'`
 
 ./SKcheck.sh keep

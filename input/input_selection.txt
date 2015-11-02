@@ -147,6 +147,10 @@ CleanVars
 	Clean
 ManualCleanVars
 	ManualClean	d:minPtMHT[30] d:maxEtaMHT[5] d:minPtHT[30] d:maxEtaHT[2.4] d:muonR[0.4] d:electronR[0.4] d:photonR[0.4]
+JECup
+	JetUnc	b:up[1]
+JECdown
+	JetUnc	b:up[0]
 
 INPUT
 input/input_sets_skim.txt

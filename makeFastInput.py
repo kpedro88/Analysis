@@ -8,7 +8,7 @@ def msplit(line):
 
 # define options
 parser = OptionParser()
-parser.add_option("-d", "--dir", dest="dir", default="/eos/uscms/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV2/scan/", help="location of python files")
+parser.add_option("-d", "--dir", dest="dir", default="/eos/uscms/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV4/scan/", help="location of python files")
 parser.add_option("-n", "--nfiles", dest="nfiles", default=0, help="number of files per part for datacard input")
 (options, args) = parser.parse_args()
 

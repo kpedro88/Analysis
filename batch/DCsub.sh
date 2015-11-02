@@ -2,8 +2,8 @@
 
 KEEPTAR=$1
 JOBDIR=jobs
-INDIR=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV3/scan
-STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Datacards/Run2ProductionV3
+INDIR=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV4/scan
+STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Datacards/Run2ProductionV4
 
 ./SKcheck.sh "$KEEPTAR" "$JOBDIR"
 

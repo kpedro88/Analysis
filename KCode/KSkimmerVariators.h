@@ -18,133 +18,84 @@ using namespace std;
 
 //base class for variators is in KVariation.h
 
-/*
+
 //----------------------------------------------------
-//variation of jet energy scale
-class KJetESVariator : public KVariator<KSkimmer> {
+//variation of jet energy scale/corrections
+class KJetUncVariator : public KVariator<KSkimmer> {
 	public:
 		//constructor
-		KJetESVariator() : KVariator<KSkimmer>() { }
-		KJetESVariator(string name_, OptionMap* localOpt_) : KVariator<KSkimmer>(name_,localOpt_) { 
+		KJetUncVariator() : KVariator<KSkimmer>() { }
+		KJetUncVariator(string name_, OptionMap* localOpt_) : KVariator<KSkimmer>(name_,localOpt_) {
 			//check options
 			up = localOpt->Get("up",true);
-			//set default values
-			PFJetPt = PFJetEnergy = 0;
 		}
 		//functions
 		virtual void DoVariation() {
-			delete PFJetPt; PFJetPt = new vector<double>();
-			PFJetPt->reserve(looper->PFJetPt->size());
-			delete PFJetEnergy; PFJetEnergy = new vector<double>();
-			PFJetEnergy->reserve(looper->PFJetEnergy->size());
+			//store original values
+			NJets = looper->NJets;
+			BTags = looper->BTags;
+			HT = looper->HT;
+			MHT = looper->MHT;
+			MHT_Phi = looper->MHT_Phi;
+			JetID = looper->JetID;
+			DeltaPhi1 = looper->DeltaPhi1;
+			DeltaPhi2 = looper->DeltaPhi2;
+			DeltaPhi3 = looper->DeltaPhi3;
+			DeltaPhi4 = looper->DeltaPhi4;
 			
-			for(unsigned j = 0; j < looper->PFJetPt->size(); j++){
-				//store original values
-				PFJetPt->push_back(looper->PFJetPt->at(j));
-				PFJetEnergy->push_back(looper->PFJetEnergy->at(j));
-				
-				//Scale jet pT by JEC uncertainty
-				double unc = looper->PFJetJECUnc->at(j);
-				TLorentzVector vj;
-				vj.SetPtEtaPhiE(looper->PFJetPt->at(j),looper->PFJetEta->at(j),looper->PFJetPhi->at(j),looper->PFJetEnergy->at(j));
-				//smear 4-vector (nonzero jet mass)
-				if(up) vj *= (1+unc);
-				else vj *= (1-unc);
-				looper->PFJetPt->at(j) = vj.Pt();
-				looper->PFJetEnergy->at(j) = vj.E();
+			//set to clean vars
+			if(up){
+				looper->NJets = looper->NJetsJECup;
+				looper->BTags = looper->BTagsJECup;
+				looper->HT = looper->HTJECup;
+				looper->MHT = looper->MHTJECup;
+				looper->MHT_Phi = looper->MHT_PhiJECup;
+				looper->JetID = looper->JetIDJECup;
+				looper->DeltaPhi1 = looper->DeltaPhi1JECup;
+				looper->DeltaPhi2 = looper->DeltaPhi2JECup;
+				looper->DeltaPhi3 = looper->DeltaPhi3JECup;
+				looper->DeltaPhi4 = looper->DeltaPhi4JECup;
+			}
+			else{
+				looper->NJets = looper->NJetsJECdown;
+				looper->BTags = looper->BTagsJECdown;
+				looper->HT = looper->HTJECdown;
+				looper->MHT = looper->MHTJECdown;
+				looper->MHT_Phi = looper->MHT_PhiJECdown;
+				looper->JetID = looper->JetIDJECdown;
+				looper->DeltaPhi1 = looper->DeltaPhi1JECdown;
+				looper->DeltaPhi2 = looper->DeltaPhi2JECdown;
+				looper->DeltaPhi3 = looper->DeltaPhi3JECdown;
+				looper->DeltaPhi4 = looper->DeltaPhi4JECdown;
 			}
 		}
 		virtual void UndoVariation() {
 			//restore original values
-			for(unsigned j = 0; j < looper->PFJetPt->size(); j++){
-				looper->PFJetPt->at(j) = PFJetPt->at(j);
-				looper->PFJetEnergy->at(j) = PFJetEnergy->at(j);
-			}
+			looper->NJets = NJets;
+			looper->BTags = BTags;
+			looper->HT = HT;
+			looper->MHT = MHT;
+			looper->MHT_Phi = MHT_Phi;
+			looper->JetID = JetID;
+			looper->DeltaPhi1 = DeltaPhi1;
+			looper->DeltaPhi2 = DeltaPhi2;
+			looper->DeltaPhi3 = DeltaPhi3;
+			looper->DeltaPhi4 = DeltaPhi4;
 		}
 		
 		//member variables
 		bool up;
-		vector<double> *PFJetPt, *PFJetEnergy;
+		Int_t           NJets;
+		Int_t           BTags;
+		Float_t         HT;
+		Float_t         MHT;
+		Float_t         MHT_Phi;
+		Bool_t          JetID;
+		Float_t         DeltaPhi1;
+		Float_t         DeltaPhi2;
+		Float_t         DeltaPhi3;
+		Float_t         DeltaPhi4;
 };
-
-//----------------------------------------------------
-//variation of jet energy resolution
-class KJetERVariator : public KVariator {
-	public:
-		//constructor
-		KJetERVariator() : KVariator() { }
-		KJetERVariator(string name_, OptionMap* localOpt_) : KVariator(name_,localOpt_) { 
-			//check options
-			up = localOpt->Get("up",true);
-			//set default values
-			PFJetPt = PFJetEnergy = 0;
-		}
-		//functions
-		virtual void DoVariation() {
-			delete PFJetPt; PFJetPt = new vector<double>();
-			PFJetPt->reserve(looper->PFJetPt->size());
-			delete PFJetEnergy; PFJetEnergy = new vector<double>();
-			PFJetEnergy->reserve(looper->PFJetEnergy->size());
-			
-			for(unsigned j = 0; j < looper->PFJetPt->size(); j++){
-				//store original values
-				PFJetPt->push_back(looper->PFJetPt->at(j));
-				PFJetEnergy->push_back(looper->PFJetEnergy->at(j));
-				
-				//JER smearing
-				double min_dR = 1000;
-				bool matchedGenJetFound = false;
-				int index_gen = -1;
-
-				for (unsigned g = 0; g < looper->GenJetPt->size(); g++){
-					double dR = KMath::DeltaR(looper->PFJetPhi->at(j),looper->PFJetEta->at(j),looper->GenJetPhi->at(g),looper->GenJetEta->at(g));
-					if(dR < min_dR) {
-						min_dR = dR;
-						index_gen = g;
-					}
-				}
-				if (min_dR < 0.4) matchedGenJetFound = true;
-				
-				if(matchedGenJetFound){
-					TLorentzVector vj, vg;
-					vj.SetPtEtaPhiE(looper->PFJetPt->at(j),looper->PFJetEta->at(j),looper->PFJetPhi->at(j),looper->PFJetEnergy->at(j));
-					vg.SetPtEtaPhiE(looper->GenJetPt->at(index_gen),looper->GenJetEta->at(index_gen),looper->GenJetPhi->at(index_gen),looper->GenJetEnergy->at(index_gen));
-					
-					vj = SmearJER(vj,vg);
-					looper->PFJetPt->at(j) = vj.Pt();
-					looper->PFJetEnergy->at(j) = vj.E();
-				}
-			}
-		}
-		virtual void UndoVariation() {
-			//restore original values
-			for(unsigned j = 0; j < looper->PFJetPt->size(); j++){
-				looper->PFJetPt->at(j) = PFJetPt->at(j);
-				looper->PFJetEnergy->at(j) = PFJetEnergy->at(j);
-			}
-		}
-		//helper for JER smearing
-		TLorentzVector SmearJER(TLorentzVector vj, TLorentzVector vg){
-			double c = 1.;
-			double abseta = TMath::Abs(vj.Eta());
-			if (abseta <= 0.5) c = 1.052;
-			else if (abseta > 0.5 && abseta <= 1.1) c = 1.057;
-			else if (abseta > 1.1 && abseta <= 1.7) c = 1.096;
-			else if (abseta > 1.7 && abseta <= 2.3) c = 1.134;
-			else c = 1.288;
-			
-			double f = 0;
-			if(up) f = max(vg.E() + c*(vj.E()-vg.E()),0.)/vj.E();
-			else f = max(vg.E() + (1.-(c-1.))*(vj.E()-vg.E()),0.)/vj.E();
-			
-			return f*vj;
-		}
-		
-		//member variables
-		bool up;
-		vector<double> *PFJetPt, *PFJetEnergy;
-};
-*/
 
 //----------------------------------------------------
 //set hadronic variables to NoPhotons version
@@ -379,8 +330,7 @@ namespace KParser {
 		//check for all known variators
 		if(vname=="Clean") vtmp = new KCleanVariator(vname,omap);
 		else if(vname=="ManualClean") vtmp = new KManualCleanVariator(vname,omap);
-		//else if(vname=="JES") vtmp = new KJetESVariator(vname,omap);
-		//else if(vname=="JER") vtmp = new KJetERVariator(vname,omap);
+		else if(vname=="JetUnc") vtmp = new KJetUncVariator(vname,omap);
 		else {} //skip unknown variators
 
 		if(!vtmp) cout << "Input error: unknown variator " << vname << ". This variator will be skipped." << endl;

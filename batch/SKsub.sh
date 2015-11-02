@@ -4,19 +4,13 @@ KEEPTAR=$1
 JOBDIR=jobs
 INPUT=input/input_selection.txt
 SELTYPE=signal,LDP,SLm,SLe,GJet_CleanVars,DYm_CleanVars,DYe_CleanVars,GJetLDP_CleanVars,DYmLDP_CleanVars,DYeLDP_CleanVars
-INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV3
+INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV4
 OUTDIR=tree
-STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV3
+STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV4
 
 ./SKcheck.sh "$KEEPTAR" "$JOBDIR"
 
 SAMPLES=(
-T1bbbb_1000_900 \
-T1bbbb_1500_100 \
-T1qqqq_1000_800 \
-T1qqqq_1400_100 \
-T1tttt_1200_800 \
-T1tttt_1500_100 \
 DYJetsToLL_M-50_HT-100to200 \
 DYJetsToLL_M-50_HT-200to400 \
 DYJetsToLL_M-50_HT-400to600 \
@@ -89,19 +83,3 @@ for SAMPLE in ${SAMPLES[@]}
   do
     ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} ${SELTYPE} ${INDIR} ${OUTDIR} ${STORE}
   done
-
-#currently not available:
-#T2bb_600_580 \
-#T2bb_900_100 \
-#T2qq_600_550 \
-#T2qq_1200_100 \
-#T1bbbb_1000_700 \
-#T1bbbb_1000_750 \
-#T1bbbb_1000_800 \
-#T1bbbb_1000_850 \
-#T1bbbb_1000_950 \
-#T1bbbb_800_550 \
-#T1bbbb_800_600 \
-#T1bbbb_800_650 \
-#T1bbbb_800_700 \
-#T1bbbb_800_750 \

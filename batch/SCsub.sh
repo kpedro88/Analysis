@@ -3,7 +3,7 @@
 KEEPTAR=$1
 JOBDIR=jobs
 INPUT=input/input_scan.txt
-INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV3
+INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV4
 STORE=${INDIR}/scan
 
 ./SKcheck.sh "$KEEPTAR" "$JOBDIR"

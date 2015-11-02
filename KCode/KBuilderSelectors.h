@@ -272,8 +272,8 @@ class KDoubleCountSelector : public KSelector<KBuilder> {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			pair<int,int> tmp(looper->RunNum,looper->EvtNum);
-			map<pair<int,int>,int>::iterator cmit = countmap.find(tmp);
+			pair<unsigned,unsigned long long> tmp(looper->RunNum,looper->EvtNum);
+			map<pair<unsigned,unsigned long long>,int>::iterator cmit = countmap.find(tmp);
 			if(cmit!=countmap.end()) return false; //fails the event if it finds a double count
 			else {
 				countmap[tmp] = 1;
@@ -282,7 +282,7 @@ class KDoubleCountSelector : public KSelector<KBuilder> {
 		}
 		
 		//member variables
-		map<pair<int,int>,int> countmap;
+		map<pair<unsigned,unsigned long long>,int> countmap;
 };
 
 //---------------------------------------------------------------
@@ -343,6 +343,7 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 			looper->fChain->SetBranchStatus("eeBadScFilter",1);
 			looper->fChain->SetBranchStatus("HBHENoiseFilter",1);
 			looper->fChain->SetBranchStatus("HBHEIsoNoiseFilter",1);
+			looper->fChain->SetBranchStatus("CSCTightHaloFilter",1);
 		}
 		virtual void CheckLooper(){
 			//check fastsim stuff
@@ -355,35 +356,11 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return looper->NVtx > 0 && looper->eeBadScFilter==1 && looper->HBHENoiseFilter && looper->HBHEIsoNoiseFilter;
+			return looper->NVtx > 0 && looper->eeBadScFilter==1 && looper->HBHENoiseFilter && looper->HBHEIsoNoiseFilter && looper->CSCTightHaloFilter;
 		}
 		
 		//member variables
 		bool fastsim;
-};
-
-//---------------------------------------------------------------
-//applies tighter jet ID
-class KJetIDSelector : public KSelector<KBuilder> {
-	public:
-		//constructor
-		KJetIDSelector() : KSelector<KBuilder>() { }
-		KJetIDSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_) {
-			pbnr = localOpt->Get("pbnr",true);
-		}
-		virtual void CheckBranches(){
-			looper->fChain->SetBranchStatus("JetIDtight",1);
-			looper->fChain->SetBranchStatus("PBNR",1);
-		}
-		
-		//used for non-dummy selectors
-		virtual bool Cut() {
-			if(pbnr) return looper->PBNR;
-			else return looper->JetIDtight;
-		}
-		
-		//member variables
-		bool pbnr;
 };
 
 //---------------------------------------------------------------
@@ -408,7 +385,7 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 		}
 		virtual void CheckBranches(){
 			looper->fChain->SetBranchStatus("Jets",1);
-			looper->fChain->SetBranchStatus("Jets_flavor",1);
+			looper->fChain->SetBranchStatus("Jets_partonFlavor",1);
 		}
 		virtual void CheckLooper(){
 			//check for option
@@ -453,14 +430,14 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 			vector<vector<double> > sfEffLists = vector<vector<double> >(looper->Jets->size(),vector<double>());
 			for(unsigned ja = 0; ja < looper->Jets->size(); ++ja){
 				//HT jet cuts
-				if(looper->Jets->at(ja).Pt() <= 30 || fabs(looper->Jets->at(ja).Eta()) >= 2.4) continue;
+				if(!looper->HTJetsMask->at(ja)) continue;
 				
 				//get sf and eff values (checks if already calculated)
-				InitSFEff(looper->Jets->at(ja).Pt(), looper->Jets->at(ja).Eta(), looper->Jets_flavor->at(ja), sfEffLists[ja]);
+				InitSFEff(looper->Jets->at(ja).Pt(), looper->Jets->at(ja).Eta(), looper->Jets_partonFlavor->at(ja), sfEffLists[ja]);
 				double eps_a = sfEffLists[ja][0]*sfEffLists[ja][1]*sfEffLists[ja][2];
 				
 				//jet index, pt, eta, flavor, eff, sf, cf
-				if(debug) cout << "Jet " << ja << ": " << looper->Jets->at(ja).Pt() << ", " << fabs(looper->Jets->at(ja).Eta()) << ", " << abs(looper->Jets_flavor->at(ja)) 
+				if(debug) cout << "Jet " << ja << ": " << looper->Jets->at(ja).Pt() << ", " << fabs(looper->Jets->at(ja).Eta()) << ", " << abs(looper->Jets_partonFlavor->at(ja)) 
 								<< ", " << sfEffLists[ja][0] << ", " << sfEffLists[ja][1] << ", " << sfEffLists[ja][2] << endl;
 				
 				//calculate prob(0 b-tags)
@@ -476,14 +453,14 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 					if(jb==ja) continue;
 					
 					//HT jet cuts
-					if(looper->Jets->at(jb).Pt() <= 30 || fabs(looper->Jets->at(jb).Eta()) >= 2.4) continue;
+					if(!looper->HTJetsMask->at(jb)) continue;
 					
 					//get sf and eff values (checks if already calculated)
-					InitSFEff(looper->Jets->at(jb).Pt(), looper->Jets->at(jb).Eta(), looper->Jets_flavor->at(jb), sfEffLists[jb]);
+					InitSFEff(looper->Jets->at(jb).Pt(), looper->Jets->at(jb).Eta(), looper->Jets_partonFlavor->at(jb), sfEffLists[jb]);
 					double eps_b = sfEffLists[jb][0]*sfEffLists[jb][1]*sfEffLists[jb][2];
 					
 					//jet index, pt, eta, flavor, eff, sf, cf
-					if(debug) cout << "\tJet " << jb << ": " << looper->Jets->at(jb).Pt() << ", " << fabs(looper->Jets->at(jb).Eta()) << ", " << abs(looper->Jets_flavor->at(jb)) 
+					if(debug) cout << "\tJet " << jb << ": " << looper->Jets->at(jb).Pt() << ", " << fabs(looper->Jets->at(jb).Eta()) << ", " << abs(looper->Jets_partonFlavor->at(jb)) 
 									<< ", " << sfEffLists[jb][0] << ", " << sfEffLists[jb][1] << ", " << sfEffLists[jb][2] << endl;
 					
 					//calculate prob(1 b-tag)
@@ -499,14 +476,14 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 						if(jc==jb || jc==ja) continue;
 						
 						//HT jet cuts
-						if(looper->Jets->at(jc).Pt() <= 30 || fabs(looper->Jets->at(jc).Eta()) >= 2.4) continue;
+						if(!looper->HTJetsMask->at(jc)) continue;
 						
 						//get sf and eff values (checks if already calculated)
-						InitSFEff(looper->Jets->at(jc).Pt(), looper->Jets->at(jc).Eta(), looper->Jets_flavor->at(jc), sfEffLists[jc]);
+						InitSFEff(looper->Jets->at(jc).Pt(), looper->Jets->at(jc).Eta(), looper->Jets_partonFlavor->at(jc), sfEffLists[jc]);
 						double eps_c = sfEffLists[jc][0]*sfEffLists[jc][1]*sfEffLists[jc][2];
 						
 						//jet index, pt, eta, flavor, eff, sf, cf
-						if(debug) cout << "\t\tJet " << jc << ": " << looper->Jets->at(jc).Pt() << ", " << fabs(looper->Jets->at(jc).Eta()) << ", " << abs(looper->Jets_flavor->at(jc)) 
+						if(debug) cout << "\t\tJet " << jc << ": " << looper->Jets->at(jc).Pt() << ", " << fabs(looper->Jets->at(jc).Eta()) << ", " << abs(looper->Jets_partonFlavor->at(jc)) 
 										<< ", " << sfEffLists[jc][0] << ", " << sfEffLists[jc][1] << ", " << sfEffLists[jc][2] << endl;
 						
 						//calculate prob(2 b-tags)
@@ -775,7 +752,6 @@ namespace KParser {
 		else if(sname=="BTagSF") srtmp = new KBTagSFSelector(sname,omap);
 		else if(sname=="METFilter") srtmp = new KMETFilterSelector(sname,omap);
 		else if(sname=="HLT") srtmp = new KHLTSelector(sname,omap);
-		else if(sname=="JetID") srtmp = new KJetIDSelector(sname,omap);
 		else {} //skip unknown selectors
 		
 		if(!srtmp) cout << "Input error: unknown selector " << sname << ". This selector will be skipped." << endl;
