@@ -660,6 +660,9 @@ class KHistoSelector : public KSelector<KBuilder> {
 					else if(vname=="nvertex"){//# good vertices
 						values[i].Fill(looper->NVtx,w);
 					}
+					else if(vname=="numint"){//# interactions
+						values[i].Fill(looper->NumInteractions,w);
+					}
 					else if(vname=="genht"){//# gen HT
 						values[i].Fill(looper->genHT,w);
 					}

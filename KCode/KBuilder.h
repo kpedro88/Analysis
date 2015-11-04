@@ -206,7 +206,7 @@ class KBuilderMC : public KBuilder {
 		//constructors
 		KBuilderMC() : KBuilder() { }
 		KBuilderMC(KBase* MyBase_, TTree* tree_, KSelection<KBuilder>* sel_) : KBuilder(MyBase_,tree_,sel_) { 
-			//get options
+			//standard weight options
 			normtype = ""; localOpt->Get("normtype",normtype); GetNormTypeEnum();
 			unweighted = localOpt->Get("unweighted",false);
 			useTreeWeight = globalOpt->Get("useTreeWeight",false);
@@ -214,13 +214,22 @@ class KBuilderMC : public KBuilder {
 			xsection = 0; got_xsection = localOpt->Get("xsection",xsection);
 			norm = 0; got_luminorm = globalOpt->Get("luminorm",norm);
 			debugWeight = globalOpt->Get("debugWeight",false); didDebugWeight = false;
+			
+			//PU options
 			pucorr = globalOpt->Get("pucorr",false);
 			puunc = 0; globalOpt->Get("puunc",puunc);
+			puhist = NULL; globalOpt->Get("puhist",puhist);
+			puhistUp = NULL; globalOpt->Get("puhistUp",puhistUp);
+			puhistDown = NULL; globalOpt->Get("puhistDown",puhistDown);
+			
+			//trig corr options
 			trigcorr = globalOpt->Get("trigcorr",false);
 			trigStatUnc = 0; globalOpt->Get("trigStatUnc", trigStatUnc);
 			trigSystUnc = 0; globalOpt->Get("trigSystUnc", trigSystUnc);
 			realMET = localOpt->Get("realMET",true);
 			signal = localOpt->Get("signal",false);
+			
+			//other uncertainty options
 			pdfunc = 0; globalOpt->Get("pdfunc",pdfunc);
 			scaleunc = 0; globalOpt->Get("scaleunc",scaleunc);
 		}
@@ -232,6 +241,8 @@ class KBuilderMC : public KBuilder {
 			//force enable branches needed for cuts/weights/etc.
 			fChain->SetBranchStatus("Weight",1); //needed for negative weights even if useTreeWeight==false
 			if(pucorr){
+				fChain->SetBranchStatus("TrueNumInteractions",1);
+				fChain->SetBranchStatus("NVtx",1);
 				if(puunc==1) fChain->SetBranchStatus("puSysUp",1);
 				else if(puunc==-1) fChain->SetBranchStatus("puSysDown",1);
 				else fChain->SetBranchStatus("puWeight",1);
@@ -270,10 +281,16 @@ class KBuilderMC : public KBuilder {
 			//(*disabled* until 2015 data is available)
 			
 			if(pucorr) {
-				//just use TreeMaker weights for now
-				if(puunc==1) w *= puSysUp;
-				else if(puunc==-1) w *= puSysDown;
-				else w *= puWeight;
+				//use TreeMaker weights if no histo provided
+				if(puunc==1){
+					w *= puhistUp ? puhistUp->GetBinContent(puhistUp->GetXaxis()->FindBin(min(TrueNumInteractions,puhistUp->GetBinLowEdge(puhistUp->GetNbinsX()+1)))) : puSysUp;
+				}
+				else if(puunc==-1){
+					w *= puhistDown ? puhistDown->GetBinContent(puhistDown->GetXaxis()->FindBin(min(TrueNumInteractions,puhistDown->GetBinLowEdge(puhistDown->GetNbinsX()+1)))) : puSysDown;
+				}
+				else {
+					w *= puhist ? puhist->GetBinContent(puhist->GetXaxis()->FindBin(min(TrueNumInteractions,puhist->GetBinLowEdge(puhist->GetNbinsX()+1)))) : puWeight;
+				}
 			}
 			
 			if(trigcorr){
@@ -329,6 +346,7 @@ class KBuilderMC : public KBuilder {
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, debugWeight, didDebugWeight;
 		bool pucorr, trigcorr, realMET, signal;
 		int puunc, pdfunc, scaleunc, trigStatUnc, trigSystUnc;
+		TH1 *puhist, *puhistUp, *puhistDown;
 		string normtype;
 		normtypes NTenum;
 		int nEventProc;

@@ -39,20 +39,19 @@ class KPlotManager : public KManager {
 			//final checks and initializations
 			MyRatio = new KSetRatio(NULL,globalOpt);
 			//store correction root files centrally
-			//todo: make file location and histo name configurable
-			//(*disabled* until 2015 data is available)
-			/*
-			if(globalOpt->Get("pucorr",true)) {
-				TFile* pufile = new TFile("corrections/puWeightsLQ.root","READ"); //puWeights
-				TH1F* puWeights = (TH1F*)pufile->Get("pileup");
-				globalOpt->Set("puWeights",puWeights);
+			string puname = ""; globalOpt->Get("puname",puname);
+			if(puname.size()>0 && globalOpt->Get("pucorr",false)) {
+				TFile* pufile = TFile::Open(puname.c_str(),"READ");
+				if(pufile){
+					TH1* puhist = (TH1*)pufile->Get("pu_weights_central"); puhist->SetDirectory(0); globalOpt->Set<TH1*>("puhist",puhist);
+					TH1* puhistUp = (TH1*)pufile->Get("pu_weights_up"); puhistUp->SetDirectory(0); globalOpt->Set<TH1*>("puhistUp",puhistUp);
+					TH1* puhistDown = (TH1*)pufile->Get("pu_weights_down"); puhistDown->SetDirectory(0); globalOpt->Set<TH1*>("puhistDown",puhistDown);
+					pufile->Close();
+				}
+				else {
+					cout << "Input error: could not open pileup weight file " << puname << "." << endl;
+				}
 			}
-			if(globalOpt->Get("mucorr",true)) {
-				TFile* mufile = new TFile("corrections/muIDTight.root","READ"); //puWeights
-				TH1F* muIDTight = (TH1F*)mufile->Get("muIDTight");
-				globalOpt->Set("muIDTight",muIDTight);
-			}
-			*/
 		}
 		//destructor
 		virtual ~KPlotManager() {}
@@ -427,7 +426,7 @@ class KPlotManager : public KManager {
 					ptmp->DrawText();
 					
 					//if printing not enabled, does nothing
-					PrintCanvas(pm->first,can);
+					PrintCanvas(pm->first+"_"+theSet->GetName(),can);
 				}
 			}
 			
