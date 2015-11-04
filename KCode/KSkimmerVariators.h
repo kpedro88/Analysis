@@ -31,7 +31,19 @@ class KJetUncVariator : public KVariator<KSkimmer> {
 		}
 		//functions
 		virtual void DoVariation() {
+			//initialize
+			Jets = new vector<TLorentzVector>();
+			HTJetsMask = new vector<bool>();
+			MHTJetsMask = new vector<bool>();
+			Jets_partonFlavor = new vector<int>();
+			Jets_hadronFlavor = new vector<int>();
+			
 			//store original values
+			*(Jets) = *(looper->Jets);
+			*(HTJetsMask) = *(looper->HTJetsMask);
+			*(MHTJetsMask) = *(looper->MHTJetsMask);
+			*(Jets_partonFlavor) = *(looper->Jets_partonFlavor);
+			*(Jets_hadronFlavor) = *(looper->Jets_hadronFlavor);
 			NJets = looper->NJets;
 			BTags = looper->BTags;
 			HT = looper->HT;
@@ -45,6 +57,11 @@ class KJetUncVariator : public KVariator<KSkimmer> {
 			
 			//set to clean vars
 			if(up){
+				*(looper->Jets) = *(looper->JetsJECup);
+				*(looper->HTJetsMask) = *(looper->HTJetsMaskJECup);
+				*(looper->MHTJetsMask) = *(looper->MHTJetsMaskJECup);
+				*(looper->Jets_partonFlavor) = *(looper->JetsJECup_partonFlavor);
+				*(looper->Jets_hadronFlavor) = *(looper->JetsJECup_hadronFlavor);
 				looper->NJets = looper->NJetsJECup;
 				looper->BTags = looper->BTagsJECup;
 				looper->HT = looper->HTJECup;
@@ -57,6 +74,11 @@ class KJetUncVariator : public KVariator<KSkimmer> {
 				looper->DeltaPhi4 = looper->DeltaPhi4JECup;
 			}
 			else{
+				*(looper->Jets) = *(looper->JetsJECdown);
+				*(looper->HTJetsMask) = *(looper->HTJetsMaskJECdown);
+				*(looper->MHTJetsMask) = *(looper->MHTJetsMaskJECdown);
+				*(looper->Jets_partonFlavor) = *(looper->JetsJECdown_partonFlavor);
+				*(looper->Jets_hadronFlavor) = *(looper->JetsJECdown_hadronFlavor);
 				looper->NJets = looper->NJetsJECdown;
 				looper->BTags = looper->BTagsJECdown;
 				looper->HT = looper->HTJECdown;
@@ -71,6 +93,11 @@ class KJetUncVariator : public KVariator<KSkimmer> {
 		}
 		virtual void UndoVariation() {
 			//restore original values
+			*(looper->Jets) = *(Jets);
+			*(looper->HTJetsMask) = *(HTJetsMask);
+			*(looper->MHTJetsMask) = *(MHTJetsMask);
+			*(looper->Jets_partonFlavor) = *(Jets_partonFlavor);
+			*(looper->Jets_hadronFlavor) = *(Jets_hadronFlavor);
 			looper->NJets = NJets;
 			looper->BTags = BTags;
 			looper->HT = HT;
@@ -85,6 +112,11 @@ class KJetUncVariator : public KVariator<KSkimmer> {
 		
 		//member variables
 		bool up;
+		vector<TLorentzVector> *Jets;
+		vector<bool> *HTJetsMask;
+		vector<bool> *MHTJetsMask;
+		vector<int> *Jets_hadronFlavor;
+		vector<int> *Jets_partonFlavor;
 		Int_t           NJets;
 		Int_t           BTags;
 		Float_t         HT;

@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Mon Nov  2 10:44:54 2015 by ROOT version 5.34/18
+// Wed Nov  4 10:48:01 2015 by ROOT version 5.34/18
 // from TTree PreSelection/PreSelection
 // found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV4/Spring15v2.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
 //////////////////////////////////////////////////////////
@@ -97,6 +97,8 @@ public :
    Double_t        HTJECdown;
    Double_t        HTJECup;
    vector<bool>    *HTJetsMask;
+   vector<bool>    *HTJetsMaskJECdown;
+   vector<bool>    *HTJetsMaskJECup;
    Int_t           isoElectronTracks;
    vector<TLorentzVector> *IsolatedElectronTracksVeto;
    vector<TLorentzVector> *IsolatedMuonTracksVeto;
@@ -125,6 +127,12 @@ public :
    vector<int>     *Jets_partonFlavor;
    vector<double>  *Jets_photonEnergyFraction;
    vector<int>     *Jets_photonMultiplicity;
+   vector<TLorentzVector> *JetsJECdown;
+   vector<int>     *JetsJECdown_hadronFlavor;
+   vector<int>     *JetsJECdown_partonFlavor;
+   vector<TLorentzVector> *JetsJECup;
+   vector<int>     *JetsJECup_hadronFlavor;
+   vector<int>     *JetsJECup_partonFlavor;
    Int_t           Leptons;
    Int_t           METFilters;
    Double_t        METPhi;
@@ -144,6 +152,8 @@ public :
    Double_t        MHTJECdown;
    Double_t        MHTJECup;
    vector<bool>    *MHTJetsMask;
+   vector<bool>    *MHTJetsMaskJECdown;
+   vector<bool>    *MHTJetsMaskJECup;
    vector<string>  *minDeltaPhiNames;
    vector<int>     *MuonCharge;
    vector<TLorentzVector> *Muons;
@@ -311,6 +321,8 @@ public :
    TBranch        *b_HTJECdown;   //!
    TBranch        *b_HTJECup;   //!
    TBranch        *b_HTJetsMask;   //!
+   TBranch        *b_HTJetsMaskJECdown;   //!
+   TBranch        *b_HTJetsMaskJECup;   //!
    TBranch        *b_isoElectronTracks;   //!
    TBranch        *b_IsolatedElectronTracksVeto;   //!
    TBranch        *b_IsolatedMuonTracksVeto;   //!
@@ -339,6 +351,12 @@ public :
    TBranch        *b_Jets_partonFlavor;   //!
    TBranch        *b_Jets_photonEnergyFraction;   //!
    TBranch        *b_Jets_photonMultiplicity;   //!
+   TBranch        *b_JetsJECdown;   //!
+   TBranch        *b_JetsJECdown_hadronFlavor;   //!
+   TBranch        *b_JetsJECdown_partonFlavor;   //!
+   TBranch        *b_JetsJECup;   //!
+   TBranch        *b_JetsJECup_hadronFlavor;   //!
+   TBranch        *b_JetsJECup_partonFlavor;   //!
    TBranch        *b_Leptons;   //!
    TBranch        *b_METFilters;   //!
    TBranch        *b_METPhi;   //!
@@ -358,6 +376,8 @@ public :
    TBranch        *b_MHTJECdown;   //!
    TBranch        *b_MHTJECup;   //!
    TBranch        *b_MHTJetsMask;   //!
+   TBranch        *b_MHTJetsMaskJECdown;   //!
+   TBranch        *b_MHTJetsMaskJECup;   //!
    TBranch        *b_minDeltaPhiNames;   //!
    TBranch        *b_MuonCharge;   //!
    TBranch        *b_Muons;   //!
@@ -550,6 +570,8 @@ void NtupleClass::Init(TTree *tree)
    GenTauNu = 0;
    GenTaus = 0;
    HTJetsMask = 0;
+   HTJetsMaskJECdown = 0;
+   HTJetsMaskJECup = 0;
    IsolatedElectronTracksVeto = 0;
    IsolatedMuonTracksVeto = 0;
    IsolatedPionTracksVeto = 0;
@@ -572,11 +594,19 @@ void NtupleClass::Init(TTree *tree)
    Jets_partonFlavor = 0;
    Jets_photonEnergyFraction = 0;
    Jets_photonMultiplicity = 0;
+   JetsJECdown = 0;
+   JetsJECdown_hadronFlavor = 0;
+   JetsJECdown_partonFlavor = 0;
+   JetsJECup = 0;
+   JetsJECup_hadronFlavor = 0;
+   JetsJECup_partonFlavor = 0;
    METPhiDown = 0;
    METPhiUp = 0;
    METPtDown = 0;
    METPtUp = 0;
    MHTJetsMask = 0;
+   MHTJetsMaskJECdown = 0;
+   MHTJetsMaskJECup = 0;
    minDeltaPhiNames = 0;
    MuonCharge = 0;
    Muons = 0;
@@ -727,6 +757,8 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("HTJECdown", &HTJECdown, &b_HTJECdown);
    fChain->SetBranchAddress("HTJECup", &HTJECup, &b_HTJECup);
    fChain->SetBranchAddress("HTJetsMask", &HTJetsMask, &b_HTJetsMask);
+   fChain->SetBranchAddress("HTJetsMaskJECdown", &HTJetsMaskJECdown, &b_HTJetsMaskJECdown);
+   fChain->SetBranchAddress("HTJetsMaskJECup", &HTJetsMaskJECup, &b_HTJetsMaskJECup);
    fChain->SetBranchAddress("isoElectronTracks", &isoElectronTracks, &b_isoElectronTracks);
    fChain->SetBranchAddress("IsolatedElectronTracksVeto", &IsolatedElectronTracksVeto, &b_IsolatedElectronTracksVeto);
    fChain->SetBranchAddress("IsolatedMuonTracksVeto", &IsolatedMuonTracksVeto, &b_IsolatedMuonTracksVeto);
@@ -755,6 +787,12 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("Jets_partonFlavor", &Jets_partonFlavor, &b_Jets_partonFlavor);
    fChain->SetBranchAddress("Jets_photonEnergyFraction", &Jets_photonEnergyFraction, &b_Jets_photonEnergyFraction);
    fChain->SetBranchAddress("Jets_photonMultiplicity", &Jets_photonMultiplicity, &b_Jets_photonMultiplicity);
+   fChain->SetBranchAddress("JetsJECdown", &JetsJECdown, &b_JetsJECdown);
+   fChain->SetBranchAddress("JetsJECdown_hadronFlavor", &JetsJECdown_hadronFlavor, &b_JetsJECdown_hadronFlavor);
+   fChain->SetBranchAddress("JetsJECdown_partonFlavor", &JetsJECdown_partonFlavor, &b_JetsJECdown_partonFlavor);
+   fChain->SetBranchAddress("JetsJECup", &JetsJECup, &b_JetsJECup);
+   fChain->SetBranchAddress("JetsJECup_hadronFlavor", &JetsJECup_hadronFlavor, &b_JetsJECup_hadronFlavor);
+   fChain->SetBranchAddress("JetsJECup_partonFlavor", &JetsJECup_partonFlavor, &b_JetsJECup_partonFlavor);
    fChain->SetBranchAddress("Leptons", &Leptons, &b_Leptons);
    fChain->SetBranchAddress("METFilters", &METFilters, &b_METFilters);
    fChain->SetBranchAddress("METPhi", &METPhi, &b_METPhi);
@@ -774,6 +812,8 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("MHTJECdown", &MHTJECdown, &b_MHTJECdown);
    fChain->SetBranchAddress("MHTJECup", &MHTJECup, &b_MHTJECup);
    fChain->SetBranchAddress("MHTJetsMask", &MHTJetsMask, &b_MHTJetsMask);
+   fChain->SetBranchAddress("MHTJetsMaskJECdown", &MHTJetsMaskJECdown, &b_MHTJetsMaskJECdown);
+   fChain->SetBranchAddress("MHTJetsMaskJECup", &MHTJetsMaskJECup, &b_MHTJetsMaskJECup);
    fChain->SetBranchAddress("minDeltaPhiNames", &minDeltaPhiNames, &b_minDeltaPhiNames);
    fChain->SetBranchAddress("MuonCharge", &MuonCharge, &b_MuonCharge);
    fChain->SetBranchAddress("Muons", &Muons, &b_Muons);
