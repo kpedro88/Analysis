@@ -32,6 +32,7 @@ To submit jobs to Condor:
 ```
 cd batch
 ./SKsub.sh
+./SKsub_signal.sh
 ./SKsub_data.sh
 ./SKsub_fast.sh
 ```
@@ -91,7 +92,7 @@ after they are generated.
 
 To save the histogram for data to a ROOT file for datacard creation:
 ```
-root -b -l -q 'MakeAllDCdata.C+("root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV4")'
+root -b -l -q 'MakeAllDCdata.C+("root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV4","signal")'
 ```
 
 ### Signal systematics
