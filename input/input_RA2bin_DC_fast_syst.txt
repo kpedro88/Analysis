@@ -30,13 +30,13 @@ vuint:RA2Var3Bins[0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,
 string:selection[ra2bin]
 vstring:disable_branches[*]
 bool:RA2Exclusive[0]
+bool:fastsim[1]
 bool:btagcorr[1]
 bool:trigcorr[1]
 bool:pucorr[1]
 
 SELECTION
 ra2bin
-	METFilter
 	BTagSF
 	RA2Bin
 	Histo
