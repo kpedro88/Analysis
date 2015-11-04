@@ -1,9 +1,11 @@
 #!/bin/bash
 
+source exportProd.sh
+
 KEEPTAR=$1
 JOBDIR=jobs
-INDIR=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV4/scan
-STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Datacards/Run2ProductionV4
+INDIR=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/${RUN2PRODV}/scan
+STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Datacards/${RUN2PRODV}
 
 ./SKcheck.sh "$KEEPTAR" "$JOBDIR"
 

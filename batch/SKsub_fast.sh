@@ -1,12 +1,14 @@
 #!/bin/bash
 
+source exportProd.sh
+
 KEEPTAR=$1
 JOBDIR=jobs
 INPUT=input/input_selection.txt
-SELTYPE=signal
-INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV4/scan
+SELTYPE=signal,signal_JECup,signal_JECdown
+INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}/scan
 OUTDIR=tree
-STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV4/scan
+STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/${RUN2PRODV}/scan
 
 ./SKcheck.sh "$KEEPTAR" "$JOBDIR"
 

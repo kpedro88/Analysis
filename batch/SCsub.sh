@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source exportProd.sh
+
 KEEPTAR=$1
 JOBDIR=jobs
 INPUT=input/input_scan.txt
