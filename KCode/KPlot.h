@@ -103,6 +103,7 @@ class KPlot{
 			//ratio range
 			ratiomin = 0.45; globalOpt->Get("ratiomin",ratiomin);
 			ratiomax = 1.55; globalOpt->Get("ratiomax",ratiomax);
+			ratiology = globalOpt->Get("ratiology",false);
 		}
 		virtual void CreateHist(){
 			//check for TProfile case
@@ -179,6 +180,7 @@ class KPlot{
 				pad2->SetMargin(marginL/pad2W,marginR/pad2W,marginB/pad2H,marginM2/pad2H);
 				pad2->SetTicks(1,1);
 				if(localOpt->Get("logx",false)) pad2->SetLogx(); //logx off by default (i.e. linx on by default)
+				if(ratiology) pad2->SetLogy(); //separate logy option for ratio
 				pad2->Draw();
 			
 				//format ratio histo
@@ -498,6 +500,7 @@ class KPlot{
 		double NdivX, NdivYhisto, NdivYratio;
 		double pad1W, pad1H, pad2W, pad2H;
 		double ratiomin, ratiomax;
+		bool ratiology;
 };
 
 //-----------------------------------------------------------
