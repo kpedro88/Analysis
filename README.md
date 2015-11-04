@@ -1,5 +1,17 @@
 # Analysis
 
+## Recompiling
+
+To recompile all drivers, testing code changes or preparing for batch submission:
+```
+./recompile.sh
+```
+
+To force recompilation of all drivers:
+```
+./recompile.sh force
+```
+
 ## Skimming
 
 [input\_selection.txt](input/input\_selection.txt) defines all the available selections, variations, and samples, as well as common global options.
@@ -15,11 +27,6 @@ python makeSkimInput.py -r input/dict_skim.txt -w input/input_sets_skim.txt
 python makeSkimInput.py -r input/dict_skim_data.txt -w input/input_sets_skim_data.txt
 ```
 Note: this script uses the python file lists in [TreeMaker/Production/python](https://github.com/TreeMaker/TreeMaker/tree/Run2/Production/python) to determine the number of files to chain together for each sample. Make sure to follow the [TreeMaker](https://github.com/TreeMaker/TreeMaker) installation instructions so this information is accessible.
-
-To recompile the driver without running (preparing for batch submission):
-```
-root -b -q -l KSkimDriver.C++
-```
 
 To submit jobs to Condor:
 ```
@@ -49,11 +56,6 @@ To make the input lists (.txt and .sh) of FastSim samples automatically:
 python makeScanInput.py
 ```
 Note: as above, this script uses the python file lists in [TreeMaker/Production/python](https://github.com/TreeMaker/TreeMaker/tree/Run2/Production/python).
-
-To recompile the driver without running (preparing for batch submission):
-```
-root -b -q -l KScanDriver.C++
-```
 
 To submit jobs to Condor:
 ```
@@ -101,11 +103,6 @@ root -b -l -q 'MakeAllDCsyst.C+(0,"root://cmseos.fnal.gov//store/user/pedrok/SUS
 This macro calls the macro `KPlotDriverDCsyst.C`, which is a modification of the macro from the previous section
 that includes extra input arguments to specify the list of input samples and the name and direction of the systematic variation (up or down).
 
-To recompile the driver without running (preparing for batch submission):
-```
-root -b -q -l MakeAllDCsyst.C++
-```
-
 Because of the large number of model points in the FastSim signal samples, batch mode should be used to run over them:
 ```
 cd batch
@@ -117,11 +114,13 @@ After the jobs finish, the split output files should be combined:
 ./hadd_DC.sh
 ```
 
-
 Currently available uncertainties:
+* Pileup reweighting
 * PDF weights
+* Scale weights (renormalization/factorization)
 * trigger efficiency statistical
 * trigger efficiency systematic
+* Jet energy corrections
 * b-tagging scale factors
 * mistagging scale factors
 * b-tagging correction factors (fastsim only)
