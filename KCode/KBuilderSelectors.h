@@ -356,7 +356,8 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return looper->NVtx > 0 && looper->eeBadScFilter==1 && looper->HBHENoiseFilter && looper->HBHEIsoNoiseFilter && looper->CSCTightHaloFilter;
+			//return looper->NVtx > 0 && looper->eeBadScFilter==1 && looper->HBHENoiseFilter && looper->HBHEIsoNoiseFilter && looper->CSCTightHaloFilter;
+			return looper->NVtx > 0 && looper->eeBadScFilter==1 && looper->HBHENoiseFilter && looper->HBHEIsoNoiseFilter;
 		}
 		
 		//member variables
