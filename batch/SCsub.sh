@@ -5,7 +5,7 @@ source exportProd.sh
 KEEPTAR=$1
 JOBDIR=jobs
 INPUT=input/input_scan.txt
-INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV4
+INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}
 STORE=${INDIR}/scan
 
 ./SKcheck.sh "$KEEPTAR" "$JOBDIR"
