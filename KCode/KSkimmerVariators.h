@@ -37,6 +37,7 @@ class KJetUncVariator : public KVariator<KSkimmer> {
 			MHTJetsMask = new vector<bool>();
 			Jets_partonFlavor = new vector<int>();
 			Jets_hadronFlavor = new vector<int>();
+			Jets_bDiscriminatorCSV = new vector<double>();
 			
 			//store original values
 			*(Jets) = *(looper->Jets);
@@ -44,6 +45,7 @@ class KJetUncVariator : public KVariator<KSkimmer> {
 			*(MHTJetsMask) = *(looper->MHTJetsMask);
 			*(Jets_partonFlavor) = *(looper->Jets_partonFlavor);
 			*(Jets_hadronFlavor) = *(looper->Jets_hadronFlavor);
+			*(Jets_bDiscriminatorCSV) = *(looper->Jets_bDiscriminatorCSV);
 			NJets = looper->NJets;
 			BTags = looper->BTags;
 			HT = looper->HT;
@@ -62,6 +64,7 @@ class KJetUncVariator : public KVariator<KSkimmer> {
 				*(looper->MHTJetsMask) = *(looper->MHTJetsMaskJECup);
 				*(looper->Jets_partonFlavor) = *(looper->JetsJECup_partonFlavor);
 				*(looper->Jets_hadronFlavor) = *(looper->JetsJECup_hadronFlavor);
+				*(looper->Jets_bDiscriminatorCSV) = *(looper->JetsJECup_bDiscriminatorCSV);
 				looper->NJets = looper->NJetsJECup;
 				looper->BTags = looper->BTagsJECup;
 				looper->HT = looper->HTJECup;
@@ -79,6 +82,7 @@ class KJetUncVariator : public KVariator<KSkimmer> {
 				*(looper->MHTJetsMask) = *(looper->MHTJetsMaskJECdown);
 				*(looper->Jets_partonFlavor) = *(looper->JetsJECdown_partonFlavor);
 				*(looper->Jets_hadronFlavor) = *(looper->JetsJECdown_hadronFlavor);
+				*(looper->Jets_bDiscriminatorCSV) = *(looper->JetsJECdown_bDiscriminatorCSV);
 				looper->NJets = looper->NJetsJECdown;
 				looper->BTags = looper->BTagsJECdown;
 				looper->HT = looper->HTJECdown;
@@ -98,6 +102,7 @@ class KJetUncVariator : public KVariator<KSkimmer> {
 			*(looper->MHTJetsMask) = *(MHTJetsMask);
 			*(looper->Jets_partonFlavor) = *(Jets_partonFlavor);
 			*(looper->Jets_hadronFlavor) = *(Jets_hadronFlavor);
+			*(looper->Jets_bDiscriminatorCSV) = *(Jets_bDiscriminatorCSV);
 			looper->NJets = NJets;
 			looper->BTags = BTags;
 			looper->HT = HT;
@@ -117,6 +122,7 @@ class KJetUncVariator : public KVariator<KSkimmer> {
 		vector<bool> *MHTJetsMask;
 		vector<int> *Jets_hadronFlavor;
 		vector<int> *Jets_partonFlavor;
+		vector<double> *Jets_bDiscriminatorCSV;
 		Int_t           NJets;
 		Int_t           BTags;
 		Float_t         HT;

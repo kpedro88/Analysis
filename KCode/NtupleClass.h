@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Wed Nov  4 10:48:01 2015 by ROOT version 5.34/18
+// Wed Nov  4 21:22:07 2015 by ROOT version 5.34/18
 // from TTree PreSelection/PreSelection
 // found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV4/Spring15v2.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
 //////////////////////////////////////////////////////////
@@ -128,9 +128,11 @@ public :
    vector<double>  *Jets_photonEnergyFraction;
    vector<int>     *Jets_photonMultiplicity;
    vector<TLorentzVector> *JetsJECdown;
+   vector<double>  *JetsJECdown_bDiscriminatorCSV;
    vector<int>     *JetsJECdown_hadronFlavor;
    vector<int>     *JetsJECdown_partonFlavor;
    vector<TLorentzVector> *JetsJECup;
+   vector<double>  *JetsJECup_bDiscriminatorCSV;
    vector<int>     *JetsJECup_hadronFlavor;
    vector<int>     *JetsJECup_partonFlavor;
    Int_t           Leptons;
@@ -352,9 +354,11 @@ public :
    TBranch        *b_Jets_photonEnergyFraction;   //!
    TBranch        *b_Jets_photonMultiplicity;   //!
    TBranch        *b_JetsJECdown;   //!
+   TBranch        *b_JetsJECdown_bDiscriminatorCSV;   //!
    TBranch        *b_JetsJECdown_hadronFlavor;   //!
    TBranch        *b_JetsJECdown_partonFlavor;   //!
    TBranch        *b_JetsJECup;   //!
+   TBranch        *b_JetsJECup_bDiscriminatorCSV;   //!
    TBranch        *b_JetsJECup_hadronFlavor;   //!
    TBranch        *b_JetsJECup_partonFlavor;   //!
    TBranch        *b_Leptons;   //!
@@ -595,9 +599,11 @@ void NtupleClass::Init(TTree *tree)
    Jets_photonEnergyFraction = 0;
    Jets_photonMultiplicity = 0;
    JetsJECdown = 0;
+   JetsJECdown_bDiscriminatorCSV = 0;
    JetsJECdown_hadronFlavor = 0;
    JetsJECdown_partonFlavor = 0;
    JetsJECup = 0;
+   JetsJECup_bDiscriminatorCSV = 0;
    JetsJECup_hadronFlavor = 0;
    JetsJECup_partonFlavor = 0;
    METPhiDown = 0;
@@ -788,9 +794,11 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("Jets_photonEnergyFraction", &Jets_photonEnergyFraction, &b_Jets_photonEnergyFraction);
    fChain->SetBranchAddress("Jets_photonMultiplicity", &Jets_photonMultiplicity, &b_Jets_photonMultiplicity);
    fChain->SetBranchAddress("JetsJECdown", &JetsJECdown, &b_JetsJECdown);
+   fChain->SetBranchAddress("JetsJECdown_bDiscriminatorCSV", &JetsJECdown_bDiscriminatorCSV, &b_JetsJECdown_bDiscriminatorCSV);
    fChain->SetBranchAddress("JetsJECdown_hadronFlavor", &JetsJECdown_hadronFlavor, &b_JetsJECdown_hadronFlavor);
    fChain->SetBranchAddress("JetsJECdown_partonFlavor", &JetsJECdown_partonFlavor, &b_JetsJECdown_partonFlavor);
    fChain->SetBranchAddress("JetsJECup", &JetsJECup, &b_JetsJECup);
+   fChain->SetBranchAddress("JetsJECup_bDiscriminatorCSV", &JetsJECup_bDiscriminatorCSV, &b_JetsJECup_bDiscriminatorCSV);
    fChain->SetBranchAddress("JetsJECup_hadronFlavor", &JetsJECup_hadronFlavor, &b_JetsJECup_hadronFlavor);
    fChain->SetBranchAddress("JetsJECup_partonFlavor", &JetsJECup_partonFlavor, &b_JetsJECup_partonFlavor);
    fChain->SetBranchAddress("Leptons", &Leptons, &b_Leptons);
