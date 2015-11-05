@@ -1,13 +1,5 @@
 #!/bin/bash
 
-#helper function
-contains(){
-	for name in $1; do
-		[[ "$name" == $2 ]] && return 0
-	done
-	return 1
-}
-
 #assumptions in this script:
 #all .jdl and .condor files are in the same directory, JOBDIR
 #all .jdl files are named jobExecCondor_JOBNAME.jdl
@@ -23,6 +15,10 @@ if [ -z "$TIME" ]; then
 	#old default was 24 hrs ago
 	#TIME=$(date "--date=$(date) -1 day" +"%Y-%m-%d %H:%M")
 	TIME="1970-01-01 00:00"
+#option to start from the time of a previous resub script
+elif (echo "$TIME" | fgrep -q ".sh"); then
+	TIME=$(date -r $TIME +"%Y-%m-%d %H:%M")
+	echo "$TIME"
 fi
 
 #default is resub.sh
@@ -39,8 +35,8 @@ echo "cd ${JOBDIR}" >> ${OUTNAME}
 joblist=""
 
 #search for "return value" in condor logs newer than TIME - denotes finished job
-#or "condor_rm" - denotes removed job
-for file in $(grep -lw "return value\|condor_rm" $(find ${JOBDIR}/*.condor -newermt "${TIME}")); do
+#or "abort" - denotes removed job
+for file in $(grep -l "return value\|abort" $(find ${JOBDIR}/*.condor -newermt "${TIME}")); do
 	#skip job if it finished successfully - return value 0
 	success=$(grep -lw "return value 0" ${file})
 	if [[ -n "$success" ]]; then
@@ -50,7 +46,7 @@ for file in $(grep -lw "return value\|condor_rm" $(find ${JOBDIR}/*.condor -newe
 	base=$(echo $(basename ${file}) | rev | cut -d'_' -f1-1 --complement | rev)
 	
 	#skip job if it has already been checked
-	if contains "$joblist" $base; then
+	if (echo "$joblist" | fgrep -qw $base); then
 		continue
 	fi
 	
