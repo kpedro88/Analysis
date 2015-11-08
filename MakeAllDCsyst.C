@@ -31,6 +31,9 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 	string input = "input/input_RA2bin_DC_syst.txt";
 	string setlist = "";
 	string osuff = "";
+	unsigned nContam = 4;
+	string contmp[] = {"LDP","SLe","SLm","GJet_CleanVars"};
+	vector<string> contams(contmp,contmp+nContam);
 	unsigned nSyst = 0;
 	vector<string> systs;
 	if(mode==1){
@@ -83,10 +86,19 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 		if(systs[i]=="JEC") region = "signal";
 	}
 	
-	if(outdir.size()>0){
-		string zipname = outdir;
-		if(zipname[zipname.size()-1] == '/') zipname.erase(zipname.size()-1,1);
-		zipname += ".zip";
-		system(("zip -r "+zipname+" "+outdir).c_str());
+	//now do the contaminations
+	for(unsigned i = 0; i < nContam; ++i){
+		cout << contams[i] << endl;
+		KPlotDriverDCsyst(indir+inpre+contams[i],input,setlist,outdir+outpre+contams[i]+osuff);
 	}
+	
+	//add up SL regions
+	system(("hadd -f "+outdir+outpre+"SL.root "+outdir+outpre+"SLe.root "+outdir+outpre+"SLm.root").c_str());
+	
+	//if(outdir.size()>0){
+	//	string zipname = outdir;
+	//	if(zipname[zipname.size()-1] == '/') zipname.erase(zipname.size()-1,1);
+	//	zipname += ".zip";
+	//	system(("zip -r "+zipname+" "+outdir).c_str());
+	//}
 }

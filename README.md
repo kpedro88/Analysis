@@ -127,3 +127,5 @@ Currently available uncertainties:
 * b-tagging correction factors (fastsim only)
 * c-tagging correction factors (fastsim only)
 * mistagging correction factors (fastsim only)
+
+Signal contamination is also checked in the LowDeltaPhi, Gamma+Jets, and SingleLepton control regions.
