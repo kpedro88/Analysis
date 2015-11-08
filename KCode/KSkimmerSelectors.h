@@ -253,18 +253,26 @@ class KMuonSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
 		KMuonSelector() : KSelector<KSkimmer>() { }
-		KMuonSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
+		KMuonSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) {
+			//check for option
+			doMTcut = localOpt->Get("doMTcut",true);
+		}
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			if(looper->Muons->size()!=1) return false;
-			double mT = KMath::TransverseMass(looper->METPt,looper->METPhi,looper->Muons->at(0).Pt(),looper->Muons->at(0).Phi());
-			return mT<100;
+			
+			if(doMTcut){
+				double mT = KMath::TransverseMass(looper->METPt,looper->METPhi,looper->Muons->at(0).Pt(),looper->Muons->at(0).Phi());
+				return mT<100;
+			}
+			else return true;
 		}
 		
 		//member variables
+		bool doMTcut;
 };
 
 //------------------------------------------------------
@@ -273,18 +281,26 @@ class KElectronSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
 		KElectronSelector() : KSelector<KSkimmer>() { }
-		KElectronSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
+		KElectronSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) {
+			//check for option
+			doMTcut = localOpt->Get("doMTcut",true);
+		}
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			if(looper->Electrons->size()!=1) return false;
-			double mT = KMath::TransverseMass(looper->METPt,looper->METPhi,looper->Electrons->at(0).Pt(),looper->Electrons->at(0).Phi());
-			return mT<100;
+			
+			if(doMTcut){
+				double mT = KMath::TransverseMass(looper->METPt,looper->METPhi,looper->Electrons->at(0).Pt(),looper->Electrons->at(0).Phi());
+				return mT<100;
+			}
+			else return true;
 		}
 		
 		//member variables
+		bool doMTcut;
 };
 
 //------------------------------------------------------
