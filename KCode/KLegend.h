@@ -103,7 +103,7 @@ class KLegend{
 		KLegend(TPad* pad_, OptionMap* localOpt_, OptionMap* globalOpt_) : 
 			pad(pad_), localOpt(localOpt_), globalOpt(globalOpt_), debug(false), npanel(1), balance_panels(false), legwidth(0), legheight(0), 
 			lbound(0), rbound(0), tbound(0), bbound(0), umin(0), umax(0), vmin(0), vmax(0),
-			leg(0), ymin(0), ymax(0), userange(false), manual_ymin(false) 
+			leg(0), ymin(0), ymax(0), ymin_min(0.001), ymin_max(1), userange(false), manual_ymin(false) 
 		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
@@ -158,6 +158,8 @@ class KLegend{
 			
 			double ymin_ = 1;
 			if(globalOpt->Get("ymin",ymin_)) SetManualYmin(ymin_);
+			globalOpt->Get("ymin_min",ymin_min);
+			globalOpt->Get("ymin_max",ymin_max);
 		}
 		//destructor
 		virtual ~KLegend() {}
@@ -301,15 +303,13 @@ class KLegend{
 				}
 				else{
 					ymin = 1; //default value
-					double ymin_max = 1;
-					double ymin_min = 0.001; //based on user preference
 					for(unsigned s = 0; s < hists.size(); s++){
 						double ymin_s = hists[s]->GetMinimum(0); //exclude 0
 						if(ymin > ymin_s) ymin = ymin_s;
 					}
 					//final checks
-					if(ymin > ymin_max) ymin = ymin_max;
-					else if (ymin < ymin_min) ymin = ymin_min;
+					if(ymin_max > 0 && ymin > ymin_max) ymin = ymin_max;
+					else if (ymin_min > 0 && ymin < ymin_min) ymin = ymin_min;
 				}
 			}
 			else ymin = 0; //just set to 0 for liny
@@ -428,6 +428,7 @@ class KLegend{
 		vector<TH1*> hists;
 		TLegend* leg;
 		double ymin, ymax;
+		double ymin_min, ymin_max;
 		bool userange;
 		bool manual_ymin;
 };
