@@ -688,6 +688,9 @@ class KHistoSelector : public KSelector<KBuilder> {
 							}
 						}
 					}
+					else if(vname=="pdfrms"){
+						values[i].Fill(TMath::RMS(looper->PDFweights->begin(),looper->PDFweights->end()),w);
+					}
 					else { //if it's a histogram with no known variable or calculation, do nothing
 					}
 				}
