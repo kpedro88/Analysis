@@ -298,6 +298,7 @@ class KPlotManager : public KManager {
 				for(unsigned s = 0; s < MySets.size(); s++){
 					if(yieldref && p->second->GetLocalOpt()->Get("yieldnorm",false) && yield>0 && MySets[s] != yieldref) MySets[s]->Normalize(yield);
 					if(globalOpt->Get("printyield",false)) MySets[s]->PrintYield();
+					if(globalOpt->Get("unitnorm",false)) MySets[s]->Normalize(1,true);
 					if(p->second->GetLocalOpt()->Get("bindivide",false)) MySets[s]->BinDivide();
 					MySets[s]->AddToLegend(kleg);
 				}
