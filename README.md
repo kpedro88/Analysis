@@ -97,12 +97,17 @@ root -b -l -q 'MakeAllDCdata.C+("root://cmseos.fnal.gov//store/user/pedrok/SUSY2
 
 ### Signal systematics
 
-To save the individual histograms for the signal processes to a ROOT file for each different variation of systematic uncertainty:
+To save the individual histograms for the FullSim signal processes to a ROOT file for each different variation of systematic uncertainty and control region contamination:
 ```
 root -b -l -q 'MakeAllDCsyst.C+(0,"root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV4")'
 ```
 This macro calls the macro `KPlotDriverDCsyst.C`, which is a modification of the macro from the previous section
 that includes extra input arguments to specify the list of input samples and the name and direction of the systematic variation (up or down).
+
+To check specific systematics or contaminations, there are extra arguments. E.g., to check only the PDF uncertainty and no contaminations:
+```
+root -b -l -q 'MakeAllDCsyst.C+(0,"root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV4","pdfunc","")'
+```
 
 Because of the large number of model points in the FastSim signal samples, batch mode should be used to run over them:
 ```
@@ -128,4 +133,4 @@ Currently available uncertainties:
 * c-tagging correction factors (fastsim only)
 * mistagging correction factors (fastsim only)
 
-Signal contamination is also checked in the LowDeltaPhi, Gamma+Jets, and SingleLepton control regions.
+Signal contamination is checked in the LowDeltaPhi, Gamma+Jets, and SingleLepton control regions.

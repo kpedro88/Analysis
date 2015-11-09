@@ -5,11 +5,11 @@ request_disk = 1000000
 request_memory = 199
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
-Transfer_Input_Files = ../jobExecCondorDC.sh, CMSSWVER.tar.gz, /uscms/home/pedrok/.rootrc
+Transfer_Input_Files = ../jobExecCondorDC.sh, CMSSWVER.tar.gz
 Output = MakeAllDCsyst_PART_$(Cluster).stdout
 Error = MakeAllDCsyst_PART_$(Cluster).stderr
 Log = MakeAllDCsyst_PART_$(Cluster).condor
 notification = Never
 x509userproxy = $ENV(X509_USER_PROXY)
-Arguments = CMSSWVER INDIR PART STORE
+Arguments = CMSSWVER INDIR SYSTS CONTAMS PART STORE
 Queue 1

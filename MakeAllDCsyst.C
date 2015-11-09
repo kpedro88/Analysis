@@ -15,7 +15,7 @@ using namespace std;
 
 //recompile:
 //root -b -l -q MakeAllDCsyst.C++
-void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV4/", int part=-1){
+void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV4/", string systTypes="puunc,pdfunc,scaleunc,trigStatUnc,trigSystUnc,JEC,btagSFunc,mistagSFunc", string contamTypes="LDP,SLe,SLm,GJet_CleanVars", int part=-1){
 	gErrorIgnoreLevel = kBreak;
 	
 	if(mode==-1){
@@ -31,11 +31,12 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 	string input = "input/input_RA2bin_DC_syst.txt";
 	string setlist = "";
 	string osuff = "";
-	unsigned nContam = 4;
-	string contmp[] = {"LDP","SLe","SLm","GJet_CleanVars"};
-	vector<string> contams(contmp,contmp+nContam);
-	unsigned nSyst = 0;
+	
+	//process syst/contam types - comma-separated input
+	vector<string> contams;
+	KParser::process(contamTypes,',',contams);
 	vector<string> systs;
+	KParser::process(systTypes,',',systs);
 	if(mode==1){
 		if(part==-1){
 			outdir = "datacards_fast/";
@@ -49,16 +50,10 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 			ss << "_part" << part;
 			osuff = ss.str();
 		}
-		nSyst = 11;
-		string systmp[] = {"puunc","pdfunc","scaleunc","trigStatUnc","trigSystUnc","JEC","btagSFunc","mistagSFunc","btagCFunc","ctagCFunc","mistagCFunc"};
-		systs = vector<string>(systmp,systmp+nSyst);
 	}
 	else {
 		outdir = "datacards/";
 		setlist = "input/input_sets_DC_syst.txt";
-		nSyst = 8;
-		string systmp[] = {"puunc","pdfunc","scaleunc","trigStatUnc","trigSystUnc","JEC","btagSFunc","mistagSFunc"};
-		systs = vector<string>(systmp,systmp+nSyst);
 	}
 	
 	//check for directory
@@ -69,7 +64,7 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 	KPlotDriverDCsyst(indir+inpre+region,input,setlist,outdir+outpre+region+osuff);
 	
 	//now do the variations
-	for(unsigned i = 0; i < nSyst; ++i){
+	for(unsigned i = 0; i < systs.size(); ++i){
 		string ovar = "";
 		//up
 		cout << systs[i] << " up" << endl;
@@ -87,7 +82,7 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 	}
 	
 	//now do the contaminations
-	for(unsigned i = 0; i < nContam; ++i){
+	for(unsigned i = 0; i < contams.size(); ++i){
 		cout << contams[i] << endl;
 		KPlotDriverDCsyst(indir+inpre+contams[i],input,setlist,outdir+outpre+contams[i]+osuff);
 	}

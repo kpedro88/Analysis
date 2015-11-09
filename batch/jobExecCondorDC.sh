@@ -11,13 +11,17 @@ echo "CMSSW on Condor"
 
 CMSSWVER=$1
 INDIR=$2
-PART=$3
-STORE=$4
+SYSTS=$3
+CONTAMS=$4
+PART=$5
+STORE=$6
 
 echo ""
 echo "parameter set:"
 echo "CMSSWVER:   $CMSSWVER"
 echo "INDIR:      $INDIR"
+echo "SYSTS:      $SYSTS"
+echo "CONTAMS:    $CONTAMS"
 echo "PART:       $PART"
 echo "STORE:      $STORE"
 
@@ -30,8 +34,8 @@ eval `scramv1 runtime -sh`
 cd src/Analysis
 
 #run macro
-echo "run: root -b -q -l 'MakeAllDCsyst.C+(1,"'"'$INDIR'",'$PART")' 2>&1"
-root -b -q -l 'MakeAllDCsyst.C+(1,"'$INDIR'",'$PART')' 2>&1
+echo "run: root -b -q -l 'MakeAllDCsyst.C+(1,"'"'$INDIR'","'$SYSTS'","'$CONTAMS'",'$PART")' 2>&1"
+root -b -q -l 'MakeAllDCsyst.C+(1,"'$INDIR'","'$SYSTS'","'$CONTAMS'",'$PART')' 2>&1
 
 ROOTEXIT=$?
 
