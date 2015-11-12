@@ -41,9 +41,6 @@ class KScanManager : public KManager {
 				return;
 			}
 			if(MyBase->GetTree()==NULL) { parsed = false; return; }
-			
-			//initialize scanner after parsing
-			scanner = new KScanner(MyBase->GetTree(),globalOpt);
 		}
 		//destructor
 		virtual ~KScanManager() {}
@@ -59,6 +56,9 @@ class KScanManager : public KManager {
 		//where the magic happens
 		void Scan(){
 			if(!parsed) return;
+			
+			//initialize scanner after parsing
+			scanner = new KScanner(MyBase);
 			
 			//scanner does the rest
 			scanner->Loop();

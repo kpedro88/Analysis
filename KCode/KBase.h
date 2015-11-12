@@ -191,6 +191,7 @@ class KBase {
 		string GetName() { return name; }
 		void SetName(string n) { name = n; }
 		void SetSelection(KSelection<KBuilder>* sel_) { MySelection = sel_; }
+		KSelection<KBuilder>* GetSelection() { return MySelection; }
 		//add a blank histo for future building
 		virtual TH1* AddHisto(string s, TH1* h){
 			//sets current name and histo

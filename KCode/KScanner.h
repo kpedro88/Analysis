@@ -35,8 +35,8 @@ class KScanner : public NtupleClass {
 		typedef map<massPoint,KSelection<KScanner>*>::iterator MPit;
 	
 		//constructor
-		KScanner(TTree* tree, OptionMap* globalOpt_) : 
-			NtupleClass(tree), globalOpt(globalOpt_ ? globalOpt_ : new OptionMap()), nentries(0), outpre(""), outsuff("")
+		KScanner(KBase* MyBase_) : 
+			NtupleClass(MyBase_->GetTree()), MyBase(MyBase_), globalOpt(MyBase->GetGlobalOpt()), nentries(0), outpre(""), outsuff("")
 		{
 			//get options
 			globalOpt->Get("outpre",outpre);
@@ -104,6 +104,7 @@ class KScanner : public NtupleClass {
 		}
 		
 		//member variables
+		KBase* MyBase;
 		map<massPoint,KSelection<KScanner>*> selectionMap;
 		OptionMap* globalOpt;
 		Long64_t nentries;

@@ -28,8 +28,8 @@ void NtupleClass::Loop() {}
 class KSkimmer : public NtupleClass {
 	public :
 		//constructor
-		KSkimmer(TTree* tree, TH1F* nEventHist_, TH1F* nEventNegHist_, OptionMap* globalOpt_) : 
-			NtupleClass(tree), nEventHist(nEventHist_), nEventNegHist(nEventNegHist_), globalOpt(globalOpt_ ? globalOpt_ : new OptionMap()), nentries(0), width1(0) { }
+		KSkimmer(KBase* MyBase_) : 
+			NtupleClass(MyBase_->GetTree()), MyBase(MyBase_), nEventHist(MyBase->GetNEventHist()), nEventNegHist(MyBase->GetNEventNegHist()), globalOpt(MyBase->GetGlobalOpt()), nentries(0), width1(0) { }
 		//destructor
 		virtual ~KSkimmer() {}
 		//functions
@@ -88,6 +88,7 @@ class KSkimmer : public NtupleClass {
 		int GetEventSign();
 		
 		//member variables
+		KBase* MyBase;
 		TH1F *nEventHist, *nEventNegHist;
 		vector<KSelection<KSkimmer>*> theSelections;
 		OptionMap* globalOpt;

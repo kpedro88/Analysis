@@ -43,7 +43,9 @@ class KBuilder : public NtupleClass {
 			if(localOpt==0) localOpt = new OptionMap();
 			if(globalOpt==0) globalOpt = new OptionMap();
 		}
-		KBuilder(KBase* MyBase_, TTree* tree_, KSelection<KBuilder>* sel_) : NtupleClass(tree_), MyBase(MyBase_), localOpt(MyBase->GetLocalOpt()), globalOpt(MyBase->GetGlobalOpt()), MySelection(sel_) {
+		KBuilder(KBase* MyBase_) : 
+			NtupleClass(MyBase_->GetTree()), MyBase(MyBase_), localOpt(MyBase->GetLocalOpt()), globalOpt(MyBase->GetGlobalOpt()), MySelection(MyBase->GetSelection())
+		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
 			if(globalOpt==0) globalOpt = new OptionMap();
@@ -153,7 +155,7 @@ class KBuilder : public NtupleClass {
 
 void KBase::Build(){
 	if(!isBuilt) {
-		if(MyBuilder==0) MyBuilder = new KBuilder(this,tree,MySelection);
+		if(MyBuilder==0) MyBuilder = new KBuilder(this);
 		MyBuilder->Loop(); //loop over tree to build histograms
 		isBuilt = true;
 	}
@@ -165,7 +167,7 @@ class KBuilderData : public KBuilder {
 	public:
 		//constructors
 		KBuilderData() : KBuilder() { }
-		KBuilderData(KBase* MyBase_, TTree* tree_, KSelection<KBuilder>* sel_) : KBuilder(MyBase_,tree_,sel_) {
+		KBuilderData(KBase* MyBase_) : KBuilder(MyBase_) {
 			//get options
 			blind = globalOpt->Get("blind",false);
 		}
@@ -193,7 +195,7 @@ class KBuilderData : public KBuilder {
 
 void KBaseData::Build(){
 	if(!isBuilt) {
-		if(MyBuilder==0) MyBuilder = new KBuilderData(this,tree,MySelection);
+		if(MyBuilder==0) MyBuilder = new KBuilderData(this);
 		MyBuilder->Loop(); //loop over tree to build histograms
 		isBuilt = true;
 	}
@@ -205,7 +207,7 @@ class KBuilderMC : public KBuilder {
 	public:
 		//constructors
 		KBuilderMC() : KBuilder() { }
-		KBuilderMC(KBase* MyBase_, TTree* tree_, KSelection<KBuilder>* sel_) : KBuilder(MyBase_,tree_,sel_) { 
+		KBuilderMC(KBase* MyBase_) : KBuilder(MyBase_) { 
 			//standard weight options
 			normtype = ""; localOpt->Get("normtype",normtype); GetNormTypeEnum();
 			unweighted = localOpt->Get("unweighted",false);
@@ -355,7 +357,7 @@ class KBuilderMC : public KBuilder {
 
 void KBaseMC::Build(){
 	if(!isBuilt) {
-		if(MyBuilder==0) MyBuilder = new KBuilderMC(this,tree,MySelection);
+		if(MyBuilder==0) MyBuilder = new KBuilderMC(this);
 		MyBuilder->Loop(); //loop over tree to build histograms
 		isBuilt = true;
 	}

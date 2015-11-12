@@ -43,13 +43,6 @@ class KSkimManager : public KManager {
 				return;
 			}
 			if(MyBase->GetTree()==NULL) { parsed = false; return; }
-			
-			//initialize skimmer after parsing
-			int mother = -1;
-			MyBase->GetLocalOpt()->Get("mother",mother);
-			globalOpt->Set("mother",mother);
-			
-			skimmer = new KSkimmer(MyBase->GetTree(),MyBase->GetNEventHist(),MyBase->GetNEventNegHist(),globalOpt);
 		}
 		//destructor
 		virtual ~KSkimManager() {}
@@ -65,7 +58,10 @@ class KSkimManager : public KManager {
 		//where the magic happens
 		void Skim(){
 			if(!parsed) return;
-			
+
+			//initialize skimmer after parsing
+			skimmer = new KSkimmer(MyBase);
+		
 			//process selection types - comma-separated input
 			vector<string> fields;
 			KParser::process(seltypes,',',fields);
