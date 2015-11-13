@@ -648,6 +648,58 @@ class KBTagEfficiencySelector : public KSelector<KSkimmer> {
 		TH2F *d_eff_b, *d_eff_c, *d_eff_udsg;
 };
 
+//-----------------------------------------------------------------
+//stores the pT distribution of the gen-level system (e.g. gluinos)
+class KGenPtSelector : public KSelector<KSkimmer> {
+	public:
+		//constructor
+		KGenPtSelector() : KSelector<KSkimmer>() { }
+		KGenPtSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), h_genpt(NULL), mother(0) {
+			canfail = false;
+			//initialize histograms using KPlot:CreateHist() method
+			TH1::AddDirectory(kFALSE);
+			KPlot* ptmp = new KPlot("GenPt",localOpt,NULL);
+			ptmp->CreateHist();
+			h_genpt = ptmp->GetHisto();
+			delete ptmp;
+		}
+		virtual void CheckLooper(){
+			//get mother pdgid
+			looper->MyBase->GetLocalOpt()->Get("mother",mother);
+			//if none, skip this
+			if(mother==0) dummy = true;
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			//loop over genparticles
+			TLorentzVector vgen;
+			vgen.SetPtEtaPhiE(0,0,0,0);
+			for(unsigned g = 0; g < looper->genParticles_PDGid->size(); ++g){
+				if(abs(looper->genParticles_PDGid->at(g))==mother){
+					vgen -= looper->genParticles->at(g);
+				}
+			}
+			
+			//fill system pt
+			h_genpt->Fill(vgen.Pt());
+			
+			return true;
+		}
+		
+		virtual void Finalize(TFile* file){
+			//write to file
+			file->cd();
+			h_genpt->Write();
+		}
+		
+		//member variables
+		TH1 *h_genpt;
+		int mother;
+};
+
 //-------------------------------------------------------------
 //look at only a specific range of events
 class KEventRangeSelector : public KSelector<KSkimmer> {
@@ -1218,6 +1270,7 @@ namespace KParser {
 		else if(sname=="EventCleaning") srtmp = new KEventCleaningSelector(sname,omap);
 		else if(sname=="NBJetBin") srtmp = new KNBJetBinSelector(sname,omap);
 		else if(sname=="BTagEfficiency") srtmp = new KBTagEfficiencySelector(sname,omap);
+		else if(sname=="GenPt") srtmp = new KGenPtSelector(sname,omap);
 		else if(sname=="EventRange") srtmp = new KEventRangeSelector(sname,omap);
 		else if(sname=="PhotonAll") srtmp = new KPhotonAllSelector(sname,omap);
 		else if(sname=="PhotonEta") srtmp = new KPhotonEtaSelector(sname,omap);

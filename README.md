@@ -124,6 +124,7 @@ Currently available uncertainties:
 * Pileup reweighting
 * PDF weights
 * Scale weights (renormalization/factorization)
+* ISR corrections
 * trigger efficiency statistical
 * trigger efficiency systematic
 * Jet energy corrections

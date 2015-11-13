@@ -10,6 +10,7 @@ def msplit(line):
 parser = OptionParser()
 parser.add_option("-d", "--dir", dest="dir", default="/eos/uscms/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV4/scan/", help="location of python files")
 parser.add_option("-n", "--nfiles", dest="nfiles", default=0, help="number of files per part for datacard input")
+parser.add_option("-m", "--mother", dest="mother", default=1000021, help="mother particle PDG ID")
 (options, args) = parser.parse_args()
 
 # find the python files
@@ -53,11 +54,11 @@ for ind,file in enumerate(files):
     # make short name
     short_name = fsplit[0] + "_" + str(mMother) + "_" + str(mLSP) + "_" + "fast"
     # make set list for skimming
-    wline = "base" + "\t" + "skim" + "\t" + short_name + "\t" + "s:filename[" + file + "]" + "\n"
+    wline = "base" + "\t" + "skim" + "\t" + short_name + "\t" + "s:filename[" + file + "]" + ("\t"+"i:mother["+str(options.mother)+"]" if options.mother > 0 else "") + "\n"
     wfile.write(wline)
     # make set list for datacards with xsecs
     dline = "hist" + "\t" + "mc" + "\t" + short_name + "\n"
-    dline += "\t" + "base" + "\t" + "mc" + "\t" + short_name + "\t" + "s:filename[tree_" + short_name + ".root]" + "\t" + "d:xsection[" + str(xsec[mMother]) + "]" + "\t" + "b:signal[1]" + "\t" + "b:fastsim[1]" + "\n"
+    dline += "\t" + "base" + "\t" + "mc" + "\t" + short_name + "\t" + "s:filename[tree_" + short_name + ".root]" + "\t" + "d:xsection[" + str(xsec[mMother]) + "]" + "\t" + "b:signal[1]" + "\t" + "b:fastsim[1]" + ("\t"+"i:mother["+str(options.mother)+"]" if options.mother > 0 else "") + "\n"
     dfile.write(dline)
     # make split set lists
     if nfiles>0:

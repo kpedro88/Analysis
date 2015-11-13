@@ -12,6 +12,7 @@
 #include "NtupleClass.h"
 #include "KSelection.h"
 #include "../corrections/GetTriggerEffCorr.C"
+#include "../corrections/ISRCorrector.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -231,6 +232,19 @@ class KBuilderMC : public KBuilder {
 			realMET = localOpt->Get("realMET",true);
 			signal = localOpt->Get("signal",false);
 			
+			//ISR corr options
+			isrcorr = globalOpt->Get("isrcorr",false);
+			mother = 0; localOpt->Get("mother",mother);
+			isrunc = 0; globalOpt->Get("isrunc", isrunc);
+			if(isrcorr){
+				TH1* isrtmp = NULL;
+				if(isrunc==1) globalOpt->Get("isrhistUp",isrtmp);
+				else if(isrunc==-1) globalOpt->Get("isrhistDown",isrtmp);
+				else globalOpt->Get("isrhist",isrtmp);
+				isrcorror.SetMother(mother);
+				isrcorror.SetWeights(isrtmp,(TH1*)MyBase->GetFile()->Get("GenPt"));
+			}
+			
 			//other uncertainty options
 			pdfunc = 0; globalOpt->Get("pdfunc",pdfunc);
 			scaleunc = 0; globalOpt->Get("scaleunc",scaleunc);
@@ -248,6 +262,10 @@ class KBuilderMC : public KBuilder {
 				if(puunc==1) fChain->SetBranchStatus("puSysUp",1);
 				else if(puunc==-1) fChain->SetBranchStatus("puSysDown",1);
 				else fChain->SetBranchStatus("puWeight",1);
+			}
+			if(isrcorr){
+				fChain->SetBranchStatus("genParticles",1);
+				fChain->SetBranchStatus("genParticles_PDGid",1);
 			}
 			if(NTenum==ttbarLowHT || NTenum==ttbarLowHThad || NTenum==ttbarHighHT) fChain->SetBranchStatus("genHT",1);
 			if(NTenum==ttbarLowHThad){
@@ -299,6 +317,10 @@ class KBuilderMC : public KBuilder {
 				w *= GetTriggerEffCorr(signal, MHT, realMET, trigStatUnc, trigSystUnc);
 			}
 			
+			if(isrcorr){
+				w *= isrcorror.GetCorrection(genParticles,genParticles_PDGid);
+			}
+			
 			if(pdfunc!=0){
 				double pdfrms = TMath::RMS(PDFweights->begin(),PDFweights->end());
 				if(pdfunc==1) w *= 1.0 + pdfrms;
@@ -346,13 +368,14 @@ class KBuilderMC : public KBuilder {
 
 		//member variables
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, debugWeight, didDebugWeight;
-		bool pucorr, trigcorr, realMET, signal;
-		int puunc, pdfunc, scaleunc, trigStatUnc, trigSystUnc;
+		bool pucorr, trigcorr, isrcorr, realMET, signal;
+		int puunc, pdfunc, mother, isrunc, scaleunc, trigStatUnc, trigSystUnc;
 		TH1 *puhist, *puhistUp, *puhistDown;
 		string normtype;
 		normtypes NTenum;
 		int nEventProc;
 		double xsection, norm;
+		ISRCorrector isrcorror;
 };
 
 void KBaseMC::Build(){

@@ -52,6 +52,24 @@ class KPlotManager : public KManager {
 					cout << "Input error: could not open pileup weight file " << puname << "." << endl;
 				}
 			}
+			string isrname = ""; globalOpt->Get("isrname",isrname);
+			if(globalOpt->Get("isrcorr",false)){
+				if(isrname.size()>0){
+					TFile* isrfile = TFile::Open(isrname.c_str(),"READ");
+					if(isrfile){
+						TH1* isrhist = (TH1*)isrfile->Get("isr_weights_central"); isrhist->SetDirectory(0); globalOpt->Set<TH1*>("isrhist",isrhist);
+						TH1* isrhistUp = (TH1*)isrfile->Get("isr_weights_up"); isrhistUp->SetDirectory(0); globalOpt->Set<TH1*>("isrhistUp",isrhistUp);
+						TH1* isrhistDown = (TH1*)isrfile->Get("isr_weights_down"); isrhistDown->SetDirectory(0); globalOpt->Set<TH1*>("isrhistDown",isrhistDown);
+						isrfile->Close();
+					}
+					else {
+						cout << "Input error: could not open ISR weight file " << isrname << "." << endl;
+					}
+				}
+				else {
+					cout << "Input error: no ISR weight file specified!" << endl;
+				}
+			}
 		}
 		//destructor
 		virtual ~KPlotManager() {}
