@@ -328,6 +328,12 @@ class KBuilderMC : public KBuilder {
 			}
 			
 			if(scaleunc!=0){
+				vector<double> ScaleWeightsMod = *ScaleWeights;
+				//remove unwanted variations
+				if(ScaleWeightsMod.size()>7) ScaleWeightsMod.erase(ScaleWeightsMod.begin()+7);
+				if(ScaleWeightsMod.size()>5) ScaleWeightsMod.erase(ScaleWeightsMod.begin()+5);
+				if(ScaleWeightsMod.size()>0) ScaleWeightsMod.erase(ScaleWeightsMod.begin());
+				
 				if(scaleunc==1) w *= *(TMath::LocMax(ScaleWeights->begin(),ScaleWeights->end()));
 				else if(scaleunc==-1) w *= *(TMath::LocMin(ScaleWeights->begin(),ScaleWeights->end()));
 			}
