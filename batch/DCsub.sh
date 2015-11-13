@@ -4,7 +4,7 @@ source exportProd.sh
 
 KEEPTAR=$1
 JOBDIR=jobs
-INDIR=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/${RUN2PRODV}/scan
+INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/${RUN2PRODV}/scan
 STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Datacards/${RUN2PRODV}
 SYSTS=puunc,pdfunc,scaleunc,isrunc,trigStatUnc,trigSystUnc,JEC,btagSFunc,mistagSFunc,btagCFunc,ctagCFunc,mistagCFunc
 CONTAMS=LDP,GJet_CleanVars
