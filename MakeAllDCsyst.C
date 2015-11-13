@@ -15,7 +15,7 @@ using namespace std;
 
 //recompile:
 //root -b -l -q MakeAllDCsyst.C++
-void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV4/", string systTypes="puunc,pdfunc,scaleunc,isrunc,trigStatUnc,trigSystUnc,JEC,btagSFunc,mistagSFunc", string contamTypes="LDP,SLe,SLm,GJet_CleanVars", int part=-1){
+void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV4/", string systTypes="puunc,pdfunc,scaleunc,isrunc,trigStatUnc,trigSystUnc,JEC,btagSFunc,mistagSFunc", string contamTypes="LDP,GJet_CleanVars", int part=-1){
 	gErrorIgnoreLevel = kBreak;
 	
 	if(mode==-1){
@@ -86,14 +86,5 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 		cout << contams[i] << endl;
 		KPlotDriverDCsyst(indir+inpre+contams[i],input,setlist,outdir+outpre+contams[i]+osuff);
 	}
-	
-	//add up SL regions
-	system(("hadd -f "+outdir+outpre+"SL.root "+outdir+outpre+"SLe.root "+outdir+outpre+"SLm.root").c_str());
-	
-	//if(outdir.size()>0){
-	//	string zipname = outdir;
-	//	if(zipname[zipname.size()-1] == '/') zipname.erase(zipname.size()-1,1);
-	//	zipname += ".zip";
-	//	system(("zip -r "+zipname+" "+outdir).c_str());
-	//}
+
 }

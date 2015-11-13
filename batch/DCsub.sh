@@ -7,7 +7,7 @@ JOBDIR=jobs
 INDIR=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/${RUN2PRODV}/scan
 STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Datacards/${RUN2PRODV}
 SYSTS=puunc,pdfunc,scaleunc,isrunc,trigStatUnc,trigSystUnc,JEC,btagSFunc,mistagSFunc,btagCFunc,ctagCFunc,mistagCFunc
-CONTAMS=LDP,SLe,SLm,GJet_CleanVars
+CONTAMS=LDP,GJet_CleanVars
 
 ./SKcheck.sh "$KEEPTAR" "$JOBDIR"
 
