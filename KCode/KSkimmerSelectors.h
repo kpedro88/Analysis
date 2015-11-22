@@ -724,21 +724,25 @@ class KPDFNormSelector : public KSelector<KSkimmer> {
 			
 			//nominal
 			h_norm->Fill(1);
-			//PDF up
-			h_norm->Fill(2,*(TMath::LocMax(looper->PDFweights->begin(),looper->PDFweights->end())));
-			//PDF down
-			h_norm->Fill(3,*(TMath::LocMin(looper->PDFweights->begin(),looper->PDFweights->end())));
+			if(looper->PDFweights->size()>0){
+				//PDF up
+				h_norm->Fill(2,*(TMath::LocMax(looper->PDFweights->begin(),looper->PDFweights->end())));
+				//PDF down
+				h_norm->Fill(3,*(TMath::LocMin(looper->PDFweights->begin(),looper->PDFweights->end())));
+			}
 			
-			vector<double> ScaleWeightsMod = *looper->ScaleWeights;
-			//remove unwanted variations
-			if(ScaleWeightsMod.size()>7) ScaleWeightsMod.erase(ScaleWeightsMod.begin()+7);
-			if(ScaleWeightsMod.size()>5) ScaleWeightsMod.erase(ScaleWeightsMod.begin()+5);
-			if(ScaleWeightsMod.size()>0) ScaleWeightsMod.erase(ScaleWeightsMod.begin());
-			
-			//scale up
-			h_norm->Fill(4,*(TMath::LocMax(ScaleWeightsMod.begin(),ScaleWeightsMod.end())));
-			//scale down
-			h_norm->Fill(5,*(TMath::LocMin(ScaleWeightsMod.begin(),ScaleWeightsMod.end())));
+			if(looper->ScaleWeights->size()>0){
+				vector<double> ScaleWeightsMod = *looper->ScaleWeights;
+				//remove unwanted variations
+				if(ScaleWeightsMod.size()>7) ScaleWeightsMod.erase(ScaleWeightsMod.begin()+7);
+				if(ScaleWeightsMod.size()>5) ScaleWeightsMod.erase(ScaleWeightsMod.begin()+5);
+				if(ScaleWeightsMod.size()>0) ScaleWeightsMod.erase(ScaleWeightsMod.begin());
+				
+				//scale up
+				h_norm->Fill(4,*(TMath::LocMax(ScaleWeightsMod.begin(),ScaleWeightsMod.end())));
+				//scale down
+				h_norm->Fill(5,*(TMath::LocMin(ScaleWeightsMod.begin(),ScaleWeightsMod.end())));
+			}
 			
 			return true;
 		}
