@@ -2,7 +2,7 @@
 
 source exportProd.sh
 
-STDIR=/eos/uscms/store/user/pedrok/SUSY2015/Analysis/Skims/${RUN2PRODV}
+STDIR=/eos/uscms/store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/${RUN2PRODV}
 
 ./SKcheck.sh keep
 
