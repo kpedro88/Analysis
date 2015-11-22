@@ -12,6 +12,7 @@
 #include <TFile.h>
 #include <TTree.h>
 #include <TLorentzVector.h>
+#include <TMath.h>
 
 //STL headers
 #include <string>
@@ -700,6 +701,58 @@ class KGenPtSelector : public KSelector<KSkimmer> {
 		int mother;
 };
 
+//-----------------------------------------------------------------
+//stores info for normalizing PDF and r/f scale uncertainties
+class KPDFNormSelector : public KSelector<KSkimmer> {
+	public:
+		//constructor
+		KPDFNormSelector() : KSelector<KSkimmer>() { }
+		KPDFNormSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), h_norm(NULL) {
+			canfail = false;
+			//initialize histogram
+			TH1::AddDirectory(kFALSE);
+			//bins:
+			//1: nominal, 2: PDF up, 3: PDF down, 4: scale up, 5: scale down
+			h_norm = new TH1F("PDFNorm","",5,0.5,5.5);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			//get weights
+			
+			//nominal
+			h_norm->Fill(1);
+			//PDF up
+			h_norm->Fill(2,*(TMath::LocMax(looper->PDFweights->begin(),looper->PDFweights->end())));
+			//PDF down
+			h_norm->Fill(3,*(TMath::LocMin(looper->PDFweights->begin(),looper->PDFweights->end())));
+			
+			vector<double> ScaleWeightsMod = *looper->ScaleWeights;
+			//remove unwanted variations
+			if(ScaleWeightsMod.size()>7) ScaleWeightsMod.erase(ScaleWeightsMod.begin()+7);
+			if(ScaleWeightsMod.size()>5) ScaleWeightsMod.erase(ScaleWeightsMod.begin()+5);
+			if(ScaleWeightsMod.size()>0) ScaleWeightsMod.erase(ScaleWeightsMod.begin());
+			
+			//scale up
+			h_norm->Fill(4,*(TMath::LocMax(ScaleWeightsMod.begin(),ScaleWeightsMod.end())));
+			//scale down
+			h_norm->Fill(5,*(TMath::LocMin(ScaleWeightsMod.begin(),ScaleWeightsMod.end())));
+			
+			return true;
+		}
+		
+		virtual void Finalize(TFile* file){
+			//write to file
+			file->cd();
+			h_norm->Write();
+		}
+		
+		//member variables
+		TH1F *h_norm;
+};
+
 //-------------------------------------------------------------
 //look at only a specific range of events
 class KEventRangeSelector : public KSelector<KSkimmer> {
@@ -1271,6 +1324,7 @@ namespace KParser {
 		else if(sname=="NBJetBin") srtmp = new KNBJetBinSelector(sname,omap);
 		else if(sname=="BTagEfficiency") srtmp = new KBTagEfficiencySelector(sname,omap);
 		else if(sname=="GenPt") srtmp = new KGenPtSelector(sname,omap);
+		else if(sname=="PDFNorm") srtmp = new KPDFNormSelector(sname,omap);
 		else if(sname=="EventRange") srtmp = new KEventRangeSelector(sname,omap);
 		else if(sname=="PhotonAll") srtmp = new KPhotonAllSelector(sname,omap);
 		else if(sname=="PhotonEta") srtmp = new KPhotonEtaSelector(sname,omap);

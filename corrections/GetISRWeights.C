@@ -32,6 +32,8 @@ void GetISRWeights(){
 	//to store results
 	vector<double> xbins;
 	vector<double> weights;
+	vector<double> weightsUp;
+	vector<double> weightsDown;
 	
 	//input weights
 	string fname = "ISRWeights";
@@ -46,6 +48,8 @@ void GetISRWeights(){
 			//convert input data to doubles
 			if(ctr==0) xbins = GetDoubles(fields);
 			else if(ctr==1) weights = GetDoubles(fields);
+			else if(ctr==2) weightsUp = GetDoubles(fields);
+			else if(ctr==3) weightsDown = GetDoubles(fields);
 			
 			ctr++;
 		}
@@ -63,10 +67,9 @@ void GetISRWeights(){
 	TH1F* h_up = new TH1F("isr_weights_up","",xbins.size()-1,&xbins[0]);
 	TH1F* h_down = new TH1F("isr_weights_down","",xbins.size()-1,&xbins[0]);
 	for(unsigned b = 1; b < xbins.size(); ++b){
-		double syst = fabs(1-weights[b-1]);
 		h_central->SetBinContent(b, weights[b-1]);
-		h_up->SetBinContent(b, weights[b-1] + syst);
-		h_down->SetBinContent(b, max(weights[b-1] - syst,0.));
+		h_up->SetBinContent(b, weightsUp[b-1]);
+		h_down->SetBinContent(b, weightsDown[b-1]);
 	}
 	
 	//save histos

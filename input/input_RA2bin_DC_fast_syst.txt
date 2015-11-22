@@ -34,7 +34,7 @@ bool:fastsim[1]
 bool:btagcorr[1]
 bool:trigcorr[1]
 bool:pucorr[1]
-string:puname[corrections/PileupHistograms_1104.root]
+string:puname[corrections/PileupHistograms_1117.root]
 bool:isrcorr[1]
 string:isrname[corrections/ISRWeights.root]
 

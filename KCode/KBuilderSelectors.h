@@ -341,6 +341,7 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 		virtual void CheckBranches(){
 			looper->fChain->SetBranchStatus("NVtx",1);
 			looper->fChain->SetBranchStatus("eeBadScFilter",1);
+			looper->fChain->SetBranchStatus("eeBadSc4Filter",1);
 			looper->fChain->SetBranchStatus("HBHENoiseFilter",1);
 			looper->fChain->SetBranchStatus("HBHEIsoNoiseFilter",1);
 			looper->fChain->SetBranchStatus("CSCTightHaloFilter",1);
@@ -356,8 +357,7 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			//return looper->NVtx > 0 && looper->eeBadScFilter==1 && looper->HBHENoiseFilter && looper->HBHEIsoNoiseFilter && looper->CSCTightHaloFilter;
-			return looper->NVtx > 0 && looper->eeBadScFilter==1 && looper->HBHENoiseFilter && looper->HBHEIsoNoiseFilter;
+			return looper->NVtx > 0 && looper->eeBadScFilter==1 && looper->eeBadSc4Filter && looper->HBHENoiseFilter && looper->HBHEIsoNoiseFilter && looper->CSCTightHaloFilter;
 		}
 		
 		//member variables

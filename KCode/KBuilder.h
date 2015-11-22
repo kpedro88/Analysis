@@ -248,6 +248,19 @@ class KBuilderMC : public KBuilder {
 			//other uncertainty options
 			pdfunc = 0; globalOpt->Get("pdfunc",pdfunc);
 			scaleunc = 0; globalOpt->Get("scaleunc",scaleunc);
+			if(pdfunc!=0 || scaleunc!=0){
+				//get the normalizations for pdf/scale uncertainties
+				TH1F* h_norm = (TH1F*)MyBase->GetFile()->Get("PDFNorm");
+				pdfnorms = vector<double>(4,1.0);
+				//0: PDF up, 1: PDF down, 2: scale up, 3: scale down
+				if(h_norm){
+					double nominal = h_norm->GetBinContent(1);
+					for(unsigned n = 0; n < 4; ++n){
+						//(bin in histo = index + 2)
+						pdfnorms[n] = nominal/h_norm->GetBinContent(n+2);
+					}
+				}
+			}
 		}
 		//destructor
 		virtual ~KBuilderMC() {}
@@ -322,9 +335,8 @@ class KBuilderMC : public KBuilder {
 			}
 			
 			if(pdfunc!=0){
-				double pdfrms = TMath::RMS(PDFweights->begin(),PDFweights->end());
-				if(pdfunc==1) w *= 1.0 + pdfrms;
-				else if(pdfunc==-1) w *= 1.0 - pdfrms;
+				if(pdfunc==1) w *= *(TMath::LocMax(PDFweights->begin(),PDFweights->end()))*pdfnorms[0];
+				else if(pdfunc==-1) w *= *(TMath::LocMin(PDFweights->begin(),PDFweights->end()))*pdfnorms[1];
 			}
 			
 			if(scaleunc!=0){
@@ -334,8 +346,8 @@ class KBuilderMC : public KBuilder {
 				if(ScaleWeightsMod.size()>5) ScaleWeightsMod.erase(ScaleWeightsMod.begin()+5);
 				if(ScaleWeightsMod.size()>0) ScaleWeightsMod.erase(ScaleWeightsMod.begin());
 				
-				if(scaleunc==1) w *= *(TMath::LocMax(ScaleWeights->begin(),ScaleWeights->end()));
-				else if(scaleunc==-1) w *= *(TMath::LocMin(ScaleWeights->begin(),ScaleWeights->end()));
+				if(scaleunc==1) w *= *(TMath::LocMax(ScaleWeightsMod.begin(),ScaleWeightsMod.end()))*pdfnorms[2];
+				else if(scaleunc==-1) w *= *(TMath::LocMin(ScaleWeightsMod.begin(),ScaleWeightsMod.end()))*pdfnorms[3];
 			}
 			
 			//now do scaling: norm*xsection/nevents
@@ -377,6 +389,7 @@ class KBuilderMC : public KBuilder {
 		bool pucorr, trigcorr, isrcorr, realMET, signal;
 		int puunc, pdfunc, mother, isrunc, scaleunc, trigStatUnc, trigSystUnc;
 		TH1 *puhist, *puhistUp, *puhistDown;
+		vector<double> pdfnorms;
 		string normtype;
 		normtypes NTenum;
 		int nEventProc;

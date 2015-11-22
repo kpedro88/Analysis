@@ -4,16 +4,15 @@ source exportProd.sh
 
 KEEPTAR=$1
 JOBDIR=jobs
+INPUT=input/input_selection.txt
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}
 OUTDIR=tree
-STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/${RUN2PRODV}
+STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/${RUN2PRODV}
 
 ./SKcheck.sh "$KEEPTAR" "$JOBDIR"
 
-# first do mc (no HLT)
-INPUT=input/input_selection_zinvtest.txt
-
-SELTYPE=DYmLoose_CleanVars,DYeLoose_CleanVars
+# selections for DY (loose, wjets)
+SELTYPE=DYmLoose_CleanVars,DYeLoose_CleanVars,SLe2_CleanVars,SLm2_CleanVars
 SAMPLES=(
 DYJetsToLL_M-50_HT-100to200 \
 DYJetsToLL_M-50_HT-200to400 \
@@ -31,6 +30,12 @@ TTJets_HT-800to1200 \
 TTJets_HT-1200to2500 \
 TTJets_HT-2500toInf \
 TTZToLLNuNu \
+SingleElectron_re2015C \
+SingleElectron_re2015D \
+SingleElectron_2015Db \
+SingleMuon_re2015C \
+SingleMuon_re2015D \
+SingleMuon_2015Db \
 )
 
 for SAMPLE in ${SAMPLES[@]}
@@ -38,7 +43,8 @@ for SAMPLE in ${SAMPLES[@]}
     ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} ${SELTYPE} ${INDIR} ${OUTDIR} ${STORE}
   done
 
-SELTYPE=GJetLoose_CleanVars
+# selections for GJ (manualclean, loose)
+SELTYPE=GJet_ManualCleanVars,GJetLDP_ManualCleanVars,GJetLoose_CleanVars
 SAMPLES=(
 GJets_HT-100to200 \
 GJets_HT-200to400 \
@@ -51,42 +57,6 @@ QCD_HT-700to1000 \
 QCD_HT-1000to1500 \
 QCD_HT-1500to2000 \
 QCD_HT-2000toInf \
-)
-
-for SAMPLE in ${SAMPLES[@]}
-  do
-    ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} ${SELTYPE} ${INDIR} ${OUTDIR} ${STORE}
-  done
-
-# now data (w/ HLT)
-INPUT=input/input_selection_zinvtest_hlt.txt
-
-SELTYPE=DYmLoose_CleanVars
-SAMPLES=(
-SingleMuon_re2015C \
-SingleMuon_re2015D \
-SingleMuon_2015Db \
-)
-
-for SAMPLE in ${SAMPLES[@]}
-  do
-    ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} ${SELTYPE} ${INDIR} ${OUTDIR} ${STORE}
-  done
-
-SELTYPE=DYeLoose_CleanVars
-SAMPLES=(
-SingleElectron_re2015C \
-SingleElectron_re2015D \
-SingleElectron_2015Db \
-)
-
-for SAMPLE in ${SAMPLES[@]}
-  do
-    ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} ${SELTYPE} ${INDIR} ${OUTDIR} ${STORE}
-  done
-  
-SELTYPE=GJetLoose_CleanVars
-SAMPLES=(
 SinglePhoton_re2015C \
 SinglePhoton_re2015D \
 SinglePhoton_2015Db \

@@ -1,15 +1,3 @@
-#sections: global options in OPTION, selections in SELECTION, variations in VARIATION, datasets in SET
-#option format is: type:name[val] or vtype:name[val1,val2,...]
-#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
-#items on each line in the SELECTION, VARIATION, and SET sections must be tab-separated, with required items first, in order
-#SELECTION/VARIATION: only required item is name, selectors/variators are associated with a selection/variation by tab-indentation
-#SET: required items are type (base), subtype (skim), name (but without filenames, nothing will happen)
-
-OPTION
-int:yieldprecision[2]
-bool:doClone[1]
-bool:quickchain[1]
-
 SELECTION
 GJetLoose
 	NJet	i:njet[2]
@@ -46,10 +34,25 @@ DYeLoose
 	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
-
-VARIATION
-CleanVars
-	Clean
-
-INPUT
-input/input_sets_skim.txt
+SLm2
+	NJet	i:njet[4]
+	HT	d:HTmin[500]
+	MHT	d:MHTmin[200]
+	Muon	b:doMTcut[0]
+	ElectronVeto
+	IsoElectronTrackVeto
+	IsoPionTrackVeto
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
+	EventCleaning
+	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
+SLe2
+	NJet	i:njet[4]
+	HT	d:HTmin[500]
+	MHT	d:MHTmin[200]
+	MuonVeto
+	Electron	b:doMTcut[0]
+	IsoMuonTrackVeto
+	IsoPionTrackVeto
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
+	EventCleaning
+	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]

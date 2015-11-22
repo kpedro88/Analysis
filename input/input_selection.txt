@@ -14,7 +14,8 @@ SELECTION
 signal
 	Blind	i:run[258750]
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
-	GenPt	vd:xbins[0,100,200,300,400,500,650,800,10000]
+	GenPt	vd:xbins[0,400,600,10000]
+	PDFNorm
 	NJet	i:njet[4]
 	HT	d:HTmin[500]
 	MHT	d:MHTmin[200]
@@ -40,7 +41,8 @@ signalUnblind
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 LDP
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
-	GenPt	vd:xbins[0,100,200,300,400,500,650,800,10000]
+	GenPt	vd:xbins[0,400,600,10000]
+	PDFNorm
 	NJet	i:njet[4]
 	HT	d:HTmin[500]
 	MHT	d:MHTmin[200]
@@ -54,44 +56,20 @@ LDP
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 SLm
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
-	GenPt	vd:xbins[0,100,200,300,400,500,650,800,10000]
+	GenPt	vd:xbins[0,400,600,10000]
+	PDFNorm
 	NJet	i:njet[4]
 	HT	d:HTmin[500]
 	MHT	d:MHTmin[200]
 	Muon
 	ElectronVeto
-	IsoElectronTrackVeto
-	IsoPionTrackVeto
 	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 SLe
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
-	GenPt	vd:xbins[0,100,200,300,400,500,650,800,10000]
-	NJet	i:njet[4]
-	HT	d:HTmin[500]
-	MHT	d:MHTmin[200]
-	MuonVeto
-	Electron
-	IsoMuonTrackVeto
-	IsoPionTrackVeto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
-	EventCleaning
-	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
-SLmLoose
-	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
-	GenPt	vd:xbins[0,100,200,300,400,500,650,800,10000]
-	NJet	i:njet[4]
-	HT	d:HTmin[500]
-	MHT	d:MHTmin[200]
-	Muon
-	ElectronVeto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
-	EventCleaning
-	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
-SLeLoose
-	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
-	GenPt	vd:xbins[0,100,200,300,400,500,650,800,10000]
+	GenPt	vd:xbins[0,400,600,10000]
+	PDFNorm
 	NJet	i:njet[4]
 	HT	d:HTmin[500]
 	MHT	d:MHTmin[200]
@@ -100,9 +78,10 @@ SLeLoose
 	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]	b:invert[1]
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
-SLmLooseLDP
+SLmLDP
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
-	GenPt	vd:xbins[0,100,200,300,400,500,650,800,10000]
+	GenPt	vd:xbins[0,400,600,10000]
+	PDFNorm
 	NJet	i:njet[4]
 	HT	d:HTmin[500]
 	MHT	d:MHTmin[200]
@@ -111,9 +90,10 @@ SLmLooseLDP
 	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
-SLeLooseLDP
+SLeLDP
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
-	GenPt	vd:xbins[0,100,200,300,400,500,650,800,10000]
+	GenPt	vd:xbins[0,400,600,10000]
+	PDFNorm
 	NJet	i:njet[4]
 	HT	d:HTmin[500]
 	MHT	d:MHTmin[200]
@@ -124,7 +104,8 @@ SLeLooseLDP
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 GJet
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
-	GenPt	vd:xbins[0,100,200,300,400,500,650,800,10000]
+	GenPt	vd:xbins[0,400,600,10000]
+	PDFNorm
 	NJet	i:njet[4]
 	HT	d:HTmin[500]
 	MHT	d:MHTmin[200]
@@ -161,7 +142,8 @@ DYe
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 GJetLDP
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
-	GenPt	vd:xbins[0,100,200,300,400,500,650,800,10000]
+	GenPt	vd:xbins[0,400,600,10000]
+	PDFNorm
 	NJet	i:njet[4]
 	HT	d:HTmin[500]
 	MHT	d:MHTmin[200]
@@ -196,38 +178,26 @@ DYeLDP
 	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]	b:invert[1]
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
-SLm2
-	NJet	i:njet[4]
-	HT	d:HTmin[500]
-	MHT	d:MHTmin[200]
-	Muon	b:doMTcut[0]
-	ElectronVeto
-	IsoElectronTrackVeto
-	IsoPionTrackVeto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
-	EventCleaning
-	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
-SLe2
-	NJet	i:njet[4]
-	HT	d:HTmin[500]
-	MHT	d:MHTmin[200]
-	MuonVeto
-	Electron	b:doMTcut[0]
-	IsoMuonTrackVeto
-	IsoPionTrackVeto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
-	EventCleaning
-	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
+
+#extra zinv selections
+INPUT
+input/input_selection_zinvtest.txt
 
 VARIATION
 CleanVars
-	Clean
+	Jet	s:vartype[clean]
 ManualCleanVars
-	ManualClean	d:minPtMHT[30] d:maxEtaMHT[5] d:minPtHT[30] d:maxEtaHT[2.4] d:muonR[0.4] d:electronR[0.4] d:photonR[0.4]
+	Jet	s:vartype[manual]
 JECup
-	JetUnc	b:up[1]
+	Jet	s:vartype[JECup]
 JECdown
-	JetUnc	b:up[0]
+	Jet	s:vartype[JECdown]
+CleanVarsDY
+	Jet	s:vartype[cleanDY]
+CleanVarsGJ
+	Jet	s:vartype[cleanGJ]
+CleanVarsGJloose
+	Jet	s:vartype[cleanGJloose]
 
 INPUT
 input/input_sets_skim.txt
