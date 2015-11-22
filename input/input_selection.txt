@@ -106,9 +106,9 @@ GJet
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
 	GenPt	vd:xbins[0,400,600,10000]
 	PDFNorm
-	NJet	i:njet[4]
-	HT	d:HTmin[500]
-	MHT	d:MHTmin[200]
+	NJet	i:njet[2]
+	HT	d:HTmin[200]
+	MHT	d:MHTmin[100]
 	Photon
 	MuonVeto
 	ElectronVeto
@@ -119,9 +119,9 @@ GJet
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 DYm
-	NJet	i:njet[4]
-	HT	d:HTmin[500]
-	MHT	d:MHTmin[200]
+	NJet	i:njet[2]
+	HT	d:HTmin[200]
+	MHT	d:MHTmin[100]
 	DiMuon
 	ElectronVeto
 	IsoElectronTrackVeto
@@ -130,9 +130,9 @@ DYm
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 DYe
-	NJet	i:njet[4]
-	HT	d:HTmin[500]
-	MHT	d:MHTmin[200]
+	NJet	i:njet[2]
+	HT	d:HTmin[200]
+	MHT	d:MHTmin[100]
 	MuonVeto
 	DiElectron
 	IsoMuonTrackVeto
@@ -144,9 +144,9 @@ GJetLDP
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
 	GenPt	vd:xbins[0,400,600,10000]
 	PDFNorm
-	NJet	i:njet[4]
-	HT	d:HTmin[500]
-	MHT	d:MHTmin[200]
+	NJet	i:njet[2]
+	HT	d:HTmin[200]
+	MHT	d:MHTmin[100]
 	Photon
 	MuonVeto
 	ElectronVeto
@@ -157,9 +157,9 @@ GJetLDP
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 DYmLDP
-	NJet	i:njet[4]
-	HT	d:HTmin[500]
-	MHT	d:MHTmin[200]
+	NJet	i:njet[2]
+	HT	d:HTmin[200]
+	MHT	d:MHTmin[100]
 	DiMuon
 	ElectronVeto
 	IsoElectronTrackVeto
@@ -168,9 +168,9 @@ DYmLDP
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 DYeLDP
-	NJet	i:njet[4]
-	HT	d:HTmin[500]
-	MHT	d:MHTmin[200]
+	NJet	i:njet[2]
+	HT	d:HTmin[200]
+	MHT	d:MHTmin[100]
 	MuonVeto
 	DiElectron
 	IsoMuonTrackVeto
@@ -178,10 +178,6 @@ DYeLDP
 	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]	b:invert[1]
 	EventCleaning
 	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
-
-#extra zinv selections
-INPUT
-input/input_selection_zinvtest.txt
 
 VARIATION
 CleanVars

@@ -5,7 +5,8 @@ source exportProd.sh
 KEEPTAR=$1
 JOBDIR=jobs
 INPUT=input/input_selection.txt
-SELTYPE=signal,LDP,SLm,SLe,SLmLDP,SLeLDP,GJet_CleanVars,DYm_CleanVars,DYe_CleanVars,GJetLDP_CleanVars,DYmLDP_CleanVars,DYeLDP_CleanVars
+SELTYPE=signal,LDP,SLm,SLe,SLmLDP,SLeLDP,GJet_CleanVars,DYm_CleanVars,DYe_CleanVars
+SETYPE2=GJetLDP_CleanVars,DYmLDP_CleanVars,DYeLDP_CleanVars,GJet_ManualCleanVars,GJetLDP_ManualCleanVars
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}
 OUTDIR=tree
 STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/${RUN2PRODV}
@@ -84,4 +85,5 @@ WZZ \
 for SAMPLE in ${SAMPLES[@]}
   do
     ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} ${SELTYPE} ${INDIR} ${OUTDIR} ${STORE}
+    ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} ${SELTYPE2} ${INDIR} ${OUTDIR} ${STORE}
   done
