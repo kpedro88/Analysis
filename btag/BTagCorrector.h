@@ -19,7 +19,7 @@ using namespace std;
 class BTagCorrector {
 	public:
 		//constructor
-		BTagCorrector() : debug(false), fastsim(false), btagSFunc(0), mistagSFunc(0), btagCFunc(0), ctagCFunc(0), mistagCFunc(0), h_eff_b(NULL), h_eff_c(NULL), h_eff_udsg(NULL) {}
+		BTagCorrector() : debug(false), fastsim(false), btagSFunc(0), ctagSFunc(0), mistagSFunc(0), btagCFunc(0), ctagCFunc(0), mistagCFunc(0), h_eff_b(NULL), h_eff_c(NULL), h_eff_udsg(NULL) {}
 		//destructor
 		virtual ~BTagCorrector() {}
 		
@@ -46,6 +46,7 @@ class BTagCorrector {
 			readerFastDown = BTagCalibrationReader(&calibFast, BTagEntry::OP_MEDIUM, "fastsim", "down");
 		}
 		void SetBtagSFunc(int u) { btagSFunc = u; }
+		void SetCtagSFunc(int u) { ctagSFunc = u; }
 		void SetMistagSFunc(int u) { mistagSFunc = u; }
 		void SetBtagCFunc(int u) { btagCFunc = u; }
 		void SetCtagCFunc(int u) { ctagCFunc = u; }
@@ -149,7 +150,7 @@ class BTagCorrector {
 			
 			sfEffList = vector<double>(3,1.0); //eff, sf (central, up, or down), cf (central, up, or down)
 			
-			if(flav==5){
+			if(flav==5){ //b-tag
 				sfEffList[0] = h_eff_b->GetBinContent(h_eff_b->FindBin(pt,eta));
 				sfEffList[1] = (btagSFunc==0 ? reader.eval(BTagEntry::FLAV_B,eta,pt) :
 							   (btagSFunc==1 ? readerUp.eval(BTagEntry::FLAV_B,eta,pt) :
@@ -160,19 +161,18 @@ class BTagCorrector {
 												   readerFastDown.eval(BTagEntry::FLAV_B,eta,pt) ) );
 				}
 			}
-			else if(flav==4){ //charm mistag unc taken to be 2x b-tag unc
+			else if(flav==4){ //charm mistag
 				sfEffList[0] = h_eff_c->GetBinContent(h_eff_c->FindBin(pt,eta));
-				double sf = reader.eval(BTagEntry::FLAV_B,eta,pt);
-				sfEffList[1] = (btagSFunc==0 ? sf :
-							   (btagSFunc==1 ? 2*readerUp.eval(BTagEntry::FLAV_B,eta,pt) - sf :
-											   2*readerDown.eval(BTagEntry::FLAV_B,eta,pt) - sf ) );
+				sfEffList[1] = (ctagSFunc==0 ? reader.eval(BTagEntry::FLAV_C,eta,pt) :
+							   (ctagSFunc==1 ? readerUp.eval(BTagEntry::FLAV_C,eta,pt) :
+											   readerDown.eval(BTagEntry::FLAV_C,eta,pt) ) );
 				if(fastsim){
 					sfEffList[2] = (ctagCFunc==0 ? readerFast.eval(BTagEntry::FLAV_C,eta,pt) :
 								   (ctagCFunc==1 ? readerFastUp.eval(BTagEntry::FLAV_C,eta,pt) :
 												   readerFastDown.eval(BTagEntry::FLAV_C,eta,pt) ) );
 				}
 			}
-			else if(flav<4 || flav==21){
+			else if(flav<4 || flav==21){ //udsg mistag
 				sfEffList[0] = h_eff_udsg->GetBinContent(h_eff_udsg->FindBin(pt,eta));
 				sfEffList[1] = (mistagSFunc==0 ? reader.eval(BTagEntry::FLAV_UDSG,eta,pt) :
 							   (mistagSFunc==1 ? readerUp.eval(BTagEntry::FLAV_UDSG,eta,pt) :
@@ -187,7 +187,7 @@ class BTagCorrector {
 		
 		//member variables
 		bool debug, fastsim;
-		int btagSFunc, mistagSFunc;
+		int btagSFunc, ctagSFunc, mistagSFunc;
 		int btagCFunc, ctagCFunc, mistagCFunc;
 		BTagCalibration calib, calibFast;
 		BTagCalibrationReader reader, readerUp, readerDown;
@@ -200,12 +200,12 @@ USAGE:
 //open skim file
 BTagCorrector btagcorr;
 btagcorr->SetEffs(file);
-btagcorr->SetCalib("btag/CSVSLV1.csv");
+btagcorr->SetCalib("btag/CSVv2_mod.csv");
 //if fastsim
 btagcorr->SetFastSim(true);
-btagcorr->SetCalibFastSim("btag/CSV_13TEV_TTJets_12_10_2015_prelimUnc.csv");
+btagcorr->SetCalibFastSim("btag/CSV_13TEV_Combined_20_11_2015.csv");
 //inside event loop
-vector<double> prob = btagcorr->GetCorrections(Jets,Jets_partonFlavor,HTJetsMask);
+vector<double> prob = btagcorr->GetCorrections(Jets,Jets_hadronFlavor,HTJetsMask);
 //put event in each btag bin, weighted by prob[0], prob[1], prob[2], prob[3] for nb = 0, 1, 2, 3+
 */
 

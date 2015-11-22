@@ -124,11 +124,12 @@ Currently available uncertainties:
 * Pileup reweighting
 * PDF weights
 * Scale weights (renormalization/factorization)
-* ISR corrections
+* initial state radiation
 * trigger efficiency statistical
 * trigger efficiency systematic
 * Jet energy corrections
 * b-tagging scale factors
+* c-tagging scale factors
 * mistagging scale factors
 * b-tagging correction factors (fastsim only)
 * c-tagging correction factors (fastsim only)

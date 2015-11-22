@@ -378,16 +378,17 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 			bool debug = localOpt->Get("debug",false); btagcorr.SetDebug(debug);
 			
 			//initialize btag corrector calibrations
-			btagcorr.SetCalib("btag/CSVSLV1.csv");
+			btagcorr.SetCalib("btag/CSVv2_mod.csv");
 		}
 		virtual void CheckBranches(){
 			looper->fChain->SetBranchStatus("HTJetsMask",1);
 			looper->fChain->SetBranchStatus("Jets",1);
-			looper->fChain->SetBranchStatus("Jets_partonFlavor",1);
+			looper->fChain->SetBranchStatus("Jets_hadronFlavor",1);
 		}
 		virtual void CheckLooper(){
 			//check for option
 			int btagSFunc = 0; looper->globalOpt->Get("btagSFunc",btagSFunc); btagcorr.SetBtagSFunc(btagSFunc);
+			int ctagSFunc = 0; looper->globalOpt->Get("ctagSFunc",ctagSFunc); btagcorr.SetCtagSFunc(ctagSFunc);
 			int mistagSFunc = 0; looper->globalOpt->Get("mistagSFunc",mistagSFunc); btagcorr.SetMistagSFunc(mistagSFunc);
 
 			//get efficiency histograms
@@ -403,7 +404,7 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 			if(fastsim){
 				//initialize btag corrector fastsim calibrations
 				//todo: check the sample name and choose the appropriate CFs (once available)
-				btagcorr.SetCalibFastSim("btag/CSV_13TEV_TTJets_12_10_2015_prelimUnc.csv");
+				btagcorr.SetCalibFastSim("btag/CSV_13TEV_Combined_20_11_2015.csv");
 				
 				//check for option
 				int btagCFunc = 0; looper->globalOpt->Get("btagCFunc",btagCFunc); btagcorr.SetBtagCFunc(btagCFunc);
@@ -415,7 +416,7 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			//get probabilities
-			prob = btagcorr.GetCorrections(looper->Jets,looper->Jets_partonFlavor,looper->HTJetsMask);
+			prob = btagcorr.GetCorrections(looper->Jets,looper->Jets_hadronFlavor,looper->HTJetsMask);
 			return true;
 		}
 		

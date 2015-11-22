@@ -606,7 +606,7 @@ class KBTagEfficiencySelector : public KSelector<KSkimmer> {
 				if(!looper->HTJetsMask->at(ja)) continue;
 				
 				//fill by flavor
-				int flav = abs(looper->Jets_partonFlavor->at(ja));
+				int flav = abs(looper->Jets_hadronFlavor->at(ja));
 				double csv = looper->Jets_bDiscriminatorCSV->at(ja);
 				double pt = looper->Jets->at(ja).Pt();
 				//use abs(eta) for now
