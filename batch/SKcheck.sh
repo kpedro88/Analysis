@@ -1,7 +1,7 @@
 #!/bin/bash
 
 KEEPTAR=$1
-JOBDIR=$2
+JOBDIR=jobs
 
 # grid proxy existence & expiration check
 PCHECK=`voms-proxy-info -timeleft`
