@@ -11,7 +11,7 @@ TIME=$1
 OUTNAME=$2
 
 #default is beginning of time
-if [ -z "$TIME" ]; then
+if [[ -z $TIME ]]; then
 	#old default was 24 hrs ago
 	#TIME=$(date "--date=$(date) -1 day" +"%Y-%m-%d %H:%M")
 	TIME="1970-01-01 00:00"
@@ -33,13 +33,14 @@ echo "cd ${JOBDIR}" >> ${OUTNAME}
 
 #keep track of jobs that have been checked
 joblist=""
+counter=0
 
 #search for "return value" in condor logs newer than TIME - denotes finished job
 #or "abort" - denotes removed job
 for file in $(grep -l "return value\|abort" $(find ${JOBDIR}/*.condor -newermt "${TIME}")); do
 	#skip job if it finished successfully - return value 0
 	success=$(grep -lw "return value 0" ${file})
-	if [[ -n "$success" ]]; then
+	if [[ -n $success ]]; then
 		continue
 	fi
 	
@@ -53,15 +54,18 @@ for file in $(grep -l "return value\|abort" $(find ${JOBDIR}/*.condor -newermt "
 	#check for newer logs that succeeded
 	newerfiles=$(find ${JOBDIR}/${base}*.condor -newer "${file}")
 	newerstatus=""
-	if [ -n "$newerfiles" ]; then
+	stillrunning=""
+	if [[ -n $newerfiles ]]; then
 		newerstatus=$(grep -lw "return value 0" ${newerfiles})
+		stillrunning=$(grep -lwv "return value\|abort" ${newerfiles})
 	fi
 	
 	#if none were found, the job failed
-	if [ -z "$newerstatus" ]; then
+	if [[ -z $newerstatus && -z $stillrunning ]]; then
 		#optional: output return value for failed job as comment in resub script
 		#echo "#"$(grep -w "return value" ${file}) >> ${OUTNAME}
 		echo "condor_submit jobExecCondor_${base}.jdl" >> ${OUTNAME}
+		counter=$((counter+1))
 	fi
 	
 	#append jobname to list
@@ -71,4 +75,5 @@ done
 echo "cd -" >> ${OUTNAME}
 
 echo "Job resubmission script created: ${OUTNAME}"
+echo "     Number of jobs to resubmit: ${counter}"
 chmod +x ${OUTNAME}

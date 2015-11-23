@@ -57,7 +57,6 @@ ST_t-channel_top \
 ST_t-channel_antitop \
 ST_tW_top \
 ST_tW_antitop \
-WWToLNuQQ \
 WWTo2L2Nu \
 WWTo1L1Nu2Q \
 ZZTo2Q2Nu \
