@@ -41,23 +41,14 @@ class KJetVariator : public KVariator<KSkimmer> {
 		}
 		//functions
 		virtual void DoVariation() {
-			//initialize
-			bestPhoton = new vector<TLorentzVector>();
-			Jets = new vector<TLorentzVector>();
-			HTJetsMask = new vector<bool>();
-			MHTJetsMask = new vector<bool>();
-			Jets_partonFlavor = new vector<int>();
-			Jets_hadronFlavor = new vector<int>();
-			Jets_bDiscriminatorCSV = new vector<double>();
-			
 			//store original values
-			*(bestPhoton) = *(looper->bestPhoton);
-			*(Jets) = *(looper->Jets);
-			*(HTJetsMask) = *(looper->HTJetsMask);
-			*(MHTJetsMask) = *(looper->MHTJetsMask);
-			*(Jets_partonFlavor) = *(looper->Jets_partonFlavor);
-			*(Jets_hadronFlavor) = *(looper->Jets_hadronFlavor);
-			*(Jets_bDiscriminatorCSV) = *(looper->Jets_bDiscriminatorCSV);
+			bestPhoton = *(looper->bestPhoton);
+			Jets = *(looper->Jets);
+			HTJetsMask = *(looper->HTJetsMask);
+			MHTJetsMask = *(looper->MHTJetsMask);
+			Jets_partonFlavor = *(looper->Jets_partonFlavor);
+			Jets_hadronFlavor = *(looper->Jets_hadronFlavor);
+			Jets_bDiscriminatorCSV = *(looper->Jets_bDiscriminatorCSV);
 			JetID = looper->JetID;
 			NumPhotons = looper->NumPhotons;
 			NJets = looper->NJets;
@@ -308,13 +299,13 @@ class KJetVariator : public KVariator<KSkimmer> {
 		}
 		virtual void UndoVariation() {
 			//restore original values
-			*(looper->bestPhoton) = *(bestPhoton);
-			*(looper->Jets) = *(Jets);
-			*(looper->HTJetsMask) = *(HTJetsMask);
-			*(looper->MHTJetsMask) = *(MHTJetsMask);
-			*(looper->Jets_partonFlavor) = *(Jets_partonFlavor);
-			*(looper->Jets_hadronFlavor) = *(Jets_hadronFlavor);
-			*(looper->Jets_bDiscriminatorCSV) = *(Jets_bDiscriminatorCSV);
+			*(looper->bestPhoton) = bestPhoton;
+			*(looper->Jets) = Jets;
+			*(looper->HTJetsMask) = HTJetsMask;
+			*(looper->MHTJetsMask) = MHTJetsMask;
+			*(looper->Jets_partonFlavor) = Jets_partonFlavor;
+			*(looper->Jets_hadronFlavor) = Jets_hadronFlavor;
+			*(looper->Jets_bDiscriminatorCSV) = Jets_bDiscriminatorCSV;
 			looper->JetID = JetID;
 			looper->NumPhotons = NumPhotons;
 			looper->NJets = NJets;
@@ -335,13 +326,13 @@ class KJetVariator : public KVariator<KSkimmer> {
 		
 		//member variables
 		vartypes vtype;
-		vector<TLorentzVector> *bestPhoton;
-		vector<TLorentzVector> *Jets;
-		vector<bool> *HTJetsMask;
-		vector<bool> *MHTJetsMask;
-		vector<int> *Jets_hadronFlavor;
-		vector<int> *Jets_partonFlavor;
-		vector<double> *Jets_bDiscriminatorCSV;
+		vector<TLorentzVector> bestPhoton;
+		vector<TLorentzVector> Jets;
+		vector<bool> HTJetsMask;
+		vector<bool> MHTJetsMask;
+		vector<int> Jets_hadronFlavor;
+		vector<int> Jets_partonFlavor;
+		vector<double> Jets_bDiscriminatorCSV;
 		Bool_t          JetID;
 		Int_t           NumPhotons;
 		Int_t           NJets;
