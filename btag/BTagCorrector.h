@@ -52,7 +52,7 @@ class BTagCorrector {
 		void SetCtagCFunc(int u) { ctagCFunc = u; }
 		void SetMistagCFunc(int u) { mistagCFunc = u; }
 		
-		//function
+		//method 1b
 		vector<double> GetCorrections(vector<TLorentzVector>* Jets, vector<int>* Jets_flavor, vector<bool>* HTJetsMask){
 			//reset probabilities
 			vector<double> prob(4,0.0);
@@ -138,6 +138,40 @@ class BTagCorrector {
 			return prob;
 		}
 		
+		//method 1a
+		double GetSimpleCorrection(vector<TLorentzVector>* Jets, vector<int>* Jets_flavor, vector<bool>* HTJetsMask, vector<double>* Jets_bDiscriminatorCSV){
+			//result
+			double c_numer = 1.0; //data
+			double c_denom = 1.0; //mc
+			
+			//loop over jets
+			vector<vector<double> > sfEffLists = vector<vector<double> >(Jets->size(),vector<double>());
+			for(unsigned ja = 0; ja < Jets->size(); ++ja){
+				//HT jet cuts
+				if(!HTJetsMask->at(ja)) continue;
+				
+				//get sf and eff values (checks if already calculated)
+				InitSFEff(Jets->at(ja).Pt(), Jets->at(ja).Eta(), Jets_flavor->at(ja), sfEffLists[ja]);
+				double eff_a = sfEffLists[ja][0]*sfEffLists[ja][2]; //eff * CF
+				double sf_a = sfEffLists[ja][1];
+				
+				//jet index, pt, eta, flavor, csv, eff, sf, cf
+				if(debug) cout << "Jet " << ja << ": " << Jets->at(ja).Pt() << ", " << fabs(Jets->at(ja).Eta()) << ", " << abs(Jets_flavor->at(ja))  << ", " << Jets_bDiscriminatorCSV->at(ja)
+								<< ", " << sfEffLists[ja][0] << ", " << sfEffLists[ja][1] << ", " << sfEffLists[ja][2] << endl;
+							
+				if(Jets_bDiscriminatorCSV->at(ja) > 0.890){
+					c_numer *= eff_a;
+					c_denom *= eff_a*sf_a;
+				}
+				else {
+					c_numer *= 1-eff_a;
+					c_denom *= 1-eff_a*sf_a;
+				}
+			}
+			
+			return c_numer/c_denom;
+		}
+		
 		//helper function
 		void InitSFEff(double pt, double eta, int flav, vector<double>& sfEffList){
 			//avoid rerunning this
@@ -207,6 +241,8 @@ btagcorr->SetCalibFastSim("btag/CSV_13TEV_Combined_20_11_2015.csv");
 //inside event loop
 vector<double> prob = btagcorr->GetCorrections(Jets,Jets_hadronFlavor,HTJetsMask);
 //put event in each btag bin, weighted by prob[0], prob[1], prob[2], prob[3] for nb = 0, 1, 2, 3+
+//instead, if cutting on nb, use method 1a in event loop to get event weight
+double corr = btagcorr->GetSimpleCorrection(Jets,Jets_hadronFlavor,HTJetsMask,Jets_bDiscriminatorCSV);
 */
 
 #endif
