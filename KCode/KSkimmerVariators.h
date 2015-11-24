@@ -159,9 +159,9 @@ class KJetVariator : public KVariator<KSkimmer> {
 				
 				//reassign best photon if found
 				if(bestPhotonIndex!=-1){
-					vector<TLorentzVector>* bestPhotonClean = new vector<TLorentzVector>();
-					bestPhotonClean->push_back(looper->photonCands->at(bestPhotonIndex));
-					*(looper->bestPhoton) = *(bestPhotonClean);
+					vector<TLorentzVector> bestPhotonClean;
+					bestPhotonClean.push_back(looper->photonCands->at(bestPhotonIndex));
+					*(looper->bestPhoton) = bestPhotonClean;
 				}
 				looper->NumPhotons = newNumPhotons;
 				

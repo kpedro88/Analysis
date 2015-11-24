@@ -6,6 +6,7 @@
 #include "KBuilder.h"
 #include "KMath.h"
 #include "../btag/BTagCorrector.h"
+#include "../corrections/EventListFilter.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -337,7 +338,12 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 	public:
 		//constructor
 		KMETFilterSelector() : KSelector<KBuilder>() { }
-		KMETFilterSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), fastsim(false) { }
+		KMETFilterSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), fastsim(false), inputfile("") { 
+			localOpt->Get("inputfile",inputfile);
+			if(inputfile.size()>0){
+				filter = EventListFilter(inputfile);
+			}
+		}
 		virtual void CheckBranches(){
 			looper->fChain->SetBranchStatus("NVtx",1);
 			looper->fChain->SetBranchStatus("eeBadScFilter",1);
@@ -345,6 +351,11 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 			looper->fChain->SetBranchStatus("HBHENoiseFilter",1);
 			looper->fChain->SetBranchStatus("HBHEIsoNoiseFilter",1);
 			looper->fChain->SetBranchStatus("CSCTightHaloFilter",1);
+			if(filter.Initialized()){
+				looper->fChain->SetBranchStatus("RunNum",1);
+				looper->fChain->SetBranchStatus("LumiBlockNum",1);
+				looper->fChain->SetBranchStatus("EvtNum",1);				
+			}
 		}
 		virtual void CheckLooper(){
 			//check fastsim stuff
@@ -357,11 +368,15 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return looper->NVtx > 0 && looper->eeBadScFilter==1 && looper->eeBadSc4Filter && looper->HBHENoiseFilter && looper->HBHEIsoNoiseFilter && looper->CSCTightHaloFilter;
+			bool CSCTightHaloFilter = looper->CSCTightHaloFilter;
+			if(filter.Initialized()) CSCTightHaloFilter = filter.CheckEvent(looper->RunNum,looper->LumiBlockNum,looper->EvtNum);
+			return looper->NVtx > 0 && looper->eeBadScFilter==1 && looper->eeBadSc4Filter && looper->HBHENoiseFilter && looper->HBHEIsoNoiseFilter && CSCTightHaloFilter;
 		}
 		
 		//member variables
 		bool fastsim;
+		string inputfile;
+		EventListFilter filter;
 };
 
 //---------------------------------------------------------------
