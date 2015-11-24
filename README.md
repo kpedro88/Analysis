@@ -74,7 +74,7 @@ The last argument splits the datacard input list into multiple lists (each conta
 
 To plot yields vs. RA2 bin (where the binning can be defined in the input file) in the signal region and save the plot as an image:
 ```
-root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV5/tree_signal","input/input_RA2bin.txt",1)'
+root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV5/tree_signal","input/input_RA2bin.txt",1)'
 ```
 Omitting the last argument will display the plot without saving it.
 
@@ -82,7 +82,7 @@ Omitting the last argument will display the plot without saving it.
 
 To save the individual histograms for each signal and background process to a ROOT file, for the creation of datacards for limit setting:
 ```
-root -b -l -q 'MakeAllDC.C+("root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV5")'
+root -b -l -q 'MakeAllDC.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV5")'
 ```
 This macro calls the macro `KPlotDriverDC.C`, which is a modification of the macro from the previous section
 that includes an extra input argument to specify the name of the output ROOT file.
@@ -92,21 +92,21 @@ after they are generated.
 
 To save the histogram for data to a ROOT file for datacard creation:
 ```
-root -b -l -q 'MakeAllDCdata.C+("root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV5","signal")'
+root -b -l -q 'MakeAllDCdata.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV5","signal")'
 ```
 
 ### Signal systematics
 
 To save the individual histograms for the FullSim signal processes to a ROOT file for each different variation of systematic uncertainty and control region contamination:
 ```
-root -b -l -q 'MakeAllDCsyst.C+(0,"root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV5")'
+root -b -l -q 'MakeAllDCsyst.C+(0,"root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV5")'
 ```
 This macro calls the macro `KPlotDriverDCsyst.C`, which is a modification of the macro from the previous section
 that includes extra input arguments to specify the list of input samples and the name and direction of the systematic variation (up or down).
 
 To check specific systematics or contaminations, there are extra arguments. E.g., to check only the PDF uncertainty and no contaminations:
 ```
-root -b -l -q 'MakeAllDCsyst.C+(0,"root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV5","pdfunc","")'
+root -b -l -q 'MakeAllDCsyst.C+(0,"root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV5","pdfunc","")'
 ```
 
 Because of the large number of model points in the FastSim signal samples, batch mode should be used to run over them:
