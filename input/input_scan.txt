@@ -9,7 +9,7 @@ OPTION
 int:yieldprecision[2]
 bool:doClone[1]
 bool:quickchain[1]
-string:outpre[T1bbbb_]
+vstring:outprelist[T1bbbb,T1tttt,T1qqqq]
 string:outsuff[_fast]
 
 INPUT

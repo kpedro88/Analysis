@@ -75,7 +75,7 @@ class KScanner : public NtupleClass {
 				else {
 					//make the name
 					stringstream oss;
-					oss << outpre << "mMother-" << thePoint.first << "_mLSP-" << thePoint.second << outsuff;
+					oss << outpre << "_" << "mMother-" << thePoint.first << "_mLSP-" << thePoint.second << outsuff;
 					string oname = oss.str();
 					
 					//make the selection and tree, fill it

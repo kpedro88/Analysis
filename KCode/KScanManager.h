@@ -57,6 +57,19 @@ class KScanManager : public KManager {
 		void Scan(){
 			if(!parsed) return;
 			
+			//name check
+			vector<string> outprelist;
+			string outpre = "";
+			if(globalOpt->Get("outprelist",outprelist)){
+				for(unsigned s = 0; s < outprelist.size(); ++s){
+					if(MyBase->GetName().find(outprelist[s])!=string::npos){
+						outpre = outprelist[s];
+						break;
+					}
+				}
+				if(outpre.size()>0) globalOpt->Set<string>("outpre",outpre);
+			}
+			
 			//initialize scanner after parsing
 			scanner = new KScanner(MyBase);
 			
