@@ -473,7 +473,13 @@ class KEventCleaningSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
 		KEventCleaningSelector() : KSelector<KSkimmer>() { }
-		KEventCleaningSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
+		KEventCleaningSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), fastsim(false) { }
+		virtual void CheckLooper(){
+			//check if fastsim
+			fastsim = looper->MyBase->GetLocalOpt()->Get("fastsim",false);
+			//disable this for fastsim
+			if(fastsim) dummy = true;
+		}
 		
 		//this selector doesn't add anything to tree
 		
@@ -483,6 +489,7 @@ class KEventCleaningSelector : public KSelector<KSkimmer> {
 		}
 		
 		//member variables
+		bool fastsim;
 };
 
 //----------------------------------------------------
