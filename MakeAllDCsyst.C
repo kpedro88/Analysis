@@ -65,9 +65,10 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 	//do the variations
 	for(unsigned i = 0; i < systs.size(); ++i){
 		//special cases
-		
+		//skip all in batch mode
+		if(systs[i]=="none") break;
 		//the nominal version
-		if(systs[i]=="nominal"){
+		else if(systs[i]=="nominal"){
 			cout << "nominal" << endl;
 			KPlotDriverDCsyst(indir+inpre+region,input,setlist,outdir+outpre+region+osuff);
 			continue;
@@ -97,6 +98,7 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 	
 	//now do the contaminations
 	for(unsigned i = 0; i < contams.size(); ++i){
+		if(contams[i]=="none") break;
 		cout << contams[i] << endl;
 		KPlotDriverDCsyst(indir+inpre+contams[i],input,setlist,outdir+outpre+contams[i]+osuff);
 	}
