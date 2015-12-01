@@ -338,6 +338,7 @@ class KPlotManager : public KManager {
 					if(out_file){
 						out_file->cd();
 						string oname = p->first + "_" + MySets[s]->GetName();
+						MySets[s]->GetHisto()->SetName(oname.c_str());
 						MySets[s]->GetHisto()->Write(oname.c_str());
 					}
 				}
@@ -539,6 +540,7 @@ class KPlotManager : public KManager {
 						if(out_file){
 							out_file->cd();
 							string oname = string(graphs[g]->GetName()) + "_" + roc_name;
+							graphs[g]->SetName(oname.c_str());
 							graphs[g]->Write(oname.c_str());
 						}
 					}
