@@ -439,6 +439,7 @@ class KPlotManager : public KManager {
 					if(out_file){
 						out_file->cd();
 						string oname = pm->first + "_" + theSet->GetName();
+						theSet->GetHisto()->SetName(oname.c_str());
 						theSet->GetHisto()->Write(oname.c_str());
 					}
 					ptmp->GetHisto()->Draw("sameaxis"); //draw again so axes on top

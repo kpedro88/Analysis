@@ -15,7 +15,7 @@ using namespace std;
 
 //recompile:
 //root -b -l -q MakeAllDCsyst.C++
-void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV4/", string systTypes="puunc,pdfunc,scaleunc,isrunc,trigStatUnc,trigSystUnc,JEC,btagSFunc,ctagSFunc,mistagSFunc", string contamTypes="LDP,GJet_CleanVars,GJetLDP_CleanVars,GJet_CleanVarsGJ,GJetLDP_CleanVarsGJ", int part=-1){
+void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV4/", string systTypes="nominal,QCD,puunc,pdfunc,scaleunc,isrunc,trigStatUnc,trigSystUnc,JEC,btagSFunc,ctagSFunc,mistagSFunc", string contamTypes="LDP,GJet_CleanVars,GJetLDP_CleanVars,GJet_CleanVarsGJ,GJetLDP_CleanVarsGJ", int part=-1){
 	gErrorIgnoreLevel = kBreak;
 	
 	if(mode==-1){
@@ -60,11 +60,25 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 	if(outdir.size()>0) system(("mkdir -p "+outdir).c_str());
 	
 	//first do the nominal version
-	cout << "nominal" << endl;
-	KPlotDriverDCsyst(indir+inpre+region,input,setlist,outdir+outpre+region+osuff);
 	
-	//now do the variations
+	
+	//do the variations
 	for(unsigned i = 0; i < systs.size(); ++i){
+		//special cases
+		
+		//the nominal version
+		if(systs[i]=="nominal"){
+			cout << "nominal" << endl;
+			KPlotDriverDCsyst(indir+inpre+region,input,setlist,outdir+outpre+region+osuff);
+			continue;
+		}
+		//220 bin version
+		else if(systs[i]=="QCD"){
+			cout << "220 bins" << endl;
+			KPlotDriverDCsyst(indir+inpre+region,"input/input_RA2bin_DC_QCD.txt",setlist,outdir+outpre+region+"_QCD"+osuff);
+			continue;
+		}
+		
 		string ovar = "";
 		//up
 		cout << systs[i] << " up" << endl;
