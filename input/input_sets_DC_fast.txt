@@ -2785,6 +2785,20 @@ hist	mc	T1qqqq_650_450_fast
 	base	mc	T1qqqq_650_450_fast	s:filename[tree_T1qqqq_650_450_fast.root]	d:xsection[5.60048]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
 hist	mc	T1qqqq_650_475_fast
 	base	mc	T1qqqq_650_475_fast	s:filename[tree_T1qqqq_650_475_fast.root]	d:xsection[5.60048]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_650_500_fast
+	base	mc	T1qqqq_650_500_fast	s:filename[tree_T1qqqq_650_500_fast.root]	d:xsection[5.60048]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_650_525_fast
+	base	mc	T1qqqq_650_525_fast	s:filename[tree_T1qqqq_650_525_fast.root]	d:xsection[5.60048]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_650_550_fast
+	base	mc	T1qqqq_650_550_fast	s:filename[tree_T1qqqq_650_550_fast.root]	d:xsection[5.60048]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_650_575_fast
+	base	mc	T1qqqq_650_575_fast	s:filename[tree_T1qqqq_650_575_fast.root]	d:xsection[5.60048]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_650_600_fast
+	base	mc	T1qqqq_650_600_fast	s:filename[tree_T1qqqq_650_600_fast.root]	d:xsection[5.60048]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_650_625_fast
+	base	mc	T1qqqq_650_625_fast	s:filename[tree_T1qqqq_650_625_fast.root]	d:xsection[5.60048]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_675_475_fast
+	base	mc	T1qqqq_675_475_fast	s:filename[tree_T1qqqq_675_475_fast.root]	d:xsection[4.43132]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
 hist	mc	T1qqqq_675_500_fast
 	base	mc	T1qqqq_675_500_fast	s:filename[tree_T1qqqq_675_500_fast.root]	d:xsection[4.43132]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
 hist	mc	T1qqqq_675_525_fast
@@ -2799,6 +2813,52 @@ hist	mc	T1qqqq_675_625_fast
 	base	mc	T1qqqq_675_625_fast	s:filename[tree_T1qqqq_675_625_fast.root]	d:xsection[4.43132]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
 hist	mc	T1qqqq_675_650_fast
 	base	mc	T1qqqq_675_650_fast	s:filename[tree_T1qqqq_675_650_fast.root]	d:xsection[4.43132]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_700_0_fast
+	base	mc	T1qqqq_700_0_fast	s:filename[tree_T1qqqq_700_0_fast.root]	d:xsection[3.5251]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_700_100_fast
+	base	mc	T1qqqq_700_100_fast	s:filename[tree_T1qqqq_700_100_fast.root]	d:xsection[3.5251]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_700_200_fast
+	base	mc	T1qqqq_700_200_fast	s:filename[tree_T1qqqq_700_200_fast.root]	d:xsection[3.5251]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_700_300_fast
+	base	mc	T1qqqq_700_300_fast	s:filename[tree_T1qqqq_700_300_fast.root]	d:xsection[3.5251]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_700_400_fast
+	base	mc	T1qqqq_700_400_fast	s:filename[tree_T1qqqq_700_400_fast.root]	d:xsection[3.5251]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_700_450_fast
+	base	mc	T1qqqq_700_450_fast	s:filename[tree_T1qqqq_700_450_fast.root]	d:xsection[3.5251]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_700_500_fast
+	base	mc	T1qqqq_700_500_fast	s:filename[tree_T1qqqq_700_500_fast.root]	d:xsection[3.5251]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_700_525_fast
+	base	mc	T1qqqq_700_525_fast	s:filename[tree_T1qqqq_700_525_fast.root]	d:xsection[3.5251]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_700_550_fast
+	base	mc	T1qqqq_700_550_fast	s:filename[tree_T1qqqq_700_550_fast.root]	d:xsection[3.5251]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_700_575_fast
+	base	mc	T1qqqq_700_575_fast	s:filename[tree_T1qqqq_700_575_fast.root]	d:xsection[3.5251]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_700_600_fast
+	base	mc	T1qqqq_700_600_fast	s:filename[tree_T1qqqq_700_600_fast.root]	d:xsection[3.5251]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_700_625_fast
+	base	mc	T1qqqq_700_625_fast	s:filename[tree_T1qqqq_700_625_fast.root]	d:xsection[3.5251]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_700_650_fast
+	base	mc	T1qqqq_700_650_fast	s:filename[tree_T1qqqq_700_650_fast.root]	d:xsection[3.5251]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_700_675_fast
+	base	mc	T1qqqq_700_675_fast	s:filename[tree_T1qqqq_700_675_fast.root]	d:xsection[3.5251]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_725_525_fast
+	base	mc	T1qqqq_725_525_fast	s:filename[tree_T1qqqq_725_525_fast.root]	d:xsection[2.81957]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_725_550_fast
+	base	mc	T1qqqq_725_550_fast	s:filename[tree_T1qqqq_725_550_fast.root]	d:xsection[2.81957]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_725_575_fast
+	base	mc	T1qqqq_725_575_fast	s:filename[tree_T1qqqq_725_575_fast.root]	d:xsection[2.81957]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_725_600_fast
+	base	mc	T1qqqq_725_600_fast	s:filename[tree_T1qqqq_725_600_fast.root]	d:xsection[2.81957]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_725_625_fast
+	base	mc	T1qqqq_725_625_fast	s:filename[tree_T1qqqq_725_625_fast.root]	d:xsection[2.81957]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_725_650_fast
+	base	mc	T1qqqq_725_650_fast	s:filename[tree_T1qqqq_725_650_fast.root]	d:xsection[2.81957]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_725_675_fast
+	base	mc	T1qqqq_725_675_fast	s:filename[tree_T1qqqq_725_675_fast.root]	d:xsection[2.81957]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_725_700_fast
+	base	mc	T1qqqq_725_700_fast	s:filename[tree_T1qqqq_725_700_fast.root]	d:xsection[2.81957]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_750_400_fast
+	base	mc	T1qqqq_750_400_fast	s:filename[tree_T1qqqq_750_400_fast.root]	d:xsection[2.26585]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
 hist	mc	T1qqqq_750_450_fast
 	base	mc	T1qqqq_750_450_fast	s:filename[tree_T1qqqq_750_450_fast.root]	d:xsection[2.26585]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
 hist	mc	T1qqqq_750_500_fast
@@ -2923,6 +2983,56 @@ hist	mc	T1qqqq_875_800_fast
 	base	mc	T1qqqq_875_800_fast	s:filename[tree_T1qqqq_875_800_fast.root]	d:xsection[0.820259]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
 hist	mc	T1qqqq_875_825_fast
 	base	mc	T1qqqq_875_825_fast	s:filename[tree_T1qqqq_875_825_fast.root]	d:xsection[0.820259]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_875_850_fast
+	base	mc	T1qqqq_875_850_fast	s:filename[tree_T1qqqq_875_850_fast.root]	d:xsection[0.820259]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_900_0_fast
+	base	mc	T1qqqq_900_0_fast	s:filename[tree_T1qqqq_900_0_fast.root]	d:xsection[0.677478]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_900_100_fast
+	base	mc	T1qqqq_900_100_fast	s:filename[tree_T1qqqq_900_100_fast.root]	d:xsection[0.677478]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_900_200_fast
+	base	mc	T1qqqq_900_200_fast	s:filename[tree_T1qqqq_900_200_fast.root]	d:xsection[0.677478]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_900_300_fast
+	base	mc	T1qqqq_900_300_fast	s:filename[tree_T1qqqq_900_300_fast.root]	d:xsection[0.677478]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_900_400_fast
+	base	mc	T1qqqq_900_400_fast	s:filename[tree_T1qqqq_900_400_fast.root]	d:xsection[0.677478]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_900_450_fast
+	base	mc	T1qqqq_900_450_fast	s:filename[tree_T1qqqq_900_450_fast.root]	d:xsection[0.677478]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_900_500_fast
+	base	mc	T1qqqq_900_500_fast	s:filename[tree_T1qqqq_900_500_fast.root]	d:xsection[0.677478]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_900_550_fast
+	base	mc	T1qqqq_900_550_fast	s:filename[tree_T1qqqq_900_550_fast.root]	d:xsection[0.677478]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_900_600_fast
+	base	mc	T1qqqq_900_600_fast	s:filename[tree_T1qqqq_900_600_fast.root]	d:xsection[0.677478]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_900_650_fast
+	base	mc	T1qqqq_900_650_fast	s:filename[tree_T1qqqq_900_650_fast.root]	d:xsection[0.677478]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_900_700_fast
+	base	mc	T1qqqq_900_700_fast	s:filename[tree_T1qqqq_900_700_fast.root]	d:xsection[0.677478]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_900_725_fast
+	base	mc	T1qqqq_900_725_fast	s:filename[tree_T1qqqq_900_725_fast.root]	d:xsection[0.677478]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_900_750_fast
+	base	mc	T1qqqq_900_750_fast	s:filename[tree_T1qqqq_900_750_fast.root]	d:xsection[0.677478]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_900_775_fast
+	base	mc	T1qqqq_900_775_fast	s:filename[tree_T1qqqq_900_775_fast.root]	d:xsection[0.677478]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_900_800_fast
+	base	mc	T1qqqq_900_800_fast	s:filename[tree_T1qqqq_900_800_fast.root]	d:xsection[0.677478]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_900_825_fast
+	base	mc	T1qqqq_900_825_fast	s:filename[tree_T1qqqq_900_825_fast.root]	d:xsection[0.677478]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_900_850_fast
+	base	mc	T1qqqq_900_850_fast	s:filename[tree_T1qqqq_900_850_fast.root]	d:xsection[0.677478]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_900_875_fast
+	base	mc	T1qqqq_900_875_fast	s:filename[tree_T1qqqq_900_875_fast.root]	d:xsection[0.677478]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_925_725_fast
+	base	mc	T1qqqq_925_725_fast	s:filename[tree_T1qqqq_925_725_fast.root]	d:xsection[0.561889]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_925_750_fast
+	base	mc	T1qqqq_925_750_fast	s:filename[tree_T1qqqq_925_750_fast.root]	d:xsection[0.561889]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_925_775_fast
+	base	mc	T1qqqq_925_775_fast	s:filename[tree_T1qqqq_925_775_fast.root]	d:xsection[0.561889]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_925_800_fast
+	base	mc	T1qqqq_925_800_fast	s:filename[tree_T1qqqq_925_800_fast.root]	d:xsection[0.561889]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_925_825_fast
+	base	mc	T1qqqq_925_825_fast	s:filename[tree_T1qqqq_925_825_fast.root]	d:xsection[0.561889]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1qqqq_925_850_fast
+	base	mc	T1qqqq_925_850_fast	s:filename[tree_T1qqqq_925_850_fast.root]	d:xsection[0.561889]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
 hist	mc	T1qqqq_925_875_fast
 	base	mc	T1qqqq_925_875_fast	s:filename[tree_T1qqqq_925_875_fast.root]	d:xsection[0.561889]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
 hist	mc	T1qqqq_925_900_fast
@@ -2969,6 +3079,40 @@ hist	mc	T1qqqq_975_875_fast
 	base	mc	T1qqqq_975_875_fast	s:filename[tree_T1qqqq_975_875_fast.root]	d:xsection[0.389266]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
 hist	mc	T1qqqq_975_900_fast
 	base	mc	T1qqqq_975_900_fast	s:filename[tree_T1qqqq_975_900_fast.root]	d:xsection[0.389266]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1000_0_fast
+	base	mc	T1tttt_1000_0_fast	s:filename[tree_T1tttt_1000_0_fast.root]	d:xsection[0.325388]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1000_100_fast
+	base	mc	T1tttt_1000_100_fast	s:filename[tree_T1tttt_1000_100_fast.root]	d:xsection[0.325388]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1000_150_fast
+	base	mc	T1tttt_1000_150_fast	s:filename[tree_T1tttt_1000_150_fast.root]	d:xsection[0.325388]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1000_200_fast
+	base	mc	T1tttt_1000_200_fast	s:filename[tree_T1tttt_1000_200_fast.root]	d:xsection[0.325388]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1000_250_fast
+	base	mc	T1tttt_1000_250_fast	s:filename[tree_T1tttt_1000_250_fast.root]	d:xsection[0.325388]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1000_300_fast
+	base	mc	T1tttt_1000_300_fast	s:filename[tree_T1tttt_1000_300_fast.root]	d:xsection[0.325388]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1000_350_fast
+	base	mc	T1tttt_1000_350_fast	s:filename[tree_T1tttt_1000_350_fast.root]	d:xsection[0.325388]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1000_400_fast
+	base	mc	T1tttt_1000_400_fast	s:filename[tree_T1tttt_1000_400_fast.root]	d:xsection[0.325388]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1000_450_fast
+	base	mc	T1tttt_1000_450_fast	s:filename[tree_T1tttt_1000_450_fast.root]	d:xsection[0.325388]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1000_500_fast
+	base	mc	T1tttt_1000_500_fast	s:filename[tree_T1tttt_1000_500_fast.root]	d:xsection[0.325388]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1000_50_fast
+	base	mc	T1tttt_1000_50_fast	s:filename[tree_T1tttt_1000_50_fast.root]	d:xsection[0.325388]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1000_550_fast
+	base	mc	T1tttt_1000_550_fast	s:filename[tree_T1tttt_1000_550_fast.root]	d:xsection[0.325388]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1000_600_fast
+	base	mc	T1tttt_1000_600_fast	s:filename[tree_T1tttt_1000_600_fast.root]	d:xsection[0.325388]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1000_625_fast
+	base	mc	T1tttt_1000_625_fast	s:filename[tree_T1tttt_1000_625_fast.root]	d:xsection[0.325388]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1000_650_fast
+	base	mc	T1tttt_1000_650_fast	s:filename[tree_T1tttt_1000_650_fast.root]	d:xsection[0.325388]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1000_675_fast
+	base	mc	T1tttt_1000_675_fast	s:filename[tree_T1tttt_1000_675_fast.root]	d:xsection[0.325388]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1000_700_fast
+	base	mc	T1tttt_1000_700_fast	s:filename[tree_T1tttt_1000_700_fast.root]	d:xsection[0.325388]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
 hist	mc	T1tttt_1000_725_fast
 	base	mc	T1tttt_1000_725_fast	s:filename[tree_T1tttt_1000_725_fast.root]	d:xsection[0.325388]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
 hist	mc	T1tttt_1000_750_fast
@@ -3349,6 +3493,20 @@ hist	mc	T1tttt_1375_1000_fast
 	base	mc	T1tttt_1375_1000_fast	s:filename[tree_T1tttt_1375_1000_fast.root]	d:xsection[0.0292919]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
 hist	mc	T1tttt_1375_1025_fast
 	base	mc	T1tttt_1375_1025_fast	s:filename[tree_T1tttt_1375_1025_fast.root]	d:xsection[0.0292919]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1375_1050_fast
+	base	mc	T1tttt_1375_1050_fast	s:filename[tree_T1tttt_1375_1050_fast.root]	d:xsection[0.0292919]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1375_1075_fast
+	base	mc	T1tttt_1375_1075_fast	s:filename[tree_T1tttt_1375_1075_fast.root]	d:xsection[0.0292919]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1375_1100_fast
+	base	mc	T1tttt_1375_1100_fast	s:filename[tree_T1tttt_1375_1100_fast.root]	d:xsection[0.0292919]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1375_1125_fast
+	base	mc	T1tttt_1375_1125_fast	s:filename[tree_T1tttt_1375_1125_fast.root]	d:xsection[0.0292919]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1375_1150_fast
+	base	mc	T1tttt_1375_1150_fast	s:filename[tree_T1tttt_1375_1150_fast.root]	d:xsection[0.0292919]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1375_950_fast
+	base	mc	T1tttt_1375_950_fast	s:filename[tree_T1tttt_1375_950_fast.root]	d:xsection[0.0292919]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_1375_975_fast
+	base	mc	T1tttt_1375_975_fast	s:filename[tree_T1tttt_1375_975_fast.root]	d:xsection[0.0292919]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
 hist	mc	T1tttt_1400_0_fast
 	base	mc	T1tttt_1400_0_fast	s:filename[tree_T1tttt_1400_0_fast.root]	d:xsection[0.0252977]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
 hist	mc	T1tttt_1400_1000_fast
@@ -4055,6 +4213,14 @@ hist	mc	T1tttt_1950_900_fast
 	base	mc	T1tttt_1950_900_fast	s:filename[tree_T1tttt_1950_900_fast.root]	d:xsection[0.0012642]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
 hist	mc	T1tttt_1950_950_fast
 	base	mc	T1tttt_1950_950_fast	s:filename[tree_T1tttt_1950_950_fast.root]	d:xsection[0.0012642]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_600_250_fast
+	base	mc	T1tttt_600_250_fast	s:filename[tree_T1tttt_600_250_fast.root]	d:xsection[9.20353]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_600_275_fast
+	base	mc	T1tttt_600_275_fast	s:filename[tree_T1tttt_600_275_fast.root]	d:xsection[9.20353]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_600_300_fast
+	base	mc	T1tttt_600_300_fast	s:filename[tree_T1tttt_600_300_fast.root]	d:xsection[9.20353]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
+hist	mc	T1tttt_600_325_fast
+	base	mc	T1tttt_600_325_fast	s:filename[tree_T1tttt_600_325_fast.root]	d:xsection[9.20353]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
 hist	mc	T1tttt_625_275_fast
 	base	mc	T1tttt_625_275_fast	s:filename[tree_T1tttt_625_275_fast.root]	d:xsection[7.15194]	b:signal[1]	b:fastsim[1]	i:mother[1000021]
 hist	mc	T1tttt_625_300_fast
