@@ -841,6 +841,240 @@ class KSyncSelector : public KSelector<KSkimmer> {
 		bool debug;
 };
 
+//---------------------------------------------------------------
+//eta regions for PFJetID: 0 = 0.0 < |eta| < 2.4; 1 = 0.0 < |eta| < 3.0; 2 = 3.0 < |eta|
+//all require pt > 30
+class KJetEtaRegionSelector : public KSyncSelector {
+	public:
+		//constructor
+		KJetEtaRegionSelector() : KSyncSelector() { }
+		KJetEtaRegionSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_), region(0) { 
+			localOpt->Get("region",region);
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			//reset mask
+			goodObjects.clear();
+			//check eta for each jet
+			for(unsigned j = 0; j < looper->Jets->size(); ++j){
+				if(looper->Jets->at(j).Pt() <= 30) continue;
+				
+				if(region==0 && fabs(looper->Jets->at(j).Eta()) <= 2.4) { goodObjects.push_back(j); ++obj_counter; }
+				else if(region==1 && fabs(looper->Jets->at(j).Eta()) > 2.4 && fabs(looper->Jets->at(j).Eta()) <= 3.0) { goodObjects.push_back(j); ++obj_counter; }
+				else if(region==2 && fabs(looper->Jets->at(j).Eta()) > 3.0) { goodObjects.push_back(j); ++obj_counter; }
+			}
+			if(goodObjects.size()==0) { if(debug) { cout << "0 jets passed ID" << endl; } return false; }
+			else return true;
+		}
+		
+		//member variables
+		int region;
+};
+
+//---------------------------------------------------------------
+//neutral hadron fraction selector for jet ID check
+class KNeutralHadronFractionSelector : public KSyncSelector {
+	public:
+		//constructor
+		KNeutralHadronFractionSelector() : KSyncSelector() { }
+		KNeutralHadronFractionSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_), cut(0.99) { 
+			localOpt->Get("cut",cut);
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			goodObjects.clear();
+			for(unsigned j = 0; j < prevSel->goodObjects.size(); ++j){
+				unsigned jj = prevSel->goodObjects[j];
+				bool goodJet = looper->Jets_neutralHadronEnergyFraction->at(jj) < cut;
+				if(goodJet) {
+					goodObjects.push_back(jj);
+					++obj_counter;
+				}
+			}
+			if(goodObjects.size()<prevSel->goodObjects.size()) { if(debug) { cout << prevSel->goodObjects.size()-goodObjects.size() << " jets failed ID" << endl; } return false; }
+			else return true;
+		}
+		
+		//member variables
+		double cut;
+};
+
+//---------------------------------------------------------------
+//photon (neutral em) fraction selector for jet ID check
+class KPhotonFractionSelector : public KSyncSelector {
+	public:
+		//constructor
+		KPhotonFractionSelector() : KSyncSelector() { }
+		KPhotonFractionSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_), cut(0.99) { 
+			localOpt->Get("cut",cut);
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			goodObjects.clear();
+			for(unsigned j = 0; j < prevSel->goodObjects.size(); ++j){
+				unsigned jj = prevSel->goodObjects[j];
+				bool goodJet = looper->Jets_photonEnergyFraction->at(jj) < cut;
+				if(goodJet) {
+					goodObjects.push_back(jj);
+					++obj_counter;
+				}
+			}
+			if(goodObjects.size()<prevSel->goodObjects.size()) { if(debug) { cout << prevSel->goodObjects.size()-goodObjects.size() << " jets failed ID" << endl; } return false; }
+			else return true;
+		}
+		
+		//member variables
+		double cut;
+};
+
+//---------------------------------------------------------------
+//num constit selector for jet ID check
+class KNumConstitSelector : public KSyncSelector {
+	public:
+		//constructor
+		KNumConstitSelector() : KSyncSelector() { }
+		KNumConstitSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_), cut(1) { 
+			localOpt->Get("cut",cut);
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			goodObjects.clear();
+			for(unsigned j = 0; j < prevSel->goodObjects.size(); ++j){
+				unsigned jj = prevSel->goodObjects[j];
+				bool goodJet = looper->Jets_chargedMultiplicity->at(jj)+looper->Jets_neutralMultiplicity->at(jj) > cut;
+				if(goodJet) {
+					goodObjects.push_back(jj);
+					++obj_counter;
+				}
+			}
+			if(goodObjects.size()<prevSel->goodObjects.size()) { if(debug) { cout << prevSel->goodObjects.size()-goodObjects.size() << " jets failed ID" << endl; } return false; }
+			else return true;
+		}
+		
+		//member variables
+		int cut;
+};
+
+//---------------------------------------------------------------
+//charged hadron fraction selector for jet ID check
+class KChargedHadronFractionSelector : public KSyncSelector {
+	public:
+		//constructor
+		KChargedHadronFractionSelector() : KSyncSelector() { }
+		KChargedHadronFractionSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_), cut(0.0) { 
+			localOpt->Get("cut",cut);
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			goodObjects.clear();
+			for(unsigned j = 0; j < prevSel->goodObjects.size(); ++j){
+				unsigned jj = prevSel->goodObjects[j];
+				bool goodJet = looper->Jets_chargedHadronEnergyFraction->at(jj) > cut;
+				if(goodJet) {
+					goodObjects.push_back(jj);
+					++obj_counter;
+				}
+			}
+			if(goodObjects.size()<prevSel->goodObjects.size()) { if(debug) { cout << prevSel->goodObjects.size()-goodObjects.size() << " jets failed ID" << endl; } return false; }
+			else return true;
+		}
+		
+		//member variables
+		double cut;
+};
+
+//---------------------------------------------------------------
+//charged mult selector for jet ID check
+class KChargedMultSelector : public KSyncSelector {
+	public:
+		//constructor
+		KChargedMultSelector() : KSyncSelector() { }
+		KChargedMultSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_), cut(0) { 
+			localOpt->Get("cut",cut);
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			goodObjects.clear();
+			for(unsigned j = 0; j < prevSel->goodObjects.size(); ++j){
+				unsigned jj = prevSel->goodObjects[j];
+				bool goodJet = looper->Jets_chargedMultiplicity->at(jj) > cut;
+				if(goodJet) {
+					goodObjects.push_back(jj);
+					++obj_counter;
+				}
+			}
+			if(goodObjects.size()<prevSel->goodObjects.size()) { if(debug) { cout << prevSel->goodObjects.size()-goodObjects.size() << " jets failed ID" << endl; } return false; }
+			else return true;
+		}
+		
+		//member variables
+		int cut;
+};
+
+//---------------------------------------------------------------
+//charged EM fraction selector for jet ID check
+class KChargedEmFractionSelector : public KSyncSelector {
+	public:
+		//constructor
+		KChargedEmFractionSelector() : KSyncSelector() { }
+		KChargedEmFractionSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_), cut(0.99) { 
+			localOpt->Get("cut",cut);
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			goodObjects.clear();
+			for(unsigned j = 0; j < prevSel->goodObjects.size(); ++j){
+				unsigned jj = prevSel->goodObjects[j];
+				bool goodJet = looper->Jets_chargedEmEnergyFraction->at(jj) < cut;
+				if(goodJet) {
+					goodObjects.push_back(jj);
+					++obj_counter;
+				}
+			}
+			if(goodObjects.size()<prevSel->goodObjects.size()) { if(debug) { cout << prevSel->goodObjects.size()-goodObjects.size() << " jets failed ID" << endl; } return false; }
+			else return true;
+		}
+		
+		//member variables
+		double cut;
+};
+
+//---------------------------------------------------------------
+//neutral mult selector for jet ID check
+class KNeutralMultSelector : public KSyncSelector {
+	public:
+		//constructor
+		KNeutralMultSelector() : KSyncSelector() { }
+		KNeutralMultSelector(string name_, OptionMap* localOpt_) : KSyncSelector(name_,localOpt_), cut(10) { 
+			localOpt->Get("cut",cut);
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			goodObjects.clear();
+			for(unsigned j = 0; j < prevSel->goodObjects.size(); ++j){
+				unsigned jj = prevSel->goodObjects[j];
+				bool goodJet = looper->Jets_neutralMultiplicity->at(jj) > cut;
+				if(goodJet) {
+					goodObjects.push_back(jj);
+					++obj_counter;
+				}
+			}
+			if(goodObjects.size()<prevSel->goodObjects.size()) { if(debug) { cout << prevSel->goodObjects.size()-goodObjects.size() << " jets failed ID" << endl; } return false; }
+			else return true;
+		}
+		
+		//member variables
+		int cut;
+};
+
 //-------------------------------------------------------------
 //photon all selector for object sync
 class KPhotonAllSelector : public KSyncSelector {
@@ -1337,6 +1571,14 @@ namespace KParser {
 		else if(sname=="GenPt") srtmp = new KGenPtSelector(sname,omap);
 		else if(sname=="PDFNorm") srtmp = new KPDFNormSelector(sname,omap);
 		else if(sname=="EventRange") srtmp = new KEventRangeSelector(sname,omap);
+		else if(sname=="JetEtaRegion") srtmp = new KJetEtaRegionSelector(sname,omap);
+		else if(sname=="NeutralHadronFraction") srtmp = new KNeutralHadronFractionSelector(sname,omap);
+		else if(sname=="PhotonFraction") srtmp = new KPhotonFractionSelector(sname,omap);
+		else if(sname=="NumConstit") srtmp = new KNumConstitSelector(sname,omap);
+		else if(sname=="ChargedHadronFraction") srtmp = new KChargedHadronFractionSelector(sname,omap);
+		else if(sname=="ChargedMult") srtmp = new KChargedMultSelector(sname,omap);
+		else if(sname=="ChargedEmFraction") srtmp = new KChargedEmFractionSelector(sname,omap);
+		else if(sname=="NeutralMult") srtmp = new KNeutralMultSelector(sname,omap);
 		else if(sname=="PhotonAll") srtmp = new KPhotonAllSelector(sname,omap);
 		else if(sname=="PhotonEta") srtmp = new KPhotonEtaSelector(sname,omap);
 		else if(sname=="PhotonPt") srtmp = new KPhotonPtSelector(sname,omap);

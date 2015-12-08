@@ -380,6 +380,41 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 };
 
 //---------------------------------------------------------------
+//eta regions for PFJetID: 0 = 0.0 < |eta| < 2.4; 1 = 0.0 < |eta| < 3.0; 2 = 3.0 < |eta|
+//all require pt > 30
+class KJetEtaRegionSelector : public KSelector<KBuilder> {
+	public:
+		//constructor
+		KJetEtaRegionSelector() : KSelector<KBuilder>() { }
+		KJetEtaRegionSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), region(0) { 
+			localOpt->Get("region",region);
+			canfail = false;
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("Jets",1);
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			//reset mask
+			mask.clear(); mask.resize(looper->Jets->size(),false);
+			//check eta for each jet
+			for(unsigned j = 0; j < looper->Jets->size(); ++j){
+				if(looper->Jets->at(j).Pt() <= 30) continue;
+				
+				if(region==0 && fabs(looper->Jets->at(j).Eta()) <= 2.4) mask[j] = true;
+				else if(region==1 && fabs(looper->Jets->at(j).Eta()) > 2.4 && fabs(looper->Jets->at(j).Eta()) <= 3.0) mask[j] = true;
+				else if(region==2 && fabs(looper->Jets->at(j).Eta()) > 3.0) mask[j] = true;
+			}
+			return true;
+		}
+		
+		//member variables
+		int region;
+		vector<bool> mask;
+};
+
+//---------------------------------------------------------------
 //calculates btag scale factors
 class KBTagSFSelector : public KSelector<KBuilder> {
 	public:
@@ -469,7 +504,7 @@ class KHistoSelector : public KSelector<KBuilder> {
 	public:
 		//constructor
 		KHistoSelector() : KSelector<KBuilder>() { }
-		KHistoSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), RA2Bin(NULL), PhotonID(NULL), BTagSF(NULL) { 
+		KHistoSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), RA2Bin(NULL), PhotonID(NULL), BTagSF(NULL), JetEtaRegion(NULL) { 
 			canfail = false;
 		}
 		
@@ -479,6 +514,7 @@ class KHistoSelector : public KSelector<KBuilder> {
 			PhotonID = sel->Get<KPhotonIDSelector*>("PhotonID");
 			bool DoBTagSF = sel->GetGlobalOpt()->Get("btagcorr",false);
 			if(DoBTagSF) BTagSF = sel->Get<KBTagSFSelector*>("BTagSF");
+			JetEtaRegion = sel->Get<KJetEtaRegionSelector*>("JetEtaRegion");
 		} 
 		
 		//used for non-dummy selectors
@@ -569,6 +605,42 @@ class KHistoSelector : public KSelector<KBuilder> {
 							values[i].Fill(looper->PDFweights->at(w),w);
 						}
 					}
+					//jet ID quantities... (w/ optional eta region specification)
+					else if(vname=="neufrac"){
+						for(unsigned j = 0; j < looper->Jets->size(); ++j){
+							if(!JetEtaRegion || JetEtaRegion->mask[j]) values[i].Fill(looper->Jets_neutralHadronEnergyFraction->at(j),w);
+						}
+					}
+					else if(vname=="phofrac"){
+						for(unsigned j = 0; j < looper->Jets->size(); ++j){
+							if(!JetEtaRegion || JetEtaRegion->mask[j]) values[i].Fill(looper->Jets_photonEnergyFraction->at(j),w);
+						}
+					}
+					else if(vname=="chgfrac"){
+						for(unsigned j = 0; j < looper->Jets->size(); ++j){
+							if(!JetEtaRegion || JetEtaRegion->mask[j]) values[i].Fill(looper->Jets_chargedHadronEnergyFraction->at(j),w);
+						}
+					}
+					else if(vname=="chgemfrac"){
+						for(unsigned j = 0; j < looper->Jets->size(); ++j){
+							if(!JetEtaRegion || JetEtaRegion->mask[j]) values[i].Fill(looper->Jets_chargedEmEnergyFraction->at(j),w);
+						}
+					}
+					else if(vname=="chgmulti"){
+						for(unsigned j = 0; j < looper->Jets->size(); ++j){
+							if(!JetEtaRegion || JetEtaRegion->mask[j]) values[i].Fill(looper->Jets_chargedMultiplicity->at(j),w);
+						}
+					}
+					else if(vname=="neumulti"){
+						for(unsigned j = 0; j < looper->Jets->size(); ++j){
+							if(!JetEtaRegion || JetEtaRegion->mask[j]) values[i].Fill(looper->Jets_neutralMultiplicity->at(j),w);
+						}
+					}
+					else if(vname=="nconstit"){
+						for(unsigned j = 0; j < looper->Jets->size(); ++j){
+							if(!JetEtaRegion || JetEtaRegion->mask[j]) values[i].Fill(looper->Jets_chargedMultiplicity->at(j)+looper->Jets_neutralMultiplicity->at(j),w);
+						}
+					}
 					else { //if it's a histogram with no known variable or calculation, do nothing
 					}
 				}
@@ -619,6 +691,7 @@ class KHistoSelector : public KSelector<KBuilder> {
 		KRA2BinSelector* RA2Bin;
 		KPhotonIDSelector* PhotonID;
 		KBTagSFSelector* BTagSF;
+		KJetEtaRegionSelector* JetEtaRegion;
 };
 
 //-------------------------------------------------------------
@@ -638,6 +711,7 @@ namespace KParser {
 		else if(sname=="BTagSF") srtmp = new KBTagSFSelector(sname,omap);
 		else if(sname=="METFilter") srtmp = new KMETFilterSelector(sname,omap);
 		else if(sname=="HLT") srtmp = new KHLTSelector(sname,omap);
+		else if(sname=="JetEtaRegion") srtmp = new KJetEtaRegionSelector(sname,omap);
 		else {} //skip unknown selectors
 		
 		if(!srtmp) cout << "Input error: unknown selector " << sname << ". This selector will be skipped." << endl;
