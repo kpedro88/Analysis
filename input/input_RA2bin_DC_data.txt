@@ -40,7 +40,7 @@ bool:debugcut[1]
 SELECTION
 ra2bin
 	HLT	vs:HLTLines[HLT_PFHT350_PFMET100_JetIdCleaned_v,HLT_PFHT350_PFMET100_v]
-	METFilter
+	METFilter	s:inputfile[../TreeMaker/Production/test/data/csc2015.txt]
 	RA2Bin
 	Histo
 
