@@ -2,14 +2,22 @@
 
 source exportProd.sh
 
-KEEPTAR=$1
 JOBDIR=jobs
 INPUT=input/input_selection.txt
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}
 OUTDIR=tree
 STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/${RUN2PRODV}
+CHECKARGS=""
 
-./SKcheck.sh "$KEEPTAR" "$JOBDIR"
+#check arguments
+while getopts "k" opt; do
+  case "$opt" in
+  k) CHECKARGS="${CHECKARGS} -k"
+    ;;
+  esac
+done
+
+./SKcheck.sh ${CHECKARGS}
 
 # selections for DY
 SELTYPE=DYm_CleanVarsDY,DYe_CleanVarsDY,DYmLDP_CleanVarsDY,DYeLDP_CleanVarsDY

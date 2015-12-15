@@ -6,19 +6,46 @@
 #all .condor files are named JOBNAME_$(Cluster).condor
 #one .jdl file per JOBNAME (i.e. only "Queue 1" is used)
 
+#progress bar function
+function redraw_progress_bar { # curr, tot, barlength
+local CURR=$1
+local TOT=$2
+local BARLENGTH=$3
+local PROGRESS=$(( $BARLENGTH * $CURR / $TOT ))
+local PERCENT=$(( 100 * $CURR / $TOT ))
+echo -n "["
+for ((j = 0; j < $PROGRESS; j++)); do echo -n ">"; done
+for ((j = $PROGRESS; j < $BARLENGTH; j++)); do echo -n " "; done
+echo -n "] $PERCENT% ( $CURR / $TOT )"$'\r'
+}
+
+#initialize parameters
 JOBDIR=jobs
-TIME=$1
-OUTNAME=$2
+TIME=""
+OUTNAME=""
+
+#check arguments
+while getopts "t:f:o:" opt; do
+	case "$opt" in
+	t)
+		TIME=$OPTARG
+	;;
+	f)  #option to start from the time of a file
+		if (stat $OPTARG > /dev/null 2>&1); then
+			TIME=$(date -r $OPTARG +"%Y-%m-%d %H:%M")
+		fi
+	;;
+	o)
+		OUTNAME=$OPTARG
+	;;
+	esac
+done
 
 #default is beginning of time
 if [[ -z $TIME ]]; then
 	#old default was 24 hrs ago
 	#TIME=$(date "--date=$(date) -1 day" +"%Y-%m-%d %H:%M")
 	TIME="1970-01-01 00:00"
-#option to start from the time of a previous resub script
-elif (echo "$TIME" | fgrep -q ".sh"); then
-	TIME=$(date -r $TIME +"%Y-%m-%d %H:%M")
-	echo "$TIME"
 fi
 
 #default is resub.sh
@@ -37,13 +64,24 @@ counter=0
 
 #search for "return value" in condor logs newer than TIME - denotes finished job
 #or "abort" - denotes removed job
-for file in $(grep -l "return value\|abort" $(find ${JOBDIR}/*.condor -newermt "${TIME}")); do
+echo -n "Searching logs after $TIME..."
+IFS=$'\n' filelist=($(grep -m1 "return value\|abort" $(find ${JOBDIR}/ -name \*.condor -newermt "${TIME}"))); unset IFS
+filelistlen=${#filelist[@]}
+echo " found $filelistlen"
+for ((i=0; i < $filelistlen; i++)); do
+	redraw_progress_bar $i $filelistlen 20
+
+	fileline=${filelist[$i]}
+	#split filename and matched line from grep
+	IFS=':' read -r file line <<< "$fileline"; unset IFS
+	
 	#skip job if it finished successfully - return value 0
-	success=$(grep -lw "return value 0" ${file})
+	success=$(echo "$line" | fgrep -w "return value 0")
 	if [[ -n $success ]]; then
 		continue
 	fi
 	
+	#get JOBNAME from filename
 	base=$(echo $(basename ${file}) | rev | cut -d'_' -f1-1 --complement | rev)
 	
 	#skip job if it has already been checked
@@ -51,13 +89,15 @@ for file in $(grep -l "return value\|abort" $(find ${JOBDIR}/*.condor -newermt "
 		continue
 	fi
 	
-	#check for newer logs that succeeded
-	newerfiles=$(find ${JOBDIR}/${base}*.condor -newer "${file}")
+	#check for newer logs that succeeded or are still running
+	newerfiles=$(find ${JOBDIR}/ -name ${base}_\*.condor -newer "${file}")
 	newerstatus=""
 	stillrunning=""
 	if [[ -n $newerfiles ]]; then
 		newerstatus=$(grep -lw "return value 0" ${newerfiles})
-		stillrunning=$(grep -lwv "return value\|abort" ${newerfiles})
+		if [[ -z $newerstatus ]]; then
+			stillrunning=$(grep -L "return value\|abort" ${newerfiles})
+		fi
 	fi
 	
 	#if none were found, the job failed
@@ -71,9 +111,11 @@ for file in $(grep -l "return value\|abort" $(find ${JOBDIR}/*.condor -newermt "
 	#append jobname to list
 	joblist="${base} ${joblist}"
 done
-  
+
 echo "cd -" >> ${OUTNAME}
 
+redraw_progress_bar $filelistlen $filelistlen 20
+echo ""
 echo "Job resubmission script created: ${OUTNAME}"
 echo "     Number of jobs to resubmit: ${counter}"
 chmod +x ${OUTNAME}

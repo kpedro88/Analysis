@@ -4,7 +4,7 @@ source exportProd.sh
 
 STDIR=/eos/uscms/store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/${RUN2PRODV}
 
-./SKcheck.sh keep
+./SKcheck.sh -k
 
 SAMPLES=(
 TTJets_SingleLeptFromT \

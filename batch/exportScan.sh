@@ -129,4 +129,8 @@ T1tttt_mGluino-1375_mLSP-950to1150 \
 T1tttt_mGluino-600_mLSP-250to325 \
 T1qqqq_mGluino-1200to1225_mLSP-1to1175 \
 T1qqqq_mGluino-925to975_mLSP-950 \
+T1tttt_mGluino-1050_mLSP-50to775 \
+T1tttt_mGluino-1550to1575_mLSP-500to1175 \
+T1tttt_mGluino-600_mLSP-1to225 \
+T1tttt_mGluino-600to625_mLSP-250to375 \
 )

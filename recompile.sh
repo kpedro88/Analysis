@@ -1,6 +1,15 @@
 #!/bin/bash
 
-FORCE=$1
+FORCE=""
+
+#check arguments
+while getopts "f" opt; do
+  case "$opt" in
+  k) FORCE="force"
+    ;;
+  esac
+done
+
 
 MACROS=(
 KSkimDriver \

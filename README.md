@@ -6,11 +6,7 @@ To recompile all drivers, testing code changes or preparing for batch submission
 ```
 ./recompile.sh
 ```
-
-To force recompilation of all drivers:
-```
-./recompile.sh force
-```
+Add the flag `-f` to force recompilaton of all drivers.
 
 ## Skimming
 
@@ -28,7 +24,7 @@ python makeSkimInput.py -r input/dict_skim_data.txt -w input/input_sets_skim_dat
 ```
 Note: this script uses the python file lists in [TreeMaker/Production/python](https://github.com/TreeMaker/TreeMaker/tree/Run2/Production/python) to determine the number of files to chain together for each sample. Make sure to follow the [TreeMaker](https://github.com/TreeMaker/TreeMaker) installation instructions so this information is accessible.
 
-To submit jobs to Condor:
+To submit jobs to Condor (add the flag `-k` to reuse the existing CMSSW tarball):
 ```
 cd batch
 ./SKsub.sh

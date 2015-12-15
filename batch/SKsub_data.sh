@@ -2,7 +2,6 @@
 
 source exportProd.sh
 
-KEEPTAR=$1
 JOBDIR=jobs
 INPUT=input/input_selection.txt
 SELTYPE=signal,signalUnblind,LDP,SLm,SLe,SLmLDP,SLeLDP,GJet_CleanVars,DYm_CleanVars,DYe_CleanVars
@@ -10,8 +9,17 @@ SELTYPE2=GJetLDP_CleanVars,DYmLDP_CleanVars,DYeLDP_CleanVars,GJet_ManualCleanVar
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}
 OUTDIR=tree
 STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/${RUN2PRODV}
+CHECKARGS=""
 
-./SKcheck.sh "$KEEPTAR" "$JOBDIR"
+#check arguments
+while getopts "k" opt; do
+  case "$opt" in
+  k) CHECKARGS="${CHECKARGS} -k"
+    ;;
+  esac
+done
+
+./SKcheck.sh ${CHECKARGS}
 
 SAMPLES=(
 DoubleEG_re2015C \
