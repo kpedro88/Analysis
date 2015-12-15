@@ -246,6 +246,8 @@ class KBuilderMC : public KBuilder {
 			}
 			
 			//other uncertainty options
+			fastsim = localOpt->Get("fastsim",false);
+			jetidcorr = globalOpt->Get("jetidcorr",false);
 			pdfunc = 0; globalOpt->Get("pdfunc",pdfunc);
 			scaleunc = 0; globalOpt->Get("scaleunc",scaleunc);
 			if(pdfunc!=0 || scaleunc!=0){
@@ -350,6 +352,11 @@ class KBuilderMC : public KBuilder {
 				else if(scaleunc==-1) w *= *(TMath::LocMin(ScaleWeightsMod.begin(),ScaleWeightsMod.end()))*pdfnorms[3];
 			}
 			
+			//correct for expected FullSim PFJetID efficiency
+			if(jetidcorr && fastsim){
+				w *= 0.99;
+			}
+			
 			//now do scaling: norm*xsection/nevents
 			if(useTreeWeight) w *= Weight;
 			else if(got_nEventProc && nEventProc>0 && got_xsection){
@@ -386,7 +393,7 @@ class KBuilderMC : public KBuilder {
 
 		//member variables
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, debugWeight, didDebugWeight;
-		bool pucorr, trigcorr, isrcorr, realMET, signal;
+		bool pucorr, trigcorr, isrcorr, realMET, signal, fastsim, jetidcorr;
 		int puunc, pdfunc, mother, isrunc, scaleunc, trigStatUnc, trigSystUnc;
 		TH1 *puhist, *puhistUp, *puhistDown;
 		vector<double> pdfnorms;
