@@ -54,8 +54,7 @@ for ind,file in enumerate(files):
     # make short name
     short_name = fsplit[0] + "_" + str(mMother) + "_" + str(mLSP) + "_" + "fast"
     # make set list for skimming
-    #wline = "base" + "\t" + "skim" + "\t" + short_name + "\t" + "s:filename[" + file + "]" + "\t" + "b:fastsim[1]" + ("\t"+"i:mother["+str(options.mother)+"]" if options.mother > 0 else "") + "\n"
-    wline = "base" + "\t" + "skim" + "\t" + short_name + "\t" + "s:filename[" + file + "]" + ("\t"+"i:mother["+str(options.mother)+"]" if options.mother > 0 else "") + "\n" #TEMPORARY
+    wline = "base" + "\t" + "skim" + "\t" + short_name + "\t" + "s:filename[" + file + "]" + "\t" + "b:fastsim[1]" + ("\t"+"i:mother["+str(options.mother)+"]" if options.mother > 0 else "") + "\n"
     wfile.write(wline)
     # make set list for datacards with xsecs
     dline = "hist" + "\t" + "mc" + "\t" + short_name + "\n"
