@@ -133,4 +133,15 @@ T1tttt_mGluino-1050_mLSP-50to775 \
 T1tttt_mGluino-1550to1575_mLSP-500to1175 \
 T1tttt_mGluino-600_mLSP-1to225 \
 T1tttt_mGluino-600to625_mLSP-250to375 \
+T1tttt_mGluino-1050to1075_mLSP-650to850 \
+T1tttt_mGluino-1225to1250_mLSP-1to1025 \
+T1tttt_mGluino-900to950_mLSP-200to700 \
+T5qqqqVV_mGluino-1000To1075_mLSP-1To950 \
+T5qqqqVV_mGluino-1100To1175_mLSP-1to1050 \
+T5qqqqVV_mGluino-1200To1275_mLSP-1to1150 \
+T5qqqqVV_mGluino-1300To1375_mLSP-1to1250 \
+T5qqqqVV_mGluino-1400To1550_mLSP-1To1275 \
+T5qqqqVV_mGluino-600To675_mLSP-1to550 \
+T5qqqqVV_mGluino-700To775_mLSP-1To650 \
+T5qqqqVV_mGluino-800To975_mLSP-1To850 \
 )
