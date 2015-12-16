@@ -61,9 +61,9 @@ cd batch
 ./SCsub.sh
 ```
 
-After the jobs finish, the split output files should be combined:
+After the jobs finish, the split output files should be combined (in batch mode due to the typically large number of hadd operations necessary):
 ```
-./hadd_scans.sh -r
+./HSsub.sh
 ```
 
 To make the input lists of model points automatically for skimming, plotting, and datacards, after the scan jobs are finished and combined:
