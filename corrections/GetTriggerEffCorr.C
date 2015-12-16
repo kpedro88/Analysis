@@ -1,14 +1,14 @@
 double GetSMTriggerEff(double MHT, bool realMET) {
   if (realMET) {
-    if (MHT<50) return 0.0080;
-    else if (MHT<100) return 0.0988;
-    else if (MHT<150) return 0.5424;
-    else if (MHT<200) return 0.9011;
-    else if (MHT<250) return 0.9846;
-    else if (MHT<300) return 0.9961;
-    else if (MHT<400) return 0.9865;
+    if (MHT<50) return 0.0036;
+    else if (MHT<100) return 0.0410;
+    else if (MHT<150) return 0.3278;
+    else if (MHT<200) return 0.8167;
+    else if (MHT<250) return 0.9705;
+    else if (MHT<300) return 0.9945;
+    else if (MHT<400) return 0.9908;
     else if (MHT<500) return 1.0000;
-    else return 1.0000;
+    else return 0.9833;
   } 
   else {
     if (MHT<50) return 0.0089;
@@ -24,15 +24,15 @@ double GetSMTriggerEff(double MHT, bool realMET) {
 }
 double GetSMTriggerEffStatUncHi(double MHT, bool realMET) {
   if (realMET) {
-    if (MHT<50) return 0.0007;
-    else if (MHT<100) return 0.0033;
-    else if (MHT<150) return 0.0099;
-    else if (MHT<200) return 0.0091;
-    else if (MHT<250) return 0.0053;
-    else if (MHT<300) return 0.0032;
-    else if (MHT<400) return 0.0073;
+    if (MHT<50) return 0.0004;
+    else if (MHT<100) return 0.0013;
+    else if (MHT<150) return 0.0058;
+    else if (MHT<200) return 0.0078;
+    else if (MHT<250) return 0.0050;
+    else if (MHT<300) return 0.0030;
+    else if (MHT<400) return 0.0044;
     else if (MHT<500) return 0.0000;
-    else return 0.0000;
+    else return 0.0138;
   } 
   else {
     if (MHT<50) return 0.0001;
@@ -48,15 +48,15 @@ double GetSMTriggerEffStatUncHi(double MHT, bool realMET) {
 }
 double GetSMTriggerEffStatUncLo(double MHT, bool realMET) {
   if (realMET) {
-    if (MHT<50) return 0.0006;
-    else if (MHT<100) return 0.0032;
-    else if (MHT<150) return 0.0099;
-    else if (MHT<200) return 0.0099;
-    else if (MHT<250) return 0.0075;
-    else if (MHT<300) return 0.0089;
-    else if (MHT<400) return 0.0000;
-    else if (MHT<500) return 0.0135;
-    else return 0.0135;
+    if (MHT<50) return 0.0003;
+    else if (MHT<100) return 0.0013;
+    else if (MHT<150) return 0.0057;
+    else if (MHT<200) return 0.0081;
+    else if (MHT<250) return 0.0059;
+    else if (MHT<300) return 0.0054;
+    else if (MHT<400) return 0.0018;
+    else if (MHT<500) return 0.0109;
+    else return 0.0000;
   } 
   else {
     if (MHT<50) return 0.0001;
@@ -71,29 +71,29 @@ double GetSMTriggerEffStatUncLo(double MHT, bool realMET) {
   }
 }
 double GetSignalTriggerEffWeight(double MHT) {
-    if (MHT<200) return 0;
-    else if (MHT<500) return 0.9887;
-    else return 1.0000;
+	if (MHT<200) return 0;
+	else if (MHT<500) return 0.9819;
+	else return 0.9833;
 }
 double GetSignalTriggerEffStatUncHi(double MHT) {
-    if (MHT<200) return 0;
-    else if (MHT<500) return 0.0032;
-    else return 0.0000;
+	if (MHT<200) return 0;
+	else if (MHT<500) return 0.0028;
+	else return 0.0138;
 }
 double GetSignalTriggerEffStatUncLo(double MHT) {
-    if (MHT<200) return 0;
-    else if (MHT<500) return 0.0043;
-    else return 0.0135;
+	if (MHT<200) return 0;
+	else if (MHT<500) return 0.0033;
+	else return 0.0047;
 }
 double GetSignalTriggerEffSystUncHi(double MHT) {
-    if (MHT<200) return 0;
-    else if (MHT<500) return 0.0081;
-    else return 0.0000;
+	if (MHT<200) return 0;
+	else if (MHT<500) return 0.0129;
+	else return 0.0001;
 }
 double GetSignalTriggerEffSystUncLo(double MHT) {
-    if (MHT<200) return 0;
-    else if (MHT<500) return 0.0130;
-    else return 0.0001;
+	if (MHT<200) return 0;
+	else if (MHT<500) return 0.0129;
+	else return 0.0001;
 }
 
 double GetTriggerEffCorr(bool signal, double MHT, bool realMET, int statUnc=0, int systUnc=0){
