@@ -32,7 +32,7 @@ void NtupleClass::Loop() {}
 class KScanner : public NtupleClass {
 	public :
 		typedef pair<double,double> massPoint;
-		typedef map<massPoint,KSelection<KScanner>*>::iterator MPit;
+		typedef map<massPoint,unsigned>::iterator MPit;
 	
 		//constructor
 		KScanner(KBase* MyBase_) : 
@@ -56,6 +56,10 @@ class KScanner : public NtupleClass {
 			int maxevents = 0;
 			if(globalOpt->Get("maxevents",maxevents) && maxevents < nentries) nentries = maxevents;
 			
+			KSelection<KScanner>* currSel = NULL;
+			massPoint currPoint = make_pair(0.0,0.0);
+			unsigned blocknum = 0;
+			MyBase->GetLocalOpt()->Get("block",blocknum);
 			Long64_t nbytes = 0, nb = 0;
 			for (Long64_t jentry=0; jentry<nentries;jentry++) {
 				Long64_t ientry = LoadTree(jentry);
@@ -63,31 +67,49 @@ class KScanner : public NtupleClass {
 				nb = fChain->GetEntry(jentry);   nbytes += nb;
 				if(jentry % 10000 == 0) cout << "Scanning " << jentry << "/" << nentries << endl;
 				
-				//check map for this event's mass point
+				//check this event's mass point
 				massPoint thePoint = make_pair(SusyMotherMass,SusyLSPMass);
-				MPit mp = selectionMap.find(thePoint);
 				
-				//if known, fill the corresponding tree
-				if(mp != selectionMap.end()){
-					mp->second->FillTree();
+				//if current, fill the corresponding tree
+				if(currPoint == thePoint){
+					currSel->FillTree();
 				}
-				//if unknown, make a new selection/output file for it
-				else {
+				//if not, make a new selection/output file for it, with a new part number
+				else{
+					//reset vars
+					currPoint = thePoint;
+					//write existing tree to file
+					if(currSel) currSel->Finalize();
+					delete currSel; currSel = NULL;
+					
+					//get part number - check if this mass point has been seen before
+					MPit mp = selectionMap.find(thePoint);
+					unsigned partnum = 0;
+					if(mp != selectionMap.end()) {
+						partnum = mp->second;
+						//increment map
+						mp->second += 1;
+					}
+					else {
+						selectionMap.insert(make_pair(thePoint,partnum+1));
+					}
+					
 					//make the name
 					stringstream oss;
-					oss << outpre << "_" << "mMother-" << thePoint.first << "_mLSP-" << thePoint.second << outsuff;
+					oss << outpre << "_" << "mMother-" << thePoint.first << "_mLSP-" << thePoint.second << "_block" << blocknum << "_part" << partnum << outsuff;
 					string oname = oss.str();
 					
 					//make the selection and tree, fill it
-					KSelection<KScanner>* stmp = new KSelection<KScanner>(oname,globalOpt);
-					stmp->ScanTree(fChain);
-					stmp->FillTree();
-					
-					//add to map
-					selectionMap.insert(make_pair(thePoint,stmp));
+					currSel = new KSelection<KScanner>(oname,globalOpt);
+					currSel->ScanTree(fChain);
+					currSel->FillTree();
 				}
 			}
 
+			//write last tree to file
+			if(currSel) currSel->Finalize();
+			delete currSel; currSel = NULL;
+			
 			//final steps
 			//loop over map
 			cout << string(17+2+14,'-') << endl;
@@ -98,14 +120,12 @@ class KScanner : public NtupleClass {
 				cout << "  ";
 				cout << right << setw(14) << mp->first.second;
 				cout << endl;
-				
-				mp->second->Finalize();
 			}
 		}
 		
 		//member variables
 		KBase* MyBase;
-		map<massPoint,KSelection<KScanner>*> selectionMap;
+		map<massPoint,unsigned> selectionMap;
 		OptionMap* globalOpt;
 		Long64_t nentries;
 		string outpre, outsuff;

@@ -2,31 +2,24 @@
 
 source exportProd.sh
 
-STDIR=/eos/uscms/store/user/pedrok/SUSY2015/Analysis/Datacards/${RUN2PRODV}
+STDIR=/eos/uscms/store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}/scan
 XRDIR=`echo $STDIR | sed 's~/eos/uscms~root://cmseos.fnal.gov/~'`
 
 ./SKcheck.sh keep
 
 #initialize parameters
 RUN=0
-UPDATE=0
 
 #check arguments
-while getopts "ru" opt; do
+while getopts "r" opt; do
   case "$opt" in
   r) RUN=1
-    ;;
-  u) UPDATE=1
     ;;
   esac
 done
 
-#if updating, part number may not start with 0
-if [[ $UPDATE -eq 1 ]]; then
-  SAMPLES=`ls $STDIR/*_part*.root 2>&1`
-else
-  SAMPLES=`ls $STDIR/*_part0.root 2>&1`
-fi
+#get list of samples by first part of first block
+SAMPLES=`ls $STDIR/*_block0_part0_*.root 2>&1`
 
 LSTEST=$?
 if [[ $LSTEST -ne 0 ]]; then
@@ -34,18 +27,12 @@ if [[ $LSTEST -ne 0 ]]; then
   exit 0
 fi
 
-SAMPLELIST=""
-
 for SAMPLE in ${SAMPLES}; do
-  BASE=$(echo $(basename ${SAMPLE}) | rev | cut -d'_' -f1-1 --complement | rev)
-  #skip duplicates
-  if (echo "$SAMPLELIST" | fgrep -qw ${BASE}); then
-    continue
-  fi
+  BASE=$(echo $(basename ${SAMPLE}) | rev | cut -d'_' -f1-3 --complement | rev)
   echo ${BASE}
   
   #check to see if anything needs to be hadded
-  STDFILES=`ls ${STDIR}/${BASE}_part*.root 2>&1`
+  STDFILES=`ls ${STDIR}/${BASE}_block*.root 2>&1`
   LSTEST=$?
   if [[ $LSTEST -ne 0 ]]; then
     echo "nothing to hadd for $BASE"
@@ -56,10 +43,8 @@ for SAMPLE in ${SAMPLES}; do
   for FILE in ${STDFILES}; do
     ALLFILES="${ALLFILES} ${XRDIR}/`basename ${FILE}`"
   done
-  #include base file when updating
-  if [[ $UPDATE -eq 1 ]]; then
-    ALLFILES="${XRDIR}/${BASE}.root ${ALLFILES}"
-  fi
+  
+  #todo: add simple case, if nfiles==1, just rename file
   
   #dryrun (list nfiles) is default
   if [[ $RUN -eq 1 ]]; then
@@ -67,7 +52,7 @@ for SAMPLE in ${SAMPLES}; do
     hadd ${BASE}.root ${ALLFILES}
     
     #remove original files
-    for FILE in ${STDIR}/${BASE}_part*.root; do
+    for FILE in ${STDIR}/${BASE}_block*.root; do
       rm ${FILE}
     done
     
@@ -79,8 +64,5 @@ for SAMPLE in ${SAMPLES}; do
   else
     echo ${ALLFILES} | wc -w
   fi
-  
-  #append sample to list
-  SAMPLELIST="${BASE} ${SAMPLELIST}"
 done
 

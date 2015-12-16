@@ -36,7 +36,7 @@ Note: `SKsub_fast.sh` should only be run after the scanning step, below, is comp
 
 After the skims finish, some may need to be hadded (split or extended samples):
 ```
-./hadd_skims.sh
+./hadd_skims.sh -r
 ```
 
 ### Scanning
@@ -50,8 +50,9 @@ root -b -q -l 'KScanDriver.C+("input/input_scan.txt","T1bbbb_mGluino-1000-1025_m
 
 To make the input lists (.txt and .sh) of FastSim samples automatically:
 ```
-python makeScanInput.py
+python makeScanInput.py -n 30
 ```
+The last argument splits the scan input list into multiple blocks (each containing `n` ntuple files) for batch submission.  
 Note: as above, this script uses the python file lists in [TreeMaker/Production/python](https://github.com/TreeMaker/TreeMaker/tree/Run2/Production/python).
 
 To submit jobs to Condor:
@@ -60,7 +61,12 @@ cd batch
 ./SCsub.sh
 ```
 
-To make the input lists of model points automatically for skimming, plotting, and datacards, after the scan jobs finish:
+After the jobs finish, the split output files should be combined:
+```
+./hadd_scans.sh -r
+```
+
+To make the input lists of model points automatically for skimming, plotting, and datacards, after the scan jobs are finished and combined:
 ```
 python makeFastInput.py -d /eos/uscms/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV5/scan/ -n 10
 ```
@@ -113,7 +119,7 @@ cd batch
 
 After the jobs finish, the split output files should be combined:
 ```
-./hadd_DC.sh
+./hadd_DC.sh -r
 ```
 
 Currently available uncertainties:
