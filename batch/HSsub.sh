@@ -6,13 +6,16 @@ JOBDIR=jobs
 DIR=/store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}/scan
 CHECKARGS=""
 nhadds=10
+RUN=0
 
 #check arguments
-while getopts "kn:" opt; do
+while getopts "kn:r" opt; do
   case "$opt" in
   k) CHECKARGS="${CHECKARGS} -k"
     ;;
   n) nhadds=$OPTARG
+    ;;
+  r) RUN=1
     ;;
   esac
 done
@@ -56,11 +59,16 @@ for ((i=0; i < ${#SAMPLES[@]}; i++)); do
   
   #check counter (or end of loop)
   if [[ $counter -ge $nhadds ]] || [[ $i -eq $((${#SAMPLES[@]} - 1)) ]]; then
-    #submit job with this input list
-	./HStemp.sh ${JOBDIR} ${INPUT} ${DIR} fast
+    #dryrun (list input) is default
+    if [[ $RUN -eq 1 ]]; then
+      #submit job with this input list
+      ./HStemp.sh ${JOBDIR} ${INPUT} ${DIR} fast
+    else
+      echo ${INPUT}
+    fi
 	
-	#reset vars
-	INPUT=""
-	counter=0
+    #reset vars
+    INPUT=""
+    counter=0
   fi
 done

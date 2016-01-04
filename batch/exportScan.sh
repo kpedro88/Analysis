@@ -298,4 +298,9 @@ T5qqqqVV_mGluino-800To975_mLSP-1To850_block3 \
 T5qqqqVV_mGluino-800To975_mLSP-1To850_block4 \
 T5qqqqVV_mGluino-800To975_mLSP-1To850_block5 \
 T5qqqqVV_mGluino-800To975_mLSP-1To850_block6 \
+T5qqqqVV_mGluino-1600To1750_mLSP-1To950_block0 \
+T5qqqqVV_mGluino-1600To1750_mLSP-1To950_block1 \
+T5qqqqVV_mGluino-1600To1750_mLSP-1To950_block2 \
+T5qqqqVV_mGluino-1600To1750_mLSP-1To950_block3 \
+T5qqqqVV_mGluino-1600To1750_mLSP-1To950_block4 \
 )
