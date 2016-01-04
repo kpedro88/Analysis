@@ -27,7 +27,7 @@ class KJetVariator : public KVariator<KSkimmer> {
 		enum vartypes { NoVar=0, JECup=1, JECdown=2, clean=3, manual=4, cleanDY=5, cleanGJ=6, cleanGJloose=7 };
 		//constructor
 		KJetVariator() : KVariator<KSkimmer>() { }
-		KJetVariator(string name_, OptionMap* localOpt_) : KVariator<KSkimmer>(name_,localOpt_), vtype(NoVar) {
+		KJetVariator(string name_, OptionMap* localOpt_) : KVariator<KSkimmer>(name_,localOpt_), enabled(false), vtype(NoVar) {
 			//check options
 			string vname = "";
 			localOpt->Get("vartype",vname);
@@ -38,6 +38,51 @@ class KJetVariator : public KVariator<KSkimmer> {
 			else if(vname=="cleanDY") vtype = cleanDY;
 			else if(vname=="cleanGJ") vtype = cleanGJ;
 			else if(vname=="cleanGJloose") vtype = cleanGJloose;
+		}
+		//helper functions
+		virtual void EnableBranches(string* branches, unsigned size){
+			if(enabled) return;
+			for(unsigned i = 0; i < size; ++i){
+				looper->fChain->SetBranchStatus(branches[i].c_str(),1);
+			}
+			enabled = true;
+		}
+		virtual void CheckBranches(){
+			if(vtype==JECup){
+				string branchlist[] = {"looper->JetsJECup","looper->HTJetsMaskJECup","looper->MHTJetsMaskJECup","looper->JetsJECup_partonFlavor","looper->JetsJECup_hadronFlavor","looper->JetsJECup_bDiscriminatorCSV","looper->JetIDJECup","looper->NJetsJECup","looper->BTagsJECup","looper->HTJECup","looper->MHTJECup","looper->MHT_PhiJECup","looper->DeltaPhi1JECup","looper->DeltaPhi2JECup","looper->DeltaPhi3JECup","looper->DeltaPhi4JECup"};
+				unsigned branchsize = 16;
+				EnableBranches(branchlist,branchsize);
+			}
+			else if(vtype==JECdown){
+				string branchlist[] = {"looper->JetsJECdown","looper->HTJetsMaskJECdown","looper->MHTJetsMaskJECdown","looper->JetsJECdown_partonFlavor","looper->JetsJECdown_hadronFlavor","looper->JetsJECdown_bDiscriminatorCSV","looper->JetIDJECdown","looper->NJetsJECdown","looper->BTagsJECdown","looper->HTJECdown","looper->MHTJECdown","looper->MHT_PhiJECdown","looper->DeltaPhi1JECdown","looper->DeltaPhi2JECdown","looper->DeltaPhi3JECdown","looper->DeltaPhi4JECdown"};
+				unsigned branchsize = 16;
+				EnableBranches(branchlist,branchsize);
+			}
+			else if(vtype==clean){
+				string branchlist[] = {"looper->Jetsclean","looper->HTJetsMaskclean","looper->MHTJetsMaskclean","looper->Jetsclean_partonFlavor","looper->Jetsclean_hadronFlavor","looper->Jetsclean_bDiscriminatorCSV","looper->JetIDclean","looper->NJetsclean","looper->BTagsclean","looper->HTclean","looper->MHTclean","looper->MHT_Phiclean","looper->METPtclean","looper->METPhiclean","looper->DeltaPhi1clean","looper->DeltaPhi2clean","looper->DeltaPhi3clean","looper->DeltaPhi4clean"};
+				unsigned branchsize = 18;
+				EnableBranches(branchlist,branchsize);
+			}
+			else if(vtype==manual){
+				string branchlist[] = {"looper->Jetsclean","looper->HTJetsMaskclean","looper->MHTJetsMaskclean","looper->Jetsclean_partonFlavor","looper->Jetsclean_hadronFlavor","looper->Jetsclean_bDiscriminatorCSV","looper->JetIDclean","looper->photonCands","looper->photon_hadTowOverEM","looper->photon_passElectronVeto","looper->photon_pfNeutralIsoRhoCorr","looper->photon_pfGammaIsoRhoCorr","looper->MHTJetsMask","looper->HTJetsMask","looper->METPtclean","looper->METPhiclean"};
+				unsigned branchsize = 16;
+				EnableBranches(branchlist,branchsize);
+			}
+			else if(vtype==cleanDY){
+				string branchlist[] = {"looper->JetscleanDY","looper->HTJetsMaskcleanDY","looper->MHTJetsMaskcleanDY","looper->JetscleanDY_partonFlavor","looper->JetscleanDY_hadronFlavor","looper->JetscleanDY_bDiscriminatorCSV","looper->JetIDcleanDY","looper->NJetscleanDY","looper->BTagscleanDY","looper->isoElectronTrackscleanDY","looper->isoMuonTrackscleanDY","looper->isoPionTrackscleanDY","looper->HTcleanDY","looper->MHTcleanDY","looper->MHT_PhicleanDY","looper->METPtcleanDY","looper->METPhicleanDY","looper->DeltaPhi1cleanDY","looper->DeltaPhi2cleanDY","looper->DeltaPhi3cleanDY","looper->DeltaPhi4cleanDY"};
+				unsigned branchsize = 21;
+				EnableBranches(branchlist,branchsize);
+			}
+			else if(vtype==cleanGJ){
+				string branchlist[] = {"looper->JetscleanGJ","looper->HTJetsMaskcleanGJ","looper->MHTJetsMaskcleanGJ","looper->JetscleanGJ_partonFlavor","looper->JetscleanGJ_hadronFlavor","looper->JetscleanGJ_bDiscriminatorCSV","looper->JetIDcleanGJ","looper->NJetscleanGJ","looper->BTagscleanGJ","looper->isoElectronTrackscleanGJ","looper->isoMuonTrackscleanGJ","looper->isoPionTrackscleanGJ","looper->HTcleanGJ","looper->MHTcleanGJ","looper->MHT_PhicleanGJ","looper->METPtcleanGJ","looper->METPhicleanGJ","looper->DeltaPhi1cleanGJ","looper->DeltaPhi2cleanGJ","looper->DeltaPhi3cleanGJ","looper->DeltaPhi4cleanGJ"};
+				unsigned branchsize = 21;
+				EnableBranches(branchlist,branchsize);
+			}
+			else if(vtype==cleanGJloose){
+				string branchlist[] = {"looper->JetscleanGJloose","looper->HTJetsMaskcleanGJloose","looper->MHTJetsMaskcleanGJloose","looper->JetscleanGJloose_partonFlavor","looper->JetscleanGJloose_hadronFlavor","looper->JetscleanGJloose_bDiscriminatorCSV","looper->JetIDcleanGJloose","looper->NJetscleanGJloose","looper->BTagscleanGJloose","looper->isoElectronTrackscleanGJloose","looper->isoMuonTrackscleanGJloose","looper->isoPionTrackscleanGJloose","looper->HTcleanGJloose","looper->MHTcleanGJloose","looper->MHT_PhicleanGJloose","looper->METPtcleanGJloose","looper->METPhicleanGJloose","looper->DeltaPhi1cleanGJloose","looper->DeltaPhi2cleanGJloose","looper->DeltaPhi3cleanGJloose","looper->DeltaPhi4cleanGJloose"};
+				unsigned branchsize = 21;
+				EnableBranches(branchlist,branchsize);
+			}			
 		}
 		//functions
 		virtual void DoVariation() {
@@ -325,6 +370,7 @@ class KJetVariator : public KVariator<KSkimmer> {
 		}
 		
 		//member variables
+		bool enabled;
 		vartypes vtype;
 		vector<TLorentzVector> bestPhoton;
 		vector<TLorentzVector> Jets;

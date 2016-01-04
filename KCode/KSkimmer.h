@@ -29,7 +29,20 @@ class KSkimmer : public NtupleClass {
 	public :
 		//constructor
 		KSkimmer(KBase* MyBase_) : 
-			NtupleClass(MyBase_->GetTree()), MyBase(MyBase_), nEventHist(MyBase->GetNEventHist()), nEventNegHist(MyBase->GetNEventNegHist()), globalOpt(MyBase->GetGlobalOpt()), nentries(0), width1(0) { }
+			NtupleClass(MyBase_->GetTree()), MyBase(MyBase_), nEventHist(MyBase->GetNEventHist()), nEventNegHist(MyBase->GetNEventNegHist()), globalOpt(MyBase->GetGlobalOpt()), nentries(0), width1(0)
+		{
+			//check for branches to enable/disable
+			vector<string> disable_branches;
+			globalOpt->Get("disable_branches",disable_branches);
+			for(unsigned b = 0; b < disable_branches.size(); ++b){
+				fChain->SetBranchStatus(disable_branches[b].c_str(),0);
+			}
+			vector<string> enable_branches;
+			globalOpt->Get("enable_branches",enable_branches);
+			for(unsigned b = 0; b < enable_branches.size(); ++b){
+				fChain->SetBranchStatus(enable_branches[b].c_str(),1);
+			}
+		}
 		//destructor
 		virtual ~KSkimmer() {}
 		//functions
@@ -55,6 +68,10 @@ class KSkimmer : public NtupleClass {
 			if(!nEventNegHist){
 				nEventNegHist = new TH1F("nEventNeg","",1,0,1);
 				fillNeg = true;
+			}
+			
+			for(unsigned s = 0; s < theSelections.size(); s++){
+				theSelections[s]->CheckBranches();
 			}
 			
 			Long64_t nbytes = 0, nb = 0;

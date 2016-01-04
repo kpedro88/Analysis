@@ -99,7 +99,9 @@ class KSelection {
 			if(globalOpt==0) globalOpt = new OptionMap();
 		}
 		//destructor
-		virtual ~KSelection() {}
+		virtual ~KSelection() {
+			delete file;
+		}
 		//accessors
 		string GetName() { return name; }
 		OptionMap* GetGlobalOpt() { return globalOpt; }
@@ -210,8 +212,9 @@ class KSelection {
 		void FillTree(){
 			if(tree) tree->Fill();
 		}
-		//check branches needed for selectors
+		//check branches needed for selectors and variators
 		void CheckBranches(){
+			if(variation) variation->CheckBranches();
 			for(unsigned s = 0; s < selectorList.size(); s++){
 				if(!selectorList[s]->Dummy()) selectorList[s]->CheckBranches();
 			}

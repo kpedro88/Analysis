@@ -30,6 +30,7 @@ class KVariator {
 		string GetName() { return name; }
 		void SetLooper(T* looper_) { looper = looper_; }
 		//functions
+		virtual void CheckBranches() {}
 		virtual void DoVariation() {}
 		virtual void UndoVariation() {}
 		
@@ -59,6 +60,11 @@ class KVariation {
 			looper = looper_;
 			for(unsigned v = 0; v < variatorList.size(); v++){
 				variatorList[v]->SetLooper(looper_);
+			}
+		}
+		void CheckBranches() { 
+			for(unsigned v = 0; v < variatorList.size(); v++){
+				variatorList[v]->CheckBranches();
 			}
 		}
 		void DoVariation() {
