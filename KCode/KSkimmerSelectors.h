@@ -6,6 +6,7 @@
 #include "KSkimmer.h"
 #include "KMath.h"
 #include "KPlot.h"
+#include "../corrections/EventListFilter.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -784,6 +785,41 @@ class KEventRangeSelector : public KSelector<KSkimmer> {
 		
 		//member variables
 		unsigned start, finish;
+};
+
+//---------------------------------------------------------------
+//updates CSC filter
+class KCSCFilterSelector : public KSelector<KSkimmer> {
+	public:
+		//constructor
+		KCSCFilterSelector() : KSelector<KSkimmer>() { }
+		KCSCFilterSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), inputfile("") {
+			canfail = false;
+		}
+		virtual void CheckLooper(){
+			//check if data
+			bool data = looper->MyBase->GetLocalOpt()->Get("data",false);
+			//disable this for non-data
+			if(!data) dummy = true;
+			else {
+				localOpt->Get("inputfile",inputfile);
+				if(inputfile.size()>0){
+					string gunzip_cmd = "gunzip -c "+inputfile+".gz > "+inputfile;
+					system(gunzip_cmd.c_str());
+					filter = EventListFilter(inputfile);
+				}
+			}
+		}
+
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			if(filter.Initialized()) looper->CSCTightHaloFilter = filter.CheckEvent(looper->RunNum,looper->LumiBlockNum,looper->EvtNum);
+			return true;
+		}
+		
+		//member variables
+		string inputfile;
+		EventListFilter filter;
 };
 
 //-------------------------------------------------------------
@@ -1574,6 +1610,7 @@ namespace KParser {
 		else if(sname=="GenPt") srtmp = new KGenPtSelector(sname,omap);
 		else if(sname=="PDFNorm") srtmp = new KPDFNormSelector(sname,omap);
 		else if(sname=="EventRange") srtmp = new KEventRangeSelector(sname,omap);
+		else if(sname=="CSCFilter") srtmp = new KCSCFilterSelector(sname,omap);
 		else if(sname=="JetEtaRegion") srtmp = new KJetEtaRegionSelector(sname,omap);
 		else if(sname=="NeutralHadronFraction") srtmp = new KNeutralHadronFractionSelector(sname,omap);
 		else if(sname=="PhotonFraction") srtmp = new KPhotonFractionSelector(sname,omap);

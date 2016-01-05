@@ -20,7 +20,7 @@ root -b -q -l 'KSkimDriver.C+("input/input_selection.txt","T1tttt_1500_100","sig
 To remake the input list of sets automatically, for data and MC:
 ```
 python makeSkimInput.py -r input/dict_skim.txt -w input/input_sets_skim.txt
-python makeSkimInput.py -r input/dict_skim_data.txt -w input/input_sets_skim_data.txt
+python makeSkimInput.py -r input/dict_skim_data.txt -w input/input_sets_skim_data.txt --data
 ```
 Note: this script uses the python file lists in [TreeMaker/Production/python](https://github.com/TreeMaker/TreeMaker/tree/Run2/Production/python) to determine the number of files to chain together for each sample. Make sure to follow the [TreeMaker](https://github.com/TreeMaker/TreeMaker) installation instructions so this information is accessible.
 
