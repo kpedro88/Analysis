@@ -25,6 +25,7 @@ SL
 	NJet	i:njet[4]
 	HT	d:HTmin[500]
 	MHT	d:MHTmin[200]
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
 GJet
 	CSCFilter	s:inputfile[corrections/csc2015_Dec01.txt]
 	NJet	i:njet[4]
@@ -33,6 +34,7 @@ GJet
 	Photon
 	MuonVeto
 	ElectronVeto
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
 DYm
 	CSCFilter	s:inputfile[corrections/csc2015_Dec01.txt]
 	NJet	i:njet[4]
@@ -40,12 +42,15 @@ DYm
 	MHT	d:MHTmin[200]
 	DiMuon
 	ElectronVeto
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
 
 VARIATION
 CleanVarsDY
 	Jet	s:vartype[cleanDY]
 CleanVarsGJ
 	Jet	s:vartype[cleanGJ]
+CleanVarsGJloose
+	Jet	s:vartype[cleanGJloose]
 
 INPUT
 input/input_sets_skim.txt

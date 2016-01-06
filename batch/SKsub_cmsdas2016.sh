@@ -96,8 +96,8 @@ for i in $(seq 1 6); do
     )
   ;;
   4)
-    SELTYPE=signal,GJet_CleanVarsGJ
-    SAMPLE=(
+    SELTYPE=signal,GJet_CleanVarsGJloose
+    SAMPLES=(
     QCD_HT-200to300 \
     QCD_HT-300to500 \
     QCD_HT-500to700 \
@@ -108,7 +108,7 @@ for i in $(seq 1 6); do
     )
   ;;
   5)
-    SELTYPE=GJet_CleanVarsGJ
+    SELTYPE=GJet_CleanVarsGJloose
     SAMPLES=(
     GJets_HT-100to200 \
     GJets_HT-200to400 \
