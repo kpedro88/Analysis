@@ -14,6 +14,17 @@ ttHJetTobb_M125 \
 TTTT
 )
 
+#initialize parameters
+RUN=0
+
+#check arguments
+while getopts "r" opt; do
+  case "$opt" in
+  r) RUN=1
+    ;;
+  esac
+done
+
 for SAMPLE in ${SAMPLES[@]}; do
   for TREEDIR in ${STDIR}/tree*/; do
     #check to see if anything needs to be hadded
@@ -30,21 +41,26 @@ for SAMPLE in ${SAMPLES[@]}; do
       ALLFILES="${ALLFILES} ${XRDIR}/`basename ${FILE}`"
     done
 
-    #hadd to tmp file
-    hadd tree_${SAMPLE}.root ${ALLFILES}
-
-    #remove original files
-    rm ${TREEDIR}/tree_${SAMPLE}.root
-    for FILE in ${TREEDIR}/tree_${SAMPLE}_*.root; do
-      rm ${FILE}
-    done
-
-    #copy hadded file to eos
-    xrdcp -f tree_${SAMPLE}.root ${XRDIR}/
-
-    #remove tmp file
-    rm tree_${SAMPLE}.root
-
+    #dryrun (list nfiles) is default
+    if [[ $RUN -eq 1 ]]; then
+      #hadd to tmp file
+      hadd tree_${SAMPLE}.root ${ALLFILES}
+      
+      #remove original files
+      rm ${TREEDIR}/tree_${SAMPLE}.root
+      for FILE in ${TREEDIR}/tree_${SAMPLE}_*.root; do
+        rm ${FILE}
+      done
+      
+      #copy hadded file to eos
+      xrdcp -f tree_${SAMPLE}.root ${XRDIR}/
+      
+      #remove tmp file
+      rm tree_${SAMPLE}.root
+    else
+      echo "$SAMPLE in $TREEDIR"
+      echo ${ALLFILES} | wc -w
+    fi
   done
 done
 
