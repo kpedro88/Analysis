@@ -3,6 +3,7 @@
 
 //custom headers
 #include "KMap.h"
+#include "KMath.h"
 #include "KVariation.h"
 
 //ROOT headers
@@ -57,13 +58,21 @@ class KSelector {
 		virtual void Finalize(TFile*) { }
 		//used for non-dummy selectors
 		virtual bool Cut() { return true; }
-		virtual void PrintEfficiency(vector<unsigned>& widths, int prev_counter, int nentries){
+		virtual void PrintEfficiency(vector<unsigned>& widths, int prev_counter, int nentries, bool printerrors){
 			if(dummy || !canfail) return;
 			cout << left << setw(widths[0]) << name;
-			cout << "  " << right << setw(widths[1]) << counter;
-			cout << "  " << right << setw(widths[2]) << ((double)counter/(double)nentries)*100;
-			//no rel. eff. for first selector
-			if(prev_counter>0) cout  << "  " << right << setw(widths[3]) << ((double)counter/(double)prev_counter)*100;
+			if(printerrors){
+				cout << "  " << right << setw(widths[4]) << counter << " +/- " << right << setw(widths[4]) << KMath::PoissonErrorUp(counter);
+				cout << "  " << right << setw(widths[5]) << ((double)counter/(double)nentries)*100 << " +/- " << right << setw(widths[5]) << KMath::EffError(counter,nentries)*100;
+				//no rel. eff. for first selector
+				if(prev_counter>0) cout << "  " << right << setw(widths[5]) << ((double)counter/(double)prev_counter)*100 << " +/- " << right << setw(widths[5]) << KMath::EffError(counter,prev_counter)*100;
+			}
+			else {
+				cout << "  " << right << setw(widths[1]) << counter;
+				cout << "  " << right << setw(widths[2]) << ((double)counter/(double)nentries)*100;
+				//no rel. eff. for first selector
+				if(prev_counter>0) cout << "  " << right << setw(widths[3]) << ((double)counter/(double)prev_counter)*100;
+			}
 			cout << endl;
 		}
 		//to set tree branches
@@ -93,7 +102,7 @@ template <class T>
 class KSelection {
 	public:
 		//constructor
-		KSelection() : name(""), variation(0), looper(0), file(0), tree(0), widths(5,0), width1s(10) {}
+		KSelection() : name(""), variation(0), looper(0), file(0), tree(0), widths(6,0), width1s(10) {}
 		KSelection(string name_, OptionMap* globalOpt_) : name(name_), globalOpt(globalOpt_), variation(0), looper(0), file(0), tree(0), widths(5,0), width1s(10) {
 			//must always have option map
 			if(globalOpt==0) globalOpt = new OptionMap();
@@ -179,18 +188,35 @@ class KSelection {
 			return result;
 		}
 		void PrintEfficiency(unsigned width1, int nentries=1){
+			//check if error printing should be enabled
+			bool printerrors = globalOpt->Get("printerrors",false);
 			//width1s set when adding selectors, width1 set by skimmer to consider all selectors in all selections
 			//default for width1s is 10 for "NEventProc"
-			widths[0] = width1; widths[1] = widths[2] = widths[3] = 13;
 			
-			cout << string(widths[0]+widths[1]+widths[2]+widths[3]+widths[4]+2*(widths.size()-1),'-') << endl;
+			widths[0] = width1;
+			if(printerrors) {
+				widths[4] = max(log10(nentries)+1,log10(sqrt(nentries))+1+3); //extra width for num and err, based on # digits
+				int numcolwidth1 = widths[4]*2 + 5; //x + 5 + x (num +/- err)
+				widths[1] = numcolwidth1;
+				widths[5] = 6; //extra width for eff and err (assumes yieldprecision = 2)
+				int numcolwidth2 = widths[5]*2 + 5; //6 + 5 + 6 (eff +/- err)
+				widths[2] = widths[3] = numcolwidth2;
+			}
+			else {
+				int numcolwidth = 13;
+				widths[1] = widths[2] = widths[3] = numcolwidth;
+			}
+			
+			cout << string(widths[0]+widths[1]+widths[2]+widths[3]+2*(4-1),'-') << endl;
 			cout << "Selection: " << name << endl;
-			cout << left << setw(widths[0]) << "Selector" << "  " << " Raw # Events" << "  " << "Abs. Eff. (%)" << "  " << "Rel. Eff. (%)" << endl;
-			cout << left << setw(widths[0]) << "NEventProc" << "  " << right << setw(widths[1]) << nentries << endl;
+			cout << left << setw(widths[0]) << "Selector" << "  " << right << setw(widths[1]) << "Raw # Events" << "  " << right << setw(widths[2]) << "Abs. Eff. (%)" << "  " << right << setw(widths[3]) << "Rel. Eff. (%)" << endl;
+			cout << left << setw(widths[0]) << "NEventProc";
+			if(printerrors) cout << "  " << right << setw(widths[4]) << nentries << " +/- " << right << setw(widths[4]) << KMath::PoissonErrorUp(nentries) << endl;
+			else cout << "  " << right << setw(widths[1]) << nentries << endl;
 			for(unsigned s = 0; s < selectorList.size(); s++){
 				int prev_counter = 0;
 				if(s>0) prev_counter = selectorList[s-1]->GetCounter();
-				selectorList[s]->PrintEfficiency(widths,prev_counter,nentries);
+				selectorList[s]->PrintEfficiency(widths,prev_counter,nentries,printerrors);
 			}
 		}
 		void Finalize(TH1F* nEventHist=NULL, TH1F* nEventNegHist=NULL){

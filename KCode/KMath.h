@@ -50,6 +50,14 @@ namespace KMath {
 		double U = (ROOT::Math::gamma_quantile_c(alpha/2,N+1,1.));
 		return U - N;
 	}
+	//use PoissonErrorUp by default
+	double EffError(int pass, int total, bool up=true){
+		int fail = total-pass;
+		double eff = (double)pass/(double)total;
+		double err_p = up ? PoissonErrorUp(pass) : PoissonErrorLow(pass);
+		double err_f = up ? PoissonErrorUp(fail) : PoissonErrorLow(fail);
+		return sqrt(pow(1-eff,2)*pow(err_p,2) + pow(eff,2)*pow(err_f,2))/(double)total;
+	}
 }
 
 #endif

@@ -568,9 +568,9 @@ class KNBJetBinSelector : public KSelector<KSkimmer> {
 			return goodB;
 		}
 		
-		virtual void PrintEfficiency(vector<unsigned>& widths, int prev_counter, int nentries){
+		virtual void PrintEfficiency(vector<unsigned>& widths, int prev_counter, int nentries, bool printerrors){
 			for(unsigned b = 0; b < bjet_sel.size(); b++){
-				bjet_sel[b]->PrintEfficiency(widths,prev_counter,nentries);
+				bjet_sel[b]->PrintEfficiency(widths,prev_counter,nentries,printerrors);
 			}
 		}
 		
@@ -851,18 +851,32 @@ class KSyncSelector : public KSelector<KSkimmer> {
 			if(result) counter++;
 			return result;
 		}
-		virtual void PrintEfficiency(vector<unsigned>& widths, int prev_counter, int nentries){
+		virtual void PrintEfficiency(vector<unsigned>& widths, int prev_counter, int nentries, bool printerrors){
 			if(dummy || !canfail) return;
 			cout << left << setw(widths[0]) << name;
-			cout << "  " << right << setw(widths[1]) << counter;
-			cout << "  " << right << setw(widths[2]) << ((double)counter/(double)nentries)*100;
-			//no rel. eff. for first selector
-			if(prev_counter>0) cout << "  " << right << setw(widths[3]) << ((double)counter/(double)prev_counter)*100;
-			else cout << "  " << right << setw(widths[3]) << " ";
-			//# of objects
-			stringstream sobj;
-			sobj << "(" << obj_counter << ")";
-			cout << "  " << right << setw(widths[3]) << sobj.str();
+			if(printerrors){
+				cout << "  " << right << setw(widths[4]) << counter << " +/- " << right << setw(widths[4]) << KMath::PoissonErrorUp(counter);
+				cout << "  " << right << setw(widths[5]) << ((double)counter/(double)nentries)*100 << " +/- " << right << setw(widths[5]) << KMath::EffError(counter,nentries)*100;
+				//no rel. eff. for first selector
+				if(prev_counter>0) cout << "  " << right << setw(widths[5]) << ((double)counter/(double)prev_counter)*100 << " +/- " << right << setw(widths[5]) << KMath::EffError(counter,prev_counter)*100;
+				else cout << "  " << right << setw(widths[3]) << " ";
+				//# of objects
+				stringstream sobj, sobj2;
+				sobj << "(" << obj_counter;
+				sobj2 << KMath::PoissonErrorUp(obj_counter) << ")";
+				cout << "  " << right << right << setw(widths[4]+1) << sobj.str() << " +/- " << right << setw(widths[4]+1) << sobj2.str();
+			}
+			else {
+				cout << "  " << right << setw(widths[1]) << counter;
+				cout << "  " << right << setw(widths[2]) << ((double)counter/(double)nentries)*100;
+				//no rel. eff. for first selector
+				if(prev_counter>0) cout << "  " << right << setw(widths[3]) << ((double)counter/(double)prev_counter)*100;
+				else cout << "  " << right << setw(widths[3]) << " ";
+				//# of objects
+				stringstream sobj;
+				sobj << "(" << obj_counter << ")";
+				cout << "  " << right << setw(widths[3]) << sobj.str();
+			}
 			cout << endl;
 		}
 		
