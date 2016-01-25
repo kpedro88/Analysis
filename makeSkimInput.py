@@ -31,7 +31,7 @@ def makeSkimInput(read,write,nfiles=0,data=False):
         else: # split chains into several blocks
             for block in range(0,nblocks):
                 fileMin = block*nfiles
-                fileMax = min((block+1)*nfiles,fileListLen-1)
+                fileMax = min((block+1)*nfiles-1,fileListLen-1)
                 wline = makeSkimLine(short_name,full_name,fileMin,fileMax,mother,block,data)
                 wfile.write(wline)
         tot += len(readFilesImport)

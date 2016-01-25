@@ -152,3 +152,4 @@ Spring15Fastv2.SMS-T2tt_mStop-500-525-550_mLSP-1to425-325to450-1to475_TuneCUETP8
 Spring15Fastv2.SMS-T2tt_mStop-500_mLSP-325_TuneCUETP8M1_13TeV-madgraphMLM-pythia8	T2tt_mStop-500_mLSP-325
 Spring15Fastv2.SMS-T2tt_mStop-600-950_mLSP-1to450_TuneCUETP8M1_13TeV-madgraphMLM-pythia8	T2tt_mStop-600-950_mLSP-1to450
 Spring15Fastv2.SMS-T2tt_mStop-850_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8	T2tt_mStop-850_mLSP-100
+Spring15Fastv2.SMS-T5qqqqVV_mGluino-1800to2000_mLSP-1to1250_TuneCUETP8M1_13TeV-madgraphMLM-pythia8	T5qqqqVV_mGluino-1800to2000_mLSP-1to1250
