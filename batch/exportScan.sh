@@ -354,4 +354,10 @@ T2tt_mStop-600-950_mLSP-1to450_block4 \
 T2tt_mStop-600-950_mLSP-1to450_block5 \
 T2tt_mStop-600-950_mLSP-1to450_block6 \
 T2tt_mStop-850_mLSP-100 \
+T5qqqqVV_mGluino-1800to2000_mLSP-1to1250_block0 \
+T5qqqqVV_mGluino-1800to2000_mLSP-1to1250_block1 \
+T5qqqqVV_mGluino-1800to2000_mLSP-1to1250_block2 \
+T5qqqqVV_mGluino-1800to2000_mLSP-1to1250_block3 \
+T5qqqqVV_mGluino-1800to2000_mLSP-1to1250_block4 \
+T5qqqqVV_mGluino-1800to2000_mLSP-1to1250_block5 \
 )
