@@ -637,19 +637,31 @@ class KBTagEfficiencySelector : public KSelector<KSkimmer> {
 		}
 		
 		virtual void Finalize(TFile* file){
-			//calculate efficiency from numer and denom
-			TH2F* h_eff_b = (TH2F*)n_eff_b->Clone("h_eff_b");
-			TH2F* h_eff_c = (TH2F*)n_eff_c->Clone("h_eff_c");
-			TH2F* h_eff_udsg = (TH2F*)n_eff_udsg->Clone("h_eff_udsg");
-			h_eff_b->Divide(d_eff_b);
-			h_eff_c->Divide(d_eff_c);
-			h_eff_udsg->Divide(d_eff_udsg);
-			
-			//write to file
-			file->cd();
-			h_eff_b->Write();
-			h_eff_c->Write();
-			h_eff_udsg->Write();
+			if(localOpt->Get("saveAll",false)){
+				//write to file
+				file->cd();
+				d_eff_b->Write();
+				d_eff_c->Write();
+				d_eff_udsg->Write();
+				n_eff_b->Write();
+				n_eff_c->Write();
+				n_eff_udsg->Write();
+			}
+			else{
+				//calculate efficiency from numer and denom
+				TH2F* h_eff_b = (TH2F*)n_eff_b->Clone("h_eff_b");
+				TH2F* h_eff_c = (TH2F*)n_eff_c->Clone("h_eff_c");
+				TH2F* h_eff_udsg = (TH2F*)n_eff_udsg->Clone("h_eff_udsg");
+				h_eff_b->Divide(d_eff_b);
+				h_eff_c->Divide(d_eff_c);
+				h_eff_udsg->Divide(d_eff_udsg);
+				
+				//write to file
+				file->cd();
+				h_eff_b->Write();
+				h_eff_c->Write();
+				h_eff_udsg->Write();
+			}
 		}
 		
 		//member variables
