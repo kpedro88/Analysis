@@ -555,6 +555,9 @@ class KHistoSelector : public KSelector<KBuilder> {
 					else if(vname=="mht"){//missing hadronic energy
 						values[i].Fill(looper->MHT,w);
 					}
+					else if(vname=="met"){//missing energy
+						values[i].Fill(looper->METPt,w);
+					}
 					else if(vname=="nleptons"){//# leptons (mu or ele)
 						values[i].Fill(looper->Leptons,w);
 					}
