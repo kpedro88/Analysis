@@ -434,9 +434,18 @@ class KPlot{
 			//fix log-scale label offsets (not final)
 			double offX, offY, offZ;
 			offX = offY = offZ = 1.0;
-			if(pad1->GetLogx()) offX = 0.5;
-			if(pad1->GetLogy()) offY = 0.5;
-			if(pad1->GetLogz()) offZ = 0.5;
+			if(pad1->GetLogx()) {
+				offX = 0.5;
+				if(localOpt->Get("morelogxlabels",false)) hist->GetXaxis()->SetMoreLogLabels();
+			}
+			if(pad1->GetLogy()) {
+				offY = 0.5;
+				if(localOpt->Get("morelogylabels",false)) hist->GetYaxis()->SetMoreLogLabels();
+			}
+			if(pad1->GetLogz()) {
+				offZ = 0.5;
+				if(localOpt->Get("morelogzlabels",false)) hist->GetZaxis()->SetMoreLogLabels();
+			}
 			
 			hist->GetYaxis()->SetTitleSize(sizeT/padH);
 			hist->GetYaxis()->SetLabelSize(sizeL/padH);
