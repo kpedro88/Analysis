@@ -338,10 +338,14 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 	public:
 		//constructor
 		KMETFilterSelector() : KSelector<KBuilder>() { }
-		KMETFilterSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), fastsim(false), inputfile("") { 
-			localOpt->Get("inputfile",inputfile);
-			if(inputfile.size()>0){
-				filter = EventListFilter(inputfile);
+		KMETFilterSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), fastsim(false), cscfile("") { 
+			localOpt->Get("cscfile",cscfile);
+			if(cscfile.size()>0){
+				cscfilter = EventListFilter(cscfile);
+			}
+			localOpt->Get("filterfiles",filterfiles);
+			for(unsigned f = 0; f < filterfiles.size(); ++f){
+				filters.push_back(new EventListFilter(filterfiles[f]));
 			}
 		}
 		virtual void CheckBranches(){
@@ -351,7 +355,7 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 			looper->fChain->SetBranchStatus("HBHENoiseFilter",1);
 			looper->fChain->SetBranchStatus("HBHEIsoNoiseFilter",1);
 			looper->fChain->SetBranchStatus("CSCTightHaloFilter",1);
-			if(filter.Initialized()){
+			if(cscfilter.Initialized() || (filters.size()>0 && filters[0]->Initialized())){
 				looper->fChain->SetBranchStatus("RunNum",1);
 				looper->fChain->SetBranchStatus("LumiBlockNum",1);
 				looper->fChain->SetBranchStatus("EvtNum",1);				
@@ -369,14 +373,20 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			bool CSCTightHaloFilter = looper->CSCTightHaloFilter;
-			if(filter.Initialized()) CSCTightHaloFilter = filter.CheckEvent(looper->RunNum,looper->LumiBlockNum,looper->EvtNum);
-			return looper->NVtx > 0 && looper->eeBadScFilter==1 && looper->eeBadSc4Filter && looper->HBHENoiseFilter && looper->HBHEIsoNoiseFilter && CSCTightHaloFilter;
+			if(cscfilter.Initialized()) CSCTightHaloFilter = cscfilter.CheckEvent(looper->RunNum,looper->LumiBlockNum,looper->EvtNum);
+			bool otherFilters = true;
+			for(unsigned f = 0; f < filters.size(); ++f){
+				otherFilters &= filters[f]->CheckEvent(looper->RunNum,looper->LumiBlockNum,looper->EvtNum);
+			}
+			return looper->NVtx > 0 && looper->eeBadScFilter==1 && looper->eeBadSc4Filter && looper->HBHENoiseFilter && looper->HBHEIsoNoiseFilter && CSCTightHaloFilter && otherFilters;
 		}
 		
 		//member variables
 		bool fastsim;
-		string inputfile;
-		EventListFilter filter;
+		string cscfile;
+		EventListFilter cscfilter;
+		vector<string> filterfiles;
+		vector<EventListFilter*> filters;
 };
 
 //---------------------------------------------------------------
@@ -425,7 +435,7 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 			canfail = false;
 			
 			//check for option
-			bool debug = localOpt->Get("debug",false); btagcorr.SetDebug(debug);
+			debug = localOpt->Get("debug",false); btagcorr.SetDebug(debug);
 			
 			//initialize btag corrector calibrations
 			btagcorr.SetCalib("btag/CSVv2_mod.csv");
@@ -434,6 +444,7 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 			looper->fChain->SetBranchStatus("HTJetsMask",1);
 			looper->fChain->SetBranchStatus("Jets",1);
 			looper->fChain->SetBranchStatus("Jets_hadronFlavor",1);
+			if(debug) looper->fChain->SetBranchStatus("BTags",1);
 		}
 		virtual void CheckLooper(){
 			//check for option
@@ -467,10 +478,12 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 		virtual bool Cut() {
 			//get probabilities
 			prob = btagcorr.GetCorrections(looper->Jets,looper->Jets_hadronFlavor,looper->HTJetsMask);
+			if(debug) cout << "BTags = " << looper->BTags << endl;
 			return true;
 		}
 		
 		//member variables
+		bool debug;
 		BTagCorrector btagcorr;
 		vector<double> prob;
 };

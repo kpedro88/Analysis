@@ -10,8 +10,8 @@ INPUT
 input/input_global.txt
 
 OPTION
-double:luminorm[225.575]
-string:luminormunit[pbinv]
+double:luminorm[2261.983]
+string:luminormunit[fbinv]
 double:sizeLeg[22]
 double:canvasW[1200]
 double:marginB[300]
@@ -40,7 +40,7 @@ bool:debugcut[1]
 SELECTION
 ra2bin
 	HLT	vs:HLTLines[HLT_PFHT350_PFMET100_JetIdCleaned_v,HLT_PFHT350_PFMET100_v]
-	METFilter	s:inputfile[../TreeMaker/Production/test/data/csc2015.txt]
+	METFilter	s:cscfile[../TreeMaker/Production/test/data/csc2015.txt]	vs:filterfiles[../TreeMaker/Production/test/data/muonBadTrack.txt,../TreeMaker/Production/test/data/badResolutionTrack.txt]
 	RA2Bin
 	Histo
 
