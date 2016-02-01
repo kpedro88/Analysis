@@ -61,9 +61,12 @@ for ind,file in enumerate(files):
     mMother = msplit(fsplit[1])
     mLSP = msplit(fsplit[2])
     # get cross section
-    if model.find("T2")!=-1:
+    if model.find("T2tt")!=-1:
         this_xsec = xsecT2[mMother]
         mother_ID = 1000006
+    elif model.find("T2bb")!=-1:
+        this_xsec = xsecT2[mMother]
+        mother_ID = 1000005
     else:
         this_xsec = xsec[mMother]
         mother_ID = 1000021
