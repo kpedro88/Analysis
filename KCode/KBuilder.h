@@ -234,7 +234,7 @@ class KBuilderMC : public KBuilder {
 			
 			//ISR corr options
 			isrcorr = globalOpt->Get("isrcorr",false);
-			mother = 0; localOpt->Get("mother",mother);
+			localOpt->Get("mother",mother);
 			isrunc = 0; globalOpt->Get("isrunc", isrunc);
 			if(isrcorr){
 				TH1* isrtmp = NULL;
@@ -394,7 +394,8 @@ class KBuilderMC : public KBuilder {
 		//member variables
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, debugWeight, didDebugWeight;
 		bool pucorr, trigcorr, isrcorr, realMET, signal, fastsim, jetidcorr;
-		int puunc, pdfunc, mother, isrunc, scaleunc, trigStatUnc, trigSystUnc;
+		int puunc, pdfunc, isrunc, scaleunc, trigStatUnc, trigSystUnc;
+		vector<int> mother;
 		TH1 *puhist, *puhistUp, *puhistDown;
 		vector<double> pdfnorms;
 		string normtype;

@@ -1,7 +1,7 @@
 from optparse import OptionParser
 
 def makeSkimLine(short_name,full_name,fileMin,fileMax,mother,block=-1,data=False):
-    return "base" + "\t" + "skim" + "\t" + short_name + ("_block"+str(block) + "\t" + "u:block[" + str(block) + "]" if block >= 0 else "") + "\t" + "b:chain[1]" + "\t" + "s:filepre[" + full_name + "_]" + "\t" + "vi:filerange[" + str(fileMin) + "," + str(fileMax) + "]" + "\t" + "s:filesuff[_RA2AnalysisTree.root]" + "\t" + "s:chainsuff[/TreeMaker2/PreSelection]" + ("\t"+"i:mother["+str(mother)+"]" if mother > 0 else "") + ("\t"+"b:data[1]" if data else "") + "\n"
+    return "base" + "\t" + "skim" + "\t" + short_name + ("_block"+str(block) + "\t" + "u:block[" + str(block) + "]" if block >= 0 else "") + "\t" + "b:chain[1]" + "\t" + "s:filepre[" + full_name + "_]" + "\t" + "vi:filerange[" + str(fileMin) + "," + str(fileMax) + "]" + "\t" + "s:filesuff[_RA2AnalysisTree.root]" + "\t" + "s:chainsuff[/TreeMaker2/PreSelection]" + ("\t"+"vi:mother["+str(','.join(str(m) for m in mother))+"]" if len(mother) > 0 else "") + ("\t"+"b:data[1]" if data else "") + "\n"
 
 def makeSkimInput(read,write,nfiles=0,data=False):
     rfile = open(read,'r')
@@ -16,8 +16,8 @@ def makeSkimInput(read,write,nfiles=0,data=False):
         if len(values)<2: continue
         full_name = values[0].rstrip()
         short_name = values[1].rstrip()
-        mother = 0
-        if len(values)>2: mother = int(values[2].rstrip())
+        mother = []
+        if len(values)>2: mother.append(int(values[2].rstrip()))
         readFilesImport = getattr(__import__("TreeMaker.Production." + full_name + "_cff",fromlist=["readFiles"]),"readFiles")
         fileListLen = len(readFilesImport)
         

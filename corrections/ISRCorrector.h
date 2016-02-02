@@ -1,15 +1,22 @@
 #ifndef ISRCORRECTOR_H
 #define ISRCORRECTOR_H
 
+#include <TH1.h>
+#include <TLorentzVector.h>
+
+#include <vector>
+#include <algorithm>
+
 class ISRCorrector {
 	public:
 		//constructor
-		ISRCorrector() : h_genpt(NULL), h_weights(NULL), mother(0) {}
+		ISRCorrector() : h_genpt(NULL), h_weights(NULL) {}
 		//destructor
 		virtual ~ISRCorrector() {}
 		
 		//accessors
-		void SetMother(int m) { mother = m; }
+		void SetMother(int m) { mother.clear(); mother.push_back(m); }
+		void SetMother(vector<int> m) { mother = m; }
 		void SetWeights(TH1* weights, TH1* gen){
 			if(!weights) return;
 			//normalize weights using gen pt spectrum so total number of gen events will stay the same
@@ -24,13 +31,13 @@ class ISRCorrector {
 		
 		//function
 		double GetCorrection(vector<TLorentzVector>* genParticles, vector<int>* genParticles_PDGid){
-			if(mother==0 || h_weights==NULL) return 1.;
+			if(mother.size()==0 || h_weights==NULL) return 1.;
 
 			//loop over genparticles
 			TLorentzVector vgen;
 			vgen.SetPtEtaPhiE(0,0,0,0);
 			for(unsigned g = 0; g < genParticles_PDGid->size(); ++g){
-				if(abs(genParticles_PDGid->at(g))==mother){
+				if(binary_search(mother.begin(),mother.end(),abs(genParticles_PDGid->at(g)))){
 					vgen -= genParticles->at(g);
 				}
 			}
@@ -41,7 +48,7 @@ class ISRCorrector {
 		
 		//member variables
 		TH1 *h_genpt, *h_weights;
-		int mother;
+		vector<int> mother;
 };
 
 /*USAGE:

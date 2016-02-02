@@ -675,7 +675,7 @@ class KGenPtSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
 		KGenPtSelector() : KSelector<KSkimmer>() { }
-		KGenPtSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), h_genpt(NULL), mother(0) {
+		KGenPtSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), h_genpt(NULL) {
 			canfail = false;
 			//initialize histograms using KPlot:CreateHist() method
 			TH1::AddDirectory(kFALSE);
@@ -688,7 +688,7 @@ class KGenPtSelector : public KSelector<KSkimmer> {
 			//get mother pdgid
 			looper->MyBase->GetLocalOpt()->Get("mother",mother);
 			//if none, skip this
-			if(mother==0) dummy = true;
+			if(mother.size()==0) dummy = true;
 		}
 		
 		//this selector doesn't add anything to tree
@@ -699,7 +699,7 @@ class KGenPtSelector : public KSelector<KSkimmer> {
 			TLorentzVector vgen;
 			vgen.SetPtEtaPhiE(0,0,0,0);
 			for(unsigned g = 0; g < looper->genParticles_PDGid->size(); ++g){
-				if(abs(looper->genParticles_PDGid->at(g))==mother){
+				if(binary_search(mother.begin(),mother.end(),abs(genParticles_PDGid->at(g)))){
 					vgen -= looper->genParticles->at(g);
 				}
 			}
@@ -718,7 +718,7 @@ class KGenPtSelector : public KSelector<KSkimmer> {
 		
 		//member variables
 		TH1 *h_genpt;
-		int mother;
+		vector<int> mother;
 };
 
 //-----------------------------------------------------------------

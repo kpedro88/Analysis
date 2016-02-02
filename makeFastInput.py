@@ -18,6 +18,7 @@ files = os.listdir(options.dir)
 # open files
 xfile = open("input/dict_xsec.txt",'r')
 xfileT2 = open("input/dict_xsec_T2.txt",'r')
+xfileT2qq = open("input/dict_xsec_T2qq.txt",'r')
 wfile = open("input/input_sets_skim_fast.txt",'w')
 dfile = open("input/input_sets_DC_fast.txt",'w')
 sfile = open("batch/exportFast.sh",'w')
@@ -44,6 +45,12 @@ for xline in xfileT2:
     if len(values) < 2: continue
     xsecT2[int(values[0])] = float(values[1])
 
+# parse xsec map (taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVsquarkantisquark)
+xsecT2qq = {}
+for xline in xfileT2qq:
+    values = xline.split('\t')
+    if len(values) < 2: continue
+    xsecT2qq[int(values[0])] = float(values[1])
     
 # preamble for script
 sfile.write("#!/bin/bash\n")
@@ -60,24 +67,28 @@ for ind,file in enumerate(files):
     model = fsplit[0]
     mMother = msplit(fsplit[1])
     mLSP = msplit(fsplit[2])
+    mother_ID = []
     # get cross section
     if model.find("T2tt")!=-1:
         this_xsec = xsecT2[mMother]
-        mother_ID = 1000006
+        mother_ID.append(1000006)
     elif model.find("T2bb")!=-1:
         this_xsec = xsecT2[mMother]
-        mother_ID = 1000005
+        mother_ID.append(1000005)
+    elif model.find("T2qq")!=-1:
+        this_xsec = xsecT2qq[mMother]
+        mother_ID.append(1000001,1000002,1000003,1000004,2000001,2000002,2000003,2000004)
     else:
         this_xsec = xsec[mMother]
-        mother_ID = 1000021
+        mother_ID.append(1000021)
     # make short name
     short_name = model + "_" + str(mMother) + "_" + str(mLSP) + "_" + "fast"
     # make set list for skimming
-    wline = "base" + "\t" + "skim" + "\t" + short_name + "\t" + "s:filename[" + file + "]" + "\t" + "b:fastsim[1]" + "\t" + "i:mother[" + str(mother_ID) + "]" + "\n"
+    wline = "base" + "\t" + "skim" + "\t" + short_name + "\t" + "s:filename[" + file + "]" + "\t" + "b:fastsim[1]" + "\t" + "vi:mother[" + str(','.join(str(m) for m in mother_ID)) + "]" + "\n"
     wfile.write(wline)
     # make set list for datacards with xsecs
     dline = "hist" + "\t" + "mc" + "\t" + short_name + "\n"
-    dline += "\t" + "base" + "\t" + "mc" + "\t" + short_name + "\t" + "s:filename[tree_" + short_name + ".root]" + "\t" + "d:xsection[" + str(this_xsec) + "]" + "\t" + "b:signal[1]" + "\t" + "b:fastsim[1]" + "\t" + "i:mother[" + str(mother_ID) + "]" + "\n"
+    dline += "\t" + "base" + "\t" + "mc" + "\t" + short_name + "\t" + "s:filename[tree_" + short_name + ".root]" + "\t" + "d:xsection[" + str(this_xsec) + "]" + "\t" + "b:signal[1]" + "\t" + "b:fastsim[1]" + "\t" + "vi:mother[" + str(','.join(str(m) for m in mother_ID)) + "]" + "\n"
     dfile.write(dline)
     # make split set lists
     if nfiles>0:
