@@ -159,6 +159,8 @@ class KBase {
 				if(nEventNegHist) nEventProc -= 2*(nEventNegHist->GetBinContent(1));
 			}
 			localOpt->Set("nEventProc",max(nEventProc,1));
+			
+			debugroc = globalOpt->Get("debugroc",false);
 		}
 		//destructor
 		virtual ~KBase() {}
@@ -225,9 +227,12 @@ class KBase {
 			//calculate efficiencies: yield(i,nbins)/yield(0,nbins)
 			efftmp = new double[htmp->GetNbinsX()+2];
 			double ydenom = htmp->Integral(0,htmp->GetNbinsX()+1);
+			if(debugroc) cout << name << " " << stmp << ":";
 			for(int b = 0; b <= htmp->GetNbinsX()+1; b++){
 				efftmp[b] = htmp->Integral(b,htmp->GetNbinsX()+1)/ydenom;
+				if(debugroc) cout << " " << efftmp[b];
 			}
+			if(debugroc) cout << endl;
 			
 			MyEffs.Add(stmp,efftmp);
 			return efftmp;
@@ -293,6 +298,7 @@ class KBase {
 		TGraphAsymmErrors* etmp;
 		double* efftmp;
 		bool isBuilt;
+		bool debugroc;
 };
 
 //---------------------------------------------------------------

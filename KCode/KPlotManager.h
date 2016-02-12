@@ -277,8 +277,8 @@ class KPlotManager : public KManager {
 				MySets[s]->Build();
 			}
 			
-			//skip all the histo drawing in roc curve mode
-			if(globalOpt->Get("roc",false)) {
+			//skip all the histo drawing in roc curve mode (by default)
+			if(globalOpt->Get("roc",false) && globalOpt->Get("skiphistos",true)) {
 				//close canvases
 				for(p = MyPlots.GetTable().begin(); p != MyPlots.GetTable().end(); p++){
 					TCanvas* can = p->second->GetCanvas();
@@ -451,6 +451,12 @@ class KPlotManager : public KManager {
 				}
 			}
 			
+			//if the histo drawing wasn't skipped in roc curve mode
+			if(globalOpt->Get("roc",false) && !globalOpt->Get("skiphistos",true)) {
+				DrawROC();
+				return;
+			}
+			
 			//close all root files
 			CloseFiles();
 		}
@@ -471,6 +477,7 @@ class KPlotManager : public KManager {
 					//specific qtys not included in roc_name right now
 					//anything desired should be specified in printsuffix option
 					string roc_name = "roc_" + roc_sig[s]->GetName() + "_vs_" + roc_bkg[b]->GetName();
+					if(globalOpt->Get("debugroc",false)) cout << roc_name << endl;
 					
 					//make base histo: 0..1 on both axes
 					TH1F* h_base = new TH1F(roc_name.c_str(),"",10,0.,1.);
@@ -499,7 +506,7 @@ class KPlotManager : public KManager {
 					for(p = MyPlots.GetTable().begin(); p != MyPlots.GetTable().end(); p++){
 						//select current histogram in sets
 						TH1F* h_sig = (TH1F*)(roc_sig[s]->GetHisto(p->first));
-						//TH1F* h_bkg = (TH1F*)(roc_bkg[b]->GetHisto(p->first)); //unused right now
+						TH1F* h_bkg = (TH1F*)(roc_bkg[b]->GetHisto(p->first)); //unused right now
 						
 						//get efficiencies
 						//(cached results will be returned if the calculation was already done)
@@ -577,6 +584,7 @@ class KPlotManager : public KManager {
 						otmp += "_" + dirs.back();
 					}
 					otmp += "." + pformat;
+					KParser::clean(otmp);
 					can->Print(otmp.c_str(),pformat.c_str());
 				}
 			}
