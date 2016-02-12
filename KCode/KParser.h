@@ -31,6 +31,18 @@ namespace KParser {
 			fields.push_back(field);
 		}
 	}
+	//clean out forbidden characters (for filenames)
+	//ref: http://codereview.stackexchange.com/questions/283/function-for-removing-forbidden-characters
+	void clean(string& line, char alt='_'){
+		string illegalChars = "\\/:?\"<>|";
+		string::iterator it;
+		for (it = line.begin(); it != line.end(); ++it){
+			bool found = illegalChars.find(*it) != string::npos;
+			if(found){
+				*it = alt;
+			}
+		}
+	}
 	//turns text input into ROOT colors: kXXX +/- #
 	Color_t processColor(string line){
 		//color input is space-separated
