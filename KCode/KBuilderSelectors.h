@@ -77,6 +77,61 @@ class KHLTSelector : public KSelector<KBuilder> {
 		vector<unsigned> HLTIndices;
 };
 
+//----------------------------------------------------
+//selects events based on HT value
+class KHTSelector : public KSelector<KBuilder> {
+	public:
+		//constructor
+		KHTSelector() : KSelector<KBuilder>() { }
+		KHTSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), HTmin(500) { 
+			//check for option
+			localOpt->Get("HTmin",HTmin);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("HT",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return looper->HT > HTmin;
+		}
+		
+		//member variables
+		double HTmin;
+};
+
+//----------------------------------------------------
+//selects events based on MHT value
+class KMHTSelector : public KSelector<KBuilder> {
+	public:
+		//constructor
+		KMHTSelector() : KSelector<KBuilder>() { }
+		KMHTSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), MHTmin(200), debug(false), minPtMHT(30.), maxEtaMHT(5.) { 
+			//check for option
+			localOpt->Get("MHTmin",MHTmin);
+			debug = localOpt->Get("debug",false);
+			localOpt->Get("minPtMHT",minPtMHT);
+			localOpt->Get("maxEtaMHT",maxEtaMHT);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("MHT",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return looper->MHT > MHTmin;
+		}
+		
+		//member variables
+		double MHTmin;
+		bool debug;
+		double minPtMHT, maxEtaMHT;
+};
+
 //---------------------------------------------------------------
 //class to store and apply RA2 binning
 class KRA2BinSelector : public KSelector<KBuilder> {
@@ -425,6 +480,50 @@ class KJetEtaRegionSelector : public KSelector<KBuilder> {
 };
 
 //---------------------------------------------------------------
+//recalculate NJets and BTags in a hemisphere around MHT_Phi
+class KHemisphereSelector : public KSelector<KBuilder> {
+	public:
+		//constructor
+		KHemisphereSelector() : KSelector<KBuilder>() { }
+		KHemisphereSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_) { 
+			canfail = false;
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("MHT_Phi",1);
+			looper->fChain->SetBranchStatus("HTJetsMask",1);
+			looper->fChain->SetBranchStatus("Jets",1);
+			looper->fChain->SetBranchStatus("Jets_bDiscriminatorCSV",1);
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			//reset output vars
+			NJets = 0; BTags = 0;
+			NJetsOpp = 0; BTagsOpp = 0;
+			//check dphi for each jet
+			for(unsigned j = 0; j < looper->Jets->size(); ++j){
+				//HT jet cuts
+				if(!looper->HTJetsMask->at(j)) continue;
+				
+				double dphi = KMath::DeltaPhi(looper->MHT_Phi,looper->Jets->at(j).Phi());
+				if(fabs(dphi)<=TMath::Pi()/2){
+					++NJets;
+					if(looper->Jets_bDiscriminatorCSV->at(j) > 0.890) ++BTags;
+				}
+				else {
+					++NJetsOpp;
+					if(looper->Jets_bDiscriminatorCSV->at(j) > 0.890) ++BTagsOpp;
+				}
+			}
+			return true;
+		}
+		
+		//member variables
+		int NJets, BTags;
+		int NJetsOpp, BTagsOpp;
+};
+
+//---------------------------------------------------------------
 //calculates btag scale factors
 class KBTagSFSelector : public KSelector<KBuilder> {
 	public:
@@ -517,7 +616,7 @@ class KHistoSelector : public KSelector<KBuilder> {
 	public:
 		//constructor
 		KHistoSelector() : KSelector<KBuilder>() { }
-		KHistoSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), RA2Bin(NULL), PhotonID(NULL), BTagSF(NULL), JetEtaRegion(NULL) { 
+		KHistoSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), RA2Bin(NULL), PhotonID(NULL), BTagSF(NULL), JetEtaRegion(NULL), Hemisphere(NULL) { 
 			canfail = false;
 		}
 		
@@ -526,9 +625,15 @@ class KHistoSelector : public KSelector<KBuilder> {
 			RA2Bin = sel->Get<KRA2BinSelector*>("RA2Bin");
 			PhotonID = sel->Get<KPhotonIDSelector*>("PhotonID");
 			bool DoBTagSF = sel->GetGlobalOpt()->Get("btagcorr",false);
+			
 			if(DoBTagSF) BTagSF = sel->Get<KBTagSFSelector*>("BTagSF");
 			JetEtaRegion = sel->Get<KJetEtaRegionSelector*>("JetEtaRegion");
-		} 
+			Hemisphere = sel->Get<KHemisphereSelector*>("Hemisphere");
+		}
+		virtual void CheckLooper(){
+			looper->localOpt->Get("mother",mother);
+			deltaM = 0; looper->localOpt->Get("deltaM",deltaM);
+		}
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
@@ -562,6 +667,18 @@ class KHistoSelector : public KSelector<KBuilder> {
 					else if(vname=="nbjets"){//b-jet multiplicity
 						values[i].Fill(looper->BTags,w);
 					}
+					else if(vname=="njetshemi"){//jet multiplicity
+						if(Hemisphere) values[i].Fill(Hemisphere->NJets,w);
+					}
+					else if(vname=="nbjetshemi"){//b-jet multiplicity
+						if(Hemisphere) values[i].Fill(Hemisphere->BTags,w);
+					}
+					else if(vname=="njetsopphemi"){//jet multiplicity
+						if(Hemisphere) values[i].Fill(Hemisphere->NJetsOpp,w);
+					}
+					else if(vname=="nbjetsopphemi"){//b-jet multiplicity
+						if(Hemisphere) values[i].Fill(Hemisphere->BTagsOpp,w);
+					}
 					else if(vname=="ht"){//sum of jet pt
 						values[i].Fill(looper->HT,w);
 					}
@@ -589,8 +706,41 @@ class KHistoSelector : public KSelector<KBuilder> {
 					else if(vname=="numint"){//# interactions
 						values[i].Fill(looper->NumInteractions,w);
 					}
-					else if(vname=="genht"){//# gen HT
+					else if(vname=="genht"){//gen HT
 						values[i].Fill(looper->genHT,w);
+					}
+					else if(vname=="leadjetpt"){//pT of leading jet
+						if(looper->Jets->size()>0){
+							values[i].Fill(looper->Jets->at(0).Pt(),w);
+						}
+					}
+					else if(vname=="deltaphi1"){//deltaphi of leading jet
+						values[i].Fill(looper->DeltaPhi1,w);
+					}
+					else if(vname=="deltaM"){//difference between mMother and mLSP
+						values[i].Fill(deltaM,w);
+					}
+					else if(vname=="recoil"){//pT of mother particle system recoiling against ISR jets
+						//loop over genparticles
+						TLorentzVector vgen;
+						vgen.SetPtEtaPhiE(0,0,0,0);
+						for(unsigned g = 0; g < looper->genParticles_PDGid->size(); ++g){
+							if(binary_search(mother.begin(),mother.end(),abs(looper->genParticles_PDGid->at(g)))){
+								vgen += looper->genParticles->at(g);
+							}
+						}
+						values[i].Fill(vgen.Pt(),w);
+					}
+					else if(vname=="deltaphirecoil"){//delta phi of mother particle system with MHT
+						//loop over genparticles
+						TLorentzVector vgen;
+						vgen.SetPtEtaPhiE(0,0,0,0);
+						for(unsigned g = 0; g < looper->genParticles_PDGid->size(); ++g){
+							if(binary_search(mother.begin(),mother.end(),abs(looper->genParticles_PDGid->at(g)))){
+								vgen += looper->genParticles->at(g);
+							}
+						}
+						values[i].Fill(KMath::DeltaPhi(vgen.Phi(),looper->MHT_Phi),w);
 					}
 					else if(vname=="sigmaietaieta"){//sigma ieta ieta variable for all photon candidates
 						if(PhotonID){
@@ -708,6 +858,9 @@ class KHistoSelector : public KSelector<KBuilder> {
 		KPhotonIDSelector* PhotonID;
 		KBTagSFSelector* BTagSF;
 		KJetEtaRegionSelector* JetEtaRegion;
+		KHemisphereSelector* Hemisphere;
+		vector<int> mother;
+		double deltaM;
 };
 
 //-------------------------------------------------------------
@@ -727,7 +880,10 @@ namespace KParser {
 		else if(sname=="BTagSF") srtmp = new KBTagSFSelector(sname,omap);
 		else if(sname=="METFilter") srtmp = new KMETFilterSelector(sname,omap);
 		else if(sname=="HLT") srtmp = new KHLTSelector(sname,omap);
+		else if(sname=="HT") srtmp = new KHTSelector(sname,omap);
+		else if(sname=="MHT") srtmp = new KMHTSelector(sname,omap);
 		else if(sname=="JetEtaRegion") srtmp = new KJetEtaRegionSelector(sname,omap);
+		else if(sname=="Hemisphere") srtmp = new KHemisphereSelector(sname,omap);
 		else {} //skip unknown selectors
 		
 		if(!srtmp) cout << "Input error: unknown selector " << sname << ". This selector will be skipped." << endl;
