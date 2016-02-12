@@ -4,7 +4,7 @@ JOBDIR=$1
 INPUT=$2
 DIR=$3
 SUFF=$4
-TIME=`date +%s`
+TIME=`date +%s%N`
 echo ""
 echo ">> `/bin/date` Submitting condor job(s) : $1 $2 $3 $4 $TIME"
 

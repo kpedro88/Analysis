@@ -5,7 +5,7 @@ FORCE=""
 #check arguments
 while getopts "f" opt; do
   case "$opt" in
-  k) FORCE="force"
+  f) FORCE="force"
     ;;
   esac
 done

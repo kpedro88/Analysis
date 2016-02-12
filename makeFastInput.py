@@ -77,7 +77,7 @@ for ind,file in enumerate(files):
         mother_ID.append(1000005)
     elif model.find("T2qq")!=-1:
         this_xsec = xsecT2qq[mMother]
-        mother_ID.append(1000001,1000002,1000003,1000004,2000001,2000002,2000003,2000004)
+        mother_ID.extend((1000001,1000002,1000003,1000004,2000001,2000002,2000003,2000004))
     else:
         this_xsec = xsec[mMother]
         mother_ID.append(1000021)

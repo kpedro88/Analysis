@@ -699,7 +699,7 @@ class KGenPtSelector : public KSelector<KSkimmer> {
 			TLorentzVector vgen;
 			vgen.SetPtEtaPhiE(0,0,0,0);
 			for(unsigned g = 0; g < looper->genParticles_PDGid->size(); ++g){
-				if(binary_search(mother.begin(),mother.end(),abs(genParticles_PDGid->at(g)))){
+				if(binary_search(mother.begin(),mother.end(),abs(looper->genParticles_PDGid->at(g)))){
 					vgen -= looper->genParticles->at(g);
 				}
 			}
