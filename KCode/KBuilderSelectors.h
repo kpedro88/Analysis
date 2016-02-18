@@ -720,6 +720,14 @@ class KHistoSelector : public KSelector<KBuilder> {
 					else if(vname=="deltaM"){//difference between mMother and mLSP
 						values[i].Fill(deltaM,w);
 					}
+					else if(vname=="motherpt"){//pT of each mother particle
+						//loop over genparticles
+						for(unsigned g = 0; g < looper->genParticles_PDGid->size(); ++g){
+							if(binary_search(mother.begin(),mother.end(),abs(looper->genParticles_PDGid->at(g)))){
+								values[i].Fill(looper->genParticles->at(g).Pt(),w);
+							}
+						}						
+					}
 					else if(vname=="recoil"){//pT of mother particle system recoiling against ISR jets
 						//loop over genparticles
 						TLorentzVector vgen;
