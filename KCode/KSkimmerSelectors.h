@@ -414,6 +414,34 @@ class KDeltaPhiSelector : public KSelector<KSkimmer> {
 		bool invert;
 };
 
+//----------------------------------------------------
+//selects events based on single DeltaPhi value
+class KDeltaPhiJSelector : public KSelector<KSkimmer> {
+	public:
+		//constructor
+		KDeltaPhiJSelector() : KSelector<KSkimmer>() { }
+		KDeltaPhiJSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), DeltaPhi(0.5), jet(1) { 
+			//check for option
+			localOpt->Get("DeltaPhi",DeltaPhi);
+			localOpt->Get("jet",jet);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			if(jet==1) return looper->DeltaPhi1 > DeltaPhi;
+			else if(jet==2) return looper->DeltaPhi2 > DeltaPhi;
+			else if(jet==3) return looper->DeltaPhi3 > DeltaPhi;
+			else if(jet==4) return looper->DeltaPhi4 > DeltaPhi;
+			else return true;
+		}
+		
+		//member variables
+		double DeltaPhi;
+		int jet;
+};
+
 //-------------------------------------------------------------
 //vetos events with isolated electron tracks
 class KIsoElectronTrackVetoSelector : public KSelector<KSkimmer> {
@@ -1630,6 +1658,7 @@ namespace KParser {
 		else if(sname=="IsoPionTrackVeto") srtmp = new KIsoPionTrackVetoSelector(sname,omap);
 		else if(sname=="MinDeltaPhi") srtmp = new KMinDeltaPhiSelector(sname,omap);
 		else if(sname=="DeltaPhi") srtmp = new KDeltaPhiSelector(sname,omap);
+		else if(sname.find("DeltaPhiJ")!=string::npos) srtmp = new KDeltaPhiJSelector(sname,omap); //allow multiple instances
 		else if(sname=="EventCleaning") srtmp = new KEventCleaningSelector(sname,omap);
 		else if(sname=="NBJetBin") srtmp = new KNBJetBinSelector(sname,omap);
 		else if(sname=="BTagEfficiency") srtmp = new KBTagEfficiencySelector(sname,omap);
