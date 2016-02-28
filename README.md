@@ -72,6 +72,13 @@ python makeFastInput.py -d /eos/uscms/store/user/lpcsusyhad/SusyRA2Analysis2015/
 ```
 The last argument splits the datacard input list into multiple lists (each containing `n` model points) for batch submission.
 
+<a name="combined"></a>A separate script is available to create a "combined" model by adding together multiple signal models with different weights.
+This script creates input lists for plotting and datacards (the existing skims are re-used).
+```
+python makeFastInputMixed.py -d /eos/uscms/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV5/scan/ -n 10 -s T1tttt,T1bbbb -x T1ttttT1bbbb
+```
+If weights are not explicitly specified (using the `-w` option), each sample is weighted equally. The weights are always normalized so sum(weights) = 1.
+
 ## Plotting
 
 To plot yields vs. RA2 bin (where the binning can be defined in the input file) in the signal region and save the plot as an image:

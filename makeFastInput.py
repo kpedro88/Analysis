@@ -1,6 +1,14 @@
 import sys, os, stat
 from optparse import OptionParser
 
+def xsec_parse(xfile):
+    xsec = {}
+    for xline in xfile:
+        values = xline.split('\t')
+        if len(values) < 2: continue
+        xsec[int(values[0])] = float(values[1])
+    return xsec
+
 def msplit(line):
     split = line.split('-')
     if len(split)==2: return int(split[1])
@@ -32,25 +40,13 @@ if nfiles>0:
         df.write("SET\n")
 
 # parse xsec map (taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVgluglu)
-xsec = {}
-for xline in xfile:
-    values = xline.split('\t')
-    if len(values) < 2: continue
-    xsec[int(values[0])] = float(values[1])
+xsec = xsec_parse(xfile)
 
 # parse xsec map (taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVstopsbottom)
-xsecT2 = {}
-for xline in xfileT2:
-    values = xline.split('\t')
-    if len(values) < 2: continue
-    xsecT2[int(values[0])] = float(values[1])
+xsecT2 = xsec_parse(xfileT2)
 
 # parse xsec map (taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVsquarkantisquark)
-xsecT2qq = {}
-for xline in xfileT2qq:
-    values = xline.split('\t')
-    if len(values) < 2: continue
-    xsecT2qq[int(values[0])] = float(values[1])
+xsecT2qq = xsec_parse(xfileT2qq)
     
 # preamble for script
 sfile.write("#!/bin/bash\n")
