@@ -132,6 +132,31 @@ class KMHTSelector : public KSelector<KBuilder> {
 		double minPtMHT, maxEtaMHT;
 };
 
+//----------------------------------------------------
+//selects events based on leading jet pt
+class KLeadJetPtSelector : public KSelector<KBuilder> {
+	public:
+		//constructor
+		KLeadJetPtSelector() : KSelector<KBuilder>() { }
+		KLeadJetPtSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), pTmin(200) { 
+			//check for option
+			localOpt->Get("pTmin",pTmin);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("Jets",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return looper->Jets->size()>0 && looper->Jets->at(0).Pt() > pTmin;
+		}
+		
+		//member variables
+		double pTmin;
+};
+
 //---------------------------------------------------------------
 //class to store and apply RA2 binning
 class KRA2BinSelector : public KSelector<KBuilder> {
@@ -714,6 +739,24 @@ class KHistoSelector : public KSelector<KBuilder> {
 							values[i].Fill(looper->Jets->at(0).Pt(),w);
 						}
 					}
+					else if(vname=="mht-leadjetpt-ratio"){//ratio of MHT & pT of leading jet
+						if(looper->Jets->size()>0){
+							values[i].Fill(looper->MHT/looper->Jets->at(0).Pt(),w);
+						}
+					}
+					else if(vname=="mht-leadjetpt-ratio"){//ratio of MET & pT of leading jet
+						if(looper->Jets->size()>0){
+							values[i].Fill(looper->METPt/looper->Jets->at(0).Pt(),w);
+						}
+					}
+					else if(vname=="leadbhadronjetpt"){//pT of leading jet w/ hadronFlavor==5, |eta|<2.4
+						for(unsigned j = 0; j < looper->Jets->size(); ++j){
+							if(abs(looper->Jets_hadronFlavor->at(j))==5 && fabs(looper->Jets->at(j).Eta())<2.4){
+								values[i].Fill(looper->Jets->at(j).Pt(),w);
+								break;
+							}
+						}
+					}
 					else if(vname=="deltaphi1"){//deltaphi of leading jet
 						values[i].Fill(looper->DeltaPhi1,w);
 					}
@@ -890,6 +933,7 @@ namespace KParser {
 		else if(sname=="HLT") srtmp = new KHLTSelector(sname,omap);
 		else if(sname=="HT") srtmp = new KHTSelector(sname,omap);
 		else if(sname=="MHT") srtmp = new KMHTSelector(sname,omap);
+		else if(sname=="LeadJetPt") srtmp = new KLeadJetPtSelector(sname,omap);
 		else if(sname=="JetEtaRegion") srtmp = new KJetEtaRegionSelector(sname,omap);
 		else if(sname=="Hemisphere") srtmp = new KHemisphereSelector(sname,omap);
 		else {} //skip unknown selectors
