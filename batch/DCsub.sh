@@ -10,25 +10,28 @@ SYSTS2=isrunc,trigStatUnc,trigSystUnc,JEC
 SYSTS3=btagSFunc,ctagSFunc,mistagSFunc,btagCFunc,ctagCFunc,mistagCFunc
 CONTAMS=LDP,GJet_CleanVars,GJetLDP_CleanVars,GJet_CleanVarsGJ,GJetLDP_CleanVarsGJ
 CHECKARGS=""
+SUFFIX=""
 
 #check arguments
-while getopts "k" opt; do
+while getopts "kx:" opt; do
   case "$opt" in
   k) CHECKARGS="${CHECKARGS} -k"
+    ;;
+  x) SUFFIX=$OPTARG
     ;;
   esac
 done
 
 ./SKcheck.sh ${CHECKARGS}
 
-nparts=`ls -1 ../input/fast/input_sets_DC_fast_*.txt | wc -l`
+nparts=`ls -1 ../input/fast${SUFFIX}/input_sets_DC_fast${SUFFIX}_*.txt | wc -l`
 nparts=$(($nparts-1))
 
 echo "Submitting parts 0.."$nparts
 
 for PART in $(seq 0 $nparts); do
-  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} none ${PART} ${STORE}
-  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS2} none ${PART} ${STORE}
-  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS3} none ${PART} ${STORE}
-  ./DCtemp.sh ${JOBDIR} ${INDIR} none ${CONTAMS} ${PART} ${STORE}
+  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} none ${PART} ${STORE} ${SUFFIX}
+  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS2} none ${PART} ${STORE} ${SUFFIX}
+  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS3} none ${PART} ${STORE} ${SUFFIX}
+  ./DCtemp.sh ${JOBDIR} ${INDIR} none ${CONTAMS} ${PART} ${STORE} ${SUFFIX}
 done

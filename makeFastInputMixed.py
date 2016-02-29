@@ -56,17 +56,6 @@ xfileT2qq = open("input/dict_xsec_T2qq.txt",'r')
 dfile = open("input/input_sets_DC_fast"+options.suffix+".txt",'w')
 sfile = open("batch/exportFast"+options.suffix+".sh",'w')
 
-nfiles = int(options.nfiles)
-if nfiles>0:
-    # check for directory
-    if not os.path.isdir("input/fast"+options.suffix):
-        os.mkdir("input/fast"+options.suffix)
-    nparts = len(files)/nfiles + int(len(files)%nfiles!=0)
-    dfiles = [open("input/fast"+options.suffix+"/input_sets_DC_fast"+options.suffix+"_"+str(x)+".txt",'w') for x in range(nparts)]
-    # preamble
-    for df in dfiles:
-        df.write("SET\n")
-
 # parse xsec map (taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVgluglu)
 xsec = xsec_parse(xfile)
 
@@ -101,6 +90,7 @@ for ind,file in enumerate(files):
     
 present_list = []
 missing_list = []
+dline_list = []
 for masspt, models in masspts.iteritems():
     #print "%s: "%(masspt,) + str(models).strip('[]')
     mMother = masspt[0]
@@ -139,14 +129,27 @@ for masspt, models in masspts.iteritems():
         dline += "\t" + "base" + "\t" + "mc" + "\t" + short_name + "\t" + "s:filename[tree_" + short_name + ".root]" + "\t" + "d:xsection[" + str(this_xsec) + "]" + "\t" + "b:signal[1]" + "\t" + "b:fastsim[1]" + "\t" + "vi:mother[" + str(','.join(str(m) for m in mother_ID)) + "]" + "\n"
         
     dfile.write(dline)
-    # make split set lists
-    if nfiles>0:
-        dfiles[ind/nfiles].write(dline)
+    dline_list.append(dline)
     # make script to export array of sample names
     sline = short_name + " \\\n"
     sfile.write(sline)
 
 sfile.write(")\n")
+
+#number of sets unknown until the end
+nfiles = int(options.nfiles)
+if nfiles>0:
+    # check for directory
+    if not os.path.isdir("input/fast"+options.suffix):
+        os.mkdir("input/fast"+options.suffix)
+    nparts = len(dline_list)/nfiles + int(len(dline_list)%nfiles!=0)
+    dfiles = [open("input/fast"+options.suffix+"/input_sets_DC_fast"+options.suffix+"_"+str(x)+".txt",'w') for x in range(nparts)]
+    # preamble
+    for df in dfiles:
+        df.write("SET\n")
+    # make split set lists
+    for ind,dline in enumerate(dline_list):
+        dfiles[ind/nfiles].write(dline)
 
 # report on missing mass points
 print "Mass points present for  all signal models: %s" % (len(present_list))

@@ -11,5 +11,5 @@ Error = MakeAllDCsyst_SYSTS_CONTAMS_PART_$(Cluster).stderr
 Log = MakeAllDCsyst_SYSTS_CONTAMS_PART_$(Cluster).condor
 notification = Never
 x509userproxy = $ENV(X509_USER_PROXY)
-Arguments = CMSSWVER INDIR SYSTS CONTAMS PART STORE
+Arguments = CMSSWVER INDIR SYSTS CONTAMS PART STORE SUFF
 Queue 1
