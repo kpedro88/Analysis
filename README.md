@@ -75,7 +75,8 @@ The last argument splits the datacard input list into multiple lists (each conta
 <a name="combined"></a>A separate script is available to create a "combined" model by adding together multiple signal models with different weights.
 This script creates input lists for plotting and datacards (the existing skims are re-used).
 ```
-python makeFastInputMixed.py -d /eos/uscms/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV5/scan/ -n 5 -s T1ttbb,T1bbbb -x T1ttbbT1bbbb
+python makeFastInputMixed.py -d /eos/uscms/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV5/scan/ -n 5 -s T1tbtb,T1tbbb,T1bbbb -w 0.25,0.5,0.25 -x T1tbtbT1tbbbT1bbbb
+python makeFastInputMixed.py -d /eos/uscms/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV5/scan/ -n 5 -s T1tbtb,T1tbtt,T1tttt -w 0.25,0.5,0.25 -x T1tbtbT1tbttT1tttt
 ```
 If weights are not explicitly specified (using the `-w` option), each sample is weighted equally. The weights are always normalized so sum(weights) = 1.
 
