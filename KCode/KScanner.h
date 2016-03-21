@@ -75,7 +75,7 @@ class KScanner : public NtupleClass {
 					int ntop = 0;
 					int nchargino = 0;
 					for(unsigned g = 0; g < genParticles_PDGid->size(); ++g){
-						if(abs(genParticles_PDGid->at(g))==6){ //top
+						if(abs(genParticles_PDGid->at(g))==24){ //top - count W instead (for offshell tops)
 							++ntop;
 						}
 						else if(abs(genParticles_PDGid->at(g))==1000024){ //chargino
