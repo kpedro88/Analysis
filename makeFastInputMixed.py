@@ -131,7 +131,7 @@ for masspt, models in masspts.iteritems():
     dfile.write(dline)
     dline_list.append(dline)
     # make script to export array of sample names
-    sline = short_name + " \\\n"
+    sline = short_name_comb + " \\\n"
     sfile.write(sline)
 
 sfile.write(")\n")
