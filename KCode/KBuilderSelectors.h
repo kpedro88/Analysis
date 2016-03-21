@@ -690,7 +690,14 @@ class KHistoSelector : public KSelector<KBuilder> {
 						values[i].Fill(looper->NJets,w);
 					}
 					else if(vname=="nbjets"){//b-jet multiplicity
-						values[i].Fill(looper->BTags,w);
+						if(BTagSF){
+							for(unsigned b = 0; b < BTagSF->prob.size(); b++){
+								//weight by btag scale factor probability if available
+								double wb = w*BTagSF->prob[b];
+								values[i].Fill(b,wb);
+							}
+						}
+						else values[i].Fill(looper->BTags,w);
 					}
 					else if(vname=="njetshemi"){//jet multiplicity
 						if(Hemisphere) values[i].Fill(Hemisphere->NJets,w);
@@ -760,6 +767,15 @@ class KHistoSelector : public KSelector<KBuilder> {
 					else if(vname=="deltaphi1"){//deltaphi of leading jet
 						values[i].Fill(looper->DeltaPhi1,w);
 					}
+					else if(vname=="deltaphi2"){//deltaphi of 2nd jet
+						values[i].Fill(looper->DeltaPhi2,w);
+					}
+					else if(vname=="deltaphi3"){//deltaphi of 3rd jet
+						values[i].Fill(looper->DeltaPhi3,w);
+					}
+					else if(vname=="deltaphi4"){//deltaphi of 4th jet
+						values[i].Fill(looper->DeltaPhi4,w);
+					}
 					else if(vname=="deltaM"){//difference between mMother and mLSP
 						values[i].Fill(deltaM,w);
 					}
@@ -769,7 +785,7 @@ class KHistoSelector : public KSelector<KBuilder> {
 							if(binary_search(mother.begin(),mother.end(),abs(looper->genParticles_PDGid->at(g)))){
 								values[i].Fill(looper->genParticles->at(g).Pt(),w);
 							}
-						}						
+						}
 					}
 					else if(vname=="recoil"){//pT of mother particle system recoiling against ISR jets
 						//loop over genparticles
