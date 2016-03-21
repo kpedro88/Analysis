@@ -2,13 +2,13 @@ universe = vanilla
 Executable = ../jobExecCondorDC.sh
 Requirements = OpSys == "LINUX" && (Arch != "DUMMY" )
 request_disk = 10000000
-request_memory = 2100
+request_memory = 3100
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
 Transfer_Input_Files = ../jobExecCondorDC.sh, CMSSWVER.tar.gz
-Output = MakeAllDCsyst_SYSTS_CONTAMS_PART_$(Cluster).stdout
-Error = MakeAllDCsyst_SYSTS_CONTAMS_PART_$(Cluster).stderr
-Log = MakeAllDCsyst_SYSTS_CONTAMS_PART_$(Cluster).condor
+Output = MakeAllDCsyst_SYSTS_CONTAMS_SUFFPART_$(Cluster).stdout
+Error = MakeAllDCsyst_SYSTS_CONTAMS_SUFFPART_$(Cluster).stderr
+Log = MakeAllDCsyst_SYSTS_CONTAMS_SUFFPART_$(Cluster).condor
 notification = Never
 x509userproxy = $ENV(X509_USER_PROXY)
 Arguments = CMSSWVER INDIR SYSTS CONTAMS PART STORE SUFF

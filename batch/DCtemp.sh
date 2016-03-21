@@ -20,8 +20,8 @@ cat ./jobExecCondorDC.jdl \
 | sed -e s/PART/${PART}/ \
 | sed -e s~STORE~${STORE}~ \
 | sed -e s/SUFF/${SUFF}/ \
-> ${JOBDIR}/jobExecCondor_MakeAllDCsyst_${SUFF}${PART}.jdl
+> ${JOBDIR}/jobExecCondor_MakeAllDCsyst_${SYSTS}_${CONTAMS}_${SUFF}${PART}.jdl
 
 cd ${JOBDIR}
-condor_submit jobExecCondor_MakeAllDCsyst_${SUFF}${PART}.jdl
+condor_submit jobExecCondor_MakeAllDCsyst_${SYSTS}_${CONTAMS}_${SUFF}${PART}.jdl
 cd -
