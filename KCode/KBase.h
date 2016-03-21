@@ -182,7 +182,8 @@ class KBase {
 			}
 			esim->SetFillColor(kGray+1);
 			//esim->SetFillStyle(3013);
-			esim->SetFillStyle(3001);
+			//esim->SetFillStyle(3001);
+			esim->SetFillStyle(3005);
 			
 			MyErrorBands.Add(stmp,esim);
 			etmp = esim;

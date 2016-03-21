@@ -235,7 +235,7 @@ class KSetMC: public KSet {
 			else kleg->AddEntry(htmp,name,"l",panel_tmp,extra_text);
 			
 			//check if error band needs to be added
-			if(localOpt->Get("errband",false)) {
+			if(localOpt->Get("errband",false) && localOpt->Get("errbandleg",true)) {
 				//this assumes it has already been created previously... a little unsafe, but a pain in the ass otherwise
 				kleg->AddEntry(etmp,"uncertainty","f",panel_tmp);
 			}
