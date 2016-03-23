@@ -4,6 +4,7 @@ from optparse import OptionParser
 # define options
 parser = OptionParser()
 parser.add_option("-d", "--dir", dest="dir", default="Spring15Fastv2", help="location of python files")
+parser.add_option("-k", "--keepdict", dest="keep", default=False, action="store_true", help="keep dictionary file")
 parser.add_option("-n", "--nfiles", dest="nfiles", default=0, help="number of files per block for scan input")
 (options, args) = parser.parse_args()
 
@@ -12,7 +13,15 @@ CMSSW_BASE = os.getenv("CMSSW_BASE")
 dir = CMSSW_BASE + "/src/TreeMaker/Production/python/" + options.dir + "/"
 files = os.listdir(dir)
 
-wfile = open("input/dict_scan.txt",'w')
+if not options.keep:
+    wfile = open("input/dict_scan.txt",'w')
+else:
+    wfile = open("input/dict_scan.txt",'r')
+    files = []
+    for wline in wfile:
+        values = wline.split('\t')
+        sample_name = values[0].split('.')[1]
+        files.append(sample_name+"_cff.py")
 sfile = open("batch/exportScan.sh",'w')
 
 # preamble for script
@@ -30,7 +39,7 @@ for file in files:
     short_name = file[4:-46]
     # make dict for makeSkimInput.py
     wline = full_name + "\t" + short_name + "\n"
-    wfile.write(wline)
+    if not options.keep: wfile.write(wline)
     # check for splitting into blocks
     nblocks = 0
     if nfiles>0:

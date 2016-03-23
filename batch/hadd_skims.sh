@@ -10,8 +10,10 @@ SAMPLES=(
 TTJets_SingleLeptFromT \
 TTJets_SingleLeptFromTbar \
 TTJets_DiLept \
-ttHJetTobb_M125 \
-TTTT
+DYJetsToLL_M-50_HT-100to200 \
+DYJetsToLL_M-50_HT-200to400 \
+DYJetsToLL_M-50_HT-400to600 \
+DYJetsToLL_M-50_HT-600toInf \
 )
 
 #initialize parameters

@@ -5,7 +5,7 @@ source exportProd.sh
 JOBDIR=jobs
 INPUT=input/input_selection.txt
 SELTYPE=signal,LDP,SLm,SLe,SLmLDP,SLeLDP,GJet_CleanVars,DYm_CleanVars,DYe_CleanVars
-SELTYPE2=GJetLDP_CleanVars,DYmLDP_CleanVars,DYeLDP_CleanVars,GJet_ManualCleanVars,GJetLDP_ManualCleanVars
+SELTYPE2=GJetLoose_CleanVars,GJetLDP_CleanVars,GJetLooseLDP_CleanVars,DYmLDP_CleanVars,DYeLDP_CleanVars
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}
 OUTDIR=tree
 STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/${RUN2PRODV}
@@ -26,7 +26,10 @@ DYJetsToLL_M-50_HT-100to200 \
 DYJetsToLL_M-50_HT-200to400 \
 DYJetsToLL_M-50_HT-400to600 \
 DYJetsToLL_M-50_HT-600toInf \
-DYJetsToLL_M-50 \
+DYJetsToLL_M-50_HT-100to200_ext1 \
+DYJetsToLL_M-50_HT-200to400_ext1 \
+DYJetsToLL_M-50_HT-400to600_ext1 \
+DYJetsToLL_M-50_HT-600toInf_ext1 \
 GJets_HT-100to200 \
 GJets_HT-200to400 \
 GJets_HT-400to600 \
@@ -65,27 +68,9 @@ ST_t-channel_top \
 ST_t-channel_antitop \
 ST_tW_top \
 ST_tW_antitop \
-WWTo2L2Nu \
-WWTo1L1Nu2Q \
-ZZTo2Q2Nu \
-WZTo1L3Nu \
-WZTo1L1Nu2Q \
-ZZTo2L2Q \
-WH_HToBB_WToLNu_M125 \
-ZH_HToBB_ZToNuNu_M125 \
-TTWJetsToQQ \
-TTWJetsToLNu \
 TTZToQQ \
 TTZToLLNuNu \
-ttHJetTobb_M125 \
-ttHJetTobb_M125_ext1 \
-ttHJetTobb_M125_ext2 \
-ttHJetTobb_M125_ext3 \
-TTTT \
-TTTT_ext1 \
-WWZ \
-ZZZ \
-WZZ \
+TTGJets \
 )
 
 for SAMPLE in ${SAMPLES[@]}
