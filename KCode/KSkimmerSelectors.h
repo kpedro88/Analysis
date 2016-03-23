@@ -551,70 +551,6 @@ class KNBJetSelector : public KSelector<KSkimmer> {
 };
 
 //----------------------------------------------------
-//chains together several inclusive b-tag bins
-class KNBJetBinSelector : public KSelector<KSkimmer> {
-	public:
-		//constructor
-		KNBJetBinSelector() : KSelector<KSkimmer>() { }
-		KNBJetBinSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), initialized(false) { 
-			//check for option
-			localOpt->Get("nbjet_min",nbjet_min);
-			localOpt->Get("nbjet_max",nbjet_max);
-		}
-		void Initialize(){
-			if(initialized) return;
-			
-			//make individual bin selectors
-			//after member ptrs get added to this
-			for(unsigned b = 0; b < nbjet_min.size(); b++){
-				OptionMap* omap = new OptionMap();
-				omap->Set<int>("nbjet_min",nbjet_min[b]);
-				omap->Set<int>("nbjet_max",nbjet_max[b]);
-				
-				stringstream sb;
-				sb << "NBJet";
-				if(nbjet_min[b]==nbjet_max[b]) sb << nbjet_min[b];
-				else if(nbjet_min[b]==-1&&nbjet_max[b]>-1) sb << "<=" << nbjet_max[b];
-				else if(nbjet_max[b]==-1&&nbjet_min[b]>-1) sb << ">=" << nbjet_min[b];
-				else if(nbjet_max[b]>-1&&nbjet_min[b]>-1) sb << nbjet_min[b] << "-" << nbjet_max[b];
-				else {}
-				
-				KSelector<KSkimmer>* srtmp = new KNBJetSelector(sb.str(),omap);
-				srtmp->SetSelection(sel);
-				srtmp->SetLooper(looper);
-				bjet_sel.push_back(srtmp);
-			}
-			
-			initialized = true;
-		}
-		
-		//this selector doesn't add anything to tree
-		
-		//used for non-dummy selectors
-		virtual bool Cut() {
-			Initialize();
-			//pass any event that falls into any available bin
-			bool goodB = false;
-			for(unsigned b = 0; b < bjet_sel.size(); b++){
-				goodB |= bjet_sel[b]->Select();
-			}
-			
-			return goodB;
-		}
-		
-		virtual void PrintEfficiency(vector<unsigned>& widths, int prev_counter, int nentries, bool printerrors){
-			for(unsigned b = 0; b < bjet_sel.size(); b++){
-				bjet_sel[b]->PrintEfficiency(widths,prev_counter,nentries,printerrors);
-			}
-		}
-		
-		//member variables
-		bool initialized;
-		vector<int> nbjet_min, nbjet_max;
-		vector<KSelector<KSkimmer>*> bjet_sel;
-};
-
-//----------------------------------------------------
 //calculate b-tagging & mistagging efficiencies
 class KBTagEfficiencySelector : public KSelector<KSkimmer> {
 	public:
@@ -897,33 +833,9 @@ class KSyncSelector : public KSelector<KSkimmer> {
 			if(result) counter++;
 			return result;
 		}
-		virtual void PrintEfficiency(vector<unsigned>& widths, int prev_counter, int nentries, bool printerrors){
+		virtual void GetEfficiency(int prev_counter, int nentries, vector<KCutflowEntry>& cuts){
 			if(dummy || !canfail) return;
-			cout << left << setw(widths[0]) << name;
-			if(printerrors){
-				cout << "  " << right << setw(widths[4]) << counter << " +/- " << right << setw(widths[4]) << KMath::PoissonErrorUp(counter);
-				cout << "  " << right << setw(widths[5]) << ((double)counter/(double)nentries)*100 << " +/- " << right << setw(widths[5]) << KMath::EffError(counter,nentries)*100;
-				//no rel. eff. for first selector
-				if(prev_counter>0) cout << "  " << right << setw(widths[5]) << ((double)counter/(double)prev_counter)*100 << " +/- " << right << setw(widths[5]) << KMath::EffError(counter,prev_counter)*100;
-				else cout << "  " << right << setw(widths[3]) << " ";
-				//# of objects
-				stringstream sobj, sobj2;
-				sobj << "(" << obj_counter;
-				sobj2 << KMath::PoissonErrorUp(obj_counter) << ")";
-				cout << "  " << right << right << setw(widths[4]+1) << sobj.str() << " +/- " << right << setw(widths[4]+1) << sobj2.str();
-			}
-			else {
-				cout << "  " << right << setw(widths[1]) << counter;
-				cout << "  " << right << setw(widths[2]) << ((double)counter/(double)nentries)*100;
-				//no rel. eff. for first selector
-				if(prev_counter>0) cout << "  " << right << setw(widths[3]) << ((double)counter/(double)prev_counter)*100;
-				else cout << "  " << right << setw(widths[3]) << " ";
-				//# of objects
-				stringstream sobj;
-				sobj << "(" << obj_counter << ")";
-				cout << "  " << right << setw(widths[3]) << sobj.str();
-			}
-			cout << endl;
+			cuts.push_back(KCutflowEntry(name, counter, KMath::PoissonErrorUp(counter), obj_counter, KMath::PoissonErrorUp(obj_counter)));
 		}
 		
 		//member variables
@@ -1665,7 +1577,7 @@ namespace KParser {
 		else if(sname=="DeltaPhi") srtmp = new KDeltaPhiSelector(sname,omap);
 		else if(sname.find("DeltaPhiJ")!=string::npos) srtmp = new KDeltaPhiJSelector(sname,omap); //allow multiple instances
 		else if(sname=="EventCleaning") srtmp = new KEventCleaningSelector(sname,omap);
-		else if(sname=="NBJetBin") srtmp = new KNBJetBinSelector(sname,omap);
+		else if(sname=="NBJet") srtmp = new KNBJetSelector(sname,omap);
 		else if(sname=="BTagEfficiency") srtmp = new KBTagEfficiencySelector(sname,omap);
 		else if(sname=="GenPt") srtmp = new KGenPtSelector(sname,omap);
 		else if(sname=="PDFNorm") srtmp = new KPDFNormSelector(sname,omap);

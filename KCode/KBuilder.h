@@ -115,7 +115,7 @@ class KBuilder : public NtupleClass {
 			//final steps
 			if(globalOpt->Get("debugcut",false)) {
 				cout << MyBase->GetName() << endl;
-				MySelection->PrintEfficiency(MySelection->GetSelectorWidth(),nentries);
+				MySelection->GetEfficiency(nentries);
 			}
 			
 			if(globalOpt->Get("plotoverflow",false)){

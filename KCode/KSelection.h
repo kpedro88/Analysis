@@ -5,11 +5,13 @@
 #include "KMap.h"
 #include "KMath.h"
 #include "KVariation.h"
+#include "KCutflow.h"
 
 //ROOT headers
 #include <TROOT.h>
 #include <TFile.h>
 #include <TTree.h>
+#include <TH1.h>
 
 //STL headers
 #include <string>
@@ -21,6 +23,20 @@ using namespace std;
 //forward declaration
 template <class T>
 class KSelection;
+
+//helper class for cutflow histos
+class KCutflowEntry {
+	public:
+		//constructor
+		KCutflowEntry() : name(""), raw(-1), rawE(-1), obj(-1), objE(-1) {}
+		KCutflowEntry(string name_, int raw_, double rawE_, double obj_=-1, double objE_=-1)
+			: name(name_), raw(raw_), rawE(rawE_), obj(obj_), objE(objE_) {}
+	
+		//member variables
+		string name;
+		int raw; double rawE;
+		double obj, objE;
+};
 
 //----------------------------------------------------------------
 //base class for Selectors, has standard functions defined
@@ -58,22 +74,9 @@ class KSelector {
 		virtual void Finalize(TFile*) { }
 		//used for non-dummy selectors
 		virtual bool Cut() { return true; }
-		virtual void PrintEfficiency(vector<unsigned>& widths, int prev_counter, int nentries, bool printerrors){
+		virtual void GetEfficiency(int prev_counter, int nentries, vector<KCutflowEntry>& cuts){
 			if(dummy || !canfail) return;
-			cout << left << setw(widths[0]) << name;
-			if(printerrors){
-				cout << "  " << right << setw(widths[4]) << counter << " +/- " << right << setw(widths[4]) << KMath::PoissonErrorUp(counter);
-				cout << "  " << right << setw(widths[5]) << ((double)counter/(double)nentries)*100 << " +/- " << right << setw(widths[5]) << KMath::EffError(counter,nentries)*100;
-				//no rel. eff. for first selector
-				if(prev_counter>0) cout << "  " << right << setw(widths[5]) << ((double)counter/(double)prev_counter)*100 << " +/- " << right << setw(widths[5]) << KMath::EffError(counter,prev_counter)*100;
-			}
-			else {
-				cout << "  " << right << setw(widths[1]) << counter;
-				cout << "  " << right << setw(widths[2]) << ((double)counter/(double)nentries)*100;
-				//no rel. eff. for first selector
-				if(prev_counter>0) cout << "  " << right << setw(widths[3]) << ((double)counter/(double)prev_counter)*100;
-			}
-			cout << endl;
+			cuts.push_back(KCutflowEntry(name, counter, KMath::PoissonErrorUp(counter)));
 		}
 		//to set tree branches
 		virtual void SetBranches() {}
@@ -102,8 +105,8 @@ template <class T>
 class KSelection {
 	public:
 		//constructor
-		KSelection() : name(""), variation(0), looper(0), file(0), tree(0), widths(6,0), width1s(10) {}
-		KSelection(string name_, OptionMap* globalOpt_) : name(name_), globalOpt(globalOpt_), variation(0), looper(0), file(0), tree(0), widths(5,0), width1s(10) {
+		KSelection() : name(""), variation(0), looper(0), file(0), tree(0) {}
+		KSelection(string name_, OptionMap* globalOpt_) : name(name_), globalOpt(globalOpt_), variation(0), looper(0), file(0), tree(0) {
 			//must always have option map
 			if(globalOpt==0) globalOpt = new OptionMap();
 		}
@@ -119,9 +122,7 @@ class KSelection {
 			selectorList.push_back(sel_);
 			selectors.Add(sel_->GetName(),sel_);
 			sel_->SetSelection(this);
-			if(!sel_->Dummy() && sel_->CanFail() && sel_->GetName().size()>width1s) width1s = sel_->GetName().size();
 		}
-		unsigned GetSelectorWidth() { return width1s; }
 		void SetLooper(T* looper_){
 			looper = looper_;
 			for(unsigned s = 0; s < selectorList.size(); s++){
@@ -187,43 +188,36 @@ class KSelection {
 			
 			return result;
 		}
-		void PrintEfficiency(unsigned width1, int nentries=1){
-			//check if error printing should be enabled
-			bool printerrors = globalOpt->Get("printerrors",false);
-			//width1s set when adding selectors, width1 set by skimmer to consider all selectors in all selections
-			//default for width1s is 10 for "NEventProc"
-			
-			widths[0] = width1;
-			if(printerrors) {
-				widths[4] = max(log10(nentries)+1,log10(sqrt(nentries))+1+3); //extra width for num and err, based on # digits
-				int numcolwidth1 = widths[4]*2 + 5; //x + 5 + x (num +/- err)
-				widths[1] = numcolwidth1;
-				widths[5] = 6; //extra width for eff and err (assumes yieldprecision = 2)
-				int numcolwidth2 = widths[5]*2 + 5; //6 + 5 + 6 (eff +/- err)
-				widths[2] = widths[3] = numcolwidth2;
-			}
-			else {
-				int numcolwidth = 13;
-				widths[1] = widths[2] = widths[3] = numcolwidth;
-			}
-			
-			cout << string(widths[0]+widths[1]+widths[2]+widths[3]+2*(4-1),'-') << endl;
-			cout << "Selection: " << name << endl;
-			cout << left << setw(widths[0]) << "Selector" << "  " << right << setw(widths[1]) << "Raw # Events" << "  " << right << setw(widths[2]) << "Abs. Eff. (%)" << "  " << right << setw(widths[3]) << "Rel. Eff. (%)" << endl;
-			cout << left << setw(widths[0]) << "NEventProc";
-			if(printerrors) cout << "  " << right << setw(widths[4]) << nentries << " +/- " << right << setw(widths[4]) << KMath::PoissonErrorUp(nentries) << endl;
-			else cout << "  " << right << setw(widths[1]) << nentries << endl;
+		void GetEfficiency(int nentries=1){
+			vector<KCutflowEntry> cuts;
 			for(unsigned s = 0; s < selectorList.size(); s++){
 				int prev_counter = 0;
 				if(s>0) prev_counter = selectorList[s-1]->GetCounter();
-				selectorList[s]->PrintEfficiency(widths,prev_counter,nentries,printerrors);
+				selectorList[s]->GetEfficiency(prev_counter,nentries,cuts);
 			}
+			
+			//create histogram
+			cutflowHist = new TH1F("cutflow",name.c_str(),cuts.size(),0,cuts.size());
+			for(unsigned c = 0; c < cuts.size(); c++){
+				cutflowHist->GetXaxis()->SetBinLabel(c+1,cuts[c].name.c_str());
+				cutflowHist->SetBinContent(c+1,cuts[c].raw);
+				cutflowHist->SetBinError(c+1,cuts[c].rawE);
+			}
+			
+			//check if error printing should be enabled
+			bool printerrors = globalOpt->Get("printerrors",false);
+			//use helper class to print
+			KCutflow kcut(cutflowHist);
+			kcut.PrintEfficiency(printerrors);
+			
+			//todo: add object ctr histogram for syncing
 		}
 		void Finalize(TH1F* nEventHist=NULL, TH1F* nEventNegHist=NULL){
 			if(file){
 				file->cd();
 				if(nEventHist) nEventHist->Write();
 				if(nEventNegHist) nEventNegHist->Write();
+				if(cutflowHist) cutflowHist->Write();
 				if(tree) tree->Write();
 				
 				//just in case selectors have something to add
@@ -256,8 +250,7 @@ class KSelection {
 		KMap<KSelector<T>*> selectors;
 		TFile* file;
 		TTree* tree;
-		vector<unsigned> widths;
-		unsigned width1s;
+		TH1F* cutflowHist;
 };
 
 #endif

@@ -29,7 +29,7 @@ class KSkimmer : public NtupleClass {
 	public :
 		//constructor
 		KSkimmer(KBase* MyBase_) : 
-			NtupleClass(MyBase_->GetTree()), MyBase(MyBase_), nEventHist(MyBase->GetNEventHist()), nEventNegHist(MyBase->GetNEventNegHist()), globalOpt(MyBase->GetGlobalOpt()), nentries(0), width1(0)
+			NtupleClass(MyBase_->GetTree()), MyBase(MyBase_), nEventHist(MyBase->GetNEventHist()), nEventNegHist(MyBase->GetNEventNegHist()), globalOpt(MyBase->GetGlobalOpt()), nentries(0)
 		{
 			//check for branches to enable/disable
 			vector<string> disable_branches;
@@ -92,14 +92,13 @@ class KSkimmer : public NtupleClass {
 			
 			//final steps
 			for(unsigned s = 0; s < theSelections.size(); s++){
-				theSelections[s]->PrintEfficiency(width1,nentries);
+				theSelections[s]->GetEfficiency(nentries);
 				theSelections[s]->Finalize(nEventHist,nEventNegHist);
 			}
 		}
 		void AddSelection(KSelection<KSkimmer>* sel) {
 			sel->SetLooper(this); //also sets looper for selectors, variation, variators
 			theSelections.push_back(sel);
-			if(sel->GetSelectorWidth()>width1) width1 = sel->GetSelectorWidth();
 		}
 		//implemented in KSkimmerSelectors for future reasons
 		int GetEventSign();
@@ -110,7 +109,6 @@ class KSkimmer : public NtupleClass {
 		vector<KSelection<KSkimmer>*> theSelections;
 		OptionMap* globalOpt;
 		Long64_t nentries;
-		unsigned width1;
 
 };
 

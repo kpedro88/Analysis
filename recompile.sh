@@ -19,6 +19,7 @@ KPlotDriverDC \
 KPlotDriverDCsyst \
 MakeAllDCdata \
 MakeAllDCsyst \
+KCutflowDriver \
 )
 
 for MACRO in ${MACROS[@]}; do
@@ -26,5 +27,11 @@ for MACRO in ${MACROS[@]}; do
     root -b -l -q ${MACRO}.C+
   else
     root -b -l -q ${MACRO}.C++
+  fi
+  
+  RECOMPEXIT=$?
+  if [[ $RECOMPEXIT -ne 0 ]]; then
+    echo "exit code $RECOMPEXIT, compilation failure"
+    exit $RECOMPEXIT
   fi
 done

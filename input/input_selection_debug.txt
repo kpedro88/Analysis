@@ -25,7 +25,6 @@ signal
 #	MHT	d:MHTmin[200]	b:debug[1]	d:minPtMHT[30]	d:maxEtaMHT[5]
 	MHT	d:MHTmin[200]
 	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
-	NBJetBin	vi:nbjet_min[0,1,2,3]	vi:nbjet_max[0,1,2,-1]
 PhotonSync
 	PhotonAll
 	PhotonEta	s:dep[PhotonAll]
