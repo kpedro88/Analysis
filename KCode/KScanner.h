@@ -74,11 +74,11 @@ class KScanner : public NtupleClass {
 					//topologies defined by ntop, nchargino
 					int ntop = 0;
 					int nchargino = 0;
-					for(unsigned g = 0; g < genParticles_PDGid->size(); ++g){
-						if(abs(genParticles_PDGid->at(g))==24){ //top - count W instead (for offshell tops)
+					for(unsigned g = 0; g < GenParticles_PdgId->size(); ++g){
+						if(abs(GenParticles_PdgId->at(g))==24){ //top - count W instead (for offshell tops)
 							++ntop;
 						}
-						else if(abs(genParticles_PDGid->at(g))==1000024){ //chargino
+						else if(abs(GenParticles_PdgId->at(g))==1000024){ //chargino
 							++nchargino;
 						}
 					}

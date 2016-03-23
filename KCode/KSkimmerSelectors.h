@@ -231,24 +231,6 @@ class KElectronVetoSelector : public KSelector<KSkimmer> {
 		//member variables
 };
 
-//-------------------------------------------------------------
-//vetos events with photons
-class KPhotonVetoSelector : public KSelector<KSkimmer> {
-	public:
-		//constructor
-		KPhotonVetoSelector() : KSelector<KSkimmer>() { }
-		KPhotonVetoSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
-		
-		//this selector doesn't add anything to tree
-		
-		//used for non-dummy selectors
-		virtual bool Cut() {
-			return looper->NumPhotons==0;
-		}
-		
-		//member variables
-};
-
 //------------------------------------------------------
 //single muon selector
 class KMuonSelector : public KSelector<KSkimmer> {
@@ -311,16 +293,40 @@ class KPhotonSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
 		KPhotonSelector() : KSelector<KSkimmer>() { }
-		KPhotonSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
+		KPhotonSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) {
+			//check option
+			loose = localOpt->Get("loose",true);
+			veto = localOpt->Get("veto",false);
+		}
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return looper->NumPhotons==1;
+			int NumPhotons = 0;
+			if(loose){
+				NumPhotons = looper->Photons->size();
+			}
+			else{
+				//tighten up ID
+				for(unsigned p = 0; p < looper->Photons->size(); ++p){
+					if(fabs(looper->Photons->at(p).Eta()) < 1.4442){ //barrel
+						bool passIDiso = looper->photon_sigmaIetaIeta->at(p) < 0.0107 && looper->photon_pfChargedIsoRhoCorr->at(p) < 2.67;
+						if(passIDiso) ++NumPhotons;
+					}
+					else if(fabs(looper->Photons->at(p).Eta())>1.566 && fabs(looper->Photons->at(p).Eta())<2.5){
+						bool passIDiso = looper->photon_sigmaIetaIeta->at(p) < 0.0272 && looper->photon_pfChargedIsoRhoCorr->at(p) < 1.79;
+						if(passIDiso) ++NumPhotons;
+					}
+				}
+			}
+			
+			return NumPhotons==(veto? 0 : 1);
 		}
 		
 		//member variables
+		bool loose;
+		bool veto;
 };
 
 //------------------------------------------------------
@@ -726,9 +732,9 @@ class KGenPtSelector : public KSelector<KSkimmer> {
 			//loop over genparticles
 			TLorentzVector vgen;
 			vgen.SetPtEtaPhiE(0,0,0,0);
-			for(unsigned g = 0; g < looper->genParticles_PDGid->size(); ++g){
-				if(binary_search(mother.begin(),mother.end(),abs(looper->genParticles_PDGid->at(g)))){
-					vgen -= looper->genParticles->at(g);
+			for(unsigned g = 0; g < looper->GenParticles_PdgId->size(); ++g){
+				if(binary_search(mother.begin(),mother.end(),abs(looper->GenParticles_PdgId->at(g)))){
+					vgen -= looper->GenParticles->at(g);
 				}
 			}
 			
@@ -1179,7 +1185,7 @@ class KPhotonAllSelector : public KSyncSelector {
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			goodObjects.clear();
-			for(unsigned p = 0; p < looper->photonCands->size(); ++p){
+			for(unsigned p = 0; p < looper->Photons->size(); ++p){
 				goodObjects.push_back(p);
 				++obj_counter;
 			}
@@ -1201,9 +1207,9 @@ class KPhotonEtaSelector : public KSyncSelector {
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			goodObjects.clear();
-			for(unsigned p = 0; p < looper->photonCands->size(); ++p){
+			for(unsigned p = 0; p < looper->Photons->size(); ++p){
 				unsigned pp = prevSel->goodObjects[p];
-				bool goodPhoton = abs(looper->photonCands->at(pp).Eta())<1.4442 || ((abs(looper->photonCands->at(pp).Eta())>1.566 && abs(looper->photonCands->at(pp).Eta())<2.5));
+				bool goodPhoton = abs(looper->Photons->at(pp).Eta())<1.4442 || ((abs(looper->Photons->at(pp).Eta())>1.566 && abs(looper->Photons->at(pp).Eta())<2.5));
 				if(goodPhoton) {
 					goodObjects.push_back(pp);
 					++obj_counter;
@@ -1230,12 +1236,12 @@ class KPhotonPtSelector : public KSyncSelector {
 			goodObjects.clear();
 			for(unsigned p = 0; p < prevSel->goodObjects.size(); ++p){
 				unsigned pp = prevSel->goodObjects[p];
-				bool goodPhoton = looper->photonCands->at(pp).Pt() > 100;
+				bool goodPhoton = looper->Photons->at(pp).Pt() > 100;
 				if(goodPhoton) {
 					goodObjects.push_back(pp);
 					++obj_counter;
 					if(debug) {
-						cout << "Photon " << pp << ": pt " << looper->photonCands->at(pp).Pt() << ", eta " << looper->photonCands->at(pp).Eta() << endl;
+						cout << "Photon " << pp << ": pt " << looper->Photons->at(pp).Pt() << ", eta " << looper->Photons->at(pp).Eta() << endl;
 						cout << "sieie " << looper->photon_sigmaIetaIeta->at(pp) << ", hOverE " << looper->photon_hadTowOverEM->at(pp) << ", hasPixelSeed " << looper->photon_hasPixelSeed->at(pp) << endl;
 						cout << "CH Iso " << looper->photon_pfChargedIsoRhoCorr->at(pp) << ", NH Iso " << looper->photon_pfNeutralIsoRhoCorr->at(pp) << ", PH Iso " << looper->photon_pfGammaIsoRhoCorr->at(pp) << endl;
 					}
@@ -1333,10 +1339,10 @@ class KPhotonNHIsoSelector : public KSyncSelector {
 				unsigned pp = prevSel->goodObjects[p];
 				bool goodPhoton = false;
 				if(looper->photon_isEB->at(pp)){ //barrel cuts
-					goodPhoton = looper->photon_pfNeutralIsoRhoCorr->at(pp) < 7.23 + exp(0.0028*looper->photonCands->at(pp).Pt()+0.5408);
+					goodPhoton = looper->photon_pfNeutralIsoRhoCorr->at(pp) < 7.23 + exp(0.0028*looper->Photons->at(pp).Pt()+0.5408);
 				}
 				else { //endcap cuts
-					goodPhoton = looper->photon_pfNeutralIsoRhoCorr->at(pp) < 8.89 + 0.01725*looper->photonCands->at(pp).Pt();
+					goodPhoton = looper->photon_pfNeutralIsoRhoCorr->at(pp) < 8.89 + 0.01725*looper->Photons->at(pp).Pt();
 				}
 				if(goodPhoton) {
 					goodObjects.push_back(pp);
@@ -1363,10 +1369,10 @@ class KPhotonPHIsoSelector : public KSyncSelector {
 				unsigned pp = prevSel->goodObjects[p];
 				bool goodPhoton = false;
 				if(looper->photon_isEB->at(pp)){ //barrel cuts
-					goodPhoton = looper->photon_pfGammaIsoRhoCorr->at(pp) < 2.11 + 0.0014*looper->photonCands->at(pp).Pt();
+					goodPhoton = looper->photon_pfGammaIsoRhoCorr->at(pp) < 2.11 + 0.0014*looper->Photons->at(pp).Pt();
 				}
 				else { //endcap cuts
-					goodPhoton = looper->photon_pfGammaIsoRhoCorr->at(pp) < 3.09 + 0.0091*looper->photonCands->at(pp).Pt();
+					goodPhoton = looper->photon_pfGammaIsoRhoCorr->at(pp) < 3.09 + 0.0091*looper->Photons->at(pp).Pt();
 				}
 				if(goodPhoton) {
 					goodObjects.push_back(pp);
@@ -1647,7 +1653,6 @@ namespace KParser {
 		else if(sname=="LowMHT") srtmp = new KLowMHTSelector(sname,omap);
 		else if(sname=="MuonVeto") srtmp = new KMuonVetoSelector(sname,omap);
 		else if(sname=="ElectronVeto") srtmp = new KElectronVetoSelector(sname,omap);
-		else if(sname=="PhotonVeto") srtmp = new KPhotonVetoSelector(sname,omap);
 		else if(sname=="Muon") srtmp = new KMuonSelector(sname,omap);
 		else if(sname=="Electron") srtmp = new KElectronSelector(sname,omap);
 		else if(sname=="Photon") srtmp = new KPhotonSelector(sname,omap);

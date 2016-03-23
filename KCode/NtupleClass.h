@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Sat Nov 21 15:40:14 2015 by ROOT version 5.34/18
+// Wed Mar 23 11:34:39 2016 by ROOT version 5.34/18
 // from TTree PreSelection/PreSelection
-// found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV5/Spring15v2.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
+// found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV6/Spring15v2.SMS-T1tttt_mGluino-1200_mLSP-800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
 //////////////////////////////////////////////////////////
 
 #ifndef NtupleClass_h
@@ -28,13 +28,8 @@ public :
    UInt_t          RunNum;
    UInt_t          LumiBlockNum;
    ULong64_t       EvtNum;
-   vector<TLorentzVector> *bestPhoton;
-   vector<TLorentzVector> *bestPhotonLoose;
    Int_t           BTags;
    Int_t           BTagsclean;
-   Int_t           BTagscleanDY;
-   Int_t           BTagscleanGJ;
-   Int_t           BTagscleanGJloose;
    Int_t           BTagsJECdown;
    Int_t           BTagsJECup;
    Double_t        CaloMETPhi;
@@ -43,30 +38,18 @@ public :
    Bool_t          CSCTightHaloFilter;
    Double_t        DeltaPhi1;
    Double_t        DeltaPhi1clean;
-   Double_t        DeltaPhi1cleanDY;
-   Double_t        DeltaPhi1cleanGJ;
-   Double_t        DeltaPhi1cleanGJloose;
    Double_t        DeltaPhi1JECdown;
    Double_t        DeltaPhi1JECup;
    Double_t        DeltaPhi2;
    Double_t        DeltaPhi2clean;
-   Double_t        DeltaPhi2cleanDY;
-   Double_t        DeltaPhi2cleanGJ;
-   Double_t        DeltaPhi2cleanGJloose;
    Double_t        DeltaPhi2JECdown;
    Double_t        DeltaPhi2JECup;
    Double_t        DeltaPhi3;
    Double_t        DeltaPhi3clean;
-   Double_t        DeltaPhi3cleanDY;
-   Double_t        DeltaPhi3cleanGJ;
-   Double_t        DeltaPhi3cleanGJloose;
    Double_t        DeltaPhi3JECdown;
    Double_t        DeltaPhi3JECup;
    Double_t        DeltaPhi4;
    Double_t        DeltaPhi4clean;
-   Double_t        DeltaPhi4cleanDY;
-   Double_t        DeltaPhi4cleanGJ;
-   Double_t        DeltaPhi4cleanGJloose;
    Double_t        DeltaPhi4JECdown;
    Double_t        DeltaPhi4JECup;
    Int_t           EcalDeadCellTriggerPrimitiveFilter;
@@ -98,8 +81,11 @@ public :
    vector<double>  *GenMu_RecoTrkd3;
    vector<double>  *GenMu_RecoTrkIso;
    vector<TLorentzVector> *GenMus;
-   vector<TLorentzVector> *genParticles;
-   vector<int>     *genParticles_PDGid;
+   vector<TLorentzVector> *GenParticles;
+   vector<int>     *GenParticles_ParentId;
+   vector<int>     *GenParticles_ParentIdx;
+   vector<int>     *GenParticles_PdgId;
+   vector<int>     *GenParticles_Status;
    vector<int>     *GenTau_GenTauHad;
    vector<double>  *GenTau_MT2Activity;
    vector<double>  *GenTauLeadRecoTrkAct;
@@ -112,38 +98,23 @@ public :
    Bool_t          HBHENoiseFilter;
    Double_t        HT;
    Double_t        HTclean;
-   Double_t        HTcleanDY;
-   Double_t        HTcleanGJ;
-   Double_t        HTcleanGJloose;
    Double_t        HTJECdown;
    Double_t        HTJECup;
    vector<bool>    *HTJetsMask;
    vector<bool>    *HTJetsMaskclean;
-   vector<bool>    *HTJetsMaskcleanDY;
-   vector<bool>    *HTJetsMaskcleanGJ;
-   vector<bool>    *HTJetsMaskcleanGJloose;
    vector<bool>    *HTJetsMaskJECdown;
    vector<bool>    *HTJetsMaskJECup;
    Int_t           isoElectronTracks;
-   Int_t           isoElectronTrackscleanDY;
-   Int_t           isoElectronTrackscleanGJ;
-   Int_t           isoElectronTrackscleanGJloose;
+   Int_t           isoElectronTracksclean;
    vector<TLorentzVector> *IsolatedElectronTracksVeto;
    vector<TLorentzVector> *IsolatedMuonTracksVeto;
    vector<TLorentzVector> *IsolatedPionTracksVeto;
    Int_t           isoMuonTracks;
-   Int_t           isoMuonTrackscleanDY;
-   Int_t           isoMuonTrackscleanGJ;
-   Int_t           isoMuonTrackscleanGJloose;
+   Int_t           isoMuonTracksclean;
    Int_t           isoPionTracks;
-   Int_t           isoPionTrackscleanDY;
-   Int_t           isoPionTrackscleanGJ;
-   Int_t           isoPionTrackscleanGJloose;
+   Int_t           isoPionTracksclean;
    Bool_t          JetID;
    Bool_t          JetIDclean;
-   Bool_t          JetIDcleanDY;
-   Bool_t          JetIDcleanGJ;
-   Bool_t          JetIDcleanGJloose;
    Bool_t          JetIDJECdown;
    Bool_t          JetIDJECup;
    vector<TLorentzVector> *Jets;
@@ -155,6 +126,7 @@ public :
    vector<int>     *Jets_chargedMultiplicity;
    vector<int>     *Jets_electronMultiplicity;
    vector<int>     *Jets_hadronFlavor;
+   vector<bool>    *Jets_ID;
    vector<double>  *Jets_jecFactor;
    vector<double>  *Jets_jecUnc;
    vector<double>  *Jets_jetArea;
@@ -167,68 +139,53 @@ public :
    vector<int>     *Jets_partonFlavor;
    vector<double>  *Jets_photonEnergyFraction;
    vector<int>     *Jets_photonMultiplicity;
+   vector<double>  *Jets_qgLikelihood;
+   vector<TLorentzVector> *JetsAK8;
+   vector<double>  *JetsAK8_bDiscriminatorSubjet1CSV;
+   vector<double>  *JetsAK8_bDiscriminatorSubjet2CSV;
+   vector<double>  *JetsAK8_NsubjettinessTau1;
+   vector<double>  *JetsAK8_NsubjettinessTau2;
+   vector<double>  *JetsAK8_NsubjettinessTau3;
+   vector<double>  *JetsAK8_prunedMass;
    vector<TLorentzVector> *Jetsclean;
    vector<double>  *Jetsclean_bDiscriminatorCSV;
    vector<int>     *Jetsclean_hadronFlavor;
+   vector<bool>    *Jetsclean_ID;
    vector<int>     *Jetsclean_partonFlavor;
-   vector<TLorentzVector> *JetscleanDY;
-   vector<double>  *JetscleanDY_bDiscriminatorCSV;
-   vector<int>     *JetscleanDY_hadronFlavor;
-   vector<int>     *JetscleanDY_partonFlavor;
-   vector<TLorentzVector> *JetscleanGJ;
-   vector<double>  *JetscleanGJ_bDiscriminatorCSV;
-   vector<int>     *JetscleanGJ_hadronFlavor;
-   vector<int>     *JetscleanGJ_partonFlavor;
-   vector<TLorentzVector> *JetscleanGJloose;
-   vector<double>  *JetscleanGJloose_bDiscriminatorCSV;
-   vector<int>     *JetscleanGJloose_hadronFlavor;
-   vector<int>     *JetscleanGJloose_partonFlavor;
    vector<TLorentzVector> *JetsJECdown;
    vector<double>  *JetsJECdown_bDiscriminatorCSV;
    vector<int>     *JetsJECdown_hadronFlavor;
+   vector<bool>    *JetsJECdown_ID;
    vector<int>     *JetsJECdown_partonFlavor;
    vector<TLorentzVector> *JetsJECup;
    vector<double>  *JetsJECup_bDiscriminatorCSV;
    vector<int>     *JetsJECup_hadronFlavor;
+   vector<bool>    *JetsJECup_ID;
    vector<int>     *JetsJECup_partonFlavor;
    Int_t           Leptons;
    Int_t           METFilters;
    Double_t        METPhi;
    Double_t        METPhiclean;
-   Double_t        METPhicleanDY;
-   Double_t        METPhicleanGJ;
-   Double_t        METPhicleanGJloose;
    vector<double>  *METPhiDown;
    vector<double>  *METPhiUp;
    Double_t        METPt;
    Double_t        METPtclean;
-   Double_t        METPtcleanDY;
-   Double_t        METPtcleanGJ;
-   Double_t        METPtcleanGJloose;
    vector<double>  *METPtDown;
    vector<double>  *METPtUp;
    Double_t        MHT;
    Double_t        MHT_Phi;
    Double_t        MHT_Phiclean;
-   Double_t        MHT_PhicleanDY;
-   Double_t        MHT_PhicleanGJ;
-   Double_t        MHT_PhicleanGJloose;
    Double_t        MHT_PhiJECdown;
    Double_t        MHT_PhiJECup;
    Double_t        MHTclean;
-   Double_t        MHTcleanDY;
-   Double_t        MHTcleanGJ;
-   Double_t        MHTcleanGJloose;
    Double_t        MHTJECdown;
    Double_t        MHTJECup;
    vector<bool>    *MHTJetsMask;
    vector<bool>    *MHTJetsMaskclean;
-   vector<bool>    *MHTJetsMaskcleanDY;
-   vector<bool>    *MHTJetsMaskcleanGJ;
-   vector<bool>    *MHTJetsMaskcleanGJloose;
    vector<bool>    *MHTJetsMaskJECdown;
    vector<bool>    *MHTJetsMaskJECup;
    vector<string>  *minDeltaPhiNames;
+   Double_t        MT2;
    vector<int>     *MuonCharge;
    vector<TLorentzVector> *Muons;
    Int_t           nAllVertices;
@@ -237,9 +194,6 @@ public :
    vector<int>     *NeutrinoPdg;
    Int_t           NJets;
    Int_t           NJetsclean;
-   Int_t           NJetscleanDY;
-   Int_t           NJetscleanGJ;
-   Int_t           NJetscleanGJloose;
    Int_t           NJetsJECdown;
    Int_t           NJetsJECup;
    Int_t           nTAPElectronTracks;
@@ -247,8 +201,6 @@ public :
    Int_t           nTAPPionTracks;
    Double_t        NumEvents;
    Int_t           NumInteractions;
-   Int_t           NumPhotons;
-   Int_t           NumPhotonsLoose;
    Int_t           NVtx;
    vector<int>     *PDFids;
    vector<double>  *PDFweights;
@@ -265,7 +217,7 @@ public :
    vector<double>  *photon_pfNeutralIso;
    vector<double>  *photon_pfNeutralIsoRhoCorr;
    vector<double>  *photon_sigmaIetaIeta;
-   vector<TLorentzVector> *photonCands;
+   vector<TLorentzVector> *Photons;
    Double_t        puSysDown;
    Double_t        puSysUp;
    Double_t        puWeight;
@@ -331,13 +283,8 @@ public :
    TBranch        *b_RunNum;   //!
    TBranch        *b_LumiBlockNum;   //!
    TBranch        *b_EvtNum;   //!
-   TBranch        *b_bestPhoton;   //!
-   TBranch        *b_bestPhotonLoose;   //!
    TBranch        *b_BTags;   //!
    TBranch        *b_BTagsclean;   //!
-   TBranch        *b_BTagscleanDY;   //!
-   TBranch        *b_BTagscleanGJ;   //!
-   TBranch        *b_BTagscleanGJloose;   //!
    TBranch        *b_BTagsJECdown;   //!
    TBranch        *b_BTagsJECup;   //!
    TBranch        *b_CaloMETPhi;   //!
@@ -346,30 +293,18 @@ public :
    TBranch        *b_CSCTightHaloFilter;   //!
    TBranch        *b_DeltaPhi1;   //!
    TBranch        *b_DeltaPhi1clean;   //!
-   TBranch        *b_DeltaPhi1cleanDY;   //!
-   TBranch        *b_DeltaPhi1cleanGJ;   //!
-   TBranch        *b_DeltaPhi1cleanGJloose;   //!
    TBranch        *b_DeltaPhi1JECdown;   //!
    TBranch        *b_DeltaPhi1JECup;   //!
    TBranch        *b_DeltaPhi2;   //!
    TBranch        *b_DeltaPhi2clean;   //!
-   TBranch        *b_DeltaPhi2cleanDY;   //!
-   TBranch        *b_DeltaPhi2cleanGJ;   //!
-   TBranch        *b_DeltaPhi2cleanGJloose;   //!
    TBranch        *b_DeltaPhi2JECdown;   //!
    TBranch        *b_DeltaPhi2JECup;   //!
    TBranch        *b_DeltaPhi3;   //!
    TBranch        *b_DeltaPhi3clean;   //!
-   TBranch        *b_DeltaPhi3cleanDY;   //!
-   TBranch        *b_DeltaPhi3cleanGJ;   //!
-   TBranch        *b_DeltaPhi3cleanGJloose;   //!
    TBranch        *b_DeltaPhi3JECdown;   //!
    TBranch        *b_DeltaPhi3JECup;   //!
    TBranch        *b_DeltaPhi4;   //!
    TBranch        *b_DeltaPhi4clean;   //!
-   TBranch        *b_DeltaPhi4cleanDY;   //!
-   TBranch        *b_DeltaPhi4cleanGJ;   //!
-   TBranch        *b_DeltaPhi4cleanGJloose;   //!
    TBranch        *b_DeltaPhi4JECdown;   //!
    TBranch        *b_DeltaPhi4JECup;   //!
    TBranch        *b_EcalDeadCellTriggerPrimitiveFilter;   //!
@@ -401,8 +336,11 @@ public :
    TBranch        *b_GenMu_RecoTrkd3;   //!
    TBranch        *b_GenMu_RecoTrkIso;   //!
    TBranch        *b_GenMus;   //!
-   TBranch        *b_genParticles;   //!
-   TBranch        *b_genParticles_PDGid;   //!
+   TBranch        *b_GenParticles;   //!
+   TBranch        *b_GenParticles_ParentId;   //!
+   TBranch        *b_GenParticles_ParentIdx;   //!
+   TBranch        *b_GenParticles_PdgId;   //!
+   TBranch        *b_GenParticles_Status;   //!
    TBranch        *b_GenTau_GenTauHad;   //!
    TBranch        *b_GenTau_MT2Activity;   //!
    TBranch        *b_GenTauLeadRecoTrkAct;   //!
@@ -415,38 +353,23 @@ public :
    TBranch        *b_HBHENoiseFilter;   //!
    TBranch        *b_HT;   //!
    TBranch        *b_HTclean;   //!
-   TBranch        *b_HTcleanDY;   //!
-   TBranch        *b_HTcleanGJ;   //!
-   TBranch        *b_HTcleanGJloose;   //!
    TBranch        *b_HTJECdown;   //!
    TBranch        *b_HTJECup;   //!
    TBranch        *b_HTJetsMask;   //!
    TBranch        *b_HTJetsMaskclean;   //!
-   TBranch        *b_HTJetsMaskcleanDY;   //!
-   TBranch        *b_HTJetsMaskcleanGJ;   //!
-   TBranch        *b_HTJetsMaskcleanGJloose;   //!
    TBranch        *b_HTJetsMaskJECdown;   //!
    TBranch        *b_HTJetsMaskJECup;   //!
    TBranch        *b_isoElectronTracks;   //!
-   TBranch        *b_isoElectronTrackscleanDY;   //!
-   TBranch        *b_isoElectronTrackscleanGJ;   //!
-   TBranch        *b_isoElectronTrackscleanGJloose;   //!
+   TBranch        *b_isoElectronTracksclean;   //!
    TBranch        *b_IsolatedElectronTracksVeto;   //!
    TBranch        *b_IsolatedMuonTracksVeto;   //!
    TBranch        *b_IsolatedPionTracksVeto;   //!
    TBranch        *b_isoMuonTracks;   //!
-   TBranch        *b_isoMuonTrackscleanDY;   //!
-   TBranch        *b_isoMuonTrackscleanGJ;   //!
-   TBranch        *b_isoMuonTrackscleanGJloose;   //!
+   TBranch        *b_isoMuonTracksclean;   //!
    TBranch        *b_isoPionTracks;   //!
-   TBranch        *b_isoPionTrackscleanDY;   //!
-   TBranch        *b_isoPionTrackscleanGJ;   //!
-   TBranch        *b_isoPionTrackscleanGJloose;   //!
+   TBranch        *b_isoPionTracksclean;   //!
    TBranch        *b_JetID;   //!
    TBranch        *b_JetIDclean;   //!
-   TBranch        *b_JetIDcleanDY;   //!
-   TBranch        *b_JetIDcleanGJ;   //!
-   TBranch        *b_JetIDcleanGJloose;   //!
    TBranch        *b_JetIDJECdown;   //!
    TBranch        *b_JetIDJECup;   //!
    TBranch        *b_Jets;   //!
@@ -458,6 +381,7 @@ public :
    TBranch        *b_Jets_chargedMultiplicity;   //!
    TBranch        *b_Jets_electronMultiplicity;   //!
    TBranch        *b_Jets_hadronFlavor;   //!
+   TBranch        *b_Jets_ID;   //!
    TBranch        *b_Jets_jecFactor;   //!
    TBranch        *b_Jets_jecUnc;   //!
    TBranch        *b_Jets_jetArea;   //!
@@ -470,68 +394,53 @@ public :
    TBranch        *b_Jets_partonFlavor;   //!
    TBranch        *b_Jets_photonEnergyFraction;   //!
    TBranch        *b_Jets_photonMultiplicity;   //!
+   TBranch        *b_Jets_qgLikelihood;   //!
+   TBranch        *b_JetsAK8;   //!
+   TBranch        *b_JetsAK8_bDiscriminatorSubjet1CSV;   //!
+   TBranch        *b_JetsAK8_bDiscriminatorSubjet2CSV;   //!
+   TBranch        *b_JetsAK8_NsubjettinessTau1;   //!
+   TBranch        *b_JetsAK8_NsubjettinessTau2;   //!
+   TBranch        *b_JetsAK8_NsubjettinessTau3;   //!
+   TBranch        *b_JetsAK8_prunedMass;   //!
    TBranch        *b_Jetsclean;   //!
    TBranch        *b_Jetsclean_bDiscriminatorCSV;   //!
    TBranch        *b_Jetsclean_hadronFlavor;   //!
+   TBranch        *b_Jetsclean_ID;   //!
    TBranch        *b_Jetsclean_partonFlavor;   //!
-   TBranch        *b_JetscleanDY;   //!
-   TBranch        *b_JetscleanDY_bDiscriminatorCSV;   //!
-   TBranch        *b_JetscleanDY_hadronFlavor;   //!
-   TBranch        *b_JetscleanDY_partonFlavor;   //!
-   TBranch        *b_JetscleanGJ;   //!
-   TBranch        *b_JetscleanGJ_bDiscriminatorCSV;   //!
-   TBranch        *b_JetscleanGJ_hadronFlavor;   //!
-   TBranch        *b_JetscleanGJ_partonFlavor;   //!
-   TBranch        *b_JetscleanGJloose;   //!
-   TBranch        *b_JetscleanGJloose_bDiscriminatorCSV;   //!
-   TBranch        *b_JetscleanGJloose_hadronFlavor;   //!
-   TBranch        *b_JetscleanGJloose_partonFlavor;   //!
    TBranch        *b_JetsJECdown;   //!
    TBranch        *b_JetsJECdown_bDiscriminatorCSV;   //!
    TBranch        *b_JetsJECdown_hadronFlavor;   //!
+   TBranch        *b_JetsJECdown_ID;   //!
    TBranch        *b_JetsJECdown_partonFlavor;   //!
    TBranch        *b_JetsJECup;   //!
    TBranch        *b_JetsJECup_bDiscriminatorCSV;   //!
    TBranch        *b_JetsJECup_hadronFlavor;   //!
+   TBranch        *b_JetsJECup_ID;   //!
    TBranch        *b_JetsJECup_partonFlavor;   //!
    TBranch        *b_Leptons;   //!
    TBranch        *b_METFilters;   //!
    TBranch        *b_METPhi;   //!
    TBranch        *b_METPhiclean;   //!
-   TBranch        *b_METPhicleanDY;   //!
-   TBranch        *b_METPhicleanGJ;   //!
-   TBranch        *b_METPhicleanGJloose;   //!
    TBranch        *b_METPhiDown;   //!
    TBranch        *b_METPhiUp;   //!
    TBranch        *b_METPt;   //!
    TBranch        *b_METPtclean;   //!
-   TBranch        *b_METPtcleanDY;   //!
-   TBranch        *b_METPtcleanGJ;   //!
-   TBranch        *b_METPtcleanGJloose;   //!
    TBranch        *b_METPtDown;   //!
    TBranch        *b_METPtUp;   //!
    TBranch        *b_MHT;   //!
    TBranch        *b_MHT_Phi;   //!
    TBranch        *b_MHT_Phiclean;   //!
-   TBranch        *b_MHT_PhicleanDY;   //!
-   TBranch        *b_MHT_PhicleanGJ;   //!
-   TBranch        *b_MHT_PhicleanGJloose;   //!
    TBranch        *b_MHT_PhiJECdown;   //!
    TBranch        *b_MHT_PhiJECup;   //!
    TBranch        *b_MHTclean;   //!
-   TBranch        *b_MHTcleanDY;   //!
-   TBranch        *b_MHTcleanGJ;   //!
-   TBranch        *b_MHTcleanGJloose;   //!
    TBranch        *b_MHTJECdown;   //!
    TBranch        *b_MHTJECup;   //!
    TBranch        *b_MHTJetsMask;   //!
    TBranch        *b_MHTJetsMaskclean;   //!
-   TBranch        *b_MHTJetsMaskcleanDY;   //!
-   TBranch        *b_MHTJetsMaskcleanGJ;   //!
-   TBranch        *b_MHTJetsMaskcleanGJloose;   //!
    TBranch        *b_MHTJetsMaskJECdown;   //!
    TBranch        *b_MHTJetsMaskJECup;   //!
    TBranch        *b_minDeltaPhiNames;   //!
+   TBranch        *b_MT2;   //!
    TBranch        *b_MuonCharge;   //!
    TBranch        *b_Muons;   //!
    TBranch        *b_nAllVertices;   //!
@@ -540,9 +449,6 @@ public :
    TBranch        *b_NeutrinoPdg;   //!
    TBranch        *b_NJets;   //!
    TBranch        *b_NJetsclean;   //!
-   TBranch        *b_NJetscleanDY;   //!
-   TBranch        *b_NJetscleanGJ;   //!
-   TBranch        *b_NJetscleanGJloose;   //!
    TBranch        *b_NJetsJECdown;   //!
    TBranch        *b_NJetsJECup;   //!
    TBranch        *b_nTAPElectronTracks;   //!
@@ -550,8 +456,6 @@ public :
    TBranch        *b_nTAPPionTracks;   //!
    TBranch        *b_NumEvents;   //!
    TBranch        *b_NumInteractions;   //!
-   TBranch        *b_NumPhotons;   //!
-   TBranch        *b_NumPhotonsLoose;   //!
    TBranch        *b_NVtx;   //!
    TBranch        *b_PDFids;   //!
    TBranch        *b_PDFweights;   //!
@@ -568,7 +472,7 @@ public :
    TBranch        *b_photon_pfNeutralIso;   //!
    TBranch        *b_photon_pfNeutralIsoRhoCorr;   //!
    TBranch        *b_photon_sigmaIetaIeta;   //!
-   TBranch        *b_photonCands;   //!
+   TBranch        *b_Photons;   //!
    TBranch        *b_puSysDown;   //!
    TBranch        *b_puSysUp;   //!
    TBranch        *b_puWeight;   //!
@@ -649,11 +553,11 @@ NtupleClass::NtupleClass(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV5/Spring15v2.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV6/Spring15v2.SMS-T1tttt_mGluino-1200_mLSP-800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV5/Spring15v2.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
+         f = new TFile("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV6/Spring15v2.SMS-T1tttt_mGluino-1200_mLSP-800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
       }
-      TDirectory * dir = (TDirectory*)f->Get("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV5/Spring15v2.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root:/TreeMaker2");
+      TDirectory * dir = (TDirectory*)f->Get("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV6/Spring15v2.SMS-T1tttt_mGluino-1200_mLSP-800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root:/TreeMaker2");
       dir->GetObject("PreSelection",tree);
 
    }
@@ -696,8 +600,6 @@ void NtupleClass::Init(TTree *tree)
    // (once per file to be processed).
 
    // Set object pointer
-   bestPhoton = 0;
-   bestPhotonLoose = 0;
    ElectronCharge = 0;
    Electrons = 0;
    GenDeltaPhi = 0;
@@ -719,8 +621,11 @@ void NtupleClass::Init(TTree *tree)
    GenMu_RecoTrkd3 = 0;
    GenMu_RecoTrkIso = 0;
    GenMus = 0;
-   genParticles = 0;
-   genParticles_PDGid = 0;
+   GenParticles = 0;
+   GenParticles_ParentId = 0;
+   GenParticles_ParentIdx = 0;
+   GenParticles_PdgId = 0;
+   GenParticles_Status = 0;
    GenTau_GenTauHad = 0;
    GenTau_MT2Activity = 0;
    GenTauLeadRecoTrkAct = 0;
@@ -731,9 +636,6 @@ void NtupleClass::Init(TTree *tree)
    GenTaus = 0;
    HTJetsMask = 0;
    HTJetsMaskclean = 0;
-   HTJetsMaskcleanDY = 0;
-   HTJetsMaskcleanGJ = 0;
-   HTJetsMaskcleanGJloose = 0;
    HTJetsMaskJECdown = 0;
    HTJetsMaskJECup = 0;
    IsolatedElectronTracksVeto = 0;
@@ -748,6 +650,7 @@ void NtupleClass::Init(TTree *tree)
    Jets_chargedMultiplicity = 0;
    Jets_electronMultiplicity = 0;
    Jets_hadronFlavor = 0;
+   Jets_ID = 0;
    Jets_jecFactor = 0;
    Jets_jecUnc = 0;
    Jets_jetArea = 0;
@@ -760,29 +663,28 @@ void NtupleClass::Init(TTree *tree)
    Jets_partonFlavor = 0;
    Jets_photonEnergyFraction = 0;
    Jets_photonMultiplicity = 0;
+   Jets_qgLikelihood = 0;
+   JetsAK8 = 0;
+   JetsAK8_bDiscriminatorSubjet1CSV = 0;
+   JetsAK8_bDiscriminatorSubjet2CSV = 0;
+   JetsAK8_NsubjettinessTau1 = 0;
+   JetsAK8_NsubjettinessTau2 = 0;
+   JetsAK8_NsubjettinessTau3 = 0;
+   JetsAK8_prunedMass = 0;
    Jetsclean = 0;
    Jetsclean_bDiscriminatorCSV = 0;
    Jetsclean_hadronFlavor = 0;
+   Jetsclean_ID = 0;
    Jetsclean_partonFlavor = 0;
-   JetscleanDY = 0;
-   JetscleanDY_bDiscriminatorCSV = 0;
-   JetscleanDY_hadronFlavor = 0;
-   JetscleanDY_partonFlavor = 0;
-   JetscleanGJ = 0;
-   JetscleanGJ_bDiscriminatorCSV = 0;
-   JetscleanGJ_hadronFlavor = 0;
-   JetscleanGJ_partonFlavor = 0;
-   JetscleanGJloose = 0;
-   JetscleanGJloose_bDiscriminatorCSV = 0;
-   JetscleanGJloose_hadronFlavor = 0;
-   JetscleanGJloose_partonFlavor = 0;
    JetsJECdown = 0;
    JetsJECdown_bDiscriminatorCSV = 0;
    JetsJECdown_hadronFlavor = 0;
+   JetsJECdown_ID = 0;
    JetsJECdown_partonFlavor = 0;
    JetsJECup = 0;
    JetsJECup_bDiscriminatorCSV = 0;
    JetsJECup_hadronFlavor = 0;
+   JetsJECup_ID = 0;
    JetsJECup_partonFlavor = 0;
    METPhiDown = 0;
    METPhiUp = 0;
@@ -790,9 +692,6 @@ void NtupleClass::Init(TTree *tree)
    METPtUp = 0;
    MHTJetsMask = 0;
    MHTJetsMaskclean = 0;
-   MHTJetsMaskcleanDY = 0;
-   MHTJetsMaskcleanGJ = 0;
-   MHTJetsMaskcleanGJloose = 0;
    MHTJetsMaskJECdown = 0;
    MHTJetsMaskJECup = 0;
    minDeltaPhiNames = 0;
@@ -816,7 +715,7 @@ void NtupleClass::Init(TTree *tree)
    photon_pfNeutralIso = 0;
    photon_pfNeutralIsoRhoCorr = 0;
    photon_sigmaIetaIeta = 0;
-   photonCands = 0;
+   Photons = 0;
    RJetDeltaPhi = 0;
    RJetMinDeltaPhiEta24 = 0;
    RJetMinDeltaPhiEta5 = 0;
@@ -878,13 +777,8 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("RunNum", &RunNum, &b_RunNum);
    fChain->SetBranchAddress("LumiBlockNum", &LumiBlockNum, &b_LumiBlockNum);
    fChain->SetBranchAddress("EvtNum", &EvtNum, &b_EvtNum);
-   fChain->SetBranchAddress("bestPhoton", &bestPhoton, &b_bestPhoton);
-   fChain->SetBranchAddress("bestPhotonLoose", &bestPhotonLoose, &b_bestPhotonLoose);
    fChain->SetBranchAddress("BTags", &BTags, &b_BTags);
    fChain->SetBranchAddress("BTagsclean", &BTagsclean, &b_BTagsclean);
-   fChain->SetBranchAddress("BTagscleanDY", &BTagscleanDY, &b_BTagscleanDY);
-   fChain->SetBranchAddress("BTagscleanGJ", &BTagscleanGJ, &b_BTagscleanGJ);
-   fChain->SetBranchAddress("BTagscleanGJloose", &BTagscleanGJloose, &b_BTagscleanGJloose);
    fChain->SetBranchAddress("BTagsJECdown", &BTagsJECdown, &b_BTagsJECdown);
    fChain->SetBranchAddress("BTagsJECup", &BTagsJECup, &b_BTagsJECup);
    fChain->SetBranchAddress("CaloMETPhi", &CaloMETPhi, &b_CaloMETPhi);
@@ -893,30 +787,18 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("CSCTightHaloFilter", &CSCTightHaloFilter, &b_CSCTightHaloFilter);
    fChain->SetBranchAddress("DeltaPhi1", &DeltaPhi1, &b_DeltaPhi1);
    fChain->SetBranchAddress("DeltaPhi1clean", &DeltaPhi1clean, &b_DeltaPhi1clean);
-   fChain->SetBranchAddress("DeltaPhi1cleanDY", &DeltaPhi1cleanDY, &b_DeltaPhi1cleanDY);
-   fChain->SetBranchAddress("DeltaPhi1cleanGJ", &DeltaPhi1cleanGJ, &b_DeltaPhi1cleanGJ);
-   fChain->SetBranchAddress("DeltaPhi1cleanGJloose", &DeltaPhi1cleanGJloose, &b_DeltaPhi1cleanGJloose);
    fChain->SetBranchAddress("DeltaPhi1JECdown", &DeltaPhi1JECdown, &b_DeltaPhi1JECdown);
    fChain->SetBranchAddress("DeltaPhi1JECup", &DeltaPhi1JECup, &b_DeltaPhi1JECup);
    fChain->SetBranchAddress("DeltaPhi2", &DeltaPhi2, &b_DeltaPhi2);
    fChain->SetBranchAddress("DeltaPhi2clean", &DeltaPhi2clean, &b_DeltaPhi2clean);
-   fChain->SetBranchAddress("DeltaPhi2cleanDY", &DeltaPhi2cleanDY, &b_DeltaPhi2cleanDY);
-   fChain->SetBranchAddress("DeltaPhi2cleanGJ", &DeltaPhi2cleanGJ, &b_DeltaPhi2cleanGJ);
-   fChain->SetBranchAddress("DeltaPhi2cleanGJloose", &DeltaPhi2cleanGJloose, &b_DeltaPhi2cleanGJloose);
    fChain->SetBranchAddress("DeltaPhi2JECdown", &DeltaPhi2JECdown, &b_DeltaPhi2JECdown);
    fChain->SetBranchAddress("DeltaPhi2JECup", &DeltaPhi2JECup, &b_DeltaPhi2JECup);
    fChain->SetBranchAddress("DeltaPhi3", &DeltaPhi3, &b_DeltaPhi3);
    fChain->SetBranchAddress("DeltaPhi3clean", &DeltaPhi3clean, &b_DeltaPhi3clean);
-   fChain->SetBranchAddress("DeltaPhi3cleanDY", &DeltaPhi3cleanDY, &b_DeltaPhi3cleanDY);
-   fChain->SetBranchAddress("DeltaPhi3cleanGJ", &DeltaPhi3cleanGJ, &b_DeltaPhi3cleanGJ);
-   fChain->SetBranchAddress("DeltaPhi3cleanGJloose", &DeltaPhi3cleanGJloose, &b_DeltaPhi3cleanGJloose);
    fChain->SetBranchAddress("DeltaPhi3JECdown", &DeltaPhi3JECdown, &b_DeltaPhi3JECdown);
    fChain->SetBranchAddress("DeltaPhi3JECup", &DeltaPhi3JECup, &b_DeltaPhi3JECup);
    fChain->SetBranchAddress("DeltaPhi4", &DeltaPhi4, &b_DeltaPhi4);
    fChain->SetBranchAddress("DeltaPhi4clean", &DeltaPhi4clean, &b_DeltaPhi4clean);
-   fChain->SetBranchAddress("DeltaPhi4cleanDY", &DeltaPhi4cleanDY, &b_DeltaPhi4cleanDY);
-   fChain->SetBranchAddress("DeltaPhi4cleanGJ", &DeltaPhi4cleanGJ, &b_DeltaPhi4cleanGJ);
-   fChain->SetBranchAddress("DeltaPhi4cleanGJloose", &DeltaPhi4cleanGJloose, &b_DeltaPhi4cleanGJloose);
    fChain->SetBranchAddress("DeltaPhi4JECdown", &DeltaPhi4JECdown, &b_DeltaPhi4JECdown);
    fChain->SetBranchAddress("DeltaPhi4JECup", &DeltaPhi4JECup, &b_DeltaPhi4JECup);
    fChain->SetBranchAddress("EcalDeadCellTriggerPrimitiveFilter", &EcalDeadCellTriggerPrimitiveFilter, &b_EcalDeadCellTriggerPrimitiveFilter);
@@ -948,8 +830,11 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("GenMu_RecoTrkd3", &GenMu_RecoTrkd3, &b_GenMu_RecoTrkd3);
    fChain->SetBranchAddress("GenMu_RecoTrkIso", &GenMu_RecoTrkIso, &b_GenMu_RecoTrkIso);
    fChain->SetBranchAddress("GenMus", &GenMus, &b_GenMus);
-   fChain->SetBranchAddress("genParticles", &genParticles, &b_genParticles);
-   fChain->SetBranchAddress("genParticles_PDGid", &genParticles_PDGid, &b_genParticles_PDGid);
+   fChain->SetBranchAddress("GenParticles", &GenParticles, &b_GenParticles);
+   fChain->SetBranchAddress("GenParticles_ParentId", &GenParticles_ParentId, &b_GenParticles_ParentId);
+   fChain->SetBranchAddress("GenParticles_ParentIdx", &GenParticles_ParentIdx, &b_GenParticles_ParentIdx);
+   fChain->SetBranchAddress("GenParticles_PdgId", &GenParticles_PdgId, &b_GenParticles_PdgId);
+   fChain->SetBranchAddress("GenParticles_Status", &GenParticles_Status, &b_GenParticles_Status);
    fChain->SetBranchAddress("GenTau_GenTauHad", &GenTau_GenTauHad, &b_GenTau_GenTauHad);
    fChain->SetBranchAddress("GenTau_MT2Activity", &GenTau_MT2Activity, &b_GenTau_MT2Activity);
    fChain->SetBranchAddress("GenTauLeadRecoTrkAct", &GenTauLeadRecoTrkAct, &b_GenTauLeadRecoTrkAct);
@@ -962,38 +847,23 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("HBHENoiseFilter", &HBHENoiseFilter, &b_HBHENoiseFilter);
    fChain->SetBranchAddress("HT", &HT, &b_HT);
    fChain->SetBranchAddress("HTclean", &HTclean, &b_HTclean);
-   fChain->SetBranchAddress("HTcleanDY", &HTcleanDY, &b_HTcleanDY);
-   fChain->SetBranchAddress("HTcleanGJ", &HTcleanGJ, &b_HTcleanGJ);
-   fChain->SetBranchAddress("HTcleanGJloose", &HTcleanGJloose, &b_HTcleanGJloose);
    fChain->SetBranchAddress("HTJECdown", &HTJECdown, &b_HTJECdown);
    fChain->SetBranchAddress("HTJECup", &HTJECup, &b_HTJECup);
    fChain->SetBranchAddress("HTJetsMask", &HTJetsMask, &b_HTJetsMask);
    fChain->SetBranchAddress("HTJetsMaskclean", &HTJetsMaskclean, &b_HTJetsMaskclean);
-   fChain->SetBranchAddress("HTJetsMaskcleanDY", &HTJetsMaskcleanDY, &b_HTJetsMaskcleanDY);
-   fChain->SetBranchAddress("HTJetsMaskcleanGJ", &HTJetsMaskcleanGJ, &b_HTJetsMaskcleanGJ);
-   fChain->SetBranchAddress("HTJetsMaskcleanGJloose", &HTJetsMaskcleanGJloose, &b_HTJetsMaskcleanGJloose);
    fChain->SetBranchAddress("HTJetsMaskJECdown", &HTJetsMaskJECdown, &b_HTJetsMaskJECdown);
    fChain->SetBranchAddress("HTJetsMaskJECup", &HTJetsMaskJECup, &b_HTJetsMaskJECup);
    fChain->SetBranchAddress("isoElectronTracks", &isoElectronTracks, &b_isoElectronTracks);
-   fChain->SetBranchAddress("isoElectronTrackscleanDY", &isoElectronTrackscleanDY, &b_isoElectronTrackscleanDY);
-   fChain->SetBranchAddress("isoElectronTrackscleanGJ", &isoElectronTrackscleanGJ, &b_isoElectronTrackscleanGJ);
-   fChain->SetBranchAddress("isoElectronTrackscleanGJloose", &isoElectronTrackscleanGJloose, &b_isoElectronTrackscleanGJloose);
+   fChain->SetBranchAddress("isoElectronTracksclean", &isoElectronTracksclean, &b_isoElectronTracksclean);
    fChain->SetBranchAddress("IsolatedElectronTracksVeto", &IsolatedElectronTracksVeto, &b_IsolatedElectronTracksVeto);
    fChain->SetBranchAddress("IsolatedMuonTracksVeto", &IsolatedMuonTracksVeto, &b_IsolatedMuonTracksVeto);
    fChain->SetBranchAddress("IsolatedPionTracksVeto", &IsolatedPionTracksVeto, &b_IsolatedPionTracksVeto);
    fChain->SetBranchAddress("isoMuonTracks", &isoMuonTracks, &b_isoMuonTracks);
-   fChain->SetBranchAddress("isoMuonTrackscleanDY", &isoMuonTrackscleanDY, &b_isoMuonTrackscleanDY);
-   fChain->SetBranchAddress("isoMuonTrackscleanGJ", &isoMuonTrackscleanGJ, &b_isoMuonTrackscleanGJ);
-   fChain->SetBranchAddress("isoMuonTrackscleanGJloose", &isoMuonTrackscleanGJloose, &b_isoMuonTrackscleanGJloose);
+   fChain->SetBranchAddress("isoMuonTracksclean", &isoMuonTracksclean, &b_isoMuonTracksclean);
    fChain->SetBranchAddress("isoPionTracks", &isoPionTracks, &b_isoPionTracks);
-   fChain->SetBranchAddress("isoPionTrackscleanDY", &isoPionTrackscleanDY, &b_isoPionTrackscleanDY);
-   fChain->SetBranchAddress("isoPionTrackscleanGJ", &isoPionTrackscleanGJ, &b_isoPionTrackscleanGJ);
-   fChain->SetBranchAddress("isoPionTrackscleanGJloose", &isoPionTrackscleanGJloose, &b_isoPionTrackscleanGJloose);
+   fChain->SetBranchAddress("isoPionTracksclean", &isoPionTracksclean, &b_isoPionTracksclean);
    fChain->SetBranchAddress("JetID", &JetID, &b_JetID);
    fChain->SetBranchAddress("JetIDclean", &JetIDclean, &b_JetIDclean);
-   fChain->SetBranchAddress("JetIDcleanDY", &JetIDcleanDY, &b_JetIDcleanDY);
-   fChain->SetBranchAddress("JetIDcleanGJ", &JetIDcleanGJ, &b_JetIDcleanGJ);
-   fChain->SetBranchAddress("JetIDcleanGJloose", &JetIDcleanGJloose, &b_JetIDcleanGJloose);
    fChain->SetBranchAddress("JetIDJECdown", &JetIDJECdown, &b_JetIDJECdown);
    fChain->SetBranchAddress("JetIDJECup", &JetIDJECup, &b_JetIDJECup);
    fChain->SetBranchAddress("Jets", &Jets, &b_Jets);
@@ -1005,6 +875,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("Jets_chargedMultiplicity", &Jets_chargedMultiplicity, &b_Jets_chargedMultiplicity);
    fChain->SetBranchAddress("Jets_electronMultiplicity", &Jets_electronMultiplicity, &b_Jets_electronMultiplicity);
    fChain->SetBranchAddress("Jets_hadronFlavor", &Jets_hadronFlavor, &b_Jets_hadronFlavor);
+   fChain->SetBranchAddress("Jets_ID", &Jets_ID, &b_Jets_ID);
    fChain->SetBranchAddress("Jets_jecFactor", &Jets_jecFactor, &b_Jets_jecFactor);
    fChain->SetBranchAddress("Jets_jecUnc", &Jets_jecUnc, &b_Jets_jecUnc);
    fChain->SetBranchAddress("Jets_jetArea", &Jets_jetArea, &b_Jets_jetArea);
@@ -1017,68 +888,53 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("Jets_partonFlavor", &Jets_partonFlavor, &b_Jets_partonFlavor);
    fChain->SetBranchAddress("Jets_photonEnergyFraction", &Jets_photonEnergyFraction, &b_Jets_photonEnergyFraction);
    fChain->SetBranchAddress("Jets_photonMultiplicity", &Jets_photonMultiplicity, &b_Jets_photonMultiplicity);
+   fChain->SetBranchAddress("Jets_qgLikelihood", &Jets_qgLikelihood, &b_Jets_qgLikelihood);
+   fChain->SetBranchAddress("JetsAK8", &JetsAK8, &b_JetsAK8);
+   fChain->SetBranchAddress("JetsAK8_bDiscriminatorSubjet1CSV", &JetsAK8_bDiscriminatorSubjet1CSV, &b_JetsAK8_bDiscriminatorSubjet1CSV);
+   fChain->SetBranchAddress("JetsAK8_bDiscriminatorSubjet2CSV", &JetsAK8_bDiscriminatorSubjet2CSV, &b_JetsAK8_bDiscriminatorSubjet2CSV);
+   fChain->SetBranchAddress("JetsAK8_NsubjettinessTau1", &JetsAK8_NsubjettinessTau1, &b_JetsAK8_NsubjettinessTau1);
+   fChain->SetBranchAddress("JetsAK8_NsubjettinessTau2", &JetsAK8_NsubjettinessTau2, &b_JetsAK8_NsubjettinessTau2);
+   fChain->SetBranchAddress("JetsAK8_NsubjettinessTau3", &JetsAK8_NsubjettinessTau3, &b_JetsAK8_NsubjettinessTau3);
+   fChain->SetBranchAddress("JetsAK8_prunedMass", &JetsAK8_prunedMass, &b_JetsAK8_prunedMass);
    fChain->SetBranchAddress("Jetsclean", &Jetsclean, &b_Jetsclean);
    fChain->SetBranchAddress("Jetsclean_bDiscriminatorCSV", &Jetsclean_bDiscriminatorCSV, &b_Jetsclean_bDiscriminatorCSV);
    fChain->SetBranchAddress("Jetsclean_hadronFlavor", &Jetsclean_hadronFlavor, &b_Jetsclean_hadronFlavor);
+   fChain->SetBranchAddress("Jetsclean_ID", &Jetsclean_ID, &b_Jetsclean_ID);
    fChain->SetBranchAddress("Jetsclean_partonFlavor", &Jetsclean_partonFlavor, &b_Jetsclean_partonFlavor);
-   fChain->SetBranchAddress("JetscleanDY", &JetscleanDY, &b_JetscleanDY);
-   fChain->SetBranchAddress("JetscleanDY_bDiscriminatorCSV", &JetscleanDY_bDiscriminatorCSV, &b_JetscleanDY_bDiscriminatorCSV);
-   fChain->SetBranchAddress("JetscleanDY_hadronFlavor", &JetscleanDY_hadronFlavor, &b_JetscleanDY_hadronFlavor);
-   fChain->SetBranchAddress("JetscleanDY_partonFlavor", &JetscleanDY_partonFlavor, &b_JetscleanDY_partonFlavor);
-   fChain->SetBranchAddress("JetscleanGJ", &JetscleanGJ, &b_JetscleanGJ);
-   fChain->SetBranchAddress("JetscleanGJ_bDiscriminatorCSV", &JetscleanGJ_bDiscriminatorCSV, &b_JetscleanGJ_bDiscriminatorCSV);
-   fChain->SetBranchAddress("JetscleanGJ_hadronFlavor", &JetscleanGJ_hadronFlavor, &b_JetscleanGJ_hadronFlavor);
-   fChain->SetBranchAddress("JetscleanGJ_partonFlavor", &JetscleanGJ_partonFlavor, &b_JetscleanGJ_partonFlavor);
-   fChain->SetBranchAddress("JetscleanGJloose", &JetscleanGJloose, &b_JetscleanGJloose);
-   fChain->SetBranchAddress("JetscleanGJloose_bDiscriminatorCSV", &JetscleanGJloose_bDiscriminatorCSV, &b_JetscleanGJloose_bDiscriminatorCSV);
-   fChain->SetBranchAddress("JetscleanGJloose_hadronFlavor", &JetscleanGJloose_hadronFlavor, &b_JetscleanGJloose_hadronFlavor);
-   fChain->SetBranchAddress("JetscleanGJloose_partonFlavor", &JetscleanGJloose_partonFlavor, &b_JetscleanGJloose_partonFlavor);
    fChain->SetBranchAddress("JetsJECdown", &JetsJECdown, &b_JetsJECdown);
    fChain->SetBranchAddress("JetsJECdown_bDiscriminatorCSV", &JetsJECdown_bDiscriminatorCSV, &b_JetsJECdown_bDiscriminatorCSV);
    fChain->SetBranchAddress("JetsJECdown_hadronFlavor", &JetsJECdown_hadronFlavor, &b_JetsJECdown_hadronFlavor);
+   fChain->SetBranchAddress("JetsJECdown_ID", &JetsJECdown_ID, &b_JetsJECdown_ID);
    fChain->SetBranchAddress("JetsJECdown_partonFlavor", &JetsJECdown_partonFlavor, &b_JetsJECdown_partonFlavor);
    fChain->SetBranchAddress("JetsJECup", &JetsJECup, &b_JetsJECup);
    fChain->SetBranchAddress("JetsJECup_bDiscriminatorCSV", &JetsJECup_bDiscriminatorCSV, &b_JetsJECup_bDiscriminatorCSV);
    fChain->SetBranchAddress("JetsJECup_hadronFlavor", &JetsJECup_hadronFlavor, &b_JetsJECup_hadronFlavor);
+   fChain->SetBranchAddress("JetsJECup_ID", &JetsJECup_ID, &b_JetsJECup_ID);
    fChain->SetBranchAddress("JetsJECup_partonFlavor", &JetsJECup_partonFlavor, &b_JetsJECup_partonFlavor);
    fChain->SetBranchAddress("Leptons", &Leptons, &b_Leptons);
    fChain->SetBranchAddress("METFilters", &METFilters, &b_METFilters);
    fChain->SetBranchAddress("METPhi", &METPhi, &b_METPhi);
    fChain->SetBranchAddress("METPhiclean", &METPhiclean, &b_METPhiclean);
-   fChain->SetBranchAddress("METPhicleanDY", &METPhicleanDY, &b_METPhicleanDY);
-   fChain->SetBranchAddress("METPhicleanGJ", &METPhicleanGJ, &b_METPhicleanGJ);
-   fChain->SetBranchAddress("METPhicleanGJloose", &METPhicleanGJloose, &b_METPhicleanGJloose);
    fChain->SetBranchAddress("METPhiDown", &METPhiDown, &b_METPhiDown);
    fChain->SetBranchAddress("METPhiUp", &METPhiUp, &b_METPhiUp);
    fChain->SetBranchAddress("METPt", &METPt, &b_METPt);
    fChain->SetBranchAddress("METPtclean", &METPtclean, &b_METPtclean);
-   fChain->SetBranchAddress("METPtcleanDY", &METPtcleanDY, &b_METPtcleanDY);
-   fChain->SetBranchAddress("METPtcleanGJ", &METPtcleanGJ, &b_METPtcleanGJ);
-   fChain->SetBranchAddress("METPtcleanGJloose", &METPtcleanGJloose, &b_METPtcleanGJloose);
    fChain->SetBranchAddress("METPtDown", &METPtDown, &b_METPtDown);
    fChain->SetBranchAddress("METPtUp", &METPtUp, &b_METPtUp);
    fChain->SetBranchAddress("MHT", &MHT, &b_MHT);
    fChain->SetBranchAddress("MHT_Phi", &MHT_Phi, &b_MHT_Phi);
    fChain->SetBranchAddress("MHT_Phiclean", &MHT_Phiclean, &b_MHT_Phiclean);
-   fChain->SetBranchAddress("MHT_PhicleanDY", &MHT_PhicleanDY, &b_MHT_PhicleanDY);
-   fChain->SetBranchAddress("MHT_PhicleanGJ", &MHT_PhicleanGJ, &b_MHT_PhicleanGJ);
-   fChain->SetBranchAddress("MHT_PhicleanGJloose", &MHT_PhicleanGJloose, &b_MHT_PhicleanGJloose);
    fChain->SetBranchAddress("MHT_PhiJECdown", &MHT_PhiJECdown, &b_MHT_PhiJECdown);
    fChain->SetBranchAddress("MHT_PhiJECup", &MHT_PhiJECup, &b_MHT_PhiJECup);
    fChain->SetBranchAddress("MHTclean", &MHTclean, &b_MHTclean);
-   fChain->SetBranchAddress("MHTcleanDY", &MHTcleanDY, &b_MHTcleanDY);
-   fChain->SetBranchAddress("MHTcleanGJ", &MHTcleanGJ, &b_MHTcleanGJ);
-   fChain->SetBranchAddress("MHTcleanGJloose", &MHTcleanGJloose, &b_MHTcleanGJloose);
    fChain->SetBranchAddress("MHTJECdown", &MHTJECdown, &b_MHTJECdown);
    fChain->SetBranchAddress("MHTJECup", &MHTJECup, &b_MHTJECup);
    fChain->SetBranchAddress("MHTJetsMask", &MHTJetsMask, &b_MHTJetsMask);
    fChain->SetBranchAddress("MHTJetsMaskclean", &MHTJetsMaskclean, &b_MHTJetsMaskclean);
-   fChain->SetBranchAddress("MHTJetsMaskcleanDY", &MHTJetsMaskcleanDY, &b_MHTJetsMaskcleanDY);
-   fChain->SetBranchAddress("MHTJetsMaskcleanGJ", &MHTJetsMaskcleanGJ, &b_MHTJetsMaskcleanGJ);
-   fChain->SetBranchAddress("MHTJetsMaskcleanGJloose", &MHTJetsMaskcleanGJloose, &b_MHTJetsMaskcleanGJloose);
    fChain->SetBranchAddress("MHTJetsMaskJECdown", &MHTJetsMaskJECdown, &b_MHTJetsMaskJECdown);
    fChain->SetBranchAddress("MHTJetsMaskJECup", &MHTJetsMaskJECup, &b_MHTJetsMaskJECup);
    fChain->SetBranchAddress("minDeltaPhiNames", &minDeltaPhiNames, &b_minDeltaPhiNames);
+   fChain->SetBranchAddress("MT2", &MT2, &b_MT2);
    fChain->SetBranchAddress("MuonCharge", &MuonCharge, &b_MuonCharge);
    fChain->SetBranchAddress("Muons", &Muons, &b_Muons);
    fChain->SetBranchAddress("nAllVertices", &nAllVertices, &b_nAllVertices);
@@ -1087,9 +943,6 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("NeutrinoPdg", &NeutrinoPdg, &b_NeutrinoPdg);
    fChain->SetBranchAddress("NJets", &NJets, &b_NJets);
    fChain->SetBranchAddress("NJetsclean", &NJetsclean, &b_NJetsclean);
-   fChain->SetBranchAddress("NJetscleanDY", &NJetscleanDY, &b_NJetscleanDY);
-   fChain->SetBranchAddress("NJetscleanGJ", &NJetscleanGJ, &b_NJetscleanGJ);
-   fChain->SetBranchAddress("NJetscleanGJloose", &NJetscleanGJloose, &b_NJetscleanGJloose);
    fChain->SetBranchAddress("NJetsJECdown", &NJetsJECdown, &b_NJetsJECdown);
    fChain->SetBranchAddress("NJetsJECup", &NJetsJECup, &b_NJetsJECup);
    fChain->SetBranchAddress("nTAPElectronTracks", &nTAPElectronTracks, &b_nTAPElectronTracks);
@@ -1097,8 +950,6 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("nTAPPionTracks", &nTAPPionTracks, &b_nTAPPionTracks);
    fChain->SetBranchAddress("NumEvents", &NumEvents, &b_NumEvents);
    fChain->SetBranchAddress("NumInteractions", &NumInteractions, &b_NumInteractions);
-   fChain->SetBranchAddress("NumPhotons", &NumPhotons, &b_NumPhotons);
-   fChain->SetBranchAddress("NumPhotonsLoose", &NumPhotonsLoose, &b_NumPhotonsLoose);
    fChain->SetBranchAddress("NVtx", &NVtx, &b_NVtx);
    fChain->SetBranchAddress("PDFids", &PDFids, &b_PDFids);
    fChain->SetBranchAddress("PDFweights", &PDFweights, &b_PDFweights);
@@ -1115,7 +966,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("photon_pfNeutralIso", &photon_pfNeutralIso, &b_photon_pfNeutralIso);
    fChain->SetBranchAddress("photon_pfNeutralIsoRhoCorr", &photon_pfNeutralIsoRhoCorr, &b_photon_pfNeutralIsoRhoCorr);
    fChain->SetBranchAddress("photon_sigmaIetaIeta", &photon_sigmaIetaIeta, &b_photon_sigmaIetaIeta);
-   fChain->SetBranchAddress("photonCands", &photonCands, &b_photonCands);
+   fChain->SetBranchAddress("Photons", &Photons, &b_Photons);
    fChain->SetBranchAddress("puSysDown", &puSysDown, &b_puSysDown);
    fChain->SetBranchAddress("puSysUp", &puSysUp, &b_puSysUp);
    fChain->SetBranchAddress("puWeight", &puWeight, &b_puWeight);

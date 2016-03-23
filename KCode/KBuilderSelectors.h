@@ -374,41 +374,36 @@ class KPhotonIDSelector : public KSelector<KBuilder> {
 		KPhotonIDSelector() : KSelector<KBuilder>() { }
 		KPhotonIDSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_) { 
 			canfail = false;
-			//check for option
-			best = localOpt->Get("best",false);
 		}
 		virtual void CheckBranches(){
-			looper->fChain->SetBranchStatus("photonCands",1);
+			looper->fChain->SetBranchStatus("Photons",1);
 			looper->fChain->SetBranchStatus("photon_hadTowOverEM",1);
 			looper->fChain->SetBranchStatus("photon_hasPixelSeed",1);
 			looper->fChain->SetBranchStatus("photon_isEB",1);
 			looper->fChain->SetBranchStatus("photon_pfChargedIsoRhoCorr",1);
 			looper->fChain->SetBranchStatus("photon_pfGammaIsoRhoCorr",1);
 			looper->fChain->SetBranchStatus("photon_pfNeutralIsoRhoCorr",1);
-			looper->fChain->SetBranchStatus("bestPhoton",1);
 		}
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			goodPhotons.clear();
-			for(unsigned p = 0; p < looper->photonCands->size(); ++p){
-				bool goodPhoton = (abs(looper->photonCands->at(p).Eta())<1.4442 || ((abs(looper->photonCands->at(p).Eta())>1.566 && abs(looper->photonCands->at(p).Eta())<2.5)))
-									&& looper->photonCands->at(p).Pt()>100.
+			for(unsigned p = 0; p < looper->Photons->size(); ++p){
+				bool goodPhoton = (abs(looper->Photons->at(p).Eta())<1.4442 || ((abs(looper->Photons->at(p).Eta())>1.566 && abs(looper->Photons->at(p).Eta())<2.5)))
+									&& looper->Photons->at(p).Pt()>100.
 									&& ((looper->photon_hadTowOverEM->at(p)<0.028 && !looper->photon_hasPixelSeed->at(p) && looper->photon_isEB->at(p)) 
 										|| (looper->photon_hadTowOverEM->at(p)<0.093 && !looper->photon_hasPixelSeed->at(p) && !looper->photon_isEB->at(p)))
 									&& looper->photon_pfChargedIsoRhoCorr->at(p)<(2.67*looper->photon_isEB->at(p) + 1.79*!looper->photon_isEB->at(p))
-									&& looper->photon_pfGammaIsoRhoCorr->at(p)<((2.11+0.0014*looper->photonCands->at(p).Pt())*looper->photon_isEB->at(p)
-																					+ (3.09+0.0091*looper->photonCands->at(p).Pt())*!looper->photon_isEB->at(p))
-									&& looper->photon_pfNeutralIsoRhoCorr->at(p)<((7.23+exp(0.0028*looper->photonCands->at(p).Pt()+0.5408))*looper->photon_isEB->at(p)
-																					+ (8.89+0.01725*looper->photonCands->at(p).Pt())*!looper->photon_isEB->at(p));
-				if(best) goodPhoton &= looper->bestPhoton->size()>0 && KMath::DeltaR(looper->bestPhoton->at(0).Phi(),looper->bestPhoton->at(0).Eta(),looper->photonCands->at(p).Phi(),looper->photonCands->at(p).Eta()) < 0.15;
+									&& looper->photon_pfGammaIsoRhoCorr->at(p)<((2.11+0.0014*looper->Photons->at(p).Pt())*looper->photon_isEB->at(p)
+																					+ (3.09+0.0091*looper->Photons->at(p).Pt())*!looper->photon_isEB->at(p))
+									&& looper->photon_pfNeutralIsoRhoCorr->at(p)<((7.23+exp(0.0028*looper->Photons->at(p).Pt()+0.5408))*looper->photon_isEB->at(p)
+																					+ (8.89+0.01725*looper->Photons->at(p).Pt())*!looper->photon_isEB->at(p));
 				if(goodPhoton) goodPhotons.push_back(p);
 			}
 			return true;
 		}
 		
 		//member variables
-		bool best;
 		vector<unsigned> goodPhotons;
 };
 
@@ -781,9 +776,9 @@ class KHistoSelector : public KSelector<KBuilder> {
 					}
 					else if(vname=="motherpt"){//pT of each mother particle
 						//loop over genparticles
-						for(unsigned g = 0; g < looper->genParticles_PDGid->size(); ++g){
-							if(binary_search(mother.begin(),mother.end(),abs(looper->genParticles_PDGid->at(g)))){
-								values[i].Fill(looper->genParticles->at(g).Pt(),w);
+						for(unsigned g = 0; g < looper->GenParticles_PdgId->size(); ++g){
+							if(binary_search(mother.begin(),mother.end(),abs(looper->GenParticles_PdgId->at(g)))){
+								values[i].Fill(looper->GenParticles->at(g).Pt(),w);
 							}
 						}
 					}
@@ -791,9 +786,9 @@ class KHistoSelector : public KSelector<KBuilder> {
 						//loop over genparticles
 						TLorentzVector vgen;
 						vgen.SetPtEtaPhiE(0,0,0,0);
-						for(unsigned g = 0; g < looper->genParticles_PDGid->size(); ++g){
-							if(binary_search(mother.begin(),mother.end(),abs(looper->genParticles_PDGid->at(g)))){
-								vgen += looper->genParticles->at(g);
+						for(unsigned g = 0; g < looper->GenParticles_PdgId->size(); ++g){
+							if(binary_search(mother.begin(),mother.end(),abs(looper->GenParticles_PdgId->at(g)))){
+								vgen += looper->GenParticles->at(g);
 							}
 						}
 						values[i].Fill(vgen.Pt(),w);
@@ -802,9 +797,9 @@ class KHistoSelector : public KSelector<KBuilder> {
 						//loop over genparticles
 						TLorentzVector vgen;
 						vgen.SetPtEtaPhiE(0,0,0,0);
-						for(unsigned g = 0; g < looper->genParticles_PDGid->size(); ++g){
-							if(binary_search(mother.begin(),mother.end(),abs(looper->genParticles_PDGid->at(g)))){
-								vgen += looper->genParticles->at(g);
+						for(unsigned g = 0; g < looper->GenParticles_PdgId->size(); ++g){
+							if(binary_search(mother.begin(),mother.end(),abs(looper->GenParticles_PdgId->at(g)))){
+								vgen += looper->GenParticles->at(g);
 							}
 						}
 						values[i].Fill(KMath::DeltaPhi(vgen.Phi(),looper->MHT_Phi),w);
@@ -822,13 +817,15 @@ class KHistoSelector : public KSelector<KBuilder> {
 						}
 					}
 					else if(vname=="bestsigmaietaieta"){//sigma ieta ieta variable for best photon
-						if(looper->bestPhoton->size()==0) continue;
-						for(unsigned p = 0; p < looper->photonCands->size(); ++p){
-							if(looper->bestPhoton->at(0)==looper->photonCands->at(p) && looper->photon_isEB->at(p)){
-								values[i].Fill(looper->photon_sigmaIetaIeta->at(p),w);
-								break;
+						double best_sieie=0;
+						double best_pt=0;
+						for(unsigned p = 0; p < looper->Photons->size(); ++p){
+							if(looper->Photons->at(p).Pt()>best_pt){
+								best_pt = looper->Photons->at(p).Pt();
+								best_sieie = looper->photon_sigmaIetaIeta->at(p);
 							}
 						}
+						values[i].Fill(best_sieie,w);
 					}
 					else if(vname=="pdfrms"){
 						values[i].Fill(TMath::RMS(looper->PDFweights->begin(),looper->PDFweights->end()),w);

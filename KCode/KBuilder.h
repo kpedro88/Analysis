@@ -333,7 +333,7 @@ class KBuilderMC : public KBuilder {
 			}
 			
 			if(isrcorr){
-				w *= isrcorror.GetCorrection(genParticles,genParticles_PDGid);
+				w *= isrcorror.GetCorrection(GenParticles,GenParticles_PdgId);
 			}
 			
 			if(pdfunc!=0){
