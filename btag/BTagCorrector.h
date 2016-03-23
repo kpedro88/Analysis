@@ -30,6 +30,26 @@ class BTagCorrector {
 			h_eff_b = (TH2F*)file->Get("h_eff_b");
 			h_eff_c = (TH2F*)file->Get("h_eff_c");
 			h_eff_udsg = (TH2F*)file->Get("h_eff_udsg");
+			
+			//if these are not found, check for their components
+			if(!h_eff_b){
+				TH2F* n_eff_b = (TH2F*)file->Get("n_eff_b");
+				TH2F* d_eff_b = (TH2F*)file->Get("d_eff_b");
+				h_eff_b = (TH2F*)n_eff_b->Clone("h_eff_b");
+				h_eff_b->Divide(d_eff_b);
+			}
+			if(!h_eff_c){
+				TH2F* n_eff_c = (TH2F*)file->Get("n_eff_c");
+				TH2F* d_eff_c = (TH2F*)file->Get("d_eff_c");
+				h_eff_c = (TH2F*)n_eff_c->Clone("h_eff_c");
+				h_eff_c->Divide(d_eff_c);
+			}
+			if(!h_eff_udsg){
+				TH2F* n_eff_udsg = (TH2F*)file->Get("n_eff_udsg");
+				TH2F* d_eff_udsg = (TH2F*)file->Get("d_eff_udsg");
+				h_eff_udsg = (TH2F*)n_eff_udsg->Clone("h_eff_udsg");
+				h_eff_udsg->Divide(d_eff_udsg);
+			}
 		}
 		void SetCalib(string cfile){
 			//initialize btag helper classes

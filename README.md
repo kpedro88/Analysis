@@ -6,7 +6,7 @@ To recompile all drivers, testing code changes or preparing for batch submission
 ```
 ./recompile.sh
 ```
-Add the flag `-f` to force recompilaton of all drivers.
+Add the flag `-f` to force recompilation of all drivers.
 
 ## Skimming
 
