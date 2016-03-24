@@ -105,8 +105,8 @@ template <class T>
 class KSelection {
 	public:
 		//constructor
-		KSelection() : name(""), variation(0), looper(0), file(0), tree(0) {}
-		KSelection(string name_, OptionMap* globalOpt_) : name(name_), globalOpt(globalOpt_), variation(0), looper(0), file(0), tree(0) {
+		KSelection() : name(""), variation(0), looper(0), file(0), tree(0), cutflowHist(0) {}
+		KSelection(string name_, OptionMap* globalOpt_) : name(name_), globalOpt(globalOpt_), variation(0), looper(0), file(0), tree(0), cutflowHist(0) {
 			//must always have option map
 			if(globalOpt==0) globalOpt = new OptionMap();
 		}
