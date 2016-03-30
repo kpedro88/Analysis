@@ -7,9 +7,10 @@ DIR=/store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}/scan
 CHECKARGS=""
 nhadds=10
 RUN=0
+SUFF=fast
 
 #check arguments
-while getopts "kn:r" opt; do
+while getopts "kn:rsd:" opt; do
   case "$opt" in
   k) CHECKARGS="${CHECKARGS} -k"
     ;;
@@ -17,19 +18,33 @@ while getopts "kn:r" opt; do
     ;;
   r) RUN=1
     ;;
+  s) SUFF=""
+    ;;
+  d) DIR=$OPTARG;
+    ;;
   esac
 done
 
 ./SKcheck.sh ${CHECKARGS}
 
 #list samples
-IFS=$'\n' ALLSAMPLES=($(xrdfs root://cmseos.fnal.gov ls ${DIR} | grep "block")); unset IFS
+IFS=$'\n' ALLSAMPLES=($(xrdfs root://cmseos.fnal.gov ls ${DIR} | grep "_block\|_ext")); unset IFS
 
 #remove duplicates
 SAMPLELIST=""
 SAMPLES=()
+#possible things to drop: block, part, ext, fast
+DISCARDS=("block" "part" "ext" "fast")
 for SAMPLE in ${ALLSAMPLES[@]}; do
-  BASE=$(echo $(basename ${SAMPLE}) | rev | cut -d'_' -f1-3 --complement | rev)
+  #figure out how much to drop from the sample name
+  NDISCARD=0
+  for DISCARD in ${DISCARDS[@]}; do
+    if (echo ${SAMPLE} | fgrep -q ${DISCARD}); then
+      NDISCARD=$((NDISCARD + 1))
+    fi
+  done
+
+  BASE=$(echo $(basename ${SAMPLE}) | rev | cut -d'_' -f1-${NDISCARD} --complement | rev)
   #skip duplicates
   if (echo "$SAMPLELIST" | fgrep -qw ${BASE}); then
     continue
@@ -62,7 +77,7 @@ for ((i=0; i < ${#SAMPLES[@]}; i++)); do
     #dryrun (list input) is default
     if [[ $RUN -eq 1 ]]; then
       #submit job with this input list
-      ./HStemp.sh ${JOBDIR} ${INPUT} ${DIR} fast
+      ./HStemp.sh ${JOBDIR} ${INPUT} ${DIR} ${SUFF}
     else
       echo ${INPUT}
     fi
