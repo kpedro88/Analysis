@@ -47,17 +47,17 @@ class KJetVariator : public KVariator<KSkimmer> {
 		virtual void CheckBranches(){
 			if(vtype==JECup){
 				string branchlist[] = {"JetsJECup","HTJetsMaskJECup","MHTJetsMaskJECup","JetsJECup_ID","JetsJECup_partonFlavor","JetsJECup_hadronFlavor","JetsJECup_bDiscriminatorCSV","JetIDJECup","NJetsJECup","BTagsJECup","HTJECup","MHTJECup","MHT_PhiJECup","DeltaPhi1JECup","DeltaPhi2JECup","DeltaPhi3JECup","DeltaPhi4JECup"};
-				unsigned branchsize = 16;
+				unsigned branchsize = 17;
 				EnableBranches(branchlist,branchsize);
 			}
 			else if(vtype==JECdown){
 				string branchlist[] = {"JetsJECdown","HTJetsMaskJECdown","MHTJetsMaskJECdown","JetsJECdown_ID","JetsJECdown_partonFlavor","JetsJECdown_hadronFlavor","JetsJECdown_bDiscriminatorCSV","JetIDJECdown","NJetsJECdown","BTagsJECdown","HTJECdown","MHTJECdown","MHT_PhiJECdown","DeltaPhi1JECdown","DeltaPhi2JECdown","DeltaPhi3JECdown","DeltaPhi4JECdown"};
-				unsigned branchsize = 16;
+				unsigned branchsize = 17;
 				EnableBranches(branchlist,branchsize);
 			}
 			else if(vtype==clean){
 				string branchlist[] = {"Jetsclean","HTJetsMaskclean","MHTJetsMaskclean","Jetsclean_ID","Jetsclean_partonFlavor","Jetsclean_hadronFlavor","Jetsclean_bDiscriminatorCSV","JetIDclean","NJetsclean","BTagsclean","HTclean","MHTclean","MHT_Phiclean","METPtclean","METPhiclean","DeltaPhi1clean","DeltaPhi2clean","DeltaPhi3clean","DeltaPhi4clean"};
-				unsigned branchsize = 18;
+				unsigned branchsize = 19;
 				EnableBranches(branchlist,branchsize);
 			}
 			

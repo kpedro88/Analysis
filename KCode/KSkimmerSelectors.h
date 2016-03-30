@@ -828,7 +828,7 @@ class KSyncSelector : public KSelector<KSkimmer> {
 			if(result) counter++;
 			return result;
 		}
-		virtual void GetEfficiency(int prev_counter, int nentries, vector<KCutflowEntry>& cuts){
+		virtual void GetEfficiency(vector<KCutflowEntry>& cuts){
 			if(dummy || !canfail) return;
 			cuts.push_back(KCutflowEntry(name, counter, KMath::PoissonErrorUp(counter), obj_counter, KMath::PoissonErrorUp(obj_counter)));
 		}

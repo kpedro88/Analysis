@@ -74,7 +74,7 @@ class KSelector {
 		virtual void Finalize(TFile*) { }
 		//used for non-dummy selectors
 		virtual bool Cut() { return true; }
-		virtual void GetEfficiency(int prev_counter, int nentries, vector<KCutflowEntry>& cuts){
+		virtual void GetEfficiency(vector<KCutflowEntry>& cuts){
 			if(dummy || !canfail) return;
 			cuts.push_back(KCutflowEntry(name, counter, KMath::PoissonErrorUp(counter)));
 		}
@@ -193,7 +193,7 @@ class KSelection {
 			for(unsigned s = 0; s < selectorList.size(); s++){
 				int prev_counter = 0;
 				if(s>0) prev_counter = selectorList[s-1]->GetCounter();
-				selectorList[s]->GetEfficiency(prev_counter,nentries,cuts);
+				selectorList[s]->GetEfficiency(cuts);
 			}
 			
 			//create histogram
