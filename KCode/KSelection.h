@@ -204,12 +204,6 @@ class KSelection {
 				cutflowHist->SetBinError(c+1,cuts[c].rawE);
 			}
 			
-			//check if error printing should be enabled
-			bool printerrors = globalOpt->Get("printerrors",false);
-			//use helper class to print
-			KCutflow kcut(cutflowHist);
-			kcut.PrintEfficiency(printerrors);
-			
 			//todo: add object ctr histogram for syncing
 		}
 		void Finalize(TH1F* nEventHist=NULL, TH1F* nEventNegHist=NULL){
@@ -219,6 +213,12 @@ class KSelection {
 				if(nEventNegHist) nEventNegHist->Write();
 				if(cutflowHist) cutflowHist->Write();
 				if(tree) tree->Write();
+				
+				//check if error printing should be enabled
+				bool printerrors = globalOpt->Get("printerrors",false);
+				//use helper class to print
+				KCutflow kcut(cutflowHist,nEventHist);
+				kcut.PrintEfficiency(printerrors);
 				
 				//just in case selectors have something to add
 				for(unsigned s = 0; s < selectorList.size(); s++){
