@@ -5,6 +5,7 @@
 #include "KMap.h"
 #include "KLegend.h"
 #include "KSelection.h"
+#include "KStyle.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -33,7 +34,7 @@ class KBuilder;
 class KBase {
 	public:
 		//constructors
-		KBase() : name(""), parent(0), localOpt(0), globalOpt(0), file(0), tree(0), nEventHist(0), nEventNegHist(0), MyBuilder(0), MySelection(0), stmp(""), htmp(0), etmp(0), isBuilt(false) {
+		KBase() : name(""), parent(0), localOpt(0), globalOpt(0), file(0), tree(0), nEventHist(0), nEventNegHist(0), MyBuilder(0), MySelection(0), stmp(""), htmp(0), etmp(0), isBuilt(false), MyStyle(0) {
 			//enable histo errors
 			TH1::SetDefaultSumw2(kTRUE);
 			//must always have local & global option maps
@@ -41,7 +42,7 @@ class KBase {
 			if(globalOpt==0) globalOpt = new OptionMap();
 		}
 		KBase(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : 
-			name(name_), parent(0), localOpt(localOpt_), globalOpt(globalOpt_), file(0), tree(0), nEventHist(0), nEventNegHist(0), MyBuilder(0), MySelection(0), stmp(""), htmp(0), etmp(0), isBuilt(false)
+			name(name_), parent(0), localOpt(localOpt_), globalOpt(globalOpt_), file(0), tree(0), nEventHist(0), nEventNegHist(0), MyBuilder(0), MySelection(0), stmp(""), htmp(0), etmp(0), isBuilt(false), MyStyle(0)
 		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
@@ -272,10 +273,24 @@ class KBase {
 		virtual TTree* GetTree() { return tree; }
 		virtual TH1F* GetNEventHist() { return nEventHist; }
 		virtual TH1F* GetNEventNegHist() { return nEventNegHist; }
+		virtual void SetStyle(KMap<string>& allStyles, string styleName="") {
+			if(styleName.size()==0) return;
+			
+			//search the list of default styles
+			if(allStyles.Has(styleName)){
+				KNamed* ntmp = KParser::processNamed(styleName+"\t"+allStyles.Get(styleName));
+				MyStyle = new KStyle(ntmp->first,ntmp->second,localOpt);
+			}
+		}
+		virtual void SetStyle(const KStyle* orig){
+			MyStyle = new KStyle(*orig);
+			MyStyle->SetLocalOpt(localOpt);
+		}
+		virtual KStyle* GetStyle() { return MyStyle; }
 		
 		//other virtual functions (unimplemented at this level)
 		virtual void Draw(TPad*) {}
-		virtual void AddToLegend(KLegend*, string="") {}
+		virtual void AddToLegend(KLegend*) {}
 		virtual void AddChild(KBase*) {}
 		virtual void SetAddExt(bool) {}
 		virtual void Build(TH1*) {}
@@ -300,6 +315,7 @@ class KBase {
 		double* efftmp;
 		bool isBuilt;
 		bool debugroc;
+		KStyle* MyStyle;
 };
 
 //---------------------------------------------------------------

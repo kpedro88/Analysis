@@ -17,3 +17,6 @@ string:puname[corrections/PileupHistograms_1117.root]
 SELECTION
 default
 	Histo
+	
+INPUT
+input/input_style_default.txt

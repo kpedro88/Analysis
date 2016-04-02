@@ -37,7 +37,8 @@ class KPlotManager : public KManager {
 			Initialize(input_);
 			
 			//final checks and initializations
-			MyRatio = new KSetRatio(NULL,globalOpt);
+			MyRatio = new KSetRatio("ratio",NULL,globalOpt);
+			MyRatio->SetStyle(allStyles);
 			//store correction root files centrally
 			string puname = ""; globalOpt->Get("puname",puname);
 			if(puname.size()>0 && globalOpt->Get("pucorr",false)) {
@@ -120,6 +121,9 @@ class KPlotManager : public KManager {
 					curr_sets[indent-1]->AddChild(tmp);
 					//cout << curr_sets[indent-1]->GetName() << "->AddChild(" << tmp->GetName() << ")" << endl;
 				}
+				
+				//set style at the end, in case parent modifies child's style options
+				tmp->SetStyle(allStyles);
 			}
 		}
 		void processHisto(string line, int dim){
@@ -502,6 +506,7 @@ class KPlotManager : public KManager {
 					
 					//loop over histos and make graphs
 					vector<TGraph*> graphs;
+					vector<KStyle*> graphstyles;
 					PMit p;
 					for(p = MyPlots.GetTable().begin(); p != MyPlots.GetTable().end(); p++){
 						//select current histogram in sets
@@ -519,18 +524,22 @@ class KPlotManager : public KManager {
 						gtmp->SetTitle("");
 						
 						//format graph using KPlot local options for this histo/qty
-						gtmp->SetLineWidth(2);
-						Color_t gcol = kBlack;
-						p->second->GetLocalOpt()->Get("color",gcol);
-						gtmp->SetLineColor(gcol);
+						string styleName = "roc";
+						KStyle* stytmp = NULL;
+						if(allStyles.Has(styleName)){
+							KNamed* ntmp = KParser::processNamed(styleName+"\t"+allStyles.Get(styleName));
+							stytmp = new KStyle(ntmp->first,ntmp->second,p->second->GetLocalOpt());
+						}
+						stytmp->Format(gtmp);
 						
 						//add to legend using histo x-name & panel
 						int panel_tmp = 0;
 						p->second->GetLocalOpt()->Get("panel",panel_tmp);
-						kleg->AddEntry(gtmp,h_sig->GetXaxis()->GetTitle(),"l",panel_tmp);
+						kleg->AddEntry(gtmp,h_sig->GetXaxis()->GetTitle(),stytmp->GetLegOpt(),panel_tmp);
 						
 						//store graph
 						graphs.push_back(gtmp);
+						graphstyles.push_back(stytmp);
 					}
 						
 					//build legend: specified quadrant, no smart resizing
@@ -541,7 +550,7 @@ class KPlotManager : public KManager {
 					//draw sets (reverse order, so first set is on top)
 					pad1->cd();
 					for(unsigned g = 0; g < graphs.size(); g++){
-						graphs[g]->Draw("l same"); //should this be "c" instead for smooth curve?
+						graphs[g]->Draw(graphstyles[g]->GetDrawOpt("same").c_str()); //should this be "c" instead for smooth curve?
 						
 						//save graphs in root file if requested
 						if(out_file){

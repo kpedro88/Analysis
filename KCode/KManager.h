@@ -88,6 +88,7 @@ class KManager {
 					else if(line.compare(0,5,"HISTO")==0) { intype = "HISTO"; continue; }
 					else if(line.compare(0,10,"VARIATION")==0) { intype = "VARIATION"; continue; }
 					else if(line.compare(0,9,"SELECTION")==0) { intype = "SELECTION"; continue; }
+					else if(line.compare(0,5,"STYLE")==0) { intype = "STYLE"; continue; }
 					//another input file to parse on next line
 					else if(line.compare(0,5,"INPUT")==0) { intype = "INPUT"; continue; }
 					
@@ -98,6 +99,7 @@ class KManager {
 					else if(intype=="HISTO") processHisto(line,1);
 					else if(intype=="VARIATION") processVariation(line);
 					else if(intype=="SELECTION") processSelection(line);
+					else if(intype=="STYLE") processStyle(line);
 					else if(intype=="INPUT") parsed_ &= Parse(line);
 				}
 				parsed_ &= true;
@@ -189,6 +191,20 @@ class KManager {
 				return NULL;
 			}
 		}
+		//wait to construct styles until one is requested
+		//just keep the option list as a string (make a new instance for each request)
+		virtual void processStyle(string style) {
+			unsigned firsttab = style.find('\t');
+			string name = "";
+			string opts = "";
+			if(firsttab != string::npos){
+				name = style.substr(0,firsttab);
+				opts = style.substr(firsttab+1,string::npos);
+			}
+			else name = style; //style with no options
+			
+			allStyles.Add(name,opts);
+		}
 		//accessors
 		OptionMap* GetGlobalOpt() { return globalOpt; }
 		void ListOptions() {
@@ -201,6 +217,7 @@ class KManager {
 		OptionMap* globalOpt;
 		bool parsed;
 		set<string> inputs;
+		KMap<string> allStyles;
 		KMap<vector<KNamed*> > allSelections, allVariations;
 		map<string,vector<KNamed*> >::iterator curr_sel, curr_var;
 };
