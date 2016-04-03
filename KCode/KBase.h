@@ -194,6 +194,11 @@ class KBase {
 		//accessors
 		string GetName() { return name; }
 		void SetName(string n) { name = n; }
+		string GetLegName() {
+			string legname = name;
+			localOpt->Get("legname",legname);
+			return legname;
+		}
 		void SetSelection(KSelection<KBuilder>* sel_) { MySelection = sel_; }
 		KSelection<KBuilder>* GetSelection() { return MySelection; }
 		//add a blank histo for future building

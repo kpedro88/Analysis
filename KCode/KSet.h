@@ -157,7 +157,7 @@ class KSetData: public KSet {
 			if(option.find("e")!=string::npos && (globalOpt->Get("horizerrbars",false) || htmp->GetXaxis()->IsVariableBinSize())){
 				option += "l";
 			}
-			kleg->AddEntry(htmp,name,option,panel_tmp,extra_text);
+			kleg->AddEntry(htmp,GetLegName(),option,panel_tmp,extra_text);
 		}
 		//draw function
 		void Draw(TPad* pad) {
@@ -225,7 +225,7 @@ class KSetMC: public KSet {
 			vector<string> extra_text;
 			localOpt->Get("extra_text",extra_text);
 			string option = MyStyle->GetLegOpt();
-			kleg->AddEntry(htmp,name,option,panel_tmp,extra_text);
+			kleg->AddEntry(htmp,GetLegName(),option,panel_tmp,extra_text);
 			
 			//check if error band needs to be added
 			if(localOpt->Get("errband",false) && localOpt->Get("errbandleg",true)) {
@@ -496,7 +496,7 @@ class KSetRatio: public KSet {
 		//first child is numerator, second child is denominator
 		void AddNumerator(KBase* numer){ children[0] = numer; }
 		void AddDenominator(KBase* denom){ children[1] = denom; }
-		string GetRatioName2D() { return "[" + children[0]->GetName() + " - " + children[1]->GetName() + "]/#sigma"; }
+		string GetRatioName2D() { return "[" + children[0]->GetLegName() + " - " + children[1]->GetLegName() + "]/#sigma"; }
 		
 		//ratio class acts a little differently:
 		//only builds from the current histo of numer and denom
