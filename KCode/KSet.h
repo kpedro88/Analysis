@@ -165,6 +165,7 @@ class KSetData: public KSet {
 			if(htmp->GetDimension()==1) htmp->Draw(MyStyle->GetDrawOpt("same").c_str());
 			else if(htmp->GetDimension()==2) htmp->Draw("colz same");
 		}
+		using KBase::SetStyle;
 		virtual void SetStyle(KMap<string>& allStyles, string styleName="") {
 			KBase::SetStyle(allStyles,"data");
 		}
@@ -243,6 +244,7 @@ class KSetMC: public KSet {
 			}
 			else if(htmp->GetDimension()==2) htmp->Draw("colz same");
 		}
+		using KBase::SetStyle;
 		virtual void SetStyle(KMap<string>& allStyles, string styleName="") {
 			//set some defaults first
 			if(!localOpt->Has("fillcolor")) localOpt->Set("fillcolor",kWhite);
@@ -454,6 +456,7 @@ class KSetMCStack : public KSet {
 			}
 			return NULL;
 		}
+		using KBase::SetStyle;
 		virtual void SetStyle(KMap<string>& allStyles, string styleName="") {
 			KBase::SetStyle(allStyles,"stack");
 		}
@@ -493,6 +496,7 @@ class KSetRatio: public KSet {
 		//first child is numerator, second child is denominator
 		void AddNumerator(KBase* numer){ children[0] = numer; }
 		void AddDenominator(KBase* denom){ children[1] = denom; }
+		string GetRatioName2D() { return "[" + children[0]->GetName() + " - " + children[1]->GetName() + "]/#sigma"; }
 		
 		//ratio class acts a little differently:
 		//only builds from the current histo of numer and denom
@@ -656,6 +660,7 @@ class KSetRatio: public KSet {
 				htmp->Draw("colz same");
 			}
 		}
+		using KBase::SetStyle;
 		virtual void SetStyle(KMap<string>& allStyles, string styleName="") {
 			KBase::SetStyle(allStyles,"data");
 		}

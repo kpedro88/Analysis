@@ -104,6 +104,13 @@ class KPlot{
 			ratiomin = 0.45; globalOpt->Get("ratiomin",ratiomin);
 			ratiomax = 1.55; globalOpt->Get("ratiomax",ratiomax);
 			ratiology = globalOpt->Get("ratiology",false);
+			
+			//ratio line
+			ratiolineval = 1.; globalOpt->Get("ratiolineval",ratiolineval);
+			ratiolinewidth = 2; globalOpt->Get("ratiolinewidth",ratiolinewidth);
+			ratiolinestyle = 2; globalOpt->Get("ratiolinestyle",ratiolinestyle);
+			ratiolinecolor = kRed; globalOpt->Get("ratiolinecolor",ratiolinecolor);
+			//todo: add option to make it a fit?
 		}
 		virtual void CreateHist(){
 			//check for TProfile case
@@ -207,10 +214,10 @@ class KPlot{
 				
 				//make line
 				pad2->cd();
-				line = new TLine(ratio->GetXaxis()->GetXmin(),1,ratio->GetXaxis()->GetXmax(),1);
-				line->SetLineStyle(2);
-				line->SetLineWidth(2);
-				line->SetLineColor(kRed);
+				line = new TLine(ratio->GetXaxis()->GetXmin(),ratiolineval,ratio->GetXaxis()->GetXmax(),ratiolineval);
+				line->SetLineStyle(ratiolinestyle);
+				line->SetLineWidth(ratiolinewidth);
+				line->SetLineColor(ratiolinecolor);
 			}
 			else {
 				//can = new TCanvas(histo->GetName(),histo->GetName(),700,550);
@@ -367,6 +374,7 @@ class KPlot{
 			exec->Draw();
 		}
 		void DrawLine(){
+			if(!pad2) return;
 			pad2->cd();
 			pad2->Update();
 			
@@ -381,7 +389,7 @@ class KPlot{
 				xcut_ratio_lines.push_back(tmp);
 			}
 			
-			line->Draw("same");
+			if(line) line->Draw("same");
 		}
 
 		//helpers
@@ -510,6 +518,9 @@ class KPlot{
 		double pad1W, pad1H, pad2W, pad2H;
 		double ratiomin, ratiomax;
 		bool ratiology;
+		double ratiolineval;
+		int ratiolinewidth, ratiolinestyle;
+		Color_t ratiolinecolor;
 };
 
 //-----------------------------------------------------------
@@ -577,9 +588,9 @@ class KPlot2D: public KPlot {
 			histo->GetXaxis()->SetTitle(xtitle.c_str());
 			histo->GetYaxis()->SetTitle(ytitle.c_str());
 			//include name of set in z title
-			if(setname=="ratio"){
+			if(setname.find("ratio")!=string::npos){
 				string rationame2D = "";
-				globalOpt->Get("rationame2D",rationame2D); //set in KManager
+				localOpt->Get(setname + "_name2D",rationame2D); //set in KPlotManager
 				histo->GetZaxis()->SetTitle(rationame2D.c_str());
 			}
 			else { //include name of set in z title

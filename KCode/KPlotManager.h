@@ -29,16 +29,15 @@ using namespace std;
 class KPlotManager : public KManager {
 	public:
 		//constructor
-		KPlotManager() : KManager(), MyRatio(0), numer(0), denom(0), yieldref(0), doPrint(false), out_file(0) {}
+		KPlotManager() : KManager(), yieldref(0), doPrint(false), out_file(0) {}
 		KPlotManager(string input_, string treedir_="tree") : 
-			KManager(treedir_), numer(0), denom(0), yieldref(0), doPrint(false), out_file(0)
+			KManager(treedir_), yieldref(0), doPrint(false), out_file(0)
 		{
 			//parse most initializations based on text input
 			Initialize(input_);
 			
 			//final checks and initializations
-			MyRatio = new KSetRatio("ratio",NULL,globalOpt);
-			MyRatio->SetStyle(allStyles);
+
 			//store correction root files centrally
 			string puname = ""; globalOpt->Get("puname",puname);
 			if(puname.size()>0 && globalOpt->Get("pucorr",false)) {
@@ -158,19 +157,41 @@ class KPlotManager : public KManager {
 			}
 			
 			//get special status options
-			string s_numer, s_denom, s_yieldref; //names for special sets
+			vector<string> s_numers, s_denoms;
+			string s_yieldref = ""; //names for special sets
+			globalOpt->Get("numers",s_numers);
+			globalOpt->Get("denoms",s_denoms);
+			globalOpt->Get("yieldref",s_yieldref);
+			string s_numer, s_denom; //backward compatibility
 			s_numer = s_denom = s_yieldref = "";
 			globalOpt->Get("numer",s_numer);
 			globalOpt->Get("denom",s_denom);
-			globalOpt->Get("yieldref",s_yieldref);
 			vector<string> s_roc_sig, s_roc_bkg; //vectors of names of roc sets
 			globalOpt->Get("roc_sig",s_roc_sig);
 			globalOpt->Get("roc_bkg",s_roc_bkg);
 			
 			//check for special status sets
 			for(unsigned s = 0; s < MySets.size(); s++){
-				if(s_numer.size()>0 && numer==0 && MySets[s]->GetName()==s_numer) numer = MySets[s];
-				if(s_denom.size()>0 && denom==0 && MySets[s]->GetName()==s_denom) denom = MySets[s];
+				//backward compatibility
+				if(s_numers.size()==0 && s_numer.size()>0 && numers.size()==0 && MySets[s]->GetName()==s_numer) numers.push_back(MySets[s]);
+				if(s_denoms.size()==0 && s_denom.size()>0 && denoms.size()==0 && MySets[s]->GetName()==s_denom) denoms.push_back(MySets[s]);
+				
+				//only find each ratio set once
+				for(unsigned r = 0; r < s_numers.size(); r++){
+					if(MySets[s]->GetName()==s_numers[r]){
+						numers.push_back(MySets[s]);
+						s_numers.erase(s_numers.begin()+r);
+						break;
+					}
+				}
+				for(unsigned r = 0; r < s_denoms.size(); r++){
+					if(MySets[s]->GetName()==s_denoms[r]){
+						denoms.push_back(MySets[s]);
+						s_denoms.erase(s_denoms.begin()+r);
+						break;
+					}
+				}
+				
 				if(s_yieldref.size()>0 && yieldref==0 && MySets[s]->GetName()==s_yieldref) yieldref = MySets[s];
 				
 				//only find each roc set once
@@ -190,14 +211,40 @@ class KPlotManager : public KManager {
 				}
 			}
 			
-			bool ratio_allowed = numer && denom;
+			//numer:denom ratio cases: 1:1, 1:x, x:1
+			bool ratio_allowed = ( (numers.size()==1 && denoms.size()==1) || (numers.size()==1 && denoms.size()>1) || (numers.size()>1 && denoms.size()==1) );
 			if(ratio_allowed){
 				//add children to ratio
-				MyRatio->AddNumerator(numer);
-				MyRatio->AddDenominator(denom);
-				//set ratio name for 2D histos
-				string rationame2D = "[" + numer->GetName() + " - " + denom->GetName() + "]/#sigma";
-				globalOpt->Set("rationame2D",rationame2D);
+				if(numers.size()==1 && denoms.size()==1){
+					KSetRatio* rtmp = new KSetRatio("ratio",NULL,globalOpt);
+					rtmp->AddNumerator(numers[0]);
+					rtmp->AddDenominator(denoms[0]);
+					//default style
+					rtmp->SetStyle(allStyles);
+					MyRatios.push_back(rtmp);
+				}
+				else if(numers.size()==1 && denoms.size()>1){
+					for(unsigned r = 0; r < denoms.size(); r++){
+						KSetRatio* rtmp = new KSetRatio("ratio_"+numers[0]->GetName()+"_"+denoms[r]->GetName(),NULL,globalOpt);
+						rtmp->AddNumerator(numers[0]);
+						rtmp->AddDenominator(denoms[r]);
+						//denom style, but pe drawopt
+						rtmp->GetLocalOpt()->Set<string>("drawopt","pe");
+						rtmp->SetStyle(denoms[r]->GetStyle());
+						MyRatios.push_back(rtmp);
+					}
+				}
+				else if(numers.size()>1 && denoms.size()==1){
+					for(unsigned r = 0; r < numers.size(); r++){
+						KSetRatio* rtmp = new KSetRatio("ratio_"+numers[r]->GetName()+"_"+denoms[0]->GetName(),NULL,globalOpt);
+						rtmp->AddNumerator(numers[r]);
+						rtmp->AddDenominator(denoms[0]);
+						//numer style, but pe drawopt
+						rtmp->GetLocalOpt()->Set<string>("drawopt","pe");
+						rtmp->SetStyle(numers[r]->GetStyle());
+						MyRatios.push_back(rtmp);
+					}
+				}
 			}			
 			
 			//make selections for base builders
@@ -218,10 +265,14 @@ class KPlotManager : public KManager {
 					ntmp->second->Set("ratio",false); //disable ratios if components not available
 					if(!globalOpt->Get("roc",false)){
 						cout << "Input error: ratio requested for histo " << ntmp->first << ", but ";
-						if(!numer && !denom) cout << "numer and denom";
-						else if(!numer) cout << "numer";
-						else if(!denom) cout << "denom";
-						cout << " not set. Ratio will not be drawn." << endl;
+						if(numers.size()>0 && denoms.size()>0) cout << "numers and denoms both > 1. Pick one!";
+						else {
+							if(numers.size()==0 && denoms.size()==0) cout << "numer(s) and denom(s)";
+							else if(numers.size()==0) cout << "numer(s)";
+							else if(denoms.size()==0) cout << "denom(s)";
+							cout << " not set.";
+						}
+						cout << " Ratio will not be drawn." << endl;
 					}
 				}
 				int dim = 0;
@@ -236,16 +287,24 @@ class KPlotManager : public KManager {
 				}
 				else if(dim==2){
 					PlotMap* p2map = new PlotMap();
-					for(unsigned s = 0; s < MySets.size()+1; s++){
+					bool ntmp_ratio = ntmp->second->Get("ratio",true);
+					for(unsigned s = 0; s < MySets.size()+MyRatios.size(); s++){
 						KBase* theSet;
+						string rationame2D = "";
 						if(s>=MySets.size()){ //add ratio set at the end of loop if enabled
-							if(ntmp->second->Get("ratio",true)) theSet = MyRatio;
+							if(ntmp_ratio) {
+								rationame2D = MyRatios[s-MySets.size()]->GetRatioName2D();
+								theSet = MyRatios[s-MySets.size()];
+							}
 							else continue;
 						}
 						else theSet = MySets[s];
 						
 						KPlot* ptmp = new KPlot2D(ntmp->first,theSet->GetName(),ntmp->second,globalOpt);
-						if(ptmp->Initialize()) p2map->Add(theSet->GetName(),ptmp);
+						if(ptmp->Initialize()) {
+							if(!rationame2D.empty()) ptmp->GetLocalOpt()->Set<string>(theSet->GetName()+"_name2D",rationame2D);
+							p2map->Add(theSet->GetName(),ptmp);
+						}
 						else {
 							cout << "Input error: unable to build 2D histo " << ntmp->first << " for set " << theSet->GetName() << ". Check binning options." << endl;
 							delete ptmp;
@@ -354,10 +413,11 @@ class KPlotManager : public KManager {
 					TPad* pad2 = p->second->GetPad2();
 
 					p->second->DrawRatio();
-				
-					MyRatio->Build(p->second->GetHisto());
 					
-					MyRatio->Draw(pad2);
+					for(unsigned r = 0; r < MyRatios.size(); ++r){
+						MyRatios[r]->Build(p->second->GetHisto());
+						MyRatios[r]->Draw(pad2);
+					}
 					p->second->DrawLine();
 				}
 				
@@ -404,12 +464,12 @@ class KPlotManager : public KManager {
 				if(globalOpt->Get("printyield",false)) cout << endl;
 				
 				//one plot for each set
-				for(unsigned s = 0; s < MySets.size()+1; s++){
+				for(unsigned s = 0; s < MySets.size()+MyRatios.size(); s++){
 					KBase* theSet;
 					KPlot* ptmp;
 					if(s>=MySets.size()){ //add ratio set at the end of loop if enabled
-						ptmp = p2map->Get("ratio");
-						if(ptmp) theSet = MyRatio;
+						ptmp = p2map->Get(MyRatios[s-MySets.size()]->GetName());
+						if(ptmp) theSet = MyRatios[s-MySets.size()];
 						else continue;
 						//build ratio histo
 						theSet->Build(ptmp->GetHisto());
@@ -425,7 +485,7 @@ class KPlotManager : public KManager {
 					TPad* pad1 = ptmp->GetPad1();
 					
 					//reset histo z-axes
-					if(theSet==MyRatio) {
+					if(s>=MySets.size()) {
 						//symmetric axis for ratio
 						//take min above -999 because empty bins set to -1000 (drawing hack)
 						double zmax_ratio = fmax(fabs(theSet->GetHisto()->GetMinimum(-999)),fabs(theSet->GetHisto()->GetMaximum()));
@@ -614,8 +674,9 @@ class KPlotManager : public KManager {
 		vector<KNamed*> MyPlotOptions;
 		vector<KBase*> MySets;
 		vector<KBase*> MyBases;
-		KSetRatio* MyRatio;
-		KBase *numer, *denom, *yieldref; //pointers to special sets
+		vector<KSetRatio*> MyRatios;
+		vector<KBase*> numers, denoms;
+		KBase *yieldref; //pointers to special sets
 		vector<KBase*> roc_sig, roc_bkg;
 		bool doPrint;
 		map<int,KBase*> curr_sets;
