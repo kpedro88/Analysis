@@ -7,6 +7,9 @@
 #include "KMath.h"
 #include "../btag/BTagCorrector.h"
 #include "../corrections/EventListFilter.h"
+#include "../corrections/GetTriggerEffCorr.C"
+#include "../corrections/Quad76x.h"
+#include "../corrections/Double76x.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -19,6 +22,7 @@
 #include <vector>
 #include <cstdlib>
 #include <map>
+#include <set>
 
 using namespace std;
 
@@ -75,6 +79,133 @@ class KHLTSelector : public KSelector<KBuilder> {
 		//member variables
 		vector<string> HLTLines;
 		vector<unsigned> HLTIndices;
+};
+
+//----------------------------------------------------
+//simulates some interesting triggers
+class KFakeHLTSelector : public KSelector<KBuilder> {
+	public:
+		//enum for trigger names
+		enum faketrigger { t_PFHT350_PFMET100=0, t_QuadJet45_TripleCSV067=1, t_DoubleJet90_Quad30_TripleCSV067=2, t_MET110_CSV07=3 };
+		//constructor
+		KFakeHLTSelector() : KSelector<KBuilder>() { }
+		KFakeHLTSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_) { 
+			//get selected trigger from options
+			vector<string> s_trigger;
+			localOpt->Get("trigger",s_trigger);
+			for(unsigned t = 0; t < s_trigger.size(); ++t){
+				if(s_trigger[t]=="PFHT350_PFMET100") trigger.push_back(t_PFHT350_PFMET100);
+				else if(s_trigger[t]=="QuadJet45_TripleCSV067") trigger.push_back(t_QuadJet45_TripleCSV067);
+				else if(s_trigger[t]=="DoubleJet90_Quad30_TripleCSV067") trigger.push_back(t_DoubleJet90_Quad30_TripleCSV067);
+				else if(s_trigger[t]=="MET110_CSV07") trigger.push_back(t_MET110_CSV07);
+			}
+		}
+		virtual void CheckBranches(){
+			//looper->fChain->SetBranchStatus("METPt",1);
+			looper->fChain->SetBranchStatus("MHT",1);
+			looper->fChain->SetBranchStatus("HT",1);
+			looper->fChain->SetBranchStatus("Jets",1);
+			looper->fChain->SetBranchStatus("Jets_bDiscriminatorCSV",1);
+		}
+		virtual void CheckLooper(){
+			//check MC stuff
+			realMET = localOpt->Get("realMET",true);
+			signal = looper->localOpt->Get("signal",false);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			vector<double> weights;
+			//simulate trigger via offline cuts: require to be on plateau or assign a weight
+			for(unsigned t = 0; t < trigger.size(); ++t){
+				if(trigger[t]==t_PFHT350_PFMET100){
+					//plateau requirements + residual inefficiency weight
+					bool passTrigger = (looper->HT > 500 && looper->MHT > 200);
+					if(!passTrigger) weights.push_back(0.);
+					else weights.push_back(GetTriggerEffCorr(signal, looper->MHT, realMET));
+				}
+				else if(trigger[t]==t_QuadJet45_TripleCSV067){
+					//weight for inefficiency w/ functions (from Caterina, AN2015_108)
+					double jcounter = 0;
+					vector<double> jetpt;
+					set<double> csv_sorted;
+					for(unsigned j = 0; j < looper->Jets->size(); ++j){
+						if(fabs(looper->Jets->at(j).Eta())<2.6){
+							if(jcounter < 4){
+								jetpt.push_back(looper->Jets->at(j).Pt());
+								++jcounter;
+							}
+							csv_sorted.insert(looper->Jets_bDiscriminatorCSV->at(j));
+						}
+					}
+					//find CSV3
+					set<double>::reverse_iterator rit = csv_sorted.rbegin();
+					++rit; ++rit;
+					double csv3 = *rit;
+					
+					weights.push_back(TurnOnQuad(jetpt[0],jetpt[1],jetpt[2],jetpt[3],csv3));
+				}
+				else if(trigger[t]==t_DoubleJet90_Quad30_TripleCSV067){
+					//weight for inefficiency w/ functions (from Caterina, AN2015_108)
+					double jcounter = 0;
+					vector<double> jetpt;
+					set<double> csv_sorted;
+					for(unsigned j = 0; j < looper->Jets->size(); ++j){
+						if(fabs(looper->Jets->at(j).Eta())<2.6){
+							if(jcounter < 4){
+								jetpt.push_back(looper->Jets->at(j).Pt());
+								++jcounter;
+							}
+							csv_sorted.insert(looper->Jets_bDiscriminatorCSV->at(j));
+						}
+					}
+					//find CSV3
+					set<double>::reverse_iterator rit = csv_sorted.rbegin();
+					++rit; ++rit;
+					double csv3 = *rit;
+					
+					weights.push_back(TurnOnDouble(jetpt[0],jetpt[1],jetpt[2],jetpt[3],csv3));
+				}
+				else if(trigger[t]==t_MET110_CSV07){
+					//MET on plateau, use CSV function from above
+					bool passTrigger = (looper->MHT > 200);
+					
+					set<double> csv_sorted;
+					for(unsigned j = 0; j < looper->Jets->size(); ++j){
+						if(fabs(looper->Jets->at(j).Eta())<2.6){
+							csv_sorted.insert(looper->Jets_bDiscriminatorCSV->at(j));
+						}
+					}
+					//find CSV1
+					set<double>::reverse_iterator rit = csv_sorted.rbegin();
+					double csv1 = *rit;
+
+					if(!passTrigger) weights.push_back(0.);
+					else {
+						csv1 = min(max(csv1,0.),1.);
+						weights.push_back(QuaJet_CSV3(-log(1-csv1+1.e-7)));
+					}
+				}
+			}
+			
+			if(weights.empty()) weight = 0.;
+			else weight = weights[0];
+			//OR: P(A||B)=P(A)+P(B)-P(A)*P(B)
+			if(weights.size()>1){
+				for(unsigned w = 1; w < weights.size(); ++w){
+					weight = weight + weights[w] - weight*weights[w];
+				}
+			}
+			
+			return true;
+		}
+		
+		//member variables
+		vector<faketrigger> trigger;
+		bool signal, realMET;
+		double weight;
 };
 
 //----------------------------------------------------
@@ -636,7 +767,7 @@ class KHistoSelector : public KSelector<KBuilder> {
 	public:
 		//constructor
 		KHistoSelector() : KSelector<KBuilder>() { }
-		KHistoSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), RA2Bin(NULL), PhotonID(NULL), BTagSF(NULL), JetEtaRegion(NULL), Hemisphere(NULL) { 
+		KHistoSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), RA2Bin(NULL), PhotonID(NULL), BTagSF(NULL), JetEtaRegion(NULL), Hemisphere(NULL), FakeHLT(NULL) { 
 			canfail = false;
 		}
 		
@@ -649,6 +780,7 @@ class KHistoSelector : public KSelector<KBuilder> {
 			if(DoBTagSF) BTagSF = sel->Get<KBTagSFSelector*>("BTagSF");
 			JetEtaRegion = sel->Get<KJetEtaRegionSelector*>("JetEtaRegion");
 			Hemisphere = sel->Get<KHemisphereSelector*>("Hemisphere");
+			FakeHLT = sel->Get<KFakeHLTSelector*>("FakeHLT");
 		}
 		virtual void CheckLooper(){
 			looper->localOpt->Get("mother",mother);
@@ -658,6 +790,7 @@ class KHistoSelector : public KSelector<KBuilder> {
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			double w = looper->GetWeight();
+			if(FakeHLT) w *= FakeHLT->weight;
 			
 			for(unsigned h = 0; h < looper->htmp.size(); h++){
 				unsigned vsize = looper->vars[h].size();
@@ -923,6 +1056,7 @@ class KHistoSelector : public KSelector<KBuilder> {
 		KBTagSFSelector* BTagSF;
 		KJetEtaRegionSelector* JetEtaRegion;
 		KHemisphereSelector* Hemisphere;
+		KFakeHLTSelector* FakeHLT;
 		vector<int> mother;
 		double deltaM;
 };
@@ -944,6 +1078,7 @@ namespace KParser {
 		else if(sname=="BTagSF") srtmp = new KBTagSFSelector(sname,omap);
 		else if(sname=="METFilter") srtmp = new KMETFilterSelector(sname,omap);
 		else if(sname=="HLT") srtmp = new KHLTSelector(sname,omap);
+		else if(sname=="FakeHLT") srtmp = new KFakeHLTSelector(sname,omap);
 		else if(sname=="HT") srtmp = new KHTSelector(sname,omap);
 		else if(sname=="MHT") srtmp = new KMHTSelector(sname,omap);
 		else if(sname=="LeadJetPt") srtmp = new KLeadJetPtSelector(sname,omap);

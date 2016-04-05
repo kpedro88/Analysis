@@ -1,3 +1,6 @@
+#ifndef GETTRIGGEREFFCORR_C
+#define GETTRIGGEREFFCORR_C
+
 double GetSMTriggerEff(double MHT, bool realMET) {
   if (realMET) {
     if (MHT<50) return 0.0036;
@@ -116,3 +119,5 @@ double GetTriggerEffCorr(bool signal, double MHT, bool realMET, int statUnc=0, i
 	
 	return w;
 }
+
+#endif
