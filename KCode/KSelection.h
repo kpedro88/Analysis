@@ -188,7 +188,7 @@ class KSelection {
 			
 			return result;
 		}
-		void GetEfficiency(int nentries=1){
+		void GetEfficiency(){
 			vector<KCutflowEntry> cuts;
 			for(unsigned s = 0; s < selectorList.size(); s++){
 				int prev_counter = 0;
@@ -197,6 +197,7 @@ class KSelection {
 			}
 			
 			//create histogram
+			if(cutflowHist) { delete cutflowHist; cutflowHist = NULL; }
 			cutflowHist = new TH1F("cutflow",name.c_str(),cuts.size(),0,cuts.size());
 			for(unsigned c = 0; c < cuts.size(); c++){
 				cutflowHist->GetXaxis()->SetBinLabel(c+1,cuts[c].name.c_str());
@@ -206,6 +207,25 @@ class KSelection {
 			
 			//todo: add object ctr histogram for syncing
 		}
+		void PrintEfficiency(TH1F* nEventHist){
+			if(!nEventHist) return;
+			if(!cutflowHist) GetEfficiency();
+			
+			//check if error printing should be enabled
+			bool printerrors = globalOpt->Get("printerrors",false);
+			//use helper class to print
+			KCutflow kcut(cutflowHist,nEventHist);
+			kcut.PrintEfficiency(printerrors);
+		}
+		void PrintEfficiency(int nentries, double nentriesE=0){
+			if(!cutflowHist) GetEfficiency();
+			
+			//check if error printing should be enabled
+			bool printerrors = globalOpt->Get("printerrors",false);
+			//use helper class to print
+			KCutflow kcut(cutflowHist,nentries,nentriesE);
+			kcut.PrintEfficiency(printerrors);
+		}
 		void Finalize(TH1F* nEventHist=NULL, TH1F* nEventNegHist=NULL){
 			if(file){
 				file->cd();
@@ -213,12 +233,6 @@ class KSelection {
 				if(nEventNegHist) nEventNegHist->Write();
 				if(cutflowHist) cutflowHist->Write();
 				if(tree) tree->Write();
-				
-				//check if error printing should be enabled
-				bool printerrors = globalOpt->Get("printerrors",false);
-				//use helper class to print
-				KCutflow kcut(cutflowHist,nEventHist);
-				kcut.PrintEfficiency(printerrors);
 				
 				//just in case selectors have something to add
 				for(unsigned s = 0; s < selectorList.size(); s++){

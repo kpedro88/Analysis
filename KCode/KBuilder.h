@@ -115,7 +115,7 @@ class KBuilder : public NtupleClass {
 			//final steps
 			if(globalOpt->Get("debugcut",false)) {
 				cout << MyBase->GetName() << endl;
-				MySelection->GetEfficiency(nentries);
+				MySelection->PrintEfficiency(nentries,sqrt((double)nentries));
 			}
 			
 			if(globalOpt->Get("plotoverflow",false)){
@@ -358,7 +358,7 @@ class KBuilderMC : public KBuilder {
 			}
 			
 			//now do scaling: norm*xsection/nevents
-			if(useTreeWeight) w *= Weight;
+			if(useTreeWeight && !fastsim) w *= Weight;
 			else if(got_nEventProc && nEventProc>0 && got_xsection){
 				w *= xsection/nEventProc;
 				//account for negative weight events

@@ -92,7 +92,7 @@ class KSkimmer : public NtupleClass {
 			
 			//final steps
 			for(unsigned s = 0; s < theSelections.size(); s++){
-				theSelections[s]->GetEfficiency(nentries);
+				theSelections[s]->PrintEfficiency(nEventHist);
 				theSelections[s]->Finalize(nEventHist,nEventNegHist);
 			}
 		}
