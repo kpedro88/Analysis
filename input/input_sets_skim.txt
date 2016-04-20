@@ -71,3 +71,7 @@ base	skim	TTTT_ext1	b:chain[1]	s:filepre[Spring15v2.TTTT_TuneCUETP8M1_13TeV-amca
 base	skim	WWZ	b:chain[1]	s:filepre[Spring15v2.WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8_]	vi:filerange[0,6]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
 base	skim	ZZZ	b:chain[1]	s:filepre[Spring15v2.ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8_]	vi:filerange[0,7]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
 base	skim	WZZ	b:chain[1]	s:filepre[Spring15v2.WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8_]	vi:filerange[0,6]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+base	skim	T2tt_170_1_2bd	b:chain[1]	s:filepre[PrivateSamples.SMS-T2tt_mStop-170_mLSP-1_2bd_madgraphMLM-pythia8_13TeV_]	vi:filerange[0,499]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	vi:mother[1000006]	b:fastsim[1]
+base	skim	T2tt_170_1	b:chain[1]	s:filepre[PrivateSamples.SMS-T2tt_mStop-170_mLSP-1_madgraphMLM-pythia8_13TeV_]	vi:filerange[0,499]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	vi:mother[1000006]	b:fastsim[1]
+base	skim	T2tt_172_1	b:chain[1]	s:filepre[PrivateSamples.SMS-T2tt_mStop-172_mLSP-1_madgraphMLM-pythia8_13TeV_]	vi:filerange[0,499]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	vi:mother[1000006]	b:fastsim[1]
+base	skim	T2tt_173_1	b:chain[1]	s:filepre[PrivateSamples.SMS-T2tt_mStop-173_mLSP-1_madgraphMLM-pythia8_13TeV_]	vi:filerange[0,499]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	vi:mother[1000006]	b:fastsim[1]
