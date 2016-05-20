@@ -20,20 +20,22 @@ using namespace std;
 
 //----------------------------------------------------
 //variation of jet-related variables
-//for: JECs, various Zinv cleanings
+//for: JECs, JERs, Zinv cleaning
 class KJetVariator : public KVariator<KSkimmer> {
 	public:
-		enum vartypes { NoVar=0, JECup=1, JECdown=2, clean=3 };
+		enum vartypes { NoVar=0, JECup=1, JECdown=2, JERup=3, JERdown=4, clean=5 };
 		//constructor
 		KJetVariator() : KVariator<KSkimmer>() { }
 		KJetVariator(string name_, OptionMap* localOpt_) : KVariator<KSkimmer>(name_,localOpt_), enabled(false), vtype(NoVar),
-			b_Jets(true),b_HTJetsMask(true),b_MHTJetsMask(true),b_Jets_ID(true),b_Jets_partonFlavor(true),b_Jets_hadronFlavor(true),b_Jets_bDiscriminatorCSV(true)
+			b_Jets(true),b_HTJetsMask(true),b_MHTJetsMask(true),b_Jets_ID(true),b_Jets_partonFlavor(true),b_Jets_hadronFlavor(true),b_Jets_bDiscriminatorCSV(true),b_Jets_bDiscriminatorMVA(true)
 		{
 			//check options
 			string vname = "";
 			localOpt->Get("vartype",vname);
 			if(vname=="JECup") vtype = JECup;
 			else if(vname=="JECdown") vtype = JECdown;
+			else if(vname=="JERup") vtype = JERup;
+			else if(vname=="JERdown") vtype = JERdown;
 			else if(vname=="clean") vtype = clean;
 		}
 		//helper functions
@@ -46,18 +48,18 @@ class KJetVariator : public KVariator<KSkimmer> {
 		}
 		virtual void CheckBranches(){
 			if(vtype==JECup){
-				string branchlist[] = {"JetsJECup","HTJetsMaskJECup","MHTJetsMaskJECup","JetsJECup_ID","JetsJECup_partonFlavor","JetsJECup_hadronFlavor","JetsJECup_bDiscriminatorCSV","JetIDJECup","NJetsJECup","BTagsJECup","HTJECup","MHTJECup","MHT_PhiJECup","DeltaPhi1JECup","DeltaPhi2JECup","DeltaPhi3JECup","DeltaPhi4JECup"};
-				unsigned branchsize = 17;
+				string branchlist[] = {"JetsJECup","HTJetsMaskJECup","MHTJetsMaskJECup","JetsJECup_ID","JetsJECup_partonFlavor","JetsJECup_hadronFlavor","JetsJECup_bDiscriminatorCSV","JetsJECup_bDiscriminatorMVA","JetIDJECup","NJetsJECup","BTagsJECup","BTagsMVAJECup","HTJECup","MHTJECup","MHTPhiJECup","DeltaPhi1JECup","DeltaPhi2JECup","DeltaPhi3JECup","DeltaPhi4JECup"};
+				unsigned branchsize = 19;
 				EnableBranches(branchlist,branchsize);
 			}
 			else if(vtype==JECdown){
-				string branchlist[] = {"JetsJECdown","HTJetsMaskJECdown","MHTJetsMaskJECdown","JetsJECdown_ID","JetsJECdown_partonFlavor","JetsJECdown_hadronFlavor","JetsJECdown_bDiscriminatorCSV","JetIDJECdown","NJetsJECdown","BTagsJECdown","HTJECdown","MHTJECdown","MHT_PhiJECdown","DeltaPhi1JECdown","DeltaPhi2JECdown","DeltaPhi3JECdown","DeltaPhi4JECdown"};
-				unsigned branchsize = 17;
+				string branchlist[] = {"JetsJECdown","HTJetsMaskJECdown","MHTJetsMaskJECdown","JetsJECdown_ID","JetsJECdown_partonFlavor","JetsJECdown_hadronFlavor","JetsJECdown_bDiscriminatorCSV","JetsJECdown_bDiscriminatorMVA","JetIDJECdown","NJetsJECdown","BTagsJECdown","BTagsMVAJECdown","HTJECdown","MHTJECdown","MHTPhiJECdown","DeltaPhi1JECdown","DeltaPhi2JECdown","DeltaPhi3JECdown","DeltaPhi4JECdown"};
+				unsigned branchsize = 19;
 				EnableBranches(branchlist,branchsize);
 			}
 			else if(vtype==clean){
-				string branchlist[] = {"Jetsclean","HTJetsMaskclean","MHTJetsMaskclean","Jetsclean_ID","Jetsclean_partonFlavor","Jetsclean_hadronFlavor","Jetsclean_bDiscriminatorCSV","JetIDclean","NJetsclean","BTagsclean","HTclean","MHTclean","MHT_Phiclean","METPtclean","METPhiclean","DeltaPhi1clean","DeltaPhi2clean","DeltaPhi3clean","DeltaPhi4clean"};
-				unsigned branchsize = 19;
+				string branchlist[] = {"Jetsclean","HTJetsMaskclean","MHTJetsMaskclean","Jetsclean_ID","Jetsclean_partonFlavor","Jetsclean_hadronFlavor","Jetsclean_bDiscriminatorCSV","Jetsclean_bDiscriminatorMVA","JetIDclean","NJetsclean","BTagsclean","BTagsMVAclean","HTclean","MHTclean","MHTPhiclean","METclean","METPhiclean","DeltaPhi1clean","DeltaPhi2clean","DeltaPhi3clean","DeltaPhi4clean"};
+				unsigned branchsize = 21;
 				EnableBranches(branchlist,branchsize);
 			}
 			
@@ -69,6 +71,7 @@ class KJetVariator : public KVariator<KSkimmer> {
 			if(!looper->fChain->GetBranchStatus("Jets_partonFlavor")) b_Jets_partonFlavor = false;
 			if(!looper->fChain->GetBranchStatus("Jets_hadronFlavor")) b_Jets_hadronFlavor = false;
 			if(!looper->fChain->GetBranchStatus("Jets_bDiscriminatorCSV")) b_Jets_bDiscriminatorCSV = false;
+			if(!looper->fChain->GetBranchStatus("Jets_bDiscriminatorMVA")) b_Jets_bDiscriminatorMVA = false;
 		}
 		//functions
 		virtual void DoVariation() {
@@ -80,17 +83,19 @@ class KJetVariator : public KVariator<KSkimmer> {
 			if(b_Jets_partonFlavor) Jets_partonFlavor = *(looper->Jets_partonFlavor);
 			if(b_Jets_hadronFlavor) Jets_hadronFlavor = *(looper->Jets_hadronFlavor);
 			if(b_Jets_bDiscriminatorCSV)Jets_bDiscriminatorCSV = *(looper->Jets_bDiscriminatorCSV);
+			if(b_Jets_bDiscriminatorMVA)Jets_bDiscriminatorMVA = *(looper->Jets_bDiscriminatorMVA);
 			JetID = looper->JetID;
 			NJets = looper->NJets;
 			BTags = looper->BTags;
+			BTagsMVA = looper->BTagsMVA;
 			isoElectronTracks = looper->isoElectronTracks;
 			isoMuonTracks = looper->isoMuonTracks;
 			isoPionTracks = looper->isoPionTracks;
 			HT = looper->HT;
-			METPt = looper->METPt;
+			MET = looper->MET;
 			METPhi = looper->METPhi;
 			MHT = looper->MHT;
-			MHT_Phi = looper->MHT_Phi;
+			MHTPhi = looper->MHTPhi;
 			DeltaPhi1 = looper->DeltaPhi1;
 			DeltaPhi2 = looper->DeltaPhi2;
 			DeltaPhi3 = looper->DeltaPhi3;
@@ -105,12 +110,14 @@ class KJetVariator : public KVariator<KSkimmer> {
 				if(b_Jets_partonFlavor) *(looper->Jets_partonFlavor) = *(looper->JetsJECup_partonFlavor);
 				if(b_Jets_hadronFlavor) *(looper->Jets_hadronFlavor) = *(looper->JetsJECup_hadronFlavor);
 				if(b_Jets_bDiscriminatorCSV) *(looper->Jets_bDiscriminatorCSV) = *(looper->JetsJECup_bDiscriminatorCSV);
+				if(b_Jets_bDiscriminatorMVA) *(looper->Jets_bDiscriminatorMVA) = *(looper->JetsJECup_bDiscriminatorMVA);
 				looper->JetID = looper->JetIDJECup;
 				looper->NJets = looper->NJetsJECup;
 				looper->BTags = looper->BTagsJECup;
+				looper->BTagsMVA = looper->BTagsMVAJECup;
 				looper->HT = looper->HTJECup;
 				looper->MHT = looper->MHTJECup;
-				looper->MHT_Phi = looper->MHT_PhiJECup;
+				looper->MHTPhi = looper->MHTPhiJECup;
 				looper->DeltaPhi1 = looper->DeltaPhi1JECup;
 				looper->DeltaPhi2 = looper->DeltaPhi2JECup;
 				looper->DeltaPhi3 = looper->DeltaPhi3JECup;
@@ -124,16 +131,60 @@ class KJetVariator : public KVariator<KSkimmer> {
 				if(b_Jets_partonFlavor) *(looper->Jets_partonFlavor) = *(looper->JetsJECdown_partonFlavor);
 				if(b_Jets_hadronFlavor) *(looper->Jets_hadronFlavor) = *(looper->JetsJECdown_hadronFlavor);
 				if(b_Jets_bDiscriminatorCSV) *(looper->Jets_bDiscriminatorCSV) = *(looper->JetsJECdown_bDiscriminatorCSV);
+				if(b_Jets_bDiscriminatorMVA) *(looper->Jets_bDiscriminatorMVA) = *(looper->JetsJECdown_bDiscriminatorMVA);
 				looper->JetID = looper->JetIDJECdown;
 				looper->NJets = looper->NJetsJECdown;
 				looper->BTags = looper->BTagsJECdown;
+				looper->BTagsMVA = looper->BTagsMVAJECdown;
 				looper->HT = looper->HTJECdown;
 				looper->MHT = looper->MHTJECdown;
-				looper->MHT_Phi = looper->MHT_PhiJECdown;
+				looper->MHTPhi = looper->MHTPhiJECdown;
 				looper->DeltaPhi1 = looper->DeltaPhi1JECdown;
 				looper->DeltaPhi2 = looper->DeltaPhi2JECdown;
 				looper->DeltaPhi3 = looper->DeltaPhi3JECdown;
 				looper->DeltaPhi4 = looper->DeltaPhi4JECdown;
+			}
+			else if(vtype==JERup){
+				if(b_Jets) *(looper->Jets) = *(looper->JetsJERup);
+				if(b_HTJetsMask) *(looper->HTJetsMask) = *(looper->HTJetsMaskJERup);
+				if(b_MHTJetsMask) *(looper->MHTJetsMask) = *(looper->MHTJetsMaskJERup);
+				if(b_Jets_ID) *(looper->Jets_ID) = *(looper->JetsJERup_ID);
+				if(b_Jets_partonFlavor) *(looper->Jets_partonFlavor) = *(looper->JetsJERup_partonFlavor);
+				if(b_Jets_hadronFlavor) *(looper->Jets_hadronFlavor) = *(looper->JetsJERup_hadronFlavor);
+				if(b_Jets_bDiscriminatorCSV) *(looper->Jets_bDiscriminatorCSV) = *(looper->JetsJERup_bDiscriminatorCSV);
+				if(b_Jets_bDiscriminatorMVA) *(looper->Jets_bDiscriminatorMVA) = *(looper->JetsJERup_bDiscriminatorMVA);
+				looper->JetID = looper->JetIDJERup;
+				looper->NJets = looper->NJetsJERup;
+				looper->BTags = looper->BTagsJERup;
+				looper->BTagsMVA = looper->BTagsMVAJERup;
+				looper->HT = looper->HTJERup;
+				looper->MHT = looper->MHTJERup;
+				looper->MHTPhi = looper->MHTPhiJERup;
+				looper->DeltaPhi1 = looper->DeltaPhi1JERup;
+				looper->DeltaPhi2 = looper->DeltaPhi2JERup;
+				looper->DeltaPhi3 = looper->DeltaPhi3JERup;
+				looper->DeltaPhi4 = looper->DeltaPhi4JERup;
+			}
+			else if(vtype==JERdown){
+				if(b_Jets) *(looper->Jets) = *(looper->JetsJERdown);
+				if(b_HTJetsMask) *(looper->HTJetsMask) = *(looper->HTJetsMaskJERdown);
+				if(b_MHTJetsMask) *(looper->MHTJetsMask) = *(looper->MHTJetsMaskJERdown);
+				if(b_Jets_ID) *(looper->Jets_ID) = *(looper->JetsJERdown_ID);
+				if(b_Jets_partonFlavor) *(looper->Jets_partonFlavor) = *(looper->JetsJERdown_partonFlavor);
+				if(b_Jets_hadronFlavor) *(looper->Jets_hadronFlavor) = *(looper->JetsJERdown_hadronFlavor);
+				if(b_Jets_bDiscriminatorCSV) *(looper->Jets_bDiscriminatorCSV) = *(looper->JetsJERdown_bDiscriminatorCSV);
+				if(b_Jets_bDiscriminatorMVA) *(looper->Jets_bDiscriminatorMVA) = *(looper->JetsJERdown_bDiscriminatorMVA);
+				looper->JetID = looper->JetIDJERdown;
+				looper->NJets = looper->NJetsJERdown;
+				looper->BTags = looper->BTagsJERdown;
+				looper->BTagsMVA = looper->BTagsMVAJERdown;
+				looper->HT = looper->HTJERdown;
+				looper->MHT = looper->MHTJERdown;
+				looper->MHTPhi = looper->MHTPhiJERdown;
+				looper->DeltaPhi1 = looper->DeltaPhi1JERdown;
+				looper->DeltaPhi2 = looper->DeltaPhi2JERdown;
+				looper->DeltaPhi3 = looper->DeltaPhi3JERdown;
+				looper->DeltaPhi4 = looper->DeltaPhi4JERdown;
 			}
 			else if(vtype==clean){
 				if(b_Jets) *(looper->Jets) = *(looper->Jetsclean);
@@ -143,13 +194,15 @@ class KJetVariator : public KVariator<KSkimmer> {
 				if(b_Jets_partonFlavor) *(looper->Jets_partonFlavor) = *(looper->Jetsclean_partonFlavor);
 				if(b_Jets_hadronFlavor) *(looper->Jets_hadronFlavor) = *(looper->Jetsclean_hadronFlavor);
 				if(b_Jets_bDiscriminatorCSV) *(looper->Jets_bDiscriminatorCSV) = *(looper->Jetsclean_bDiscriminatorCSV);
+				if(b_Jets_bDiscriminatorMVA) *(looper->Jets_bDiscriminatorMVA) = *(looper->Jetsclean_bDiscriminatorMVA);
 				looper->JetID = looper->JetIDclean;
 				looper->NJets = looper->NJetsclean;
 				looper->BTags = looper->BTagsclean;
+				looper->BTagsMVA = looper->BTagsMVAclean;
 				looper->HT = looper->HTclean;
 				looper->MHT = looper->MHTclean;
-				looper->MHT_Phi = looper->MHT_Phiclean;
-				looper->METPt = looper->METPtclean;
+				looper->MHTPhi = looper->MHTPhiclean;
+				looper->MET = looper->METclean;
 				looper->METPhi = looper->METPhiclean;
 				looper->DeltaPhi1 = looper->DeltaPhi1clean;
 				looper->DeltaPhi2 = looper->DeltaPhi2clean;
@@ -166,17 +219,19 @@ class KJetVariator : public KVariator<KSkimmer> {
 			if(b_Jets_partonFlavor) *(looper->Jets_partonFlavor) = Jets_partonFlavor;
 			if(b_Jets_hadronFlavor) *(looper->Jets_hadronFlavor) = Jets_hadronFlavor;
 			if(b_Jets_bDiscriminatorCSV) *(looper->Jets_bDiscriminatorCSV) = Jets_bDiscriminatorCSV;
+			if(b_Jets_bDiscriminatorMVA) *(looper->Jets_bDiscriminatorMVA) = Jets_bDiscriminatorMVA;
 			looper->JetID = JetID;
 			looper->NJets = NJets;
 			looper->BTags = BTags;
+			looper->BTagsMVA = BTagsMVA;
 			looper->isoElectronTracks = isoElectronTracks;
 			looper->isoMuonTracks = isoMuonTracks;
 			looper->isoPionTracks = isoPionTracks;
 			looper->HT = HT;
-			looper->METPt = METPt;
+			looper->MET = MET;
 			looper->METPhi = METPhi;
 			looper->MHT = MHT;
-			looper->MHT_Phi = MHT_Phi;
+			looper->MHTPhi = MHTPhi;
 			looper->DeltaPhi1 = DeltaPhi1;
 			looper->DeltaPhi2 = DeltaPhi2;
 			looper->DeltaPhi3 = DeltaPhi3;
@@ -185,7 +240,7 @@ class KJetVariator : public KVariator<KSkimmer> {
 		
 		//member variables
 		bool enabled;
-		bool b_Jets,b_HTJetsMask,b_MHTJetsMask,b_Jets_ID,b_Jets_partonFlavor,b_Jets_hadronFlavor,b_Jets_bDiscriminatorCSV;
+		bool b_Jets,b_HTJetsMask,b_MHTJetsMask,b_Jets_ID,b_Jets_partonFlavor,b_Jets_hadronFlavor,b_Jets_bDiscriminatorCSV,b_Jets_bDiscriminatorMVA;
 		vartypes vtype;
 		vector<TLorentzVector> Jets;
 		vector<bool> HTJetsMask;
@@ -194,17 +249,19 @@ class KJetVariator : public KVariator<KSkimmer> {
 		vector<int> Jets_hadronFlavor;
 		vector<int> Jets_partonFlavor;
 		vector<double> Jets_bDiscriminatorCSV;
+		vector<double> Jets_bDiscriminatorMVA;
 		Bool_t          JetID;
 		Int_t           NJets;
 		Int_t           BTags;
+		Int_t           BTagsMVA;
 		Int_t           isoElectronTracks;
 		Int_t           isoMuonTracks;
 		Int_t           isoPionTracks;
 		Double_t        HT;
-		Double_t        METPt;
+		Double_t        MET;
 		Double_t        METPhi;
 		Double_t        MHT;
-		Double_t        MHT_Phi;
+		Double_t        MHTPhi;
 		Double_t        DeltaPhi1;
 		Double_t        DeltaPhi2;
 		Double_t        DeltaPhi3;

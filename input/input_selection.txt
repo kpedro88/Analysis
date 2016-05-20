@@ -15,34 +15,8 @@ signal
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
 	GenPt	vd:xbins[0,400,600,10000]
 	PDFNorm
-	NJet	i:njet[4]
-	HT	d:HTmin[500]
-	MHT	d:MHTmin[200]
-	MuonVeto
-	ElectronVeto
-	IsoMuonTrackVeto
-	IsoElectronTrackVeto
-	IsoPionTrackVeto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
-	EventCleaning
-signalLoose
-	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
-	GenPt	vd:xbins[0,400,600,10000]
-	PDFNorm
 	NJet	i:njet[2]
-	MuonVeto
-	ElectronVeto
-	IsoMuonTrackVeto
-	IsoElectronTrackVeto
-	IsoPionTrackVeto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
-	EventCleaning
-signalLooseHT250
-	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
-	GenPt	vd:xbins[0,400,600,10000]
-	PDFNorm
-	NJet	i:njet[4]
-	HT	d:HTmin[250]
+	HT	d:HTmin[200]
 	MHT	d:MHTmin[200]
 	MuonVeto
 	ElectronVeto
@@ -55,8 +29,8 @@ LDP
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
 	GenPt	vd:xbins[0,400,600,10000]
 	PDFNorm
-	NJet	i:njet[4]
-	HT	d:HTmin[500]
+	NJet	i:njet[2]
+	HT	d:HTmin[200]
 	MHT	d:MHTmin[200]
 	MuonVeto
 	ElectronVeto
@@ -69,8 +43,8 @@ SLm
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
 	GenPt	vd:xbins[0,400,600,10000]
 	PDFNorm
-	NJet	i:njet[4]
-	HT	d:HTmin[500]
+	NJet	i:njet[2]
+	HT	d:HTmin[200]
 	MHT	d:MHTmin[200]
 	Muon
 	ElectronVeto
@@ -80,8 +54,8 @@ SLe
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
 	GenPt	vd:xbins[0,400,600,10000]
 	PDFNorm
-	NJet	i:njet[4]
-	HT	d:HTmin[500]
+	NJet	i:njet[2]
+	HT	d:HTmin[200]
 	MHT	d:MHTmin[200]
 	MuonVeto
 	Electron
@@ -91,8 +65,8 @@ SLmLDP
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
 	GenPt	vd:xbins[0,400,600,10000]
 	PDFNorm
-	NJet	i:njet[4]
-	HT	d:HTmin[500]
+	NJet	i:njet[2]
+	HT	d:HTmin[200]
 	MHT	d:MHTmin[200]
 	Muon
 	ElectronVeto
@@ -102,8 +76,8 @@ SLeLDP
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
 	GenPt	vd:xbins[0,400,600,10000]
 	PDFNorm
-	NJet	i:njet[4]
-	HT	d:HTmin[500]
+	NJet	i:njet[2]
+	HT	d:HTmin[200]
 	MHT	d:MHTmin[200]
 	MuonVeto
 	Electron

@@ -249,7 +249,7 @@ class KMuonSelector : public KSelector<KSkimmer> {
 			if(looper->Muons->size()!=1) return false;
 			
 			if(doMTcut){
-				double mT = KMath::TransverseMass(looper->METPt,looper->METPhi,looper->Muons->at(0).Pt(),looper->Muons->at(0).Phi());
+				double mT = KMath::TransverseMass(looper->MET,looper->METPhi,looper->Muons->at(0).Pt(),looper->Muons->at(0).Phi());
 				return mT<100;
 			}
 			else return true;
@@ -277,7 +277,7 @@ class KElectronSelector : public KSelector<KSkimmer> {
 			if(looper->Electrons->size()!=1) return false;
 			
 			if(doMTcut){
-				double mT = KMath::TransverseMass(looper->METPt,looper->METPhi,looper->Electrons->at(0).Pt(),looper->Electrons->at(0).Phi());
+				double mT = KMath::TransverseMass(looper->MET,looper->METPhi,looper->Electrons->at(0).Pt(),looper->Electrons->at(0).Phi());
 				return mT<100;
 			}
 			else return true;
@@ -548,6 +548,47 @@ class KNBJetSelector : public KSelector<KSkimmer> {
 		
 		//member variables
 		int nbjet_min, nbjet_max;
+};
+
+//----------------------------------------------------
+//selects events based on genHT bin
+class KGenHTBinSelector : public KSelector<KSkimmer> {
+	public:
+		//constructor
+		KGenHTBinSelector() : KSelector<KSkimmer>() { }
+		KGenHTBinSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { 
+			//check for option
+			localOpt->Get("bins",genHTbins);
+			count = vector<unsigned>(genHTbins.size()-1, 0);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			for(unsigned g = 0; g < genHTbins.size()-1; ++g){
+				if(looper->madHT > genHTbins[g] && (looper->madHT < genHTbins[g+1] || genHTbins[g+1]==-1)) {
+					count[g] += 1;
+					break;
+				}
+			}
+			return true;
+		}
+		
+		virtual void Finalize(TFile* file){
+			unsigned total = 0;
+			for(unsigned c = 0; c < count.size(); ++c){
+				total += count[c];
+			}
+			
+			for(unsigned g = 0; g < genHTbins.size()-1; ++g){
+				cout << genHTbins[g] << " - " << genHTbins[g+1] << " : " << double(count[g])/double(total)*100 << "%" << endl;
+			}
+		}
+		
+		//member variables
+		vector<double> genHTbins;
+		vector<unsigned> count;
 };
 
 //----------------------------------------------------
@@ -1573,6 +1614,7 @@ namespace KParser {
 		else if(sname.find("DeltaPhiJ")!=string::npos) srtmp = new KDeltaPhiJSelector(sname,omap); //allow multiple instances
 		else if(sname=="EventCleaning") srtmp = new KEventCleaningSelector(sname,omap);
 		else if(sname=="NBJet") srtmp = new KNBJetSelector(sname,omap);
+		else if(sname=="GenHTBin") srtmp = new KGenHTBinSelector(sname,omap);
 		else if(sname=="BTagEfficiency") srtmp = new KBTagEfficiencySelector(sname,omap);
 		else if(sname=="GenPt") srtmp = new KGenPtSelector(sname,omap);
 		else if(sname=="PDFNorm") srtmp = new KPDFNormSelector(sname,omap);

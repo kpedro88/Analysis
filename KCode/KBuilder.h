@@ -282,7 +282,7 @@ class KBuilderMC : public KBuilder {
 				fChain->SetBranchStatus("genParticles",1);
 				fChain->SetBranchStatus("genParticles_PDGid",1);
 			}
-			if(NTenum==ttbarLowHT || NTenum==ttbarLowHThad || NTenum==ttbarHighHT) fChain->SetBranchStatus("genHT",1);
+			if(NTenum==ttbarLowHT || NTenum==ttbarLowHThad || NTenum==ttbarHighHT) fChain->SetBranchStatus("madHT",1);
 			if(NTenum==ttbarLowHThad){
 				fChain->SetBranchStatus("GenEls",1);
 				fChain->SetBranchStatus("GenMus",1);
@@ -300,9 +300,9 @@ class KBuilderMC : public KBuilder {
 			bool goodEvent = true;
 			
 			//check normalization type here
-			if(NTenum==ttbarLowHT) { goodEvent &= genHT < 600; }
-			else if(NTenum==ttbarLowHThad) { goodEvent &= genHT < 600 && GenEls->size()==0 && GenMus->size()==0 && GenTaus->size()==0; }
-			else if(NTenum==ttbarHighHT) { goodEvent &= genHT >= 600; }
+			if(NTenum==ttbarLowHT) { goodEvent &= madHT < 600; }
+			else if(NTenum==ttbarLowHThad) { goodEvent &= madHT < 600 && GenEls->size()==0 && GenMus->size()==0 && GenTaus->size()==0; }
+			else if(NTenum==ttbarHighHT) { goodEvent &= madHT >= 600; }
 		
 			//KBuilder::Cut() comes *last* because it includes histo filling selector
 			return goodEvent ? KBuilder::Cut() : goodEvent;

@@ -185,7 +185,9 @@ class KFakeHLTSelector : public KSelector<KBuilder> {
 					if(!passTrigger) weights.push_back(0.);
 					else {
 						csv1 = min(max(csv1,0.),1.);
-						weights.push_back(QuaJet_CSV3(-log(1-csv1+1.e-7)));
+						double wtmp = QuaJet_CSV3(-log(1-csv1+1.e-7));
+						if(TMath::IsNaN(wtmp)) wtmp = 0.0;
+						weights.push_back(wtmp);
 					}
 				}
 			}
@@ -557,7 +559,6 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 		virtual void CheckBranches(){
 			looper->fChain->SetBranchStatus("NVtx",1);
 			looper->fChain->SetBranchStatus("eeBadScFilter",1);
-			looper->fChain->SetBranchStatus("eeBadSc4Filter",1);
 			looper->fChain->SetBranchStatus("HBHENoiseFilter",1);
 			looper->fChain->SetBranchStatus("HBHEIsoNoiseFilter",1);
 			looper->fChain->SetBranchStatus("CSCTightHaloFilter",1);
@@ -584,7 +585,7 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 			for(unsigned f = 0; f < filters.size(); ++f){
 				otherFilters &= filters[f]->CheckEvent(looper->RunNum,looper->LumiBlockNum,looper->EvtNum);
 			}
-			return looper->NVtx > 0 && looper->eeBadScFilter==1 && looper->eeBadSc4Filter && looper->HBHENoiseFilter && looper->HBHEIsoNoiseFilter && CSCTightHaloFilter && otherFilters;
+			return looper->NVtx > 0 && looper->eeBadScFilter==1 && looper->HBHENoiseFilter==1 && looper->HBHEIsoNoiseFilter==1 && CSCTightHaloFilter==1 && otherFilters;
 		}
 		
 		//member variables
@@ -656,7 +657,7 @@ class KHemisphereSelector : public KSelector<KBuilder> {
 				//HT jet cuts
 				if(!looper->HTJetsMask->at(j)) continue;
 				
-				double dphi = KMath::DeltaPhi(looper->MHT_Phi,looper->Jets->at(j).Phi());
+				double dphi = KMath::DeltaPhi(looper->MHTPhi,looper->Jets->at(j).Phi());
 				if(fabs(dphi)<=TMath::Pi()/2){
 					++NJets;
 					if(looper->Jets_bDiscriminatorCSV->at(j) > 0.890) ++BTags;
@@ -846,10 +847,10 @@ class KHistoSelector : public KSelector<KBuilder> {
 						values[i].Fill(looper->MHT,w);
 					}
 					else if(vname=="met"){//missing energy
-						values[i].Fill(looper->METPt,w);
+						values[i].Fill(looper->MET,w);
 					}
 					else if(vname=="nleptons"){//# leptons (mu or ele)
-						values[i].Fill(looper->Leptons,w);
+						values[i].Fill(looper->Muons->size()+looper->Electrons->size(),w);
 					}
 					else if(vname=="nelectrons"){//# electrons
 						values[i].Fill(looper->Electrons->size(),w);
@@ -866,8 +867,8 @@ class KHistoSelector : public KSelector<KBuilder> {
 					else if(vname=="numint"){//# interactions
 						values[i].Fill(looper->NumInteractions,w);
 					}
-					else if(vname=="genht"){//gen HT
-						values[i].Fill(looper->genHT,w);
+					else if(vname=="madht"){//madgraph HT
+						values[i].Fill(looper->madHT,w);
 					}
 					else if(vname=="leadjetpt"){//pT of leading jet
 						if(looper->Jets->size()>0){
@@ -879,9 +880,9 @@ class KHistoSelector : public KSelector<KBuilder> {
 							values[i].Fill(looper->MHT/looper->Jets->at(0).Pt(),w);
 						}
 					}
-					else if(vname=="mht-leadjetpt-ratio"){//ratio of MET & pT of leading jet
+					else if(vname=="met-leadjetpt-ratio"){//ratio of MET & pT of leading jet
 						if(looper->Jets->size()>0){
-							values[i].Fill(looper->METPt/looper->Jets->at(0).Pt(),w);
+							values[i].Fill(looper->MET/looper->Jets->at(0).Pt(),w);
 						}
 					}
 					else if(vname=="leadbhadronjetpt"){//pT of leading jet w/ hadronFlavor==5, |eta|<2.4
@@ -935,7 +936,7 @@ class KHistoSelector : public KSelector<KBuilder> {
 								vgen += looper->GenParticles->at(g);
 							}
 						}
-						values[i].Fill(KMath::DeltaPhi(vgen.Phi(),looper->MHT_Phi),w);
+						values[i].Fill(KMath::DeltaPhi(vgen.Phi(),looper->MHTPhi),w);
 					}
 					else if(vname=="sigmaietaieta"){//sigma ieta ieta variable for all photon candidates
 						if(PhotonID){
