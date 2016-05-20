@@ -7,9 +7,9 @@ STDIR=/eos/uscms/store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/${RUN2PRODV}
 ./SKcheck.sh -k
 
 SAMPLES=(
-TTJets_SingleLeptFromT \
-TTJets_SingleLeptFromTbar \
-TTJets_DiLept \
+#TTJets_SingleLeptFromT \
+#TTJets_SingleLeptFromTbar \
+#TTJets_DiLept \
 DYJetsToLL_M-50_HT-100to200 \
 DYJetsToLL_M-50_HT-200to400 \
 DYJetsToLL_M-50_HT-400to600 \

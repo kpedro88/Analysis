@@ -28,4 +28,6 @@ T1bbbb_mGluino-800-825_mLSP-1to775-600_block0 \
 T1bbbb_mGluino-800-825_mLSP-1to775-600_block1 \
 T1bbbb_mGluino-1400-1450_mLSP-1to1350-1to200_block0 \
 T1bbbb_mGluino-1400-1450_mLSP-1to1350-1to200_block1 \
+T1bbbb_mGluino-1200_mLSP-1to1175_block0 \
+T1bbbb_mGluino-1200_mLSP-1to1175_block1 \
 )
