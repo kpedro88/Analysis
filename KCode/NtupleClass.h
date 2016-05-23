@@ -43,7 +43,7 @@ public :
    Double_t        CaloMET;
    Double_t        CaloMETPhi;
    Double_t        CrossSection;
-   Int_t           CSCTightHaloFilter;
+   Bool_t          CSCTightHaloFilter;
    Double_t        DeltaPhi1;
    Double_t        DeltaPhi1clean;
    Double_t        DeltaPhi1JECdown;
@@ -69,6 +69,7 @@ public :
    Double_t        DeltaPhi4JERdown;
    Double_t        DeltaPhi4JERup;
    Int_t           EcalDeadCellTriggerPrimitiveFilter;
+   Bool_t          eeBadSc4Filter;
    Int_t           eeBadScFilter;
    vector<int>     *ElectronCharge;
    vector<TLorentzVector> *Electrons;
@@ -105,8 +106,8 @@ public :
    vector<TLorentzVector> *GenTauLeadTrk;
    vector<TLorentzVector> *GenTauNu;
    vector<TLorentzVector> *GenTaus;
-   Int_t           HBHEIsoNoiseFilter;
-   Int_t           HBHENoiseFilter;
+   Bool_t          HBHEIsoNoiseFilter;
+   Bool_t          HBHENoiseFilter;
    Double_t        HT;
    Double_t        HTclean;
    Double_t        HTJECdown;
@@ -350,6 +351,7 @@ public :
    TBranch        *b_DeltaPhi4JERup;   //!
    TBranch        *b_EcalDeadCellTriggerPrimitiveFilter;   //!
    TBranch        *b_eeBadScFilter;   //!
+   TBranch        *b_eeBadSc4Filter;   //!
    TBranch        *b_ElectronCharge;   //!
    TBranch        *b_Electrons;   //!
    TBranch        *b_GenElec_GenElecFromTau;   //!
@@ -874,6 +876,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("DeltaPhi4JERup", &DeltaPhi4JERup, &b_DeltaPhi4JERup);
    fChain->SetBranchAddress("EcalDeadCellTriggerPrimitiveFilter", &EcalDeadCellTriggerPrimitiveFilter, &b_EcalDeadCellTriggerPrimitiveFilter);
    fChain->SetBranchAddress("eeBadScFilter", &eeBadScFilter, &b_eeBadScFilter);
+   fChain->SetBranchAddress("eeBadSc4Filter", &eeBadSc4Filter, &b_eeBadSc4Filter);
    fChain->SetBranchAddress("ElectronCharge", &ElectronCharge, &b_ElectronCharge);
    fChain->SetBranchAddress("Electrons", &Electrons, &b_Electrons);
    fChain->SetBranchAddress("GenElec_GenElecFromTau", &GenElec_GenElecFromTau, &b_GenElec_GenElecFromTau);
