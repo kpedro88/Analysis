@@ -1,0 +1,43 @@
+#!/bin/bash
+
+export SAMPLES=(
+HTMHT_re2015C \
+JetHT_re2015C \
+MET_re2015C \
+SingleElectron_re2015C \
+SingleMuon_re2015C \
+SinglePhoton_re2015C \
+HTMHT_re2015D \
+JetHT_re2015D_block0 \
+JetHT_re2015D_block1 \
+JetHT_re2015D_block2 \
+MET_re2015D \
+SingleElectron_re2015D_block0 \
+SingleElectron_re2015D_block1 \
+SingleElectron_re2015D_block2 \
+SingleElectron_re2015D_block3 \
+SingleMuon_re2015D_block0 \
+SingleMuon_re2015D_block1 \
+SingleMuon_re2015D_block2 \
+SinglePhoton_re2015D_block0 \
+SinglePhoton_re2015D_block1 \
+HTMHT_2015Db \
+JetHT_2015Db_block0 \
+JetHT_2015Db_block1 \
+MET_2015Db \
+SingleElectron_2015Db_block0 \
+SingleElectron_2015Db_block1 \
+SingleElectron_2015Db_block2 \
+SingleElectron_2015Db_block3 \
+SingleMuon_2015Db_block0 \
+SingleMuon_2015Db_block1 \
+SingleMuon_2015Db_block2 \
+SinglePhoton_2015Db_block0 \
+SinglePhoton_2015Db_block1 \
+HTMHT_2016B \
+JetHT_2016B \
+MET_2016B \
+SingleElectron_2016B \
+SingleMuon_2016B \
+SinglePhoton_2016B \
+)
