@@ -195,6 +195,10 @@ JECup
 	Jet	s:vartype[JECup]
 JECdown
 	Jet	s:vartype[JECdown]
+JERup
+	Jet	s:vartype[JERup]
+JERdown
+	Jet	s:vartype[JERdown]
 
 INPUT
 input/input_sets_skim.txt
