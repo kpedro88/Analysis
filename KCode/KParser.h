@@ -15,6 +15,7 @@
 #include <iostream>
 #include <iomanip>
 #include <utility>
+#include <cmath>
 
 //forward declaration
 template <class T>
@@ -118,7 +119,37 @@ namespace KParser {
 	//special case: special processing for colors
 	template <> Color_t getOptionValue<Color_t>(string val){
 		return processColor(val);
-	}	
+	}
+	//special case: chains
+	vector<string> getOptionValueChain(vector<string> fields){
+		if(fields.size()!=4) {
+			cout << "Input error: chain type needs 4 fields (filepre, filemin, filemax, filesuff), given " << fields.size() << ". This chain will not be initialized." << endl;
+			return vector<string>();
+		}
+		
+		//chain has: filepre, filemin, filemax, filesuff
+		string filepre = getOptionValue<string>(fields[0]);
+		int filemin = getOptionValue<int>(fields[1]);
+		int filemax = getOptionValue<int>(fields[2]);
+		string filesuff = getOptionValue<string>(fields[3]);
+		
+		if(filemin>filemax){
+			cout << "Input error: chain specified incorrectly with filemin > filemax. This chain will not be initialized." << endl;
+			return vector<string>();
+		}
+		
+		//loop over ranges (inclusive)
+		//todo: add option to exclude certain files?
+		vector<string> filenames;
+		filenames.reserve(filemax-filemin+1);
+		for(int f = filemin; f <= filemax; f++){
+			stringstream fs;
+			fs << filepre << f << filesuff;
+			filenames.push_back(fs.str());
+		}
+		
+		return filenames;
+	}
 	//handles vector and non-vector options
 	template <class O> void addOption(OptionMap* option, string name, string val, bool isvector){
 		if(isvector){
@@ -134,7 +165,30 @@ namespace KParser {
 		else {
 			option->Set(name, getOptionValue<O>(val));
 		}
-	}	
+	}
+	//special handling for chains
+	void addOptionChain(OptionMap* option, string name, string val, bool isvector){
+		//comma-separated values
+		vector<string> fields;
+		process(val,',',fields);
+		
+		if(isvector){
+			vector<vector<string> > vtmp;
+			for(unsigned i = 0; i < fields.size()-3; i+=4){
+				vtmp.push_back(getOptionValueChain(vector<string>(fields.begin()+i,fields.begin()+min(i+4,unsigned(fields.size())))));
+			}
+			option->Set(name,vtmp);
+		}
+		else {
+			//chains can be lumped together
+			vector<string> vlump;
+			for(unsigned i = 0; i < fields.size()-3; i+=4){
+				vector<string> vtmp = getOptionValueChain(vector<string>(fields.begin()+i,fields.begin()+min(i+4,unsigned(fields.size()))));
+				vlump.insert(vlump.end(),vtmp.begin(),vtmp.end());
+			}
+			option->Set(name, vlump);
+		}
+	}
 	//helper functions
 	void processOption(string line, OptionMap* option){
 		//type:name[value]
@@ -148,8 +202,8 @@ namespace KParser {
 		}
 		
 		//currently anticipated option types: full/abbrev.
-		//bool/b, int/i, uint/u, float/f, double/d, string/s, color/c,
-		//vbool/vb, vint/vi, vuint/vu, vfloat/vf, vdouble/vd, vstring/vs, vcolor/vc (vectors)
+		//bool/b, int/i, uint/u, float/f, double/d, string/s, color/c, chain/ch
+		//vbool/vb, vint/vi, vuint/vu, vfloat/vf, vdouble/vd, vstring/vs, vcolor/vc, vchain/vch(vectors)
 		//others could easily be added...
 		if(fields.size()>=3){
 			string type = fields[0]; string name = fields[1]; string val = fields[2];
@@ -170,6 +224,7 @@ namespace KParser {
 			else if(type=="double" || type=="d") addOption<double>(option,name,val,isvector);
 			else if(type=="string" || type=="s") addOption<string>(option,name,val,isvector);
 			else if(type=="color" || type=="c") addOption<Color_t>(option,name,val,isvector);
+			else if(type=="chain" || type=="ch") addOptionChain(option,name,val,isvector);
 			else {
 				cout << "Unknown option type: " << line << endl;
 			}

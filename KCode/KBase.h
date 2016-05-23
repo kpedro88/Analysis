@@ -53,32 +53,9 @@ class KBase {
 			bool use_treedir = globalOpt->Get("treedir",treedir);
 			if(localOpt->Get("chain",false)){
 				vector<string> filenames;
-				if(!localOpt->Get("filenames",filenames)){
-					//if explicit list of filenames is not provided, construct it from filepre, filerange, filesuff
-					string filepre = "", filesuff = ".root";
-					localOpt->Get("filepre",filepre);
-					localOpt->Get("filesuff",filesuff);
-					vector<int> filerange;
-					localOpt->Get("filerange",filerange);
-					
-					//check for improper ranges
-					if(filerange.size()!=2) {
-						cout << "Input error: filerange specified incorrectly with size = " << filerange.size() << ". Object " << name << " will not be initialized." << endl;
-						return;
-					}
-					else if(filerange[0]>filerange[1]){
-						cout << "Input error: filerange specified incorrectly with min > max. Object " << name << " will not be initialized." << endl;
-						return;
-					}
-					
-					//loop over ranges (inclusive)
-					//todo: add option to exclude certain files?
-					filenames.reserve(filerange[1]-filerange[0]+1);
-					for(int f = filerange[0]; f <= filerange[1]; f++){
-						stringstream fs;
-						fs << filepre << f << filesuff;
-						filenames.push_back(fs.str());
-					}
+				if(!localOpt->Get("filenames",filenames) || filenames.size()==0){
+					cout << "Input error: filenames not specified for chain. Object " << name << " will not be initialized." << endl;
+					return;
 				}
 				
 				//add filenames to chain
