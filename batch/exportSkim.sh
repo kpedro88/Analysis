@@ -59,8 +59,7 @@ DYJetsToLL_M-50_HT-100to200 \
 DYJetsToLL_M-50_HT-200to400 \
 DYJetsToLL_M-50_HT-400to600 \
 DYJetsToLL_M-50_HT-600toInf \
-ZJetsToNuNu_HT-100to200_block0 \
-ZJetsToNuNu_HT-100to200_block1 \
+ZJetsToNuNu_HT-100to200 \
 ZJetsToNuNu_HT-200to400_block0 \
 ZJetsToNuNu_HT-200to400_block1 \
 ZJetsToNuNu_HT-200to400_block2 \

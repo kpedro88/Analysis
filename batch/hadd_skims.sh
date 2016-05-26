@@ -5,7 +5,7 @@ source exportProd.sh
 ./SKcheck.sh -k
 
 SKIMDIR=/store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/${RUN2PRODV}/
-CHECKARGS="-s"
+CHECKARGS="-k -s"
 
 #check arguments
 while getopts "n:r" opt; do
