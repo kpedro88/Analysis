@@ -546,7 +546,7 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 	public:
 		//constructor
 		KMETFilterSelector() : KSelector<KBuilder>() { }
-		KMETFilterSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), fastsim(false), cscfile("") { 
+		KMETFilterSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), fastsim(false), cscfile(""), is74X(false) { 
 			localOpt->Get("cscfile",cscfile);
 			if(cscfile.size()>0){
 				cscfilter = EventListFilter(cscfile);
@@ -557,8 +557,10 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 			}
 		}
 		virtual void CheckBranches(){
+			is74X = !(looper->CheckBranchType("HBHEIsoNoiseFilter","/I"));
 			looper->fChain->SetBranchStatus("NVtx",1);
 			looper->fChain->SetBranchStatus("eeBadScFilter",1);
+			looper->fChain->SetBranchStatus("eeBadSc4Filter",1);
 			looper->fChain->SetBranchStatus("HBHENoiseFilter",1);
 			looper->fChain->SetBranchStatus("HBHEIsoNoiseFilter",1);
 			looper->fChain->SetBranchStatus("CSCTightHaloFilter",1);
@@ -579,18 +581,22 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			bool CSCTightHaloFilter = looper->CSCTightHaloFilter;
+			bool CSCTightHaloFilter = is74X ? looper->CSCTightHaloFilter74X : looper->CSCTightHaloFilter==1;
+			bool HBHENoiseFilter = is74X ? looper->HBHENoiseFilter74X : looper->HBHENoiseFilter==1;
+			bool HBHEIsoNoiseFilter = is74X ? looper->HBHEIsoNoiseFilter74X : looper->HBHEIsoNoiseFilter==1;
+			bool eeBadSc4Filter = is74X ? looper->eeBadSc4Filter : true;
 			if(cscfilter.Initialized()) CSCTightHaloFilter = cscfilter.CheckEvent(looper->RunNum,looper->LumiBlockNum,looper->EvtNum);
 			bool otherFilters = true;
 			for(unsigned f = 0; f < filters.size(); ++f){
 				otherFilters &= filters[f]->CheckEvent(looper->RunNum,looper->LumiBlockNum,looper->EvtNum);
 			}
-			return looper->NVtx > 0 && looper->eeBadScFilter==1 && looper->HBHENoiseFilter==1 && looper->HBHEIsoNoiseFilter==1 && CSCTightHaloFilter==1 && otherFilters;
+			return looper->NVtx > 0 && looper->eeBadScFilter==1 && eeBadSc4Filter && HBHENoiseFilter && HBHEIsoNoiseFilter && CSCTightHaloFilter && otherFilters;
 		}
 		
 		//member variables
 		bool fastsim;
 		string cscfile;
+		bool is74X;
 		EventListFilter cscfilter;
 		vector<string> filterfiles;
 		vector<EventListFilter*> filters;

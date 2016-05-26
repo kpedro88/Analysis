@@ -43,7 +43,8 @@ public :
    Double_t        CaloMET;
    Double_t        CaloMETPhi;
    Double_t        CrossSection;
-   Bool_t          CSCTightHaloFilter;
+   Int_t           CSCTightHaloFilter;
+   Bool_t          CSCTightHaloFilter74X;
    Double_t        DeltaPhi1;
    Double_t        DeltaPhi1clean;
    Double_t        DeltaPhi1JECdown;
@@ -106,8 +107,10 @@ public :
    vector<TLorentzVector> *GenTauLeadTrk;
    vector<TLorentzVector> *GenTauNu;
    vector<TLorentzVector> *GenTaus;
-   Bool_t          HBHEIsoNoiseFilter;
-   Bool_t          HBHENoiseFilter;
+   Int_t           HBHEIsoNoiseFilter;
+   Bool_t          HBHEIsoNoiseFilter74X;
+   Int_t           HBHENoiseFilter;
+   Bool_t          HBHENoiseFilter74X;
    Double_t        HT;
    Double_t        HTclean;
    Double_t        HTJECdown;
@@ -595,6 +598,7 @@ public :
    virtual void     Loop();
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
+   virtual Bool_t   CheckBranchType(std::string title, std::string label);
 };
 
 #endif
@@ -639,6 +643,12 @@ Long64_t NtupleClass::LoadTree(Long64_t entry)
       Notify();
    }
    return centry;
+}
+
+Bool_t NtupleClass::CheckBranchType(std::string title, std::string label){
+	if (!fChain) return false;
+	
+	return (std::string(fChain->GetBranch(title.c_str())->GetTitle()).find(label.c_str())!=std::string::npos);
 }
 
 void NtupleClass::Init(TTree *tree)
@@ -831,6 +841,8 @@ void NtupleClass::Init(TTree *tree)
    fCurrent = -1;
    fChain->SetMakeClass(1);
 
+   //below: hacky solution to handle MET filter bool vs. int
+   
    fChain->SetBranchAddress("RunNum", &RunNum, &b_RunNum);
    fChain->SetBranchAddress("LumiBlockNum", &LumiBlockNum, &b_LumiBlockNum);
    fChain->SetBranchAddress("EvtNum", &EvtNum, &b_EvtNum);
@@ -849,7 +861,8 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("CaloMET", &CaloMET, &b_CaloMET);
    fChain->SetBranchAddress("CaloMETPhi", &CaloMETPhi, &b_CaloMETPhi);
    fChain->SetBranchAddress("CrossSection", &CrossSection, &b_CrossSection);
-   fChain->SetBranchAddress("CSCTightHaloFilter", &CSCTightHaloFilter, &b_CSCTightHaloFilter);
+   if(CheckBranchType("CSCTightHaloFilter","/I")) fChain->SetBranchAddress("CSCTightHaloFilter", &CSCTightHaloFilter, &b_CSCTightHaloFilter);
+   else fChain->SetBranchAddress("CSCTightHaloFilter", &CSCTightHaloFilter74X, &b_CSCTightHaloFilter);
    fChain->SetBranchAddress("DeltaPhi1", &DeltaPhi1, &b_DeltaPhi1);
    fChain->SetBranchAddress("DeltaPhi1clean", &DeltaPhi1clean, &b_DeltaPhi1clean);
    fChain->SetBranchAddress("DeltaPhi1JECdown", &DeltaPhi1JECdown, &b_DeltaPhi1JECdown);
@@ -912,8 +925,10 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("GenTauLeadTrk", &GenTauLeadTrk, &b_GenTauLeadTrk);
    fChain->SetBranchAddress("GenTauNu", &GenTauNu, &b_GenTauNu);
    fChain->SetBranchAddress("GenTaus", &GenTaus, &b_GenTaus);
-   fChain->SetBranchAddress("HBHEIsoNoiseFilter", &HBHEIsoNoiseFilter, &b_HBHEIsoNoiseFilter);
-   fChain->SetBranchAddress("HBHENoiseFilter", &HBHENoiseFilter, &b_HBHENoiseFilter);
+   if(CheckBranchType("HBHEIsoNoiseFilter","/I")) fChain->SetBranchAddress("HBHEIsoNoiseFilter", &HBHEIsoNoiseFilter, &b_HBHEIsoNoiseFilter);
+   else fChain->SetBranchAddress("HBHEIsoNoiseFilter", &HBHEIsoNoiseFilter74X, &b_HBHEIsoNoiseFilter);
+   if(CheckBranchType("HBHENoiseFilter","/I")) fChain->SetBranchAddress("HBHENoiseFilter", &HBHENoiseFilter, &b_HBHENoiseFilter);
+   else fChain->SetBranchAddress("HBHENoiseFilter", &HBHENoiseFilter74X, &b_HBHENoiseFilter);
    fChain->SetBranchAddress("HT", &HT, &b_HT);
    fChain->SetBranchAddress("HTclean", &HTclean, &b_HTclean);
    fChain->SetBranchAddress("HTJECdown", &HTJECdown, &b_HTJECdown);
