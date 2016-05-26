@@ -33,8 +33,8 @@ IFS=$'\n' ALLSAMPLES=($(xrdfs root://cmseos.fnal.gov ls ${DIR} | grep "_block\|_
 #remove duplicates
 SAMPLELIST=""
 SAMPLES=()
-#possible things to drop: block, part, ext, fast
-DISCARDS=("block" "part" "ext" "fast")
+#possible things to drop: block, part, fast
+DISCARDS=("block" "part" "fast")
 for SAMPLE in ${ALLSAMPLES[@]}; do
   #figure out how much to drop from the sample name
   NDISCARD=0

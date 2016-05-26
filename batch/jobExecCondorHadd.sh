@@ -37,7 +37,7 @@ for BASE in ${SAMPLES[@]}; do
   echo $BASE
   
   #check to see if anything needs to be hadded
-  IFS=$'\n' LGFILES=($(xrdfs root://cmseos.fnal.gov ls ${DIR} | grep "${BASE}_block\|${BASE}_ext")); unset IFS
+  IFS=$'\n' LGFILES=($(xrdfs root://cmseos.fnal.gov ls ${DIR} | grep "${BASE}_block")); unset IFS
   LSTEST=$?
   if [[ $LSTEST -ne 0 ]]; then
     echo "nothing to hadd for $BASE"
@@ -48,13 +48,6 @@ for BASE in ${SAMPLES[@]}; do
   for FILE in ${LGFILES[@]}; do
     ALLFILES="${ALLFILES} ${XRDIR}/`basename ${FILE}`"
   done
-  
-  #check to see if base file should be included
-  LSBASEFILE=$(xrdfs root://cmseos.fnal.gov ls ${DIR} | grep "${BASE}.root")
-  LSTEST=$?
-  if [[ $LSTEST -eq 0 ]]; then
-    ALLFILES="${XRDIR}/${BASE}.root ${ALLFILES}"
-  fi
   
   #hadd to tmp file
   TMPFILE=${BASE}.root
