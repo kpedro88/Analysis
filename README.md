@@ -21,7 +21,7 @@ To remake the input list of sets automatically, for data and MC:
 ```
 python makeSkimInput.py -r input/dict_skim.py -w input/input_sets_skim.txt -e batch/exportSkim.sh -n 50
 python makeSkimInput.py -r input/dict_skim_signal.py -w input/input_sets_skim_signal.txt -e batch/exportSkimSignal.sh -n 50
-python makeSkimInput.py -r input/dict_skim_data.py -w input/input_sets_skim_data.txt -e batch/exportSkimData.sh --data -n 50
+python makeSkimInput.py -r input/dict_skim_data.py -w input/input_sets_skim_data.txt -e batch/exportSkimData.sh --data -n 50 -f /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV7
 ```
 Note: this script uses the python file lists in [TreeMaker/Production/python](https://github.com/TreeMaker/TreeMaker/tree/Run2/Production/python) to determine the number of files to chain together for each sample. Make sure to follow the [TreeMaker](https://github.com/TreeMaker/TreeMaker) installation instructions so this information is accessible.
 

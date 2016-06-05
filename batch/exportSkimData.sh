@@ -81,7 +81,6 @@ HTMHT_2015Db_block0 \
 HTMHT_2015Db_block1 \
 HTMHT_2015Db_block2 \
 HTMHT_2015Db_block3 \
-HTMHT_2015Db_block4 \
 JetHT_2015Db_block0 \
 JetHT_2015Db_block1 \
 JetHT_2015Db_block2 \
@@ -91,12 +90,9 @@ JetHT_2015Db_block5 \
 JetHT_2015Db_block6 \
 JetHT_2015Db_block7 \
 JetHT_2015Db_block8 \
-JetHT_2015Db_block9 \
-JetHT_2015Db_block10 \
 MET_2015Db_block0 \
 MET_2015Db_block1 \
 MET_2015Db_block2 \
-MET_2015Db_block3 \
 SingleElectron_2015Db_block0 \
 SingleElectron_2015Db_block1 \
 SingleElectron_2015Db_block2 \
@@ -115,8 +111,6 @@ SingleElectron_2015Db_block14 \
 SingleElectron_2015Db_block15 \
 SingleElectron_2015Db_block16 \
 SingleElectron_2015Db_block17 \
-SingleElectron_2015Db_block18 \
-SingleElectron_2015Db_block19 \
 SingleMuon_2015Db_block0 \
 SingleMuon_2015Db_block1 \
 SingleMuon_2015Db_block2 \
@@ -130,14 +124,12 @@ SingleMuon_2015Db_block9 \
 SingleMuon_2015Db_block10 \
 SingleMuon_2015Db_block11 \
 SingleMuon_2015Db_block12 \
-SingleMuon_2015Db_block13 \
 SinglePhoton_2015Db_block0 \
 SinglePhoton_2015Db_block1 \
 SinglePhoton_2015Db_block2 \
 SinglePhoton_2015Db_block3 \
 SinglePhoton_2015Db_block4 \
 SinglePhoton_2015Db_block5 \
-SinglePhoton_2015Db_block6 \
 HTMHT_2016B_block0 \
 HTMHT_2016B_block1 \
 JetHT_2016B_block0 \
@@ -145,6 +137,9 @@ JetHT_2016B_block1 \
 JetHT_2016B_block2 \
 JetHT_2016B_block3 \
 JetHT_2016B_block4 \
+JetHT_2016B_block5 \
+JetHT_2016B_block6 \
+JetHT_2016B_block7 \
 MET_2016B_block0 \
 MET_2016B_block1 \
 SingleElectron_2016B_block0 \
@@ -152,9 +147,18 @@ SingleElectron_2016B_block1 \
 SingleElectron_2016B_block2 \
 SingleElectron_2016B_block3 \
 SingleElectron_2016B_block4 \
+SingleElectron_2016B_block5 \
+SingleElectron_2016B_block6 \
+SingleElectron_2016B_block7 \
+SingleElectron_2016B_block8 \
+SingleElectron_2016B_block9 \
 SingleMuon_2016B_block0 \
 SingleMuon_2016B_block1 \
 SingleMuon_2016B_block2 \
+SingleMuon_2016B_block3 \
+SingleMuon_2016B_block4 \
+SingleMuon_2016B_block5 \
 SinglePhoton_2016B_block0 \
 SinglePhoton_2016B_block1 \
+SinglePhoton_2016B_block2 \
 )

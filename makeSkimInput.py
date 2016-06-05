@@ -10,7 +10,7 @@ def makeSkimLine(short_name,full_names,file_mins,file_maxs,mothers,block=-1,data
     expline = the_name + " \\\n"
     return (line,expline)
 
-def makeSkimInput(read,write,export,nfiles=0,data=False):
+def makeSkimInput(read,write,export,nfiles=0,data=False,folder=""):
     readname = read.replace(".py","").split("/")[-1]
     rfile = imp.load_source(readname,read)
     wfile = open(write,'w')
@@ -31,17 +31,37 @@ def makeSkimInput(read,write,export,nfiles=0,data=False):
         file_lens = []
         file_mins = []
         file_maxs = []
+        #lists of file indices and part numbers
+        indices = []
+        pnumbers = []
         short_name = rline[1][0]
         mother = []
         if len(rline[1])>1: mother = rline[1][1:]
         
-        for full_name in full_names:
-            readFilesImport = getattr(__import__("TreeMaker.Production." + full_name + "_cff",fromlist=["readFiles"]),"readFiles")
-            fileListLen = len(readFilesImport)
-            file_lens.append(fileListLen)
-            file_mins.append(0)
-            file_maxs.append(fileListLen-1)
-            totfiles += fileListLen
+        for ind, full_name in enumerate(full_names):
+            # account for skipped runs in prompt reco
+            if data and "PromptReco" in full_name and len(folder)>0:
+                fileArrays = filter(None,os.popen("xrdfs root://cmseos.fnal.gov/ ls "+folder+" | grep \""+full_name+"\"").read().split('\n'))
+                # get part numbers of existing ntuples: name format is ...._X_RA2AnalysisTree.root
+                ptmp = [ int(f.split('_')[-2]) for f in fileArrays ]
+                ptmp.sort()
+                
+                #make list of file indices and part numbers
+                fileListLen = len(ptmp)
+                indices.extend([ind]*fileListLen)
+                pnumbers.extend(ptmp)
+                
+                file_lens.append(fileListLen)
+                file_mins.append(ptmp[0])
+                file_maxs.append(ptmp[-1])
+                totfiles += fileListLen
+            else:
+                readFilesImport = getattr(__import__("TreeMaker.Production." + full_name + "_cff",fromlist=["readFiles"]),"readFiles")
+                fileListLen = len(readFilesImport)
+                file_lens.append(fileListLen)
+                file_mins.append(0)
+                file_maxs.append(fileListLen-1)
+                totfiles += fileListLen
         
         # check for splitting into blocks
         fileListLen = sum(file_lens)
@@ -53,22 +73,21 @@ def makeSkimInput(read,write,export,nfiles=0,data=False):
             wfile.write(wline)
             efile.write(eline)
         else: # split chains into several blocks
-            #make list of file indices and part numbers
-            indices = []
-            pnumbers = []
+            # make list of file indices and part numbers
             for ind, full_name in enumerate(full_names):
+                if data and "PromptReco" in full_name and len(folder)>0: continue # already done for prompt data
                 indices.extend([ind]*file_lens[ind])
                 pnumbers.extend(range(0,file_lens[ind]))
         
             for block in range(0,nblocks):
                 fileMin = block*nfiles
                 fileMax = min((block+1)*nfiles-1,fileListLen-1)
-                #check lists
+                # check lists
                 indexMin = indices[fileMin]
                 indexMax = indices[fileMax]
                 pnumberMin = pnumbers[fileMin]
                 pnumberMax = pnumbers[fileMax]
-                #check for crossover between two samples
+                # check for crossover between two samples
                 if indexMin == indexMax: wline,eline = makeSkimLine(short_name,[full_names[indexMin]],[pnumberMin],[pnumberMax],mother,block,data)
                 else: wline,eline = makeSkimLine(short_name,[full_names[indexMin],full_names[indexMax]],[pnumberMin,0],[file_lens[indexMin]-1,pnumberMax],mother,block,data)
                 wfile.write(wline)
@@ -96,6 +115,7 @@ if __name__ == "__main__":
     parser.add_option("-e", "--export", dest="export", default="batch/exportSkim.sh", help="export file to write")
     parser.add_option("-n", "--nfiles", dest="nfiles", default=0, help="number of files per block for skim input")
     parser.add_option("-d", "--data", dest="data", default=False, action="store_true", help="denotes data file (instead of MC)")
+    parser.add_option("-f", "--folder", dest="folder", default="", help="EOS directory to check for data ntuples")
     (options, args) = parser.parse_args()
 
-    makeSkimInput(options.read,options.write,options.export,int(options.nfiles),options.data)
+    makeSkimInput(options.read,options.write,options.export,int(options.nfiles),options.data,options.folder)
