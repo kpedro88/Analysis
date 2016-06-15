@@ -1,5 +1,3 @@
 SET
 hist	data	data	c:color[kBlack]
-	base	data	HTMHT_re2015C	s:filename[tree_HTMHT_re2015C.root]
-	base	data	HTMHT_re2015D	s:filename[tree_HTMHT_re2015D.root]
-	base	data	HTMHT_2015Db	s:filename[tree_HTMHT_2015Db.root]
+	base	data	MET_2016B	s:filename[tree_MET_2016B.root]
