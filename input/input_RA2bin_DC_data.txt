@@ -39,7 +39,7 @@ bool:debugcut[1]
 
 SELECTION
 ra2bin
-	HLT	vs:HLTLines[HLT_PFMET100_PFMHT100_IDTight_v]
+	HLT	vs:HLTLines[HLT_PFMET100_PFMHT100_IDTight_v,HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_v]
 	METFilter
 	RA2Bin
 	Histo
