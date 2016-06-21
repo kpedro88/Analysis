@@ -1,7 +1,7 @@
 OPTION
 vstring:printformat[png]
 bool:treesuffix[1]
-double:luminorm[2262]
+double:luminorm[1]
 bool:printyield[1]
 int:yieldprecision[2]
 #bool:debugloop[1]
@@ -12,7 +12,6 @@ string:denom[mc]
 int:npanel[2]
 bool:balance_panels[0]
 string:selection[default]
-string:puname[corrections/PileupHistograms_1117.root]
 
 SELECTION
 default

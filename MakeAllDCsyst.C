@@ -15,7 +15,7 @@ using namespace std;
 
 //recompile:
 //root -b -l -q MakeAllDCsyst.C++
-void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Skims/Run2ProductionV4/", string systTypes="nominal,QCD,puunc,pdfunc,scaleunc,isrunc,trigStatUnc,trigSystUnc,JEC,btagSFunc,ctagSFunc,mistagSFunc", string contamTypes="LDP,GJet_CleanVars,GJetLDP_CleanVars,GJet_CleanVarsGJ,GJetLDP_CleanVarsGJ", int part=-1, string suffix=""){
+void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV7", string systTypes="nominal,puunc,scaleunc,isrunc,JEC,JER,btagSFunc,ctagSFunc,mistagSFunc", string contamTypes="LDP,GJet_CleanVars,GJetLDP_CleanVars", int part=-1, string suffix=""){
 	gErrorIgnoreLevel = kBreak;
 	
 	if(mode==-1){
@@ -39,8 +39,8 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 	KParser::process(systTypes,',',systs);
 	if(mode==1){
 		if(part==-1){
-			outdir = "datacards_fast/";
-			setlist = "input/input_sets_DC_fast.txt";
+			outdir = "datacards_fast"+suffix+"/";
+			setlist = "input/input_sets_DC_fast"+suffix+".txt";
 		}
 		else { //batch mode
 			stringstream ss;
@@ -53,6 +53,7 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 	}
 	else {
 		outdir = "datacards/";
+		if(suffix.size()>0) outdir = "datacards_"+suffix+"/";
 		setlist = "input/input_sets_DC_syst.txt";
 	}
 	
@@ -84,16 +85,18 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 		//up
 		cout << systs[i] << " up" << endl;
 		if(systs[i]=="JEC") region = "signal_JECup";
+		else if(systs[i]=="JER") region = "signal_JERup";
 		else ovar = "_"+systs[i]+"Up";
 		KPlotDriverDCsyst(indir+inpre+region,input,setlist,outdir+outpre+region+ovar+osuff,systs[i],1);
 		//down
 		cout << systs[i] << " down" << endl;
 		if(systs[i]=="JEC") region = "signal_JECdown";
+		if(systs[i]=="JER") region = "signal_JERdown";
 		else ovar = "_"+systs[i]+"Down";
 		KPlotDriverDCsyst(indir+inpre+region,input,setlist,outdir+outpre+region+ovar+osuff,systs[i],-1);
 		
 		//reset region if altered for jet syst
-		if(systs[i]=="JEC") region = "signal";
+		if(systs[i]=="JEC" || systs[i]=="JER") region = "signal";
 	}
 	
 	//now do the contaminations
