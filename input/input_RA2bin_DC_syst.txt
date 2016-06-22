@@ -33,8 +33,8 @@ vstring:disable_branches[*]
 bool:RA2Exclusive[0]
 bool:btagcorr[1]
 #bool:trigcorr[1]
-#bool:pucorr[1]
-#string:puname[corrections/PileupHistograms_1117.root]
+bool:pucorr[1]
+string:puname[corrections/PileupHistograms_0621.root]
 bool:isrcorr[1]
 string:isrname[corrections/ISRWeights.root]
 
@@ -46,4 +46,4 @@ ra2bin
 	Histo
 
 HISTO
-RA2bin	i:xnum[72]	d:xmin[0.5]	d:xmax[72.5]	s:xtitle[RA2 bin [^{}n_{j},^{}n_{b},^{}#slash{H}_{T},^{}H_{T}]]	s:ytitle[number of events]	b:ratio[0]	b:xbinlabel[1]
+RA2bin	i:xnum[160]	d:xmin[0.5]	d:xmax[160.5]	s:xtitle[RA2 bin [^{}n_{j},^{}n_{b},^{}#slash{H}_{T},^{}H_{T}]]	s:ytitle[number of events]	b:ratio[0]	b:xbinlabel[1]

@@ -15,7 +15,7 @@ using namespace std;
 
 //recompile:
 //root -b -l -q MakeAllDCsyst.C++
-void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV7", string systTypes="nominal,puunc,scaleunc,isrunc,JEC,JER,btagSFunc,ctagSFunc,mistagSFunc", string contamTypes="LDP,GJet_CleanVars,GJetLDP_CleanVars", int part=-1, string suffix=""){
+void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV7", string systTypes="nominal,QCD,puunc,scaleunc,isrunc,JEC,JER,btagSFunc,ctagSFunc,mistagSFunc", string contamTypes="LDP,GJet_CleanVars,GJetLDP_CleanVars", int part=-1, string suffix=""){
 	gErrorIgnoreLevel = kBreak;
 	
 	if(mode==-1){
@@ -74,9 +74,9 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 			KPlotDriverDCsyst(indir+inpre+region,input,setlist,outdir+outpre+region+osuff);
 			continue;
 		}
-		//220 bin version
+		//qcd sideband
 		else if(systs[i]=="QCD"){
-			cout << "220 bins" << endl;
+			cout << "QCD sideband" << endl;
 			KPlotDriverDCsyst(indir+inpre+region,"input/input_RA2bin_DC_QCD.txt",setlist,outdir+outpre+region+"_QCD"+osuff);
 			continue;
 		}
@@ -91,7 +91,7 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 		//down
 		cout << systs[i] << " down" << endl;
 		if(systs[i]=="JEC") region = "signal_JECdown";
-		if(systs[i]=="JER") region = "signal_JERdown";
+		else if(systs[i]=="JER") region = "signal_JERdown";
 		else ovar = "_"+systs[i]+"Down";
 		KPlotDriverDCsyst(indir+inpre+region,input,setlist,outdir+outpre+region+ovar+osuff,systs[i],-1);
 		
@@ -104,6 +104,13 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 		if(contams[i]=="none") break;
 		cout << contams[i] << endl;
 		KPlotDriverDCsyst(indir+inpre+contams[i],input,setlist,outdir+outpre+contams[i]+osuff);
+		
+		//qcd sideband for LDP
+		if(contams[i]=="LDP"){
+			cout << "LDP QCD sideband" << endl;
+			KPlotDriverDCsyst(indir+inpre+contams[i],"input/input_RA2bin_DC_QCD.txt",setlist,outdir+outpre+contams[i]+"_QCD"+osuff);
+			continue;
+		}
 	}
 
 }
