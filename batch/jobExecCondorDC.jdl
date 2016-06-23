@@ -12,4 +12,6 @@ Log = MakeAllDCsyst_SYSTS_CONTAMS_SUFFPART_$(Cluster).condor
 notification = Never
 x509userproxy = $ENV(X509_USER_PROXY)
 Arguments = CMSSWVER INDIR SYSTS CONTAMS PART STORE SUFF
+on_exit_remove = (ExitBySignal == False) && (ExitCode == 0)
+on_exit_hold = (NumJobStarts > 2) && ( (ExitBySignal == True) || (ExitCode != 0) )
 Queue 1
