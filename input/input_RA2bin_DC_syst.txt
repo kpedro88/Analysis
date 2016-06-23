@@ -10,7 +10,7 @@ INPUT
 input/input_global.txt
 
 OPTION
-int:yieldprecision[4]
+int:yieldprecision[8]
 double:sizeLeg[22]
 double:canvasW[1200]
 double:marginB[300]
@@ -32,7 +32,7 @@ string:selection[ra2bin]
 vstring:disable_branches[*]
 bool:RA2Exclusive[0]
 bool:btagcorr[1]
-#bool:trigcorr[1]
+bool:trigcorr[1]
 bool:pucorr[1]
 string:puname[corrections/PileupHistograms_0621.root]
 bool:isrcorr[1]
