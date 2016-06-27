@@ -296,7 +296,7 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 	public:
 		//constructor
 		KRA2BinSelector() : KSelector<KBuilder>() { }
-		KRA2BinSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), RA2Exclusive(true), DoBTagSF(false) { }
+		KRA2BinSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), RA2Exclusive(true), DoBTagSF(false), debug(false) { }
 		virtual void CheckDeps(){
 			//check if initial reading of input has already been done
 			if(sel->GetGlobalOpt()->Get("prepared_RA2bin",false)){
@@ -374,6 +374,7 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 			//check other options
 			RA2Exclusive = sel->GetGlobalOpt()->Get("RA2Exclusive",true);
 			DoBTagSF = sel->GetGlobalOpt()->Get("btagcorr",false);
+			debug = sel->GetGlobalOpt()->Get("RA2debug",false);
 		}
 		virtual void CheckBranches(){
 			for(unsigned q = 0; q < RA2VarNames.size(); ++q){
@@ -464,7 +465,7 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 		
 	public:
 		//member variables
-		bool RA2Exclusive, DoBTagSF;
+		bool RA2Exclusive, DoBTagSF, debug;
 		vector<unsigned> RA2bins;
 		vector<vector<unsigned> > RA2binVec;
 		map<vector<unsigned>, unsigned> IDtoBinNumber;
@@ -791,6 +792,13 @@ class KHistoSelector : public KSelector<KBuilder> {
 			Hemisphere = sel->Get<KHemisphereSelector*>("Hemisphere");
 			FakeHLT = sel->Get<KFakeHLTSelector*>("FakeHLT");
 		}
+		virtual void CheckBranches(){
+			if(RA2Bin && RA2Bin->debug){
+				looper->fChain->SetBranchStatus("RunNum",1);
+				looper->fChain->SetBranchStatus("LumiBlockNum",1);
+				looper->fChain->SetBranchStatus("EvtNum",1);
+			}
+		}
 		virtual void CheckLooper(){
 			looper->localOpt->Get("mother",mother);
 			deltaM = 0; looper->localOpt->Get("deltaM",deltaM);
@@ -809,7 +817,19 @@ class KHistoSelector : public KSelector<KBuilder> {
 					string vname = looper->vars[h][i];
 					//list of cases for histo calculation and filling
 					if(vname=="RA2bin" && RA2Bin){ //plot yield vs. bin of RA2 search -> depends on RA2Bin selector
-						if(RA2Bin->RA2Exclusive) values[i].Fill(RA2Bin->RA2bins[0],w);
+						if(RA2Bin->RA2Exclusive) {
+							if(RA2Bin->debug){
+								cout << "Run = " << looper->RunNum << ", LS = " << looper->LumiBlockNum << ", Evt = " << looper->EvtNum;
+								for(unsigned q = 0; q < RA2Bin->RA2VarNames.size(); ++q){
+									if(RA2Bin->RA2VarNames[q]=="NJets") cout << ", NJets = " << looper->NJets;
+									else if(RA2Bin->RA2VarNames[q]=="BTags") cout << ", BTags = " << looper->BTags;
+									else if(RA2Bin->RA2VarNames[q]=="MHT") cout << ", MHT = " << looper->MHT;
+									else if(RA2Bin->RA2VarNames[q]=="HT") cout << ", HT = " << looper->HT;
+								}
+								cout << endl;
+							}
+							values[i].Fill(RA2Bin->RA2bins[0],w);
+						}
 						else {
 							for(unsigned b = 0; b < RA2Bin->RA2bins.size(); b++){
 								double wb = w;
