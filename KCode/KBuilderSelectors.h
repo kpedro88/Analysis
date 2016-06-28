@@ -566,6 +566,9 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 			looper->fChain->SetBranchStatus("HBHEIsoNoiseFilter",1);
 			looper->fChain->SetBranchStatus("CSCTightHaloFilter",1);
 			looper->fChain->SetBranchStatus("EcalDeadCellTriggerPrimitiveFilter",1);
+			looper->fChain->SetBranchStatus("globalTightHalo2016Filter",1);
+			looper->fChain->SetBranchStatus("BadChargedCandidateFilter",1);
+			looper->fChain->SetBranchStatus("BadPFMuonFilter",1);
 			if(cscfilter.Initialized() || (filters.size()>0 && filters[0]->Initialized())){
 				looper->fChain->SetBranchStatus("RunNum",1);
 				looper->fChain->SetBranchStatus("LumiBlockNum",1);
@@ -583,17 +586,19 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			bool CSCTightHaloFilter = is74X ? looper->CSCTightHaloFilter74X : looper->CSCTightHaloFilter==1;
+			bool TightHaloFilter = is74X ? looper->CSCTightHaloFilter74X : looper->globalTightHalo2016Filter==1;
 			bool HBHENoiseFilter = is74X ? looper->HBHENoiseFilter74X : looper->HBHENoiseFilter==1;
 			bool HBHEIsoNoiseFilter = is74X ? looper->HBHEIsoNoiseFilter74X : looper->HBHEIsoNoiseFilter==1;
 			bool eeBadSc4Filter = is74X ? looper->eeBadSc4Filter : true;
 			bool EcalDeadCellTriggerPrimitiveFilter = is74X ? true : looper->EcalDeadCellTriggerPrimitiveFilter==1;
-			if(cscfilter.Initialized()) CSCTightHaloFilter = cscfilter.CheckEvent(looper->RunNum,looper->LumiBlockNum,looper->EvtNum);
+			bool BadChargedCandidateFilter = is74X ? true : looper->BadChargedCandidateFilter;
+			//BadPFMuonFilter not used
+			if(cscfilter.Initialized()) TightHaloFilter = cscfilter.CheckEvent(looper->RunNum,looper->LumiBlockNum,looper->EvtNum);
 			bool otherFilters = true;
 			for(unsigned f = 0; f < filters.size(); ++f){
 				otherFilters &= filters[f]->CheckEvent(looper->RunNum,looper->LumiBlockNum,looper->EvtNum);
 			}
-			return looper->NVtx > 0 && looper->eeBadScFilter==1 && eeBadSc4Filter && HBHENoiseFilter && HBHEIsoNoiseFilter && CSCTightHaloFilter && EcalDeadCellTriggerPrimitiveFilter && otherFilters;
+			return looper->NVtx > 0 && looper->eeBadScFilter==1 && eeBadSc4Filter && HBHENoiseFilter && HBHEIsoNoiseFilter && TightHaloFilter && EcalDeadCellTriggerPrimitiveFilter && BadChargedCandidateFilter && otherFilters;
 		}
 		
 		//member variables
