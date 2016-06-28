@@ -28,31 +28,7 @@ done
 ./SKcheck.sh ${CHECKARGS}
 
 #list samples
-IFS=$'\n' ALLSAMPLES=($(xrdfs root://cmseos.fnal.gov ls ${DIR} | grep "_block\|_ext")); unset IFS
-
-#remove duplicates
-SAMPLELIST=""
-SAMPLES=()
-#possible things to drop: block, part, fast
-DISCARDS=("block" "part" "fast")
-for SAMPLE in ${ALLSAMPLES[@]}; do
-  #figure out how much to drop from the sample name
-  NDISCARD=0
-  for DISCARD in ${DISCARDS[@]}; do
-    if (echo ${SAMPLE} | fgrep -q ${DISCARD}); then
-      NDISCARD=$((NDISCARD + 1))
-    fi
-  done
-
-  BASE=$(echo $(basename ${SAMPLE}) | rev | cut -d'_' -f1-${NDISCARD} --complement | rev)
-  #skip duplicates
-  if (echo "$SAMPLELIST" | fgrep -qw ${BASE}); then
-    continue
-  fi
-  #append
-  SAMPLES+=(${BASE})
-  SAMPLELIST="${BASE} ${SAMPLELIST}"
-done
+IFS=$'\n' SAMPLES=($(python findHadds.py -d ${DIR})); unset IFS
 
 #loop vars
 counter=0
