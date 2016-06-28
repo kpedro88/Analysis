@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Fri May 20 11:01:16 2016 by ROOT version 5.34/18
+// Sun Jun 26 18:23:59 2016 by ROOT version 5.34/18
 // from TTree PreSelection/PreSelection
-// found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV7/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
+// found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV8/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
 //////////////////////////////////////////////////////////
 
 #ifndef NtupleClass_h
@@ -28,6 +28,8 @@ public :
    UInt_t          RunNum;
    UInt_t          LumiBlockNum;
    ULong64_t       EvtNum;
+   Bool_t          BadChargedCandidateFilter;
+   Bool_t          BadPFMuonFilter;
    Int_t           BTags;
    Int_t           BTagsclean;
    Int_t           BTagsJECdown;
@@ -107,6 +109,7 @@ public :
    vector<TLorentzVector> *GenTauLeadTrk;
    vector<TLorentzVector> *GenTauNu;
    vector<TLorentzVector> *GenTaus;
+   Int_t           globalTightHalo2016Filter;
    Int_t           HBHEIsoNoiseFilter;
    Bool_t          HBHEIsoNoiseFilter74X;
    Int_t           HBHENoiseFilter;
@@ -239,6 +242,7 @@ public :
    Int_t           NVtx;
    vector<int>     *PDFids;
    vector<double>  *PDFweights;
+   Double_t        PFCaloMETRatio;
    vector<bool>    *photon_fullID;
    vector<double>  *photon_genMatched;
    vector<double>  *photon_hadTowOverEM;
@@ -312,6 +316,8 @@ public :
    TBranch        *b_RunNum;   //!
    TBranch        *b_LumiBlockNum;   //!
    TBranch        *b_EvtNum;   //!
+   TBranch        *b_BadChargedCandidateFilter;   //!
+   TBranch        *b_BadPFMuonFilter;   //!
    TBranch        *b_BTags;   //!
    TBranch        *b_BTagsclean;   //!
    TBranch        *b_BTagsJECdown;   //!
@@ -390,6 +396,7 @@ public :
    TBranch        *b_GenTauLeadTrk;   //!
    TBranch        *b_GenTauNu;   //!
    TBranch        *b_GenTaus;   //!
+   TBranch        *b_globalTightHalo2016Filter;   //!
    TBranch        *b_HBHEIsoNoiseFilter;   //!
    TBranch        *b_HBHENoiseFilter;   //!
    TBranch        *b_HT;   //!
@@ -520,6 +527,7 @@ public :
    TBranch        *b_NVtx;   //!
    TBranch        *b_PDFids;   //!
    TBranch        *b_PDFweights;   //!
+   TBranch        *b_PFCaloMETRatio;   //!
    TBranch        *b_photon_fullID;   //!
    TBranch        *b_photon_genMatched;   //!
    TBranch        *b_photon_hadTowOverEM;   //!
@@ -609,11 +617,11 @@ NtupleClass::NtupleClass(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV7/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV8/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV7/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
+         f = new TFile("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV8/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
       }
-      TDirectory * dir = (TDirectory*)f->Get("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV7/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root:/TreeMaker2");
+      TDirectory * dir = (TDirectory*)f->Get("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV8/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root:/TreeMaker2");
       dir->GetObject("PreSelection",tree);
 
    }
@@ -647,8 +655,10 @@ Long64_t NtupleClass::LoadTree(Long64_t entry)
 
 Bool_t NtupleClass::CheckBranchType(std::string title, std::string label){
 	if (!fChain) return false;
+	TBranch* br = fChain->GetBranch(title.c_str());
+	if(!br) return false;
 	
-	return (std::string(fChain->GetBranch(title.c_str())->GetTitle()).find(label.c_str())!=std::string::npos);
+	return (std::string(br->GetTitle()).find(label.c_str())!=std::string::npos);
 }
 
 void NtupleClass::Init(TTree *tree)
@@ -846,6 +856,8 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("RunNum", &RunNum, &b_RunNum);
    fChain->SetBranchAddress("LumiBlockNum", &LumiBlockNum, &b_LumiBlockNum);
    fChain->SetBranchAddress("EvtNum", &EvtNum, &b_EvtNum);
+   fChain->SetBranchAddress("BadChargedCandidateFilter", &BadChargedCandidateFilter, &b_BadChargedCandidateFilter);
+   fChain->SetBranchAddress("BadPFMuonFilter", &BadPFMuonFilter, &b_BadPFMuonFilter);
    fChain->SetBranchAddress("BTags", &BTags, &b_BTags);
    fChain->SetBranchAddress("BTagsclean", &BTagsclean, &b_BTagsclean);
    fChain->SetBranchAddress("BTagsJECdown", &BTagsJECdown, &b_BTagsJECdown);
@@ -925,6 +937,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("GenTauLeadTrk", &GenTauLeadTrk, &b_GenTauLeadTrk);
    fChain->SetBranchAddress("GenTauNu", &GenTauNu, &b_GenTauNu);
    fChain->SetBranchAddress("GenTaus", &GenTaus, &b_GenTaus);
+   fChain->SetBranchAddress("globalTightHalo2016Filter", &globalTightHalo2016Filter, &b_globalTightHalo2016Filter);
    if(CheckBranchType("HBHEIsoNoiseFilter","/I")) fChain->SetBranchAddress("HBHEIsoNoiseFilter", &HBHEIsoNoiseFilter, &b_HBHEIsoNoiseFilter);
    else fChain->SetBranchAddress("HBHEIsoNoiseFilter", &HBHEIsoNoiseFilter74X, &b_HBHEIsoNoiseFilter);
    if(CheckBranchType("HBHENoiseFilter","/I")) fChain->SetBranchAddress("HBHENoiseFilter", &HBHENoiseFilter, &b_HBHENoiseFilter);
@@ -1048,6 +1061,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("nAllVertices", &nAllVertices, &b_nAllVertices);
    fChain->SetBranchAddress("NJets", &NJets, &b_NJets);
    fChain->SetBranchAddress("NJetsclean", &NJetsclean, &b_NJetsclean);
+   fChain->SetBranchAddress("PFCaloMETRatio", &PFCaloMETRatio, &b_PFCaloMETRatio);
    fChain->SetBranchAddress("NJetsJECdown", &NJetsJECdown, &b_NJetsJECdown);
    fChain->SetBranchAddress("NJetsJECup", &NJetsJECup, &b_NJetsJECup);
    fChain->SetBranchAddress("NJetsJERdown", &NJetsJERdown, &b_NJetsJERdown);

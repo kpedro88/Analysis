@@ -90,6 +90,12 @@ class KBlindSelector : public KSelector<KSkimmer> {
 			//check for option
 			localOpt->Get("run",lastUnblindRun);
 		}
+		virtual void CheckLooper(){
+			//check if data
+			bool data = looper->MyBase->GetLocalOpt()->Get("data",false);
+			//disable this for non-data
+			if(!data) dummy = true;
+		}
 		
 		//this selector doesn't add anything to tree
 		
@@ -310,14 +316,7 @@ class KPhotonSelector : public KSelector<KSkimmer> {
 			else{
 				//tighten up ID
 				for(unsigned p = 0; p < looper->Photons->size(); ++p){
-					if(fabs(looper->Photons->at(p).Eta()) < 1.4442){ //barrel
-						bool passIDiso = looper->photon_sigmaIetaIeta->at(p) < 0.0107 && looper->photon_pfChargedIsoRhoCorr->at(p) < 2.67;
-						if(passIDiso) ++NumPhotons;
-					}
-					else if(fabs(looper->Photons->at(p).Eta())>1.566 && fabs(looper->Photons->at(p).Eta())<2.5){
-						bool passIDiso = looper->photon_sigmaIetaIeta->at(p) < 0.0272 && looper->photon_pfChargedIsoRhoCorr->at(p) < 1.79;
-						if(passIDiso) ++NumPhotons;
-					}
+					if(looper->photon_fullID->at(p)) ++NumPhotons;
 				}
 			}
 			
@@ -741,6 +740,16 @@ class KPDFNormSelector : public KSelector<KSkimmer> {
 			//1: nominal, 2: PDF up, 3: PDF down, 4: scale up, 5: scale down
 			h_norm = new TH1F("PDFNorm","",5,0.5,5.5);
 		}
+		virtual void CheckLooper(){
+			//check if data
+			bool data = looper->MyBase->GetLocalOpt()->Get("data",false);
+			//disable this for data
+			if(data) {
+				dummy = true;
+				delete h_norm;
+			}
+		}
+
 		
 		//this selector doesn't add anything to tree
 		
@@ -774,6 +783,7 @@ class KPDFNormSelector : public KSelector<KSkimmer> {
 		}
 		
 		virtual void Finalize(TFile* file){
+			if(dummy) return;
 			//write to file
 			file->cd();
 			h_norm->Write();

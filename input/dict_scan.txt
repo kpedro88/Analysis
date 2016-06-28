@@ -1,7 +1,3 @@
-Spring15Fastv2.SMS-T2bb_mSbottom-625to1050_0to550_TuneCUETP8M1_13TeV-madgraphMLM-pythia8	T2bb_mSbottom-625to1050_0to550
-Spring15Fastv2.SMS-T2qq_mSq600to900_mLSP-0to850_TuneCUETP8M1_13TeV-madgraphMLM-pythia8	T2qq_mSq600to900_mLSP-0to850
-Spring15Fastv2.SMS-T2qq_mSq950to1250_mLSP-0to1050_TuneCUETP8M1_13TeV-madgraphMLM-pythia8	T2qq_mSq950to1250_mLSP-0to1050
-Spring15Fastv2.SMS-T1bbbb_mGluino-1000-1025_mLSP-1to975-1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8	T1bbbb_mGluino-1000-1025_mLSP-1to975-1000
-Spring15Fastv2.SMS-T1bbbb_mGluino-800-825_mLSP-1to775-600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8	T1bbbb_mGluino-800-825_mLSP-1to775-600
-Spring15Fastv2.SMS-T1bbbb_mGluino-1400-1450_mLSP-1to1350-1to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8	T1bbbb_mGluino-1400-1450_mLSP-1to1350-1to200
-Spring15Fastv2.SMS-T1bbbb_mGluino-1200_mLSP-1to1175_TuneCUETP8M1_13TeV-madgraphMLM-pythia8	T1bbbb_mGluino-1200_mLSP-1to1175
+Spring16Fast.SMS-T1tttt_TuneCUETP8M1_13TeV-madgraphMLM-pythia8	T1tttt
+Spring16Fast.SMS-T2bb_TuneCUETP8M1_13TeV-madgraphMLM-pythia8	T2bb
+Spring16Fast.SMS-T2tt_mStop-400to1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8	T2tt_mStop-400to1200

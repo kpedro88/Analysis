@@ -57,11 +57,22 @@ class KJetVariator : public KVariator<KSkimmer> {
 				unsigned branchsize = 19;
 				EnableBranches(branchlist,branchsize);
 			}
+			if(vtype==JERup){
+				string branchlist[] = {"JetsJERup","HTJetsMaskJERup","MHTJetsMaskJERup","JetsJERup_ID","JetsJERup_partonFlavor","JetsJERup_hadronFlavor","JetsJERup_bDiscriminatorCSV","JetsJERup_bDiscriminatorMVA","JetIDJERup","NJetsJERup","BTagsJERup","BTagsMVAJERup","HTJERup","MHTJERup","MHTPhiJERup","DeltaPhi1JERup","DeltaPhi2JERup","DeltaPhi3JERup","DeltaPhi4JERup"};
+				unsigned branchsize = 19;
+				EnableBranches(branchlist,branchsize);
+			}
+			else if(vtype==JERdown){
+				string branchlist[] = {"JetsJERdown","HTJetsMaskJERdown","MHTJetsMaskJERdown","JetsJERdown_ID","JetsJERdown_partonFlavor","JetsJERdown_hadronFlavor","JetsJERdown_bDiscriminatorCSV","JetsJERdown_bDiscriminatorMVA","JetIDJERdown","NJetsJERdown","BTagsJERdown","BTagsMVAJERdown","HTJERdown","MHTJERdown","MHTPhiJERdown","DeltaPhi1JERdown","DeltaPhi2JERdown","DeltaPhi3JERdown","DeltaPhi4JERdown"};
+				unsigned branchsize = 19;
+				EnableBranches(branchlist,branchsize);
+			}
 			else if(vtype==clean){
-				string branchlist[] = {"Jetsclean","HTJetsMaskclean","MHTJetsMaskclean","Jetsclean_ID","Jetsclean_partonFlavor","Jetsclean_hadronFlavor","Jetsclean_bDiscriminatorCSV","Jetsclean_bDiscriminatorMVA","JetIDclean","NJetsclean","BTagsclean","BTagsMVAclean","HTclean","MHTclean","MHTPhiclean","METclean","METPhiclean","DeltaPhi1clean","DeltaPhi2clean","DeltaPhi3clean","DeltaPhi4clean"};
+				string branchlist[] = {"Jetsclean","HTJetsMaskclean","MHTJetsMaskclean","Jetsclean_ID","Jetsclean_partonFlavor","Jetsclean_hadronFlavor","Jetsclean_bDiscriminatorCSV","Jetsclean_bDiscriminatorMVA","JetIDclean","NJetsclean","BTagsclean","BTagsMVAclean","HTclean","MHTclean","MHTPhiclean","METclean","METPhiclean","DeltaPhi1clean","DeltaPhi2clean","DeltaPhi3clean","DeltaPhi4clean","isoElectronTracksclean","isoMuonTracksclean","isoPionTracksclean"};
 				unsigned branchsize = 21;
 				EnableBranches(branchlist,branchsize);
 			}
+			
 			
 			//check pointer branches
 			if(!looper->fChain->GetBranchStatus("Jets")) b_Jets = false;
@@ -199,6 +210,9 @@ class KJetVariator : public KVariator<KSkimmer> {
 				looper->NJets = looper->NJetsclean;
 				looper->BTags = looper->BTagsclean;
 				looper->BTagsMVA = looper->BTagsMVAclean;
+				looper->isoElectronTracks = looper->isoElectronTracksclean;
+				looper->isoMuonTracks = looper->isoMuonTracksclean;
+				looper->isoPionTracks = looper->isoPionTracksclean;
 				looper->HT = looper->HTclean;
 				looper->MHT = looper->MHTclean;
 				looper->MHTPhi = looper->MHTPhiclean;

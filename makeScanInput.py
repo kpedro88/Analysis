@@ -3,7 +3,7 @@ from optparse import OptionParser
 
 # define options
 parser = OptionParser()
-parser.add_option("-d", "--dir", dest="dir", default="Spring15Fastv2", help="location of python files")
+parser.add_option("-d", "--dir", dest="dir", default="Spring16Fast", help="location of python files")
 parser.add_option("-k", "--keepdict", dest="keep", default=False, action="store_true", help="keep dictionary file")
 parser.add_option("-n", "--nfiles", dest="nfiles", default=0, help="number of files per block for scan input")
 (options, args) = parser.parse_args()
