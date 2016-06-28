@@ -23,7 +23,7 @@ def msplit(line):
 
 # define options
 parser = OptionParser()
-parser.add_option("-d", "--dir", dest="dir", default="/eos/uscms/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV5/scan/", help="location of python files")
+parser.add_option("-d", "--dir", dest="dir", default="/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV8/scan/", help="location of root files (LFN)")
 parser.add_option("-n", "--nfiles", dest="nfiles", default=0, help="number of files per part for datacard input")
 parser.add_option("-s", "--signals", dest="signals", type='string', action='callback', callback=sig_callback, help="list of signal model names")
 parser.add_option("-w", "--weights", dest="weights", type='string', action='callback', callback=wt_callback, help="list of signal model weights")
@@ -46,7 +46,9 @@ else:
     options.weights = [x/sumwt for x in options.weights]
 
 # find the python files
-files = os.listdir(options.dir)
+files = filter(None,os.popen("xrdfs root://cmseos.fnal.gov/ ls "+options.dir).read().split('\n'))
+# basename
+files = [ f.split("/")[-1] for f in files]
 
 # open files
 xfile = open("input/dict_xsec.txt",'r')
@@ -110,16 +112,16 @@ for masspt, models in masspts.iteritems():
         mother_ID = []
         # get cross section
         if model.find("T2tt")!=-1:
-            this_xsec = xsecT2[mMother]
+            this_xsec = xsecT2[mMother] if mMother in xsecT2.keys() else 1
             mother_ID.append(1000006)
         elif model.find("T2bb")!=-1:
-            this_xsec = xsecT2[mMother]
+            this_xsec = xsecT2[mMother] if mMother in xsecT2.keys() else 1
             mother_ID.append(1000005)
         elif model.find("T2qq")!=-1:
-            this_xsec = xsecT2qq[mMother]
+            this_xsec = xsecT2qq[mMother] if mMother in xsecT2qq.keys() else 1
             mother_ID.extend((1000001,1000002,1000003,1000004,2000001,2000002,2000003,2000004))
         else:
-            this_xsec = xsec[mMother]
+            this_xsec = xsec[mMother] if mMother in xsec.keys() else 1
             mother_ID.append(1000021)
         # multiply xsec by weight
         this_xsec *= options.weights[options.signals.index(model)]
