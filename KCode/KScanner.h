@@ -24,6 +24,7 @@
 #include <sstream>
 #include <map>
 #include <utility>
+#include <cstdlib>
 
 using namespace std;
 
@@ -113,10 +114,7 @@ class KScanner : public NtupleClass {
 					//if unknown, make a new selection/output file for it
 					else {
 						//make the name
-						unsigned partnum = 0;
-						stringstream oss;
-						oss << outpre << "_" << "mMother-" << thePoint.first-MassOffset << "_mLSP-" << thePoint.second << "_block" << blocknum << "_part" << partnum << outsuff;
-						string oname = oss.str();
+						string oname = makeName(thePoint.first-MassOffset,thePoint.second,blocknum,outsuff);
 						
 						//make the selection and tree, fill it
 						KSelection<KScanner>* stmp = new KSelection<KScanner>(oname,globalOpt);
@@ -157,9 +155,7 @@ class KScanner : public NtupleClass {
 						}
 						
 						//make the name
-						stringstream oss;
-						oss << outpre << "_" << "mMother-" << thePoint.first << "_mLSP-" << thePoint.second << "_block" << blocknum << "_part" << partnum << outsuff;
-						string oname = oss.str();
+						string oname = makeName(thePoint.first,thePoint.second,blocknum,partnum,outsuff);
 						
 						//make the selection and tree, fill it
 						currSel = new KSelection<KScanner>(oname,globalOpt);
@@ -200,7 +196,26 @@ class KScanner : public NtupleClass {
 					cout << right << setw(14) << mp->first.second;
 					cout << endl;
 				}
+				
+				//hadd parts now
+				if(globalOpt->Get("hadd",false)){
+					for(MPit mp = partMap.begin(); mp != partMap.end(); ++mp){
+						stringstream ssys;
+						ssys << "batch/haddHelper.sh " << makeName(mp->first.first,mp->first.second,blocknum) << " " << mp->second - 1 << " " << outsuff;
+						system(ssys.str().c_str());
+					}
+				}
 			}
+		}
+		string makeName(double mass1, double mass2, unsigned block, string suff=""){
+			stringstream oss;
+			oss << outpre << "_" << "mMother-" << mass1 << "_mLSP-" << mass2 << "_block" << block << suff;
+			return oss.str();
+		}
+		string makeName(double mass1, double mass2, unsigned block, unsigned part, string suff=""){
+			stringstream oss;
+			oss << outpre << "_" << "mMother-" << mass1 << "_mLSP-" << mass2 << "_block" << block << "_part" << part << suff;
+			return oss.str();
 		}
 		
 		//member variables
