@@ -5,10 +5,10 @@ source exportProd.sh
 JOBDIR=jobs
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/${RUN2PRODV}/scan
 STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Datacards/${RUN2PRODV}
-SYSTS=nominal,QCD,puunc,pdfunc,scaleunc
-SYSTS2=isrunc,trigStatUnc,trigSystUnc,JEC
+SYSTS=nominal,QCD,puunc,scaleunc,isrunc
+SYSTS2=trigStatUnc,trigSystUnc,JEC,JER
 SYSTS3=btagSFunc,ctagSFunc,mistagSFunc,btagCFunc,ctagCFunc,mistagCFunc
-CONTAMS=LDP,GJet_CleanVars,GJetLDP_CleanVars,GJet_CleanVarsGJ,GJetLDP_CleanVarsGJ
+CONTAMS=LDP,GJet_CleanVars,GJetLDP_CleanVars
 CHECKARGS=""
 SUFFIX=""
 
@@ -21,6 +21,10 @@ while getopts "kx:" opt; do
     ;;
   esac
 done
+
+if [ -n "$SUFFIX" ]; then
+  STORE=${STORE}/${SUFFIX}
+fi
 
 ./SKcheck.sh ${CHECKARGS}
 
