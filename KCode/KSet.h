@@ -42,6 +42,20 @@ class KSet : public KBase {
 		vector<KBase*>& GetChildren() { return children; }
 		KBase* GetParent() { return parent; }
 		void SetParent(KBase* p) { parent = p; }
+		//add function - does formatting
+		TH1* AddHisto(string s, TH1* h){
+			KBase::AddHisto(s,h);
+			
+			//add to children
+			for(unsigned c = 0; c < children.size(); c++){
+				children[c]->AddHisto(s,h);
+			}
+			
+			//formatting			
+			MyStyle->Format(htmp);
+			
+			return htmp;
+		}
 		//default build for sets
 		using KBase::Build;
 		virtual void Build(){
@@ -53,10 +67,29 @@ class KSet : public KBase {
 			HMit sit;
 			for(sit = MyHistos.GetTable().begin(); sit != MyHistos.GetTable().end(); sit++){
 				GetHisto(sit->first); //this will propagate to children
+				if(CheckSpecialHistos(sit->first,false)) continue; //don't hadd special histos
 				for(unsigned c = 0; c < children.size(); c++){ //include option to subtract histos, off by default
 					htmp->Add(children[c]->GetHisto(), children[c]->GetLocalOpt()->Get("subtract",false) ? -1 : 1);				
 				}
 			}
+		}
+		virtual void MakeCutflows(){
+			//all children get their cutflows
+			//then add up raw cutflows & nevents from children
+			TH1F* cutflowRaw = NULL;
+			for(unsigned c = 0; c < children.size(); c++){
+				children[c]->MakeCutflows();
+				if(c==0){
+					nEventHist = (TH1F*)(children[c]->GetNEventHist())->Clone();
+					cutflowRaw = (TH1F*)(children[c]->GetCutflow(KCutflow::CutRaw))->Clone();
+				}
+				else {
+					nEventHist->Add(children[c]->GetNEventHist());
+					cutflowRaw->Add(children[c]->GetCutflow(KCutflow::CutRaw));
+				}
+			}
+			//make derived (abs, rel) cutflows
+			MyCutflow = new KCutflow(cutflowRaw,nEventHist);
 		}
 		//resetting current histo propagates to children for consistency
 		using KBase::GetHisto;
@@ -90,6 +123,7 @@ class KSet : public KBase {
 		}
 		//in case of normalization to yield or other scaling
 		virtual void Normalize(double nn, bool toYield=true){
+			if(CheckSpecialHistos(stmp,false)) return;
 			//first, normalize all children
 			for(unsigned c = 0; c < children.size(); c++){
 				children[c]->Normalize(nn,toYield);
@@ -123,27 +157,6 @@ class KSetData: public KSet {
 				localOpt->Get("intlumi",intlumi);
 				localOpt->Set("intlumi",intlumi + intlumi_ch);
 			}
-		}	
-		//add function - does formatting
-		TH1* AddHisto(string s, TH1* h){
-			KBase::AddHisto(s,h);
-			
-			//add to children
-			for(unsigned c = 0; c < children.size(); c++){
-				children[c]->AddHisto(s,h);
-			}
-			
-			//formatting
-			MyStyle->Format(htmp);
-			Color_t color = kBlack;
-			localOpt->Get("color",color);
-			//formatting
-			htmp->SetLineColor(color);
-			htmp->SetMarkerColor(color);
-			htmp->SetFillColor(0);
-			htmp->SetMarkerStyle(20);
-			
-			return htmp;
 		}
 		//adds histo to legend
 		void AddToLegend(KLegend* kleg) {
@@ -183,40 +196,16 @@ class KSetMC: public KSet {
 
 		//build for MC sets
 		using KBase::Build;
+		using KSet::Build;
 		virtual void Build(){
-			//first, all children build
-			for(unsigned c = 0; c < children.size(); c++){
-				children[c]->Build();
-			}
-			//then loop to add up histos (only resetting current histo for children once)
-			HMit sit;
-			for(sit = MyHistos.GetTable().begin(); sit != MyHistos.GetTable().end(); sit++){
-				GetHisto(sit->first); //this will propagate to children
-				for(unsigned c = 0; c < children.size(); c++){ //include option to subtract histos
-					htmp->Add(children[c]->GetHisto(), children[c]->GetLocalOpt()->Get("subtract",false) ? -1 : 1);
-				}
-			}
-			
+			KSet::Build();
+
 			//build error band, disabled by default
 			if(localOpt->Get("errband",false)) {
 				BuildErrorBand();
 				//style
 				MyStyle->FormatErr(etmp);
 			}
-		}		
-		//add function - does formatting
-		TH1* AddHisto(string s, TH1* h){
-			KBase::AddHisto(s,h);
-			
-			//add to children
-			for(unsigned c = 0; c < children.size(); c++){
-				children[c]->AddHisto(s,h);
-			}
-			
-			//formatting			
-			MyStyle->Format(htmp);
-			
-			return htmp;
 		}
 		//adds histo to legend
 		void AddToLegend(KLegend* kleg) {

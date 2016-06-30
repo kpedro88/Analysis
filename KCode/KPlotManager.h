@@ -131,6 +131,9 @@ class KPlotManager : public KManager {
 			//keep track of histo dimension
 			tmp->second->Set("dimension",dim);
 			
+			//check for cutflows
+			if(tmp->first.find("cutflow")!=string::npos) globalOpt->Set<bool>("doCutflow",true);
+			
 			//store local plot options for later use
 			MyPlotOptions.push_back(tmp);
 		}		
@@ -209,6 +212,9 @@ class KPlotManager : public KManager {
 						break;
 					}
 				}
+				
+				//compute cutflows if necessary
+				if(globalOpt->Get("doCutflow",false)) MySets[s]->MakeCutflows();
 			}
 			
 			//numer:denom ratio cases: 1:1, 1:x, x:1
@@ -225,7 +231,7 @@ class KPlotManager : public KManager {
 				}
 				else if(numers.size()==1 && denoms.size()>1){
 					for(unsigned r = 0; r < denoms.size(); r++){
-						KSetRatio* rtmp = new KSetRatio("ratio_"+numers[0]->GetName()+"_"+denoms[r]->GetName(),NULL,globalOpt);
+						KSetRatio* rtmp = new KSetRatio("ratio__"+numers[0]->GetName()+"__"+denoms[r]->GetName(),NULL,globalOpt);
 						rtmp->AddNumerator(numers[0]);
 						rtmp->AddDenominator(denoms[r]);
 						//denom style, but pe drawopt
@@ -236,7 +242,7 @@ class KPlotManager : public KManager {
 				}
 				else if(numers.size()>1 && denoms.size()==1){
 					for(unsigned r = 0; r < numers.size(); r++){
-						KSetRatio* rtmp = new KSetRatio("ratio_"+numers[r]->GetName()+"_"+denoms[0]->GetName(),NULL,globalOpt);
+						KSetRatio* rtmp = new KSetRatio("ratio__"+numers[r]->GetName()+"__"+denoms[0]->GetName(),NULL,globalOpt);
 						rtmp->AddNumerator(numers[r]);
 						rtmp->AddDenominator(denoms[0]);
 						//numer style, but pe drawopt
@@ -279,7 +285,12 @@ class KPlotManager : public KManager {
 				ntmp->second->Get("dimension",dim);
 				if(dim==1){
 					KPlot* ptmp = new KPlot(ntmp->first,ntmp->second,globalOpt);
-					if(ptmp->Initialize()) MyPlots.Add(ntmp->first,ptmp);
+					TH1* hptmp = NULL;
+					if(MySets[0]->CheckSpecialHistos(ntmp->first)) {
+						hptmp = (TH1*)(MySets[0]->GetHisto())->Clone();
+						hptmp->Reset();
+					}
+					if(ptmp->Initialize(hptmp)) MyPlots.Add(ntmp->first,ptmp);
 					else {
 						cout << "Input error: unable to build histo " << ntmp->first << ". Check binning options." << endl;
 						delete ptmp;

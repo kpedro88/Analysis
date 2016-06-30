@@ -113,10 +113,6 @@ class KPlot{
 			//todo: add option to make it a fit?
 		}
 		virtual void CreateHist(){
-			//check for TProfile case
-			vector<string> vars;
-			KParser::process(name,'_',vars);
-			
 			//construct histogram		
 			vector<double> xbins;
 			int xnum;
@@ -135,13 +131,19 @@ class KPlot{
 				isInit = false;
 				return;
 			}
-			string xtitle, ytitle;
-			localOpt->Get("xtitle",xtitle);
-			localOpt->Get("ytitle",ytitle);
-			histo->GetXaxis()->SetTitle(xtitle.c_str());
-			histo->GetYaxis()->SetTitle(ytitle.c_str());
+		}
+		virtual bool Initialize(TH1* histo_=NULL){
+			if(isInit) return isInit;
+			
+			//check for TProfile case
+			KParser::process(name,'_',vars);
+			histo = histo_;
+			if(!histo) CreateHist();
+			if(!histo) return isInit; //histo creation failed
+			else isInit = true;
 			
 			//assign bin labels if requested
+			//we might want to relabel an existing histo
 			if(localOpt->Get("xbinlabel",false)){
 				vector<string> labels;
 				//check both option maps
@@ -153,13 +155,9 @@ class KPlot{
 					}
 				}
 			}
-		}
-		virtual bool Initialize(TH1* histo_=NULL){
-			if(isInit) return isInit;
-			
-			histo = histo_;
-			if(!histo) CreateHist();
-			if(!histo) return isInit; //histo creation failed
+			string xtitle, ytitle;
+			if(localOpt->Get("xtitle",xtitle)) histo->GetXaxis()->SetTitle(xtitle.c_str());
+			if(localOpt->Get("ytitle",ytitle)) histo->GetYaxis()->SetTitle(ytitle.c_str());
 			
 			//plotting with ratio enabled by default
 			if(localOpt->Get("ratio",true)) {
@@ -521,6 +519,7 @@ class KPlot{
 		double ratiolineval;
 		int ratiolinewidth, ratiolinestyle;
 		Color_t ratiolinecolor;
+		vector<string> vars;
 };
 
 //-----------------------------------------------------------

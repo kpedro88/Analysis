@@ -20,35 +20,48 @@ using namespace std;
 
 class KCutflow {
 	public:
+		//enum
+		enum CutflowType { CutRaw=0, CutAbs=1, CutRel=2 };
+	
 		//constructors
 		KCutflow(string fname_) : h_raw(NULL), h_abs(NULL), h_rel(NULL) {
 			TFile* file = TFile::Open(fname_.c_str());
+			GetFromFile(file);
+		}
+		KCutflow(TFile* file) : h_raw(NULL), h_abs(NULL), h_rel(NULL) {
+			GetFromFile(file);
+		}
+		//get nevent info from histo
+		KCutflow(TH1F* h_tmp, TH1F* h_ntmp) : h_raw(h_tmp), nentries(h_ntmp->GetBinContent(1)), nentriesE(h_ntmp->GetBinError(1)), h_abs(NULL), h_rel(NULL) { 
+			//initialize derived histos
+			CalcEfficiency();
+		}
+		//get nevent info directly
+		KCutflow(TH1F* h_tmp, int nentries_, double nentriesE_=0) : h_raw(h_tmp), nentries(nentries_), nentriesE(nentriesE_), h_abs(NULL), h_rel(NULL) { 
+			//initialize derived histos
+			CalcEfficiency();
+		}
+		//constructor helper
+		void GetFromFile(TFile* file){
 			if(!file) {
-				cout << "Input error: could not open file " << fname_ << endl;
+				cout << "Input error: null file pointer!" << endl;
+				return;
 			}
 			h_raw = (TH1F*)file->Get("cutflow");
 			if(!h_raw){
-				cout << "Input error: could not find cutflow histogram in file " << fname_ << endl;
+				cout << "Input error: could not find cutflow histogram in file " << file->GetName() << endl;
+				return;
 			}
 			TH1F* h_nevent = (TH1F*)file->Get("nEventProc");
 			if(!h_nevent){
-				cout << "Input error: could not find NEventProc histogram in file " << fname_ << endl;
+				cout << "Input error: could not find NEventProc histogram in file " << file->GetName() << endl;
+				return;
 			}
 			nentries = h_nevent->GetBinContent(1);
 			nentriesE = h_nevent->GetBinError(1);
 			
 			//initialize derived histos
-			GetEfficiency();
-		}
-		//get nevent info from histo
-		KCutflow(TH1F* h_tmp, TH1F* h_ntmp) : h_raw(h_tmp), nentries(h_ntmp->GetBinContent(1)), nentriesE(h_ntmp->GetBinError(1)), h_abs(NULL), h_rel(NULL) { 
-			//initialize derived histos
-			GetEfficiency();
-		}
-		//get nevent info directly
-		KCutflow(TH1F* h_tmp, int nentries_, double nentriesE_=0) : h_raw(h_tmp), nentries(nentries_), nentriesE(nentriesE_), h_abs(NULL), h_rel(NULL) { 
-			//initialize derived histos
-			GetEfficiency();
+			CalcEfficiency();			
 		}
 		//destructor
 		virtual ~KCutflow() { }
@@ -57,7 +70,7 @@ class KCutflow {
 		//todo: expand for object sync selectors
 		
 		//make abs and rel efficiency histograms
-		void GetEfficiency(){
+		void CalcEfficiency(){
 			if(!h_raw) return;
 
 			//initialize histos
@@ -134,6 +147,12 @@ class KCutflow {
 				}
 				cout << endl;
 			}
+		}
+		//get an efficiency histogram
+		TH1F* GetEfficiency(CutflowType ct=CutRaw){
+			if(ct==CutRaw) return h_raw;
+			else if(ct==CutAbs) return h_abs;
+			else if(ct==CutRel) return h_rel;
 		}
 	
 	private:

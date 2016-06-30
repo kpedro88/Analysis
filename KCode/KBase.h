@@ -6,6 +6,7 @@
 #include "KLegend.h"
 #include "KSelection.h"
 #include "KStyle.h"
+#include "KCutflow.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -34,7 +35,10 @@ class KBuilder;
 class KBase {
 	public:
 		//constructors
-		KBase() : name(""), parent(0), localOpt(0), globalOpt(0), file(0), tree(0), nEventHist(0), nEventNegHist(0), MyBuilder(0), MySelection(0), stmp(""), htmp(0), etmp(0), isBuilt(false), MyStyle(0) {
+		KBase() :
+			name(""), parent(0), localOpt(0), globalOpt(0), file(0), tree(0), nEventHist(0), nEventNegHist(0), MyCutflow(0),
+			MyBuilder(0), MySelection(0), stmp(""), htmp(0), etmp(0), isBuilt(false), MyStyle(0)
+		{
 			//enable histo errors
 			TH1::SetDefaultSumw2(kTRUE);
 			//must always have local & global option maps
@@ -42,7 +46,8 @@ class KBase {
 			if(globalOpt==0) globalOpt = new OptionMap();
 		}
 		KBase(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : 
-			name(name_), parent(0), localOpt(localOpt_), globalOpt(globalOpt_), file(0), tree(0), nEventHist(0), nEventNegHist(0), MyBuilder(0), MySelection(0), stmp(""), htmp(0), etmp(0), isBuilt(false), MyStyle(0)
+			name(name_), parent(0), localOpt(localOpt_), globalOpt(globalOpt_), file(0), tree(0), nEventHist(0), nEventNegHist(0), MyCutflow(0), 
+			MyBuilder(0), MySelection(0), stmp(""), htmp(0), etmp(0), isBuilt(false), MyStyle(0)
 		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
@@ -182,10 +187,27 @@ class KBase {
 		virtual TH1* AddHisto(string s, TH1* h){
 			//sets current name and histo
 			stmp = s;
-			htmp = (TH1*)h->Clone();
-			htmp->Sumw2();
+			if(!CheckSpecialHistos(s)){
+				htmp = (TH1*)h->Clone();
+				htmp->Sumw2();
+			}
 			MyHistos.Add(stmp,htmp);
 			return htmp;
+		}
+		virtual bool CheckSpecialHistos(string s, bool assign=true){
+			if(s=="cutflowRaw") {
+				if(assign) htmp = GetCutflow(KCutflow::CutRaw);
+				return true;
+			}
+			else if(s=="cutflowAbs") {
+				if(assign) htmp = GetCutflow(KCutflow::CutAbs);
+				return true;
+			}
+			else if(s=="cutflowRel") {
+				if(assign) htmp = GetCutflow(KCutflow::CutRel);
+				return true;
+			}
+			return false;
 		}
 		//gets current histo
 		virtual TH1* GetHisto(){ return htmp; }
@@ -248,13 +270,18 @@ class KBase {
 		}
 		//in case of normalization to yield or other scaling
 		virtual void Normalize(double nn, bool toYield=true){
+			if(CheckSpecialHistos(stmp,false)) return;
 			double simyield = htmp->Integral(0,htmp->GetNbinsX()+1);
 			if(toYield) htmp->Scale(nn/simyield);
 			else htmp->Scale(nn);
 		}
+		virtual void MakeCutflows(){
+			MyCutflow = new KCutflow(file);
+		}
 		virtual TTree* GetTree() { return tree; }
 		virtual TH1F* GetNEventHist() { return nEventHist; }
 		virtual TH1F* GetNEventNegHist() { return nEventNegHist; }
+		virtual TH1F* GetCutflow(KCutflow::CutflowType ct=KCutflow::CutRaw) { return (MyCutflow ? MyCutflow->GetEfficiency(ct) : NULL); }
 		virtual void SetStyle(KMap<string>& allStyles, string styleName="") {
 			if(styleName.size()==0) return;
 			
@@ -286,6 +313,7 @@ class KBase {
 		TFile* file;
 		TTree* tree;
 		TH1F *nEventHist, *nEventNegHist;
+		KCutflow* MyCutflow;
 		KBuilder* MyBuilder;
 		KSelection<KBuilder>* MySelection;
 		HistoMap MyHistos;
