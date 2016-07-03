@@ -28,7 +28,7 @@ done
 ./SKcheck.sh ${CHECKARGS}
 
 #list samples
-IFS=$'\n' SAMPLES=($(python findHadds.py -d ${DIR})); unset IFS
+IFS=$'\n' SAMPLES=($(python findHadds.py -d ${DIR} -g "_block")); unset IFS
 
 #loop vars
 counter=0
