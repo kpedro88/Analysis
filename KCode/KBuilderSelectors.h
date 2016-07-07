@@ -547,7 +547,7 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 	public:
 		//constructor
 		KMETFilterSelector() : KSelector<KBuilder>() { }
-		KMETFilterSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), fastsim(false), cscfile(""), is74X(false) { 
+		KMETFilterSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), cscfile(""), is74X(false) { 
 			localOpt->Get("cscfile",cscfile);
 			if(cscfile.size()>0){
 				cscfilter = EventListFilter(cscfile);
@@ -556,6 +556,7 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 			for(unsigned f = 0; f < filterfiles.size(); ++f){
 				filters.push_back(new EventListFilter(filterfiles[f]));
 			}
+			onlydata = localOpt->Get("onlydata",false);
 		}
 		virtual void CheckBranches(){
 			is74X = !(looper->CheckBranchType("HBHEIsoNoiseFilter","/I"));
@@ -577,9 +578,14 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 		}
 		virtual void CheckLooper(){
 			//check fastsim stuff
-			fastsim = looper->localOpt->Get("fastsim",false);
+			bool fastsim = looper->localOpt->Get("fastsim",false);
 			if(fastsim){
 				//disable this for fastsim
+				dummy = true;
+			}
+			bool data = looper->localOpt->Get("data",false);
+			if(onlydata and !data){
+				//disable this for non-data if desired
 				dummy = true;
 			}
 		}
@@ -602,7 +608,7 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 		}
 		
 		//member variables
-		bool fastsim;
+		bool onlydata;
 		string cscfile;
 		bool is74X;
 		EventListFilter cscfilter;
