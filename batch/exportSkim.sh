@@ -349,8 +349,7 @@ GJets_HT-400to600_block1 \
 GJets_HT-600toInf_block0 \
 GJets_HT-600toInf_block1 \
 ST_s-channel \
-ST_t-channel_top_block0 \
-ST_t-channel_top_block1 \
+ST_t-channel_top \
 ST_t-channel_antitop_block0 \
 ST_t-channel_antitop_block1 \
 ST_tW_top \

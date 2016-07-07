@@ -2,7 +2,7 @@ SET
 base	skim	T1bbbb_1000_900	b:chain[1]	ch:filenames[Spring16.SMS-T1bbbb_mGluino-1000_mLSP-900_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_,0,8,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	vi:mother[1000021]
 base	skim	T1bbbb_1500_100	b:chain[1]	ch:filenames[Spring16.SMS-T1bbbb_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_,0,1,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	vi:mother[1000021]
 base	skim	T1qqqq_1000_800	b:chain[1]	ch:filenames[Spring16.SMS-T1qqqq_mGluino-1000_mLSP-800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_,0,5,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	vi:mother[1000021]
-base	skim	T1qqqq_1400_100	b:chain[1]	ch:filenames[Spring15v2.SMS-T1qqqq_mGluino-1400_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_,0,2,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	vi:mother[1000021]
+base	skim	T1qqqq_1400_100	b:chain[1]	ch:filenames[Spring16.SMS-T1qqqq_mGluino-1400_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_,0,16,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	vi:mother[1000021]
 base	skim	T1tttt_1200_800	b:chain[1]	ch:filenames[Spring16.SMS-T1tttt_mGluino-1200_mLSP-800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_,0,4,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	vi:mother[1000021]
 base	skim	T1tttt_1500_100	b:chain[1]	ch:filenames[Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_,0,2,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	vi:mother[1000021]
 base	skim	T2tt_425_325	b:chain[1]	ch:filenames[Spring16.SMS-T2tt_mStop-425_mLSP-325_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_,0,9,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	vi:mother[1000006]

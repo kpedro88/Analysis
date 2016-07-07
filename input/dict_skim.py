@@ -59,7 +59,7 @@ flist = [
 [['Spring16.GJets_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'],                  ['GJets_HT-400to600']],
 [['Spring16.GJets_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'],                  ['GJets_HT-600toInf']],
 [['Spring16.ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1'],          ['ST_s-channel']],
-[['Spring15v2.ST_t-channel_top_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1'],      ['ST_t-channel_top']],
+[['Spring16.ST_t-channel_top_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1'],      ['ST_t-channel_top']],
 [['Spring16.ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1'],    ['ST_t-channel_antitop']],
 [['Spring16.ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1'],            ['ST_tW_top']],
 [['Spring16.ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1'],        ['ST_tW_antitop']],
