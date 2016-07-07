@@ -34,9 +34,10 @@ bool:RA2Exclusive[0]
 bool:btagcorr[1]
 bool:trigcorr[1]
 bool:pucorr[1]
-string:puname[corrections/PileupHistograms_0621.root]
+string:puname[corrections/PileupHistograms_0704.root]
 bool:isrcorr[1]
 string:isrname[corrections/ISRWeights.root]
+bool:jetidcorr[1]
 
 SELECTION
 ra2bin
