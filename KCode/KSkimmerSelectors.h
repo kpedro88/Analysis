@@ -507,22 +507,40 @@ class KEventCleaningSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
 		KEventCleaningSelector() : KSelector<KSkimmer>() { }
-		KEventCleaningSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), fastsim(false) { }
+		KEventCleaningSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), fastsim(false) { 
+			//check for option
+			doJetID = localOpt->Get("JetID",false);
+			doMETRatio = localOpt->Get("METRatio",false);
+			doMuonJet = localOpt->Get("MuonJet",false);
+		}
 		virtual void CheckLooper(){
 			//check if fastsim
 			fastsim = looper->MyBase->GetLocalOpt()->Get("fastsim",false);
-			//disable this for fastsim
-			if(fastsim) dummy = true;
+			//disable JetID for fastsim
+			if(fastsim) doJetID = false;
 		}
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return looper->JetID;
+			bool goodEvent = (!doJetID || looper->JetID) &&
+							 (!doMETRatio || looper->PFCaloMETRatio < 5);
+			if(doMuonJet){
+				bool noMuonJet = true;
+				for(unsigned j = 0; j < looper->Jets->size(); ++j){
+					if(looper->Jets->at(j).Pt() > 200 && looper->Jets_muonEnergyFraction->at(j) > 0.5 && KMath::DeltaPhi(looper->Jets->at(j).Phi(),looper->METPhi) > (TMath::Pi() - 0.4)){
+						noMuonJet = false;
+						break;
+					}
+				}
+				goodEvent &= noMuonJet;
+			}
+			return goodEvent;
 		}
 		
 		//member variables
+		bool doJetID, doMETRatio, doMuonJet;
 		bool fastsim;
 };
 
