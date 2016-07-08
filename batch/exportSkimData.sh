@@ -9,6 +9,8 @@ HTMHT_2016B_block4 \
 HTMHT_2016B_block5 \
 HTMHT_2016B_block6 \
 HTMHT_2016B_block7 \
+HTMHT_2016B_block8 \
+HTMHT_2016B_block9 \
 JetHT_2016B_block0 \
 JetHT_2016B_block1 \
 JetHT_2016B_block2 \
@@ -31,6 +33,13 @@ JetHT_2016B_block18 \
 JetHT_2016B_block19 \
 JetHT_2016B_block20 \
 JetHT_2016B_block21 \
+JetHT_2016B_block22 \
+JetHT_2016B_block23 \
+JetHT_2016B_block24 \
+JetHT_2016B_block25 \
+JetHT_2016B_block26 \
+JetHT_2016B_block27 \
+JetHT_2016B_block28 \
 MET_2016B_block0 \
 MET_2016B_block1 \
 MET_2016B_block2 \
@@ -38,6 +47,8 @@ MET_2016B_block3 \
 MET_2016B_block4 \
 MET_2016B_block5 \
 MET_2016B_block6 \
+MET_2016B_block7 \
+MET_2016B_block8 \
 SingleElectron_2016B_block0 \
 SingleElectron_2016B_block1 \
 SingleElectron_2016B_block2 \
@@ -77,6 +88,18 @@ SingleElectron_2016B_block35 \
 SingleElectron_2016B_block36 \
 SingleElectron_2016B_block37 \
 SingleElectron_2016B_block38 \
+SingleElectron_2016B_block39 \
+SingleElectron_2016B_block40 \
+SingleElectron_2016B_block41 \
+SingleElectron_2016B_block42 \
+SingleElectron_2016B_block43 \
+SingleElectron_2016B_block44 \
+SingleElectron_2016B_block45 \
+SingleElectron_2016B_block46 \
+SingleElectron_2016B_block47 \
+SingleElectron_2016B_block48 \
+SingleElectron_2016B_block49 \
+SingleElectron_2016B_block50 \
 SingleMuon_2016B_block0 \
 SingleMuon_2016B_block1 \
 SingleMuon_2016B_block2 \
@@ -102,6 +125,14 @@ SingleMuon_2016B_block21 \
 SingleMuon_2016B_block22 \
 SingleMuon_2016B_block23 \
 SingleMuon_2016B_block24 \
+SingleMuon_2016B_block25 \
+SingleMuon_2016B_block26 \
+SingleMuon_2016B_block27 \
+SingleMuon_2016B_block28 \
+SingleMuon_2016B_block29 \
+SingleMuon_2016B_block30 \
+SingleMuon_2016B_block31 \
+SingleMuon_2016B_block32 \
 SinglePhoton_2016B_block0 \
 SinglePhoton_2016B_block1 \
 SinglePhoton_2016B_block2 \
@@ -112,4 +143,7 @@ SinglePhoton_2016B_block6 \
 SinglePhoton_2016B_block7 \
 SinglePhoton_2016B_block8 \
 SinglePhoton_2016B_block9 \
+SinglePhoton_2016B_block10 \
+SinglePhoton_2016B_block11 \
+SinglePhoton_2016B_block12 \
 )
