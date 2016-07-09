@@ -598,13 +598,14 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 			bool eeBadSc4Filter = is74X ? looper->eeBadSc4Filter : true;
 			bool EcalDeadCellTriggerPrimitiveFilter = is74X ? true : looper->EcalDeadCellTriggerPrimitiveFilter==1;
 			bool BadChargedCandidateFilter = is74X ? true : looper->BadChargedCandidateFilter;
-			//BadPFMuonFilter not used
+			bool BadPFMuonFilter = is74X ? true : looper->BadPFMuonFilter;
 			if(cscfilter.Initialized()) TightHaloFilter = cscfilter.CheckEvent(looper->RunNum,looper->LumiBlockNum,looper->EvtNum);
 			bool otherFilters = true;
 			for(unsigned f = 0; f < filters.size(); ++f){
 				otherFilters &= filters[f]->CheckEvent(looper->RunNum,looper->LumiBlockNum,looper->EvtNum);
 			}
-			return looper->NVtx > 0 && looper->eeBadScFilter==1 && eeBadSc4Filter && HBHENoiseFilter && HBHEIsoNoiseFilter && TightHaloFilter && EcalDeadCellTriggerPrimitiveFilter && BadChargedCandidateFilter && otherFilters;
+			return looper->NVtx > 0 && looper->eeBadScFilter==1 && eeBadSc4Filter && HBHENoiseFilter && HBHEIsoNoiseFilter && 
+				   TightHaloFilter && EcalDeadCellTriggerPrimitiveFilter && BadChargedCandidateFilter && BadPFMuonFilter && otherFilters;
 		}
 		
 		//member variables
