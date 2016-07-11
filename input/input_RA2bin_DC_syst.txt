@@ -41,7 +41,7 @@ bool:jetidcorr[1]
 
 SELECTION
 ra2bin
-	METFilter
+	METFilter	b:onlydata[1]
 	BTagSF
 	RA2Bin
 	Histo
