@@ -139,17 +139,20 @@ class KHTSelector : public KSelector<KSkimmer> {
 		KHTSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), HTmin(500) { 
 			//check for option
 			localOpt->Get("HTmin",HTmin);
+			doGen = localOpt->Get("gen",false);
 		}
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return looper->HT > HTmin;
+			if(doGen) return looper->GenHT > HTmin;
+			else return looper->HT > HTmin;
 		}
 		
 		//member variables
 		double HTmin;
+		bool doGen;
 };
 
 //----------------------------------------------------
@@ -158,25 +161,23 @@ class KMHTSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
 		KMHTSelector() : KSelector<KSkimmer>() { }
-		KMHTSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), MHTmin(200), debug(false), minPtMHT(30.), maxEtaMHT(5.) { 
+		KMHTSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), MHTmin(200) { 
 			//check for option
 			localOpt->Get("MHTmin",MHTmin);
-			debug = localOpt->Get("debug",false);
-			localOpt->Get("minPtMHT",minPtMHT);
-			localOpt->Get("maxEtaMHT",maxEtaMHT);
+			doGen = localOpt->Get("gen",false);
 		}
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return looper->MHT > MHTmin;
+			if(doGen) return looper->GenMHT > MHTmin;
+			else return looper->MHT > MHTmin;
 		}
 		
 		//member variables
 		double MHTmin;
-		bool debug;
-		double minPtMHT, maxEtaMHT;
+		bool doGen;
 };
 
 //----------------------------------------------------
@@ -507,17 +508,20 @@ class KEventCleaningSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
 		KEventCleaningSelector() : KSelector<KSkimmer>() { }
-		KEventCleaningSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), fastsim(false) { 
+		KEventCleaningSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { 
 			//check for option
 			doJetID = localOpt->Get("JetID",false);
 			doMETRatio = localOpt->Get("METRatio",false);
 			doMuonJet = localOpt->Get("MuonJet",false);
+			doFakeJet = localOpt->Get("FakeJet",false);
 		}
 		virtual void CheckLooper(){
 			//check if fastsim
-			fastsim = looper->MyBase->GetLocalOpt()->Get("fastsim",false);
+			bool fastsim = looper->MyBase->GetLocalOpt()->Get("fastsim",false);
 			//disable JetID for fastsim
 			if(fastsim) doJetID = false;
+			//disable FakeJet for non-fastsim
+			if(!fastsim) doFakeJet = false;
 		}
 		
 		//this selector doesn't add anything to tree
@@ -536,12 +540,30 @@ class KEventCleaningSelector : public KSelector<KSkimmer> {
 				}
 				goodEvent &= noMuonJet;
 			}
+			if(doFakeJet){
+				bool noFakeJet = true;
+				//reject events with any jet pt>30, |eta|<2.5 NOT matched to a GenJet (w/in DeltaR<0.3) and chfrac < 0.1
+				for(unsigned j = 0; j < looper->Jets->size(); ++j){
+					if(looper->Jets->at(j).Pt() <= 30 || fabs(looper->Jets->at(j).Eta())>=2.5) continue;
+					bool genMatched = false;
+					for(unsigned g = 0; g < looper->GenJets->size(); ++g){
+						if(looper->GenJets->at(g).DeltaR(looper->Jets->at(j)) < 0.3) {
+							genMatched = true;
+							break;
+						}
+					}
+					if(!genMatched && looper->Jets_chargedHadronEnergyFraction->at(j) < 0.1){
+						noFakeJet = false;
+						break;
+					}
+				}
+				goodEvent &= noFakeJet;
+			}
 			return goodEvent;
 		}
 		
 		//member variables
-		bool doJetID, doMETRatio, doMuonJet;
-		bool fastsim;
+		bool doJetID, doMETRatio, doMuonJet, doFakeJet;
 };
 
 //----------------------------------------------------

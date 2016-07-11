@@ -444,6 +444,8 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 			}
 			else if(RA2VarNames[qty]=="MHT") val.push_back(looper->MHT);
 			else if(RA2VarNames[qty]=="HT") val.push_back(looper->HT);
+			else if(RA2VarNames[qty]=="GenMHT") val.push_back(looper->GenMHT);
+			else if(RA2VarNames[qty]=="GenHT") val.push_back(looper->GenHT);
 			//else if(RA2VarNames[qty]=="ak1p2Jets_sumJetMass") val.push_back(looper->ak1p2Jets_sumJetMass);
 			else {}			
 			

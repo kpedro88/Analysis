@@ -1,0 +1,50 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+INPUT
+input/input_global.txt
+
+OPTION
+int:yieldprecision[8]
+double:sizeLeg[22]
+double:canvasW[1200]
+double:marginB[300]
+double:NdivX[518]
+vstring:RA2VarNames[NJets,BTags,GenMHT,GenHT]
+vfloat:RA2Var0Min[2,4,6,8]
+vfloat:RA2Var0Max[4,6,8,99]
+vfloat:RA2Var1Min[-1,0,1,2]
+vfloat:RA2Var1Max[0,1,2,99]
+vfloat:RA2Var2Min[250]
+vfloat:RA2Var2Max[300]
+vfloat:RA2Var3Min[300,500,1000]
+vfloat:RA2Var3Max[500,1000,9999]
+vuint:RA2Var0Bins[0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3]
+vuint:RA2Var1Bins[0,0,0,1,1,1,2,2,2,3,3,3,0,0,0,1,1,1,2,2,2,3,3,3,0,0,0,1,1,1,2,2,2,3,3,3,0,0,0,1,1,1,2,2,2,3,3,3]
+vuint:RA2Var2Bins[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+vuint:RA2Var3Bins[0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2]
+string:selection[ra2bin]
+vstring:disable_branches[*]
+bool:RA2Exclusive[0]
+bool:btagcorr[1]
+#bool:trigcorr[1]
+bool:pucorr[1]
+string:puname[corrections/PileupHistograms_0704.root]
+#bool:isrcorr[1]
+#string:isrname[corrections/ISRWeights.root]
+bool:jetidcorr[1]
+
+SELECTION
+ra2bin
+	METFilter	b:onlydata[1]
+	BTagSF
+	RA2Bin
+	Histo
+
+HISTO
+RA2bin	i:xnum[48]	d:xmin[0.5]	d:xmax[48.5]	s:xtitle[RA2 bin [^{}n_{j},^{}n_{b},^{}#slash{H}_{T},^{}H_{T}]]	s:ytitle[number of events]	b:ratio[0]	b:xbinlabel[1]

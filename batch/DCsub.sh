@@ -11,13 +11,18 @@ SYSTS3=btagSFunc,ctagSFunc,mistagSFunc,btagCFunc,ctagCFunc,mistagCFunc
 CONTAMS=LDP,GJet_CleanVars,GJetLDP_CleanVars
 CHECKARGS=""
 SUFFIX=""
+GEN=0
 
 #check arguments
-while getopts "kx:" opt; do
+while getopts "kx:g" opt; do
   case "$opt" in
   k) CHECKARGS="${CHECKARGS} -k"
     ;;
   x) SUFFIX=$OPTARG
+    ;;
+  g) GEN=1
+     INDIR=${INDIR}/genMHT
+     STORE=${STORE}/genMHT
     ;;
   esac
 done
@@ -34,8 +39,8 @@ nparts=$(($nparts-1))
 echo "Submitting parts 0.."$nparts
 
 for PART in $(seq 0 $nparts); do
-  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} none ${PART} ${STORE} ${SUFFIX}
-  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS2} none ${PART} ${STORE} ${SUFFIX}
-  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS3} none ${PART} ${STORE} ${SUFFIX}
-  ./DCtemp.sh ${JOBDIR} ${INDIR} none ${CONTAMS} ${PART} ${STORE} ${SUFFIX}
+  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} none ${PART} ${STORE} ${SUFFIX} ${GEN}
+  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS2} none ${PART} ${STORE} ${SUFFIX} ${GEN}
+  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS3} none ${PART} ${STORE} ${SUFFIX} ${GEN}
+  ./DCtemp.sh ${JOBDIR} ${INDIR} none ${CONTAMS} ${PART} ${STORE} ${SUFFIX} ${GEN}
 done

@@ -16,6 +16,7 @@ CONTAMS=$4
 PART=$5
 STORE=$6
 SUFF=$7
+GEN=$8
 
 echo ""
 echo "parameter set:"
@@ -26,6 +27,7 @@ echo "CONTAMS:    $CONTAMS"
 echo "PART:       $PART"
 echo "STORE:      $STORE"
 echo "SUFF:       $SUFF"
+echo "GEN:        $GEN"
 
 tar -xzf ${CMSSWVER}.tar.gz
 cd ${CMSSWVER}
@@ -36,8 +38,8 @@ eval `scramv1 runtime -sh`
 cd src/Analysis
 
 #run macro
-echo "run: root -b -q -l 'MakeAllDCsyst.C+(1,"'"'$INDIR'","'$SYSTS'","'$CONTAMS'",'$PART',"'$SUFF'"'")' 2>&1"
-root -b -q -l 'MakeAllDCsyst.C+(1,"'$INDIR'","'$SYSTS'","'$CONTAMS'",'$PART',"'$SUFF'")' 2>&1
+echo "run: root -b -q -l 'MakeAllDCsyst.C+(1,"'"'$INDIR'","'$SYSTS'","'$CONTAMS'",'$PART',"'$SUFF'",'$GEN")' 2>&1"
+root -b -q -l 'MakeAllDCsyst.C+(1,"'$INDIR'","'$SYSTS'","'$CONTAMS'",'$PART',"'$SUFF'",'$GEN')' 2>&1
 
 ROOTEXIT=$?
 

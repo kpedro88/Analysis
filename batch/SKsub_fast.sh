@@ -10,18 +10,23 @@ INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PR
 OUTDIR=tree
 STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/${RUN2PRODV}/scan
 CHECKARGS=""
+EXPORT=exportFast.sh
 
 #check arguments
-while getopts "k" opt; do
+while getopts "kg" opt; do
   case "$opt" in
   k) CHECKARGS="${CHECKARGS} -k"
+    ;;
+  g) INPUT=input/input_selection_genMHT.txt
+     STORE=${STORE}/genMHT
+	 EXPORT=exportFastT2tt.sh
     ;;
   esac
 done
 
 ./SKcheck.sh ${CHECKARGS}
 
-source exportFast.sh
+source ${EXPORT}
 
 for SAMPLE in ${SAMPLES[@]}
   do
