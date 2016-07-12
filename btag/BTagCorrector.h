@@ -19,7 +19,7 @@ using namespace std;
 class BTagCorrector {
 	public:
 		//constructor
-		BTagCorrector() : debug(false), fastsim(false), btagSFunc(0), ctagSFunc(0), mistagSFunc(0), btagCFunc(0), ctagCFunc(0), mistagCFunc(0), h_eff_b(NULL), h_eff_c(NULL), h_eff_udsg(NULL) {}
+		BTagCorrector() : debug(false), fastsim(false), btagSFunc(0), mistagSFunc(0), btagCFunc(0), ctagCFunc(0), mistagCFunc(0), h_eff_b(NULL), h_eff_c(NULL), h_eff_udsg(NULL) {}
 		//destructor
 		virtual ~BTagCorrector() {}
 		
@@ -54,19 +54,25 @@ class BTagCorrector {
 		void SetCalib(string cfile){
 			//initialize btag helper classes
 			calib = BTagCalibration("",cfile);
-			reader = BTagCalibrationReader(&calib, BTagEntry::OP_MEDIUM, "comb", "central");
-			readerUp = BTagCalibrationReader(&calib, BTagEntry::OP_MEDIUM, "comb", "up");
-			readerDown = BTagCalibrationReader(&calib, BTagEntry::OP_MEDIUM, "comb", "down");
+			reader = BTagCalibrationReader(BTagEntry::OP_MEDIUM, "central");
+			reader.load(calib, BTagEntry::FLAV_B, "comb"); reader.load(calib, BTagEntry::FLAV_C, "comb");  reader.load(calib, BTagEntry::FLAV_UDSG, "incl");
+			readerUp = BTagCalibrationReader(BTagEntry::OP_MEDIUM, "up");
+			readerUp.load(calib, BTagEntry::FLAV_B, "comb"); readerUp.load(calib, BTagEntry::FLAV_C, "comb");  readerUp.load(calib, BTagEntry::FLAV_UDSG, "incl");
+			readerDown = BTagCalibrationReader(BTagEntry::OP_MEDIUM, "down");
+			readerDown.load(calib, BTagEntry::FLAV_B, "comb"); readerDown.load(calib, BTagEntry::FLAV_C, "comb");  readerDown.load(calib, BTagEntry::FLAV_UDSG, "incl");
 		}
 		void SetCalibFastSim(string cfile){
 			//read CFs
 			calibFast = BTagCalibration("",cfile);
-			readerFast = BTagCalibrationReader(&calibFast, BTagEntry::OP_MEDIUM, "fastsim", "central");
-			readerFastUp = BTagCalibrationReader(&calibFast, BTagEntry::OP_MEDIUM, "fastsim", "up");
-			readerFastDown = BTagCalibrationReader(&calibFast, BTagEntry::OP_MEDIUM, "fastsim", "down");
+			readerFast = BTagCalibrationReader(BTagEntry::OP_MEDIUM, "central");
+			readerFast.load(calibFast, BTagEntry::FLAV_B, "fastsim"); readerFast.load(calibFast, BTagEntry::FLAV_C, "fastsim");  readerFast.load(calibFast, BTagEntry::FLAV_UDSG, "fastsim");
+			readerFastUp = BTagCalibrationReader(BTagEntry::OP_MEDIUM, "up");
+			readerFastUp.load(calibFast, BTagEntry::FLAV_B, "fastsim"); readerFastUp.load(calibFast, BTagEntry::FLAV_C, "fastsim");  readerFastUp.load(calibFast, BTagEntry::FLAV_UDSG, "fastsim");
+			readerFastDown = BTagCalibrationReader(BTagEntry::OP_MEDIUM, "down");
+			readerFastDown.load(calibFast, BTagEntry::FLAV_B, "fastsim"); readerFastDown.load(calibFast, BTagEntry::FLAV_C, "fastsim");  readerFastDown.load(calibFast, BTagEntry::FLAV_UDSG, "fastsim");
 		}
 		void SetBtagSFunc(int u) { btagSFunc = u; }
-		void SetCtagSFunc(int u) { ctagSFunc = u; }
+		void SetCtagSFunc(int u) { btagSFunc = u; } //ctag and btag are correlated
 		void SetMistagSFunc(int u) { mistagSFunc = u; }
 		void SetBtagCFunc(int u) { btagCFunc = u; }
 		void SetCtagCFunc(int u) { ctagCFunc = u; }
@@ -179,7 +185,7 @@ class BTagCorrector {
 				if(debug) cout << "Jet " << ja << ": " << Jets->at(ja).Pt() << ", " << fabs(Jets->at(ja).Eta()) << ", " << abs(Jets_flavor->at(ja))  << ", " << Jets_bDiscriminatorCSV->at(ja)
 								<< ", " << sfEffLists[ja][0] << ", " << sfEffLists[ja][1] << ", " << sfEffLists[ja][2] << endl;
 							
-				if(Jets_bDiscriminatorCSV->at(ja) > 0.890){
+				if(Jets_bDiscriminatorCSV->at(ja) > 0.800){
 					c_numer *= eff_a;
 					c_denom *= eff_a*sf_a;
 				}
@@ -217,8 +223,8 @@ class BTagCorrector {
 			}
 			else if(flav==4){ //charm mistag
 				sfEffList[0] = h_eff_c->GetBinContent(h_eff_c->FindBin(pt,eta));
-				sfEffList[1] = (ctagSFunc==0 ? reader.eval(BTagEntry::FLAV_C,eta,pt) :
-							   (ctagSFunc==1 ? readerUp.eval(BTagEntry::FLAV_C,eta,pt) :
+				sfEffList[1] = (btagSFunc==0 ? reader.eval(BTagEntry::FLAV_C,eta,pt) :
+							   (btagSFunc==1 ? readerUp.eval(BTagEntry::FLAV_C,eta,pt) :
 											   readerDown.eval(BTagEntry::FLAV_C,eta,pt) ) );
 				if(fastsim){
 					sfEffList[2] = (ctagCFunc==0 ? readerFast.eval(BTagEntry::FLAV_C,eta,pt) :
@@ -241,7 +247,7 @@ class BTagCorrector {
 		
 		//member variables
 		bool debug, fastsim;
-		int btagSFunc, ctagSFunc, mistagSFunc;
+		int btagSFunc, mistagSFunc;
 		int btagCFunc, ctagCFunc, mistagCFunc;
 		BTagCalibration calib, calibFast;
 		BTagCalibrationReader reader, readerUp, readerDown;
@@ -254,10 +260,10 @@ USAGE:
 //open skim file
 BTagCorrector btagcorr;
 btagcorr->SetEffs(file);
-btagcorr->SetCalib("btag/CSVv2_mod.csv");
+btagcorr->SetCalib("btag/CSVv2_4invfb.csv");
 //if fastsim
 btagcorr->SetFastSim(true);
-btagcorr->SetCalibFastSim("btag/CSV_13TEV_Combined_20_11_2015.csv");
+btagcorr->SetCalibFastSim("btag/CSV_13TEV_TTJets_11_7_2016.csv");
 //inside event loop
 vector<double> prob = btagcorr->GetCorrections(Jets,Jets_hadronFlavor,HTJetsMask);
 //put event in each btag bin, weighted by prob[0], prob[1], prob[2], prob[3] for nb = 0, 1, 2, 3+

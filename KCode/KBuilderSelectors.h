@@ -559,6 +559,7 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 				filters.push_back(new EventListFilter(filterfiles[f]));
 			}
 			onlydata = localOpt->Get("onlydata",false);
+			filter2015 = localOpt->Get("filter2015",false);
 		}
 		virtual void CheckBranches(){
 			is74X = !(looper->CheckBranchType("HBHEIsoNoiseFilter","/I"));
@@ -606,12 +607,13 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 			for(unsigned f = 0; f < filters.size(); ++f){
 				otherFilters &= filters[f]->CheckEvent(looper->RunNum,looper->LumiBlockNum,looper->EvtNum);
 			}
+			if(filter2015 and !is74X) return looper->NVtx > 0 && looper->eeBadScFilter==1 && eeBadSc4Filter && HBHENoiseFilter && HBHEIsoNoiseFilter && looper->CSCTightHaloFilter==1 && EcalDeadCellTriggerPrimitiveFilter && otherFilters;
 			return looper->NVtx > 0 && looper->eeBadScFilter==1 && eeBadSc4Filter && HBHENoiseFilter && HBHEIsoNoiseFilter && 
 				   TightHaloFilter && EcalDeadCellTriggerPrimitiveFilter && BadChargedCandidateFilter && BadPFMuonFilter && otherFilters;
 		}
 		
 		//member variables
-		bool onlydata;
+		bool onlydata, filter2015;
 		string cscfile;
 		bool is74X;
 		EventListFilter cscfilter;
@@ -712,7 +714,7 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 			debug = localOpt->Get("debug",false); btagcorr.SetDebug(debug);
 			
 			//initialize btag corrector calibrations
-			btagcorr.SetCalib("btag/CSVv2_mod.csv");
+			btagcorr.SetCalib("btag/CSVv2_4invfb.csv");
 		}
 		virtual void CheckBranches(){
 			looper->fChain->SetBranchStatus("HTJetsMask",1);
@@ -723,7 +725,6 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 		virtual void CheckLooper(){
 			//check for option
 			int btagSFunc = 0; looper->globalOpt->Get("btagSFunc",btagSFunc); btagcorr.SetBtagSFunc(btagSFunc);
-			int ctagSFunc = 0; looper->globalOpt->Get("ctagSFunc",ctagSFunc); btagcorr.SetCtagSFunc(ctagSFunc);
 			int mistagSFunc = 0; looper->globalOpt->Get("mistagSFunc",mistagSFunc); btagcorr.SetMistagSFunc(mistagSFunc);
 
 			//get efficiency histograms
@@ -739,7 +740,7 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 			if(fastsim){
 				//initialize btag corrector fastsim calibrations
 				//todo: check the sample name and choose the appropriate CFs (once available)
-				btagcorr.SetCalibFastSim("btag/CSV_13TEV_Combined_20_11_2015.csv");
+				btagcorr.SetCalibFastSim("btag/CSV_13TEV_TTJets_11_7_2016.csv");
 				
 				//check for option
 				int btagCFunc = 0; looper->globalOpt->Get("btagCFunc",btagCFunc); btagcorr.SetBtagCFunc(btagCFunc);

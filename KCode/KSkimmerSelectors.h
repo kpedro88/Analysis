@@ -671,15 +671,15 @@ class KBTagEfficiencySelector : public KSelector<KSkimmer> {
 				double eta = fabs(looper->Jets->at(ja).Eta());
 				if(flav==5){
 					d_eff_b->Fill(pt,eta);
-					if(csv > 0.890) n_eff_b->Fill(pt,eta);
+					if(csv > 0.800) n_eff_b->Fill(pt,eta);
 				}
 				else if(flav==4){
 					d_eff_c->Fill(pt,eta);
-					if(csv > 0.890) n_eff_c->Fill(pt,eta);
+					if(csv > 0.800) n_eff_c->Fill(pt,eta);
 				}
 				else if(flav<4 || flav==21){
 					d_eff_udsg->Fill(pt,eta);
-					if(csv > 0.890) n_eff_udsg->Fill(pt,eta);
+					if(csv > 0.800) n_eff_udsg->Fill(pt,eta);
 				}
 			}
 			
