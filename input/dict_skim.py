@@ -49,7 +49,7 @@ flist = [
   'Spring16.DYJetsToLL_M-50_HT-600toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1'],   ['DYJetsToLL_M-50_HT-600toInf']],
 [['Spring16.ZJetsToNuNu_HT-100To200_13TeV-madgraph_ext1'],                               ['ZJetsToNuNu_HT-100to200']],
 [['Spring16.ZJetsToNuNu_HT-200To400_13TeV-madgraph_ext1'],                               ['ZJetsToNuNu_HT-200to400']],
-[['Spring15v2.ZJetsToNuNu_HT-400To600_13TeV-madgraph'],                                  ['ZJetsToNuNu_HT-400to600']],
+[['Spring16.ZJetsToNuNu_HT-400To600_13TeV-madgraph'],                                    ['ZJetsToNuNu_HT-400to600']],
 [['Spring16.ZJetsToNuNu_HT-600To800_13TeV-madgraph'],                                    ['ZJetsToNuNu_HT-600to800']],
 [['Spring16.ZJetsToNuNu_HT-800To1200_13TeV-madgraph'],                                   ['ZJetsToNuNu_HT-800to1200']],
 [['Spring16.ZJetsToNuNu_HT-1200To2500_13TeV-madgraph'],                                  ['ZJetsToNuNu_HT-1200to2500']],
