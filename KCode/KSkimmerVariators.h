@@ -299,6 +299,33 @@ class KJetVariator : public KVariator<KSkimmer> {
 		Double_t        DeltaPhi4;
 };
 
+class KGenMHTVariator : public KVariator<KSkimmer> {
+	public:
+		//constructor
+		KGenMHTVariator() : KVariator<KSkimmer>() { }
+		KGenMHTVariator(string name_, OptionMap* localOpt_) : KVariator<KSkimmer>(name_,localOpt_) { }
+		
+		virtual void DoVariation() {
+			//store original values
+			MHT = looper->MHT;
+			HT = looper->HT;
+			
+			//set to gen vars
+			looper->MHT = looper->GenMHT;
+			looper->HT = looper->GenHT;
+			
+		}
+		virtual void UndoVariation(){
+			//restore original values
+			looper->MHT = MHT;
+			looper->HT = HT;
+		}
+		
+		//member variables
+		double MHT;
+		double HT;
+};
+
 namespace KParser {
 	template <>
 	KVariator<KSkimmer>* processVariator<KSkimmer>(KNamed* tmp){
@@ -308,6 +335,7 @@ namespace KParser {
 		
 		//check for all known variators
 		if(vname=="Jet") vtmp = new KJetVariator(vname,omap);
+		if(vname=="GenMHT") vtmp = new KGenMHTVariator(vname,omap);
 		else {} //skip unknown variators
 
 		if(!vtmp) cout << "Input error: unknown variator " << vname << ". This variator will be skipped." << endl;

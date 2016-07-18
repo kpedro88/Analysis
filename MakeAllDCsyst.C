@@ -15,7 +15,7 @@ using namespace std;
 
 //recompile:
 //root -b -l -q MakeAllDCsyst.C++
-void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV7", string systTypes="nominal,QCD,puunc,scaleunc,isrunc,trigStatUnc,trigSystUnc,JEC,JER,btagSFunc,mistagSFunc", string contamTypes="LDP,GJet_CleanVars,GJetLDP_CleanVars", int part=-1, string suffix="", bool doGen=false){
+void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV7", string systTypes="nominal,QCD,puunc,scaleunc,isrunc,trigStatUnc,trigSystUnc,JEC,JER,btagSFunc,mistagSFunc", string contamTypes="LDP,GJet_CleanVars,GJetLDP_CleanVars", int part=-1, string suffix=""){
 	gErrorIgnoreLevel = kBreak;
 	
 	if(mode==-1){
@@ -29,9 +29,7 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 	string outpre = "RA2bin_";
 	string outdir = "";
 	string input = "input/input_RA2bin_DC_syst.txt";
-	if(doGen) input = "input/input_RA2bin_DC_syst_genMHT.txt";
 	string inputQCD = "input/input_RA2bin_DC_QCD.txt";
-	if(doGen) inputQCD = "input/input_RA2bin_DC_QCD_genMHT.txt";
 	string setlist = "";
 	string osuff = "";
 	
@@ -108,9 +106,9 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 		cout << contams[i] << endl;
 		KPlotDriverDCsyst(indir+inpre+contams[i],input,setlist,outdir+outpre+contams[i]+osuff);
 		
-		//qcd sideband for LDP
-		if(contams[i]=="LDP"){
-			cout << "LDP QCD sideband" << endl;
+		//qcd sideband for LDP & genMHT
+		if(contams[i]=="LDP" || contams[i]=="signal_genMHT" || contams[i]=="LDP_genMHT"){
+			cout << contams[i] << " QCD sideband" << endl;
 			KPlotDriverDCsyst(indir+inpre+contams[i],inputQCD,setlist,outdir+outpre+contams[i]+"_QCD"+osuff);
 			continue;
 		}

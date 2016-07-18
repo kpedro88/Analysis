@@ -8,10 +8,9 @@ STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Datacards/${RU
 SYSTS=nominal,QCD,puunc,scaleunc,isrunc
 SYSTS2=trigStatUnc,trigSystUnc,JEC,JER
 SYSTS3=btagSFunc,mistagSFunc,btagCFunc,ctagCFunc,mistagCFunc
-CONTAMS=LDP,GJet_CleanVars,GJetLDP_CleanVars
+CONTAMS=signal_genMHT,LDP,LDP_genMHT,GJet_CleanVars,GJetLDP_CleanVars
 CHECKARGS=""
 SUFFIX=""
-GEN=0
 
 #check arguments
 while getopts "kx:g" opt; do
@@ -19,10 +18,6 @@ while getopts "kx:g" opt; do
   k) CHECKARGS="${CHECKARGS} -k"
     ;;
   x) SUFFIX=$OPTARG
-    ;;
-  g) GEN=1
-     INDIR=${INDIR}/genMHT
-     STORE=${STORE}/genMHT
     ;;
   esac
 done
@@ -39,8 +34,8 @@ nparts=$(($nparts-1))
 echo "Submitting parts 0.."$nparts
 
 for PART in $(seq 0 $nparts); do
-  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} none ${PART} ${STORE} ${SUFFIX} ${GEN}
-  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS2} none ${PART} ${STORE} ${SUFFIX} ${GEN}
-  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS3} none ${PART} ${STORE} ${SUFFIX} ${GEN}
-  ./DCtemp.sh ${JOBDIR} ${INDIR} none ${CONTAMS} ${PART} ${STORE} ${SUFFIX} ${GEN}
+  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} none ${PART} ${STORE} ${SUFFIX}
+  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS2} none ${PART} ${STORE} ${SUFFIX}
+  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS3} none ${PART} ${STORE} ${SUFFIX}
+  ./DCtemp.sh ${JOBDIR} ${INDIR} none ${CONTAMS} ${PART} ${STORE} ${SUFFIX}
 done

@@ -7,7 +7,6 @@ CONTAMS=$4
 PART=$5
 STORE=$6
 SUFF=$7
-GEN=$8
 echo ""
 echo ">> `/bin/date` Submitting condor job(s) : $1 $2 $3 $4 $5 $7"
 
@@ -21,7 +20,6 @@ cat ./jobExecCondorDC.jdl \
 | sed -e s/PART/${PART}/ \
 | sed -e s~STORE~${STORE}~ \
 | sed -e s/SUFF/${SUFF}/ \
-| sed -e s/GEN/${GEN}/ \
 > ${JOBDIR}/jobExecCondor_MakeAllDCsyst_${SYSTS}_${CONTAMS}_${SUFF}${PART}.jdl
 
 cd ${JOBDIR}

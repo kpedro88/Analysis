@@ -259,6 +259,8 @@ JERup
 	Jet	s:vartype[JERup]
 JERdown
 	Jet	s:vartype[JERdown]
+genMHT
+	GenMHT
 
 INPUT
 input/input_sets_skim.txt
