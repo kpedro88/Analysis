@@ -731,7 +731,7 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 			if(fastsim){
 				//initialize btag corrector fastsim calibrations
 				//todo: check the sample name and choose the appropriate CFs (once available)
-				btagcorr.SetCalibFastSim("btag/CSV_13TEV_TTJets_11_7_2016.csv");
+				btagcorr.SetCalibFastSim("btag/CSV_13TEV_Combined_14_7_2016.csv");
 				
 				//check for option
 				int btagCFunc = 0; looper->globalOpt->Get("btagCFunc",btagCFunc); btagcorr.SetBtagCFunc(btagCFunc);
