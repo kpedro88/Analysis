@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Sun Jun 26 18:23:59 2016 by ROOT version 5.34/18
+// Sun Jul 17 13:13:40 2016 by ROOT version 5.34/18
 // from TTree PreSelection/PreSelection
-// found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV8/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
+// found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV9/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
 //////////////////////////////////////////////////////////
 
 #ifndef NtupleClass_h
@@ -46,7 +46,6 @@ public :
    Double_t        CaloMETPhi;
    Double_t        CrossSection;
    Int_t           CSCTightHaloFilter;
-   Bool_t          CSCTightHaloFilter74X;
    Double_t        DeltaPhi1;
    Double_t        DeltaPhi1clean;
    Double_t        DeltaPhi1JECdown;
@@ -72,7 +71,6 @@ public :
    Double_t        DeltaPhi4JERdown;
    Double_t        DeltaPhi4JERup;
    Int_t           EcalDeadCellTriggerPrimitiveFilter;
-   Bool_t          eeBadSc4Filter;
    Int_t           eeBadScFilter;
    vector<int>     *ElectronCharge;
    vector<TLorentzVector> *Electrons;
@@ -111,9 +109,7 @@ public :
    vector<TLorentzVector> *GenTaus;
    Int_t           globalTightHalo2016Filter;
    Int_t           HBHEIsoNoiseFilter;
-   Bool_t          HBHEIsoNoiseFilter74X;
    Int_t           HBHENoiseFilter;
-   Bool_t          HBHENoiseFilter74X;
    Double_t        HT;
    Double_t        HTclean;
    Double_t        HTJECdown;
@@ -132,6 +128,12 @@ public :
    Int_t           isoMuonTracksclean;
    Int_t           isoPionTracks;
    Int_t           isoPionTracksclean;
+   vector<bool>    *ISRJetsMask;
+   vector<bool>    *ISRJetsMaskclean;
+   vector<bool>    *ISRJetsMaskJECdown;
+   vector<bool>    *ISRJetsMaskJECup;
+   vector<bool>    *ISRJetsMaskJERdown;
+   vector<bool>    *ISRJetsMaskJERup;
    Bool_t          JetID;
    Bool_t          JetIDclean;
    Bool_t          JetIDJECdown;
@@ -233,6 +235,12 @@ public :
    Int_t           nAllVertices;
    Int_t           NJets;
    Int_t           NJetsclean;
+   Int_t           NJetsISR;
+   Int_t           NJetsISRclean;
+   Int_t           NJetsISRJECdown;
+   Int_t           NJetsISRJECup;
+   Int_t           NJetsISRJERdown;
+   Int_t           NJetsISRJERup;
    Int_t           NJetsJECdown;
    Int_t           NJetsJECup;
    Int_t           NJetsJERdown;
@@ -360,7 +368,6 @@ public :
    TBranch        *b_DeltaPhi4JERup;   //!
    TBranch        *b_EcalDeadCellTriggerPrimitiveFilter;   //!
    TBranch        *b_eeBadScFilter;   //!
-   TBranch        *b_eeBadSc4Filter;   //!
    TBranch        *b_ElectronCharge;   //!
    TBranch        *b_Electrons;   //!
    TBranch        *b_GenElec_GenElecFromTau;   //!
@@ -417,6 +424,12 @@ public :
    TBranch        *b_isoMuonTracksclean;   //!
    TBranch        *b_isoPionTracks;   //!
    TBranch        *b_isoPionTracksclean;   //!
+   TBranch        *b_ISRJetsMask;   //!
+   TBranch        *b_ISRJetsMaskclean;   //!
+   TBranch        *b_ISRJetsMaskJECdown;   //!
+   TBranch        *b_ISRJetsMaskJECup;   //!
+   TBranch        *b_ISRJetsMaskJERdown;   //!
+   TBranch        *b_ISRJetsMaskJERup;   //!
    TBranch        *b_JetID;   //!
    TBranch        *b_JetIDclean;   //!
    TBranch        *b_JetIDJECdown;   //!
@@ -518,6 +531,12 @@ public :
    TBranch        *b_nAllVertices;   //!
    TBranch        *b_NJets;   //!
    TBranch        *b_NJetsclean;   //!
+   TBranch        *b_NJetsISR;   //!
+   TBranch        *b_NJetsISRclean;   //!
+   TBranch        *b_NJetsISRJECdown;   //!
+   TBranch        *b_NJetsISRJECup;   //!
+   TBranch        *b_NJetsISRJERdown;   //!
+   TBranch        *b_NJetsISRJERup;   //!
    TBranch        *b_NJetsJECdown;   //!
    TBranch        *b_NJetsJECup;   //!
    TBranch        *b_NJetsJERdown;   //!
@@ -606,7 +625,6 @@ public :
    virtual void     Loop();
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
-   virtual Bool_t   CheckBranchType(std::string title, std::string label);
 };
 
 #endif
@@ -617,11 +635,11 @@ NtupleClass::NtupleClass(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV8/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV9/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV8/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
+         f = new TFile("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV9/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
       }
-      TDirectory * dir = (TDirectory*)f->Get("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV8/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root:/TreeMaker2");
+      TDirectory * dir = (TDirectory*)f->Get("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV9/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root:/TreeMaker2");
       dir->GetObject("PreSelection",tree);
 
    }
@@ -651,14 +669,6 @@ Long64_t NtupleClass::LoadTree(Long64_t entry)
       Notify();
    }
    return centry;
-}
-
-Bool_t NtupleClass::CheckBranchType(std::string title, std::string label){
-	if (!fChain) return false;
-	TBranch* br = fChain->GetBranch(title.c_str());
-	if(!br) return false;
-	
-	return (std::string(br->GetTitle()).find(label.c_str())!=std::string::npos);
 }
 
 void NtupleClass::Init(TTree *tree)
@@ -708,6 +718,12 @@ void NtupleClass::Init(TTree *tree)
    HTJetsMaskJECup = 0;
    HTJetsMaskJERdown = 0;
    HTJetsMaskJERup = 0;
+   ISRJetsMask = 0;
+   ISRJetsMaskclean = 0;
+   ISRJetsMaskJECdown = 0;
+   ISRJetsMaskJECup = 0;
+   ISRJetsMaskJERdown = 0;
+   ISRJetsMaskJERup = 0;
    Jets = 0;
    Jets_bDiscriminatorCSV = 0;
    Jets_bDiscriminatorMVA = 0;
@@ -851,8 +867,6 @@ void NtupleClass::Init(TTree *tree)
    fCurrent = -1;
    fChain->SetMakeClass(1);
 
-   //below: hacky solution to handle MET filter bool vs. int
-   
    fChain->SetBranchAddress("RunNum", &RunNum, &b_RunNum);
    fChain->SetBranchAddress("LumiBlockNum", &LumiBlockNum, &b_LumiBlockNum);
    fChain->SetBranchAddress("EvtNum", &EvtNum, &b_EvtNum);
@@ -873,8 +887,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("CaloMET", &CaloMET, &b_CaloMET);
    fChain->SetBranchAddress("CaloMETPhi", &CaloMETPhi, &b_CaloMETPhi);
    fChain->SetBranchAddress("CrossSection", &CrossSection, &b_CrossSection);
-   if(CheckBranchType("CSCTightHaloFilter","/I")) fChain->SetBranchAddress("CSCTightHaloFilter", &CSCTightHaloFilter, &b_CSCTightHaloFilter);
-   else fChain->SetBranchAddress("CSCTightHaloFilter", &CSCTightHaloFilter74X, &b_CSCTightHaloFilter);
+   fChain->SetBranchAddress("CSCTightHaloFilter", &CSCTightHaloFilter, &b_CSCTightHaloFilter);
    fChain->SetBranchAddress("DeltaPhi1", &DeltaPhi1, &b_DeltaPhi1);
    fChain->SetBranchAddress("DeltaPhi1clean", &DeltaPhi1clean, &b_DeltaPhi1clean);
    fChain->SetBranchAddress("DeltaPhi1JECdown", &DeltaPhi1JECdown, &b_DeltaPhi1JECdown);
@@ -901,7 +914,6 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("DeltaPhi4JERup", &DeltaPhi4JERup, &b_DeltaPhi4JERup);
    fChain->SetBranchAddress("EcalDeadCellTriggerPrimitiveFilter", &EcalDeadCellTriggerPrimitiveFilter, &b_EcalDeadCellTriggerPrimitiveFilter);
    fChain->SetBranchAddress("eeBadScFilter", &eeBadScFilter, &b_eeBadScFilter);
-   fChain->SetBranchAddress("eeBadSc4Filter", &eeBadSc4Filter, &b_eeBadSc4Filter);
    fChain->SetBranchAddress("ElectronCharge", &ElectronCharge, &b_ElectronCharge);
    fChain->SetBranchAddress("Electrons", &Electrons, &b_Electrons);
    fChain->SetBranchAddress("GenElec_GenElecFromTau", &GenElec_GenElecFromTau, &b_GenElec_GenElecFromTau);
@@ -938,10 +950,8 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("GenTauNu", &GenTauNu, &b_GenTauNu);
    fChain->SetBranchAddress("GenTaus", &GenTaus, &b_GenTaus);
    fChain->SetBranchAddress("globalTightHalo2016Filter", &globalTightHalo2016Filter, &b_globalTightHalo2016Filter);
-   if(CheckBranchType("HBHEIsoNoiseFilter","/I")) fChain->SetBranchAddress("HBHEIsoNoiseFilter", &HBHEIsoNoiseFilter, &b_HBHEIsoNoiseFilter);
-   else fChain->SetBranchAddress("HBHEIsoNoiseFilter", &HBHEIsoNoiseFilter74X, &b_HBHEIsoNoiseFilter);
-   if(CheckBranchType("HBHENoiseFilter","/I")) fChain->SetBranchAddress("HBHENoiseFilter", &HBHENoiseFilter, &b_HBHENoiseFilter);
-   else fChain->SetBranchAddress("HBHENoiseFilter", &HBHENoiseFilter74X, &b_HBHENoiseFilter);
+   fChain->SetBranchAddress("HBHEIsoNoiseFilter", &HBHEIsoNoiseFilter, &b_HBHEIsoNoiseFilter);
+   fChain->SetBranchAddress("HBHENoiseFilter", &HBHENoiseFilter, &b_HBHENoiseFilter);
    fChain->SetBranchAddress("HT", &HT, &b_HT);
    fChain->SetBranchAddress("HTclean", &HTclean, &b_HTclean);
    fChain->SetBranchAddress("HTJECdown", &HTJECdown, &b_HTJECdown);
@@ -960,6 +970,12 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("isoMuonTracksclean", &isoMuonTracksclean, &b_isoMuonTracksclean);
    fChain->SetBranchAddress("isoPionTracks", &isoPionTracks, &b_isoPionTracks);
    fChain->SetBranchAddress("isoPionTracksclean", &isoPionTracksclean, &b_isoPionTracksclean);
+   fChain->SetBranchAddress("ISRJetsMask", &ISRJetsMask, &b_ISRJetsMask);
+   fChain->SetBranchAddress("ISRJetsMaskclean", &ISRJetsMaskclean, &b_ISRJetsMaskclean);
+   fChain->SetBranchAddress("ISRJetsMaskJECdown", &ISRJetsMaskJECdown, &b_ISRJetsMaskJECdown);
+   fChain->SetBranchAddress("ISRJetsMaskJECup", &ISRJetsMaskJECup, &b_ISRJetsMaskJECup);
+   fChain->SetBranchAddress("ISRJetsMaskJERdown", &ISRJetsMaskJERdown, &b_ISRJetsMaskJERdown);
+   fChain->SetBranchAddress("ISRJetsMaskJERup", &ISRJetsMaskJERup, &b_ISRJetsMaskJERup);
    fChain->SetBranchAddress("JetID", &JetID, &b_JetID);
    fChain->SetBranchAddress("JetIDclean", &JetIDclean, &b_JetIDclean);
    fChain->SetBranchAddress("JetIDJECdown", &JetIDJECdown, &b_JetIDJECdown);
@@ -1061,7 +1077,12 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("nAllVertices", &nAllVertices, &b_nAllVertices);
    fChain->SetBranchAddress("NJets", &NJets, &b_NJets);
    fChain->SetBranchAddress("NJetsclean", &NJetsclean, &b_NJetsclean);
-   fChain->SetBranchAddress("PFCaloMETRatio", &PFCaloMETRatio, &b_PFCaloMETRatio);
+   fChain->SetBranchAddress("NJetsISR", &NJetsISR, &b_NJetsISR);
+   fChain->SetBranchAddress("NJetsISRclean", &NJetsISRclean, &b_NJetsISRclean);
+   fChain->SetBranchAddress("NJetsISRJECdown", &NJetsISRJECdown, &b_NJetsISRJECdown);
+   fChain->SetBranchAddress("NJetsISRJECup", &NJetsISRJECup, &b_NJetsISRJECup);
+   fChain->SetBranchAddress("NJetsISRJERdown", &NJetsISRJERdown, &b_NJetsISRJERdown);
+   fChain->SetBranchAddress("NJetsISRJERup", &NJetsISRJERup, &b_NJetsISRJERup);
    fChain->SetBranchAddress("NJetsJECdown", &NJetsJECdown, &b_NJetsJECdown);
    fChain->SetBranchAddress("NJetsJECup", &NJetsJECup, &b_NJetsJECup);
    fChain->SetBranchAddress("NJetsJERdown", &NJetsJERdown, &b_NJetsJERdown);
@@ -1071,6 +1092,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("NVtx", &NVtx, &b_NVtx);
    fChain->SetBranchAddress("PDFids", &PDFids, &b_PDFids);
    fChain->SetBranchAddress("PDFweights", &PDFweights, &b_PDFweights);
+   fChain->SetBranchAddress("PFCaloMETRatio", &PFCaloMETRatio, &b_PFCaloMETRatio);
    fChain->SetBranchAddress("photon_fullID", &photon_fullID, &b_photon_fullID);
    fChain->SetBranchAddress("photon_genMatched", &photon_genMatched, &b_photon_genMatched);
    fChain->SetBranchAddress("photon_hadTowOverEM", &photon_hadTowOverEM, &b_photon_hadTowOverEM);

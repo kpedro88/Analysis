@@ -715,42 +715,28 @@ class KBTagEfficiencySelector : public KSelector<KSkimmer> {
 };
 
 //-----------------------------------------------------------------
-//stores the pT distribution of the gen-level system (e.g. gluinos)
-class KGenPtSelector : public KSelector<KSkimmer> {
+//stores the NJetISR distribution
+class KNJetsISRSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
-		KGenPtSelector() : KSelector<KSkimmer>() { }
-		KGenPtSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), h_genpt(NULL) {
+		KNJetsISRSelector() : KSelector<KSkimmer>() { }
+		KNJetsISRSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), h_njetsisr(NULL) {
 			canfail = false;
+			localOpt->Get("xbins",xbins);
 			//initialize histograms using KPlot:CreateHist() method
 			TH1::AddDirectory(kFALSE);
-			KPlot* ptmp = new KPlot("GenPt",localOpt,NULL);
+			KPlot* ptmp = new KPlot("NJetsISR",localOpt,NULL);
 			ptmp->CreateHist();
-			h_genpt = ptmp->GetHisto();
+			h_njetsisr = ptmp->GetHisto();
 			delete ptmp;
-		}
-		virtual void CheckLooper(){
-			//get mother pdgid
-			looper->MyBase->GetLocalOpt()->Get("mother",mother);
-			//if none, skip this
-			if(mother.size()==0) dummy = true;
 		}
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			//loop over genparticles
-			TLorentzVector vgen;
-			vgen.SetPtEtaPhiE(0,0,0,0);
-			for(unsigned g = 0; g < looper->GenParticles_PdgId->size(); ++g){
-				if(binary_search(mother.begin(),mother.end(),abs(looper->GenParticles_PdgId->at(g)))){
-					vgen -= looper->GenParticles->at(g);
-				}
-			}
-			
-			//fill system pt
-			h_genpt->Fill(vgen.Pt());
+			//fill histo
+			h_njetsisr->Fill(min(double(looper->NJetsISR),xbins[xbins.size()-2]));
 			
 			return true;
 		}
@@ -758,12 +744,12 @@ class KGenPtSelector : public KSelector<KSkimmer> {
 		virtual void Finalize(TFile* file){
 			//write to file
 			file->cd();
-			h_genpt->Write();
+			h_njetsisr->Write();
 		}
 		
 		//member variables
-		TH1 *h_genpt;
-		vector<int> mother;
+		TH1 *h_njetsisr;
+		vector<double> xbins;
 };
 
 //-----------------------------------------------------------------
@@ -1666,7 +1652,7 @@ namespace KParser {
 		else if(sname=="NBJet") srtmp = new KNBJetSelector(sname,omap);
 		else if(sname=="GenHTBin") srtmp = new KGenHTBinSelector(sname,omap);
 		else if(sname=="BTagEfficiency") srtmp = new KBTagEfficiencySelector(sname,omap);
-		else if(sname=="GenPt") srtmp = new KGenPtSelector(sname,omap);
+		else if(sname=="NJetsISR") srtmp = new KNJetsISRSelector(sname,omap);
 		else if(sname=="PDFNorm") srtmp = new KPDFNormSelector(sname,omap);
 		else if(sname=="EventRange") srtmp = new KEventRangeSelector(sname,omap);
 		else if(sname=="CSCFilter") srtmp = new KCSCFilterSelector(sname,omap);

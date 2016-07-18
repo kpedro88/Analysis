@@ -241,8 +241,7 @@ class KBuilderMC : public KBuilder {
 				if(isrunc==1) globalOpt->Get("isrhistUp",isrtmp);
 				else if(isrunc==-1) globalOpt->Get("isrhistDown",isrtmp);
 				else globalOpt->Get("isrhist",isrtmp);
-				isrcorror.SetMother(mother);
-				isrcorror.SetWeights(isrtmp,(TH1*)MyBase->GetFile()->Get("GenPt"));
+				isrcorror.SetWeights(isrtmp,(TH1*)MyBase->GetFile()->Get("NJetsISR"));
 			}
 			
 			//other uncertainty options
@@ -279,8 +278,7 @@ class KBuilderMC : public KBuilder {
 				else fChain->SetBranchStatus("puWeight",1);
 			}
 			if(isrcorr){
-				fChain->SetBranchStatus("genParticles",1);
-				fChain->SetBranchStatus("genParticles_PDGid",1);
+				fChain->SetBranchStatus("NJetsISR",1);
 			}
 			if(NTenum==ttbarLowHT || NTenum==ttbarLowHThad || NTenum==ttbarHighHT) fChain->SetBranchStatus("madHT",1);
 			if(NTenum==ttbarLowHThad){
@@ -333,7 +331,7 @@ class KBuilderMC : public KBuilder {
 			}
 			
 			if(isrcorr){
-				w *= isrcorror.GetCorrection(GenParticles,GenParticles_PdgId);
+				w *= isrcorror.GetCorrection(NJetsISR);
 			}
 			
 			if(pdfunc!=0){

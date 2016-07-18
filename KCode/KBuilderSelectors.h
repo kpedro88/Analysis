@@ -549,11 +549,7 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 	public:
 		//constructor
 		KMETFilterSelector() : KSelector<KBuilder>() { }
-		KMETFilterSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), cscfile(""), is74X(false) { 
-			localOpt->Get("cscfile",cscfile);
-			if(cscfile.size()>0){
-				cscfilter = EventListFilter(cscfile);
-			}
+		KMETFilterSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_) {
 			localOpt->Get("filterfiles",filterfiles);
 			for(unsigned f = 0; f < filterfiles.size(); ++f){
 				filters.push_back(new EventListFilter(filterfiles[f]));
@@ -562,7 +558,6 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 			filter2015 = localOpt->Get("filter2015",false);
 		}
 		virtual void CheckBranches(){
-			is74X = !(looper->CheckBranchType("HBHEIsoNoiseFilter","/I"));
 			looper->fChain->SetBranchStatus("NVtx",1);
 			looper->fChain->SetBranchStatus("eeBadScFilter",1);
 			looper->fChain->SetBranchStatus("eeBadSc4Filter",1);
@@ -573,7 +568,7 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 			looper->fChain->SetBranchStatus("globalTightHalo2016Filter",1);
 			looper->fChain->SetBranchStatus("BadChargedCandidateFilter",1);
 			looper->fChain->SetBranchStatus("BadPFMuonFilter",1);
-			if(cscfilter.Initialized() || (filters.size()>0 && filters[0]->Initialized())){
+			if(filters.size()>0 && filters[0]->Initialized()){
 				looper->fChain->SetBranchStatus("RunNum",1);
 				looper->fChain->SetBranchStatus("LumiBlockNum",1);
 				looper->fChain->SetBranchStatus("EvtNum",1);				
@@ -595,28 +590,24 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			bool TightHaloFilter = is74X ? looper->CSCTightHaloFilter74X : looper->globalTightHalo2016Filter==1;
-			bool HBHENoiseFilter = is74X ? looper->HBHENoiseFilter74X : looper->HBHENoiseFilter==1;
-			bool HBHEIsoNoiseFilter = is74X ? looper->HBHEIsoNoiseFilter74X : looper->HBHEIsoNoiseFilter==1;
-			bool eeBadSc4Filter = is74X ? looper->eeBadSc4Filter : true;
-			bool EcalDeadCellTriggerPrimitiveFilter = is74X ? true : looper->EcalDeadCellTriggerPrimitiveFilter==1;
-			bool BadChargedCandidateFilter = is74X ? true : looper->BadChargedCandidateFilter;
-			bool BadPFMuonFilter = is74X ? true : looper->BadPFMuonFilter;
-			if(cscfilter.Initialized()) TightHaloFilter = cscfilter.CheckEvent(looper->RunNum,looper->LumiBlockNum,looper->EvtNum);
+			bool TightHaloFilter = looper->globalTightHalo2016Filter==1;
+			bool HBHENoiseFilter = looper->HBHENoiseFilter==1;
+			bool HBHEIsoNoiseFilter = looper->HBHEIsoNoiseFilter==1;
+			bool EcalDeadCellTriggerPrimitiveFilter = looper->EcalDeadCellTriggerPrimitiveFilter==1;
+			bool eeBadScFilter = looper->eeBadScFilter==1;
+			bool BadChargedCandidateFilter = looper->BadChargedCandidateFilter;
+			bool BadPFMuonFilter = looper->BadPFMuonFilter;
 			bool otherFilters = true;
 			for(unsigned f = 0; f < filters.size(); ++f){
 				otherFilters &= filters[f]->CheckEvent(looper->RunNum,looper->LumiBlockNum,looper->EvtNum);
 			}
-			if(filter2015 and !is74X) return looper->NVtx > 0 && looper->eeBadScFilter==1 && eeBadSc4Filter && HBHENoiseFilter && HBHEIsoNoiseFilter && looper->CSCTightHaloFilter==1 && EcalDeadCellTriggerPrimitiveFilter && otherFilters;
-			return looper->NVtx > 0 && looper->eeBadScFilter==1 && eeBadSc4Filter && HBHENoiseFilter && HBHEIsoNoiseFilter && 
-				   TightHaloFilter && EcalDeadCellTriggerPrimitiveFilter && BadChargedCandidateFilter && BadPFMuonFilter && otherFilters;
+			if(filter2015) return looper->NVtx > 0 && eeBadScFilter && HBHENoiseFilter && HBHEIsoNoiseFilter && looper->CSCTightHaloFilter==1 && EcalDeadCellTriggerPrimitiveFilter && otherFilters;
+			return looper->NVtx > 0 && eeBadScFilter && HBHENoiseFilter && HBHEIsoNoiseFilter && TightHaloFilter 
+				&& EcalDeadCellTriggerPrimitiveFilter && BadChargedCandidateFilter && BadPFMuonFilter && otherFilters;
 		}
 		
 		//member variables
 		bool onlydata, filter2015;
-		string cscfile;
-		bool is74X;
-		EventListFilter cscfilter;
 		vector<string> filterfiles;
 		vector<EventListFilter*> filters;
 };
@@ -860,6 +851,9 @@ class KHistoSelector : public KSelector<KBuilder> {
 					}
 					else if(vname=="njets"){//jet multiplicity
 						values[i].Fill(looper->NJets,w);
+					}
+					else if(vname=="njetsisr"){//ISR jet multiplicity
+						values[i].Fill(looper->NJetsISR,w);
 					}
 					else if(vname=="nbjets"){//b-jet multiplicity
 						if(BTagSF){
