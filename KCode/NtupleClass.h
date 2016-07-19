@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Sun Jul 17 13:13:40 2016 by ROOT version 5.34/18
+// Tue Jul 19 09:03:16 2016 by ROOT version 5.34/18
 // from TTree PreSelection/PreSelection
 // found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV9/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
 //////////////////////////////////////////////////////////
@@ -140,6 +140,12 @@ public :
    Bool_t          JetIDJECup;
    Bool_t          JetIDJERdown;
    Bool_t          JetIDJERup;
+   vector<bool>    *JetLeptonMask;
+   vector<bool>    *JetLeptonMaskclean;
+   vector<bool>    *JetLeptonMaskJECdown;
+   vector<bool>    *JetLeptonMaskJECup;
+   vector<bool>    *JetLeptonMaskJERdown;
+   vector<bool>    *JetLeptonMaskJERup;
    vector<TLorentzVector> *Jets;
    vector<double>  *Jets_bDiscriminatorCSV;
    vector<double>  *Jets_bDiscriminatorMVA;
@@ -436,6 +442,12 @@ public :
    TBranch        *b_JetIDJECup;   //!
    TBranch        *b_JetIDJERdown;   //!
    TBranch        *b_JetIDJERup;   //!
+   TBranch        *b_JetLeptonMask;   //!
+   TBranch        *b_JetLeptonMaskclean;   //!
+   TBranch        *b_JetLeptonMaskJECdown;   //!
+   TBranch        *b_JetLeptonMaskJECup;   //!
+   TBranch        *b_JetLeptonMaskJERdown;   //!
+   TBranch        *b_JetLeptonMaskJERup;   //!
    TBranch        *b_Jets;   //!
    TBranch        *b_Jets_bDiscriminatorCSV;   //!
    TBranch        *b_Jets_bDiscriminatorMVA;   //!
@@ -724,6 +736,12 @@ void NtupleClass::Init(TTree *tree)
    ISRJetsMaskJECup = 0;
    ISRJetsMaskJERdown = 0;
    ISRJetsMaskJERup = 0;
+   JetLeptonMask = 0;
+   JetLeptonMaskclean = 0;
+   JetLeptonMaskJECdown = 0;
+   JetLeptonMaskJECup = 0;
+   JetLeptonMaskJERdown = 0;
+   JetLeptonMaskJERup = 0;
    Jets = 0;
    Jets_bDiscriminatorCSV = 0;
    Jets_bDiscriminatorMVA = 0;
@@ -982,6 +1000,12 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("JetIDJECup", &JetIDJECup, &b_JetIDJECup);
    fChain->SetBranchAddress("JetIDJERdown", &JetIDJERdown, &b_JetIDJERdown);
    fChain->SetBranchAddress("JetIDJERup", &JetIDJERup, &b_JetIDJERup);
+   fChain->SetBranchAddress("JetLeptonMask", &JetLeptonMask, &b_JetLeptonMask);
+   fChain->SetBranchAddress("JetLeptonMaskclean", &JetLeptonMaskclean, &b_JetLeptonMaskclean);
+   fChain->SetBranchAddress("JetLeptonMaskJECdown", &JetLeptonMaskJECdown, &b_JetLeptonMaskJECdown);
+   fChain->SetBranchAddress("JetLeptonMaskJECup", &JetLeptonMaskJECup, &b_JetLeptonMaskJECup);
+   fChain->SetBranchAddress("JetLeptonMaskJERdown", &JetLeptonMaskJERdown, &b_JetLeptonMaskJERdown);
+   fChain->SetBranchAddress("JetLeptonMaskJERup", &JetLeptonMaskJERup, &b_JetLeptonMaskJERup);
    fChain->SetBranchAddress("Jets", &Jets, &b_Jets);
    fChain->SetBranchAddress("Jets_bDiscriminatorCSV", &Jets_bDiscriminatorCSV, &b_Jets_bDiscriminatorCSV);
    fChain->SetBranchAddress("Jets_bDiscriminatorMVA", &Jets_bDiscriminatorMVA, &b_Jets_bDiscriminatorMVA);
