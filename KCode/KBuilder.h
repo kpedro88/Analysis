@@ -227,6 +227,8 @@ class KBuilderMC : public KBuilder {
 			
 			//trig corr options
 			trigcorr = globalOpt->Get("trigcorr",false);
+			string treedir = ""; globalOpt->Get("treedir",treedir);
+			if(treedir.find("genMHT")!=string::npos) trigcorr = false; //disabled for genMHT variation
 			trigStatUnc = 0; globalOpt->Get("trigStatUnc", trigStatUnc);
 			trigSystUnc = 0; globalOpt->Get("trigSystUnc", trigSystUnc);
 			realMET = localOpt->Get("realMET",true);
