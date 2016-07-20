@@ -705,7 +705,7 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 			debug = localOpt->Get("debug",false); btagcorr.SetDebug(debug);
 			
 			//initialize btag corrector calibrations
-			btagcorr.SetCalib("btag/CSVv2_4invfb.csv");
+			btagcorr.SetCalib("btag/CSVv2_ichep.csv");
 		}
 		virtual void CheckBranches(){
 			looper->fChain->SetBranchStatus("HTJetsMask",1);

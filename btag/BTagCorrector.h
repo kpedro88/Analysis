@@ -260,7 +260,7 @@ USAGE:
 //open skim file
 BTagCorrector btagcorr;
 btagcorr->SetEffs(file);
-btagcorr->SetCalib("btag/CSVv2_4invfb.csv");
+btagcorr->SetCalib("btag/CSVv2_ichep.csv");
 //if fastsim
 btagcorr->SetFastSim(true);
 btagcorr->SetCalibFastSim("btag/CSV_13TEV_Combined_14_7_2016.csv");

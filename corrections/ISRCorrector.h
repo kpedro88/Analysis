@@ -44,7 +44,7 @@ TFile* isrfile = TFile::Open("corrections/ISRWeights.root","READ");
 TH1* h_isr = (TH1*)isrfile->Get("isr_weights_central");
 isrcorr.SetWeights(h_isr,h_njetsisr);
 //in event loop
-double w_isr = iscorr.GetCorrection(NJetsISR);
+double w_isr = isrcorr.GetCorrection(NJetsISR);
 */
 
 #endif
