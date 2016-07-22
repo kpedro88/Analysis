@@ -2,3 +2,4 @@ SET
 hist	data	data	c:color[kBlack]
 	base	data	MET_2016B	s:filename[tree_MET_2016B.root]
 	base	data	MET_2016C	s:filename[tree_MET_2016C.root]
+	base	data	MET_2016D	s:filename[tree_MET_2016D.root]

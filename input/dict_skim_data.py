@@ -11,4 +11,10 @@ flist=[
 [['Run2016C-PromptReco-v2.SingleElectron'], ['SingleElectron_2016C']],
 [['Run2016C-PromptReco-v2.SingleMuon'], ['SingleMuon_2016C']],
 [['Run2016C-PromptReco-v2.SinglePhoton'], ['SinglePhoton_2016C']],
+[['Run2016D-PromptReco-v2.HTMHT'], ['HTMHT_2016D']],
+[['Run2016D-PromptReco-v2.JetHT'], ['JetHT_2016D']],
+[['Run2016D-PromptReco-v2.MET'], ['MET_2016D']],
+[['Run2016D-PromptReco-v2.SingleElectron'], ['SingleElectron_2016D']],
+[['Run2016D-PromptReco-v2.SingleMuon'], ['SingleMuon_2016D']],
+[['Run2016D-PromptReco-v2.SinglePhoton'], ['SinglePhoton_2016D']],
 ]
