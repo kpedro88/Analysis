@@ -1,4 +1,5 @@
 #include "KCode/KPlotManager.h"
+#include "KCode/KParser.h"
 
 using namespace std;
 
@@ -11,7 +12,12 @@ void KPlotDriverDCsyst(string dir="", string inFile="", string setList="", strin
 	}
 
 	KPlotManager k(inFile,dir);
-	k.Parse(setList);
+	//allow appending of multiple input lists
+	vector<string> setLists;
+	KParser::process(setList,',',setLists);
+	for(unsigned s = 0; s < setLists.size(); ++s){
+		k.Parse(setLists[s]);
+	}
 	k.SetPrint(doPrint);
 	k.GetGlobalOpt()->Set<string>("rootfile",oname);
 	if(syst_opt.size()>0) k.GetGlobalOpt()->Set<int>(syst_opt,syst_val);
