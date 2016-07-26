@@ -335,6 +335,151 @@ class KGenMHTVariator : public KVariator<KSkimmer> {
 		double HT;
 };
 
+
+class KJetLeptonVariator : public KVariator<KSkimmer> {
+	public:
+		//constructor
+		KJetLeptonVariator() : KVariator<KSkimmer>() { }
+		KJetLeptonVariator(string name_, OptionMap* localOpt_) : KVariator<KSkimmer>(name_,localOpt_) { }
+		
+		virtual void DoVariation() {
+			//store original values
+			Jets = *(looper->Jets);
+			HTJetsMask = *(looper->HTJetsMask);
+			MHTJetsMask = *(looper->MHTJetsMask);
+			Jets_ID = *(looper->Jets_ID);
+			Jets_muonEnergyFraction = *(looper->Jets_muonEnergyFraction);
+			Jets_bDiscriminatorCSV = *(looper->Jets_bDiscriminatorCSV);
+			JetID = looper->JetID;
+			NJets = looper->NJets;
+			BTags = looper->BTags;
+			MHT = looper->MHT;
+			MHTPhi = looper->MHTPhi;
+			HT = looper->HT;
+			DeltaPhi1 = looper->DeltaPhi1;
+			DeltaPhi2 = looper->DeltaPhi2;
+			DeltaPhi3 = looper->DeltaPhi3;
+			DeltaPhi4 = looper->DeltaPhi4;
+
+			vector<TLorentzVector> Jets_;
+			vector<bool> HTJetsMask_;
+			vector<bool> MHTJetsMask_;
+			vector<bool> Jets_ID_;
+			vector<double> Jets_muonEnergyFraction_;
+			vector<double> Jets_bDiscriminatorCSV_;
+			bool JetID_ = true;
+			int NJets_ = 0;
+			int BTags_ = 0;
+			double MHT_ = 0;
+			double MHTPhi_ = 0;
+			double HT_ = 0;
+			double DeltaPhi1_ = 0;
+			double DeltaPhi2_ = 0;
+			double DeltaPhi3_ = 0;
+			double DeltaPhi4_ = 0;
+			TLorentzVector MHTvec; MHTvec.SetPtEtaPhiE(0,0,0,0);
+			
+			vector<TLorentzVector>* handles[] = {looper->Muons,looper->Electrons};
+			for(unsigned j = 0; j < looper->Jets->size(); ++j){
+				if(looper->Jets->at(j).Pt()<=30) continue; //skip all low pT jets
+				bool skip = false;
+				for(unsigned h = 0; h < 2; ++h){
+					for(unsigned ih = 0; ih < handles[h]->size(); ++ih){
+						if( abs(looper->Jets->at(j).Pt() - handles[h]->at(ih).Pt())/handles[h]->at(ih).Pt() < 1 && looper->Jets->at(j).DeltaR(handles[h]->at(ih)) < 0.4) {
+							skip = true;
+							break;
+						}
+					}
+					if(skip) break;
+				}
+				if(!skip){
+					Jets_.push_back(looper->Jets->at(j));
+					HTJetsMask_.push_back(looper->HTJetsMask->at(j));
+					MHTJetsMask_.push_back(looper->MHTJetsMask->at(j));
+					Jets_ID_.push_back(looper->Jets_ID->at(j));
+					Jets_muonEnergyFraction_.push_back(looper->Jets_muonEnergyFraction->at(j));
+					Jets_bDiscriminatorCSV_.push_back(looper->Jets_bDiscriminatorCSV->at(j));
+					if(looper->Jets->at(j).Pt() > 30) JetID &= looper->Jets_ID->at(j);
+					if(looper->HTJetsMask->at(j)){
+						HT_ += looper->Jets->at(j).Pt();
+						++NJets_;
+						if(looper->Jets_bDiscriminatorCSV->at(j)>0.800) ++BTags_;
+					}
+					if(looper->MHTJetsMask->at(j)){
+						MHTvec -= looper->Jets->at(j);
+					}
+				}
+			}
+			
+			MHT_ = MHTvec.Pt();
+			MHTPhi_ = MHTvec.Phi();
+			
+			for(unsigned j = 0; j < min((unsigned)4,(unsigned)Jets_.size()); ++j){
+				//recalc delta phi
+				if(j==0) DeltaPhi1_ = abs(KMath::DeltaPhi(Jets_.at(j).Phi(),MHTPhi_));
+				else if(j==1) DeltaPhi2_ = abs(KMath::DeltaPhi(Jets_.at(j).Phi(),MHTPhi_));
+				else if(j==2) DeltaPhi3_ = abs(KMath::DeltaPhi(Jets_.at(j).Phi(),MHTPhi_));
+				else if(j==3) DeltaPhi4_ = abs(KMath::DeltaPhi(Jets_.at(j).Phi(),MHTPhi_));
+			}
+			
+			//set to new vars
+			*(looper->Jets) = Jets_;
+			*(looper->HTJetsMask) = HTJetsMask_;
+			*(looper->MHTJetsMask) = MHTJetsMask_;
+			*(looper->Jets_ID) = Jets_ID_;
+			*(looper->Jets_bDiscriminatorCSV) = Jets_bDiscriminatorCSV_;
+			*(looper->Jets_muonEnergyFraction) = Jets_muonEnergyFraction_;
+			looper->JetID = JetID_;
+			looper->NJets = NJets_;
+			looper->BTags = BTags_;
+			looper->MHT = MHT_;
+			looper->MHTPhi = MHTPhi_;
+			looper->HT = HT_;
+			looper->DeltaPhi1 = DeltaPhi1_;
+			looper->DeltaPhi2 = DeltaPhi2_;
+			looper->DeltaPhi3 = DeltaPhi3_;
+			looper->DeltaPhi4 = DeltaPhi4_;
+			
+		}
+		virtual void UndoVariation(){
+			//restore original values
+			*(looper->Jets) = Jets;
+			*(looper->HTJetsMask) = HTJetsMask;
+			*(looper->MHTJetsMask) = MHTJetsMask;
+			*(looper->Jets_ID) = Jets_ID;
+			*(looper->Jets_bDiscriminatorCSV) = Jets_bDiscriminatorCSV;
+			*(looper->Jets_muonEnergyFraction) = Jets_muonEnergyFraction;
+			looper->JetID = JetID;
+			looper->NJets = NJets;
+			looper->BTags = BTags;
+			looper->MHT = MHT;
+			looper->MHTPhi = MHTPhi;
+			looper->HT = HT;
+			looper->DeltaPhi1 = DeltaPhi1;
+			looper->DeltaPhi2 = DeltaPhi2;
+			looper->DeltaPhi3 = DeltaPhi3;
+			looper->DeltaPhi4 = DeltaPhi4;
+		}
+		
+		//member variables
+		vector<TLorentzVector> Jets;
+		vector<bool> HTJetsMask;
+		vector<bool> MHTJetsMask;
+		vector<bool> Jets_ID;
+		vector<double> Jets_bDiscriminatorCSV;
+		vector<double> Jets_muonEnergyFraction;
+		Bool_t          JetID;
+		Int_t           NJets;
+		Int_t           BTags;
+		Double_t        MHT;
+		Double_t        MHTPhi;
+		Double_t        HT;
+		Double_t        DeltaPhi1;
+		Double_t        DeltaPhi2;
+		Double_t        DeltaPhi3;
+		Double_t        DeltaPhi4;
+};
+
 namespace KParser {
 	template <>
 	KVariator<KSkimmer>* processVariator<KSkimmer>(KNamed* tmp){
@@ -345,6 +490,7 @@ namespace KParser {
 		//check for all known variators
 		if(vname=="Jet") vtmp = new KJetVariator(vname,omap);
 		if(vname=="GenMHT") vtmp = new KGenMHTVariator(vname,omap);
+		if(vname=="JetLepton") vtmp = new KJetLeptonVariator(vname,omap);
 		else {} //skip unknown variators
 
 		if(!vtmp) cout << "Input error: unknown variator " << vname << ". This variator will be skipped." << endl;

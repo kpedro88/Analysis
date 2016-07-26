@@ -367,6 +367,60 @@ class KDiElectronSelector : public KSelector<KSkimmer> {
 		//member variables
 };
 
+//------------------------------------------------------
+//muon selector for trigger study
+class KMuonTriggerSelector : public KSelector<KSkimmer> {
+	public:
+		//constructor
+		KMuonTriggerSelector() : KSelector<KSkimmer>() { }
+		KMuonTriggerSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) {
+			//check for option
+			localOpt->Get("pTmin",pTmin);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			int num = 0;
+			for(unsigned m = 0; m < looper->Muons->size(); ++m){
+				if(looper->Muons->at(m).Pt()>pTmin) ++num;
+			}
+
+			return num>0;
+		}
+		
+		//member variables
+		double pTmin;
+};
+
+//------------------------------------------------------
+//electron selector for trigger study
+class KElectronTriggerSelector : public KSelector<KSkimmer> {
+	public:
+		//constructor
+		KElectronTriggerSelector() : KSelector<KSkimmer>() { }
+		KElectronTriggerSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) {
+			//check for option
+			localOpt->Get("pTmin",pTmin);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			int num = 0;
+			for(unsigned e = 0; e < looper->Electrons->size(); ++e){
+				if(looper->Electrons->at(e).Pt()>pTmin) ++num;
+			}
+
+			return num>0;
+		}
+		
+		//member variables
+		double pTmin;
+};
+
 //----------------------------------------------------
 //selects events based on minDeltaPhi value
 class KMinDeltaPhiSelector : public KSelector<KSkimmer> {
@@ -1642,6 +1696,8 @@ namespace KParser {
 		else if(sname=="Photon") srtmp = new KPhotonSelector(sname,omap);
 		else if(sname=="DiMuon") srtmp = new KDiMuonSelector(sname,omap);
 		else if(sname=="DiElectron") srtmp = new KDiElectronSelector(sname,omap);
+		else if(sname=="MuonTrigger") srtmp = new KMuonTriggerSelector(sname,omap);
+		else if(sname=="ElectronTrigger") srtmp = new KElectronTriggerSelector(sname,omap);
 		else if(sname=="IsoElectronTrackVeto") srtmp = new KIsoElectronTrackVetoSelector(sname,omap);
 		else if(sname=="IsoMuonTrackVeto") srtmp = new KIsoMuonTrackVetoSelector(sname,omap);
 		else if(sname=="IsoPionTrackVeto") srtmp = new KIsoPionTrackVetoSelector(sname,omap);

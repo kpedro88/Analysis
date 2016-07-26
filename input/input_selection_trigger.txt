@@ -1,0 +1,34 @@
+#sections: global options in OPTION, selections in SELECTION, variations in VARIATION, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the SELECTION, VARIATION, and SET sections must be tab-separated, with required items first, in order
+#SELECTION/VARIATION: only required item is name, selectors/variators are associated with a selection/variation by tab-indentation
+#SET: required items are type (base), subtype (skim), name (but without filenames, nothing will happen)
+
+OPTION
+int:yieldprecision[2]
+bool:doClone[1]
+bool:quickchain[1]
+vstring:disable_branches[*]
+vstring:enable_branches[RunNum,LumiBlockNum,EvtNum,BTags,BadChargedCandidateFilter,BadPFMuonFilter,CaloMETPhi,CaloMET,CSCTightHaloFilter,DeltaPhi1,DeltaPhi2,DeltaPhi3,DeltaPhi4,eeBadScFilter,EcalDeadCellTriggerPrimitiveFilter,ElectronCharge,Electrons,globalTightHalo2016Filter,HBHEIsoNoiseFilter,HBHENoiseFilter,HT,HTJetsMask,isoElectronTracks,isoMuonTracks,isoPionTracks,JetID,Jets,Jets_ID,Jets_bDiscriminatorCSV,Jets_muonEnergyFraction,METPhi,MET,MHT,MHTPhi,MHTJetsMask,MuonCharge,Muons,NJets,NVtx,PFCaloMETRatio,Photons,photon_fullID,TriggerNames,TriggerPass,TriggerPrescales,ZCandidates]
+int:maxevents[10000]
+
+SELECTION
+signalTrigger
+	NJet	i:njet[3]
+	MHT	d:MHTmin[200]
+SLmTrigger
+	NJet	i:njet[3]
+	MuonTrigger	d:pTmin[25]
+SLeTrigger
+	NJet	i:njet[3]
+	ElectronTrigger	d:pTmin[25]
+QCDTrigger
+	HT	d:HTmin[900]
+
+VARIATION
+JetLeptonClean
+	JetLepton
+
+INPUT
+input/input_sets_skim_data.txt
