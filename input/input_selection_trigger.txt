@@ -11,7 +11,6 @@ bool:doClone[1]
 bool:quickchain[1]
 vstring:disable_branches[*]
 vstring:enable_branches[RunNum,LumiBlockNum,EvtNum,BTags,BadChargedCandidateFilter,BadPFMuonFilter,CaloMETPhi,CaloMET,CSCTightHaloFilter,DeltaPhi1,DeltaPhi2,DeltaPhi3,DeltaPhi4,eeBadScFilter,EcalDeadCellTriggerPrimitiveFilter,ElectronCharge,Electrons,globalTightHalo2016Filter,HBHEIsoNoiseFilter,HBHENoiseFilter,HT,HTJetsMask,isoElectronTracks,isoMuonTracks,isoPionTracks,JetID,Jets,Jets_ID,Jets_bDiscriminatorCSV,Jets_muonEnergyFraction,METPhi,MET,MHT,MHTPhi,MHTJetsMask,MuonCharge,Muons,NJets,NVtx,PFCaloMETRatio,Photons,photon_fullID,TriggerNames,TriggerPass,TriggerPrescales,ZCandidates]
-int:maxevents[10000]
 
 SELECTION
 signalTrigger
