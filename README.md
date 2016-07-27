@@ -57,7 +57,7 @@ root -b -q -l 'KScanDriver.C+("input/input_scan.txt","T1bbbb_mGluino-1000-1025_m
 
 To make the input lists (.txt and .sh) of FastSim samples automatically:
 ```
-python makeScanInput.py -n 30
+python makeScanInput.py -n 10
 ```
 The last argument splits the scan input list into multiple blocks (each containing `n` ntuple files) for batch submission.  
 Note: as above, this script uses the python file lists in [TreeMaker/Production/python](https://github.com/TreeMaker/TreeMaker/tree/Run2/Production/python).
