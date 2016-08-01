@@ -105,7 +105,7 @@ class KBlindSelector : public KSelector<KSkimmer> {
 		}
 		
 		//member variables
-		int lastUnblindRun;
+		unsigned lastUnblindRun;
 };
 
 //----------------------------------------------------

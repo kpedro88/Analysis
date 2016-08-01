@@ -226,6 +226,7 @@ class KSelection {
 				cutflowHist->SetBinContent(c+1,cuts[c].raw);
 				cutflowHist->SetBinError(c+1,cuts[c].rawE);
 			}
+			cutflowHist->GetXaxis()->SetNoAlphanumeric();
 			
 			//todo: add object ctr histogram for syncing
 		}

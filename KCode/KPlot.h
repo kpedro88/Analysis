@@ -153,6 +153,7 @@ class KPlot{
 					for(unsigned b = 0; b < labels.size(); b++){
 						histo->GetXaxis()->SetBinLabel(b+1,labels[b].c_str());
 					}
+					histo->GetXaxis()->SetNoAlphanumeric(); //todo: make optional?
 				}
 			}
 			string xtitle, ytitle;

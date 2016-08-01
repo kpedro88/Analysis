@@ -78,7 +78,7 @@ class KCutflow {
 			h_rel = new TH1F("cutflowRel","",h_raw->GetNbinsX(),0,h_raw->GetNbinsX());
 			
 			//fill histos
-			for(unsigned c = 1; c <= h_raw->GetNbinsX(); c++){
+			for(int c = 1; c <= h_raw->GetNbinsX(); c++){
 				int counter = (int)h_raw->GetBinContent(c);
 				int prev_counter = c==1 ? nentries : (int)h_raw->GetBinContent(c-1);
 				
@@ -90,6 +90,8 @@ class KCutflow {
 				h_rel->SetBinContent(c,((double)counter/(double)prev_counter)*100);
 				h_rel->SetBinError(c,KMath::EffError(counter,prev_counter)*100);
 			}
+			h_abs->GetXaxis()->SetNoAlphanumeric();
+			h_rel->GetXaxis()->SetNoAlphanumeric();
 		}
 		//print efficiencies
 		void PrintEfficiency(bool printerrors=false){
@@ -99,7 +101,7 @@ class KCutflow {
 			//loop to get width of selector name
 			widths = vector<unsigned>(6,0);
 			unsigned width1s = 10;
-			for(unsigned c = 1; c <= h_raw->GetNbinsX(); ++c){
+			for(int c = 1; c <= h_raw->GetNbinsX(); ++c){
 				string sname = h_raw->GetXaxis()->GetBinLabel(c);
 				if(sname.size()>width1s) width1s = sname.size();
 			}
@@ -128,7 +130,7 @@ class KCutflow {
 			else cout << "  " << right << setw(widths[1]) << nentries << endl;
 			
 			//print selectors
-			for(unsigned c = 1; c <= h_raw->GetNbinsX(); ++c){
+			for(int c = 1; c <= h_raw->GetNbinsX(); ++c){
 				cout << left << setw(widths[0]) << h_raw->GetXaxis()->GetBinLabel(c);
 				int raw = (int)h_raw->GetBinContent(c); double rawE = h_raw->GetBinError(c);
 				double abs = h_abs->GetBinContent(c); double absE = h_abs->GetBinError(c);
@@ -153,6 +155,7 @@ class KCutflow {
 			if(ct==CutRaw) return h_raw;
 			else if(ct==CutAbs) return h_abs;
 			else if(ct==CutRel) return h_rel;
+			else return NULL;
 		}
 	
 	private:
