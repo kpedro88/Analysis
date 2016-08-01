@@ -194,7 +194,7 @@ class KManager {
 		//wait to construct styles until one is requested
 		//just keep the option list as a string (make a new instance for each request)
 		virtual void processStyle(string style) {
-			unsigned firsttab = style.find('\t');
+			size_t firsttab = style.find('\t');
 			string name = "";
 			string opts = "";
 			if(firsttab != string::npos){
