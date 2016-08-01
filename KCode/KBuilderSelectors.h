@@ -296,7 +296,7 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 	public:
 		//constructor
 		KRA2BinSelector() : KSelector<KBuilder>() { }
-		KRA2BinSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), RA2Exclusive(true), DoBTagSF(false), debug(false) { }
+		KRA2BinSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), RA2Exclusive(true), DoBTagSF(false), debug(0) { }
 		virtual void CheckDeps(){
 			//check if initial reading of input has already been done
 			if(sel->GetGlobalOpt()->Get("prepared_RA2bin",false)){
@@ -311,6 +311,7 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 				sel->GetGlobalOpt()->Get("RA2VarNames",RA2VarNames);
 				sel->GetGlobalOpt()->Get("RA2VarMin",RA2VarMin);
 				sel->GetGlobalOpt()->Get("RA2VarMax",RA2VarMax);
+				sel->GetGlobalOpt()->Get("RA2bin_labels",labels);
 			}
 			else { //assemble member vars from user input
 				sel->GetGlobalOpt()->Get("RA2VarNames",RA2VarNames);
@@ -349,7 +350,6 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 				
 				//create map of RA2 bin IDs to bin numbers
 				//and associated bin labels (in case they are requested)
-				vector<string> labels;
 				labels.reserve(all_bins[0].size());
 				for(unsigned b = 0; b < all_bins[0].size(); ++b){
 					vector<unsigned> bin_id;
@@ -374,7 +374,7 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 			//check other options
 			RA2Exclusive = sel->GetGlobalOpt()->Get("RA2Exclusive",true);
 			DoBTagSF = sel->GetGlobalOpt()->Get("btagcorr",false);
-			debug = sel->GetGlobalOpt()->Get("RA2debug",false);
+			sel->GetGlobalOpt()->Get("RA2debug",debug);
 		}
 		virtual void CheckBranches(){
 			for(unsigned q = 0; q < RA2VarNames.size(); ++q){
@@ -467,12 +467,14 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 		
 	public:
 		//member variables
-		bool RA2Exclusive, DoBTagSF, debug;
+		bool RA2Exclusive, DoBTagSF;
+		int debug;
 		vector<unsigned> RA2bins;
 		vector<vector<unsigned> > RA2binVec;
 		map<vector<unsigned>, unsigned> IDtoBinNumber;
 		vector<string> RA2VarNames;
 		vector<vector<float> > RA2VarMin, RA2VarMax;
+		vector<string> labels;
 };
 
 //---------------------------------------------------------------
@@ -824,7 +826,7 @@ class KHistoSelector : public KSelector<KBuilder> {
 					//list of cases for histo calculation and filling
 					if(vname=="RA2bin" && RA2Bin){ //plot yield vs. bin of RA2 search -> depends on RA2Bin selector
 						if(RA2Bin->RA2Exclusive) {
-							if(RA2Bin->debug){
+							if(RA2Bin->debug==1){
 								cout << "Run = " << looper->RunNum << ", LS = " << looper->LumiBlockNum << ", Evt = " << looper->EvtNum;
 								for(unsigned q = 0; q < RA2Bin->RA2VarNames.size(); ++q){
 									if(RA2Bin->RA2VarNames[q]=="NJets") cout << ", NJets = " << looper->NJets;
@@ -833,6 +835,10 @@ class KHistoSelector : public KSelector<KBuilder> {
 									else if(RA2Bin->RA2VarNames[q]=="HT") cout << ", HT = " << looper->HT;
 								}
 								cout << endl;
+							}
+							else if(RA2Bin->debug==2){
+								//RA2bin number starts at 1
+								cout << looper->RunNum << "\t" << looper->LumiBlockNum << "\t" << looper->EvtNum << "\t" << RA2Bin->RA2bins[0] << "\t" << RA2Bin->labels[RA2Bin->RA2bins[0]-1] << endl;
 							}
 							values[i].Fill(RA2Bin->RA2bins[0],w);
 						}
