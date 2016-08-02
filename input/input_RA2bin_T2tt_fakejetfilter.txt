@@ -1,0 +1,58 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+#root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV5/scan/tree_signal","input/input_RA2bin_T2tt_fakejetfilter.txt")'
+
+INPUT
+input/input_global.txt
+
+OPTION
+double:sizeLeg[22]
+double:canvasW[1200]
+double:marginB[300]
+double:NdivX[518]
+vstring:RA2VarNames[NJets,BTags,MHT,HT]
+vfloat:RA2Var0Min[3,6,8]
+vfloat:RA2Var0Max[6,8,99]
+vfloat:RA2Var1Min[-1,0,1,2]
+vfloat:RA2Var1Max[0,1,2,99]
+vfloat:RA2Var2Min[200,500,750]
+vfloat:RA2Var2Max[500,750,9999]
+vfloat:RA2Var3Min[500,800,1200,500,1200,800]
+vfloat:RA2Var3Max[800,1200,9999,1200,9999,9999]
+vuint:RA2Var0Bins[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]
+vuint:RA2Var1Bins[0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,3,3,0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,3,3,0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,3,3]
+vuint:RA2Var2Bins[0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2,0,0,0,1,1,2]
+vuint:RA2Var3Bins[0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5]
+string:selection[ra2bin]
+vstring:disable_branches[*]
+bool:RA2Exclusive[0]
+bool:jetidcorr[1]
+bool:btagcorr[1]
+bool:trigcorr[1]
+bool:pucorr[1]
+string:puname[corrections/PileupHistograms_1117.root]
+bool:isrcorr[1]
+string:isrname[corrections/ISRWeights.root]
+bool:debugcut[1]
+
+SELECTION
+ra2bin
+	FakeJetFilter
+	BTagSF
+	RA2Bin
+	Histo
+
+HISTO
+RA2bin	i:xnum[72]	d:xmin[0.5]	d:xmax[72.5]	s:xtitle[RA2 bin [^{}n_{j},^{}n_{b},^{}#slash{H}_{T},^{}H_{T}]]	s:ytitle[number of events]	b:ratio[0]	b:xbinlabel[1]
+
+SET
+hist	mc	T2tt_300_125_fast
+	base	mc	T2tt_300_125_fast	s:filename[tree_T2tt_300_125_fast.root]	d:xsection[8.51615]	b:signal[1]	b:fastsim[1]	vi:mother[1000006]
+hist	mc	T2tt_175_0_fast
+	base	mc	T2tt_175_0_fast	s:filename[tree_T2tt_175_0_fast.root]	d:xsection[121.416]	b:signal[1]	b:fastsim[1]	vi:mother[1000006]

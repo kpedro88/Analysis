@@ -1,0 +1,37 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+#root -l 'KPlotDriver.C+(".","input/input_beffcomp.txt",1)'
+
+INPUT
+input/input_global.txt
+
+OPTION
+vstring:printformat[png]
+string:lumi_text[(13 TeV)]
+bool:printyield[1]
+int:yieldprecision[2]
+bool:plotoverflow[1]
+vstring:disable_branches[*]
+int:npanel[1]
+bool:treesuffix[0]
+string:printsuffix[comp]
+double:ymin[0]
+
+HISTO
+effb	vd:xbins[30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,670]	s:xtitle[p_{T} [GeV]]	s:ytitle[efficiency]	b:ratio[0]	b:logy[0]	b:logx[1]	b:morelogxlabels[1]
+
+SET
+hist	data	SMSbbbb1500	c:color[kRed]
+	base	ext	T1bbbb_1500_100	s:extfilename[test/tree_signalBtag/tree_T1bbbb_1500_100_btagSF.root]	vs:exthisto_in[h_eff_b]	vs:exthisto_out[effb]
+hist	data	SMSbbbb1000	c:color[kOrange + 1]
+	base	ext	T1bbbb_1000_900	s:extfilename[test/tree_signalBtag/tree_T1bbbb_1000_900_btagSF.root]	vs:exthisto_in[h_eff_b]	vs:exthisto_out[effb]
+hist	data	SMStttt1500	c:color[kBlue]
+	base	ext	T1tttt_1500_100	s:extfilename[test/tree_signalBtag/tree_T1tttt_1500_100_btagSF.root]	vs:exthisto_in[h_eff_b]	vs:exthisto_out[effb]
+hist	data	SMStttt1200	c:color[kCyan]
+	base	ext	T1tttt_1200_800	s:extfilename[test/tree_signalBtag/tree_T1tttt_1200_800_btagSF.root]	vs:exthisto_in[h_eff_b]	vs:exthisto_out[effb]

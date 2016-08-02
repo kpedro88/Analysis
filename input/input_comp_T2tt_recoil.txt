@@ -1,0 +1,45 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+#root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV5_noJetID/","input/input_jetID_region0.txt",1)'
+
+INPUT
+input/input_global.txt
+
+OPTION
+double:luminorm[2262]
+string:luminormunit[fbinv]
+string:lumi_text[(13 TeV)]
+int:npanel[1]
+vstring:disable_branches[*]
+#vstring:enable_branches[NJets,BTags,HT,MHT,genParticles,genParticles_PDGid,Jets,DeltaPhi1]
+vstring:enable_branches[genParticles,genParticles_PDGid]
+string:printsuffix[T2tt_450_375]
+double:sizeLeg[24]
+bool:unitnorm[1]
+string:numer[T2tt (450/375) (all jets)]
+string:denom[T2tt (450/375) (no fake jets)]
+string:rationame[all/nofake]
+double:ymin[1e-4]
+
+HISTO
+#njets	i:xnum[21]	d:xmin[-0.5]	d:xmax[20.5]	s:xtitle[N_{jet}]	s:ytitle[number of events]	b:ratio[0]	vd:xcuts[3.5,6.5,8.5]
+#nbjets	i:xnum[11]	d:xmin[-0.5]	d:xmax[10.5]	s:xtitle[N_{b-jet}]	s:ytitle[number of events]	b:ratio[0]	vd:xcuts[0.5,1.5,2.5]
+#ht	i:xnum[40]	d:xmin[0]	d:xmax[2000]	s:xtitle[H_{T} [GeV]]	s:ytitle[number of events]	b:ratio[0]	vd:xcuts[500,800,1200]
+#mht	i:xnum[30]	d:xmin[0]	d:xmax[1500]	s:xtitle[H_{T}^{miss} [GeV]]	s:ytitle[number of events]	b:ratio[0]	vd:xcuts[200,500,750]
+recoil	i:xnum[40]	d:xmin[0]	d:xmax[2000]	s:xtitle[recoil p_{T} [GeV]]	s:ytitle[number of events]	b:ratio[1]
+#leadjetpt	i:xnum[30]	d:xmin[0]	d:xmax[1500]	s:xtitle[leading jet p_{T} [GeV]]	s:ytitle[number of events]	b:ratio[0]
+#deltaphi1	i:xnum[25]	d:xmin[0.5]	d:xmax[3.1415]	s:xtitle[#Delta#phi(^{}H_{T}^{miss},^{}j_{1})]	s:ytitle[number of events]	b:ratio[0]
+
+SET
+hist	mc	T2tt (450/375) (all jets)	c:color[kBlack]
+	base	mc	T2tt_450_375_fast	s:filename[tree_signalAllJet/tree_T2tt_450_375_fast.root]	d:xsection[0.948333]	b:signal[1]	b:fastsim[1]	vi:mother[1000006]
+hist	mc	T2tt (450/375) (no fake jets)	c:color[kBlue]
+	base	mc	T2tt_450_375_fast	s:filename[tree_signal/tree_T2tt_450_375_fast.root]	d:xsection[0.948333]	b:signal[1]	b:fastsim[1]	vi:mother[1000006]
+hist	mc	T2tt (450/375) (fake jets)	c:color[kRed]
+	base	mc	T2tt_450_375_fast	s:filename[tree_signalFakeJet/tree_T2tt_450_375_fast.root]	d:xsection[0.948333]	b:signal[1]	b:fastsim[1]	vi:mother[1000006]

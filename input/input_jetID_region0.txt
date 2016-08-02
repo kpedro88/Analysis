@@ -1,0 +1,49 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+#root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV5_noJetID/","input/input_jetID_region0.txt",1)'
+
+INPUT
+input/input_global.txt
+
+OPTION
+double:luminorm[1]
+string:luminormunit[pbinv]
+string:lumi_text[(13 TeV)]
+int:npanel[1]
+vstring:disable_branches[*]
+vstring:enable_branches[Jets_neutralHadronEnergyFraction,Jets_photonEnergyFraction,Jets_chargedHadronEnergyFraction,Jets_chargedEmEnergyFraction,Jets_chargedMultiplicity,Jets_neutralMultiplicity]
+bool:quickchain[1]
+string:selection[jetregion]
+string:numer[T1tttt (1500/100) (fast)]
+string:denom[T1tttt (1500/100) (full)]
+string:yieldref[T1tttt (1500/100) (full)]
+string:rationame[fast/full]
+vstring:extra_text[p_{T} > 30 GeV,0 #leq |#eta| #leq 2.4]
+double:ratiomin[0.0]
+double:ratiomax[3.0]
+string:printsuffix[region0]
+
+SELECTION
+jetregion
+	JetEtaRegion	i:region[0]
+	Histo
+
+HISTO
+neufrac	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[neutral hadron fraction]	s:ytitle[number of events]	vd:xcuts[0.99]	vc:xcut_colors[kBlack]	b:yieldnorm[1]
+phofrac	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[neutral EM fraction]	s:ytitle[number of events]	vd:xcuts[0.99]	vc:xcut_colors[kBlack]	b:yieldnorm[1]
+nconstit	i:xnum[150]	d:xmin[0]	d:xmax[150]	s:xtitle[number of constituents]	s:ytitle[number of events]	vd:xcuts[2]	vc:xcut_colors[kBlack]	b:yieldnorm[1]
+chgfrac	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[charged hadron fraction]	s:ytitle[number of events]	vd:xcuts[0]	vc:xcut_colors[kBlack]	b:yieldnorm[1]
+chgmulti	i:xnum[100]	d:xmin[0]	d:xmax[100]	s:xtitle[charged multiplicity]	s:ytitle[number of events]	vd:xcuts[1]	vc:xcut_colors[kBlack]	b:yieldnorm[1]
+chgemfrac	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[charged EM fraction]	s:ytitle[number of events]	vd:xcuts[0.99]	vc:xcut_colors[kBlack]	b:yieldnorm[1]
+
+SET
+hist	mc	T1tttt (1500/100) (full)	c:color[kBlue]
+	base	mc	T1tttt_1500_100	b:chain[1]	s:filepre[Spring15v2.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_]	vi:filerange[0,3]	s:filesuff[_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	i:mother[1000021]	b:unweighted[1]
+hist	mc	T1tttt (1500/100) (fast)	c:color[kRed]
+	base	mc	T1tttt_1500_100	s:filename[scan/T1tttt_mMother-1500_mLSP-100_fast.root]	i:mother[1000021]	b:unweighted[1]

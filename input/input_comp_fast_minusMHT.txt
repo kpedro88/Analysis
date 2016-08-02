@@ -1,0 +1,53 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+#root -l 'KPlotDriver.C+("test/tree_signalMinusMHT","input/input_comp_fast_minusMHT.txt",1)'
+
+INPUT
+input/input_global.txt
+
+OPTION
+double:luminorm[2262]
+string:luminormunit[fbinv]
+#string:lumi_text[(13 TeV)]
+string:prelim_text[Supplementary]
+int:npanel[1]
+vstring:disable_branches[*]
+vstring:enable_branches[NJets,BTags,HT,MHT]
+string:printsuffix[fast_Nminus1]
+double:sizeLeg[21.5]
+double:sizeSymb[0.075]
+string:selection[corr]
+bool:btagcorr[1]
+#bool:trigcorr[1]
+bool:pucorr[1]
+string:puname[corrections/PileupHistograms_1117.root]
+bool:isrcorr[1]
+string:isrname[corrections/ISRWeights.root]
+vstring:extra_text[#color[4]{arXiv:1602.06581}]
+vstring:printformat[png,eps]
+
+SELECTION
+corr
+	METFilter
+	BTagSF
+	Histo
+
+HISTO
+#njets	i:xnum[10]	d:xmin[-0.5]	d:xmax[9.5]	s:xtitle[N_{jet} (p_{T} > 30 GeV)]	s:ytitle[number of events]	b:ratio[0]
+#nbjets	i:xnum[4]	d:xmin[-0.5]	d:xmax[3.5]	s:xtitle[N_{b-jet} (p_{T} > 30 GeV)]	s:ytitle[number of events]	b:ratio[0]
+#ht	i:xnum[30]	d:xmin[0]	d:xmax[1500]	s:xtitle[H_{T} [GeV]]	s:ytitle[number of events]	b:ratio[0]
+mht	i:xnum[20]	d:xmin[0]	d:xmax[1000]	s:xtitle[H_{T}^{miss} [GeV]]	s:ytitle[number of events]	b:ratio[0]
+
+SET
+hist	mc	pp #rightarrow #tilde{g}#tilde{g}, #tilde{g} #rightarrow b#bar{b} ^{}#tilde{#chi}^{0}_{1} (^{}m_{#tilde{g}} = 1500 GeV, ^{}m_{^{}#tilde{#chi}^{0}_{1}} = 100 GeV)	c:color[kRed]	b:errband[1]	b:errbandleg[0]
+	base	mc	T1bbbb_1500_100_fast	s:filename[tree_T1bbbb_1500_100_fast.root]	d:xsection[0.0141903]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]
+hist	mc	pp #rightarrow #tilde{g}#tilde{g}, #tilde{g} #rightarrow t#bar{t} ^{}#tilde{#chi}^{0}_{1} (^{}m_{#tilde{g}} = 1500 GeV, ^{}m_{^{}#tilde{#chi}^{0}_{1}} = 100 GeV)	c:color[kBlue]	b:errband[1]	b:errbandleg[0]
+	base	mc	T1tttt_1500_100_fast	s:filename[tree_T1tttt_1500_100_fast.root]	d:xsection[0.0141903]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]
+hist	mc	pp #rightarrow #tilde{g}#tilde{g}, #tilde{g} #rightarrow q#bar{q} ^{}#tilde{#chi}^{0}_{1} (^{}m_{#tilde{g}} = 1000 GeV, ^{}m_{^{}#tilde{#chi}^{0}_{1}} = 800 GeV)	c:color[kGreen + 3]	b:errband[1]	b:errbandleg[0]
+	base	mc	T1qqqq_1000_800_fast	s:filename[tree_T1qqqq_1000_800_fast.root]	d:xsection[0.325388]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]

@@ -1,0 +1,48 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+#root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV5_noJetID/","input/input_jetID_region0.txt",1)'
+
+INPUT
+input/input_global.txt
+
+OPTION
+double:luminorm[2262]
+string:luminormunit[fbinv]
+int:npanel[1]
+vstring:disable_branches[*]
+vstring:enable_branches[NJets,BTags,HT,MHT,MHT_Phi,genParticles,genParticles_PDGid,Jets,DeltaPhi1]
+string:printsuffix[compressed_MHTcuts_T1tttt]
+double:sizeLeg[24]
+string:selection[mysel]
+int:npanel[2]
+vstring:extra_text[H_{T}^{miss} > 200 GeV]
+vint:extra_text_panels[0]
+
+SELECTION
+mysel
+	MHT	d:MHTmin[200]
+	Histo
+
+HISTO
+deltaphi1	i:xnum[25]	d:xmin[0.5]	d:xmax[3.1415]	s:xtitle[#Delta#phi(^{}H_{T}^{miss},^{}j_{1})]	s:ytitle[number of events]	b:ratio[0]
+deltaphirecoil	i:xnum[25]	d:xmin[0.0]	d:xmax[3.1415]	s:xtitle[#Delta#phi(^{}H_{T}^{miss},^{}p_{T}(#tilde{g}#tilde{g}))]	s:ytitle[number of events]	b:ratio[0]
+
+SET
+hist	mc	T1tttt (1200/700)	c:color[kBlue]	i:panel[0]
+	base	mc	T1tttt_1200_700_fast	s:filename[tree_T1tttt_1200_700_fast.root]	d:xsection[0.0856418]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]
+hist	mc	T1tttt (1200/750)	c:color[kCyan]	i:panel[0]
+	base	mc	T1tttt_1200_750_fast	s:filename[tree_T1tttt_1200_750_fast.root]	d:xsection[0.0856418]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]
+hist	mc	T1tttt (1200/800)	c:color[kMagenta]	i:panel[0]
+	base	mc	T1tttt_1200_800_fast	s:filename[tree_T1tttt_1200_800_fast.root]	d:xsection[0.0856418]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]
+hist	mc	T1tttt (1200/850)	c:color[kMagenta + 2]	i:panel[0]
+	base	mc	T1tttt_1200_850_fast	s:filename[tree_T1tttt_1200_850_fast.root]	d:xsection[0.0856418]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]
+hist	mc	T1tttt (1200/875)	c:color[kOrange + 1]	i:panel[0]
+	base	mc	T1tttt_1200_875_fast	s:filename[tree_T1tttt_1200_875_fast.root]	d:xsection[0.0856418]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]
+hist	mc	T1tttt (1200/900)	c:color[kRed]	i:panel[0]
+	base	mc	T1tttt_1200_900_fast	s:filename[tree_T1tttt_1200_900_fast.root]	d:xsection[0.0856418]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]

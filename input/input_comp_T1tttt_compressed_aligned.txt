@@ -1,0 +1,58 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+#root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV5_noJetID/","input/input_jetID_region0.txt",1)'
+
+INPUT
+input/input_global.txt
+
+OPTION
+double:luminorm[2262]
+string:luminormunit[fbinv]
+int:npanel[1]
+vstring:disable_branches[*]
+vstring:enable_branches[NJets,BTags]
+string:printsuffix[compressed_hemisphere_T1tttt]
+double:sizeLeg[24]
+string:selection[mysel]
+vstring:extra_text[H_{T}^{miss} > 200 GeV]
+b:roc[1]
+b:skiphistos[0]
+b:debugroc[1]
+vstring:roc_sig[T1tttt (1200/700),T1tttt (1200/750),T1tttt (1200/800),T1tttt (1200/850),T1tttt (1200/875),T1tttt (1200/900)]
+vstring:roc_bkg[t#bar{t}]
+
+SELECTION
+mysel
+	MHT	d:MHTmin[200]
+	Hemisphere
+	Histo
+
+HISTO
+njetshemi	i:xnum[21]	d:xmin[-0.5]	d:xmax[20.5]	s:xtitle[N_{jet} (|#Delta#phi(H_{T}^{miss};j)| #leq #pi/2)]	s:ytitle[number of events]	b:ratio[0]	vd:xcuts[3.5,6.5,8.5]	c:color[kMagenta]
+nbjetshemi	i:xnum[11]	d:xmin[-0.5]	d:xmax[10.5]	s:xtitle[N_{b-jet} (|#Delta#phi(H_{T}^{miss};j)| #leq #pi/2)]	s:ytitle[number of events]	b:ratio[0]	vd:xcuts[0.5,1.5,2.5]	c:color[kCyan]
+njetsopphemi	i:xnum[21]	d:xmin[-0.5]	d:xmax[20.5]	s:xtitle[N_{jet} (|#Delta#phi(H_{T}^{miss};j)| > #pi/2)]	s:ytitle[number of events]	b:ratio[0]	vd:xcuts[3.5,6.5,8.5]	c:color[kOrange + 1]
+nbjetsopphemi	i:xnum[11]	d:xmin[-0.5]	d:xmax[10.5]	s:xtitle[N_{b-jet} (|#Delta#phi(H_{T}^{miss};j)| > #pi/2)]	s:ytitle[number of events]	b:ratio[0]	vd:xcuts[0.5,1.5,2.5]	c:color[kCyan + 2]
+njets	i:xnum[21]	d:xmin[-0.5]	d:xmax[20.5]	s:xtitle[N_{jet}]	s:ytitle[number of events]	b:ratio[0]	vd:xcuts[3.5,6.5,8.5]	c:color[kRed]
+nbjets	i:xnum[11]	d:xmin[-0.5]	d:xmax[10.5]	s:xtitle[N_{b-jet}]	s:ytitle[number of events]	b:ratio[0]	vd:xcuts[0.5,1.5,2.5]	c:color[kBlue]
+
+SET
+hist	mc	T1tttt (1200/700)	c:color[kBlue]
+	base	mc	T1tttt_1200_700_fast	s:filename[tree_T1tttt_1200_700_fast.root]	d:xsection[0.0856418]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]
+hist	mc	T1tttt (1200/750)	c:color[kCyan]
+	base	mc	T1tttt_1200_750_fast	s:filename[tree_T1tttt_1200_750_fast.root]	d:xsection[0.0856418]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]
+hist	mc	T1tttt (1200/800)	c:color[kMagenta]
+	base	mc	T1tttt_1200_800_fast	s:filename[tree_T1tttt_1200_800_fast.root]	d:xsection[0.0856418]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]
+hist	mc	T1tttt (1200/850)	c:color[kMagenta + 2]
+	base	mc	T1tttt_1200_850_fast	s:filename[tree_T1tttt_1200_850_fast.root]	d:xsection[0.0856418]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]
+hist	mc	T1tttt (1200/875)	c:color[kOrange + 1]
+	base	mc	T1tttt_1200_875_fast	s:filename[tree_T1tttt_1200_875_fast.root]	d:xsection[0.0856418]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]
+hist	mc	T1tttt (1200/900)	c:color[kRed]
+	base	mc	T1tttt_1200_900_fast	s:filename[tree_T1tttt_1200_900_fast.root]	d:xsection[0.0856418]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]
+hist	mc	t#bar{t}	c:color[kBlack]	i:panel[1]
+	base	mc	TTJets	s:filename[tree_TTJets.root]	d:xsection[815.96]

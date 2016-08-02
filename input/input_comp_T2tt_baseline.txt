@@ -1,0 +1,38 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+#root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV5/scan/tree_signal","input/input_comp_T2tt_baseline.txt",1)'
+
+INPUT
+input/input_global.txt
+
+OPTION
+#double:luminorm[2262]
+#string:luminormunit[fbinv]
+string:lumi_text[(13 TeV)]
+bool:unitnorm[1]
+int:npanel[1]
+vstring:disable_branches[*]
+vstring:enable_branches[NJets,BTags,HT,MHT]
+string:printsuffix[T2tt_baseline]
+#double:sizeLeg[24]
+#bool:debugloop[1]
+
+HISTO
+njets	i:xnum[12]	d:xmin[3.5]	d:xmax[15.5]	s:xtitle[N_{jet}]	s:ytitle[arbitrary units]	b:ratio[0]	vd:xcuts[6.5,8.5]
+nbjets	i:xnum[6]	d:xmin[-0.5]	d:xmax[5.5]	s:xtitle[N_{b-jet}]	s:ytitle[arbitrary units]	b:ratio[0]	vd:xcuts[0.5,1.5,2.5]
+ht	i:xnum[30]	d:xmin[500]	d:xmax[2000]	s:xtitle[H_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	vd:xcuts[800,1200]
+mht	i:xnum[16]	d:xmin[200]	d:xmax[1000]	s:xtitle[H_{T}^{miss} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	vd:xcuts[500,750]
+
+SET
+hist	mc	T2tt (275/200)	c:color[kRed]
+	base	mc	T2tt_275_200_fast	s:filename[tree_T2tt_275_200_fast.root]	d:xsection[13.3231]	b:signal[1]	b:fastsim[1]	vi:mother[1000006]
+hist	mc	T2tt (300/200)	c:color[kMagenta]
+	base	mc	T2tt_300_200_fast	s:filename[tree_T2tt_300_200_fast.root]	d:xsection[8.51615]	b:signal[1]	b:fastsim[1]	vi:mother[1000006]
+hist	mc	T2tt (325/200)	c:color[kBlue]
+	base	mc	T2tt_325_200_fast	s:filename[tree_T2tt_325_200_fast.root]	d:xsection[5.60471]	b:signal[1]	b:fastsim[1]	vi:mother[1000006]

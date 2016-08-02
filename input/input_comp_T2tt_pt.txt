@@ -1,0 +1,38 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+#root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV5/scan","input/input_comp_T2tt_pt.txt",1)'
+
+INPUT
+input/input_global.txt
+
+OPTION
+string:lumi_text[(13 TeV)]
+bool:unitnorm[1]
+int:npanel[1]
+vstring:disable_branches[*]
+vstring:enable_branches[genParticles,genParticles_PDGid]
+#string:printsuffix[compressed_T1tttt]
+#double:sizeLeg[24]
+#bool:debugloop[1]
+bool:plotoverflow[0]
+
+HISTO
+motherpt	i:xnum[100]	d:xmin[0]	d:xmax[1000]	s:xtitle[p_{T}(#tilde{t}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]
+
+SET
+hist	mc	T2tt (200/100)	c:color[kRed]
+	base	mc	T2tt_200_100_fast	s:filename[T2tt_mMother-200_mLSP-100_fast.root]	d:xsection[64.5085]	b:signal[1]	b:fastsim[1]	vi:mother[1000006]
+hist	mc	T2tt (250/100)	c:color[kGreen]
+	base	mc	T2tt_250_100_fast	s:filename[T2tt_mMother-250_mLSP-100_fast.root]	d:xsection[21.5949]	b:signal[1]	b:fastsim[1]	vi:mother[1000006]
+hist	mc	T2tt (275/100)	c:color[kBlue]
+	base	mc	T2tt_275_100_fast	s:filename[T2tt_mMother-275_mLSP-100_fast.root]	d:xsection[13.3231]	b:signal[1]	b:fastsim[1]	vi:mother[1000006]
+hist	mc	T2tt (500/100)	c:color[kMagenta]
+	base	mc	T2tt_500_100_fast	s:filename[T2tt_mMother-500_mLSP-100_fast.root]	d:xsection[0.51848]	b:signal[1]	b:fastsim[1]	vi:mother[1000006]
+hist	mc	T2tt (650/100)	c:color[kBlack]
+	base	mc	T2tt_650_100_fast	s:filename[T2tt_mMother-650_mLSP-100_fast.root]	d:xsection[0.107045]	b:signal[1]	b:fastsim[1]	vi:mother[1000006]
