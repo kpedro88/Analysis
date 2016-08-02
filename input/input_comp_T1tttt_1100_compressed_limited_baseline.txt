@@ -1,0 +1,53 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+#root -l 'KPlotDriver.C+("test/tree_signalTight","input/input_comp_T1tttt_1100_compressed_limited_baseline.txt",1)'
+
+INPUT
+input/input_global.txt
+
+OPTION
+double:luminorm[2584.653]
+string:luminormunit[fbinv]
+int:npanel[1]
+vstring:disable_branches[*]
+vstring:enable_branches[NJets,BTags,HT,MHT,Jets]
+string:printsuffix[T1tttt_1100_compressed_limited_baseline]
+double:sizeLeg[22]
+double:sizeSymb[0.15]
+bool:unitnorm[1]
+double:ymin_min[1e-6]
+bool:btagcorr[1]
+bool:trigcorr[1]
+bool:pucorr[1]
+string:puname[corrections/PileupHistograms_0621.root]
+vstring:numers[T1tttt_1100_750,T1tttt_1100_800]
+vstring:denoms[T1tttt_1100_700]
+string:rationame[#frac{X}{1100_700}]
+
+HISTO
+njets	i:xnum[21]	d:xmin[-0.5]	d:xmax[20.5]	s:xtitle[N_{jet}]	s:ytitle[arbitrary units]	b:ratio[1]	vd:xcuts[2.5,4.5,6.5,8.5]
+nbjets	i:xnum[11]	d:xmin[-0.5]	d:xmax[10.5]	s:xtitle[N_{b-jet}]	s:ytitle[arbitrary units]	b:ratio[1]	vd:xcuts[0.5,1.5,2.5]
+ht	i:xnum[40]	d:xmin[0]	d:xmax[2000]	s:xtitle[H_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[1]	vd:xcuts[300,500,750,1000,1500]
+mht	i:xnum[30]	d:xmin[0]	d:xmax[1500]	s:xtitle[H_{T}^{miss} [GeV]]	s:ytitle[arbitrary units]	b:ratio[1]	vd:xcuts[300,350,500,750]
+cutflowRel	b:ratio[0]	s:ytitle[Rel. Eff. [%]]	b:logy[0]
+cutflowAbs	b:ratio[0]	s:ytitle[Abs. Eff. [%]]	b:logy[0]
+#recoil	i:xnum[40]	d:xmin[0]	d:xmax[2000]	s:xtitle[recoil p_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]
+#leadjetpt	i:xnum[30]	d:xmin[0]	d:xmax[1500]	s:xtitle[leading jet p_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]
+#leadjetpt	i:xnum[20]	d:xmin[0]	d:xmax[200]	s:xtitle[leading jet p_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	vd:xcuts[30]
+#deltaphi1	i:xnum[25]	d:xmin[0.5]	d:xmax[3.1415]	s:xtitle[#Delta#phi(^{}H_{T}^{miss},^{}j_{1})]	s:ytitle[arbitrary units]	b:ratio[0]
+
+SET
+hist	mc	T1tttt_1100_700	c:color[kMagenta]	i:linestyle[1]
+	base	mc	T1tttt_1100_700	s:filename[tree_T1tttt_1100_700_fast.root]	d:xsection[0.163491]	b:signal[1]	b:fastsim[1]
+hist	mc	T1tttt_1100_750	c:color[kRed]	i:linestyle[1]
+	base	mc	T1tttt_1100_750	s:filename[tree_T1tttt_1100_750_fast.root]	d:xsection[0.163491]	b:signal[1]	b:fastsim[1]
+hist	mc	T1tttt_1100_800	c:color[kOrange + 1]	i:linestyle[1]
+	base	mc	T1tttt_1100_800	s:filename[tree_T1tttt_1100_800_fast.root]	d:xsection[0.163491]	b:signal[1]	b:fastsim[1]
+
+	

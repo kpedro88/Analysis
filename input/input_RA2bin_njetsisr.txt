@@ -1,0 +1,54 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+#root -l 'KPlotDriver.C+("test/tree_signal","input/input_RA2bin_njetsisr.txt",1)'
+
+INPUT
+input/input_global.txt
+
+OPTION
+int:yieldprecision[8]
+vstring:RA2VarNames[NJets,BTags,MHT,HT]
+vfloat:RA2Var0Min[2,4,6,8]
+vfloat:RA2Var0Max[4,6,8,99]
+vfloat:RA2Var1Min[-1,0,1,2]
+vfloat:RA2Var1Max[0,1,2,99]
+vfloat:RA2Var2Min[300,350,500,750]
+vfloat:RA2Var2Max[350,500,750,9999]
+vfloat:RA2Var3Min[300,500,1000,350,500,1000,500,1000,750,1500]
+vfloat:RA2Var3Max[500,1000,9999,500,1000,9999,1000,9999,1500,9999]
+vuint:RA2Var0Bins[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]
+vuint:RA2Var1Bins[0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3]
+vuint:RA2Var2Bins[0,0,0,1,1,1,2,2,3,3,0,0,0,1,1,1,2,2,3,3,0,0,0,1,1,1,2,2,3,3,0,0,0,1,1,1,2,2,3,3,0,0,0,1,1,1,2,2,3,3,0,0,0,1,1,1,2,2,3,3,0,0,0,1,1,1,2,2,3,3,0,0,0,1,1,1,2,2,3,3,0,0,0,1,1,1,2,2,3,3,0,0,0,1,1,1,2,2,3,3,0,0,0,1,1,1,2,2,3,3,0,0,0,1,1,1,2,2,3,3,0,0,0,1,1,1,2,2,3,3,0,0,0,1,1,1,2,2,3,3,0,0,0,1,1,1,2,2,3,3,0,0,0,1,1,1,2,2,3,3]
+vuint:RA2Var3Bins[0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9]
+string:selection[ra2bin]
+vstring:disable_branches[*]
+vstring:enable_branches[NJetsISR]
+string:lumi_text[(13 TeV)]
+bool:treesuffix[1]
+bool:unitnorm[1]
+string:printsuffix[isr_comp_SMStttt1500]
+#bool:isrcorr[1]
+#string:isrname[corrections/ISRWeights.root]
+#string:printsuffix[isr_comp_SMStttt1500_corr]
+
+HISTO
+njetsisr	i:xnum[7]	d:xmin[0]	d:xmax[7]	s:xtitle[N_{jet}^{ISR}]	s:ytitle[arbitrary units]	b:logy[0]	b:ratio[0]
+
+SELECTION
+ra2bin
+#	METFilter	b:onlydata[1]
+#	BTagSF
+	RA2Bin
+	Histo
+
+SET
+hist	mc	T1tttt_1500_100_all	s:legname[T1tttt_1500_100 (all)]	c:color[kBlue]
+	base	ext	T1tttt_1500_100	s:extfilename[test/tree_signal/tree_T1tttt_1500_100.root]	vs:exthisto_in[NJetsISR]	vs:exthisto_out[njetsisr]
+hist	mc	T1tttt_1500_100_skim	s:legname[T1tttt_1500_100 (SR)]	c:color[kRed]
+	base	mc	T1tttt_1500_100	s:filename[tree_T1tttt_1500_100.root]	d:xsection[0.0141903]	b:signal[1]	vi:mother[1000021]

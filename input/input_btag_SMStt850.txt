@@ -1,0 +1,12 @@
+OPTION
+string:printsuffix[btag_comp_SMStt850]
+vstring:extra_text[#color[6]{N_{jet} bin},N_{b-jet} bin,T2tt_850_100]
+vint:extra_text_panels[0,0,1]
+vstring:numers[T2tt_850_100SF16]
+vstring:denoms[T2tt_850_100SF15]
+
+SET
+hist	data	T2tt_850_100SF16	s:legname[SF16]	c:color[kBlue]	i:panel[1]
+	base	ext	T2tt_850_100SF16	s:extfilename[datacards/RA2bin_signal.root]	vs:exthisto_in[RA2bin_SMStt850]	vs:exthisto_out[RA2bin]
+hist	data	T2tt_850_100SF15	s:legname[SF15]	c:color[kRed]	i:panel[1]
+	base	ext	T2tt_850_100SF15	s:extfilename[datacards_btag2015/RA2bin_signal.root]	vs:exthisto_in[RA2bin_SMStt850]	vs:exthisto_out[RA2bin]

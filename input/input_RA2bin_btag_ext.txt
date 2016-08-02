@@ -1,0 +1,28 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+INPUT
+input/input_global.txt
+
+OPTION
+int:yieldprecision[8]
+double:sizeLeg[22]
+double:canvasW[1200]
+double:marginL[115]
+#double:marginB[300]
+double:NdivX[518]
+string:lumi_text[(13 TeV)]
+vstring:disable_branches[*]
+bool:treesuffix[0]
+int:npanel[2]
+string:rationame[2016/2015]
+double:ratiomin[0.0]
+double:ratiomax[3.0]
+
+HISTO
+RA2bin	i:xnum[160]	d:xmin[0.5]	d:xmax[160.5]	s:xtitle[RA2 bin [^{}N_{jet},^{}N_{b-jet},^{}H_{T}^{miss},^{}H_{T}]]	s:ytitle[number of events]	b:logy[0]	vd:xcuts[10.5,20.5,30.5,40.5,50.5,60.5,70.5,80.5,90.5,100.5,110.5,120.5,130.5,140.5,150.5]	vc:xcut_colors[kBlack,kBlack,kBlack,kMagenta,kBlack,kBlack,kBlack,kMagenta,kBlack,kBlack,kBlack,kMagenta,kBlack,kBlack,kBlack]
