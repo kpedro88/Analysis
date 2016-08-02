@@ -10,6 +10,13 @@ To recompile all drivers, testing code changes or preparing for batch submission
 ```
 Add the flag `-f` to force recompilaton of all drivers.
 
+## Setup scripts
+
+To set up the various useful scripts now included in the [scripts](./scripts) directory:
+```
+./setup.sh
+```
+
 ## Skimming
 
 [input\_selection.txt](input/input\_selection.txt) defines all the available selections, variations, and samples, as well as common global options.
