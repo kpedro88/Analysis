@@ -39,8 +39,8 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 	KParser::process(systTypes,',',systs);
 	if(mode==1){
 		if(part==-1){
-			outdir = "datacards_fast/";
-			setlist = "input/input_sets_DC_fast.txt";
+			outdir = "datacards_fast"+suffix+"/";
+			setlist = "input/input_sets_DC_fast"+suffix+".txt";
 		}
 		else { //batch mode
 			stringstream ss;
@@ -53,7 +53,8 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 	}
 	else {
 		outdir = "datacards/";
-		setlist = "input/input_sets_DC_syst.txt";
+		if(suffix.size()>0) outdir = "datacards_"+suffix+"/";
+		setlist = "input/input_sets_DC_syst"+suffix+".txt";
 	}
 	
 	//check for directory

@@ -19,6 +19,8 @@
 #include <vector>
 #include <cstdlib>
 #include <map>
+#include <algorithm>
+#include <iterator>
 
 using namespace std;
 
@@ -310,6 +312,8 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 			}
 			else if(RA2VarNames[qty]=="MHT") val.push_back(looper->MHT);
 			else if(RA2VarNames[qty]=="HT") val.push_back(looper->HT);
+			else if(RA2VarNames[qty]=="GenMHT") val.push_back(looper->GenMHT);
+			else if(RA2VarNames[qty]=="genHT") val.push_back(looper->genHT);
 			//else if(RA2VarNames[qty]=="ak1p2Jets_sumJetMass") val.push_back(looper->ak1p2Jets_sumJetMass);
 			else {}			
 			
@@ -319,6 +323,13 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 					if(val[v] > RA2VarMin[qty][n] && val[v] <= RA2VarMax[qty][n]) bins.push_back(n);
 				}
 			}
+			//debugging
+			//cout << RA2VarNames[qty] << " = ";
+			//copy(val.begin(), val.end(), ostream_iterator<float>(cout, ","));
+			//cout << " ; bins = ";
+			//copy(bins.begin(), bins.end(), ostream_iterator<unsigned>(cout, ","));
+			//cout << endl;
+			
 			return bins;
 		}
 		
@@ -467,6 +478,48 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 		EventListFilter cscfilter;
 		vector<string> filterfiles;
 		vector<EventListFilter*> filters;
+};
+
+//---------------------------------------------------------------
+//applies fastsim fake jet filter
+class KFakeJetFilterSelector : public KSelector<KBuilder> {
+	public:
+		//constructor
+		KFakeJetFilterSelector() : KSelector<KBuilder>() { }
+		KFakeJetFilterSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), fastsim(false) { }
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("GenJets",1);
+			looper->fChain->SetBranchStatus("Jets",1);
+			looper->fChain->SetBranchStatus("Jets_chargedHadronEnergyFraction",1);
+		}
+		virtual void CheckLooper(){
+			//check fastsim stuff
+			fastsim = looper->localOpt->Get("fastsim",false);
+			if(!fastsim){
+				//disable this for non-fastsim
+				dummy = true;
+			}
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			//reject events with any jet pt>30, |eta|<2.5 NOT matched to a GenJet (w/in DeltaR<0.3) and chfrac < 0.1
+			for(unsigned j = 0; j < looper->Jets->size(); ++j){
+				if(looper->Jets->at(j).Pt() <= 30 || fabs(looper->Jets->at(j).Eta())>=2.5) continue;
+				bool genMatched = false;
+				for(unsigned g = 0; g < looper->GenJets->size(); ++g){
+					if(looper->GenJets->at(g).DeltaR(looper->Jets->at(j)) < 0.3) {
+						genMatched = true;
+						break;
+					}
+				}
+				if(!genMatched && looper->Jets_chargedHadronEnergyFraction->at(j) < 0.1) return false;
+			}
+			return true;
+		}
+		
+		//member variables
+		bool fastsim;
 };
 
 //---------------------------------------------------------------
@@ -952,6 +1005,7 @@ namespace KParser {
 		else if(sname=="LeadJetPt") srtmp = new KLeadJetPtSelector(sname,omap);
 		else if(sname=="JetEtaRegion") srtmp = new KJetEtaRegionSelector(sname,omap);
 		else if(sname=="Hemisphere") srtmp = new KHemisphereSelector(sname,omap);
+		else if(sname=="FakeJetFilter") srtmp = new KFakeJetFilterSelector(sname,omap);
 		else {} //skip unknown selectors
 		
 		if(!srtmp) cout << "Input error: unknown selector " << sname << ". This selector will be skipped." << endl;

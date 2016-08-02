@@ -130,20 +130,32 @@ class KHTSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
 		KHTSelector() : KSelector<KSkimmer>() { }
-		KHTSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), HTmin(500) { 
+		KHTSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), HTmin(500), doGen(false) { 
 			//check for option
 			localOpt->Get("HTmin",HTmin);
+			doGen = localOpt->Get("gen",false);
 		}
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return looper->HT > HTmin;
+			if(doGen) {
+				//treat this as a variation - recalc from genjets & store value
+				double genHT = 0.;
+				for(unsigned g = 0; g < looper->GenJets->size(); ++g){
+					if(looper->GenJets->at(g).Pt() <= 30 || fabs(looper->GenJets->at(g).Eta()) >= 2.4) continue;
+					genHT += looper->GenJets->at(g).Pt();
+				}
+				looper->genHT = genHT;
+				return looper->genHT > HTmin;
+			}
+			else return looper->HT > HTmin;
 		}
 		
 		//member variables
 		double HTmin;
+		bool doGen;
 };
 
 //----------------------------------------------------
@@ -152,25 +164,24 @@ class KMHTSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
 		KMHTSelector() : KSelector<KSkimmer>() { }
-		KMHTSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), MHTmin(200), debug(false), minPtMHT(30.), maxEtaMHT(5.) { 
+		KMHTSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), MHTmin(200), debug(false), doGen(false) { 
 			//check for option
 			localOpt->Get("MHTmin",MHTmin);
 			debug = localOpt->Get("debug",false);
-			localOpt->Get("minPtMHT",minPtMHT);
-			localOpt->Get("maxEtaMHT",maxEtaMHT);
+			doGen = localOpt->Get("gen",false);
 		}
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return looper->MHT > MHTmin;
+			if(doGen) return looper->GenMHT > MHTmin;
+			else return looper->MHT > MHTmin;
 		}
 		
 		//member variables
 		double MHTmin;
-		bool debug;
-		double minPtMHT, maxEtaMHT;
+		bool debug, doGen;
 };
 
 //----------------------------------------------------
@@ -860,6 +871,52 @@ class KCSCFilterSelector : public KSelector<KSkimmer> {
 		//member variables
 		string inputfile;
 		EventListFilter filter;
+};
+
+//---------------------------------------------------------------
+//applies fastsim fake jet filter
+class KFakeJetFilterSelector : public KSelector<KSkimmer> {
+	public:
+		//constructor
+		KFakeJetFilterSelector() : KSelector<KSkimmer>() { }
+		KFakeJetFilterSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), fastsim(false), invert(false) { 
+			//check for option
+			invert = localOpt->Get("invert",false);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("GenJets",1);
+			looper->fChain->SetBranchStatus("Jets",1);
+			looper->fChain->SetBranchStatus("Jets_chargedHadronEnergyFraction",1);
+		}
+		virtual void CheckLooper(){
+			//check fastsim stuff
+			fastsim = looper->MyBase->GetLocalOpt()->Get("fastsim",false);
+			if(!fastsim){
+				//disable this for non-fastsim
+				dummy = true;
+			}
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			//reject events with any jet pt>30, |eta|<2.5 NOT matched to a GenJet (w/in DeltaR<0.3) and chfrac < 0.1
+			for(unsigned j = 0; j < looper->Jets->size(); ++j){
+				if(looper->Jets->at(j).Pt() <= 30 || fabs(looper->Jets->at(j).Eta())>=2.5) continue;
+				bool genMatched = false;
+				for(unsigned g = 0; g < looper->GenJets->size(); ++g){
+					if(looper->GenJets->at(g).DeltaR(looper->Jets->at(j)) < 0.3) {
+						genMatched = true;
+						break;
+					}
+				}
+				if(!genMatched && looper->Jets_chargedHadronEnergyFraction->at(j) < 0.1) return invert;
+			}
+			return !invert;
+		}
+		
+		//member variables
+		bool fastsim;
+		bool invert;
 };
 
 //-------------------------------------------------------------
@@ -1666,6 +1723,7 @@ namespace KParser {
 		else if(sname=="PDFNorm") srtmp = new KPDFNormSelector(sname,omap);
 		else if(sname=="EventRange") srtmp = new KEventRangeSelector(sname,omap);
 		else if(sname=="CSCFilter") srtmp = new KCSCFilterSelector(sname,omap);
+		else if(sname=="FakeJetFilter") srtmp = new KFakeJetFilterSelector(sname,omap);
 		else if(sname=="JetEtaRegion") srtmp = new KJetEtaRegionSelector(sname,omap);
 		else if(sname=="NeutralHadronFraction") srtmp = new KNeutralHadronFractionSelector(sname,omap);
 		else if(sname=="PhotonFraction") srtmp = new KPhotonFractionSelector(sname,omap);

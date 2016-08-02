@@ -40,7 +40,8 @@ string:isrname[corrections/ISRWeights.root]
 
 SELECTION
 ra2bin
-	BTagSF
+	FakeJetFilter
+	BTagSF	
 	RA2Bin
 	Histo
 
