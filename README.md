@@ -1,5 +1,7 @@
 # Analysis
 
+This is the version of my analysis code used to produce the results in CMS-PAS-SUS-16-014 and associated supplementary material, using the CMS 13 TeV dataset from 2016 (up to ICHEP).
+
 ## Recompiling
 
 To recompile all drivers, testing code changes or preparing for batch submission:
@@ -7,6 +9,13 @@ To recompile all drivers, testing code changes or preparing for batch submission
 ./recompile.sh
 ```
 Add the flag `-f` to force recompilation of all drivers.
+
+## Setup scripts
+
+To set up the various useful scripts now included in the [scripts](./scripts) directory:
+```
+./setup.sh
+```
 
 ## Skimming
 
