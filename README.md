@@ -1,6 +1,6 @@
 # Analysis
 
-This is the version of my analysis code used to produce the results in CMS-PAS-SUS-16-014 and associated supplementary material, using the CMS 13 TeV dataset from 2016 (up to ICHEP).
+This is the version of my analysis code used to produce the results in [CMS-PAS-SUS-16-014](http://cds.cern.ch/record/2205158) and associated supplementary material, using the CMS 13 TeV dataset from 2016 (up to ICHEP).
 
 ## Recompiling
 
