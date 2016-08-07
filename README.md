@@ -1,6 +1,6 @@
 # Analysis
 
-This is the version of my analysis code used to produce the results in [arXiv:1602.06581](http://arxiv.org/abs/1602.06581) and associated supplementary material, using the CMS 13 TeV dataset from 2015.
+This is the version of my analysis code used to produce the results in [arXiv:1602.06581](http://arxiv.org/abs/1602.06581) and [associated supplementary material](http://cms-results.web.cern.ch/cms-results/public-results/publications/SUS-15-002/index.html), using the CMS 13 TeV dataset from 2015.
 
 ## Recompiling
 
@@ -8,7 +8,7 @@ To recompile all drivers, testing code changes or preparing for batch submission
 ```
 ./recompile.sh
 ```
-Add the flag `-f` to force recompilaton of all drivers.
+Add the flag `-f` to force recompilation of all drivers.
 
 ## Setup scripts
 
