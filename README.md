@@ -1,5 +1,7 @@
 # Analysis
 
+Important note: the current version of this code uses ROOT6 and C++11 features. It is not compatible with older versions of ROOT, i.e. ROOT5.
+
 ## Recompiling
 
 To recompile all drivers, testing code changes or preparing for batch submission:
