@@ -626,4 +626,9 @@ T2qq_block27 \
 T2qq_block28 \
 T2qq_block29 \
 T2qq_block30 \
+TChiHH_HToBB_HToBB_block0 \
+TChiHH_HToBB_HToBB_block1 \
+TChiHH_HToBB_HToBB_block2 \
+TChiHH_HToBB_HToBB_block3 \
+TChiHH_HToBB_HToBB_block4 \
 )
