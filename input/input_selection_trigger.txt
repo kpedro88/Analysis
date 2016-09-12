@@ -10,7 +10,7 @@ int:yieldprecision[2]
 bool:doClone[1]
 bool:quickchain[1]
 vstring:disable_branches[*]
-vstring:enable_branches[RunNum,LumiBlockNum,EvtNum,BTags,BadChargedCandidateFilter,BadPFMuonFilter,CaloMETPhi,CaloMET,CSCTightHaloFilter,DeltaPhi1,DeltaPhi2,DeltaPhi3,DeltaPhi4,eeBadScFilter,EcalDeadCellTriggerPrimitiveFilter,ElectronCharge,Electrons,globalTightHalo2016Filter,HBHEIsoNoiseFilter,HBHENoiseFilter,HT,HTJetsMask,isoElectronTracks,isoMuonTracks,isoPionTracks,JetID,Jets,Jets_ID,Jets_bDiscriminatorCSV,Jets_muonEnergyFraction,METPhi,MET,MHT,MHTPhi,MHTJetsMask,MuonCharge,Muons,NJets,NVtx,PFCaloMETRatio,Photons,photon_fullID,TriggerNames,TriggerPass,TriggerPrescales,ZCandidates]
+vstring:enable_branches[RunNum,LumiBlockNum,EvtNum,BTags,BadChargedCandidateFilter,BadPFMuonFilter,CaloMETPhi,CaloMET,CSCTightHaloFilter,DeltaPhi1,DeltaPhi2,DeltaPhi3,DeltaPhi4,eeBadScFilter,EcalDeadCellTriggerPrimitiveFilter,Electrons,Electrons_charge,Electrons_mediumID,Electrons_tightID,globalTightHalo2016Filter,HBHEIsoNoiseFilter,HBHENoiseFilter,HT,isoElectronTracks,isoMuonTracks,isoPionTracks,JetID,Jets,Jets_HTMask,Jets_ID,Jets_MHTMask,Jets_bDiscriminatorCSV,Jets_muonEnergyFraction,METPhi,MET,MHT,MHTPhi,Muons,Muons_charge,Muons_tightID,NJets,NVtx,PFCaloMETRatio,Photons,Photons_fullID,TriggerNames,TriggerPass,TriggerPrescales,ZCandidates]
 
 SELECTION
 signalTrigger
