@@ -596,9 +596,9 @@ class KEventCleaningSelector : public KSelector<KSkimmer> {
 			}
 			if(doFakeJet){
 				bool noFakeJet = true;
-				//reject events with any jet pt>30, |eta|<2.5 NOT matched to a GenJet (w/in DeltaR<0.3) and chfrac < 0.1
+				//reject events with any jet pt>20, |eta|<2.5 NOT matched to a GenJet (w/in DeltaR<0.3) and chfrac < 0.1
 				for(unsigned j = 0; j < looper->Jets->size(); ++j){
-					if(looper->Jets->at(j).Pt() <= 30 || fabs(looper->Jets->at(j).Eta())>=2.5) continue;
+					if(looper->Jets->at(j).Pt() <= 20 || fabs(looper->Jets->at(j).Eta())>=2.5) continue;
 					bool genMatched = false;
 					for(unsigned g = 0; g < looper->GenJets->size(); ++g){
 						if(looper->GenJets->at(g).DeltaR(looper->Jets->at(j)) < 0.3) {
