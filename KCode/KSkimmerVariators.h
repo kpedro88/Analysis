@@ -27,7 +27,7 @@ class KJetVariator : public KVariator<KSkimmer> {
 		//constructor
 		KJetVariator() : KVariator<KSkimmer>() { }
 		KJetVariator(string name_, OptionMap* localOpt_) : KVariator<KSkimmer>(name_,localOpt_), enabled(false), vtype(NoVar),
-			b_Jets(true),b_Jets_HTMask(true),b_Jets_MHTMask(true),b_Jets_ID(true),b_Jets_partonFlavor(true),b_Jets_hadronFlavor(true),b_Jets_bDiscriminatorCSV(true),b_Jets_bDiscriminatorMVA(true)
+			b_Jets(true),b_Jets_HTMask(true),b_Jets_MHTMask(true),b_Jets_ID(true),b_Jets_partonFlavor(true),b_Jets_hadronFlavor(true),b_Jets_bDiscriminatorCSV(true),b_Jets_bDiscriminatorMVA(true),b_Jets_muonEnergyFraction(true)
 		{
 			//check options
 			string vname = "";
@@ -48,28 +48,28 @@ class KJetVariator : public KVariator<KSkimmer> {
 		}
 		virtual void CheckBranches(){
 			if(vtype==JECup){
-				string branchlist[] = {"JetsJECup","JetsJECup_HTMask","JetsJECup_MHTMask","JetsJECup_ISRMask","JetsJECup_LeptonMask","JetsJECup_ID","JetsJECup_partonFlavor","JetsJECup_hadronFlavor","JetsJECup_bDiscriminatorCSV","JetsJECup_bDiscriminatorMVA","JetIDJECup","NJetsJECup","NJetsISRJECup","BTagsJECup","BTagsMVAJECup","HTJECup","MHTJECup","MHTPhiJECup","DeltaPhi1JECup","DeltaPhi2JECup","DeltaPhi3JECup","DeltaPhi4JECup"};
-				unsigned branchsize = 19;
+				string branchlist[] = {"JetsJECup","JetsJECup_HTMask","JetsJECup_MHTMask","JetsJECup_ISRMask","JetsJECup_LeptonMask","JetsJECup_ID","JetsJECup_partonFlavor","JetsJECup_hadronFlavor","JetsJECup_bDiscriminatorCSV","JetsJECup_bDiscriminatorMVA","JetsJECup_muonEnergyFraction","JetIDJECup","NJetsJECup","NJetsISRJECup","BTagsJECup","BTagsMVAJECup","HTJECup","MHTJECup","MHTPhiJECup","DeltaPhi1JECup","DeltaPhi2JECup","DeltaPhi3JECup","DeltaPhi4JECup"};
+				unsigned branchsize = 20;
 				EnableBranches(branchlist,branchsize);
 			}
 			else if(vtype==JECdown){
-				string branchlist[] = {"JetsJECdown","JetsJECdown_HTMask","JetsJECdown_MHTMask","JetsJECdown_ISRMask","JetsJECdown_LeptonMask","JetsJECdown_ID","JetsJECdown_partonFlavor","JetsJECdown_hadronFlavor","JetsJECdown_bDiscriminatorCSV","JetsJECdown_bDiscriminatorMVA","JetIDJECdown","NJetsJECdown","NJetsISRJECdown","BTagsJECdown","BTagsMVAJECdown","HTJECdown","MHTJECdown","MHTPhiJECdown","DeltaPhi1JECdown","DeltaPhi2JECdown","DeltaPhi3JECdown","DeltaPhi4JECdown"};
-				unsigned branchsize = 19;
+				string branchlist[] = {"JetsJECdown","JetsJECdown_HTMask","JetsJECdown_MHTMask","JetsJECdown_ISRMask","JetsJECdown_LeptonMask","JetsJECdown_ID","JetsJECdown_partonFlavor","JetsJECdown_hadronFlavor","JetsJECdown_bDiscriminatorCSV","JetsJECdown_bDiscriminatorMVA","JetsJECdown_muonEnergyFraction","JetIDJECdown","NJetsJECdown","NJetsISRJECdown","BTagsJECdown","BTagsMVAJECdown","HTJECdown","MHTJECdown","MHTPhiJECdown","DeltaPhi1JECdown","DeltaPhi2JECdown","DeltaPhi3JECdown","DeltaPhi4JECdown"};
+				unsigned branchsize = 20;
 				EnableBranches(branchlist,branchsize);
 			}
 			if(vtype==JERup){
-				string branchlist[] = {"JetsJERup","JetsJERup_HTMask","JetsJERup_MHTMask","JetsJERup_ISRMask","JetsJERup_LeptonMask","JetsJERup_ID","JetsJERup_partonFlavor","JetsJERup_hadronFlavor","JetsJERup_bDiscriminatorCSV","JetsJERup_bDiscriminatorMVA","JetIDJERup","NJetsJERup","NJetsISRJERup","BTagsJERup","BTagsMVAJERup","HTJERup","MHTJERup","MHTPhiJERup","DeltaPhi1JERup","DeltaPhi2JERup","DeltaPhi3JERup","DeltaPhi4JERup"};
-				unsigned branchsize = 19;
+				string branchlist[] = {"JetsJERup","JetsJERup_HTMask","JetsJERup_MHTMask","JetsJERup_ISRMask","JetsJERup_LeptonMask","JetsJERup_ID","JetsJERup_partonFlavor","JetsJERup_hadronFlavor","JetsJERup_bDiscriminatorCSV","JetsJERup_bDiscriminatorMVA","JetsJERup_muonEnergyFraction","JetIDJERup","NJetsJERup","NJetsISRJERup","BTagsJERup","BTagsMVAJERup","HTJERup","MHTJERup","MHTPhiJERup","DeltaPhi1JERup","DeltaPhi2JERup","DeltaPhi3JERup","DeltaPhi4JERup"};
+				unsigned branchsize = 20;
 				EnableBranches(branchlist,branchsize);
 			}
 			else if(vtype==JERdown){
-				string branchlist[] = {"JetsJERdown","JetsJERdown_HTMask","JetsJERdown_MHTMask","JetsJERdown_ISRMask","JetsJERdown_LeptonMask","JetsJERdown_ID","JetsJERdown_partonFlavor","JetsJERdown_hadronFlavor","JetsJERdown_bDiscriminatorCSV","JetsJERdown_bDiscriminatorMVA","JetIDJERdown","NJetsJERdown","NJetsISRJERdown","BTagsJERdown","BTagsMVAJERdown","HTJERdown","MHTJERdown","MHTPhiJERdown","DeltaPhi1JERdown","DeltaPhi2JERdown","DeltaPhi3JERdown","DeltaPhi4JERdown"};
-				unsigned branchsize = 19;
+				string branchlist[] = {"JetsJERdown","JetsJERdown_HTMask","JetsJERdown_MHTMask","JetsJERdown_ISRMask","JetsJERdown_LeptonMask","JetsJERdown_ID","JetsJERdown_partonFlavor","JetsJERdown_hadronFlavor","JetsJERdown_bDiscriminatorCSV","JetsJERdown_bDiscriminatorMVA","JetsJERdown_muonEnergyFraction","JetIDJERdown","NJetsJERdown","NJetsISRJERdown","BTagsJERdown","BTagsMVAJERdown","HTJERdown","MHTJERdown","MHTPhiJERdown","DeltaPhi1JERdown","DeltaPhi2JERdown","DeltaPhi3JERdown","DeltaPhi4JERdown"};
+				unsigned branchsize = 20;
 				EnableBranches(branchlist,branchsize);
 			}
 			else if(vtype==clean){
-				string branchlist[] = {"Jetsclean","Jetsclean_HTMask","Jetsclean_MHTMask","Jetsclean_ISRMask","Jetsclean_ID","Jetsclean_partonFlavor","Jetsclean_hadronFlavor","Jetsclean_bDiscriminatorCSV","Jetsclean_bDiscriminatorMVA","JetIDclean","NJetsclean","NJetsISRclean","BTagsclean","BTagsMVAclean","HTclean","MHTclean","MHTPhiclean","METclean","METPhiclean","DeltaPhi1clean","DeltaPhi2clean","DeltaPhi3clean","DeltaPhi4clean","isoElectronTracksclean","isoMuonTracksclean","isoPionTracksclean"};
-				unsigned branchsize = 21;
+				string branchlist[] = {"Jetsclean","Jetsclean_HTMask","Jetsclean_MHTMask","Jetsclean_ISRMask","Jetsclean_ID","Jetsclean_partonFlavor","Jetsclean_hadronFlavor","Jetsclean_bDiscriminatorCSV","Jetsclean_bDiscriminatorMVA","Jetsclean_muonEnergyFraction","JetIDclean","NJetsclean","NJetsISRclean","BTagsclean","BTagsMVAclean","HTclean","MHTclean","MHTPhiclean","METclean","METPhiclean","DeltaPhi1clean","DeltaPhi2clean","DeltaPhi3clean","DeltaPhi4clean","isoElectronTracksclean","isoMuonTracksclean","isoPionTracksclean"};
+				unsigned branchsize = 22;
 				EnableBranches(branchlist,branchsize);
 			}
 			
@@ -85,6 +85,7 @@ class KJetVariator : public KVariator<KSkimmer> {
 			if(!looper->fChain->GetBranchStatus("Jets_hadronFlavor")) b_Jets_hadronFlavor = false;
 			if(!looper->fChain->GetBranchStatus("Jets_bDiscriminatorCSV")) b_Jets_bDiscriminatorCSV = false;
 			if(!looper->fChain->GetBranchStatus("Jets_bDiscriminatorMVA")) b_Jets_bDiscriminatorMVA = false;
+			if(!looper->fChain->GetBranchStatus("Jets_muonEnergyFraction")) b_Jets_muonEnergyFraction = false;
 		}
 		//functions
 		virtual void DoVariation() {
@@ -99,6 +100,7 @@ class KJetVariator : public KVariator<KSkimmer> {
 			if(b_Jets_hadronFlavor) Jets_hadronFlavor = *(looper->Jets_hadronFlavor);
 			if(b_Jets_bDiscriminatorCSV) Jets_bDiscriminatorCSV = *(looper->Jets_bDiscriminatorCSV);
 			if(b_Jets_bDiscriminatorMVA) Jets_bDiscriminatorMVA = *(looper->Jets_bDiscriminatorMVA);
+			if(b_Jets_muonEnergyFraction) Jets_muonEnergyFraction = *(looper->Jets_muonEnergyFraction);
 			JetID = looper->JetID;
 			NJets = looper->NJets;
 			NJetsISR = looper->NJetsISR;
@@ -129,6 +131,7 @@ class KJetVariator : public KVariator<KSkimmer> {
 				if(b_Jets_hadronFlavor) *(looper->Jets_hadronFlavor) = *(looper->JetsJECup_hadronFlavor);
 				if(b_Jets_bDiscriminatorCSV) *(looper->Jets_bDiscriminatorCSV) = *(looper->JetsJECup_bDiscriminatorCSV);
 				if(b_Jets_bDiscriminatorMVA) *(looper->Jets_bDiscriminatorMVA) = *(looper->JetsJECup_bDiscriminatorMVA);
+				if(b_Jets_muonEnergyFraction) *(looper->Jets_muonEnergyFraction) = *(looper->JetsJECup_muonEnergyFraction);
 				looper->JetID = looper->JetIDJECup;
 				looper->NJets = looper->NJetsJECup;
 				looper->NJetsISR = looper->NJetsISRJECup;
@@ -153,6 +156,7 @@ class KJetVariator : public KVariator<KSkimmer> {
 				if(b_Jets_hadronFlavor) *(looper->Jets_hadronFlavor) = *(looper->JetsJECdown_hadronFlavor);
 				if(b_Jets_bDiscriminatorCSV) *(looper->Jets_bDiscriminatorCSV) = *(looper->JetsJECdown_bDiscriminatorCSV);
 				if(b_Jets_bDiscriminatorMVA) *(looper->Jets_bDiscriminatorMVA) = *(looper->JetsJECdown_bDiscriminatorMVA);
+				if(b_Jets_muonEnergyFraction) *(looper->Jets_muonEnergyFraction) = *(looper->JetsJECdown_muonEnergyFraction);
 				looper->JetID = looper->JetIDJECdown;
 				looper->NJets = looper->NJetsJECdown;
 				looper->NJetsISR = looper->NJetsISRJECdown;
@@ -177,6 +181,7 @@ class KJetVariator : public KVariator<KSkimmer> {
 				if(b_Jets_hadronFlavor) *(looper->Jets_hadronFlavor) = *(looper->JetsJERup_hadronFlavor);
 				if(b_Jets_bDiscriminatorCSV) *(looper->Jets_bDiscriminatorCSV) = *(looper->JetsJERup_bDiscriminatorCSV);
 				if(b_Jets_bDiscriminatorMVA) *(looper->Jets_bDiscriminatorMVA) = *(looper->JetsJERup_bDiscriminatorMVA);
+				if(b_Jets_muonEnergyFraction) *(looper->Jets_muonEnergyFraction) = *(looper->JetsJERup_muonEnergyFraction);
 				looper->JetID = looper->JetIDJERup;
 				looper->NJets = looper->NJetsJERup;
 				looper->NJetsISR = looper->NJetsISRJERup;
@@ -201,6 +206,7 @@ class KJetVariator : public KVariator<KSkimmer> {
 				if(b_Jets_hadronFlavor) *(looper->Jets_hadronFlavor) = *(looper->JetsJERdown_hadronFlavor);
 				if(b_Jets_bDiscriminatorCSV) *(looper->Jets_bDiscriminatorCSV) = *(looper->JetsJERdown_bDiscriminatorCSV);
 				if(b_Jets_bDiscriminatorMVA) *(looper->Jets_bDiscriminatorMVA) = *(looper->JetsJERdown_bDiscriminatorMVA);
+				if(b_Jets_muonEnergyFraction) *(looper->Jets_muonEnergyFraction) = *(looper->JetsJERdown_muonEnergyFraction);
 				looper->JetID = looper->JetIDJERdown;
 				looper->NJets = looper->NJetsJERdown;
 				looper->NJetsISR = looper->NJetsISRJERdown;
@@ -224,6 +230,7 @@ class KJetVariator : public KVariator<KSkimmer> {
 				if(b_Jets_hadronFlavor) *(looper->Jets_hadronFlavor) = *(looper->Jetsclean_hadronFlavor);
 				if(b_Jets_bDiscriminatorCSV) *(looper->Jets_bDiscriminatorCSV) = *(looper->Jetsclean_bDiscriminatorCSV);
 				if(b_Jets_bDiscriminatorMVA) *(looper->Jets_bDiscriminatorMVA) = *(looper->Jetsclean_bDiscriminatorMVA);
+				if(b_Jets_muonEnergyFraction) *(looper->Jets_muonEnergyFraction) = *(looper->Jetsclean_muonEnergyFraction);
 				looper->JetID = looper->JetIDclean;
 				looper->NJets = looper->NJetsclean;
 				looper->NJetsISR = looper->NJetsISRclean;
@@ -255,6 +262,7 @@ class KJetVariator : public KVariator<KSkimmer> {
 			if(b_Jets_hadronFlavor) *(looper->Jets_hadronFlavor) = Jets_hadronFlavor;
 			if(b_Jets_bDiscriminatorCSV) *(looper->Jets_bDiscriminatorCSV) = Jets_bDiscriminatorCSV;
 			if(b_Jets_bDiscriminatorMVA) *(looper->Jets_bDiscriminatorMVA) = Jets_bDiscriminatorMVA;
+			if(b_Jets_muonEnergyFraction) *(looper->Jets_muonEnergyFraction) = Jets_muonEnergyFraction;
 			looper->JetID = JetID;
 			looper->NJets = NJets;
 			looper->NJetsISR = NJetsISR;
@@ -276,7 +284,7 @@ class KJetVariator : public KVariator<KSkimmer> {
 		
 		//member variables
 		bool enabled;
-		bool b_Jets,b_Jets_HTMask,b_Jets_MHTMask,b_Jets_ISRMask,b_Jets_LeptonMask,b_Jets_ID,b_Jets_partonFlavor,b_Jets_hadronFlavor,b_Jets_bDiscriminatorCSV,b_Jets_bDiscriminatorMVA;
+		bool b_Jets,b_Jets_HTMask,b_Jets_MHTMask,b_Jets_ISRMask,b_Jets_LeptonMask,b_Jets_ID,b_Jets_partonFlavor,b_Jets_hadronFlavor,b_Jets_bDiscriminatorCSV,b_Jets_bDiscriminatorMVA,b_Jets_muonEnergyFraction;
 		vartypes vtype;
 		vector<TLorentzVector> Jets;
 		vector<bool> Jets_HTMask;
@@ -288,6 +296,7 @@ class KJetVariator : public KVariator<KSkimmer> {
 		vector<int> Jets_partonFlavor;
 		vector<double> Jets_bDiscriminatorCSV;
 		vector<double> Jets_bDiscriminatorMVA;
+		vector<double> Jets_muonEnergyFraction;
 		Bool_t          JetID;
 		Int_t           NJets;
 		Int_t           NJetsISR;
