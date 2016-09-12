@@ -515,12 +515,12 @@ class KPhotonIDSelector : public KSelector<KBuilder> {
 		}
 		virtual void CheckBranches(){
 			looper->fChain->SetBranchStatus("Photons",1);
-			looper->fChain->SetBranchStatus("photon_hadTowOverEM",1);
-			looper->fChain->SetBranchStatus("photon_hasPixelSeed",1);
-			looper->fChain->SetBranchStatus("photon_isEB",1);
-			looper->fChain->SetBranchStatus("photon_pfChargedIsoRhoCorr",1);
-			looper->fChain->SetBranchStatus("photon_pfGammaIsoRhoCorr",1);
-			looper->fChain->SetBranchStatus("photon_pfNeutralIsoRhoCorr",1);
+			looper->fChain->SetBranchStatus("Photons_hadTowOverEM",1);
+			looper->fChain->SetBranchStatus("Photons_hasPixelSeed",1);
+			looper->fChain->SetBranchStatus("Photons_isEB",1);
+			looper->fChain->SetBranchStatus("Photons_pfChargedIsoRhoCorr",1);
+			looper->fChain->SetBranchStatus("Photons_pfGammaIsoRhoCorr",1);
+			looper->fChain->SetBranchStatus("Photons_pfNeutralIsoRhoCorr",1);
 		}
 		
 		//used for non-dummy selectors
@@ -529,13 +529,13 @@ class KPhotonIDSelector : public KSelector<KBuilder> {
 			for(unsigned p = 0; p < looper->Photons->size(); ++p){
 				bool goodPhoton = (abs(looper->Photons->at(p).Eta())<1.4442 || ((abs(looper->Photons->at(p).Eta())>1.566 && abs(looper->Photons->at(p).Eta())<2.5)))
 									&& looper->Photons->at(p).Pt()>100.
-									&& ((looper->photon_hadTowOverEM->at(p)<0.028 && !looper->photon_hasPixelSeed->at(p) && looper->photon_isEB->at(p)) 
-										|| (looper->photon_hadTowOverEM->at(p)<0.093 && !looper->photon_hasPixelSeed->at(p) && !looper->photon_isEB->at(p)))
-									&& looper->photon_pfChargedIsoRhoCorr->at(p)<(2.67*looper->photon_isEB->at(p) + 1.79*!looper->photon_isEB->at(p))
-									&& looper->photon_pfGammaIsoRhoCorr->at(p)<((2.11+0.0014*looper->Photons->at(p).Pt())*looper->photon_isEB->at(p)
-																					+ (3.09+0.0091*looper->Photons->at(p).Pt())*!looper->photon_isEB->at(p))
-									&& looper->photon_pfNeutralIsoRhoCorr->at(p)<((7.23+exp(0.0028*looper->Photons->at(p).Pt()+0.5408))*looper->photon_isEB->at(p)
-																					+ (8.89+0.01725*looper->Photons->at(p).Pt())*!looper->photon_isEB->at(p));
+									&& ((looper->Photons_hadTowOverEM->at(p)<0.028 && !looper->Photons_hasPixelSeed->at(p) && looper->Photons_isEB->at(p)) 
+										|| (looper->Photons_hadTowOverEM->at(p)<0.093 && !looper->Photons_hasPixelSeed->at(p) && !looper->Photons_isEB->at(p)))
+									&& looper->Photons_pfChargedIsoRhoCorr->at(p)<(2.67*looper->Photons_isEB->at(p) + 1.79*!looper->Photons_isEB->at(p))
+									&& looper->Photons_pfGammaIsoRhoCorr->at(p)<((2.11+0.0014*looper->Photons->at(p).Pt())*looper->Photons_isEB->at(p)
+																					+ (3.09+0.0091*looper->Photons->at(p).Pt())*!looper->Photons_isEB->at(p))
+									&& looper->Photons_pfNeutralIsoRhoCorr->at(p)<((7.23+exp(0.0028*looper->Photons->at(p).Pt()+0.5408))*looper->Photons_isEB->at(p)
+																					+ (8.89+0.01725*looper->Photons->at(p).Pt())*!looper->Photons_isEB->at(p));
 				if(goodPhoton) goodPhotons.push_back(p);
 			}
 			return true;
@@ -660,7 +660,7 @@ class KHemisphereSelector : public KSelector<KBuilder> {
 		}
 		virtual void CheckBranches(){
 			looper->fChain->SetBranchStatus("MHT_Phi",1);
-			looper->fChain->SetBranchStatus("HTJetsMask",1);
+			looper->fChain->SetBranchStatus("Jets_HTMask",1);
 			looper->fChain->SetBranchStatus("Jets",1);
 			looper->fChain->SetBranchStatus("Jets_bDiscriminatorCSV",1);
 		}
@@ -673,7 +673,7 @@ class KHemisphereSelector : public KSelector<KBuilder> {
 			//check dphi for each jet
 			for(unsigned j = 0; j < looper->Jets->size(); ++j){
 				//HT jet cuts
-				if(!looper->HTJetsMask->at(j)) continue;
+				if(!looper->Jets_HTMask->at(j)) continue;
 				
 				double dphi = KMath::DeltaPhi(looper->MHTPhi,looper->Jets->at(j).Phi());
 				if(fabs(dphi)<=TMath::Pi()/2){
@@ -710,7 +710,7 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 			btagcorr.SetCalib("btag/CSVv2_ichep.csv");
 		}
 		virtual void CheckBranches(){
-			looper->fChain->SetBranchStatus("HTJetsMask",1);
+			looper->fChain->SetBranchStatus("Jets_HTMask",1);
 			looper->fChain->SetBranchStatus("Jets",1);
 			looper->fChain->SetBranchStatus("Jets_hadronFlavor",1);
 			if(debug) looper->fChain->SetBranchStatus("BTags",1);
@@ -745,7 +745,7 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			//get probabilities
-			prob = btagcorr.GetCorrections(looper->Jets,looper->Jets_hadronFlavor,looper->HTJetsMask);
+			prob = btagcorr.GetCorrections(looper->Jets,looper->Jets_hadronFlavor,looper->Jets_HTMask);
 			if(debug) cout << "BTags = " << looper->BTags << endl;
 			return true;
 		}
@@ -984,12 +984,12 @@ class KHistoSelector : public KSelector<KBuilder> {
 					else if(vname=="sigmaietaieta"){//sigma ieta ieta variable for all photon candidates
 						if(PhotonID){
 							for(unsigned p = 0; p < PhotonID->goodPhotons.size(); ++p){
-								values[i].Fill(looper->photon_sigmaIetaIeta->at(PhotonID->goodPhotons[p]),w);
+								values[i].Fill(looper->Photons_sigmaIetaIeta->at(PhotonID->goodPhotons[p]),w);
 							}
 						}
 						else { //if no ID applied, just plot everything
-							for(unsigned p = 0; p < looper->photon_sigmaIetaIeta->size(); ++p){
-								values[i].Fill(looper->photon_sigmaIetaIeta->at(p),w);
+							for(unsigned p = 0; p < looper->Photons_sigmaIetaIeta->size(); ++p){
+								values[i].Fill(looper->Photons_sigmaIetaIeta->at(p),w);
 							}
 						}
 					}
@@ -999,7 +999,7 @@ class KHistoSelector : public KSelector<KBuilder> {
 						for(unsigned p = 0; p < looper->Photons->size(); ++p){
 							if(looper->Photons->at(p).Pt()>best_pt){
 								best_pt = looper->Photons->at(p).Pt();
-								best_sieie = looper->photon_sigmaIetaIeta->at(p);
+								best_sieie = looper->Photons_sigmaIetaIeta->at(p);
 							}
 						}
 						values[i].Fill(best_sieie,w);

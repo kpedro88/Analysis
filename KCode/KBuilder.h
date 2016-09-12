@@ -284,8 +284,8 @@ class KBuilderMC : public KBuilder {
 			}
 			if(NTenum==ttbarLowHT || NTenum==ttbarLowHThad || NTenum==ttbarHighHT) fChain->SetBranchStatus("madHT",1);
 			if(NTenum==ttbarLowHThad){
-				fChain->SetBranchStatus("GenEls",1);
-				fChain->SetBranchStatus("GenMus",1);
+				fChain->SetBranchStatus("GenElectrons",1);
+				fChain->SetBranchStatus("GenMuons",1);
 				fChain->SetBranchStatus("GenTaus",1);
 			}
 			if(pdfunc!=0){
@@ -301,7 +301,7 @@ class KBuilderMC : public KBuilder {
 			
 			//check normalization type here
 			if(NTenum==ttbarLowHT) { goodEvent &= madHT < 600; }
-			else if(NTenum==ttbarLowHThad) { goodEvent &= madHT < 600 && GenEls->size()==0 && GenMus->size()==0 && GenTaus->size()==0; }
+			else if(NTenum==ttbarLowHThad) { goodEvent &= madHT < 600 && GenElectrons->size()==0 && GenMuons->size()==0 && GenTaus->size()==0; }
 			else if(NTenum==ttbarHighHT) { goodEvent &= madHT >= 600; }
 		
 			//KBuilder::Cut() comes *last* because it includes histo filling selector
