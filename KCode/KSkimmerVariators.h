@@ -389,7 +389,6 @@ class KJetLeptonVariator : public KVariator<KSkimmer> {
 			
 			vector<TLorentzVector>* handles[] = {looper->Muons,looper->Electrons};
 			for(unsigned j = 0; j < looper->Jets->size(); ++j){
-				if(looper->Jets->at(j).Pt()<=30) continue; //skip all low pT jets
 				bool skip = false;
 				for(unsigned h = 0; h < 2; ++h){
 					for(unsigned ih = 0; ih < handles[h]->size(); ++ih){
