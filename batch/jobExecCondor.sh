@@ -46,17 +46,22 @@ if [[ $ROOTEXIT -ne 0 ]]; then
   exit $ROOTEXIT
 fi
 
+# list output
+ls ${OUTDIR}*/*.root
+
 # copy output to eos
 echo "xrdcp output for condor"
-for TREEDIR in ${OUTDIR}*/
-do
-  xrdcp -R -f ${TREEDIR} ${STORE}/${TREEDIR}
-  XRDEXIT=$?
-  if [[ $XRDEXIT -ne 0 ]]; then
-    rm -r ${OUTDIR}*
-    echo "exit code $XRDEXIT, failure in xrdcp"
-    exit $XRDEXIT
-  fi
+for TREEDIR in ${OUTDIR}*/; do
+  for FILE in ${TREEDIR}/*.root; do
+    # FILE contains TREEDIR in path
+    xrdcp -f ${FILE} ${STORE}/${FILE}
+    XRDEXIT=$?
+    if [[ $XRDEXIT -ne 0 ]]; then
+      rm -r ${OUTDIR}*
+      echo "exit code $XRDEXIT, failure in xrdcp"
+      exit $XRDEXIT
+    fi
+  done
   rm -r ${TREEDIR}
 done
 
