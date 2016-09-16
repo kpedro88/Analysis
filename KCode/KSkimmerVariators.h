@@ -39,38 +39,33 @@ class KJetVariator : public KVariator<KSkimmer> {
 			else if(vname=="clean") vtype = clean;
 		}
 		//helper functions
-		virtual void EnableBranches(string* branches, unsigned size){
+		virtual void EnableBranches(vector<string>& branches){
 			if(enabled) return;
-			for(unsigned i = 0; i < size; ++i){
+			for(unsigned i = 0; i < branches.size(); ++i){
 				looper->fChain->SetBranchStatus(branches[i].c_str(),1);
 			}
 			enabled = true;
 		}
 		virtual void CheckBranches(){
 			if(vtype==JECup){
-				string branchlist[] = {"JetsJECup","JetsJECup_HTMask","JetsJECup_MHTMask","JetsJECup_ISRMask","JetsJECup_LeptonMask","JetsJECup_ID","JetsJECup_partonFlavor","JetsJECup_hadronFlavor","JetsJECup_bDiscriminatorCSV","JetsJECup_bDiscriminatorMVA","JetsJECup_muonEnergyFraction","JetIDJECup","NJetsJECup","NJetsISRJECup","BTagsJECup","BTagsMVAJECup","HTJECup","MHTJECup","MHTPhiJECup","DeltaPhi1JECup","DeltaPhi2JECup","DeltaPhi3JECup","DeltaPhi4JECup"};
-				unsigned branchsize = 20;
-				EnableBranches(branchlist,branchsize);
+				vector<string> branchlist = {"JetsJECup","JetsJECup_HTMask","JetsJECup_MHTMask","JetsJECup_ISRMask","JetsJECup_LeptonMask","JetsJECup_ID","JetsJECup_partonFlavor","JetsJECup_hadronFlavor","JetsJECup_bDiscriminatorCSV","JetsJECup_bDiscriminatorMVA","JetsJECup_muonEnergyFraction","JetIDJECup","NJetsJECup","NJetsISRJECup","BTagsJECup","BTagsMVAJECup","HTJECup","MHTJECup","MHTPhiJECup","DeltaPhi1JECup","DeltaPhi2JECup","DeltaPhi3JECup","DeltaPhi4JECup"};
+				EnableBranches(branchlist);
 			}
 			else if(vtype==JECdown){
-				string branchlist[] = {"JetsJECdown","JetsJECdown_HTMask","JetsJECdown_MHTMask","JetsJECdown_ISRMask","JetsJECdown_LeptonMask","JetsJECdown_ID","JetsJECdown_partonFlavor","JetsJECdown_hadronFlavor","JetsJECdown_bDiscriminatorCSV","JetsJECdown_bDiscriminatorMVA","JetsJECdown_muonEnergyFraction","JetIDJECdown","NJetsJECdown","NJetsISRJECdown","BTagsJECdown","BTagsMVAJECdown","HTJECdown","MHTJECdown","MHTPhiJECdown","DeltaPhi1JECdown","DeltaPhi2JECdown","DeltaPhi3JECdown","DeltaPhi4JECdown"};
-				unsigned branchsize = 20;
-				EnableBranches(branchlist,branchsize);
+				vector<string> branchlist = {"JetsJECdown","JetsJECdown_HTMask","JetsJECdown_MHTMask","JetsJECdown_ISRMask","JetsJECdown_LeptonMask","JetsJECdown_ID","JetsJECdown_partonFlavor","JetsJECdown_hadronFlavor","JetsJECdown_bDiscriminatorCSV","JetsJECdown_bDiscriminatorMVA","JetsJECdown_muonEnergyFraction","JetIDJECdown","NJetsJECdown","NJetsISRJECdown","BTagsJECdown","BTagsMVAJECdown","HTJECdown","MHTJECdown","MHTPhiJECdown","DeltaPhi1JECdown","DeltaPhi2JECdown","DeltaPhi3JECdown","DeltaPhi4JECdown"};
+				EnableBranches(branchlist);
 			}
 			if(vtype==JERup){
-				string branchlist[] = {"JetsJERup","JetsJERup_HTMask","JetsJERup_MHTMask","JetsJERup_ISRMask","JetsJERup_LeptonMask","JetsJERup_ID","JetsJERup_partonFlavor","JetsJERup_hadronFlavor","JetsJERup_bDiscriminatorCSV","JetsJERup_bDiscriminatorMVA","JetsJERup_muonEnergyFraction","JetIDJERup","NJetsJERup","NJetsISRJERup","BTagsJERup","BTagsMVAJERup","HTJERup","MHTJERup","MHTPhiJERup","DeltaPhi1JERup","DeltaPhi2JERup","DeltaPhi3JERup","DeltaPhi4JERup"};
-				unsigned branchsize = 20;
-				EnableBranches(branchlist,branchsize);
+				vector<string> branchlist = {"JetsJERup","JetsJERup_HTMask","JetsJERup_MHTMask","JetsJERup_ISRMask","JetsJERup_LeptonMask","JetsJERup_ID","JetsJERup_partonFlavor","JetsJERup_hadronFlavor","JetsJERup_bDiscriminatorCSV","JetsJERup_bDiscriminatorMVA","JetsJERup_muonEnergyFraction","JetIDJERup","NJetsJERup","NJetsISRJERup","BTagsJERup","BTagsMVAJERup","HTJERup","MHTJERup","MHTPhiJERup","DeltaPhi1JERup","DeltaPhi2JERup","DeltaPhi3JERup","DeltaPhi4JERup"};
+				EnableBranches(branchlist);
 			}
 			else if(vtype==JERdown){
-				string branchlist[] = {"JetsJERdown","JetsJERdown_HTMask","JetsJERdown_MHTMask","JetsJERdown_ISRMask","JetsJERdown_LeptonMask","JetsJERdown_ID","JetsJERdown_partonFlavor","JetsJERdown_hadronFlavor","JetsJERdown_bDiscriminatorCSV","JetsJERdown_bDiscriminatorMVA","JetsJERdown_muonEnergyFraction","JetIDJERdown","NJetsJERdown","NJetsISRJERdown","BTagsJERdown","BTagsMVAJERdown","HTJERdown","MHTJERdown","MHTPhiJERdown","DeltaPhi1JERdown","DeltaPhi2JERdown","DeltaPhi3JERdown","DeltaPhi4JERdown"};
-				unsigned branchsize = 20;
-				EnableBranches(branchlist,branchsize);
+				vector<string> branchlist = {"JetsJERdown","JetsJERdown_HTMask","JetsJERdown_MHTMask","JetsJERdown_ISRMask","JetsJERdown_LeptonMask","JetsJERdown_ID","JetsJERdown_partonFlavor","JetsJERdown_hadronFlavor","JetsJERdown_bDiscriminatorCSV","JetsJERdown_bDiscriminatorMVA","JetsJERdown_muonEnergyFraction","JetIDJERdown","NJetsJERdown","NJetsISRJERdown","BTagsJERdown","BTagsMVAJERdown","HTJERdown","MHTJERdown","MHTPhiJERdown","DeltaPhi1JERdown","DeltaPhi2JERdown","DeltaPhi3JERdown","DeltaPhi4JERdown"};
+				EnableBranches(branchlist);
 			}
 			else if(vtype==clean){
-				string branchlist[] = {"Jetsclean","Jetsclean_HTMask","Jetsclean_MHTMask","Jetsclean_ISRMask","Jetsclean_ID","Jetsclean_partonFlavor","Jetsclean_hadronFlavor","Jetsclean_bDiscriminatorCSV","Jetsclean_bDiscriminatorMVA","Jetsclean_muonEnergyFraction","JetIDclean","NJetsclean","NJetsISRclean","BTagsclean","BTagsMVAclean","HTclean","MHTclean","MHTPhiclean","METclean","METPhiclean","DeltaPhi1clean","DeltaPhi2clean","DeltaPhi3clean","DeltaPhi4clean","isoElectronTracksclean","isoMuonTracksclean","isoPionTracksclean"};
-				unsigned branchsize = 22;
-				EnableBranches(branchlist,branchsize);
+				vector<string> branchlist = {"Jetsclean","Jetsclean_HTMask","Jetsclean_MHTMask","Jetsclean_ISRMask","Jetsclean_ID","Jetsclean_partonFlavor","Jetsclean_hadronFlavor","Jetsclean_bDiscriminatorCSV","Jetsclean_bDiscriminatorMVA","Jetsclean_muonEnergyFraction","JetIDclean","NJetsclean","NJetsISRclean","BTagsclean","BTagsMVAclean","HTclean","MHTclean","MHTPhiclean","METclean","METPhiclean","DeltaPhi1clean","DeltaPhi2clean","DeltaPhi3clean","DeltaPhi4clean","isoElectronTracksclean","isoMuonTracksclean","isoPionTracksclean"};
+				EnableBranches(branchlist);
 			}
 			
 			
