@@ -201,7 +201,10 @@ class KScanner : public NtupleClass {
 				if(globalOpt->Get("hadd",false)){
 					for(MPit mp = partMap.begin(); mp != partMap.end(); ++mp){
 						stringstream ssys;
-						ssys << "batch/haddHelper.sh " << makeName(mp->first.first,mp->first.second,blocknum) << " " << mp->second - 1 << " " << outsuff;
+						//just mv if only one part
+						if(mp->second==1) ssys << "mv " << makeName(mp->first.first,mp->first.second,blocknum,0,outsuff) << ".root " << makeName(mp->first.first,mp->first.second,blocknum,outsuff) << ".root";
+						else ssys << "batch/haddHelper.sh " << makeName(mp->first.first,mp->first.second,blocknum) << " " << mp->second - 1 << " " << outsuff;
+						cout << ssys.str() << endl;
 						system(ssys.str().c_str());
 					}
 				}
