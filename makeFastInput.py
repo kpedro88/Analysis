@@ -29,6 +29,7 @@ files = [ f.split("/")[-1] for f in files]
 xfile = open("input/dict_xsec.txt",'r')
 xfileT2 = open("input/dict_xsec_T2.txt",'r')
 xfileT2qq = open("input/dict_xsec_T2qq.txt",'r')
+xfileTChiHH = open("input/dict_xsec_TChiHH.txt",'r')
 wfile = open("input/input_sets_skim_fast.txt",'w')
 dfile = open("input/input_sets_DC_fast.txt",'w')
 sfile = open("batch/exportFast.sh",'w')
@@ -49,7 +50,10 @@ xsecT2 = xsec_parse(xfileT2)
 
 # parse xsec map (taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVsquarkantisquark)
 xsecT2qq = xsec_parse(xfileT2qq)
-    
+
+# parse xsec map (taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVhino)
+xsecTChiHH = xsec_parse(xfileTChiHH)
+
 # preamble for script
 sfile.write("#!/bin/bash\n")
 sfile.write("\n")
@@ -62,9 +66,9 @@ dfile.write("SET\n")
 for ind,file in enumerate(files):
     # parse filename: model, mMother-X, mLSP-Y, fast.root
     fsplit = file.split('_')
-    model = fsplit[0]
-    mMother = msplit(fsplit[1])
-    mLSP = msplit(fsplit[2])
+    model = '_'.join(fsplit[0:-3])
+    mMother = msplit(fsplit[-3])
+    mLSP = msplit(fsplit[-2])
     mother_ID = []
     # get cross section
     if model.find("T2tt")!=-1:
@@ -75,7 +79,10 @@ for ind,file in enumerate(files):
         mother_ID.append(1000005)
     elif model.find("T2qq")!=-1:
         this_xsec = xsecT2qq[mMother] if mMother in xsecT2qq.keys() else 1
-        mother_ID.extend((1000001,1000002,1000003,1000004,2000001,2000002,2000003,2000004))
+        mother_ID.extend([1000001,1000002,1000003,1000004,2000001,2000002,2000003,2000004])
+    elif model.find("TChiHH")!=-1:
+        this_xsec = xsecTChiHH[mMother] if mMother in xsecTChiHH.keys() else 1
+        mother_ID.extend([1000023,1000025])
     else:
         this_xsec = xsec[mMother] if mMother in xsec.keys() else 1
         mother_ID.append(1000021)

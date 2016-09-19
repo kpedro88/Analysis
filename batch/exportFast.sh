@@ -66,6 +66,7 @@ T1bbbb_1200_100_fast \
 T1bbbb_1200_1050_fast \
 T1bbbb_1200_1100_fast \
 T1bbbb_1200_1150_fast \
+T1bbbb_mMother-1200_1175_-1_fast \
 T1bbbb_1200_1175_fast \
 T1bbbb_1200_1_fast \
 T1bbbb_1200_200_fast \
@@ -186,6 +187,7 @@ T1bbbb_1450_1_fast \
 T1bbbb_1450_200_fast \
 T1bbbb_1450_300_fast \
 T1bbbb_1450_400_fast \
+T1bbbb_mMother-1450_500_-1_fast \
 T1bbbb_1450_500_fast \
 T1bbbb_1450_550_fast \
 T1bbbb_1450_600_fast \
@@ -199,6 +201,7 @@ T1bbbb_1450_950_fast \
 T1bbbb_1500_1000_fast \
 T1bbbb_1500_100_fast \
 T1bbbb_1500_1050_fast \
+T1bbbb_mMother-1500_1100_-1_fast \
 T1bbbb_1500_1100_fast \
 T1bbbb_1500_1150_fast \
 T1bbbb_1500_1200_fast \
@@ -293,6 +296,7 @@ T1bbbb_1650_1600_fast \
 T1bbbb_1650_1_fast \
 T1bbbb_1650_200_fast \
 T1bbbb_1650_300_fast \
+T1bbbb_mMother-1650_400_-1_fast \
 T1bbbb_1650_400_fast \
 T1bbbb_1650_500_fast \
 T1bbbb_1650_600_fast \
@@ -315,6 +319,7 @@ T1bbbb_1700_1350_fast \
 T1bbbb_1700_1400_fast \
 T1bbbb_1700_1450_fast \
 T1bbbb_1700_1500_fast \
+T1bbbb_mMother-1700_1550_-1_fast \
 T1bbbb_1700_1550_fast \
 T1bbbb_1700_1600_fast \
 T1bbbb_1700_1_fast \
@@ -329,6 +334,7 @@ T1bbbb_1700_800_fast \
 T1bbbb_1700_850_fast \
 T1bbbb_1700_900_fast \
 T1bbbb_1700_950_fast \
+T1bbbb_mMother-1750_1000_-1_fast \
 T1bbbb_1750_1000_fast \
 T1bbbb_1750_100_fast \
 T1bbbb_1750_1050_fast \
@@ -460,6 +466,7 @@ T1bbbb_2000_1100_fast \
 T1bbbb_2000_1150_fast \
 T1bbbb_2000_1200_fast \
 T1bbbb_2000_1250_fast \
+T1bbbb_mMother-2000_1300_-1_fast \
 T1bbbb_2000_1300_fast \
 T1bbbb_2000_1350_fast \
 T1bbbb_2000_1400_fast \
@@ -493,6 +500,7 @@ T1bbbb_2050_1600_fast \
 T1bbbb_2050_1_fast \
 T1bbbb_2050_200_fast \
 T1bbbb_2050_300_fast \
+T1bbbb_mMother-2050_400_-1_fast \
 T1bbbb_2050_400_fast \
 T1bbbb_2050_500_fast \
 T1bbbb_2050_600_fast \
@@ -631,6 +639,7 @@ T1bbbb_750_500_fast \
 T1bbbb_750_550_fast \
 T1bbbb_750_600_fast \
 T1bbbb_750_650_fast \
+T1bbbb_mMother-750_700_-1_fast \
 T1bbbb_750_700_fast \
 T1bbbb_750_725_fast \
 T1bbbb_800_100_fast \
@@ -758,6 +767,7 @@ T1qqqq_1200_850_fast \
 T1qqqq_1200_900_fast \
 T1qqqq_1200_950_fast \
 T1qqqq_1250_1000_fast \
+T1qqqq_mMother-1250_100_-1_fast \
 T1qqqq_1250_100_fast \
 T1qqqq_1250_1050_fast \
 T1qqqq_1250_1100_fast \
@@ -800,6 +810,7 @@ T1qqqq_1300_800_fast \
 T1qqqq_1300_850_fast \
 T1qqqq_1300_900_fast \
 T1qqqq_1300_950_fast \
+T1qqqq_mMother-1350_1000_-1_fast \
 T1qqqq_1350_1000_fast \
 T1qqqq_1350_100_fast \
 T1qqqq_1350_1050_fast \
@@ -809,6 +820,7 @@ T1qqqq_1350_1200_fast \
 T1qqqq_1350_1250_fast \
 T1qqqq_1350_1300_fast \
 T1qqqq_1350_1325_fast \
+T1qqqq_mMother-1350_1_-1_fast \
 T1qqqq_1350_1_fast \
 T1qqqq_1350_200_fast \
 T1qqqq_1350_300_fast \
@@ -817,6 +829,7 @@ T1qqqq_1350_500_fast \
 T1qqqq_1350_550_fast \
 T1qqqq_1350_600_fast \
 T1qqqq_1350_650_fast \
+T1qqqq_mMother-1350_700_-1_fast \
 T1qqqq_1350_700_fast \
 T1qqqq_1350_750_fast \
 T1qqqq_1350_800_fast \
@@ -978,6 +991,7 @@ T1qqqq_1650_750_fast \
 T1qqqq_1650_800_fast \
 T1qqqq_1650_850_fast \
 T1qqqq_1650_900_fast \
+T1qqqq_mMother-1650_950_-1_fast \
 T1qqqq_1650_950_fast \
 T1qqqq_1700_1000_fast \
 T1qqqq_1700_100_fast \
@@ -1029,6 +1043,7 @@ T1qqqq_1750_700_fast \
 T1qqqq_1750_750_fast \
 T1qqqq_1750_800_fast \
 T1qqqq_1750_850_fast \
+T1qqqq_mMother-1750_900_-1_fast \
 T1qqqq_1750_900_fast \
 T1qqqq_1750_950_fast \
 T1qqqq_1800_1000_fast \
@@ -4138,4 +4153,40 @@ T5qqqqVV_950_700_fast \
 T5qqqqVV_950_750_fast \
 T5qqqqVV_950_800_fast \
 T5qqqqVV_950_825_fast \
+TChiHH_HToBB_HToBB_1000_1_fast \
+TChiHH_HToBB_HToBB_127_1_fast \
+TChiHH_HToBB_HToBB_150_1_fast \
+TChiHH_HToBB_HToBB_175_1_fast \
+TChiHH_HToBB_HToBB_200_1_fast \
+TChiHH_HToBB_HToBB_225_1_fast \
+TChiHH_HToBB_HToBB_250_1_fast \
+TChiHH_HToBB_HToBB_275_1_fast \
+TChiHH_HToBB_HToBB_300_1_fast \
+TChiHH_HToBB_HToBB_325_1_fast \
+TChiHH_HToBB_HToBB_350_1_fast \
+TChiHH_HToBB_HToBB_375_1_fast \
+TChiHH_HToBB_HToBB_400_1_fast \
+TChiHH_HToBB_HToBB_425_1_fast \
+TChiHH_HToBB_HToBB_450_1_fast \
+TChiHH_HToBB_HToBB_475_1_fast \
+TChiHH_HToBB_HToBB_500_1_fast \
+TChiHH_HToBB_HToBB_525_1_fast \
+TChiHH_HToBB_HToBB_550_1_fast \
+TChiHH_HToBB_HToBB_575_1_fast \
+TChiHH_HToBB_HToBB_600_1_fast \
+TChiHH_HToBB_HToBB_625_1_fast \
+TChiHH_HToBB_HToBB_650_1_fast \
+TChiHH_HToBB_HToBB_675_1_fast \
+TChiHH_HToBB_HToBB_700_1_fast \
+TChiHH_HToBB_HToBB_725_1_fast \
+TChiHH_HToBB_HToBB_750_1_fast \
+TChiHH_HToBB_HToBB_775_1_fast \
+TChiHH_HToBB_HToBB_800_1_fast \
+TChiHH_HToBB_HToBB_825_1_fast \
+TChiHH_HToBB_HToBB_850_1_fast \
+TChiHH_HToBB_HToBB_875_1_fast \
+TChiHH_HToBB_HToBB_900_1_fast \
+TChiHH_HToBB_HToBB_925_1_fast \
+TChiHH_HToBB_HToBB_950_1_fast \
+TChiHH_HToBB_HToBB_975_1_fast \
 )
