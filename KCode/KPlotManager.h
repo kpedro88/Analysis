@@ -30,11 +30,11 @@ class KPlotManager : public KManager {
 	public:
 		//constructor
 		KPlotManager() : KManager(), yieldref(0), doPrint(false), out_file(0) {}
-		KPlotManager(string input_, string treedir_="tree") : 
+		KPlotManager(vector<string> input_, string treedir_, string direct_="") : 
 			KManager(treedir_), yieldref(0), doPrint(false), out_file(0)
 		{
 			//parse most initializations based on text input
-			Initialize(input_);
+			Initialize(input_,direct_);
 			
 			//final checks and initializations
 

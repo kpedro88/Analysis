@@ -1,5 +1,5 @@
 //custom headers
-#include "KPlotDriverDC.C"
+#include "KPlotDriver.C"
 
 //STL headers
 #include <string>
@@ -22,7 +22,7 @@ void MakeAllDC(string indir="root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/
 	
 	for(unsigned i = 0; i < nRegions; ++i){
 		cout << regions[i] << endl;
-		KPlotDriverDC(indir+inpre+regions[i],input[i],outdir+outpre+regions[i]);
+		KPlotDriver(indir+inpre+regions[i],{input[i]},"OPTION\nstring:rootfile["+outdir+outpre+regions[i]+"]\n");
 	}
 	
 	//add up SL regions

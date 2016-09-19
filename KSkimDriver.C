@@ -25,6 +25,7 @@ void KSkimDriver(string input="", string setname="", string selTypes="", string 
 		return;
 	}
 	
-	KSkimManager k(input,setname,selTypes,indir,outdir);
+	vector<string> vinput = {input};
+	KSkimManager k(vinput,setname,selTypes,indir,outdir);
 	k.Skim();
 }

@@ -44,15 +44,19 @@ class KManager {
 			if(globalOpt->Get("listoptions",false)) ListOptions();			
 		}
 		//parse most initializations based on text input
-		virtual void Initialize(string input_){
-			parsed = Parse(input_);
+		virtual void Initialize(vector<string>& infiles_, string direct_=""){
+			parsed = true;
+			for(auto& input_ : infiles_){
+				parsed &= ParseFile(input_);
+			}
+			if(direct_.size()>0) parsed &= ParseString(direct_);
 			
 			//final checks and initializations
 			int prcsn;
 			if(globalOpt->Get("yieldprecision",prcsn)) cout << fixed << setprecision(prcsn);
 		}
 		//parse input file
-		bool Parse(string inname){
+		bool ParseFile(string inname){
 			bool parsed_ = true;
 			
 			//infinite loop detection
@@ -63,50 +67,55 @@ class KManager {
 			}
 			else inputs.insert(inname);
 			
-			string intype;
-			string line;
 			ifstream infile(inname.c_str());
 			if(infile.is_open()){
-				while(getline(infile,line)){
-					//skip commented lines
-					if(line[0]=='#') continue;
-					//skip blank lines
-					if(line.size()<2) continue;
-					
-					//check for carriage returns (not allowed)
-					if(line[line.size()-1]=='\r') {
-						cout << "Carriage return detected. Please run:" << endl;
-						cout << "dos2unix " << inname << endl;
-						cout << "and then try again." << endl;
-						return false;
-					}
-					
-					//check for input type
-					if(line.compare(0,6,"OPTION")==0) { intype = "OPTION"; continue; }
-					else if(line.compare(0,3,"SET")==0) { intype = "SET"; continue; }
-					else if(line.compare(0,7,"HISTO2D")==0) { intype = "HISTO2D"; continue; }
-					else if(line.compare(0,5,"HISTO")==0) { intype = "HISTO"; continue; }
-					else if(line.compare(0,10,"VARIATION")==0) { intype = "VARIATION"; continue; }
-					else if(line.compare(0,9,"SELECTION")==0) { intype = "SELECTION"; continue; }
-					else if(line.compare(0,5,"STYLE")==0) { intype = "STYLE"; continue; }
-					//another input file to parse on next line
-					else if(line.compare(0,5,"INPUT")==0) { intype = "INPUT"; continue; }
-					
-					//otherwise, process line according to input type
-					if(intype=="OPTION") KParser::processOption(line,globalOpt);
-					else if(intype=="SET") processSet(line);
-					else if(intype=="HISTO2D") processHisto(line,2);
-					else if(intype=="HISTO") processHisto(line,1);
-					else if(intype=="VARIATION") processVariation(line);
-					else if(intype=="SELECTION") processSelection(line);
-					else if(intype=="STYLE") processStyle(line);
-					else if(intype=="INPUT") parsed_ &= Parse(line);
-				}
-				parsed_ &= true;
+				parsed_ &= ParseStream(infile);
 			}
 			else {
 				cout << "Input error: could not open input file \"" << inname << "\"." << endl;
 				parsed_ &= false;
+			}
+			return parsed_;
+		}
+		bool ParseString(string input){
+			stringstream sinput(input);
+			return ParseStream(sinput);
+		}
+		bool ParseStream(istream& instream){
+			bool parsed_ = true;
+			string intype;
+			string line;
+			while(getline(instream,line)){
+				//skip commented lines
+				if(line[0]=='#') continue;
+				//skip blank lines
+				if(line.size()<2) continue;
+				
+				//check for carriage returns (not allowed)
+				if(line.back()=='\r') {
+					line.pop_back();
+				}
+				
+				//check for input type
+				if(line.compare(0,6,"OPTION")==0) { intype = "OPTION"; continue; }
+				else if(line.compare(0,3,"SET")==0) { intype = "SET"; continue; }
+				else if(line.compare(0,7,"HISTO2D")==0) { intype = "HISTO2D"; continue; }
+				else if(line.compare(0,5,"HISTO")==0) { intype = "HISTO"; continue; }
+				else if(line.compare(0,10,"VARIATION")==0) { intype = "VARIATION"; continue; }
+				else if(line.compare(0,9,"SELECTION")==0) { intype = "SELECTION"; continue; }
+				else if(line.compare(0,5,"STYLE")==0) { intype = "STYLE"; continue; }
+				//another input file to parse on next line
+				else if(line.compare(0,5,"INPUT")==0) { intype = "INPUT"; continue; }
+				
+				//otherwise, process line according to input type
+				if(intype=="OPTION") KParser::processOption(line,globalOpt);
+				else if(intype=="SET") processSet(line);
+				else if(intype=="HISTO2D") processHisto(line,2);
+				else if(intype=="HISTO") processHisto(line,1);
+				else if(intype=="VARIATION") processVariation(line);
+				else if(intype=="SELECTION") processSelection(line);
+				else if(intype=="STYLE") processStyle(line);
+				else if(intype=="INPUT") parsed_ &= ParseFile(line);
 			}
 			return parsed_;
 		}

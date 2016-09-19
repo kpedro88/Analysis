@@ -91,9 +91,9 @@ If weights are not explicitly specified (using the `-w` option), each sample is 
 
 ## Plotting
 
-To plot yields vs. RA2 bin (where the binning can be defined in the input file) in the signal region and save the plot as an image:
+To plot yields vs. RA2 bin (where the binning can be defined in the input file(s)) in the signal region and save the plot as an image:
 ```
-root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV10/tree_signal","input/input_RA2bin.txt",1)'
+root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV10/tree_signal",{"input/input_RA2bin.txt"},"",1)'
 ```
 Omitting the last argument will display the plot without saving it.
 
@@ -103,8 +103,6 @@ To save the individual histograms for each signal and background process to a RO
 ```
 root -b -l -q 'MakeAllDC.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV10")'
 ```
-This macro calls the macro `KPlotDriverDC.C`, which is a modification of the macro from the previous section
-that includes an extra input argument to specify the name of the output ROOT file.
 These macros use modified input files that split up each background process (rather than stacking them together, as done for plotting).
 The W+jets and ttbar processes are added together in the input file. The macro adds together the two single-lepton control region files
 after they are generated.
@@ -120,8 +118,6 @@ To save the individual histograms for the FullSim signal processes to a ROOT fil
 ```
 root -b -l -q 'MakeAllDCsyst.C+(0,"root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV10")'
 ```
-This macro calls the macro `KPlotDriverDCsyst.C`, which is a modification of the macro from the previous section
-that includes extra input arguments to specify the list of input samples and the name and direction of the systematic variation (up or down).
 
 To check specific systematics or contaminations, there are extra arguments. E.g., to check only the PDF uncertainty and no contaminations:
 ```

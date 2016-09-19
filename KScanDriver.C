@@ -25,6 +25,7 @@ void KScanDriver(string input="", string setname="", string indir=""){
 		return;
 	}
 	
-	KScanManager k(input,setname,indir);
+	vector<string> vinput = {input};
+	KScanManager k(vinput,setname,indir);
 	k.Scan();
 }

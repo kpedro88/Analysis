@@ -1,5 +1,5 @@
 //custom headers
-#include "KPlotDriverDC.C"
+#include "KPlotDriver.C"
 
 //STL headers
 #include <string>
@@ -25,5 +25,5 @@ void MakeAllDCdata(string indir="", string region="", string outdir="datacards_d
 	system(("mkdir -p "+outdir).c_str());
 	
 	cout << region << endl;
-	KPlotDriverDC(indir+inpre+region,input,outdir+outpre+region);
+	KPlotDriver(indir+inpre+region,{input},"OPTION\nstring:rootfile["+outdir+outpre+region+"]\n");
 }
