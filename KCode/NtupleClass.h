@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Mon Sep 12 04:14:52 2016 by ROOT version 6.06/01
+// Mon Sep 19 15:41:50 2016 by ROOT version 6.06/01
 // from TTree PreSelection/PreSelection
 // found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV10/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
 //////////////////////////////////////////////////////////
@@ -183,6 +183,7 @@ public :
    vector<TLorentzVector> *Jetsclean;
    vector<double>  *Jetsclean_bDiscriminatorCSV;
    vector<double>  *Jetsclean_bDiscriminatorMVA;
+   vector<double>  *Jetsclean_chargedHadronEnergyFraction;
    vector<int>     *Jetsclean_hadronFlavor;
    vector<bool>    *Jetsclean_HTMask;
    vector<bool>    *Jetsclean_ID;
@@ -193,6 +194,7 @@ public :
    vector<TLorentzVector> *JetsJECdown;
    vector<double>  *JetsJECdown_bDiscriminatorCSV;
    vector<double>  *JetsJECdown_bDiscriminatorMVA;
+   vector<double>  *JetsJECdown_chargedHadronEnergyFraction;
    vector<int>     *JetsJECdown_hadronFlavor;
    vector<bool>    *JetsJECdown_HTMask;
    vector<bool>    *JetsJECdown_ID;
@@ -204,6 +206,7 @@ public :
    vector<TLorentzVector> *JetsJECup;
    vector<double>  *JetsJECup_bDiscriminatorCSV;
    vector<double>  *JetsJECup_bDiscriminatorMVA;
+   vector<double>  *JetsJECup_chargedHadronEnergyFraction;
    vector<int>     *JetsJECup_hadronFlavor;
    vector<bool>    *JetsJECup_HTMask;
    vector<bool>    *JetsJECup_ID;
@@ -215,6 +218,7 @@ public :
    vector<TLorentzVector> *JetsJERdown;
    vector<double>  *JetsJERdown_bDiscriminatorCSV;
    vector<double>  *JetsJERdown_bDiscriminatorMVA;
+   vector<double>  *JetsJERdown_chargedHadronEnergyFraction;
    vector<int>     *JetsJERdown_hadronFlavor;
    vector<bool>    *JetsJERdown_HTMask;
    vector<bool>    *JetsJERdown_ID;
@@ -226,6 +230,7 @@ public :
    vector<TLorentzVector> *JetsJERup;
    vector<double>  *JetsJERup_bDiscriminatorCSV;
    vector<double>  *JetsJERup_bDiscriminatorMVA;
+   vector<double>  *JetsJERup_chargedHadronEnergyFraction;
    vector<int>     *JetsJERup_hadronFlavor;
    vector<bool>    *JetsJERup_HTMask;
    vector<bool>    *JetsJERup_ID;
@@ -501,6 +506,7 @@ public :
    TBranch        *b_Jetsclean;   //!
    TBranch        *b_Jetsclean_bDiscriminatorCSV;   //!
    TBranch        *b_Jetsclean_bDiscriminatorMVA;   //!
+   TBranch        *b_Jetsclean_chargedHadronEnergyFraction;   //!
    TBranch        *b_Jetsclean_hadronFlavor;   //!
    TBranch        *b_Jetsclean_HTMask;   //!
    TBranch        *b_Jetsclean_ID;   //!
@@ -511,6 +517,7 @@ public :
    TBranch        *b_JetsJECdown;   //!
    TBranch        *b_JetsJECdown_bDiscriminatorCSV;   //!
    TBranch        *b_JetsJECdown_bDiscriminatorMVA;   //!
+   TBranch        *b_JetsJECdown_chargedHadronEnergyFraction;   //!
    TBranch        *b_JetsJECdown_hadronFlavor;   //!
    TBranch        *b_JetsJECdown_HTMask;   //!
    TBranch        *b_JetsJECdown_ID;   //!
@@ -522,6 +529,7 @@ public :
    TBranch        *b_JetsJECup;   //!
    TBranch        *b_JetsJECup_bDiscriminatorCSV;   //!
    TBranch        *b_JetsJECup_bDiscriminatorMVA;   //!
+   TBranch        *b_JetsJECup_chargedHadronEnergyFraction;   //!
    TBranch        *b_JetsJECup_hadronFlavor;   //!
    TBranch        *b_JetsJECup_HTMask;   //!
    TBranch        *b_JetsJECup_ID;   //!
@@ -533,6 +541,7 @@ public :
    TBranch        *b_JetsJERdown;   //!
    TBranch        *b_JetsJERdown_bDiscriminatorCSV;   //!
    TBranch        *b_JetsJERdown_bDiscriminatorMVA;   //!
+   TBranch        *b_JetsJERdown_chargedHadronEnergyFraction;   //!
    TBranch        *b_JetsJERdown_hadronFlavor;   //!
    TBranch        *b_JetsJERdown_HTMask;   //!
    TBranch        *b_JetsJERdown_ID;   //!
@@ -544,6 +553,7 @@ public :
    TBranch        *b_JetsJERup;   //!
    TBranch        *b_JetsJERup_bDiscriminatorCSV;   //!
    TBranch        *b_JetsJERup_bDiscriminatorMVA;   //!
+   TBranch        *b_JetsJERup_chargedHadronEnergyFraction;   //!
    TBranch        *b_JetsJERup_hadronFlavor;   //!
    TBranch        *b_JetsJERup_HTMask;   //!
    TBranch        *b_JetsJERup_ID;   //!
@@ -810,6 +820,7 @@ void NtupleClass::Init(TTree *tree)
    Jetsclean = 0;
    Jetsclean_bDiscriminatorCSV = 0;
    Jetsclean_bDiscriminatorMVA = 0;
+   Jetsclean_chargedHadronEnergyFraction = 0;
    Jetsclean_hadronFlavor = 0;
    Jetsclean_HTMask = 0;
    Jetsclean_ID = 0;
@@ -820,6 +831,7 @@ void NtupleClass::Init(TTree *tree)
    JetsJECdown = 0;
    JetsJECdown_bDiscriminatorCSV = 0;
    JetsJECdown_bDiscriminatorMVA = 0;
+   JetsJECdown_chargedHadronEnergyFraction = 0;
    JetsJECdown_hadronFlavor = 0;
    JetsJECdown_HTMask = 0;
    JetsJECdown_ID = 0;
@@ -831,6 +843,7 @@ void NtupleClass::Init(TTree *tree)
    JetsJECup = 0;
    JetsJECup_bDiscriminatorCSV = 0;
    JetsJECup_bDiscriminatorMVA = 0;
+   JetsJECup_chargedHadronEnergyFraction = 0;
    JetsJECup_hadronFlavor = 0;
    JetsJECup_HTMask = 0;
    JetsJECup_ID = 0;
@@ -842,6 +855,7 @@ void NtupleClass::Init(TTree *tree)
    JetsJERdown = 0;
    JetsJERdown_bDiscriminatorCSV = 0;
    JetsJERdown_bDiscriminatorMVA = 0;
+   JetsJERdown_chargedHadronEnergyFraction = 0;
    JetsJERdown_hadronFlavor = 0;
    JetsJERdown_HTMask = 0;
    JetsJERdown_ID = 0;
@@ -853,6 +867,7 @@ void NtupleClass::Init(TTree *tree)
    JetsJERup = 0;
    JetsJERup_bDiscriminatorCSV = 0;
    JetsJERup_bDiscriminatorMVA = 0;
+   JetsJERup_chargedHadronEnergyFraction = 0;
    JetsJERup_hadronFlavor = 0;
    JetsJERup_HTMask = 0;
    JetsJERup_ID = 0;
@@ -1089,6 +1104,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("Jetsclean", &Jetsclean, &b_Jetsclean);
    fChain->SetBranchAddress("Jetsclean_bDiscriminatorCSV", &Jetsclean_bDiscriminatorCSV, &b_Jetsclean_bDiscriminatorCSV);
    fChain->SetBranchAddress("Jetsclean_bDiscriminatorMVA", &Jetsclean_bDiscriminatorMVA, &b_Jetsclean_bDiscriminatorMVA);
+   fChain->SetBranchAddress("Jetsclean_chargedHadronEnergyFraction", &Jetsclean_chargedHadronEnergyFraction, &b_Jetsclean_chargedHadronEnergyFraction);
    fChain->SetBranchAddress("Jetsclean_hadronFlavor", &Jetsclean_hadronFlavor, &b_Jetsclean_hadronFlavor);
    fChain->SetBranchAddress("Jetsclean_HTMask", &Jetsclean_HTMask, &b_Jetsclean_HTMask);
    fChain->SetBranchAddress("Jetsclean_ID", &Jetsclean_ID, &b_Jetsclean_ID);
@@ -1099,6 +1115,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("JetsJECdown", &JetsJECdown, &b_JetsJECdown);
    fChain->SetBranchAddress("JetsJECdown_bDiscriminatorCSV", &JetsJECdown_bDiscriminatorCSV, &b_JetsJECdown_bDiscriminatorCSV);
    fChain->SetBranchAddress("JetsJECdown_bDiscriminatorMVA", &JetsJECdown_bDiscriminatorMVA, &b_JetsJECdown_bDiscriminatorMVA);
+   fChain->SetBranchAddress("JetsJECdown_chargedHadronEnergyFraction", &JetsJECdown_chargedHadronEnergyFraction, &b_JetsJECdown_chargedHadronEnergyFraction);
    fChain->SetBranchAddress("JetsJECdown_hadronFlavor", &JetsJECdown_hadronFlavor, &b_JetsJECdown_hadronFlavor);
    fChain->SetBranchAddress("JetsJECdown_HTMask", &JetsJECdown_HTMask, &b_JetsJECdown_HTMask);
    fChain->SetBranchAddress("JetsJECdown_ID", &JetsJECdown_ID, &b_JetsJECdown_ID);
@@ -1110,6 +1127,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("JetsJECup", &JetsJECup, &b_JetsJECup);
    fChain->SetBranchAddress("JetsJECup_bDiscriminatorCSV", &JetsJECup_bDiscriminatorCSV, &b_JetsJECup_bDiscriminatorCSV);
    fChain->SetBranchAddress("JetsJECup_bDiscriminatorMVA", &JetsJECup_bDiscriminatorMVA, &b_JetsJECup_bDiscriminatorMVA);
+   fChain->SetBranchAddress("JetsJECup_chargedHadronEnergyFraction", &JetsJECup_chargedHadronEnergyFraction, &b_JetsJECup_chargedHadronEnergyFraction);
    fChain->SetBranchAddress("JetsJECup_hadronFlavor", &JetsJECup_hadronFlavor, &b_JetsJECup_hadronFlavor);
    fChain->SetBranchAddress("JetsJECup_HTMask", &JetsJECup_HTMask, &b_JetsJECup_HTMask);
    fChain->SetBranchAddress("JetsJECup_ID", &JetsJECup_ID, &b_JetsJECup_ID);
@@ -1121,6 +1139,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("JetsJERdown", &JetsJERdown, &b_JetsJERdown);
    fChain->SetBranchAddress("JetsJERdown_bDiscriminatorCSV", &JetsJERdown_bDiscriminatorCSV, &b_JetsJERdown_bDiscriminatorCSV);
    fChain->SetBranchAddress("JetsJERdown_bDiscriminatorMVA", &JetsJERdown_bDiscriminatorMVA, &b_JetsJERdown_bDiscriminatorMVA);
+   fChain->SetBranchAddress("JetsJERdown_chargedHadronEnergyFraction", &JetsJERdown_chargedHadronEnergyFraction, &b_JetsJERdown_chargedHadronEnergyFraction);
    fChain->SetBranchAddress("JetsJERdown_hadronFlavor", &JetsJERdown_hadronFlavor, &b_JetsJERdown_hadronFlavor);
    fChain->SetBranchAddress("JetsJERdown_HTMask", &JetsJERdown_HTMask, &b_JetsJERdown_HTMask);
    fChain->SetBranchAddress("JetsJERdown_ID", &JetsJERdown_ID, &b_JetsJERdown_ID);
@@ -1132,6 +1151,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("JetsJERup", &JetsJERup, &b_JetsJERup);
    fChain->SetBranchAddress("JetsJERup_bDiscriminatorCSV", &JetsJERup_bDiscriminatorCSV, &b_JetsJERup_bDiscriminatorCSV);
    fChain->SetBranchAddress("JetsJERup_bDiscriminatorMVA", &JetsJERup_bDiscriminatorMVA, &b_JetsJERup_bDiscriminatorMVA);
+   fChain->SetBranchAddress("JetsJERup_chargedHadronEnergyFraction", &JetsJERup_chargedHadronEnergyFraction, &b_JetsJERup_chargedHadronEnergyFraction);
    fChain->SetBranchAddress("JetsJERup_hadronFlavor", &JetsJERup_hadronFlavor, &b_JetsJERup_hadronFlavor);
    fChain->SetBranchAddress("JetsJERup_HTMask", &JetsJERup_HTMask, &b_JetsJERup_HTMask);
    fChain->SetBranchAddress("JetsJERup_ID", &JetsJERup_ID, &b_JetsJERup_ID);
