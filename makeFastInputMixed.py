@@ -1,5 +1,6 @@
 import sys, os, stat
 from optparse import OptionParser
+from makeFastCommon import *
 
 def sig_callback(option, opt, value, parser):
     setattr(parser.values, option.dest, value.split(','))
@@ -7,19 +8,6 @@ def sig_callback(option, opt, value, parser):
 def wt_callback(option, opt, value, parser):
     if value is None: return
     setattr(parser.values, option.dest, [float(x) for x in value.split(',')])
-
-def xsec_parse(xfile):
-    xsec = {}
-    for xline in xfile:
-        values = xline.split('\t')
-        if len(values) < 2: continue
-        xsec[int(values[0])] = float(values[1])
-    return xsec
-  
-def msplit(line):
-    split = line.split('-')
-    if len(split)==2: return int(split[1])
-    else: return -1
 
 # define options
 parser = OptionParser()
@@ -50,26 +38,9 @@ files = filter(None,os.popen("xrdfs root://cmseos.fnal.gov/ ls "+options.dir).re
 # basename
 files = [ f.split("/")[-1] for f in files]
 
-# open files
-xfile = open("input/dict_xsec.txt",'r')
-xfileT2 = open("input/dict_xsec_T2.txt",'r')
-xfileT2qq = open("input/dict_xsec_T2qq.txt",'r')
-xfileTChiHH = open("input/dict_xsec_TChiHH.txt",'r')
 # only need to make datacard input file (use existing skims)
 dfile = open("input/input_sets_DC_fast"+options.suffix+".txt",'w')
 sfile = open("batch/exportFast"+options.suffix+".sh",'w')
-
-# parse xsec map (taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVgluglu)
-xsec = xsec_parse(xfile)
-
-# parse xsec map (taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVstopsbottom)
-xsecT2 = xsec_parse(xfileT2)
-
-# parse xsec map (taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVsquarkantisquark)
-xsecT2qq = xsec_parse(xfileT2qq)
-
-# parse xsec map (taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVhino)
-xsecTChiHH = xsec_parse(xfileTChiHH)
 
 # preamble for script
 sfile.write("#!/bin/bash\n")
@@ -97,14 +68,14 @@ for ind,file in enumerate(files):
 present_list = []
 missing_list = []
 dline_list = []
-for masspt, models in masspts.iteritems():
+for masspt, models in sorted(masspts.iteritems()):
     #print "%s: "%(masspt,) + str(models).strip('[]')
     mMother = masspt[0]
     mLSP = masspt[1]
     # make short name
     short_name_comb = options.suffix + "_" + str(mMother) + "_" + str(mLSP) + "_" + "fast"
     # make set list for datacards with xsecs
-    dline = "hist" + "\t" + "mc" + "\t" + short_name_comb + "\n"
+    dline = makeLineDCHist(short_name_comb)
     
     if len(models)!=len(options.signals):
         missing_list.append(masspt)
@@ -113,30 +84,15 @@ for masspt, models in masspts.iteritems():
         present_list.append(masspt)
     
     for model in models:
-        mother_ID = []
         # get cross section
-        if model.find("T2tt")!=-1:
-            this_xsec = xsecT2[mMother] if mMother in xsecT2.keys() else 1
-            mother_ID.append(1000006)
-        elif model.find("T2bb")!=-1:
-            this_xsec = xsecT2[mMother] if mMother in xsecT2.keys() else 1
-            mother_ID.append(1000005)
-        elif model.find("T2qq")!=-1:
-            this_xsec = xsecT2qq[mMother] if mMother in xsecT2qq.keys() else 1
-            mother_ID.extend([1000001,1000002,1000003,1000004,2000001,2000002,2000003,2000004])
-        elif model.find("TChiHH")!=-1:
-            this_xsec = xsecTChiHH[mMother] if mMother in xsecTChiHH.keys() else 1
-            mother_ID.extend([1000023,1000025])
-        else:
-            this_xsec = xsec[mMother] if mMother in xsec.keys() else 1
-            mother_ID.append(1000021)
+        this_xsec, mother_ID = get_xsec(model,mMother)
         # multiply xsec by weight
         this_xsec *= options.weights[options.signals.index(model)]
         # make short name
         short_name = model + "_" + str(mMother) + "_" + str(mLSP) + "_" + "fast"
         # make base list for datacards with xsec
-        dline += "\t" + "base" + "\t" + "mc" + "\t" + short_name + "\t" + "s:filename[tree_" + short_name + ".root]" + "\t" + "d:xsection[" + str(this_xsec) + "]" + "\t" + "b:signal[1]" + "\t" + "b:fastsim[1]" + "\t" + "vi:mother[" + str(','.join(str(m) for m in mother_ID)) + "]" + "\n"
-        
+        dline += makeLineDCBase(short_name,this_xsec,mother_ID)
+
     dfile.write(dline)
     dline_list.append(dline)
     # make script to export array of sample names

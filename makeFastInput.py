@@ -1,5 +1,6 @@
 import sys, os, stat
 from optparse import OptionParser
+from makeFastCommon import *
 
 def xsec_parse(xfile):
     xsec = {}
@@ -26,10 +27,6 @@ files = filter(None,os.popen("xrdfs root://cmseos.fnal.gov/ ls "+options.dir).re
 files = [ f.split("/")[-1] for f in files]
 
 # open files
-xfile = open("input/dict_xsec.txt",'r')
-xfileT2 = open("input/dict_xsec_T2.txt",'r')
-xfileT2qq = open("input/dict_xsec_T2qq.txt",'r')
-xfileTChiHH = open("input/dict_xsec_TChiHH.txt",'r')
 wfile = open("input/input_sets_skim_fast.txt",'w')
 dfile = open("input/input_sets_DC_fast.txt",'w')
 sfile = open("batch/exportFast.sh",'w')
@@ -41,18 +38,6 @@ if nfiles>0:
     #preamble
     for df in dfiles:
         df.write("SET\n")
-
-# parse xsec map (taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVgluglu)
-xsec = xsec_parse(xfile)
-
-# parse xsec map (taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVstopsbottom)
-xsecT2 = xsec_parse(xfileT2)
-
-# parse xsec map (taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVsquarkantisquark)
-xsecT2qq = xsec_parse(xfileT2qq)
-
-# parse xsec map (taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVhino)
-xsecTChiHH = xsec_parse(xfileTChiHH)
 
 # preamble for script
 sfile.write("#!/bin/bash\n")
@@ -71,29 +56,15 @@ for ind,file in enumerate(files):
     mLSP = msplit(fsplit[-2])
     mother_ID = []
     # get cross section
-    if model.find("T2tt")!=-1:
-        this_xsec = xsecT2[mMother] if mMother in xsecT2.keys() else 1
-        mother_ID.append(1000006)
-    elif model.find("T2bb")!=-1:
-        this_xsec = xsecT2[mMother] if mMother in xsecT2.keys() else 1
-        mother_ID.append(1000005)
-    elif model.find("T2qq")!=-1:
-        this_xsec = xsecT2qq[mMother] if mMother in xsecT2qq.keys() else 1
-        mother_ID.extend([1000001,1000002,1000003,1000004,2000001,2000002,2000003,2000004])
-    elif model.find("TChiHH")!=-1:
-        this_xsec = xsecTChiHH[mMother] if mMother in xsecTChiHH.keys() else 1
-        mother_ID.extend([1000023,1000025])
-    else:
-        this_xsec = xsec[mMother] if mMother in xsec.keys() else 1
-        mother_ID.append(1000021)
+    this_xsec, mother_ID = get_xsec(model,mMother)
     # make short name
     short_name = model + "_" + str(mMother) + "_" + str(mLSP) + "_" + "fast"
     # make set list for skimming
     wline = "base" + "\t" + "skim" + "\t" + short_name + "\t" + "s:filename[" + file + "]" + "\t" + "b:fastsim[1]" + "\t" + "vi:mother[" + str(','.join(str(m) for m in mother_ID)) + "]" + "\n"
     wfile.write(wline)
     # make set list for datacards with xsecs
-    dline = "hist" + "\t" + "mc" + "\t" + short_name + "\n"
-    dline += "\t" + "base" + "\t" + "mc" + "\t" + short_name + "\t" + "s:filename[tree_" + short_name + ".root]" + "\t" + "d:xsection[" + str(this_xsec) + "]" + "\t" + "b:signal[1]" + "\t" + "b:fastsim[1]" + "\t" + "vi:mother[" + str(','.join(str(m) for m in mother_ID)) + "]" + "\n"
+    dline = makeLineDCHist(short_name)
+    dline += makeLineDCBase(short_name,this_xsec,mother_ID)
     dfile.write(dline)
     # make split set lists
     if nfiles>0:
