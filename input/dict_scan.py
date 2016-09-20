@@ -10,4 +10,5 @@ flist = [
 [['Spring16Fast.SMS-T2tt_mStop-400to1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'], ['T2tt_mStop-400to1200']],
 [['Spring16Fast.SMS-T5qqqqVV_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'], ['T5qqqqVV']],
 [['Spring16Fast.SMS-TChiHH_HToBB_HToBB_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'], ['TChiHH_HToBB_HToBB']],
+[['Spring16Fast.SMS-T1ttbb_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'], ['T1ttbb']],
 ]

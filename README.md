@@ -54,7 +54,7 @@ The SUSY FastSim signal samples contain multiple model points per file. Before s
 
 To run the scanner interactively:
 ```
-root -b -q -l 'KScanDriver.C+("input/input_scan.txt","T1bbbb_mGluino-1000-1025_mLSP-1to975-1000","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV10")'
+root -b -q -l 'KScanDriver.C+("input/input_scan.txt","T1bbbb_block0","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV10")'
 ```
 
 To make the input lists (.txt and .sh) of FastSim samples automatically:
