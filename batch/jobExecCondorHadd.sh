@@ -31,3 +31,10 @@ cd src/Analysis/batch
 
 #run code
 ./haddEOS.sh -d ${DIR} -i ${INPUT} -x "${SUFF}" -g "_block" -r
+
+#check exit code
+HADDEXIT=$?
+if [[ $HADDEXIT -ne 0 ]]; then
+  echo "exit code $HADDEXIT, job failed"
+  exit $HADDEXIT
+fi
