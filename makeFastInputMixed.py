@@ -108,13 +108,21 @@ if nfiles>0:
     if not os.path.isdir("input/fast"+options.suffix):
         os.mkdir("input/fast"+options.suffix)
     nparts = len(dline_list)/nfiles + int(len(dline_list)%nfiles!=0)
-    dfiles = [open("input/fast"+options.suffix+"/input_sets_DC_fast"+options.suffix+"_"+str(x)+".txt",'w') for x in range(nparts)]
+    dfiles = ["input/fast"+options.suffix+"/input_sets_DC_fast"+options.suffix+"_"+str(x)+".txt" for x in range(nparts)]
     # preamble
     for df in dfiles:
-        df.write("SET\n")
+        with open(df,'w') as dftmp:
+            dftmp.write("SET\n")
     # make split set lists
+    dftmp = None
+    curr_ind = -1
     for ind,dline in enumerate(dline_list):
-        dfiles[ind/nfiles].write(dline)
+        if ind/nfiles != curr_ind:
+            if curr_ind > -1: dftmp.close()
+            curr_ind = ind/nfiles
+            dftmp = open(dfiles[curr_ind],'a')
+        dftmp.write(dline)
+    dftmp.close()
 
 # report on missing mass points
 print "Mass points present for  all signal models: %s" % (len(present_list))

@@ -34,10 +34,11 @@ sfile = open("batch/exportFast.sh",'w')
 nfiles = int(options.nfiles)
 if nfiles>0: 
     nparts = len(files)/nfiles + int(len(files)%nfiles!=0)
-    dfiles = [open("input/fast/input_sets_DC_fast_"+str(x)+".txt",'w') for x in range(nparts)]
+    dfiles = ["input/fast/input_sets_DC_fast_"+str(x)+".txt" for x in range(nparts)]
     #preamble
     for df in dfiles:
-        df.write("SET\n")
+        with open(df,'w') as dftmp:
+            dftmp.write("SET\n")
 
 # preamble for script
 sfile.write("#!/bin/bash\n")
@@ -48,6 +49,8 @@ sfile.write("export SAMPLES=(\n")
 wfile.write("SET\n")
 dfile.write("SET\n")
 
+dftmp = None
+curr_ind = -1
 for ind,file in enumerate(files):
     # parse filename: model, mMother-X, mLSP-Y, fast.root
     fsplit = file.split('_')
@@ -68,11 +71,16 @@ for ind,file in enumerate(files):
     dfile.write(dline)
     # make split set lists
     if nfiles>0:
-        dfiles[ind/nfiles].write(dline)
+        if ind/nfiles != curr_ind:
+            if curr_ind > -1: dftmp.close()
+            curr_ind = ind/nfiles
+            dftmp = open(dfiles[curr_ind],'a')
+        dftmp.write(dline)
     # make script to export array of sample names
     sline = short_name + " \\\n"
     sfile.write(sline)
-
+dftmp.close()
+    
 sfile.write(")\n")
 
 # make the script executable
