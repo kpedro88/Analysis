@@ -25,6 +25,7 @@
 #include <map>
 #include <utility>
 #include <cstdlib>
+#include <cmath>
 
 using namespace std;
 
@@ -33,8 +34,6 @@ void NtupleClass::Loop() {}
 class KScanner : public NtupleClass {
 	public :
 		typedef pair<double,double> massPoint;
-		typedef map<massPoint,unsigned>::iterator MPit;
-		typedef map<massPoint,KSelection<KScanner>*>::iterator MPSit;
 	
 		//constructor
 		KScanner(KBase* MyBase_) : 
@@ -71,6 +70,7 @@ class KScanner : public NtupleClass {
 				if(jentry % 10000 == 0) cout << "Scanning " << jentry << "/" << nentries << endl;
 				
 				//special checks for T1ttbb - separate the mixed topologies
+				double MassOffset = 0.0;
 				if(T1ttbb){
 					//topologies defined by ntop, nchargino
 					int ntop = 0;
@@ -84,7 +84,6 @@ class KScanner : public NtupleClass {
 						}
 					}
 					
-					double MassOffset = 0.0;
 					if(ntop==2 && nchargino==0){ //T1bbtt (g->bb, g->tt)
 						MassOffset = 0.1;
 						outpre = "T1bbtt";
@@ -102,129 +101,87 @@ class KScanner : public NtupleClass {
 						outpre = "T1tbtt";
 					}
 					else continue; //discard other topologies (T1bbbb, T1tttt)
-					
-					//check this event's mass point
-					massPoint thePoint = make_pair(SusyMotherMass+MassOffset,SusyLSPMass);
-					MPSit mp = selectionMap.find(thePoint);
-					
-					//if known, fill the corresponding tree
-					if(mp != selectionMap.end()){
-						mp->second->FillTree();
-					}
-					//if unknown, make a new selection/output file for it
-					else {
-						//make the name
-						string oname = makeName(thePoint.first-MassOffset,thePoint.second,blocknum,outsuff);
-						
-						//make the selection and tree, fill it
-						KSelection<KScanner>* stmp = new KSelection<KScanner>(oname,globalOpt);
-						stmp->ScanTree(fChain);
-						stmp->FillTree();
-						
-						//add to map
-						selectionMap.insert(make_pair(thePoint,stmp));
-					}
 				}
 				
-				else {
-					//check this event's mass point
-					massPoint thePoint = make_pair(SusyMotherMass,SusyLSPMass);
+				//check this event's mass point
+				massPoint thePoint = make_pair(SusyMotherMass+MassOffset,SusyLSPMass);
 					
-					//if current, fill the corresponding tree
-					if(currPoint == thePoint){
-						currSel->FillTree();
+				//if current, fill the corresponding tree
+				if(currPoint == thePoint){
+					currSel->FillTree();
+				}
+				//if not, make a new selection/output file for it, with a new part number
+				else{
+					//reset vars
+					currPoint = thePoint;
+					//write existing tree to file
+					if(currSel) currSel->Finalize();
+					delete currSel; currSel = NULL;
+					
+					//get part number - check if this mass point has been seen before
+					auto mp = partMap.find(thePoint);
+					unsigned partnum = 0;
+					if(mp != partMap.end()) {
+						partnum = mp->second;
+						//increment map
+						mp->second += 1;
 					}
-					//if not, make a new selection/output file for it, with a new part number
-					else{
-						//reset vars
-						currPoint = thePoint;
-						//write existing tree to file
-						if(currSel) currSel->Finalize();
-						delete currSel; currSel = NULL;
-						
-						//get part number - check if this mass point has been seen before
-						MPit mp = partMap.find(thePoint);
-						unsigned partnum = 0;
-						if(mp != partMap.end()) {
-							partnum = mp->second;
-							//increment map
-							mp->second += 1;
-						}
-						else {
-							partMap.insert(make_pair(thePoint,partnum+1));
-						}
-						
-						//make the name
-						string oname = makeName(thePoint.first,thePoint.second,blocknum,partnum,outsuff);
-						
-						//make the selection and tree, fill it
-						currSel = new KSelection<KScanner>(oname,globalOpt);
-						currSel->ScanTree(fChain);
-						currSel->FillTree();
+					else {
+						partMap.insert(make_pair(thePoint,partnum+1));
 					}
+					
+					//make the name
+					string oname = makeName(thePoint.first,thePoint.second,blocknum,partnum,outsuff);
+					
+					//make the selection and tree, fill it
+					currSel = new KSelection<KScanner>(oname,globalOpt);
+					currSel->ScanTree(fChain);
+					currSel->FillTree();
 				}
 			}
 
-			if(T1ttbb){
-				//final steps
-				//loop over map
-				cout << string(17+2+14,'-') << endl;
-				cout << "Mother mass [GeV]" << "  " << "LSP mass [GeV]" << endl;
-				for(MPSit mp = selectionMap.begin(); mp != selectionMap.end(); ++mp){
-					//print all the mass points in this file
-					cout << right << setw(17) << mp->first.first;
-					cout << "  ";
-					cout << right << setw(14) << mp->first.second;
-					cout << endl;
-					
-					mp->second->Finalize();
-				}
+			//write last tree to file
+			if(currSel) currSel->Finalize();
+			delete currSel; currSel = NULL;
+			
+			//final steps
+			//loop over map
+			cout << string(17+2+14,'-') << endl;
+			cout << "Mother mass [GeV]" << "  " << "LSP mass [GeV]" << endl;
+			for(auto& mp : partMap){
+				//print all the mass points in this file
+				cout << right << setw(17) << mp.first.first;
+				cout << "  ";
+				cout << right << setw(14) << mp.first.second;
+				cout << endl;
 			}
-			else {
-				//write last tree to file
-				if(currSel) currSel->Finalize();
-				delete currSel; currSel = NULL;
-				
-				//final steps
-				//loop over map
-				cout << string(17+2+14,'-') << endl;
-				cout << "Mother mass [GeV]" << "  " << "LSP mass [GeV]" << endl;
-				for(MPit mp = partMap.begin(); mp != partMap.end(); ++mp){
-					//print all the mass points in this file
-					cout << right << setw(17) << mp->first.first;
-					cout << "  ";
-					cout << right << setw(14) << mp->first.second;
-					cout << endl;
-				}
-				
-				//hadd parts now
-				if(globalOpt->Get("hadd",false)){
-					for(MPit mp = partMap.begin(); mp != partMap.end(); ++mp){
-						stringstream ssys;
-						//just mv if only one part
-						if(mp->second==1) ssys << "mv " << makeName(mp->first.first,mp->first.second,blocknum,0,outsuff) << ".root " << makeName(mp->first.first,mp->first.second,blocknum,outsuff) << ".root";
-						else ssys << "batch/haddHelper.sh " << makeName(mp->first.first,mp->first.second,blocknum) << " " << mp->second - 1 << " " << outsuff;
-						cout << ssys.str() << endl;
-						system(ssys.str().c_str());
-					}
+			
+			//hadd parts now
+			if(globalOpt->Get("hadd",false)){
+				for(auto& mp : partMap){
+					stringstream ssys;
+					//just mv if only one part
+					if(mp.second==1) ssys << "mv " << makeName(mp.first.first,mp.first.second,blocknum,0,outsuff) << ".root " << makeName(mp.first.first,mp.first.second,blocknum,outsuff) << ".root";
+					else ssys << "batch/haddHelper.sh " << makeName(mp.first.first,mp.first.second,blocknum) << " " << mp.second - 1 << " " << outsuff;
+					cout << ssys.str() << endl;
+					system(ssys.str().c_str());
 				}
 			}
 		}
 		string makeName(double mass1, double mass2, unsigned block, string suff=""){
 			stringstream oss;
-			oss << outpre << "_" << "mMother-" << mass1 << "_mLSP-" << mass2 << "_block" << block << suff;
+			oss << outpre << "_" << "mMother-" << floor(mass1) << "_mLSP-" << mass2 << "_block" << block << suff;
 			return oss.str();
 		}
 		string makeName(double mass1, double mass2, unsigned block, unsigned part, string suff=""){
 			stringstream oss;
-			oss << outpre << "_" << "mMother-" << mass1 << "_mLSP-" << mass2 << "_block" << block << "_part" << part << suff;
+			oss << outpre << "_" << "mMother-" << floor(mass1) << "_mLSP-" << mass2 << "_block" << block << "_part" << part << suff;
 			return oss.str();
 		}
 		
 		//member variables
 		KBase* MyBase;
 		map<massPoint,unsigned> partMap;
-		map<massPoint,KSelection<KScanner>*> selectionMap;
 		OptionMap* globalOpt;
 		Long64_t nentries;
 		string outpre, outsuff;
