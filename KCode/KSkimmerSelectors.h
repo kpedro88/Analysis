@@ -620,6 +620,29 @@ class KEventCleaningSelector : public KSelector<KSkimmer> {
 		bool doJetID, doMETRatio, doMuonJet, doFakeJet;
 };
 
+//-------------------------------------------------------------
+//selects based on nvtx
+class KNVtxSelector : public KSelector<KSkimmer> {
+	public:
+		//constructor
+		KNVtxSelector() : KSelector<KSkimmer>() { }
+		KNVtxSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), invert(false), num(20) {
+			invert = localOpt->Get("invert",false);
+			localOpt->Get("num",num);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return invert ? looper->NVtx < num : looper->NVtx >= num;
+		}
+		
+		//member variables
+		bool invert;
+		int num;
+};
+
 //----------------------------------------------------
 //selects events based on number of b-jets
 class KNBJetSelector : public KSelector<KSkimmer> {
@@ -1705,6 +1728,7 @@ namespace KParser {
 		else if(sname=="DeltaPhi") srtmp = new KDeltaPhiSelector(sname,omap);
 		else if(sname.find("DeltaPhiJ")!=string::npos) srtmp = new KDeltaPhiJSelector(sname,omap); //allow multiple instances
 		else if(sname=="EventCleaning") srtmp = new KEventCleaningSelector(sname,omap);
+		else if(sname=="NVtx") srtmp = new KNVtxSelector(sname,omap);
 		else if(sname=="NBJet") srtmp = new KNBJetSelector(sname,omap);
 		else if(sname=="GenHTBin") srtmp = new KGenHTBinSelector(sname,omap);
 		else if(sname=="BTagEfficiency") srtmp = new KBTagEfficiencySelector(sname,omap);
