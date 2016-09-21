@@ -11,6 +11,6 @@ void KCutflowDriver(string fname="", bool printerrors=false, int prcsn=2){
 	}
 	
 	cout << fixed << setprecision(prcsn);
-	KCutflow k(fname);
+	KCutflow k("print",fname);
 	k.PrintEfficiency(printerrors);
 }

@@ -197,17 +197,16 @@ class KBase {
 		virtual bool CheckSpecialHistos(string s, bool assign=true){
 			if(s=="cutflowRaw") {
 				if(assign) htmp = GetCutflow(KCutflow::CutRaw);
-				return true;
 			}
 			else if(s=="cutflowAbs") {
 				if(assign) htmp = GetCutflow(KCutflow::CutAbs);
-				return true;
 			}
 			else if(s=="cutflowRel") {
 				if(assign) htmp = GetCutflow(KCutflow::CutRel);
-				return true;
 			}
-			return false;
+			else return false;
+			
+			return true;
 		}
 		//gets current histo
 		virtual TH1* GetHisto(){ return htmp; }
@@ -276,12 +275,12 @@ class KBase {
 			else htmp->Scale(nn);
 		}
 		virtual void MakeCutflows(){
-			MyCutflow = new KCutflow(file);
+			MyCutflow = new KCutflow(name,file);
 		}
 		virtual TTree* GetTree() { return tree; }
 		virtual TH1F* GetNEventHist() { return nEventHist; }
 		virtual TH1F* GetNEventNegHist() { return nEventNegHist; }
-		virtual TH1F* GetCutflow(KCutflow::CutflowType ct=KCutflow::CutRaw) { return (MyCutflow ? MyCutflow->GetEfficiency(ct) : NULL); }
+		virtual TH1F* GetCutflow(KCutflow::CutflowType ct=KCutflow::CutRaw) { return (MyCutflow ? MyCutflow->GetEfficiency(ct,globalOpt->Get("cutflownorm",false)) : NULL); }
 		virtual void SetStyle(KMap<string>& allStyles, string styleName="") {
 			if(styleName.size()==0) return;
 			

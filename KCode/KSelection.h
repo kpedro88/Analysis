@@ -237,7 +237,7 @@ class KSelection {
 			//check if error printing should be enabled
 			bool printerrors = globalOpt->Get("printerrors",false);
 			//use helper class to print
-			KCutflow kcut(cutflowHist,nEventHist);
+			KCutflow kcut(name,cutflowHist,nEventHist);
 			kcut.PrintEfficiency(printerrors);
 		}
 		void PrintEfficiency(int nentries, double nentriesE=0){
@@ -246,7 +246,7 @@ class KSelection {
 			//check if error printing should be enabled
 			bool printerrors = globalOpt->Get("printerrors",false);
 			//use helper class to print
-			KCutflow kcut(cutflowHist,nentries,nentriesE);
+			KCutflow kcut(name,cutflowHist,nentries,nentriesE);
 			kcut.PrintEfficiency(printerrors);
 		}
 		void Finalize(TH1F* nEventHist=NULL, TH1F* nEventNegHist=NULL){

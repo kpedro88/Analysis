@@ -89,7 +89,7 @@ class KSet : public KBase {
 				}
 			}
 			//make derived (abs, rel) cutflows
-			MyCutflow = new KCutflow(cutflowRaw,nEventHist);
+			MyCutflow = new KCutflow(name,cutflowRaw,nEventHist);
 		}
 		//resetting current histo propagates to children for consistency
 		using KBase::GetHisto;

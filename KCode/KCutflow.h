@@ -24,20 +24,20 @@ class KCutflow {
 		enum CutflowType { CutRaw=0, CutAbs=1, CutRel=2 };
 	
 		//constructors
-		KCutflow(string fname_) : h_raw(NULL), h_abs(NULL), h_rel(NULL) {
+		KCutflow(string name_, string fname_) : name(name_), h_raw(NULL), h_abs(NULL), h_rel(NULL) {
 			TFile* file = TFile::Open(fname_.c_str());
 			GetFromFile(file);
 		}
-		KCutflow(TFile* file) : h_raw(NULL), h_abs(NULL), h_rel(NULL) {
+		KCutflow(string name_, TFile* file) : name(name_), h_raw(NULL), h_abs(NULL), h_rel(NULL) {
 			GetFromFile(file);
 		}
 		//get nevent info from histo
-		KCutflow(TH1F* h_tmp, TH1F* h_ntmp) : h_raw(h_tmp), nentries(h_ntmp->GetBinContent(1)), nentriesE(h_ntmp->GetBinError(1)), h_abs(NULL), h_rel(NULL) { 
+		KCutflow(string name_, TH1F* h_tmp, TH1F* h_ntmp) : name(name_), h_raw(h_tmp), nentries(h_ntmp->GetBinContent(1)), nentriesE(h_ntmp->GetBinError(1)), h_abs(NULL), h_rel(NULL) { 
 			//initialize derived histos
 			CalcEfficiency();
 		}
 		//get nevent info directly
-		KCutflow(TH1F* h_tmp, int nentries_, double nentriesE_=0) : h_raw(h_tmp), nentries(nentries_), nentriesE(nentriesE_), h_abs(NULL), h_rel(NULL) { 
+		KCutflow(string name_, TH1F* h_tmp, int nentries_, double nentriesE_=0) : name(name_), h_raw(h_tmp), nentries(nentries_), nentriesE(nentriesE_), h_abs(NULL), h_rel(NULL) { 
 			//initialize derived histos
 			CalcEfficiency();
 		}
@@ -47,11 +47,13 @@ class KCutflow {
 				cout << "Input error: null file pointer!" << endl;
 				return;
 			}
+			
 			h_raw = (TH1F*)file->Get("cutflow");
 			if(!h_raw){
 				cout << "Input error: could not find cutflow histogram in file " << file->GetName() << endl;
 				return;
 			}
+			
 			TH1F* h_nevent = (TH1F*)file->Get("nEventProc");
 			if(!h_nevent){
 				cout << "Input error: could not find NEventProc histogram in file " << file->GetName() << endl;
@@ -74,8 +76,9 @@ class KCutflow {
 			if(!h_raw) return;
 
 			//initialize histos
-			h_abs = new TH1F("cutflowAbs","",h_raw->GetNbinsX(),0,h_raw->GetNbinsX());
-			h_rel = new TH1F("cutflowRel","",h_raw->GetNbinsX(),0,h_raw->GetNbinsX());
+			h_raw->SetName(("cutflow_"+name).c_str());
+			h_abs = new TH1F(("cutflowAbs_"+name).c_str(),"",h_raw->GetNbinsX(),0,h_raw->GetNbinsX());
+			h_rel = new TH1F(("cutflowRel_"+name).c_str(),"",h_raw->GetNbinsX(),0,h_raw->GetNbinsX());
 			
 			//fill histos
 			for(int c = 1; c <= h_raw->GetNbinsX(); c++){
@@ -151,15 +154,22 @@ class KCutflow {
 			}
 		}
 		//get an efficiency histogram
-		TH1F* GetEfficiency(CutflowType ct=CutRaw){
+		TH1F* GetEfficiency(CutflowType ct=CutRaw, bool cutflownorm=false){
 			if(ct==CutRaw) return h_raw;
-			else if(ct==CutAbs) return h_abs;
-			else if(ct==CutRel) return h_rel;
+			else if(ct==CutAbs) {
+				if(cutflownorm) h_abs->Scale(100./h_abs->GetBinContent(1));
+				return h_abs;
+			}
+			else if(ct==CutRel) {
+				if(cutflownorm) h_rel->Scale(100./h_rel->GetBinContent(1));
+				return h_rel;
+			}
 			else return NULL;
 		}
 	
 	private:
 		//members
+		string name;
 		TH1F *h_raw, *h_abs, *h_rel;
 		int nentries;
 		double nentriesE;
