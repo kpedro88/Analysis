@@ -72,13 +72,13 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 		//the nominal version
 		else if(systs[i]=="nominal"){
 			cout << "nominal" << endl;
-			KPlotDriver(indir+inpre+region,{input,setlist},"OPTION\nstring:rootfile["+outdir+outpre+region+osuff+"]\n");
+			KPlotDriver(indir+inpre+region,{input,setlist},{"OPTION","string:rootfile["+outdir+outpre+region+osuff+"]"});
 			continue;
 		}
 		//qcd sideband
 		else if(systs[i]=="QCD"){
 			cout << "QCD sideband" << endl;
-			KPlotDriver(indir+inpre+region,{inputQCD,setlist},"OPTION\nstring:rootfile["+outdir+outpre+region+"_QCD"+osuff+"]\n");
+			KPlotDriver(indir+inpre+region,{inputQCD,setlist},{"OPTION","string:rootfile["+outdir+outpre+region+"_QCD"+osuff+"]"});
 			continue;
 		}
 		
@@ -89,16 +89,16 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 		else if(systs[i]=="JER") region = "signal_JERup";
 		else ovar = "_"+systs[i]+"Up";
 		stringstream ssystup;
-		ssystup << "int:" << systs[i] << "[" << 1 << "]\n";
-		KPlotDriver(indir+inpre+region,{input,setlist},"OPTION\nstring:rootfile["+outdir+outpre+region+ovar+osuff+"]\n"+ssystup.str());
+		ssystup << "int:" << systs[i] << "[" << 1 << "]";
+		KPlotDriver(indir+inpre+region,{input,setlist},{"OPTION","string:rootfile["+outdir+outpre+region+ovar+osuff+"]",ssystup.str()});
 		//down
 		cout << systs[i] << " down" << endl;
 		if(systs[i]=="JEC") region = "signal_JECdown";
 		else if(systs[i]=="JER") region = "signal_JERdown";
 		else ovar = "_"+systs[i]+"Down";
 		stringstream ssystdown;
-		ssystdown << "int:" << systs[i] << "[" << 1 << "]\n";
-		KPlotDriver(indir+inpre+region,{input,setlist},"OPTION\nstring:rootfile["+outdir+outpre+region+ovar+osuff+"]\n"+ssystdown.str());
+		ssystdown << "int:" << systs[i] << "[" << 1 << "]";
+		KPlotDriver(indir+inpre+region,{input,setlist},{"OPTION","string:rootfile["+outdir+outpre+region+ovar+osuff+"]",ssystdown.str()});
 		
 		//reset region if altered for jet syst
 		if(systs[i]=="JEC" || systs[i]=="JER") region = "signal";
@@ -108,12 +108,12 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 	for(unsigned i = 0; i < contams.size(); ++i){
 		if(contams[i]=="none") break;
 		cout << contams[i] << endl;
-		KPlotDriver(indir+inpre+contams[i],{input,setlist},"OPTION\nstring:rootfile["+outdir+outpre+contams[i]+osuff+"]\n");
+		KPlotDriver(indir+inpre+contams[i],{input,setlist},{"OPTION","string:rootfile["+outdir+outpre+contams[i]+osuff+"]"});
 		
 		//qcd sideband for LDP & genMHT
 		if(contams[i]=="LDP" || contams[i]=="signal_genMHT" || contams[i]=="LDP_genMHT"){
 			cout << contams[i] << " QCD sideband" << endl;
-			KPlotDriver(indir+inpre+contams[i],{inputQCD,setlist},"OPTION\nstring:rootfile["+outdir+outpre+contams[i]+"_QCD"+osuff+"]\n");
+			KPlotDriver(indir+inpre+contams[i],{inputQCD,setlist},{"OPTION","string:rootfile["+outdir+outpre+contams[i]+"_QCD"+osuff+"]"});
 			continue;
 		}
 	}

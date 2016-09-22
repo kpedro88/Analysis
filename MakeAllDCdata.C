@@ -25,5 +25,5 @@ void MakeAllDCdata(string indir="", string region="", string outdir="datacards_d
 	system(("mkdir -p "+outdir).c_str());
 	
 	cout << region << endl;
-	KPlotDriver(indir+inpre+region,{input},"OPTION\nstring:rootfile["+outdir+outpre+region+"]\n");
+	KPlotDriver(indir+inpre+region,{input},{"OPTION","string:rootfile["+outdir+outpre+region+"]"});
 }

@@ -33,7 +33,8 @@ class KSkimManager : public KManager {
 			KManager(indir_), setname(setname_), seltypes(seltypes_), outdir(outdir_), skimmer(0), MyBase(0)
 		{
 			//parse most initializations based on text input
-			Initialize(input_);
+			vector<string> direct = {};
+			Initialize(input_,direct);
 			
 			//safety checks
 			if(!parsed) return;

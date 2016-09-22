@@ -22,7 +22,7 @@ void MakeAllDC(string indir="root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/
 	
 	for(unsigned i = 0; i < nRegions; ++i){
 		cout << regions[i] << endl;
-		KPlotDriver(indir+inpre+regions[i],{input[i]},"OPTION\nstring:rootfile["+outdir+outpre+regions[i]+"]\n");
+		KPlotDriver(indir+inpre+regions[i],{input[i]},{"OPTION","string:rootfile["+outdir+outpre+regions[i]+"]"});
 	}
 	
 	//add up SL regions

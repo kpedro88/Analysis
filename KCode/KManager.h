@@ -20,7 +20,8 @@
 #include <iomanip>
 #include <cmath>
 #include <utility>
-#include <unistd.h> //for sleep
+#include <algorithm>
+#include <iterator>
 
 using namespace std;
 
@@ -44,12 +45,12 @@ class KManager {
 			if(globalOpt->Get("listoptions",false)) ListOptions();			
 		}
 		//parse most initializations based on text input
-		virtual void Initialize(vector<string>& infiles_, string direct_=""){
+		virtual void Initialize(vector<string>& infiles_, vector<string>& direct_){
 			parsed = true;
 			for(auto& input_ : infiles_){
 				parsed &= ParseFile(input_);
 			}
-			if(direct_.size()>0) parsed &= ParseString(direct_);
+			if(direct_.size()>0) parsed &= ParseDirect(direct_);
 			
 			//final checks and initializations
 			int prcsn;
@@ -77,8 +78,9 @@ class KManager {
 			}
 			return parsed_;
 		}
-		bool ParseString(string input){
-			stringstream sinput(input);
+		bool ParseDirect(vector<string>& input){
+			stringstream sinput;
+			copy(input.begin(), input.end(), ostream_iterator<string>(sinput, "\n")); sinput << "\n";
 			return ParseStream(sinput);
 		}
 		bool ParseStream(istream& instream){

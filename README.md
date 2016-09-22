@@ -93,7 +93,7 @@ If weights are not explicitly specified (using the `-w` option), each sample is 
 
 To plot yields vs. RA2 bin (where the binning can be defined in the input file(s)) in the signal region and save the plot as an image:
 ```
-root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV10/tree_signal",{"input/input_RA2bin.txt"},"",1)'
+root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV10/tree_signal",{"input/input_RA2bin.txt"},{},1)'
 ```
 Omitting the last argument will display the plot without saving it.
 

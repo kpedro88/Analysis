@@ -4,7 +4,7 @@ using namespace std;
 
 //how to run:
 //root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/tree_signal",{"input/input_RA2bin.txt"})'
-void KPlotDriver(string dir="", vector<string> inFiles={}, string extras = "", bool doPrint = false){
+void KPlotDriver(string dir="", vector<string> inFiles={}, vector<string> extras = {}, bool doPrint = false){
 	if(inFiles.size()==0){
 		cout << "Recompiled KPlotDriver, exiting." << endl;
 		return;
