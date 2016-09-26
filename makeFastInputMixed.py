@@ -33,6 +33,11 @@ else:
     sumwt = sum(options.weights)
     options.weights = [x/sumwt for x in options.weights]
 
+# special list for T1ttbb
+special_model_base = "T1ttbb"
+special_models = ["T1bbtt","T1tbtb","T1tbbb","T1tbtt"]
+has_special_model = not set(special_models).isdisjoint(options.signals)
+    
 # find the python files
 files = filter(None,os.popen("xrdfs root://cmseos.fnal.gov/ ls "+options.dir).read().split('\n'))
 # basename
@@ -59,11 +64,13 @@ for ind,file in enumerate(files):
     model = '_'.join(fsplit[0:-3])
     mMother = msplit(fsplit[-3])
     mLSP = msplit(fsplit[-2])
-    if not model in options.signals: continue
+    is_special_model = (has_special_model and model==special_model_base)
+    if not ((model in options.signals) or is_special_model): continue
     
-    mlist = masspts.get((mMother, mLSP),[])
-    mlist.append(model)
-    masspts[(mMother, mLSP)] = mlist
+    for model_ in (special_models if is_special_model else [model]):
+        mlist = masspts.get((mMother, mLSP),[])
+        mlist.append(model)
+        masspts[(mMother, mLSP)] = mlist
     
 present_list = []
 missing_list = []
@@ -91,7 +98,10 @@ for masspt, models in sorted(masspts.iteritems()):
         # make short name
         short_name = model + "_" + str(mMother) + "_" + str(mLSP) + "_" + "fast"
         # make base list for datacards with xsec
-        dline += makeLineDCBase(short_name,this_xsec,mother_ID)
+        is_special_model = model in special_models
+        basetmp = makeLineDCBase(short_name,this_xsec,mother_ID,(model if is_special_model else ""))
+        if is_special_model: basetmp = basetmp.replace("tree_"+short_name,"tree_"+short_name.replace(model,special_model_base))
+        dline += basetmp
 
     dfile.write(dline)
     dline_list.append(dline)

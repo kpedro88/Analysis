@@ -299,10 +299,28 @@ class KBuilderMC : public KBuilder {
 		bool Cut(){
 			bool goodEvent = true;
 			
+			int ntop = 0;
+			int nchargino = 0;
+			//topologies defined by ntop, nchargino
+			if(NTenum==T1bbtt || NTenum==T1tbtb || NTenum==T1tbbb || NTenum==T1tbtt){
+				for(unsigned g = 0; g < GenParticles_PdgId->size(); ++g){
+					if(abs(GenParticles_PdgId->at(g))==6){ //top
+						++ntop;
+					}
+					else if(abs(GenParticles_PdgId->at(g))==1000024){ //chargino
+						++nchargino;
+					}
+				}
+			}
+			
 			//check normalization type here
 			if(NTenum==ttbarLowHT) { goodEvent &= madHT < 600; }
 			else if(NTenum==ttbarLowHThad) { goodEvent &= madHT < 600 && GenElectrons->size()==0 && GenMuons->size()==0 && GenTaus->size()==0; }
 			else if(NTenum==ttbarHighHT) { goodEvent &= madHT >= 600; }
+			else if(NTenum==T1bbtt) { goodEvent &= (ntop==2 && nchargino==0); } //T1bbtt (g->bb, g->tt)
+			else if(NTenum==T1tbtb) { goodEvent &= (ntop==2 && nchargino==2); } //T1tbtb (g->tbchi+, g->tbchi+)
+			else if(NTenum==T1tbbb) { goodEvent &= (ntop==1 && nchargino==1); } //T1tbbb (g->tbchi+, g->bb)
+			else if(NTenum==T1tbtt) { goodEvent &= (ntop==3 && nchargino==1); } //T1tbtt (g->tbchi+, g->tt)
 		
 			//KBuilder::Cut() comes *last* because it includes histo filling selector
 			return goodEvent ? KBuilder::Cut() : goodEvent;
@@ -382,12 +400,16 @@ class KBuilderMC : public KBuilder {
 		}
 		
 		//enum for normtypes
-		enum normtypes { NoNT=0, ttbarLowHT=1, ttbarLowHThad=2, ttbarHighHT=3 };
+		enum normtypes { NoNT=0, ttbarLowHT=1, ttbarLowHThad=2, ttbarHighHT=3, T1bbtt=11, T1tbtb=12, T1tbbb=13, T1tbtt=14 };
 		//convert normtype from string to enum for quicker compares
 		void GetNormTypeEnum(){
 			if(normtype=="ttbarLowHT") NTenum = ttbarLowHT;
 			else if(normtype=="ttbarLowHThad") NTenum = ttbarLowHThad;
 			else if(normtype=="ttbarHighHT") NTenum = ttbarHighHT;
+			else if(normtype=="T1bbtt") NTenum = T1bbtt;
+			else if(normtype=="T1tbtb") NTenum = T1tbtb;
+			else if(normtype=="T1tbbb") NTenum = T1tbbb;
+			else if(normtype=="T1tbtt") NTenum = T1tbtt;
 			else NTenum = NoNT;
 		}
 
