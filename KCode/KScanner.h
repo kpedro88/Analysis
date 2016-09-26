@@ -37,7 +37,8 @@ class KScanner : public NtupleClass {
 	
 		//constructor
 		KScanner(KBase* MyBase_) : 
-			NtupleClass(MyBase_->GetTree()), MyBase(MyBase_), globalOpt(MyBase->GetGlobalOpt()), nentries(0), outpre(""), outsuff("")
+			NtupleClass(MyBase_->GetTree()), MyBase(MyBase_), globalOpt(MyBase->GetGlobalOpt()), nentries(0), outpre(""), outsuff(""),
+			sT1bbtt("T1bbtt"), sT1tbtb("T1tbtb"), sT1tbbb("T1tbbb"), sT1tbtt("T1tbtt")
 		{
 			//get options
 			globalOpt->Get("outpre",outpre);
@@ -76,7 +77,7 @@ class KScanner : public NtupleClass {
 					int ntop = 0;
 					int nchargino = 0;
 					for(unsigned g = 0; g < GenParticles_PdgId->size(); ++g){
-						if(abs(GenParticles_PdgId->at(g))==24){ //top - count W instead (for offshell tops)
+						if(abs(GenParticles_PdgId->at(g))==6){ //top
 							++ntop;
 						}
 						else if(abs(GenParticles_PdgId->at(g))==1000024){ //chargino
@@ -84,23 +85,8 @@ class KScanner : public NtupleClass {
 						}
 					}
 					
-					if(ntop==2 && nchargino==0){ //T1bbtt (g->bb, g->tt)
-						MassOffset = 0.1;
-						outpre = "T1bbtt";
-					}
-					else if(ntop==2 && nchargino==2){ //T1tbtb (g->tbchi+, g->tbchi+)
-						MassOffset = 0.2;
-						outpre = "T1tbtb";
-					}
-					else if(ntop==1 && nchargino==1){ //T1tbbb (g->tbchi+, g->bb)
-						MassOffset = 0.3;
-						outpre = "T1tbbb";
-					}
-					else if(ntop==3 && nchargino==1){ //T1tbtt (g->tbchi+, g->tt)
-						MassOffset = 0.4;
-						outpre = "T1tbtt";
-					}
-					else continue; //discard other topologies (T1bbbb, T1tttt)
+					MassOffset = getMassOffset(ntop, nchargino);
+					if(MassOffset==0.0) continue; //discard other topologies (T1bbbb, T1tttt);
 				}
 				
 				//check this event's mass point
@@ -131,7 +117,7 @@ class KScanner : public NtupleClass {
 					}
 					
 					//make the name
-					string oname = makeName(thePoint.first,thePoint.second,blocknum,partnum,outsuff);
+					string oname = makeName(thePoint.first,thePoint.second,blocknum,partnum)+outsuff;
 					
 					//make the selection and tree, fill it
 					currSel = new KSelection<KScanner>(oname,globalOpt);
@@ -161,22 +147,39 @@ class KScanner : public NtupleClass {
 				for(auto& mp : partMap){
 					stringstream ssys;
 					//just mv if only one part
-					if(mp.second==1) ssys << "mv " << makeName(mp.first.first,mp.first.second,blocknum,0,outsuff) << ".root " << makeName(mp.first.first,mp.first.second,blocknum,outsuff) << ".root";
+					if(mp.second==1) ssys << "mv " << makeName(mp.first.first,mp.first.second,blocknum,0)+outsuff << ".root " << makeName(mp.first.first,mp.first.second,blocknum)+outsuff << ".root";
 					else ssys << "batch/haddHelper.sh " << makeName(mp.first.first,mp.first.second,blocknum) << " " << mp.second - 1 << " " << outsuff;
 					cout << ssys.str() << endl;
 					system(ssys.str().c_str());
 				}
 			}
 		}
-		string makeName(double mass1, double mass2, unsigned block, string suff=""){
+		string makeName(double mass1, double mass2, unsigned block){
+			double mass1i, mass1f;
+			mass1f = modf(mass1,&mass1i);
 			stringstream oss;
-			oss << outpre << "_" << "mMother-" << floor(mass1) << "_mLSP-" << mass2 << "_block" << block << suff;
+			oss << getTopologyName(mass1f) << "_" << "mMother-" << mass1i << "_mLSP-" << mass2 << "_block" << block;
 			return oss.str();
 		}
-		string makeName(double mass1, double mass2, unsigned block, unsigned part, string suff=""){
+		string makeName(double mass1, double mass2, unsigned block, unsigned part){
 			stringstream oss;
-			oss << outpre << "_" << "mMother-" << floor(mass1) << "_mLSP-" << mass2 << "_block" << block << "_part" << part << suff;
+			oss << makeName(mass1,mass2,block) << "_part" << part;
 			return oss.str();
+		}
+		double getMassOffset(int ntop, int nchargino){
+			if(ntop==2 && nchargino==0) return 0.1; //T1bbtt (g->bb, g->tt)
+			else if(ntop==2 && nchargino==2) return 0.2; //T1tbtb (g->tbchi+, g->tbchi+)
+			else if(ntop==1 && nchargino==1) return 0.3; //T1tbbb (g->tbchi+, g->bb)
+			else if(ntop==3 && nchargino==1) return 0.4; //T1tbtt (g->tbchi+, g->tt)
+			else return 0.0; //default
+		}
+		const string& getTopologyName(double MassOffset){
+			const double eps = 0.0001;
+			if(abs(MassOffset-0.1)<eps) return sT1bbtt; //T1bbtt (g->bb, g->tt)
+			else if(abs(MassOffset-0.2)<eps) return sT1tbtb; //T1tbtb (g->tbchi+, g->tbchi+)
+			else if(abs(MassOffset-0.3)<eps) return sT1tbbb; //T1tbbb (g->tbchi+, g->bb)
+			else if(abs(MassOffset-0.4)<eps) return sT1tbtt; //T1tbtt (g->tbchi+, g->tt)
+			else return outpre; //default
 		}
 		
 		//member variables
@@ -186,7 +189,7 @@ class KScanner : public NtupleClass {
 		Long64_t nentries;
 		string outpre, outsuff;
 		bool T1ttbb;
-
+		const string sT1bbtt, sT1tbtb, sT1tbbb, sT1tbtt;
 };
 
 //fake implementations of unneeded KBase classes
