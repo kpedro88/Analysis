@@ -29,12 +29,11 @@ class KSkimManager : public KManager {
 	public:
 		//constructor
 		KSkimManager() : KManager(), setname(""), seltypes(""), outdir(""), skimmer(0), MyBase(0) {}
-		KSkimManager(vector<string> input_, string setname_, string seltypes_, string indir_, string outdir_) : 
+		KSkimManager(string setname_, string seltypes_, string indir_, vector<string> input_, vector<string> direct_, string outdir_) : 
 			KManager(indir_), setname(setname_), seltypes(seltypes_), outdir(outdir_), skimmer(0), MyBase(0)
 		{
 			//parse most initializations based on text input
-			vector<string> direct = {};
-			Initialize(input_,direct);
+			Initialize(input_,direct_);
 			
 			//safety checks
 			if(!parsed) return;

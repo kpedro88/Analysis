@@ -36,8 +36,8 @@ eval `scramv1 runtime -sh`
 cd src/Analysis
 
 #run macro
-echo "run: root -b -q -l 'KSkimDriver.C+("'"'$INPUT'","'$SAMPLE'","'$SELTYPE'","'$INDIR'","'$OUTDIR'"'")' 2>&1"
-root -b -q -l 'KSkimDriver.C+("'$INPUT'","'$SAMPLE'","'$SELTYPE'","'$INDIR'","'$OUTDIR'")' 2>&1
+echo "run: root -b -q -l 'KSkimDriver.C+("'"'$SAMPLE'","'$SELTYPE'","'$INDIR'",{"'$INPUT'"},{},"'$OUTDIR'"'")' 2>&1"
+root -b -q -l 'KSkimDriver.C+("'$SAMPLE'","'$SELTYPE'","'$INDIR'",{"'$INPUT'"},{},"'$OUTDIR'")' 2>&1
 
 ROOTEXIT=$?
 

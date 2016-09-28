@@ -32,8 +32,8 @@ eval `scramv1 runtime -sh`
 cd src/Analysis
 
 #run macro
-echo "run: root -b -q -l 'KScanDriver.C+("'"'$INPUT'","'$SAMPLE'","'$INDIR'"'")' 2>&1"
-root -b -q -l 'KScanDriver.C+("'$INPUT'","'$SAMPLE'","'$INDIR'")' 2>&1
+echo "run: root -b -q -l 'KScanDriver.C+("'"'$SAMPLE'","'$INDIR'",{"'$INPUT'"},{}'")' 2>&1"
+root -b -q -l 'KScanDriver.C+("'$SAMPLE'","'$INDIR'",{"'$INPUT'"},{})' 2>&1
 
 ROOTEXIT=$?
 

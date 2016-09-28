@@ -16,7 +16,7 @@ Add the flag `-f` to force recompilation of all drivers.
 
 To run interactively, applying the "signal" selection to the "T1tttt\_1500\_100" sample and writing output trees to a folder "test/tree\_${SELECTION}":
 ```
-root -b -q -l 'KSkimDriver.C+("input/input_selection.txt","T1tttt_1500_100","signal","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV10","test/tree")'
+root -b -q -l 'KSkimDriver.C+("T1tttt_1500_100","signal","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV10",{"input/input_selection.txt"},{},"test/tree")'
 ```
 
 To remake the input list of sets automatically, for data and MC:
@@ -54,7 +54,7 @@ The SUSY FastSim signal samples contain multiple model points per file. Before s
 
 To run the scanner interactively:
 ```
-root -b -q -l 'KScanDriver.C+("input/input_scan.txt","T1bbbb_block0","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV10")'
+root -b -q -l 'KScanDriver.C+("T1bbbb_block0","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV10",{"input/input_scan.txt"},{})'
 ```
 
 To make the input lists (.txt and .sh) of FastSim samples automatically:

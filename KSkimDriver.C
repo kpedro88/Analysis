@@ -16,16 +16,15 @@ using namespace std;
 //to recompile:
 //root -b -q -l 'KSkimDriver.C++()'
 //to run interactively:
-//root -b -q -l 'KSkimDriver.C+("input/input_selection.txt","T1tttt_1500_100","signal","root://cmseos.fnal.gov//store/user/awhitbe1/PHYS14productionV12","tree_test")'
-void KSkimDriver(string input="", string setname="", string selTypes="", string indir="", string outdir="tree"){
+//root -b -q -l 'KSkimDriver.C+("T1tttt_1500_100","signal","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV10",{"input/input_selection.txt"},{},"test/tree")'
+void KSkimDriver(string setname="", string selTypes="", string indir="", vector<string> input={}, vector<string> extras={}, string outdir="tree"){
 	gErrorIgnoreLevel = kBreak;
 	
-	if(input.size()==0){
+	if(input.size()==0 && extras.size()==0){
 		cout << "Recompiled KSkimDriver, exiting." << endl;
 		return;
 	}
 	
-	vector<string> vinput = {input};
-	KSkimManager k(vinput,setname,selTypes,indir,outdir);
+	KSkimManager k(setname,selTypes,indir,input,extras,outdir);
 	k.Skim();
 }

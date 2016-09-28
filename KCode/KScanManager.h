@@ -27,12 +27,11 @@ class KScanManager : public KManager {
 	public:
 		//constructor
 		KScanManager() : KManager(), setname(""), scanner(0), MyBase(0) {}
-		KScanManager(vector<string> input_, string setname_, string indir_) : 
+		KScanManager(string setname_, string indir_, vector<string> input_, vector<string> direct_) : 
 			KManager(indir_), setname(setname_), scanner(0), MyBase(0)
 		{
 			//parse most initializations based on text input
-			vector<string> direct = {};
-			Initialize(input_,direct);
+			Initialize(input_,direct_);
 			
 			//safety checks
 			if(!parsed) return;
