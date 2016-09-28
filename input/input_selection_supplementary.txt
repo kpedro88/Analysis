@@ -13,6 +13,7 @@ vstring:disable_branches[*clean*,*JECdown*,*JECup*,*JERdown*,*JERup*]
 
 SELECTION
 signal
+	NEventsT1ttbb
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
 	NJetsISR	vd:xbins[0,1,2,3,4,5,6,7]
 	PDFNorm
@@ -30,6 +31,7 @@ signal
 	DeltaPhiJ4	d:DeltaPhi[0.3]	i:jet[4]
 	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
 signalMinusNJet
+	NEventsT1ttbb
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
 	NJetsISR	vd:xbins[0,1,2,3,4,5,6,7]
 	PDFNorm
@@ -47,6 +49,7 @@ signalMinusNJet
 	DeltaPhiJ4	d:DeltaPhi[0.3]	i:jet[4]
 	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
 signalMinusHT
+	NEventsT1ttbb
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
 	NJetsISR	vd:xbins[0,1,2,3,4,5,6,7]
 	PDFNorm
@@ -64,6 +67,7 @@ signalMinusHT
 	DeltaPhiJ4	d:DeltaPhi[0.3]	i:jet[4]
 	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
 signalMinusMHT
+	NEventsT1ttbb
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
 	NJetsISR	vd:xbins[0,1,2,3,4,5,6,7]
 	PDFNorm
@@ -81,6 +85,7 @@ signalMinusMHT
 	DeltaPhiJ4	d:DeltaPhi[0.3]	i:jet[4]
 	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
 signalHighPU
+	NEventsT1ttbb
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
 	NJetsISR	vd:xbins[0,1,2,3,4,5,6,7]
 	PDFNorm
@@ -99,6 +104,7 @@ signalHighPU
 	DeltaPhiJ4	d:DeltaPhi[0.3]	i:jet[4]
 	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
 signalLowPU
+	NEventsT1ttbb
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
 	NJetsISR	vd:xbins[0,1,2,3,4,5,6,7]
 	PDFNorm
@@ -117,6 +123,7 @@ signalLowPU
 	DeltaPhiJ4	d:DeltaPhi[0.3]	i:jet[4]
 	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
 signalAllPU
+	NEventsT1ttbb
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
 	NJetsISR	vd:xbins[0,1,2,3,4,5,6,7]
 	PDFNorm

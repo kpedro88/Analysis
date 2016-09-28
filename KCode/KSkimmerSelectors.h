@@ -635,7 +635,7 @@ class KNVtxSelector : public KSelector<KSkimmer> {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return invert ? looper->NVtx < num : looper->NVtx >= num;
+			return (invert ? looper->NVtx < num : looper->NVtx >= num);
 		}
 		
 		//member variables
@@ -894,6 +894,69 @@ class KPDFNormSelector : public KSelector<KSkimmer> {
 		
 		//member variables
 		TH1F *h_norm;
+};
+
+//-----------------------------------------------------------------
+//stores separate nevents for each T1ttbb decay topology
+class KNEventsT1ttbbSelector : public KSelector<KSkimmer> {
+	public:
+		//constructor
+		KNEventsT1ttbbSelector() : KSelector<KSkimmer>() { }
+		KNEventsT1ttbbSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), h_nevents(NULL) {
+			canfail = false;
+			//initialize histogram
+			TH1::AddDirectory(kFALSE);
+			h_nevents = new TH1F("NEventsT1ttbb","",4,0.5,4.5);
+			//set bin labels
+			h_nevents->GetXaxis()->SetBinLabel(1,"T1bbtt");
+			h_nevents->GetXaxis()->SetBinLabel(2,"T1tbtb");
+			h_nevents->GetXaxis()->SetBinLabel(3,"T1tbbb");
+			h_nevents->GetXaxis()->SetBinLabel(4,"T1tbtt");
+		}
+		virtual void CheckLooper(){
+			//check if T1ttbb
+			bool isT1ttbb = looper->MyBase->GetName().find("T1ttbb")!=string::npos;
+			//disable this for anything else
+			if(!isT1ttbb) {
+				dummy = true;
+				delete h_nevents;
+			}
+		}
+
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			//topologies defined by ntop, nchargino
+			int ntop = 0;
+			int nchargino = 0;
+			for(unsigned g = 0; g < looper->GenParticles_PdgId->size(); ++g){
+				if(abs(looper->GenParticles_PdgId->at(g))==6){ //top
+					++ntop;
+				}
+				else if(abs(looper->GenParticles_PdgId->at(g))==1000024){ //chargino
+					++nchargino;
+				}
+			}
+			
+				 if(ntop==2 && nchargino==0) h_nevents->Fill("T1bbtt",1);
+			else if(ntop==2 && nchargino==2) h_nevents->Fill("T1tbtb",1); 
+			else if(ntop==1 && nchargino==1) h_nevents->Fill("T1tbbb",1); 
+			else if(ntop==3 && nchargino==1) h_nevents->Fill("T1tbtt",1); 
+			
+			return true;
+		}
+		
+		virtual void Finalize(TFile* file){
+			if(dummy) return;
+			//write to file
+			file->cd();
+			h_nevents->Write();
+		}
+		
+		//member variables
+		TH1F *h_nevents;
 };
 
 //-------------------------------------------------------------
@@ -1734,6 +1797,7 @@ namespace KParser {
 		else if(sname=="BTagEfficiency") srtmp = new KBTagEfficiencySelector(sname,omap);
 		else if(sname=="NJetsISR") srtmp = new KNJetsISRSelector(sname,omap);
 		else if(sname=="PDFNorm") srtmp = new KPDFNormSelector(sname,omap);
+		else if(sname=="NEventsT1ttbb") srtmp = new KNEventsT1ttbbSelector(sname,omap);
 		else if(sname=="EventRange") srtmp = new KEventRangeSelector(sname,omap);
 		else if(sname=="CSCFilter") srtmp = new KCSCFilterSelector(sname,omap);
 		else if(sname=="JetEtaRegion") srtmp = new KJetEtaRegionSelector(sname,omap);
