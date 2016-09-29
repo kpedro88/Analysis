@@ -32,31 +32,48 @@ eval `scramv1 runtime -sh`
 cd src/Analysis
 
 #run macro
-echo "run: root -b -q -l 'KScanDriver.C+("'"'$SAMPLE'","'$INDIR'",{"'$INPUT'"},{}'")' 2>&1"
+echo "run: root -b -q -l 'KScanDriver.C+(\"$SAMPLE\",\"$INDIR\",{\"$INPUT\"},{})' 2>&1"
 root -b -q -l 'KScanDriver.C+("'$SAMPLE'","'$INDIR'",{"'$INPUT'"},{})' 2>&1
 
 ROOTEXIT=$?
 
 if [[ $ROOTEXIT -ne 0 ]]; then
-  rm *.root
-  echo "exit code $ROOTEXIT, skipping xrdcp"
-  exit $ROOTEXIT
+	rm *.root
+	echo "exit code $ROOTEXIT, skipping xrdcp"
+	exit $ROOTEXIT
+fi
+
+#run followup for T1ttbb only
+if [[ $SAMPLE == "T1ttbb"* ]]; then
+	for FILE in *.root; do
+		FILEBASE=`basename $FILE .root`
+		SETDESC="base\tskim\t$FILEBASE\ts:filename[$FILE]"
+		echo "run: root -b -q -l 'KScanDriver.C+(\"$FILEBASE\",\".\",{\"$INPUT\"},{\"OPTION\",\"b:splitT1ttbb[1]\",\"SET\",\"$SETDESC\"})' 2>&1"
+		root -b -q -l 'KScanDriver.C+("'$FILEBASE'",".",{"'$INPUT'"},{"OPTION","b:splitT1ttbb[1]","SET","'$SETDESC'"})' 2>&1
+		
+		ROOTEXIT=$?
+
+		if [[ $ROOTEXIT -ne 0 ]]; then
+			rm *.root
+			echo "exit code $ROOTEXIT, skipping xrdcp"
+			exit $ROOTEXIT
+		fi		
+		
+		#remove intermediate scan after splitting up
+		rm $FILE
+	done
 fi
 
 # copy output to eos
 echo "xrdcp output for condor"
-for FILE in *.root
-do
-  echo "xrdcp -f ${FILE} ${STORE}/${FILE}"
-  xrdcp -f ${FILE} ${STORE}/${FILE}
-  XRDEXIT=$?
-  if [[ $XRDEXIT -ne 0 ]]; then
-    rm *.root
-    echo "exit code $XRDEXIT, failure in xrdcp"
-    exit $XRDEXIT
-  fi
-  rm ${FILE}
+for FILE in *.root; do
+	echo "xrdcp -f ${FILE} ${STORE}/${FILE}"
+	xrdcp -f ${FILE} ${STORE}/${FILE}
+	XRDEXIT=$?
+	if [[ $XRDEXIT -ne 0 ]]; then
+		rm *.root
+		echo "exit code $XRDEXIT, failure in xrdcp"
+		exit $XRDEXIT
+	fi
+	rm ${FILE}
 done
-
-
-

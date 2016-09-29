@@ -37,13 +37,12 @@ class KScanner : public NtupleClass {
 	
 		//constructor
 		KScanner(KBase* MyBase_) : 
-			NtupleClass(MyBase_->GetTree()), MyBase(MyBase_), globalOpt(MyBase->GetGlobalOpt()), nentries(0), outpre(""), outsuff(""),
-			sT1bbtt("T1bbtt"), sT1tbtb("T1tbtb"), sT1tbbb("T1tbbb"), sT1tbtt("T1tbtt")
+			NtupleClass(MyBase_->GetTree()), MyBase(MyBase_), globalOpt(MyBase->GetGlobalOpt()), nentries(0), outpre(""), outsuff("")
 		{
 			//get options
 			globalOpt->Get("outpre",outpre);
 			globalOpt->Get("outsuff",outsuff);
-			T1ttbb = outpre=="T1ttbb";
+			splitT1ttbb = globalOpt->Get("splitT1ttbb",false);
 		}
 		//destructor
 		virtual ~KScanner() {}
@@ -59,6 +58,19 @@ class KScanner : public NtupleClass {
 			int maxevents = 0;
 			if(globalOpt->Get("maxevents",maxevents) && maxevents < nentries) nentries = maxevents;
 			
+			vector<KSelection<KScanner>*> allSels;
+			vector<string> namesT1ttbb = {"T1bbtt","T1tbtb","T1tbbb","T1tbtt"};
+			if(splitT1ttbb){
+				allSels.reserve(namesT1ttbb.size());
+				for(auto& name : namesT1ttbb){
+					string otmp = MyBase->GetName();
+					otmp.replace(0,6,name);
+					KSelection<KScanner>* seltmp = new KSelection<KScanner>(otmp,globalOpt);
+					seltmp->ScanTree(fChain);
+					allSels.push_back(seltmp);
+				}
+			}
+			
 			KSelection<KScanner>* currSel = NULL;
 			massPoint currPoint = make_pair(0.0,0.0);
 			unsigned blocknum = 0;
@@ -70,9 +82,8 @@ class KScanner : public NtupleClass {
 				nb = fChain->GetEntry(jentry);   nbytes += nb;
 				if(jentry % 10000 == 0) cout << "Scanning " << jentry << "/" << nentries << endl;
 				
-				//special checks for T1ttbb - separate the mixed topologies
-				double MassOffset = 0.0;
-				if(T1ttbb){
+				//special mode to split T1ttbb topologies
+				if(splitT1ttbb){
 					//topologies defined by ntop, nchargino
 					int ntop = 0;
 					int nchargino = 0;
@@ -85,12 +96,16 @@ class KScanner : public NtupleClass {
 						}
 					}
 					
-					MassOffset = getMassOffset(ntop, nchargino);
-					if(MassOffset==0.0) continue; //discard other topologies (T1bbbb, T1tttt);
+					if(ntop==2 && nchargino==0) allSels[0]->FillTree(); //T1bbtt (g->bb, g->tt)
+					else if(ntop==2 && nchargino==2) allSels[1]->FillTree(); //T1tbtb (g->tbchi+, g->tbchi+)
+					else if(ntop==1 && nchargino==1) allSels[2]->FillTree(); //T1tbbb (g->tbchi+, g->bb)
+					else if(ntop==3 && nchargino==1) allSels[3]->FillTree(); //T1tbtt (g->tbchi+, g->tt)
+					
+					continue;
 				}
 				
 				//check this event's mass point
-				massPoint thePoint = make_pair(SusyMotherMass+MassOffset,SusyLSPMass);
+				massPoint thePoint = make_pair(SusyMotherMass,SusyLSPMass);
 					
 				//if current, fill the corresponding tree
 				if(currPoint == thePoint){
@@ -126,6 +141,13 @@ class KScanner : public NtupleClass {
 				}
 			}
 
+			if(splitT1ttbb){
+				for(auto seltmp : allSels){
+					seltmp->Finalize();
+				}
+				return;
+			}
+			
 			//write last tree to file
 			if(currSel) currSel->Finalize();
 			delete currSel; currSel = NULL;
@@ -155,31 +177,14 @@ class KScanner : public NtupleClass {
 			}
 		}
 		string makeName(double mass1, double mass2, unsigned block){
-			double mass1i, mass1f;
-			mass1f = modf(mass1,&mass1i);
 			stringstream oss;
-			oss << getTopologyName(mass1f) << "_" << "mMother-" << mass1i << "_mLSP-" << mass2 << "_block" << block;
+			oss << outpre << "_" << "mMother-" << mass1 << "_mLSP-" << mass2 << "_block" << block;
 			return oss.str();
 		}
 		string makeName(double mass1, double mass2, unsigned block, unsigned part){
 			stringstream oss;
 			oss << makeName(mass1,mass2,block) << "_part" << part;
 			return oss.str();
-		}
-		double getMassOffset(int ntop, int nchargino){
-			if(ntop==2 && nchargino==0) return 0.1; //T1bbtt (g->bb, g->tt)
-			else if(ntop==2 && nchargino==2) return 0.2; //T1tbtb (g->tbchi+, g->tbchi+)
-			else if(ntop==1 && nchargino==1) return 0.3; //T1tbbb (g->tbchi+, g->bb)
-			else if(ntop==3 && nchargino==1) return 0.4; //T1tbtt (g->tbchi+, g->tt)
-			else return 0.0; //default
-		}
-		const string& getTopologyName(double MassOffset){
-			const double eps = 0.0001;
-			if(abs(MassOffset-0.1)<eps) return sT1bbtt; //T1bbtt (g->bb, g->tt)
-			else if(abs(MassOffset-0.2)<eps) return sT1tbtb; //T1tbtb (g->tbchi+, g->tbchi+)
-			else if(abs(MassOffset-0.3)<eps) return sT1tbbb; //T1tbbb (g->tbchi+, g->bb)
-			else if(abs(MassOffset-0.4)<eps) return sT1tbtt; //T1tbtt (g->tbchi+, g->tt)
-			else return outpre; //default
 		}
 		
 		//member variables
@@ -188,8 +193,7 @@ class KScanner : public NtupleClass {
 		OptionMap* globalOpt;
 		Long64_t nentries;
 		string outpre, outsuff;
-		bool T1ttbb;
-		const string sT1bbtt, sT1tbtb, sT1tbbb, sT1tbtt;
+		bool splitT1ttbb;
 };
 
 //fake implementations of unneeded KBase classes
