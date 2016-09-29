@@ -76,9 +76,13 @@ class KCutflow {
 			if(!h_raw) return;
 
 			//initialize histos
-			h_raw->SetName(("cutflow_"+name).c_str());
-			h_abs = new TH1F(("cutflowAbs_"+name).c_str(),"",h_raw->GetNbinsX(),0,h_raw->GetNbinsX());
-			h_rel = new TH1F(("cutflowRel_"+name).c_str(),"",h_raw->GetNbinsX(),0,h_raw->GetNbinsX());
+			vector<string> names = {"cutflow","cutflowAbs","cutflowRel"};
+			if(name.size()>0){
+				for(auto& name_ : names) name += "_"+name;
+			}
+			h_raw->SetName((names[0]).c_str());
+			h_abs = new TH1F((names[1]).c_str(),"",h_raw->GetNbinsX(),0,h_raw->GetNbinsX());
+			h_rel = new TH1F((names[2]).c_str(),"",h_raw->GetNbinsX(),0,h_raw->GetNbinsX());
 			
 			//fill histos
 			for(int c = 1; c <= h_raw->GetNbinsX(); c++){
