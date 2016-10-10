@@ -2,51 +2,29 @@
 
 source exportProd.sh
 
-DIR=/store/user/pedrok/SUSY2015/Analysis/Datacards/${RUN2PRODV}
-
 ./SKcheck.sh -k
 
-#initialize parameters
-RUN=0
-UPDATE=0
-SUFFIX=""
-ARGS="-g _part"
+SKIMDIR=/store/user/pedrok/SUSY2015/Analysis/Datacards/${RUN2PRODV}/
+ARGS="-k -s -g _part"
 
 #check arguments
-while getopts "rux:" opt; do
+while getopts "n:ru" opt; do
   case "$opt" in
-  r) RUN=1
-     ARGS="${ARGS} -r"
+  n) ARGS="${ARGS} -n $OPTARG"
     ;;
-  u) UPDATE=1
-     ARGS="${ARGS} -u"
+  r) ARGS="${ARGS} -r"
     ;;
-  x) SUFFIX=$OPTARG
-     # do NOT include suffix in args for haddEOS (used differently there)
+  u) ARGS="${ARGS} -u"
     ;;
   esac
 done
 
-if [ -n "$SUFFIX" ]; then
-  DIR=${DIR}/${SUFFIX}
-fi
+#list folders
+IFS=$'\n' DIRS=($(xrdfs root://cmseos.fnal.gov ls ${SKIMDIR})); unset IFS
 
-echo ${DIR}
-ARGS="${ARGS} -d ${DIR}"
-
-#if updating, part number may not start with 0
-if [[ $UPDATE -eq 1 ]]; then
-  IFS=$'\n' SAMPLES=($(python findHadds.py -d ${DIR} -g "_part")); unset IFS
-else
-  IFS=$'\n' SAMPLES=($(python findHadds.py -d ${DIR} -g "_part0")); unset IFS
-fi
-
-if [[ ${#SAMPLES[@]} -eq 0 ]]; then
-  echo "nothing to hadd in $DIR"
-  exit 0
-fi
-
-for BASE in ${SAMPLES[@]}; do
-  ./haddEOS.sh ${ARGS} -i ${BASE}
+#loop over hadd script for each dir
+for DIR in ${DIRS[@]}; do
+  echo ${DIR}
+  ./HSsub.sh ${ARGS} -d ${DIR}
 done
 

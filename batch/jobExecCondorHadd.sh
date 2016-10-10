@@ -12,13 +12,17 @@ echo "CMSSW on Condor"
 CMSSWVER=$1
 INPUT=$2
 DIR=$3
-SUFF=$4
+SEARCH=$4
+UPDATE=$5
+SUFF=$6
 
 echo ""
 echo "parameter set:"
 echo "CMSSWVER:   $CMSSWVER"
 echo "INPUT:      $INPUT"
 echo "DIR:        $DIR"
+echo "SEARCH:     $SEARCH"
+echo "UPDATE:     $UPDATE"
 echo "SUFF:       $SUFF"
 
 tar -xzf ${CMSSWVER}.tar.gz
@@ -30,11 +34,15 @@ eval `scramv1 runtime -sh`
 cd src/Analysis/batch
 
 #run code
-./haddEOS.sh -d ${DIR} -i ${INPUT} -x "${SUFF}" -g "_block" -r
+ARGS=""
+if [[ $UPDATE -eq 1 ]]; then
+	ARGS="-u"
+fi
+./haddEOS.sh -d ${DIR} -i ${INPUT} -x "${SUFF}" -g "${SEARCH}" -r ${ARGS}
 
 #check exit code
 HADDEXIT=$?
 if [[ $HADDEXIT -ne 0 ]]; then
-  echo "exit code $HADDEXIT, job failed"
-  exit $HADDEXIT
+	echo "exit code $HADDEXIT, job failed"
+	exit $HADDEXIT
 fi
