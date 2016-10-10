@@ -15,7 +15,7 @@ using namespace std;
 
 //recompile:
 //root -b -l -q MakeAllDCsyst.C++
-void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV7", string systTypes="nominal,QCD,puunc,scaleunc,isrunc,trigStatUnc,trigSystUnc,JEC,JER,btagSFunc,mistagSFunc", string contamTypes="LDP,GJet_CleanVars,GJetLDP_CleanVars", int part=-1, string suffix=""){
+void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV7", string systTypes="nominal,QCD,scaleunc,isrunc,trigStatUnc,trigSystUnc,JEC,JER,btagSFunc,mistagSFunc", string contamTypes="LDP,GJet_CleanVars,GJetLDP_CleanVars", int part=-1, string suffix=""){
 	gErrorIgnoreLevel = kBreak;
 	
 	if(mode==-1){
