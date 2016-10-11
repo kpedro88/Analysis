@@ -73,6 +73,8 @@ class KSkimmer : public NtupleClass {
 			for(unsigned s = 0; s < theSelections.size(); s++){
 				theSelections[s]->CheckBranches();
 			}
+			//ROOT voodoo (apparently, branch addresses can sometimes get screwed up by excessive enabling/disabling?)
+			Init(fChain);
 			
 			Long64_t nbytes = 0, nb = 0;
 			for (Long64_t jentry=0; jentry<nentries;jentry++) {
