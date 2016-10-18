@@ -19,7 +19,10 @@ using namespace std;
 class BTagCorrector {
 	public:
 		//constructor
-		BTagCorrector() : debug(false), fastsim(false), btagSFunc(0), mistagSFunc(0), btagCFunc(0), ctagCFunc(0), mistagCFunc(0), h_eff_b(NULL), h_eff_c(NULL), h_eff_udsg(NULL) {}
+		BTagCorrector() : debug(false), fastsim(false), 
+			btagSFunc("central"), mistagSFunc("central"), btagCFunc("central"), ctagCFunc("central"), mistagCFunc("central"), 
+			h_eff_b(NULL), h_eff_c(NULL), h_eff_udsg(NULL)
+		{}
 		//destructor
 		virtual ~BTagCorrector() {}
 		
@@ -54,29 +57,21 @@ class BTagCorrector {
 		void SetCalib(string cfile){
 			//initialize btag helper classes
 			calib = BTagCalibrationS("",cfile);
-			reader = BTagCalibrationReaderS(BTagEntryS::OP_MEDIUM, "central");
+			reader = BTagCalibrationReaderS(BTagEntryS::OP_MEDIUM, "central", {"up","down"});
 			reader.load(calib, BTagEntryS::FLAV_B, "comb"); reader.load(calib, BTagEntryS::FLAV_C, "comb");  reader.load(calib, BTagEntryS::FLAV_UDSG, "incl");
-			readerUp = BTagCalibrationReaderS(BTagEntryS::OP_MEDIUM, "up");
-			readerUp.load(calib, BTagEntryS::FLAV_B, "comb"); readerUp.load(calib, BTagEntryS::FLAV_C, "comb");  readerUp.load(calib, BTagEntryS::FLAV_UDSG, "incl");
-			readerDown = BTagCalibrationReaderS(BTagEntryS::OP_MEDIUM, "down");
-			readerDown.load(calib, BTagEntryS::FLAV_B, "comb"); readerDown.load(calib, BTagEntryS::FLAV_C, "comb");  readerDown.load(calib, BTagEntryS::FLAV_UDSG, "incl");
 		}
 		void SetCalibFastSim(string cfile){
 			//read CFs
 			calibFast = BTagCalibrationS("",cfile);
-			readerFast = BTagCalibrationReaderS(BTagEntryS::OP_MEDIUM, "central");
+			readerFast = BTagCalibrationReaderS(BTagEntryS::OP_MEDIUM, "central", {"up","down"});
 			readerFast.load(calibFast, BTagEntryS::FLAV_B, "fastsim"); readerFast.load(calibFast, BTagEntryS::FLAV_C, "fastsim");  readerFast.load(calibFast, BTagEntryS::FLAV_UDSG, "fastsim");
-			readerFastUp = BTagCalibrationReaderS(BTagEntryS::OP_MEDIUM, "up");
-			readerFastUp.load(calibFast, BTagEntryS::FLAV_B, "fastsim"); readerFastUp.load(calibFast, BTagEntryS::FLAV_C, "fastsim");  readerFastUp.load(calibFast, BTagEntryS::FLAV_UDSG, "fastsim");
-			readerFastDown = BTagCalibrationReaderS(BTagEntryS::OP_MEDIUM, "down");
-			readerFastDown.load(calibFast, BTagEntryS::FLAV_B, "fastsim"); readerFastDown.load(calibFast, BTagEntryS::FLAV_C, "fastsim");  readerFastDown.load(calibFast, BTagEntryS::FLAV_UDSG, "fastsim");
 		}
-		void SetBtagSFunc(int u) { btagSFunc = u; }
-		void SetCtagSFunc(int u) { btagSFunc = u; } //ctag and btag are correlated
-		void SetMistagSFunc(int u) { mistagSFunc = u; }
-		void SetBtagCFunc(int u) { btagCFunc = u; }
-		void SetCtagCFunc(int u) { ctagCFunc = u; }
-		void SetMistagCFunc(int u) { mistagCFunc = u; }
+		void SetBtagSFunc(int u) { btagSFunc = u==0 ? "central" : (u==1 ? "up" : "down"); }
+		void SetCtagSFunc(int u) { btagSFunc = u==0 ? "central" : (u==1 ? "up" : "down"); } //ctag and btag are correlated
+		void SetMistagSFunc(int u) { mistagSFunc = u==0 ? "central" : (u==1 ? "up" : "down"); }
+		void SetBtagCFunc(int u) { btagCFunc = u==0 ? "central" : (u==1 ? "up" : "down"); }
+		void SetCtagCFunc(int u) { ctagCFunc = u==0 ? "central" : (u==1 ? "up" : "down"); }
+		void SetMistagCFunc(int u) { mistagCFunc = u==0 ? "central" : (u==1 ? "up" : "down"); }
 		
 		//method 1b
 		vector<double> GetCorrections(vector<TLorentzVector>* Jets, vector<int>* Jets_flavor, vector<bool>* Jets_HTMask){
@@ -212,46 +207,34 @@ class BTagCorrector {
 			
 			if(flav==5){ //b-tag
 				sfEffList[0] = h_eff_b->GetBinContent(h_eff_b->FindBin(pt,eta));
-				sfEffList[1] = (btagSFunc==0 ? reader.eval(BTagEntryS::FLAV_B,eta,pt) :
-							   (btagSFunc==1 ? readerUp.eval(BTagEntryS::FLAV_B,eta,pt) :
-											   readerDown.eval(BTagEntryS::FLAV_B,eta,pt) ) );
+				sfEffList[1] = reader.eval_auto_bounds(btagSFunc,BTagEntryS::FLAV_B,eta,pt);
 				if(fastsim){
-					sfEffList[2] = (btagCFunc==0 ? readerFast.eval(BTagEntryS::FLAV_B,eta,pt) :
-								   (btagCFunc==1 ? readerFastUp.eval(BTagEntryS::FLAV_B,eta,pt) :
-												   readerFastDown.eval(BTagEntryS::FLAV_B,eta,pt) ) );
+					sfEffList[2] = readerFast.eval_auto_bounds(btagCFunc,BTagEntryS::FLAV_B,eta,pt);
 				}
 			}
 			else if(flav==4){ //charm mistag
 				sfEffList[0] = h_eff_c->GetBinContent(h_eff_c->FindBin(pt,eta));
-				sfEffList[1] = (btagSFunc==0 ? reader.eval(BTagEntryS::FLAV_C,eta,pt) :
-							   (btagSFunc==1 ? readerUp.eval(BTagEntryS::FLAV_C,eta,pt) :
-											   readerDown.eval(BTagEntryS::FLAV_C,eta,pt) ) );
+				sfEffList[1] = reader.eval_auto_bounds(btagSFunc,BTagEntryS::FLAV_C,eta,pt);
 				if(fastsim){
-					sfEffList[2] = (ctagCFunc==0 ? readerFast.eval(BTagEntryS::FLAV_C,eta,pt) :
-								   (ctagCFunc==1 ? readerFastUp.eval(BTagEntryS::FLAV_C,eta,pt) :
-												   readerFastDown.eval(BTagEntryS::FLAV_C,eta,pt) ) );
+					sfEffList[2] = readerFast.eval_auto_bounds(ctagCFunc,BTagEntryS::FLAV_C,eta,pt);
 				}
 			}
 			else if(flav<4 || flav==21){ //udsg mistag
 				sfEffList[0] = h_eff_udsg->GetBinContent(h_eff_udsg->FindBin(pt,eta));
-				sfEffList[1] = (mistagSFunc==0 ? reader.eval(BTagEntryS::FLAV_UDSG,eta,pt) :
-							   (mistagSFunc==1 ? readerUp.eval(BTagEntryS::FLAV_UDSG,eta,pt) :
-												 readerDown.eval(BTagEntryS::FLAV_UDSG,eta,pt) ) );
+				sfEffList[1] = reader.eval_auto_bounds(mistagSFunc,BTagEntryS::FLAV_UDSG,eta,pt);
 				if(fastsim){
-					sfEffList[2] = (mistagCFunc==0 ? readerFast.eval(BTagEntryS::FLAV_UDSG,eta,pt) :
-								   (mistagCFunc==1 ? readerFastUp.eval(BTagEntryS::FLAV_UDSG,eta,pt) :
-													 readerFastDown.eval(BTagEntryS::FLAV_UDSG,eta,pt) ) );
+					sfEffList[2] = readerFast.eval_auto_bounds(mistagCFunc,BTagEntryS::FLAV_UDSG,eta,pt);
 				}
 			}
 		}
 		
 		//member variables
 		bool debug, fastsim;
-		int btagSFunc, mistagSFunc;
-		int btagCFunc, ctagCFunc, mistagCFunc;
+		string btagSFunc, mistagSFunc;
+		string btagCFunc, ctagCFunc, mistagCFunc;
 		BTagCalibrationS calib, calibFast;
-		BTagCalibrationReaderS reader, readerUp, readerDown;
-		BTagCalibrationReaderS readerFast, readerFastUp, readerFastDown;
+		BTagCalibrationReaderS reader;
+		BTagCalibrationReaderS readerFast;
 		TH2F *h_eff_b, *h_eff_c, *h_eff_udsg;
 };
 
