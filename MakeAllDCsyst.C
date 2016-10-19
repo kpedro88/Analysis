@@ -15,7 +15,7 @@ using namespace std;
 
 //recompile:
 //root -b -l -q MakeAllDCsyst.C++
-void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV7", string systTypes="nominal,QCD,scaleunc,isrunc,trigStatUnc,trigSystUnc,JEC,JER,btagSFunc,mistagSFunc", string contamTypes="LDP,GJet_CleanVars,GJetLDP_CleanVars", int part=-1, string suffix=""){
+void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV7", string systTypes="nominal,QCD,scaleunc,isrunc,trigStatUnc,trigSystUnc,JEC,JER,btagSFunc,mistagSFunc,isotrackunc,lumiunc", string contamTypes="LDP,GJet_CleanVars,GJetLDP_CleanVars", int part=-1, string suffix=""){
 	gErrorIgnoreLevel = kBreak;
 	
 	if(mode==-1){
@@ -83,6 +83,7 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 		}
 		
 		string ovar = "";
+		string labelopt = "string:RA2prefix["+systs[i]+"]";
 		//up
 		cout << systs[i] << " up" << endl;
 		if(systs[i]=="JEC") region = "signal_JECup";
@@ -90,15 +91,15 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 		else ovar = "_"+systs[i]+"Up";
 		stringstream ssystup;
 		ssystup << "int:" << systs[i] << "[" << 1 << "]";
-		KPlotDriver(indir+inpre+region,{input,setlist},{"OPTION","string:rootfile["+outdir+outpre+region+ovar+osuff+"]",ssystup.str()});
+		KPlotDriver(indir+inpre+region,{input,setlist},{"OPTION","string:rootfile["+outdir+outpre+region+ovar+osuff+"]",labelopt,ssystup.str()});
 		//down
 		cout << systs[i] << " down" << endl;
 		if(systs[i]=="JEC") region = "signal_JECdown";
 		else if(systs[i]=="JER") region = "signal_JERdown";
 		else ovar = "_"+systs[i]+"Down";
 		stringstream ssystdown;
-		ssystdown << "int:" << systs[i] << "[" << 1 << "]";
-		KPlotDriver(indir+inpre+region,{input,setlist},{"OPTION","string:rootfile["+outdir+outpre+region+ovar+osuff+"]",ssystdown.str()});
+		ssystdown << "int:" << systs[i] << "[" << -1 << "]";
+		KPlotDriver(indir+inpre+region,{input,setlist},{"OPTION","string:rootfile["+outdir+outpre+region+ovar+osuff+"]",labelopt,ssystdown.str()});
 		
 		//reset region if altered for jet syst
 		if(systs[i]=="JEC" || systs[i]=="JER") region = "signal";

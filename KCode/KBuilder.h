@@ -217,6 +217,7 @@ class KBuilderMC : public KBuilder {
 			xsection = 0; got_xsection = localOpt->Get("xsection",xsection);
 			norm = 0; got_luminorm = globalOpt->Get("luminorm",norm);
 			debugWeight = globalOpt->Get("debugWeight",false); didDebugWeight = false;
+			fastsim = localOpt->Get("fastsim",false);
 			
 			//PU options
 			pucorr = globalOpt->Get("pucorr",false);
@@ -246,9 +247,45 @@ class KBuilderMC : public KBuilder {
 				isrcorror.SetWeights(isrtmp,(TH1*)MyBase->GetFile()->Get("NJetsISR"));
 			}
 			
-			//other uncertainty options
-			fastsim = localOpt->Get("fastsim",false);
+			//jet ID corr options - only for fastsim
+			jetidcorrval = 1;
 			jetidcorr = globalOpt->Get("jetidcorr",false);
+			int jetidunc = 0; globalOpt->Get("jetidunc",jetidunc);
+			vector<double> jetidcorrvals;
+			if(fastsim && globalOpt->Get("jetidcorrvals",jetidcorrvals) && jetidcorrvals.size()==3){
+				//vector has down, central, up
+				jetidcorrval = jetidunc==0 ? jetidcorrvals[1] : ( jetidunc==1 ? jetidcorrvals[2] : jetidcorrvals[0] );
+			}
+			
+			//isotrack eff corr options - only for signals with leptonic decays
+			isotrackcorrval = 1;
+			isotrackcorr = globalOpt->Get("isotrackcorr",false);
+			int isotrackunc = 0; globalOpt->Get("isotrackunc",isotrackunc);
+			vector<string> isotracksiglist; globalOpt->Get("isotracksiglist",isotracksiglist);
+			bool inisotracksiglist = false;
+			for(const auto& sig : isotracksiglist){
+				if(MyBase->GetName().find(sig)!=string::npos){
+					inisotracksiglist = true;
+					break;
+				}
+			}
+			vector<double> isotrackcorrvals;
+			if(inisotracksiglist && globalOpt->Get("isotrackcorrvals",isotrackcorrvals) && isotrackcorrvals.size()==3){
+				//vector has down, central, up
+				isotrackcorrval = isotrackunc==0 ? isotrackcorrvals[1] : ( isotrackunc==1 ? isotrackcorrvals[2] : isotrackcorrvals[0] );
+			}
+			
+			//lumi corr options
+			lumicorrval = 1;
+			lumicorr = globalOpt->Get("lumicorr",false);
+			int lumiunc = 0; globalOpt->Get("lumiunc",lumiunc);
+			vector<double> lumicorrvals;
+			if(globalOpt->Get("lumicorrvals",lumicorrvals) && lumicorrvals.size()==3){
+				//vector has down, central, up
+				lumicorrval = lumiunc==0 ? lumicorrvals[1] : ( lumiunc==1 ? lumicorrvals[2] : lumicorrvals[0] );
+			}
+			
+			//other uncertainty options
 			pdfunc = 0; globalOpt->Get("pdfunc",pdfunc);
 			scaleunc = 0; globalOpt->Get("scaleunc",scaleunc);
 			if(pdfunc!=0 || scaleunc!=0){
@@ -353,8 +390,16 @@ class KBuilderMC : public KBuilder {
 			}
 			
 			//correct for expected FullSim PFJetID efficiency
-			if(jetidcorr && fastsim){
-				w *= 0.99;
+			if(jetidcorr){
+				w *= jetidcorrval;
+			}
+			
+			if(isotrackcorr){
+				w *= isotrackcorrval;
+			}
+			
+			if(lumicorr){
+				w *= lumicorrval;
 			}
 			
 			//now do scaling: norm*xsection/nevents
@@ -393,7 +438,8 @@ class KBuilderMC : public KBuilder {
 
 		//member variables
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, debugWeight, didDebugWeight;
-		bool pucorr, trigcorr, isrcorr, realMET, signal, fastsim, jetidcorr;
+		bool pucorr, trigcorr, isrcorr, realMET, signal, fastsim, jetidcorr, isotrackcorr, lumicorr;
+		double jetidcorrval, isotrackcorrval, lumicorrval;
 		int puunc, pdfunc, isrunc, scaleunc, trigStatUnc, trigSystUnc;
 		vector<int> mother;
 		TH1 *puhist, *puhistUp, *puhistDown;

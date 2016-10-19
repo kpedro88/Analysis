@@ -1,19 +1,19 @@
 SET
-hist	mc	SMSbbbb1500
+hist	mc	T1bbbb_1500_100
 	base	mc	T1bbbb_1500_100	s:filename[tree_T1bbbb_1500_100.root]	d:xsection[0.0141903]	b:signal[1]	vi:mother[1000021]
-hist	mc	SMSbbbb1000
+hist	mc	T1bbbb_1000_900
 	base	mc	T1bbbb_1000_900	s:filename[tree_T1bbbb_1000_900.root]	d:xsection[0.325388]	b:signal[1]	vi:mother[1000021]
-hist	mc	SMStttt1500
+hist	mc	T1tttt_1500_100
 	base	mc	T1tttt_1500_100	s:filename[tree_T1tttt_1500_100.root]	d:xsection[0.0141903]	b:signal[1]	vi:mother[1000021]
-hist	mc	SMStttt1200
+hist	mc	T1tttt_1200_800
 	base	mc	T1tttt_1200_800	s:filename[tree_T1tttt_1200_800.root]	d:xsection[0.0856418]	b:signal[1]	vi:mother[1000021]
-hist	mc	SMSqqqq1400
+hist	mc	T1qqqq_1400_100
 	base	mc	T1qqqq_1400_100	s:filename[tree_T1qqqq_1400_100.root]	d:xsection[0.0252977]	b:signal[1]	vi:mother[1000021]
-hist	mc	SMSqqqq1000
-	base	mc	T1qqqq_1000_800	s:filename[tree_T1qqqq_1000_800.root]	d:xsection[0.325388]	b:signal[1]	vi:mother[1000021]
-hist	mc	SMStt425
+hist	mc	T1qqqq_1400_100
+	base	mc	T1qqqq_1400_100	s:filename[tree_T1qqqq_1000_800.root]	d:xsection[0.325388]	b:signal[1]	vi:mother[1000021]
+hist	mc	T2tt_425_325
 	base	mc	T2tt_425_325	s:filename[tree_T2tt_425_325.root]	d:xsection[1.31169]	b:signal[1]	vi:mother[1000006]
-hist	mc	SMStt500
+hist	mc	T2tt_500_325
 	base	mc	T2tt_500_325	s:filename[tree_T2tt_500_325.root]	d:xsection[0.51848]	b:signal[1]	vi:mother[1000006]
-hist	mc	SMStt850
+hist	mc	T2tt_850_100
 	base	mc	T2tt_850_100	s:filename[tree_T2tt_850_100.root]	d:xsection[0.0189612]	b:signal[1]	vi:mother[1000006]
