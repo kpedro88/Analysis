@@ -136,18 +136,20 @@ After the jobs finish, the split output files should be combined:
 ```
 
 Currently available uncertainties:
-* Pileup reweighting
-* PDF weights
-* Scale weights (renormalization/factorization)
+* pileup reweighting (not used)
+* scale weights (renormalization/factorization)
 * initial state radiation
 * trigger efficiency statistical
 * trigger efficiency systematic
-* Jet energy corrections
+* jet energy corrections
+* jet energy resolution
+* jet ID (fastsim only)
+* isolated track efficiency (leptonic decays only)
+* luminosity
 * b-tagging scale factors
-* c-tagging scale factors
 * mistagging scale factors
 * b-tagging correction factors (fastsim only)
 * c-tagging correction factors (fastsim only)
 * mistagging correction factors (fastsim only)
 
-Signal contamination is checked in the LowDeltaPhi, Gamma+Jets, and SingleLepton control regions.
+Signal contamination is checked in the LowDeltaPhi, Gamma+Jets, SingleLepton, and LowMHT (QCD) control regions.
