@@ -152,4 +152,4 @@ Currently available uncertainties:
 * c-tagging correction factors (fastsim only)
 * mistagging correction factors (fastsim only)
 
-Signal contamination is checked in the LowDeltaPhi, Gamma+Jets, SingleLepton, and LowMHT (QCD) control regions.
+Signal contamination can be checked in the LowDeltaPhi, Gamma+Jets, SingleLepton, and LowMHT (QCD) control regions.

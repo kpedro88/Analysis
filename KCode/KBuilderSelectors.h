@@ -353,13 +353,16 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 				labels.reserve(all_bins[0].size());
 				string prefix = "";
 				sel->GetGlobalOpt()->Get("RA2prefix",prefix);
+				bool suffix = sel->GetGlobalOpt()->Get("RA2suffix",true);
 				for(unsigned b = 0; b < all_bins[0].size(); ++b){
 					vector<unsigned> bin_id;
 					bin_id.reserve(all_bins.size());
 					stringstream label;
-					if(prefix.size()>0) label << prefix << "_";
+					if(prefix.size()>0) label << prefix;
+					if(suffix) label << "_";
 					for(unsigned q = 0; q < all_bins.size(); ++q){
 						bin_id.push_back(all_bins[q][b]);
+						if(!suffix) continue;
 						label << RA2VarNames[q] << all_bins[q][b]; //the specific bin label: currently just the bin number
 						if(q<all_bins.size()-1) label << "_";
 					}
