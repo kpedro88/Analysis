@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Mon Sep 19 15:41:50 2016 by ROOT version 6.06/01
+// Thu Nov  3 17:34:27 2016 by ROOT version 6.06/01
 // from TTree PreSelection/PreSelection
-// found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV10/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
+// found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV11/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
 //////////////////////////////////////////////////////////
 
 #ifndef NtupleClass_h
@@ -117,6 +117,7 @@ public :
    vector<double>  *GenTaus_LeadRecoTrkIso;
    vector<TLorentzVector> *GenTaus_LeadTrk;
    vector<double>  *GenTaus_MT2Activity;
+   vector<int>     *GenTaus_NProngs;
    vector<TLorentzVector> *GenTaus_Nu;
    Int_t           globalTightHalo2016Filter;
    Int_t           HBHEIsoNoiseFilter;
@@ -154,6 +155,9 @@ public :
    vector<bool>    *Jets_ISRMask;
    vector<double>  *Jets_jecFactor;
    vector<double>  *Jets_jecUnc;
+   vector<double>  *Jets_jerFactor;
+   vector<double>  *Jets_jerFactorDown;
+   vector<double>  *Jets_jerFactorUp;
    vector<bool>    *Jets_LeptonMask;
    vector<bool>    *Jets_MHTMask;
    vector<double>  *Jets_muonEnergyFraction;
@@ -240,6 +244,7 @@ public :
    vector<double>  *JetsJERup_muonEnergyFraction;
    vector<int>     *JetsJERup_partonFlavor;
    Double_t        madHT;
+   Int_t           madMinDeltaRStatus;
    Double_t        madMinPhotonDeltaR;
    Double_t        MET;
    Double_t        METclean;
@@ -307,22 +312,19 @@ public :
    vector<double>  *Photons_pfNeutralIso;
    vector<double>  *Photons_pfNeutralIsoRhoCorr;
    vector<double>  *Photons_sigmaIetaIeta;
+   vector<string>  *PmssmId;
    Double_t        puSysDown;
    Double_t        puSysUp;
    Double_t        puWeight;
    vector<double>  *ScaleWeights;
    vector<TLorentzVector> *SoftJets;
+   vector<double>  *SoftJets_bDiscriminatorCSV;
    vector<bool>    *SoftJets_ID;
    vector<double>  *SoftJets_jecFactor;
    vector<double>  *SoftJets_jecUnc;
-   vector<TLorentzVector> *SoftJetsJECdown;
-   vector<bool>    *SoftJetsJECdown_ID;
-   vector<TLorentzVector> *SoftJetsJECup;
-   vector<bool>    *SoftJetsJECup_ID;
-   vector<TLorentzVector> *SoftJetsJERdown;
-   vector<bool>    *SoftJetsJERdown_ID;
-   vector<TLorentzVector> *SoftJetsJERup;
-   vector<bool>    *SoftJetsJERup_ID;
+   vector<double>  *SoftJets_jerFactor;
+   vector<double>  *SoftJets_jerFactorDown;
+   vector<double>  *SoftJets_jerFactorUp;
    Double_t        SusyLSPMass;
    Double_t        SusyMotherMass;
    vector<TLorentzVector> *TAPElectronTracks;
@@ -440,6 +442,7 @@ public :
    TBranch        *b_GenTaus_LeadRecoTrkIso;   //!
    TBranch        *b_GenTaus_LeadTrk;   //!
    TBranch        *b_GenTaus_MT2Activity;   //!
+   TBranch        *b_GenTaus_NProngs;   //!
    TBranch        *b_GenTaus_Nu;   //!
    TBranch        *b_globalTightHalo2016Filter;   //!
    TBranch        *b_HBHEIsoNoiseFilter;   //!
@@ -477,6 +480,9 @@ public :
    TBranch        *b_Jets_ISRMask;   //!
    TBranch        *b_Jets_jecFactor;   //!
    TBranch        *b_Jets_jecUnc;   //!
+   TBranch        *b_Jets_jerFactor;   //!
+   TBranch        *b_Jets_jerFactorDown;   //!
+   TBranch        *b_Jets_jerFactorUp;   //!
    TBranch        *b_Jets_LeptonMask;   //!
    TBranch        *b_Jets_MHTMask;   //!
    TBranch        *b_Jets_muonEnergyFraction;   //!
@@ -563,6 +569,7 @@ public :
    TBranch        *b_JetsJERup_muonEnergyFraction;   //!
    TBranch        *b_JetsJERup_partonFlavor;   //!
    TBranch        *b_madHT;   //!
+   TBranch        *b_madMinDeltaRStatus;   //!
    TBranch        *b_madMinPhotonDeltaR;   //!
    TBranch        *b_MET;   //!
    TBranch        *b_METclean;   //!
@@ -630,22 +637,19 @@ public :
    TBranch        *b_Photons_pfNeutralIso;   //!
    TBranch        *b_Photons_pfNeutralIsoRhoCorr;   //!
    TBranch        *b_Photons_sigmaIetaIeta;   //!
+   TBranch        *b_PmssmId;   //!
    TBranch        *b_puSysDown;   //!
    TBranch        *b_puSysUp;   //!
    TBranch        *b_puWeight;   //!
    TBranch        *b_ScaleWeights;   //!
    TBranch        *b_SoftJets;   //!
+   TBranch        *b_SoftJets_bDiscriminatorCSV;   //!
    TBranch        *b_SoftJets_ID;   //!
    TBranch        *b_SoftJets_jecFactor;   //!
    TBranch        *b_SoftJets_jecUnc;   //!
-   TBranch        *b_SoftJetsJECdown;   //!
-   TBranch        *b_SoftJetsJECdown_ID;   //!
-   TBranch        *b_SoftJetsJECup;   //!
-   TBranch        *b_SoftJetsJECup_ID;   //!
-   TBranch        *b_SoftJetsJERdown;   //!
-   TBranch        *b_SoftJetsJERdown_ID;   //!
-   TBranch        *b_SoftJetsJERup;   //!
-   TBranch        *b_SoftJetsJERup_ID;   //!
+   TBranch        *b_SoftJets_jerFactor;   //!
+   TBranch        *b_SoftJets_jerFactorDown;   //!
+   TBranch        *b_SoftJets_jerFactorUp;   //!
    TBranch        *b_SusyLSPMass;   //!
    TBranch        *b_SusyMotherMass;   //!
    TBranch        *b_TAPElectronTracks;   //!
@@ -689,11 +693,11 @@ NtupleClass::NtupleClass(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV10/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV11/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV10/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
+         f = new TFile("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV11/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
       }
-      TDirectory * dir = (TDirectory*)f->Get("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV10/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root:/TreeMaker2");
+      TDirectory * dir = (TDirectory*)f->Get("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV11/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root:/TreeMaker2");
       dir->GetObject("PreSelection",tree);
 
    }
@@ -776,6 +780,7 @@ void NtupleClass::Init(TTree *tree)
    GenTaus_LeadRecoTrkIso = 0;
    GenTaus_LeadTrk = 0;
    GenTaus_MT2Activity = 0;
+   GenTaus_NProngs = 0;
    GenTaus_Nu = 0;
    Jets = 0;
    Jets_bDiscriminatorCSV = 0;
@@ -791,6 +796,9 @@ void NtupleClass::Init(TTree *tree)
    Jets_ISRMask = 0;
    Jets_jecFactor = 0;
    Jets_jecUnc = 0;
+   Jets_jerFactor = 0;
+   Jets_jerFactorDown = 0;
+   Jets_jerFactorUp = 0;
    Jets_LeptonMask = 0;
    Jets_MHTMask = 0;
    Jets_muonEnergyFraction = 0;
@@ -908,19 +916,16 @@ void NtupleClass::Init(TTree *tree)
    Photons_pfNeutralIso = 0;
    Photons_pfNeutralIsoRhoCorr = 0;
    Photons_sigmaIetaIeta = 0;
+   PmssmId = 0;
    ScaleWeights = 0;
    SoftJets = 0;
+   SoftJets_bDiscriminatorCSV = 0;
    SoftJets_ID = 0;
    SoftJets_jecFactor = 0;
    SoftJets_jecUnc = 0;
-   SoftJetsJECdown = 0;
-   SoftJetsJECdown_ID = 0;
-   SoftJetsJECup = 0;
-   SoftJetsJECup_ID = 0;
-   SoftJetsJERdown = 0;
-   SoftJetsJERdown_ID = 0;
-   SoftJetsJERup = 0;
-   SoftJetsJERup_ID = 0;
+   SoftJets_jerFactor = 0;
+   SoftJets_jerFactorDown = 0;
+   SoftJets_jerFactorUp = 0;
    TAPElectronTracks = 0;
    TAPElectronTracks_activity = 0;
    TAPElectronTracks_charge = 0;
@@ -1038,6 +1043,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("GenTaus_LeadRecoTrkIso", &GenTaus_LeadRecoTrkIso, &b_GenTaus_LeadRecoTrkIso);
    fChain->SetBranchAddress("GenTaus_LeadTrk", &GenTaus_LeadTrk, &b_GenTaus_LeadTrk);
    fChain->SetBranchAddress("GenTaus_MT2Activity", &GenTaus_MT2Activity, &b_GenTaus_MT2Activity);
+   fChain->SetBranchAddress("GenTaus_NProngs", &GenTaus_NProngs, &b_GenTaus_NProngs);
    fChain->SetBranchAddress("GenTaus_Nu", &GenTaus_Nu, &b_GenTaus_Nu);
    fChain->SetBranchAddress("globalTightHalo2016Filter", &globalTightHalo2016Filter, &b_globalTightHalo2016Filter);
    fChain->SetBranchAddress("HBHEIsoNoiseFilter", &HBHEIsoNoiseFilter, &b_HBHEIsoNoiseFilter);
@@ -1075,6 +1081,9 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("Jets_ISRMask", &Jets_ISRMask, &b_Jets_ISRMask);
    fChain->SetBranchAddress("Jets_jecFactor", &Jets_jecFactor, &b_Jets_jecFactor);
    fChain->SetBranchAddress("Jets_jecUnc", &Jets_jecUnc, &b_Jets_jecUnc);
+   fChain->SetBranchAddress("Jets_jerFactor", &Jets_jerFactor, &b_Jets_jerFactor);
+   fChain->SetBranchAddress("Jets_jerFactorDown", &Jets_jerFactorDown, &b_Jets_jerFactorDown);
+   fChain->SetBranchAddress("Jets_jerFactorUp", &Jets_jerFactorUp, &b_Jets_jerFactorUp);
    fChain->SetBranchAddress("Jets_LeptonMask", &Jets_LeptonMask, &b_Jets_LeptonMask);
    fChain->SetBranchAddress("Jets_MHTMask", &Jets_MHTMask, &b_Jets_MHTMask);
    fChain->SetBranchAddress("Jets_muonEnergyFraction", &Jets_muonEnergyFraction, &b_Jets_muonEnergyFraction);
@@ -1161,6 +1170,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("JetsJERup_muonEnergyFraction", &JetsJERup_muonEnergyFraction, &b_JetsJERup_muonEnergyFraction);
    fChain->SetBranchAddress("JetsJERup_partonFlavor", &JetsJERup_partonFlavor, &b_JetsJERup_partonFlavor);
    fChain->SetBranchAddress("madHT", &madHT, &b_madHT);
+   fChain->SetBranchAddress("madMinDeltaRStatus", &madMinDeltaRStatus, &b_madMinDeltaRStatus);
    fChain->SetBranchAddress("madMinPhotonDeltaR", &madMinPhotonDeltaR, &b_madMinPhotonDeltaR);
    fChain->SetBranchAddress("MET", &MET, &b_MET);
    fChain->SetBranchAddress("METclean", &METclean, &b_METclean);
@@ -1228,22 +1238,19 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("Photons_pfNeutralIso", &Photons_pfNeutralIso, &b_Photons_pfNeutralIso);
    fChain->SetBranchAddress("Photons_pfNeutralIsoRhoCorr", &Photons_pfNeutralIsoRhoCorr, &b_Photons_pfNeutralIsoRhoCorr);
    fChain->SetBranchAddress("Photons_sigmaIetaIeta", &Photons_sigmaIetaIeta, &b_Photons_sigmaIetaIeta);
+   fChain->SetBranchAddress("PmssmId", &PmssmId, &b_PmssmId);
    fChain->SetBranchAddress("puSysDown", &puSysDown, &b_puSysDown);
    fChain->SetBranchAddress("puSysUp", &puSysUp, &b_puSysUp);
    fChain->SetBranchAddress("puWeight", &puWeight, &b_puWeight);
    fChain->SetBranchAddress("ScaleWeights", &ScaleWeights, &b_ScaleWeights);
    fChain->SetBranchAddress("SoftJets", &SoftJets, &b_SoftJets);
+   fChain->SetBranchAddress("SoftJets_bDiscriminatorCSV", &SoftJets_bDiscriminatorCSV, &b_SoftJets_bDiscriminatorCSV);
    fChain->SetBranchAddress("SoftJets_ID", &SoftJets_ID, &b_SoftJets_ID);
    fChain->SetBranchAddress("SoftJets_jecFactor", &SoftJets_jecFactor, &b_SoftJets_jecFactor);
    fChain->SetBranchAddress("SoftJets_jecUnc", &SoftJets_jecUnc, &b_SoftJets_jecUnc);
-   fChain->SetBranchAddress("SoftJetsJECdown", &SoftJetsJECdown, &b_SoftJetsJECdown);
-   fChain->SetBranchAddress("SoftJetsJECdown_ID", &SoftJetsJECdown_ID, &b_SoftJetsJECdown_ID);
-   fChain->SetBranchAddress("SoftJetsJECup", &SoftJetsJECup, &b_SoftJetsJECup);
-   fChain->SetBranchAddress("SoftJetsJECup_ID", &SoftJetsJECup_ID, &b_SoftJetsJECup_ID);
-   fChain->SetBranchAddress("SoftJetsJERdown", &SoftJetsJERdown, &b_SoftJetsJERdown);
-   fChain->SetBranchAddress("SoftJetsJERdown_ID", &SoftJetsJERdown_ID, &b_SoftJetsJERdown_ID);
-   fChain->SetBranchAddress("SoftJetsJERup", &SoftJetsJERup, &b_SoftJetsJERup);
-   fChain->SetBranchAddress("SoftJetsJERup_ID", &SoftJetsJERup_ID, &b_SoftJetsJERup_ID);
+   fChain->SetBranchAddress("SoftJets_jerFactor", &SoftJets_jerFactor, &b_SoftJets_jerFactor);
+   fChain->SetBranchAddress("SoftJets_jerFactorDown", &SoftJets_jerFactorDown, &b_SoftJets_jerFactorDown);
+   fChain->SetBranchAddress("SoftJets_jerFactorUp", &SoftJets_jerFactorUp, &b_SoftJets_jerFactorUp);
    fChain->SetBranchAddress("SusyLSPMass", &SusyLSPMass, &b_SusyLSPMass);
    fChain->SetBranchAddress("SusyMotherMass", &SusyMotherMass, &b_SusyMotherMass);
    fChain->SetBranchAddress("TAPElectronTracks", &TAPElectronTracks, &b_TAPElectronTracks);
