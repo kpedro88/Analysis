@@ -128,6 +128,7 @@ public :
    Double_t        HTJECup;
    Double_t        HTJERdown;
    Double_t        HTJERup;
+   Double_t        HTOnline;
    Int_t           isoElectronTracks;
    Int_t           isoElectronTracksclean;
    Int_t           isoMuonTracks;
@@ -260,6 +261,7 @@ public :
    Double_t        MHTJECup;
    Double_t        MHTJERdown;
    Double_t        MHTJERup;
+   Double_t        MHTOnline;
    Double_t        MHTPhi;
    Double_t        MHTPhiclean;
    Double_t        MHTPhiJECdown;
@@ -313,6 +315,7 @@ public :
    vector<double>  *Photons_pfNeutralIsoRhoCorr;
    vector<double>  *Photons_sigmaIetaIeta;
    vector<string>  *PmssmId;
+   Double_t        PrescaleWeightHT;
    Double_t        puSysDown;
    Double_t        puSysUp;
    Double_t        puWeight;
@@ -453,6 +456,7 @@ public :
    TBranch        *b_HTJECup;   //!
    TBranch        *b_HTJERdown;   //!
    TBranch        *b_HTJERup;   //!
+   TBranch        *b_HTOnline;   //!
    TBranch        *b_isoElectronTracks;   //!
    TBranch        *b_isoElectronTracksclean;   //!
    TBranch        *b_isoMuonTracks;   //!
@@ -585,6 +589,7 @@ public :
    TBranch        *b_MHTJECup;   //!
    TBranch        *b_MHTJERdown;   //!
    TBranch        *b_MHTJERup;   //!
+   TBranch        *b_MHTOnline;   //!
    TBranch        *b_MHTPhi;   //!
    TBranch        *b_MHTPhiclean;   //!
    TBranch        *b_MHTPhiJECdown;   //!
@@ -638,6 +643,7 @@ public :
    TBranch        *b_Photons_pfNeutralIsoRhoCorr;   //!
    TBranch        *b_Photons_sigmaIetaIeta;   //!
    TBranch        *b_PmssmId;   //!
+   TBranch        *b_PrescaleWeightHT;   //!
    TBranch        *b_puSysDown;   //!
    TBranch        *b_puSysUp;   //!
    TBranch        *b_puWeight;   //!
@@ -1054,6 +1060,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("HTJECup", &HTJECup, &b_HTJECup);
    fChain->SetBranchAddress("HTJERdown", &HTJERdown, &b_HTJERdown);
    fChain->SetBranchAddress("HTJERup", &HTJERup, &b_HTJERup);
+   fChain->SetBranchAddress("HTOnline", &HTOnline, &b_HTOnline);
    fChain->SetBranchAddress("isoElectronTracks", &isoElectronTracks, &b_isoElectronTracks);
    fChain->SetBranchAddress("isoElectronTracksclean", &isoElectronTracksclean, &b_isoElectronTracksclean);
    fChain->SetBranchAddress("isoMuonTracks", &isoMuonTracks, &b_isoMuonTracks);
@@ -1186,6 +1193,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("MHTJECup", &MHTJECup, &b_MHTJECup);
    fChain->SetBranchAddress("MHTJERdown", &MHTJERdown, &b_MHTJERdown);
    fChain->SetBranchAddress("MHTJERup", &MHTJERup, &b_MHTJERup);
+   fChain->SetBranchAddress("MHTOnline", &MHTOnline, &b_MHTOnline);
    fChain->SetBranchAddress("MHTPhi", &MHTPhi, &b_MHTPhi);
    fChain->SetBranchAddress("MHTPhiclean", &MHTPhiclean, &b_MHTPhiclean);
    fChain->SetBranchAddress("MHTPhiJECdown", &MHTPhiJECdown, &b_MHTPhiJECdown);
@@ -1239,6 +1247,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("Photons_pfNeutralIsoRhoCorr", &Photons_pfNeutralIsoRhoCorr, &b_Photons_pfNeutralIsoRhoCorr);
    fChain->SetBranchAddress("Photons_sigmaIetaIeta", &Photons_sigmaIetaIeta, &b_Photons_sigmaIetaIeta);
    fChain->SetBranchAddress("PmssmId", &PmssmId, &b_PmssmId);
+   fChain->SetBranchAddress("PrescaleWeightHT", &PrescaleWeightHT, &b_PrescaleWeightHT);
    fChain->SetBranchAddress("puSysDown", &puSysDown, &b_puSysDown);
    fChain->SetBranchAddress("puSysUp", &puSysUp, &b_puSysUp);
    fChain->SetBranchAddress("puWeight", &puWeight, &b_puWeight);

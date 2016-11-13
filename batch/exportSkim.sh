@@ -301,6 +301,15 @@ DYJetsToLL_M-50_HT-400to600_block3 \
 DYJetsToLL_M-50_HT-600toInf_block0 \
 DYJetsToLL_M-50_HT-600toInf_block1 \
 DYJetsToLL_M-50_HT-600toInf_block2 \
+DYJetsToLL_M-50_HT-600to800_block0 \
+DYJetsToLL_M-50_HT-600to800_block1 \
+DYJetsToLL_M-50_HT-600to800_block2 \
+DYJetsToLL_M-50_HT-600to800_block3 \
+DYJetsToLL_M-50_HT-800to1200_block0 \
+DYJetsToLL_M-50_HT-800to1200_block1 \
+DYJetsToLL_M-50_HT-800to1200_block2 \
+DYJetsToLL_M-50_HT-1200to2500 \
+DYJetsToLL_M-50_HT-2500toInf \
 ZJetsToNuNu_HT-100to200_block0 \
 ZJetsToNuNu_HT-100to200_block1 \
 ZJetsToNuNu_HT-100to200_block2 \
