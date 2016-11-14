@@ -304,6 +304,7 @@ class KPhotonSelector : public KSelector<KSkimmer> {
 			//check option
 			loose = localOpt->Get("loose",true);
 			veto = localOpt->Get("veto",false);
+			trigger = localOpt->Get("trigger",false);
 		}
 		
 		//this selector doesn't add anything to tree
@@ -317,7 +318,7 @@ class KPhotonSelector : public KSelector<KSkimmer> {
 			else{
 				//tighten up ID
 				for(unsigned p = 0; p < looper->Photons->size(); ++p){
-					if(looper->Photons_fullID->at(p)) ++NumPhotons;
+					if(looper->Photons_fullID->at(p) and (!trigger || looper->Photons->at(p).Pt()>200)) ++NumPhotons;
 				}
 			}
 			
@@ -327,6 +328,7 @@ class KPhotonSelector : public KSelector<KSkimmer> {
 		//member variables
 		bool loose;
 		bool veto;
+		bool trigger;
 };
 
 //------------------------------------------------------

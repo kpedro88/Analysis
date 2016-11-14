@@ -30,5 +30,7 @@ for SAMPLE in ${SAMPLES[@]}; do
     ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} signalTrigger,signalTrigger_JetLeptonClean ${INDIR} ${OUTDIR} ${STORE}
   elif [[ $SAMPLE == *"JetHT"* ]]; then
     ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} QCDTrigger,QCDTrigger_JetLeptonClean ${INDIR} ${OUTDIR} ${STORE}
+  elif [[ $SAMPLE == *"SinglePhoton"* ]]; then
+    ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} PhotonTrigger ${INDIR} ${OUTDIR} ${STORE}
   fi
 done
