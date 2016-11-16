@@ -139,8 +139,7 @@ Currently available uncertainties:
 * pileup reweighting (not used)
 * scale weights (renormalization/factorization)
 * initial state radiation
-* trigger efficiency statistical
-* trigger efficiency systematic
+* trigger efficiency
 * jet energy corrections
 * jet energy resolution
 * jet ID (fastsim only)

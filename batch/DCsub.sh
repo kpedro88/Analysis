@@ -5,10 +5,9 @@ source exportProd.sh
 JOBDIR=jobs
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/${RUN2PRODV}/scan
 STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Datacards/${RUN2PRODV}
-SYSTS=nominal,scaleunc,isrunc
-SYSTS2=trigStatUnc,trigSystUnc,JEC,JER
-SYSTS3=btagSFunc,mistagSFunc,btagCFunc,ctagCFunc,mistagCFunc
-SYSTS4=jetidunc,isotrackunc,lumiunc
+SYSTS=nominal,scaleunc,isrunc,JEC,JER
+SYSTS2=btagSFunc,mistagSFunc,btagCFunc,ctagCFunc,mistagCFunc
+SYSTS3=trigunc,jetidunc,isotrackunc,lumiunc
 CONTAMS=signal_genMHT
 CHECKARGS=""
 SUFFIX=""
@@ -37,6 +36,5 @@ echo "Submitting parts 0.."$nparts
 for PART in $(seq 0 $nparts); do
   ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} none ${PART} ${STORE} ${SUFFIX}
   ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS2} none ${PART} ${STORE} ${SUFFIX}
-  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS3} none ${PART} ${STORE} ${SUFFIX}
-  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS4} ${CONTAMS} ${PART} ${STORE} ${SUFFIX}
+  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS3} ${CONTAMS} ${PART} ${STORE} ${SUFFIX}
 done

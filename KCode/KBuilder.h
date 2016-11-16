@@ -11,7 +11,7 @@
 #include "KBase.h"
 #include "NtupleClass.h"
 #include "KSelection.h"
-#include "../corrections/GetTriggerEffCorr.C"
+#include "../corrections/RealMetEff_HLT_Met110Mht110.cpp"
 #include "../corrections/ISRCorrector.h"
 
 //ROOT headers
@@ -230,8 +230,7 @@ class KBuilderMC : public KBuilder {
 			trigcorr = globalOpt->Get("trigcorr",false);
 			string treedir = ""; globalOpt->Get("treedir",treedir);
 			if(treedir.find("genMHT")!=string::npos) trigcorr = false; //disabled for genMHT variation
-			trigStatUnc = 0; globalOpt->Get("trigStatUnc", trigStatUnc);
-			trigSystUnc = 0; globalOpt->Get("trigSystUnc", trigSystUnc);
+			trigunc = 0; globalOpt->Get("trigunc", trigunc);
 			realMET = localOpt->Get("realMET",true);
 			signal = localOpt->Get("signal",false);
 			
@@ -366,7 +365,8 @@ class KBuilderMC : public KBuilder {
 			}
 			
 			if(trigcorr){
-				w *= GetTriggerEffCorr(signal, MHT, realMET, trigStatUnc, trigSystUnc);
+				unsigned effindex = trigunc==-1 ? 2 : trigunc;
+				w *= Eff_Met110Mht110_CenterUpDown(HT, MHT, NJets)[effindex];
 			}
 			
 			if(isrcorr){
@@ -440,7 +440,7 @@ class KBuilderMC : public KBuilder {
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, debugWeight, didDebugWeight;
 		bool pucorr, trigcorr, isrcorr, realMET, signal, fastsim, jetidcorr, isotrackcorr, lumicorr;
 		double jetidcorrval, isotrackcorrval, lumicorrval;
-		int puunc, pdfunc, isrunc, scaleunc, trigStatUnc, trigSystUnc;
+		int puunc, pdfunc, isrunc, scaleunc, trigunc;
 		vector<int> mother;
 		TH1 *puhist, *puhistUp, *puhistDown;
 		vector<double> pdfnorms;
