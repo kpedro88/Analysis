@@ -86,9 +86,10 @@ class KBlindSelector : public KSelector<KSkimmer> {
 	public:
 		//constructor
 		KBlindSelector() : KSelector<KSkimmer>() { }
-		KBlindSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), lastUnblindRun(257599) { 
+		KBlindSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), firstUnblindRun(0), lastUnblindRun(257599) { 
 			//check for option
-			localOpt->Get("run",lastUnblindRun);
+			localOpt->Get("firstUnblindRun",firstUnblindRun);
+			localOpt->Get("lastUnblindRun",lastUnblindRun);
 		}
 		virtual void CheckLooper(){
 			//check if data
@@ -101,11 +102,11 @@ class KBlindSelector : public KSelector<KSkimmer> {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return looper->RunNum <= lastUnblindRun;
+			return (firstUnblindRun==-1 or looper->RunNum >= firstUnblindRun) and (lastUnblindRun==-1 or looper->RunNum <= lastUnblindRun);
 		}
 		
 		//member variables
-		int lastUnblindRun;
+		int firstUnblindRun, lastUnblindRun;
 };
 
 //----------------------------------------------------
