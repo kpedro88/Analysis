@@ -11,7 +11,7 @@
 #include "KBase.h"
 #include "NtupleClass.h"
 #include "KSelection.h"
-#include "../corrections/RealMetEff_HLT_Met110Mht110.cpp"
+#include "../corrections/TriggerEfficiencySextet.cpp"
 #include "../corrections/ISRCorrector.h"
 
 //ROOT headers
@@ -366,7 +366,7 @@ class KBuilderMC : public KBuilder {
 			
 			if(trigcorr){
 				unsigned effindex = trigunc==-1 ? 2 : trigunc;
-				w *= Eff_Met110Mht110_CenterUpDown(HT, MHT, NJets)[effindex];
+				w *= Eff_MetMhtSextetReal_CenterUpDown(HT, MHT, NJets)[effindex];
 			}
 			
 			if(isrcorr){
