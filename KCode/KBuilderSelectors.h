@@ -37,6 +37,7 @@ class KHLTSelector : public KSelector<KBuilder> {
 		KHLTSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_) { 
 			//get selected line from options
 			localOpt->Get("HLTLines",HLTLines);
+			debug = localOpt->Get("debug",false);
 		}
 		virtual void CheckBranches(){
 			looper->fChain->SetBranchStatus("TriggerNames",1);
@@ -54,8 +55,16 @@ class KHLTSelector : public KSelector<KBuilder> {
 			if(HLTIndices.empty()){
 				for(unsigned h = 0; h < HLTLines.size(); h++){
 					vector<string>::iterator lb = lower_bound(looper->TriggerNames->begin(),looper->TriggerNames->end(),HLTLines[h]);
+					if(debug){
+						cout << HLTLines[h] << " " << *lb << endl;
+					}
 					if(lb != looper->TriggerNames->end() && lb->find(HLTLines[h]) != std::string::npos){
 						HLTIndices.push_back(distance(looper->TriggerNames->begin(),lb));
+					}
+				}
+				if(debug){
+					for(unsigned h = 0; h < HLTIndices.size(); h++){
+						cout << HLTLines[h] << ": " << HLTIndices[h] << endl;
 					}
 				}
 			}
@@ -79,6 +88,7 @@ class KHLTSelector : public KSelector<KBuilder> {
 		//member variables
 		vector<string> HLTLines;
 		vector<unsigned> HLTIndices;
+		bool debug;
 };
 
 //----------------------------------------------------
