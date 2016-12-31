@@ -1,15 +1,12 @@
 #ifndef KBUILDER_H
 #define KBUILDER_H
 
-#ifndef NtupleClass_cxx
-#define NtupleClass_cxx
-
 //custom headers
+#include "KLooper.h"
 #include "KMap.h"
 #include "KMath.h"
 #include "KParser.h"
 #include "KBase.h"
-#include "NtupleClass.h"
 #include "KSelection.h"
 #include "../corrections/TriggerEfficiencySextet.cpp"
 #include "../corrections/ISRCorrector.h"
@@ -32,24 +29,18 @@
 
 using namespace std;
 
-void NtupleClass::Loop() {}
-
 //---------------------------------------------------------------
 //histo builder class - loops over tree to fill histos for a base
-class KBuilder : public NtupleClass {
+class KBuilder : public KLooper {
 	public:
 		//constructors
-		KBuilder() : NtupleClass(), MyBase(0), localOpt(0), globalOpt(0), MySelection(0) {
-			//must always have local & global option maps
-			if(localOpt==0) localOpt = new OptionMap();
-			if(globalOpt==0) globalOpt = new OptionMap();
-		}
+		KBuilder() : KLooper(), MyBase(0), localOpt(new OptionMap()), globalOpt(new OptionMap()), MySelection(0) {}
 		KBuilder(KBase* MyBase_) : 
-			NtupleClass(MyBase_->GetTree()), MyBase(MyBase_), localOpt(MyBase->GetLocalOpt()), globalOpt(MyBase->GetGlobalOpt()), MySelection(MyBase->GetSelection())
+			KLooper(MyBase_->GetLocalOpt(),MyBase_->GetGlobalOpt()), MyBase(MyBase_), 
+			localOpt(MyBase->GetLocalOpt() ? MyBase->GetLocalOpt() : new OptionMap()), 
+			globalOpt(MyBase->GetGlobalOpt() ? MyBase->GetGlobalOpt() : new OptionMap()), 
+			MySelection(MyBase->GetSelection())
 		{
-			//must always have local & global option maps
-			if(localOpt==0) localOpt = new OptionMap();
-			if(globalOpt==0) globalOpt = new OptionMap();
 			//pass self to selection; also sets looper for selectors, variation, variators
 			MySelection->SetLooper(this); 
 		}
@@ -66,20 +57,6 @@ class KBuilder : public NtupleClass {
 		virtual double GetWeight() { return 1.; }
 		virtual void Loop() {
 			if (fChain == 0) return;
-			
-			//initial loop to get histo variables
-			int table_size = MyBase->GetTable().size();
-			vars.clear(); vars.reserve(table_size);
-			htmp.clear(); htmp.reserve(table_size);
-			for(auto& sit : MyBase->GetTable()){
-				//get histo name
-				string stmp = sit.first;
-				htmp.push_back(sit.second);
-				//split up histo variable names
-				vector<string> vars_tmp;
-				KParser::process(stmp,'_',vars_tmp);
-				vars.push_back(vars_tmp);
-			}
 			
 			//check for branches to enable/disable
 			vector<string> disable_branches;
@@ -117,28 +94,9 @@ class KBuilder : public NtupleClass {
 				MySelection->PrintEfficiency(nentries,sqrt((double)nentries));
 			}
 			
-			if(globalOpt->Get("plotoverflow",false)){
-				for(unsigned h = 0; h < htmp.size(); h++){
-					if(vars[h].size()==2) continue; //not implemented for 2D histos or profiles yet
-					
-					//temporary histo to calculate error correctly when adding overflow bin to last bin
-					TH1* otmp = (TH1*)htmp[h]->Clone();
-					otmp->Reset("ICEM");
-					int ovbin = htmp[h]->GetNbinsX()+1;
-					double err = 0.;
-					otmp->SetBinContent(ovbin-1,htmp[h]->IntegralAndError(ovbin,ovbin,err));
-					otmp->SetBinError(ovbin-1,err);
-					
-					//add overflow bin to last bin
-					htmp[h]->Add(otmp);
-					
-					//remove overflow bin from htmp[h] (for consistent integral/yield)
-					htmp[h]->SetBinContent(ovbin,0);
-					htmp[h]->SetBinError(ovbin,0);
-					
-					delete otmp;
-				}
-			}
+			//finalize histos
+			KSelector* Histo = MySelection->Get<KSelector*>("Histo");
+			Histo->Finalize(NULL);
 		}
 		//unimplemented
 		virtual void CheckBranches() {}
@@ -148,18 +106,8 @@ class KBuilder : public NtupleClass {
 		KBase* MyBase;
 		OptionMap* localOpt;
 		OptionMap* globalOpt;
-		KSelection<KBuilder>* MySelection;
-		vector<vector<string> > vars;
-		vector<TH1*> htmp;
+		KSelection* MySelection;
 };
-
-void KBase::Build(){
-	if(!isBuilt) {
-		if(MyBuilder==0) MyBuilder = new KBuilder(this);
-		MyBuilder->Loop(); //loop over tree to build histograms
-		isBuilt = true;
-	}
-}
 
 //---------------------------------------------------------
 //extension of builder class for data - has blinding option
@@ -193,13 +141,29 @@ class KBuilderData : public KBuilder {
 		bool blind;
 };
 
-void KBaseData::Build(){
-	if(!isBuilt) {
-		if(MyBuilder==0) MyBuilder = new KBuilderData(this);
-		MyBuilder->Loop(); //loop over tree to build histograms
-		isBuilt = true;
-	}
-}
+//---------------------------------------------------------------
+//extension of base class for data - has default intlumi
+class KBaseData : public KBase {
+	public:
+		//constructors
+		KBaseData() : KBase() { localOpt->Set<double>("intlumi",0.0); }
+		KBaseData(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KBase(name_, localOpt_, globalOpt_) { 
+			if(!localOpt->Has("intlumi")) localOpt->Set<double>("intlumi",0.0);
+			KBuilderData* ltmp = new KBuilderData(this);
+			SetLooper(ltmp);
+		}
+		//destructor
+		virtual ~KBaseData() {}
+
+		//functions for histo creation
+		using KBase::Build;
+		virtual void Build(){
+			if(!isBuilt) {
+				MyLooper->Loop(); //loop over tree to build histograms
+				isBuilt = true;
+			}
+		}
+};
 
 //------------------------------------------------------------------------------------------------------------
 //extension of builder class for MC - has weighting (corrections & normalization), extra cuts (fake tau, etc.)
@@ -450,13 +414,32 @@ class KBuilderMC : public KBuilder {
 		ISRCorrector isrcorror;
 };
 
-void KBaseMC::Build(){
-	if(!isBuilt) {
-		if(MyBuilder==0) MyBuilder = new KBuilderMC(this);
-		MyBuilder->Loop(); //loop over tree to build histograms
-		isBuilt = true;
-	}
-}
+//--------------------------------------------------------------------------------
+//extension of base class for MC - has error band calc, default cross section & norm type
+class KBaseMC : public KBase {
+	public:
+		//constructors
+		KBaseMC() : KBase() { 
+			localOpt->Set<string>("normtype","MC");
+			localOpt->Set<double>("xsection",0.0);
+		}
+		KBaseMC(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KBase(name_, localOpt_, globalOpt_) {
+			if(!localOpt->Has("normtype")) localOpt->Set<string>("normtype","MC");
+			if(!localOpt->Has("xsection")) localOpt->Set<double>("xsection",0.0);
+			KBuilderMC* ltmp = new KBuilderMC(this);
+			SetLooper(ltmp);
+		}
+		//destructor
+		virtual ~KBaseMC() {}
+		
+		//functions for histo creation
+		using KBase::Build;
+		virtual void Build(){
+			if(!isBuilt) {
+				MyLooper->Loop(); //loop over tree to build histograms
+				isBuilt = true;
+			}
+		}
+};
 
-#endif
 #endif

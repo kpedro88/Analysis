@@ -3,6 +3,7 @@
 
 //custom headers
 #include "KMap.h"
+#include "KLooper.h"
 #include "KLegend.h"
 #include "KSelection.h"
 #include "KStyle.h"
@@ -27,112 +28,35 @@
 
 using namespace std;
 
-//forward declaration of builder
-class KBuilder;
-
 //------------------------------------------------------------------------------------------------------------------
 //base class: virtual methods and info for bases, other base/set classes inherit from it
 class KBase {
 	public:
 		//constructors
 		KBase() :
-			name(""), parent(0), localOpt(0), globalOpt(0), file(0), tree(0), nEventHist(0), nEventNegHist(0), MyCutflow(0),
-			MyBuilder(0), MySelection(0), stmp(""), htmp(0), etmp(0), isBuilt(false), MyStyle(0)
+			name(""), parent(0), localOpt(new OptionMap()), globalOpt(new OptionMap()), 
+			file(0), tree(0), nEventHist(0), nEventNegHist(0), MyCutflow(0),
+			MyLooper(0), MySelection(0), stmp(""), htmp(0), etmp(0), isBuilt(false), MyStyle(0)
 		{
 			//enable histo errors
 			TH1::SetDefaultSumw2(kTRUE);
-			//must always have local & global option maps
-			if(localOpt==0) localOpt = new OptionMap();
-			if(globalOpt==0) globalOpt = new OptionMap();
 		}
 		KBase(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : 
-			name(name_), parent(0), localOpt(localOpt_), globalOpt(globalOpt_), file(0), tree(0), nEventHist(0), nEventNegHist(0), MyCutflow(0), 
-			MyBuilder(0), MySelection(0), stmp(""), htmp(0), etmp(0), isBuilt(false), MyStyle(0)
+			name(name_), parent(0), localOpt(localOpt_ ? localOpt_ : new OptionMap()), globalOpt(globalOpt_ ? globalOpt_ : new OptionMap()), 
+			file(0), tree(0), nEventHist(0), nEventNegHist(0), MyCutflow(0), 
+			MyLooper(0), MySelection(0), stmp(""), htmp(0), etmp(0), isBuilt(false), MyStyle(0)
 		{
-			//must always have local & global option maps
-			if(localOpt==0) localOpt = new OptionMap();
-			if(globalOpt==0) globalOpt = new OptionMap();
-			
-			string filename;
-			string treedir;
-			bool use_treedir = globalOpt->Get("treedir",treedir);
-			if(localOpt->Get("chain",false)){
-				vector<string> filenames;
-				if(!localOpt->Get("filenames",filenames) || filenames.size()==0){
-					cout << "Input error: filenames not specified for chain. Object " << name << " will not be initialized." << endl;
-					return;
-				}
-				
-				//add filenames to chain
-				tree = new TChain(("tree_"+name).c_str());
-				string chainsuff = "";
-				localOpt->Get("chainsuff",chainsuff);
-
-				bool quickchain = globalOpt->Get("quickchain",false);
-				if(quickchain){
-					for(unsigned f = 0; f < filenames.size(); f++){
-						filename = filenames[f];
-						if(use_treedir) filename = treedir + "/" + filename;
-						static_cast<TChain*>(tree)->Add((filename+chainsuff).c_str());
-					}
-				}
-				else {
-					for(unsigned f = 0; f < filenames.size(); f++){
-						filename = filenames[f];
-						if(use_treedir) filename = treedir + "/" + filename;
-						
-						TFile* ftmp = TFile::Open(filename.c_str());
-						if(!ftmp) {
-							cout << "Input error: file " << filename << " cannot be found or opened. Object " << name << " will not be fully initialized." << endl;
-							continue;
-						}
-						
-						static_cast<TChain*>(tree)->Add((filename+chainsuff).c_str());
-						TH1F* nEventHistTmp = (TH1F*)ftmp->Get("nEventProc");
-						//sum up nEventProc histos
-						if(nEventHistTmp) {
-							if(nEventHist) nEventHist->Add(nEventHistTmp);
-							else {
-								nEventHist = (TH1F*)nEventHistTmp->Clone("nEventProc");
-								nEventHist->SetDirectory(0);
-							}
-						}
-						TH1F* nEventNegHistTmp = (TH1F*)ftmp->Get("nEventNeg");
-						//sum up nEventNeg histos
-						if(nEventNegHistTmp) {
-							if(nEventNegHist) nEventNegHist->Add(nEventNegHistTmp);
-							else {
-								nEventNegHist = (TH1F*)nEventNegHistTmp->Clone("nEventNeg");
-								nEventNegHist->SetDirectory(0);
-							}
-						}
-						ftmp->Close();
-					}
-				}
-				if(tree->GetEntries()==0){
-					cout << "Input error: no files could be opened. Object " << name << " will not be initialized." << endl;
-					delete tree;
-					tree = NULL;
-					return;
-				}
-			}
-			else if(localOpt->Get("filename",filename)){
-				//get directory from global
-				if(use_treedir) filename = treedir + "/" + filename;
-				//open file
-				file = TFile::Open(filename.c_str());
-				if(!file) {
-					cout << "Input error: file " << filename << " cannot be found or opened. Object " << name << " will not be fully initialized." << endl;
-					return;
-				}
-				//get tree
-				string treename = "tree";
-				localOpt->Get("treename",treename);
-				tree = (TTree*)file->Get(treename.c_str());
-				
-				nEventHist = (TH1F*)file->Get("nEventProc");
-				nEventNegHist = (TH1F*)file->Get("nEventNeg");
-			}
+			debugroc = globalOpt->Get("debugroc",false);
+			localOpt->Set("name",name);
+		}
+		//subsequent initialization
+		virtual void SetLooper(KLooper* looper){
+			if(!looper) return;
+			MyLooper = looper;
+			file = MyLooper->GetFile();
+			tree = MyLooper->GetTree();
+			nEventHist = MyLooper->GetNEventHist();
+			nEventNegHist = MyLooper->GetNEventNegHist();
 
 			//store this value (number of events processed) at the beginning so histo only has to be accessed once
 			int nEventProc = 0;
@@ -142,14 +66,11 @@ class KBase {
 				if(nEventNegHist) nEventProc -= 2*(nEventNegHist->GetBinContent(1));
 			}
 			localOpt->Set("nEventProc",max(nEventProc,1));
-			
-			debugroc = globalOpt->Get("debugroc",false);
 		}
 		//destructor
 		virtual ~KBase() {}
 
 		//functions for histo creation
-		virtual void Build(); //implemented in KBuilder.h to avoid circular dependency
 		virtual TGraphAsymmErrors* BuildErrorBand(){
 			//make sim error band
 			TGraphAsymmErrors* esim = new TGraphAsymmErrors(htmp->GetNbinsX()+2); //under- and overflow
@@ -181,8 +102,9 @@ class KBase {
 			localOpt->Get("legname",legname);
 			return legname;
 		}
-		void SetSelection(KSelection<KBuilder>* sel_) { MySelection = sel_; }
-		KSelection<KBuilder>* GetSelection() { return MySelection; }
+		KLooper* GetLooper() { return MyLooper; }
+		void SetSelection(KSelection* sel_) { MySelection = sel_; MySelection->SetBase(this); }
+		KSelection* GetSelection() { return MySelection; }
 		//add a blank histo for future building
 		virtual TH1* AddHisto(string s, TH1* h){
 			//sets current name and histo
@@ -301,6 +223,7 @@ class KBase {
 		virtual void AddToLegend(KLegend*) {}
 		virtual void AddChild(KBase*) {}
 		virtual void SetAddExt(bool) {}
+		virtual void Build() {}
 		virtual void Build(TH1*) {}
 		
 	protected:
@@ -313,8 +236,8 @@ class KBase {
 		TTree* tree;
 		TH1F *nEventHist, *nEventNegHist;
 		KCutflow* MyCutflow;
-		KBuilder* MyBuilder;
-		KSelection<KBuilder>* MySelection;
+		KLooper* MyLooper;
+		KSelection* MySelection;
 		HistoMap MyHistos;
 		ErrorMap MyErrorBands;
 		KMap<double*> MyEffs;
@@ -325,45 +248,6 @@ class KBase {
 		bool isBuilt;
 		bool debugroc;
 		KStyle* MyStyle;
-};
-
-//---------------------------------------------------------------
-//extension of base class for data - has default intlumi
-class KBaseData : public KBase {
-	public:
-		//constructors
-		KBaseData() : KBase() { localOpt->Set<double>("intlumi",0.0); }
-		KBaseData(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KBase(name_, localOpt_, globalOpt_) { 
-			if(!localOpt->Has("intlumi")) localOpt->Set<double>("intlumi",0.0);
-		}
-		//destructor
-		virtual ~KBaseData() {}
-
-		//functions for histo creation
-		using KBase::Build;
-		virtual void Build(); //implemented in KBuilder.h to avoid circular dependency
-};
-
-//--------------------------------------------------------------------------------
-//extension of base class for MC - has error band calc, default cross section & norm type
-class KBaseMC : public KBase {
-	public:
-		//constructors
-		KBaseMC() : KBase() { 
-			localOpt->Set<string>("normtype","MC");
-			localOpt->Set<double>("xsection",0.0);
-		}
-		KBaseMC(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KBase(name_, localOpt_, globalOpt_) {
-			if(!localOpt->Has("normtype")) localOpt->Set<string>("normtype","MC");
-			if(!localOpt->Has("xsection")) localOpt->Set<double>("xsection",0.0); 
-		}
-		//destructor
-		virtual ~KBaseMC() {}
-		
-		//functions for histo creation
-		using KBase::Build;
-		virtual void Build(); //implemented in KBuilder.h to avoid circular dependency
-
 };
 
 //-------------------------------------------
@@ -429,17 +313,6 @@ class KBaseExt : public KBase {
 	private:
 		//member variables
 		bool add_ext;
-};
-
-//-------------------------------------------
-//extension of base class for skimmer
-//currently it doesn't do anything special
-//but it might in the future
-class KBaseSkim : public KBase {
-	public:
-		//constructors
-		KBaseSkim() : KBase() {}
-		KBaseSkim(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KBase(name_, localOpt_, globalOpt_) { }
 };
 
 //------------------------------------------------

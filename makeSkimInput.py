@@ -2,15 +2,15 @@ import sys, os, stat
 from optparse import OptionParser
 import imp
 
-def makeSkimLine(short_name,full_names,file_mins,file_maxs,mothers,block=-1,data=False):
+def makeSkimLine(short_name,full_names,file_mins,file_maxs,mothers,btype="skim",block=-1,data=False):
     the_name = short_name + ("_block"+str(block) if block >= 0 else "")
-    line = "base" + "\t" + "skim" + "\t" + the_name + ("\t" + "u:block[" + str(block) + "]" if block >= 0 else "") + "\t" + "b:chain[1]" + "\t"
+    line = "base" + "\t" + btype + "\t" + the_name + ("\t" + "u:block[" + str(block) + "]" if block >= 0 else "") + "\t" + "b:chain[1]" + "\t"
     line += "ch:filenames[" + str(','.join(full_names[i]+"_,"+str(file_mins[i])+","+str(file_maxs[i])+","+"_RA2AnalysisTree.root" for i, x in enumerate(full_names))) + "]" + "\t" 
     line += "s:chainsuff[/TreeMaker2/PreSelection]" + ("\t"+"vi:mother["+str(','.join(str(m) for m in mothers))+"]" if len(mothers) > 0 else "") + ("\t"+"b:data[1]" if data else "") + "\n"
     expline = the_name + " \\\n"
     return (line,expline)
 
-def makeSkimInput(read,write,export,nfiles=0,data=False,folder=""):
+def makeSkimInput(read,write,export,btype="skim",nfiles=0,data=False,folder=""):
     readname = read.replace(".py","").split("/")[-1]
     rfile = imp.load_source(readname,read)
     wfile = open(write,'w')
@@ -69,7 +69,7 @@ def makeSkimInput(read,write,export,nfiles=0,data=False,folder=""):
         if nfiles>0: nblocks = fileListLen/nfiles + int(fileListLen%nfiles!=0)
         
         if nblocks<2: # all files in one chain (either no splitting or nfiles < fileListLen)
-            wline,eline = makeSkimLine(short_name,full_names,file_mins,file_maxs,mother,-1,data)
+            wline,eline = makeSkimLine(short_name,full_names,file_mins,file_maxs,mother,btype,-1,data)
             wfile.write(wline)
             efile.write(eline)
         else: # split chains into several blocks
@@ -88,8 +88,8 @@ def makeSkimInput(read,write,export,nfiles=0,data=False,folder=""):
                 pnumberMin = pnumbers[fileMin]
                 pnumberMax = pnumbers[fileMax]
                 # check for crossover between two samples
-                if indexMin == indexMax: wline,eline = makeSkimLine(short_name,[full_names[indexMin]],[pnumberMin],[pnumberMax],mother,block,data)
-                else: wline,eline = makeSkimLine(short_name,[full_names[indexMin],full_names[indexMax]],[pnumberMin,0],[file_lens[indexMin]-1,pnumberMax],mother,block,data)
+                if indexMin == indexMax: wline,eline = makeSkimLine(short_name,[full_names[indexMin]],[pnumberMin],[pnumberMax],mother,btype,block,data)
+                else: wline,eline = makeSkimLine(short_name,[full_names[indexMin],full_names[indexMax]],[pnumberMin,0],[file_lens[indexMin]-1,pnumberMax],mother,btype,block,data)
                 wfile.write(wline)
                 efile.write(eline)
         print short_name + " : nfiles = " + str(fileListLen) + ", njobs = " + str(max(nblocks,1))
@@ -118,4 +118,4 @@ if __name__ == "__main__":
     parser.add_option("-f", "--folder", dest="folder", default="", help="EOS directory to check for data ntuples")
     (options, args) = parser.parse_args()
 
-    makeSkimInput(options.read,options.write,options.export,int(options.nfiles),options.data,options.folder)
+    makeSkimInput(options.read,options.write,options.export,"skim",int(options.nfiles),options.data,options.folder)

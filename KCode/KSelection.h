@@ -3,6 +3,7 @@
 
 //custom headers
 #include "KMap.h"
+#include "KLooper.h"
 #include "KMath.h"
 #include "KVariation.h"
 #include "KCutflow.h"
@@ -21,8 +22,8 @@
 
 using namespace std;
 
-//forward declaration
-template <class T>
+//forward declarations
+class KBase;
 class KSelection;
 
 //helper class for cutflow histos
@@ -41,15 +42,14 @@ class KCutflowEntry {
 
 //----------------------------------------------------------------
 //base class for Selectors, has standard functions defined
-template <class T>
 class KSelector {
 	public:
 		//constructor
-		KSelector() : name(""), localOpt(0), sel(0), looper(0), tree(0), counter(0), dummy(0), canfail(1), depfailed(0) {
+		KSelector() : name(""), localOpt(0), sel(0), looper(0), tree(0), counter(0), dummy(0), canfail(1), depfailed(0), base(0) {
 			//must always have local option map
 			if(localOpt==0) localOpt = new OptionMap();
 		}
-		KSelector(string name_, OptionMap* localOpt_) : name(name_), localOpt(localOpt_), sel(0), looper(0), tree(0), counter(0), dummy(0), canfail(1), depfailed(0) {
+		KSelector(string name_, OptionMap* localOpt_) : name(name_), localOpt(localOpt_), sel(0), looper(0), tree(0), counter(0), dummy(0), canfail(1), depfailed(0), base(0) {
 			//must always have local option map
 			if(localOpt==0) localOpt = new OptionMap();
 			dummy = localOpt->Get("dummy",false);
@@ -58,9 +58,10 @@ class KSelector {
 		virtual ~KSelector() {}
 		//accessors
 		string GetName() { return name; }
-		virtual void SetSelection(KSelection<T>* sel_) { sel = sel_; CheckDeps(); } //set dependencies here if desired
-		virtual void SetLooper(T* looper_) { looper = looper_; CheckLooper(); }
+		virtual void SetSelection(KSelection* sel_) { sel = sel_; CheckDeps(); } //set dependencies here if desired
+		virtual void SetLooper(KLooper* looper_) { looper = looper_; CheckLooper(); }
 		virtual void SetTree(TTree* tree_) { tree = tree_; SetBranches(); } //set tree branches here if desired
+		virtual void SetBase(KBase* base_) { base = base_; CheckBase(); }
 		int GetCounter() { return counter; }
 		bool Dummy() { return dummy; }
 		bool CanFail() { return canfail; }
@@ -87,27 +88,29 @@ class KSelector {
 		virtual void CheckLooper() {}
 		//to allow selectors to turn on branches they need
 		virtual void CheckBranches() {}
+		//to check dependencies on the base
+		virtual void CheckBase() {}
 		
 	protected:
 		//member variables
 		string name;
 		OptionMap* localOpt;
-		KSelection<T>* sel;
-		T* looper;
+		KSelection* sel;
+		KLooper* looper;
 		TTree* tree;
 		int counter;
 		bool dummy, canfail, depfailed;
+		KBase* base;
 };
 
 //----------------------------------------------------------------
 //class to keep track of a list of Selectors
 //has a vector for an ordered list and a map for a searchable list
-template <class T>
 class KSelection {
 	public:
 		//constructor
-		KSelection() : name(""), variation(0), looper(0), file(0), tree(0), cutflowHist(0) {}
-		KSelection(string name_, OptionMap* globalOpt_) : name(name_), globalOpt(globalOpt_), variation(0), looper(0), file(0), tree(0), cutflowHist(0), filter(0), eventlist("") {
+		KSelection() : name(""), variation(0), looper(0), file(0), tree(0), cutflowHist(0), eventlist(""), base(0) {}
+		KSelection(string name_, OptionMap* globalOpt_) : name(name_), globalOpt(globalOpt_), variation(0), looper(0), file(0), tree(0), cutflowHist(0), filter(0), eventlist(""), base(0) {
 			//must always have option map
 			if(globalOpt==0) globalOpt = new OptionMap();
 			globalOpt->Get("selectevents",eventlist);
@@ -120,13 +123,13 @@ class KSelection {
 		//accessors
 		string GetName() { return name; }
 		OptionMap* GetGlobalOpt() { return globalOpt; }
-		void SetVariation(KVariation<T>* varn) { variation = varn; }
-		void AddSelector(KSelector<T>* sel_){
+		void SetVariation(KVariation* varn) { variation = varn; }
+		void AddSelector(KSelector* sel_){
 			selectorList.push_back(sel_);
 			selectors.Add(sel_->GetName(),sel_);
 			sel_->SetSelection(this);
 		}
-		void SetLooper(T* looper_){
+		void SetLooper(KLooper* looper_){
 			looper = looper_;
 			for(unsigned s = 0; s < selectorList.size(); s++){
 				selectorList[s]->SetLooper(looper_);
@@ -136,6 +139,12 @@ class KSelection {
 				looper->fChain->SetBranchStatus("RunNum",1);
 				looper->fChain->SetBranchStatus("LumiBlockNum",1);
 				looper->fChain->SetBranchStatus("EvtNum",1);
+			}
+		}
+		void SetBase(KBase* base_){
+			base = base_;
+			for(unsigned s = 0; s < selectorList.size(); s++){
+				selectorList[s]->SetBase(base_);
 			}
 		}
 		void DoVariation() { if(variation) variation->DoVariation(); }
@@ -281,15 +290,16 @@ class KSelection {
 		//member variables
 		string name;
 		OptionMap* globalOpt;
-		KVariation<T>* variation;
-		T* looper;
-		vector<KSelector<T>*> selectorList;
-		KMap<KSelector<T>*> selectors;
+		KVariation* variation;
+		KLooper* looper;
+		vector<KSelector*> selectorList;
+		KMap<KSelector*> selectors;
 		TFile* file;
 		TTree* tree;
 		TH1F* cutflowHist;
 		EventListFilter* filter;
 		string eventlist;
+		KBase* base;
 };
 
 #endif

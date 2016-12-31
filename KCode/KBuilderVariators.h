@@ -17,9 +17,8 @@ using namespace std;
 //base class for variators is in KVariation.h
 
 namespace KParser {
-	template <>
-	KVariator<KBuilder>* processVariator<KBuilder>(KNamed* tmp){
-		KVariator<KBuilder>* vtmp = 0;
+	KVariator* processVariator(KNamed* tmp){
+		KVariator* vtmp = 0;
 		string vname = tmp->first;
 		//OptionMap* omap = tmp->second; //unused right now
 		

@@ -28,9 +28,9 @@ using namespace std;
 class KSkimManager : public KManager {
 	public:
 		//constructor
-		KSkimManager() : KManager(), setname(""), seltypes(""), outdir(""), skimmer(0), MyBase(0) {}
+		KSkimManager() : KManager(), setname(""), seltypes(""), outdir(""), MySkimmer(0), MyBase(0) {}
 		KSkimManager(string setname_, string seltypes_, string indir_, vector<string> input_, vector<string> direct_, string outdir_) : 
-			KManager(indir_), setname(setname_), seltypes(seltypes_), outdir(outdir_), skimmer(0), MyBase(0)
+			KManager(indir_), setname(setname_), seltypes(seltypes_), outdir(outdir_), MySkimmer(0), MyBase(0)
 		{
 			//parse most initializations based on text input
 			Initialize(input_,direct_);
@@ -53,14 +53,12 @@ class KSkimManager : public KManager {
 			//only process the set of interest
 			if(fields.size()>2 && fields[2]==setname) {
 				MyBase = KParser::processBase(line,globalOpt);
+				MySkimmer = static_cast<KSkimmer*>(MyBase->GetLooper());
 			}
 		}
 		//where the magic happens
 		void Skim(){
 			if(!parsed) return;
-
-			//initialize skimmer after parsing
-			skimmer = new KSkimmer(MyBase);
 		
 			//process selection types - comma-separated input
 			vector<string> fields;
@@ -73,14 +71,14 @@ class KSkimManager : public KManager {
 			//construct requested selections
 			for(unsigned i = 0; i < fields.size(); i++){
 				//make selection
-				KSelection<KSkimmer>* sntmp = makeSelection<KSkimmer>(fields[i]);
+				KSelection* sntmp = makeSelection(fields[i]);
 				
 				if(sntmp){
 					//setup output tree
-					sntmp->MakeTree(outdir,MyBase->GetName(), (globalOpt->Get("doClone",false) ? skimmer->fChain : NULL));
+					sntmp->MakeTree(outdir,MyBase->GetName(), (globalOpt->Get("doClone",false) ? MySkimmer->fChain : NULL));
 
 					//add to list
-					skimmer->AddSelection(sntmp);
+					MySkimmer->AddSelection(sntmp);
 				}
 				else {
 					continue;
@@ -88,19 +86,18 @@ class KSkimManager : public KManager {
 			}
 			
 			//skimmer does the rest
-			skimmer->Loop();
+			MySkimmer->Loop();
 			
 			//final stuff
-			MyBase->CloseFile();
+			MySkimmer->CloseFile();
 		}
 		
 	private:
 		//member variables
 		string setname, seltypes, outdir;
 		bool doClone;
-		KSkimmer* skimmer;
+		KSkimmer* MySkimmer;
 		KBase* MyBase;
 };
-
 
 #endif

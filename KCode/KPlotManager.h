@@ -259,7 +259,7 @@ class KPlotManager : public KManager {
 			globalOpt->Get("selection",selection);
 			for(unsigned b = 0; b < MyBases.size(); b++){
 				//make selection
-				KSelection<KBuilder>* sntmp = makeSelection<KBuilder>(selection);
+				KSelection* sntmp = makeSelection(selection);
 				if(sntmp) MyBases[b]->SetSelection(sntmp);
 			}
 			
@@ -690,6 +690,5 @@ class KPlotManager : public KManager {
 		map<int,KBase*> curr_sets;
 		TFile* out_file;
 };
-
 
 #endif

@@ -17,11 +17,9 @@
 #include <utility>
 #include <cmath>
 
-//forward declaration
-template <class T>
-class KVariator;
-template <class T>
+//forward declarations
 class KSelector;
+class KVariator;
 
 namespace KParser {
 	//generalization for processing a line
@@ -246,18 +244,11 @@ namespace KParser {
 		KNamed* tmp = new pair<string,OptionMap*>(name,omap);
 		return tmp;
 	}
-	//general function templates for processing selectors and variators: specializations defined elsewhere
-	template <class T>
-	KVariator<T>* processVariator(KNamed* tmp){
-		return NULL;
-	}
-	template <class T>
-	KSelector<T>* processSelector(KNamed* tmp){
-		return NULL;
-	}
+	KSelector* processSelector(KNamed* tmp);
+	KVariator* processVariator(KNamed* tmp);
 }
 
 //NOTE: namespace also includes:
-// processBase() defined in KSet.h, processSelector() defined in KSelectors.h, processVariator() defined in KVariators.h
+// processBase() defined in KSet.h, processSelector() defined in K*Selectors.h, processVariator() defined in K*Variators.h
 
 #endif

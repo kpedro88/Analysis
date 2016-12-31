@@ -2,6 +2,7 @@
 #define KVARIATION_H
 
 //custom headers
+#include "KLooper.h"
 #include "KMap.h"
 
 //ROOT headers
@@ -14,7 +15,6 @@ using namespace std;
 
 //----------------------------------------------------------------
 //base class for Variators, has standard functions defined
-template <class T>
 class KVariator {
 	public:
 		//constructor
@@ -28,7 +28,7 @@ class KVariator {
 		}
 		//accessors
 		string GetName() { return name; }
-		void SetLooper(T* looper_) { looper = looper_; }
+		void SetLooper(KLooper* looper_) { looper = looper_; }
 		//functions
 		virtual void CheckBranches() {}
 		virtual void DoVariation() {}
@@ -38,12 +38,11 @@ class KVariator {
 		//member variables
 		string name;
 		OptionMap* localOpt;
-		T* looper;
+		KLooper* looper;
 };
 
 //----------------------------------------------------------------
 //class to keep track of a list of Variators
-template <class T>
 class KVariation {
 	public:
 		//constructor
@@ -53,10 +52,10 @@ class KVariation {
 		virtual ~KVariation() {}
 		//accessors
 		string GetName() { return name; }
-		void AddVariator(KVariator<T>* var_){
+		void AddVariator(KVariator* var_){
 			variatorList.push_back(var_);
 		}
-		void SetLooper(T* looper_){ 
+		void SetLooper(KLooper* looper_){ 
 			looper = looper_;
 			for(unsigned v = 0; v < variatorList.size(); v++){
 				variatorList[v]->SetLooper(looper_);
@@ -81,8 +80,8 @@ class KVariation {
 	protected:
 		//member variables
 		string name;
-		T* looper;
-		vector<KVariator<T>*> variatorList;
+		KLooper* looper;
+		vector<KVariator*> variatorList;
 };
 
 #endif

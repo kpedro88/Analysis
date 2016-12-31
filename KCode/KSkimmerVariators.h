@@ -21,12 +21,12 @@ using namespace std;
 //----------------------------------------------------
 //variation of jet-related variables
 //for: JECs, JERs, Zinv cleaning
-class KJetVariator : public KVariator<KSkimmer> {
+class KJetVariator : public KVariator {
 	public:
 		enum vartypes { NoVar=0, JECup=1, JECdown=2, JERup=3, JERdown=4, clean=5 };
 		//constructor
-		KJetVariator() : KVariator<KSkimmer>() { }
-		KJetVariator(string name_, OptionMap* localOpt_) : KVariator<KSkimmer>(name_,localOpt_), vtype(NoVar),
+		KJetVariator() : KVariator() { }
+		KJetVariator(string name_, OptionMap* localOpt_) : KVariator(name_,localOpt_), vtype(NoVar),
 			b_Jets(true),b_Jets_HTMask(true),b_Jets_MHTMask(true),b_Jets_ISRMask(true),b_Jets_LeptonMask(true),b_Jets_ID(true),b_Jets_partonFlavor(true),b_Jets_hadronFlavor(true),b_Jets_bDiscriminatorCSV(true),b_Jets_bDiscriminatorMVA(true),b_Jets_muonEnergyFraction(true),b_Jets_chargedHadronEnergyFraction(true)
 		{
 			//check options
@@ -328,11 +328,11 @@ class KJetVariator : public KVariator<KSkimmer> {
 		Double_t        DeltaPhi4;
 };
 
-class KGenMHTVariator : public KVariator<KSkimmer> {
+class KGenMHTVariator : public KVariator {
 	public:
 		//constructor
-		KGenMHTVariator() : KVariator<KSkimmer>() { }
-		KGenMHTVariator(string name_, OptionMap* localOpt_) : KVariator<KSkimmer>(name_,localOpt_) { }
+		KGenMHTVariator() : KVariator() { }
+		KGenMHTVariator(string name_, OptionMap* localOpt_) : KVariator(name_,localOpt_) { }
 		
 		virtual void DoVariation() {
 			//store original values
@@ -356,11 +356,11 @@ class KGenMHTVariator : public KVariator<KSkimmer> {
 };
 
 
-class KJetLeptonVariator : public KVariator<KSkimmer> {
+class KJetLeptonVariator : public KVariator {
 	public:
 		//constructor
-		KJetLeptonVariator() : KVariator<KSkimmer>() { }
-		KJetLeptonVariator(string name_, OptionMap* localOpt_) : KVariator<KSkimmer>(name_,localOpt_) { }
+		KJetLeptonVariator() : KVariator() { }
+		KJetLeptonVariator(string name_, OptionMap* localOpt_) : KVariator(name_,localOpt_) { }
 		
 		virtual void DoVariation() {
 			//store original values
@@ -500,9 +500,8 @@ class KJetLeptonVariator : public KVariator<KSkimmer> {
 };
 
 namespace KParser {
-	template <>
-	KVariator<KSkimmer>* processVariator<KSkimmer>(KNamed* tmp){
-		KVariator<KSkimmer>* vtmp = 0;
+	KVariator* processVariator(KNamed* tmp){
+		KVariator* vtmp = 0;
 		string vname = tmp->first;
 		OptionMap* omap = tmp->second;
 		

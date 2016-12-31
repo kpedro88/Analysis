@@ -33,11 +33,11 @@ int KSkimmer::GetEventSign() {
 
 //----------------------------------------------------
 //selects events based on HLT line
-class KHLTSelector : public KSelector<KSkimmer> {
+class KHLTSelector : public KSelector {
 	public:
 		//constructor
-		KHLTSelector() : KSelector<KSkimmer>() { }
-		KHLTSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { 
+		KHLTSelector() : KSelector() { }
+		KHLTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { 
 			//get selected line from options
 			localOpt->Get("HLTLines",HLTLines);
 		}
@@ -82,18 +82,18 @@ class KHLTSelector : public KSelector<KSkimmer> {
 
 //------------------------------------------------------
 //selects events based on run number (for blinding data)
-class KBlindSelector : public KSelector<KSkimmer> {
+class KBlindSelector : public KSelector {
 	public:
 		//constructor
-		KBlindSelector() : KSelector<KSkimmer>() { }
-		KBlindSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), firstUnblindRun(0), lastUnblindRun(257599) { 
+		KBlindSelector() : KSelector() { }
+		KBlindSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), firstUnblindRun(0), lastUnblindRun(257599) { 
 			//check for option
 			localOpt->Get("firstUnblindRun",firstUnblindRun);
 			localOpt->Get("lastUnblindRun",lastUnblindRun);
 		}
-		virtual void CheckLooper(){
+		virtual void CheckBase(){
 			//check if data
-			bool data = looper->MyBase->GetLocalOpt()->Get("data",false);
+			bool data = base->GetLocalOpt()->Get("data",false);
 			//disable this for non-data
 			if(!data) dummy = true;
 		}
@@ -111,11 +111,11 @@ class KBlindSelector : public KSelector<KSkimmer> {
 
 //----------------------------------------------------
 //selects events based on number of jets
-class KNJetSelector : public KSelector<KSkimmer> {
+class KNJetSelector : public KSelector {
 	public:
 		//constructor
-		KNJetSelector() : KSelector<KSkimmer>() { }
-		KNJetSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), njet(4) { 
+		KNJetSelector() : KSelector() { }
+		KNJetSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), njet(4) { 
 			//check for option
 			localOpt->Get("njet",njet);
 		}
@@ -133,11 +133,11 @@ class KNJetSelector : public KSelector<KSkimmer> {
 
 //----------------------------------------------------
 //selects events based on HT value
-class KHTSelector : public KSelector<KSkimmer> {
+class KHTSelector : public KSelector {
 	public:
 		//constructor
-		KHTSelector() : KSelector<KSkimmer>() { }
-		KHTSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), HTmin(500) { 
+		KHTSelector() : KSelector() { }
+		KHTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), HTmin(500) { 
 			//check for option
 			localOpt->Get("HTmin",HTmin);
 			doGen = localOpt->Get("gen",false);
@@ -158,11 +158,11 @@ class KHTSelector : public KSelector<KSkimmer> {
 
 //----------------------------------------------------
 //selects events based on MHT value
-class KMHTSelector : public KSelector<KSkimmer> {
+class KMHTSelector : public KSelector {
 	public:
 		//constructor
-		KMHTSelector() : KSelector<KSkimmer>() { }
-		KMHTSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), MHTmin(200) { 
+		KMHTSelector() : KSelector() { }
+		KMHTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), MHTmin(200) { 
 			//check for option
 			localOpt->Get("MHTmin",MHTmin);
 			doGen = localOpt->Get("gen",false);
@@ -183,11 +183,11 @@ class KMHTSelector : public KSelector<KSkimmer> {
 
 //----------------------------------------------------
 //low MHT selection for single photon test
-class KLowMHTSelector : public KSelector<KSkimmer> {
+class KLowMHTSelector : public KSelector {
 	public:
 		//constructor
-		KLowMHTSelector() : KSelector<KSkimmer>() { }
-		KLowMHTSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), MHTmax(200) { 
+		KLowMHTSelector() : KSelector() { }
+		KLowMHTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), MHTmax(200) { 
 			//check for option
 			localOpt->Get("MHTmax",MHTmax);
 		}
@@ -205,11 +205,11 @@ class KLowMHTSelector : public KSelector<KSkimmer> {
 
 //-------------------------------------------------------------
 //vetos events with muons
-class KMuonVetoSelector : public KSelector<KSkimmer> {
+class KMuonVetoSelector : public KSelector {
 	public:
 		//constructor
-		KMuonVetoSelector() : KSelector<KSkimmer>() { }
-		KMuonVetoSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
+		KMuonVetoSelector() : KSelector() { }
+		KMuonVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
 		
 		//this selector doesn't add anything to tree
 		
@@ -223,11 +223,11 @@ class KMuonVetoSelector : public KSelector<KSkimmer> {
 
 //-------------------------------------------------------------
 //vetos events with electrons
-class KElectronVetoSelector : public KSelector<KSkimmer> {
+class KElectronVetoSelector : public KSelector {
 	public:
 		//constructor
-		KElectronVetoSelector() : KSelector<KSkimmer>() { }
-		KElectronVetoSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
+		KElectronVetoSelector() : KSelector() { }
+		KElectronVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
 		
 		//this selector doesn't add anything to tree
 		
@@ -241,11 +241,11 @@ class KElectronVetoSelector : public KSelector<KSkimmer> {
 
 //------------------------------------------------------
 //single muon selector
-class KMuonSelector : public KSelector<KSkimmer> {
+class KMuonSelector : public KSelector {
 	public:
 		//constructor
-		KMuonSelector() : KSelector<KSkimmer>() { }
-		KMuonSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) {
+		KMuonSelector() : KSelector() { }
+		KMuonSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
 			//check for option
 			doMTcut = localOpt->Get("doMTcut",true);
 		}
@@ -269,11 +269,11 @@ class KMuonSelector : public KSelector<KSkimmer> {
 
 //------------------------------------------------------
 //single electron selector
-class KElectronSelector : public KSelector<KSkimmer> {
+class KElectronSelector : public KSelector {
 	public:
 		//constructor
-		KElectronSelector() : KSelector<KSkimmer>() { }
-		KElectronSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) {
+		KElectronSelector() : KSelector() { }
+		KElectronSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
 			//check for option
 			doMTcut = localOpt->Get("doMTcut",true);
 		}
@@ -297,11 +297,11 @@ class KElectronSelector : public KSelector<KSkimmer> {
 
 //------------------------------------------------------
 //single photon selector
-class KPhotonSelector : public KSelector<KSkimmer> {
+class KPhotonSelector : public KSelector {
 	public:
 		//constructor
-		KPhotonSelector() : KSelector<KSkimmer>() { }
-		KPhotonSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) {
+		KPhotonSelector() : KSelector() { }
+		KPhotonSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
 			//check option
 			loose = localOpt->Get("loose",true);
 			veto = localOpt->Get("veto",false);
@@ -334,11 +334,11 @@ class KPhotonSelector : public KSelector<KSkimmer> {
 
 //------------------------------------------------------
 //dimuon selector
-class KDiMuonSelector : public KSelector<KSkimmer> {
+class KDiMuonSelector : public KSelector {
 	public:
 		//constructor
-		KDiMuonSelector() : KSelector<KSkimmer>() { }
-		KDiMuonSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
+		KDiMuonSelector() : KSelector() { }
+		KDiMuonSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
 		
 		//this selector doesn't add anything to tree
 		
@@ -353,11 +353,11 @@ class KDiMuonSelector : public KSelector<KSkimmer> {
 
 //------------------------------------------------------
 //dielectron selector
-class KDiElectronSelector : public KSelector<KSkimmer> {
+class KDiElectronSelector : public KSelector {
 	public:
 		//constructor
-		KDiElectronSelector() : KSelector<KSkimmer>() { }
-		KDiElectronSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
+		KDiElectronSelector() : KSelector() { }
+		KDiElectronSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
 		
 		//this selector doesn't add anything to tree
 		
@@ -372,11 +372,11 @@ class KDiElectronSelector : public KSelector<KSkimmer> {
 
 //------------------------------------------------------
 //muon selector for trigger study
-class KMuonTriggerSelector : public KSelector<KSkimmer> {
+class KMuonTriggerSelector : public KSelector {
 	public:
 		//constructor
-		KMuonTriggerSelector() : KSelector<KSkimmer>() { }
-		KMuonTriggerSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) {
+		KMuonTriggerSelector() : KSelector() { }
+		KMuonTriggerSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
 			//check for option
 			localOpt->Get("pTmin",pTmin);
 		}
@@ -399,11 +399,11 @@ class KMuonTriggerSelector : public KSelector<KSkimmer> {
 
 //------------------------------------------------------
 //electron selector for trigger study
-class KElectronTriggerSelector : public KSelector<KSkimmer> {
+class KElectronTriggerSelector : public KSelector {
 	public:
 		//constructor
-		KElectronTriggerSelector() : KSelector<KSkimmer>() { }
-		KElectronTriggerSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) {
+		KElectronTriggerSelector() : KSelector() { }
+		KElectronTriggerSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
 			//check for option
 			localOpt->Get("pTmin",pTmin);
 		}
@@ -426,11 +426,11 @@ class KElectronTriggerSelector : public KSelector<KSkimmer> {
 
 //----------------------------------------------------
 //selects events based on minDeltaPhi value
-class KMinDeltaPhiSelector : public KSelector<KSkimmer> {
+class KMinDeltaPhiSelector : public KSelector {
 	public:
 		//constructor
-		KMinDeltaPhiSelector() : KSelector<KSkimmer>() { }
-		KMinDeltaPhiSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), minDeltaPhi(0.4), invert(false) { 
+		KMinDeltaPhiSelector() : KSelector() { }
+		KMinDeltaPhiSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), minDeltaPhi(0.4), invert(false) { 
 			//check for option
 			localOpt->Get("minDeltaPhi",minDeltaPhi);
 			invert = localOpt->Get("invert",false);
@@ -453,11 +453,11 @@ class KMinDeltaPhiSelector : public KSelector<KSkimmer> {
 
 //----------------------------------------------------
 //selects events based on DeltaPhi values
-class KDeltaPhiSelector : public KSelector<KSkimmer> {
+class KDeltaPhiSelector : public KSelector {
 	public:
 		//constructor
-		KDeltaPhiSelector() : KSelector<KSkimmer>() { }
-		KDeltaPhiSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), DeltaPhi(4,0), invert(false) { 
+		KDeltaPhiSelector() : KSelector() { }
+		KDeltaPhiSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), DeltaPhi(4,0), invert(false) { 
 			//check for option
 			DeltaPhi[0] = 0.5; DeltaPhi[1] = 0.5; DeltaPhi[2] = 0.3; DeltaPhi[3] = 0.3;
 			localOpt->Get("DeltaPhi",DeltaPhi);
@@ -479,11 +479,11 @@ class KDeltaPhiSelector : public KSelector<KSkimmer> {
 
 //----------------------------------------------------
 //selects events based on single DeltaPhi value
-class KDeltaPhiJSelector : public KSelector<KSkimmer> {
+class KDeltaPhiJSelector : public KSelector {
 	public:
 		//constructor
-		KDeltaPhiJSelector() : KSelector<KSkimmer>() { }
-		KDeltaPhiJSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), DeltaPhi(0.5), jet(1) { 
+		KDeltaPhiJSelector() : KSelector() { }
+		KDeltaPhiJSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), DeltaPhi(0.5), jet(1) { 
 			//check for option
 			localOpt->Get("DeltaPhi",DeltaPhi);
 			localOpt->Get("jet",jet);
@@ -507,11 +507,11 @@ class KDeltaPhiJSelector : public KSelector<KSkimmer> {
 
 //-------------------------------------------------------------
 //vetos events with isolated electron tracks
-class KIsoElectronTrackVetoSelector : public KSelector<KSkimmer> {
+class KIsoElectronTrackVetoSelector : public KSelector {
 	public:
 		//constructor
-		KIsoElectronTrackVetoSelector() : KSelector<KSkimmer>() { }
-		KIsoElectronTrackVetoSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
+		KIsoElectronTrackVetoSelector() : KSelector() { }
+		KIsoElectronTrackVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
 		
 		//this selector doesn't add anything to tree
 		
@@ -525,11 +525,11 @@ class KIsoElectronTrackVetoSelector : public KSelector<KSkimmer> {
 
 //-------------------------------------------------------------
 //vetos events with isolated muon tracks
-class KIsoMuonTrackVetoSelector : public KSelector<KSkimmer> {
+class KIsoMuonTrackVetoSelector : public KSelector {
 	public:
 		//constructor
-		KIsoMuonTrackVetoSelector() : KSelector<KSkimmer>() { }
-		KIsoMuonTrackVetoSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
+		KIsoMuonTrackVetoSelector() : KSelector() { }
+		KIsoMuonTrackVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
 		
 		//this selector doesn't add anything to tree
 		
@@ -543,11 +543,11 @@ class KIsoMuonTrackVetoSelector : public KSelector<KSkimmer> {
 
 //-------------------------------------------------------------
 //vetos events with isolated charged hadron tracks
-class KIsoPionTrackVetoSelector : public KSelector<KSkimmer> {
+class KIsoPionTrackVetoSelector : public KSelector {
 	public:
 		//constructor
-		KIsoPionTrackVetoSelector() : KSelector<KSkimmer>() { }
-		KIsoPionTrackVetoSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { }
+		KIsoPionTrackVetoSelector() : KSelector() { }
+		KIsoPionTrackVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
 		
 		//this selector doesn't add anything to tree
 		
@@ -561,20 +561,20 @@ class KIsoPionTrackVetoSelector : public KSelector<KSkimmer> {
 
 //-------------------------------------------------------------
 //vetos events with bad jets (using PFJetID loose WP)
-class KEventCleaningSelector : public KSelector<KSkimmer> {
+class KEventCleaningSelector : public KSelector {
 	public:
 		//constructor
-		KEventCleaningSelector() : KSelector<KSkimmer>() { }
-		KEventCleaningSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { 
+		KEventCleaningSelector() : KSelector() { }
+		KEventCleaningSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { 
 			//check for option
 			doJetID = localOpt->Get("JetID",false);
 			doMETRatio = localOpt->Get("METRatio",false);
 			doMuonJet = localOpt->Get("MuonJet",false);
 			doFakeJet = localOpt->Get("FakeJet",false);
 		}
-		virtual void CheckLooper(){
+		virtual void CheckBase(){
 			//check if fastsim
-			bool fastsim = looper->MyBase->GetLocalOpt()->Get("fastsim",false);
+			bool fastsim = base->GetLocalOpt()->Get("fastsim",false);
 			//disable JetID for fastsim
 			if(fastsim) doJetID = false;
 			//disable FakeJet for non-fastsim
@@ -625,11 +625,11 @@ class KEventCleaningSelector : public KSelector<KSkimmer> {
 
 //-------------------------------------------------------------
 //selects based on nvtx
-class KNVtxSelector : public KSelector<KSkimmer> {
+class KNVtxSelector : public KSelector {
 	public:
 		//constructor
-		KNVtxSelector() : KSelector<KSkimmer>() { }
-		KNVtxSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), invert(false), num(20) {
+		KNVtxSelector() : KSelector() { }
+		KNVtxSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), invert(false), num(20) {
 			invert = localOpt->Get("invert",false);
 			localOpt->Get("num",num);
 		}
@@ -648,11 +648,11 @@ class KNVtxSelector : public KSelector<KSkimmer> {
 
 //----------------------------------------------------
 //selects events based on number of b-jets
-class KNBJetSelector : public KSelector<KSkimmer> {
+class KNBJetSelector : public KSelector {
 	public:
 		//constructor
-		KNBJetSelector() : KSelector<KSkimmer>() { }
-		KNBJetSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), nbjet_min(-1), nbjet_max(-1) { 
+		KNBJetSelector() : KSelector() { }
+		KNBJetSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), nbjet_min(-1), nbjet_max(-1) { 
 			//check for option
 			localOpt->Get("nbjet_min",nbjet_min);
 			localOpt->Get("nbjet_max",nbjet_max);
@@ -671,11 +671,11 @@ class KNBJetSelector : public KSelector<KSkimmer> {
 
 //----------------------------------------------------
 //selects events based on genHT bin
-class KGenHTBinSelector : public KSelector<KSkimmer> {
+class KGenHTBinSelector : public KSelector {
 	public:
 		//constructor
-		KGenHTBinSelector() : KSelector<KSkimmer>() { }
-		KGenHTBinSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) { 
+		KGenHTBinSelector() : KSelector() { }
+		KGenHTBinSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { 
 			//check for option
 			localOpt->Get("bins",genHTbins);
 			count = vector<unsigned>(genHTbins.size()-1, 0);
@@ -712,11 +712,11 @@ class KGenHTBinSelector : public KSelector<KSkimmer> {
 
 //----------------------------------------------------
 //calculate b-tagging & mistagging efficiencies
-class KBTagEfficiencySelector : public KSelector<KSkimmer> {
+class KBTagEfficiencySelector : public KSelector {
 	public:
 		//constructor
-		KBTagEfficiencySelector() : KSelector<KSkimmer>() { }
-		KBTagEfficiencySelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_) {
+		KBTagEfficiencySelector() : KSelector() { }
+		KBTagEfficiencySelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
 			canfail = false;
 			//initialize histograms using KPlot2D::CreateHist() method
 			TH1::AddDirectory(kFALSE);
@@ -796,11 +796,11 @@ class KBTagEfficiencySelector : public KSelector<KSkimmer> {
 
 //-----------------------------------------------------------------
 //stores the NJetISR distribution
-class KNJetsISRSelector : public KSelector<KSkimmer> {
+class KNJetsISRSelector : public KSelector {
 	public:
 		//constructor
-		KNJetsISRSelector() : KSelector<KSkimmer>() { }
-		KNJetsISRSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), h_njetsisr(NULL) {
+		KNJetsISRSelector() : KSelector() { }
+		KNJetsISRSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), h_njetsisr(NULL) {
 			canfail = false;
 			localOpt->Get("xbins",xbins);
 			//initialize histograms using KPlot:CreateHist() method
@@ -834,11 +834,11 @@ class KNJetsISRSelector : public KSelector<KSkimmer> {
 
 //-----------------------------------------------------------------
 //stores info for normalizing PDF and r/f scale uncertainties
-class KPDFNormSelector : public KSelector<KSkimmer> {
+class KPDFNormSelector : public KSelector {
 	public:
 		//constructor
-		KPDFNormSelector() : KSelector<KSkimmer>() { }
-		KPDFNormSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), h_norm(NULL) {
+		KPDFNormSelector() : KSelector() { }
+		KPDFNormSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), h_norm(NULL) {
 			canfail = false;
 			//initialize histogram
 			TH1::AddDirectory(kFALSE);
@@ -846,9 +846,9 @@ class KPDFNormSelector : public KSelector<KSkimmer> {
 			//1: nominal, 2: PDF up, 3: PDF down, 4: scale up, 5: scale down
 			h_norm = new TH1F("PDFNorm","",5,0.5,5.5);
 		}
-		virtual void CheckLooper(){
+		virtual void CheckBase(){
 			//check if data
-			bool data = looper->MyBase->GetLocalOpt()->Get("data",false);
+			bool data = base->GetLocalOpt()->Get("data",false);
 			//disable this for data
 			if(data) {
 				dummy = true;
@@ -901,11 +901,11 @@ class KPDFNormSelector : public KSelector<KSkimmer> {
 
 //-------------------------------------------------------------
 //look at only a specific range of events
-class KEventRangeSelector : public KSelector<KSkimmer> {
+class KEventRangeSelector : public KSelector {
 	public:
 		//constructor
-		KEventRangeSelector() : KSelector<KSkimmer>() { }
-		KEventRangeSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), start(0), finish(0) { 
+		KEventRangeSelector() : KSelector() { }
+		KEventRangeSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), start(0), finish(0) { 
 			//check for option
 			localOpt->Get("start",start);
 			localOpt->Get("finish",finish);
@@ -923,16 +923,16 @@ class KEventRangeSelector : public KSelector<KSkimmer> {
 
 //---------------------------------------------------------------
 //updates CSC filter
-class KCSCFilterSelector : public KSelector<KSkimmer> {
+class KCSCFilterSelector : public KSelector {
 	public:
 		//constructor
-		KCSCFilterSelector() : KSelector<KSkimmer>() { }
-		KCSCFilterSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), inputfile("") {
+		KCSCFilterSelector() : KSelector() { }
+		KCSCFilterSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), inputfile("") {
 			canfail = false;
 		}
-		virtual void CheckLooper(){
+		virtual void CheckBase(){
 			//check if data
-			bool data = looper->MyBase->GetLocalOpt()->Get("data",false);
+			bool data = base->GetLocalOpt()->Get("data",false);
 			//disable this for non-data
 			if(!data) dummy = true;
 			else {
@@ -958,11 +958,11 @@ class KCSCFilterSelector : public KSelector<KSkimmer> {
 
 //-------------------------------------------------------------
 //special version of selector class for object sync
-class KSyncSelector : public KSelector<KSkimmer> {
+class KSyncSelector : public KSelector {
 	public:
 		//constructor
-		KSyncSelector() : KSelector<KSkimmer>() { }
-		KSyncSelector(string name_, OptionMap* localOpt_) : KSelector<KSkimmer>(name_,localOpt_), depname(""), prevSel(NULL), obj_counter(0), debug(false) { 
+		KSyncSelector() : KSelector() { }
+		KSyncSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), depname(""), prevSel(NULL), obj_counter(0), debug(false) { 
 			//check for option
 			localOpt->Get("dep",depname);
 		}
@@ -1511,9 +1511,8 @@ class KIsoPionTrackSelector : public KSyncSelector {
 //-------------------------------------------------------------
 //addition to KParser to create selectors
 namespace KParser {
-	template <>
-	KSelector<KSkimmer>* processSelector<KSkimmer>(KNamed* tmp){
-		KSelector<KSkimmer>* srtmp = 0;
+	KSelector* processSelector(KNamed* tmp){
+		KSelector* srtmp = 0;
 		string sname = tmp->first;
 		OptionMap* omap = tmp->second;
 		

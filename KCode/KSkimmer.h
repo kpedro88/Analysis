@@ -1,11 +1,8 @@
 #ifndef KSKIMMER_H
 #define KSKIMMER_H
 
-#ifndef NtupleClass_cxx
-#define NtupleClass_cxx
-
 //custom headers
-#include "NtupleClass.h"
+#include "KLooper.h"
 #include "KMap.h"
 #include "KBase.h"
 #include "KSelection.h"
@@ -23,13 +20,11 @@
 
 using namespace std;
 
-void NtupleClass::Loop() {}
-
-class KSkimmer : public NtupleClass {
+class KSkimmer : public KLooper {
 	public :
 		//constructor
 		KSkimmer(KBase* MyBase_) : 
-			NtupleClass(MyBase_->GetTree()), MyBase(MyBase_), nEventHist(MyBase->GetNEventHist()), nEventNegHist(MyBase->GetNEventNegHist()), globalOpt(MyBase->GetGlobalOpt()), nentries(0)
+			KLooper(MyBase_->GetLocalOpt(),MyBase_->GetGlobalOpt()), MyBase(MyBase_), nEventHist(MyBase->GetNEventHist()), nEventNegHist(MyBase->GetNEventNegHist()), nentries(0)
 		{
 			//check for branches to enable/disable
 			vector<string> disable_branches;
@@ -98,8 +93,9 @@ class KSkimmer : public NtupleClass {
 				theSelections[s]->Finalize(nEventHist,nEventNegHist);
 			}
 		}
-		void AddSelection(KSelection<KSkimmer>* sel) {
+		void AddSelection(KSelection* sel) {
 			sel->SetLooper(this); //also sets looper for selectors, variation, variators
+			sel->SetBase(MyBase);
 			theSelections.push_back(sel);
 		}
 		//implemented in KSkimmerSelectors for future reasons
@@ -108,16 +104,22 @@ class KSkimmer : public NtupleClass {
 		//member variables
 		KBase* MyBase;
 		TH1F *nEventHist, *nEventNegHist;
-		vector<KSelection<KSkimmer>*> theSelections;
+		vector<KSelection*> theSelections;
 		OptionMap* globalOpt;
 		Long64_t nentries;
 
 };
 
-//fake implementations of unneeded KBase classes
-void KBase::Build() {}
-void KBaseData::Build() {}
-void KBaseMC::Build() {}
+//-------------------------------------------
+//extension of base class for skimmer
+class KBaseSkim : public KBase {
+	public:
+		//constructors
+		KBaseSkim() : KBase() {}
+		KBaseSkim(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KBase(name_, localOpt_, globalOpt_) {
+			KSkimmer* ltmp = new KSkimmer(this);
+			SetLooper(ltmp);
+		}
+};
 
-#endif
 #endif

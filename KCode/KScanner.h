@@ -1,11 +1,8 @@
 #ifndef KSCANNER_H
 #define KSCANNER_H
 
-#ifndef NtupleClass_cxx
-#define NtupleClass_cxx
-
 //custom headers
-#include "NtupleClass.h"
+#include "KLooper.h"
 #include "KMap.h"
 #include "KBase.h"
 #include "KSelection.h"
@@ -29,15 +26,13 @@
 
 using namespace std;
 
-void NtupleClass::Loop() {}
-
-class KScanner : public NtupleClass {
+class KScanner : public KLooper {
 	public :
 		typedef pair<double,double> massPoint;
 	
 		//constructor
-		KScanner(KBase* MyBase_) : 
-			NtupleClass(MyBase_->GetTree()), MyBase(MyBase_), globalOpt(MyBase->GetGlobalOpt()), nentries(0), outpre(""), outsuff("")
+		KScanner(KBase* MyBase_) :
+			KLooper(MyBase_->GetLocalOpt(),MyBase_->GetGlobalOpt()), MyBase(MyBase_), nentries(0), outpre(""), outsuff("")
 		{
 			//get options
 			globalOpt->Get("outpre",outpre);
@@ -58,20 +53,20 @@ class KScanner : public NtupleClass {
 			int maxevents = 0;
 			if(globalOpt->Get("maxevents",maxevents) && maxevents < nentries) nentries = maxevents;
 			
-			vector<KSelection<KScanner>*> allSels;
+			vector<KSelection*> allSels;
 			vector<string> namesT1ttbb = {"T1bbtt","T1tbtb","T1tbbb","T1tbtt"};
 			if(splitT1ttbb){
 				allSels.reserve(namesT1ttbb.size());
 				for(auto& name : namesT1ttbb){
 					string otmp = MyBase->GetName();
 					otmp.replace(0,6,name);
-					KSelection<KScanner>* seltmp = new KSelection<KScanner>(otmp,globalOpt);
+					KSelection* seltmp = new KSelection(otmp,globalOpt);
 					seltmp->ScanTree(fChain);
 					allSels.push_back(seltmp);
 				}
 			}
 			
-			KSelection<KScanner>* currSel = NULL;
+			KSelection* currSel = NULL;
 			massPoint currPoint = make_pair(0.0,0.0);
 			unsigned blocknum = 0;
 			MyBase->GetLocalOpt()->Get("block",blocknum);
@@ -135,7 +130,7 @@ class KScanner : public NtupleClass {
 					string oname = makeName(thePoint.first,thePoint.second,blocknum,partnum)+outsuff;
 					
 					//make the selection and tree, fill it
-					currSel = new KSelection<KScanner>(oname,globalOpt);
+					currSel = new KSelection(oname,globalOpt);
 					currSel->ScanTree(fChain);
 					currSel->FillTree();
 				}
@@ -196,10 +191,16 @@ class KScanner : public NtupleClass {
 		bool splitT1ttbb;
 };
 
-//fake implementations of unneeded KBase classes
-void KBase::Build() {}
-void KBaseData::Build() {}
-void KBaseMC::Build() {}
+//-------------------------------------------
+//extension of base class for scanner
+class KBaseScan : public KBase {
+	public:
+		//constructors
+		KBaseScan() : KBase() {}
+		KBaseScan(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KBase(name_, localOpt_, globalOpt_) {
+			KScanner* ltmp = new KScanner(this);
+			SetLooper(ltmp);
+		}
+};
 
-#endif
 #endif

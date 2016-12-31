@@ -45,4 +45,4 @@ if not options.keep:
 
 # run makeSkimInput.py
 from makeSkimInput import makeSkimInput
-makeSkimInput("input/dict_scan.py","input/input_sets_scan.txt","batch/exportScan.sh",nfiles)
+makeSkimInput("input/dict_scan.py","input/input_sets_scan.txt","batch/exportScan.sh","scan",nfiles)

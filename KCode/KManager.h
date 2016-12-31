@@ -157,8 +157,7 @@ class KManager {
 			}
 		}
 		//generalized function to make selection
-		template <class T>
-		KSelection<T>* makeSelection(string selection){
+		KSelection* makeSelection(string selection){
 			//check for systematic
 			vector<string> sel_unc;
 			KParser::process(selection,'_',sel_unc);
@@ -168,30 +167,30 @@ class KManager {
 			
 			//check in full list (selections may be repeated with different systematics, so never remove things from the full list)
 			if(allSelections.Has(sel)){
-				KVariation<T>* vntmp = 0;
+				KVariation* vntmp = 0;
 				if(unc.size()>0) {
 					if(!allVariations.Has(unc)) {
 						cout << "Input error: variation " << unc << " is not defined. This request will be ignored." << endl;
 						return NULL;
 					}
-					vntmp = new KVariation<T>(unc);
+					vntmp = new KVariation(unc);
 					
 					//create variators for variation
 					vector<KNamed*> variatorLines = allVariations.Get(unc);
 					for(unsigned v = 0; v < variatorLines.size(); v++){
-						KVariator<T>* vrtmp = KParser::processVariator<T>(variatorLines[v]);
+						KVariator* vrtmp = KParser::processVariator(variatorLines[v]);
 						if(vrtmp) vntmp->AddVariator(vrtmp);
 					}
 				}
 			
 				//create selection using full name (sel + unc)
-				KSelection<T>* sntmp = new KSelection<T>(selection,globalOpt);
+				KSelection* sntmp = new KSelection(selection,globalOpt);
 				if(vntmp) sntmp->SetVariation(vntmp);
 				
 				//create selectors for selection
 				vector<KNamed*> selectorLines = allSelections.Get(sel);
 				for(unsigned s = 0; s < selectorLines.size(); s++){
-					KSelector<T>* srtmp = KParser::processSelector<T>(selectorLines[s]);
+					KSelector* srtmp = KParser::processSelector(selectorLines[s]);
 					if(srtmp) sntmp->AddSelector(srtmp);
 				}
 				

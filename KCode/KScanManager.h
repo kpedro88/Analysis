@@ -26,9 +26,9 @@ using namespace std;
 class KScanManager : public KManager {
 	public:
 		//constructor
-		KScanManager() : KManager(), setname(""), scanner(0), MyBase(0) {}
+		KScanManager() : KManager(), setname(""), MyScanner(0), MyBase(0) {}
 		KScanManager(string setname_, string indir_, vector<string> input_, vector<string> direct_) : 
-			KManager(indir_), setname(setname_), scanner(0), MyBase(0)
+			KManager(indir_), setname(setname_), MyScanner(0), MyBase(0)
 		{
 			//parse most initializations based on text input
 			Initialize(input_,direct_);
@@ -51,6 +51,7 @@ class KScanManager : public KManager {
 			//only process the set of interest
 			if(fields.size()>2 && fields[2]==setname) {
 				MyBase = KParser::processBase(line,globalOpt);
+				MyScanner = static_cast<KScanner*>(MyBase->GetLooper());
 			}
 		}
 		//where the magic happens
@@ -70,23 +71,19 @@ class KScanManager : public KManager {
 				if(outpre.size()>0) globalOpt->Set<string>("outpre",outpre);
 			}
 			
-			//initialize scanner after parsing
-			scanner = new KScanner(MyBase);
-			
 			//scanner does the rest
-			scanner->Loop();
+			MyScanner->Loop();
 			
 			//final stuff
-			MyBase->CloseFile();
+			MyScanner->CloseFile();
 		}
 		
 	private:
 		//member variables
 		string setname;
 		bool doClone;
-		KScanner* scanner;
+		KScanner* MyScanner;
 		KBase* MyBase;
 };
-
 
 #endif

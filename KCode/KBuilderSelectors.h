@@ -30,11 +30,11 @@ using namespace std;
 
 //----------------------------------------------------
 //selects events based on HLT line
-class KHLTSelector : public KSelector<KBuilder> {
+class KHLTSelector : public KSelector {
 	public:
 		//constructor
-		KHLTSelector() : KSelector<KBuilder>() { }
-		KHLTSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_) { 
+		KHLTSelector() : KSelector() { }
+		KHLTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { 
 			//get selected line from options
 			localOpt->Get("HLTLines",HLTLines);
 			debug = localOpt->Get("debug",false);
@@ -93,13 +93,13 @@ class KHLTSelector : public KSelector<KBuilder> {
 
 //----------------------------------------------------
 //simulates some interesting triggers
-class KFakeHLTSelector : public KSelector<KBuilder> {
+class KFakeHLTSelector : public KSelector {
 	public:
 		//enum for trigger names
 		enum faketrigger { t_PFHT350_PFMET100=0, t_QuadJet45_TripleCSV067=1, t_DoubleJet90_Quad30_TripleCSV067=2, t_MET110_CSV07=3 };
 		//constructor
-		KFakeHLTSelector() : KSelector<KBuilder>() { }
-		KFakeHLTSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_) { 
+		KFakeHLTSelector() : KSelector() { }
+		KFakeHLTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { 
 			//get selected trigger from options
 			vector<string> s_trigger;
 			localOpt->Get("trigger",s_trigger);
@@ -120,7 +120,9 @@ class KFakeHLTSelector : public KSelector<KBuilder> {
 		virtual void CheckLooper(){
 			//check MC stuff
 			realMET = localOpt->Get("realMET",true);
-			signal = looper->localOpt->Get("signal",false);
+		}
+		virtual void CheckBase(){
+			signal = base->GetLocalOpt()->Get("signal",false);
 		}
 		
 		//this selector doesn't add anything to tree
@@ -222,11 +224,11 @@ class KFakeHLTSelector : public KSelector<KBuilder> {
 
 //----------------------------------------------------
 //selects events based on HT value
-class KHTSelector : public KSelector<KBuilder> {
+class KHTSelector : public KSelector {
 	public:
 		//constructor
-		KHTSelector() : KSelector<KBuilder>() { }
-		KHTSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), HTmin(500) { 
+		KHTSelector() : KSelector() { }
+		KHTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), HTmin(500) { 
 			//check for option
 			localOpt->Get("HTmin",HTmin);
 		}
@@ -247,11 +249,11 @@ class KHTSelector : public KSelector<KBuilder> {
 
 //----------------------------------------------------
 //selects events based on MHT value
-class KMHTSelector : public KSelector<KBuilder> {
+class KMHTSelector : public KSelector {
 	public:
 		//constructor
-		KMHTSelector() : KSelector<KBuilder>() { }
-		KMHTSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), MHTmin(200), debug(false), minPtMHT(30.), maxEtaMHT(5.) { 
+		KMHTSelector() : KSelector() { }
+		KMHTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), MHTmin(200), debug(false), minPtMHT(30.), maxEtaMHT(5.) { 
 			//check for option
 			localOpt->Get("MHTmin",MHTmin);
 			debug = localOpt->Get("debug",false);
@@ -277,11 +279,11 @@ class KMHTSelector : public KSelector<KBuilder> {
 
 //----------------------------------------------------
 //selects events based on leading jet pt
-class KLeadJetPtSelector : public KSelector<KBuilder> {
+class KLeadJetPtSelector : public KSelector {
 	public:
 		//constructor
-		KLeadJetPtSelector() : KSelector<KBuilder>() { }
-		KLeadJetPtSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), pTmin(200) { 
+		KLeadJetPtSelector() : KSelector() { }
+		KLeadJetPtSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), pTmin(200) { 
 			//check for option
 			localOpt->Get("pTmin",pTmin);
 		}
@@ -302,11 +304,11 @@ class KLeadJetPtSelector : public KSelector<KBuilder> {
 
 //---------------------------------------------------------------
 //class to store and apply RA2 binning
-class KRA2BinSelector : public KSelector<KBuilder> {
+class KRA2BinSelector : public KSelector {
 	public:
 		//constructor
-		KRA2BinSelector() : KSelector<KBuilder>() { }
-		KRA2BinSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), RA2Exclusive(true), DoBTagSF(false), debug(0) { }
+		KRA2BinSelector() : KSelector() { }
+		KRA2BinSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), RA2Exclusive(true), DoBTagSF(false), debug(0) { }
 		virtual void CheckDeps(){
 			//check if initial reading of input has already been done
 			if(sel->GetGlobalOpt()->Get("prepared_RA2bin",false)){
@@ -495,11 +497,11 @@ class KRA2BinSelector : public KSelector<KBuilder> {
 
 //---------------------------------------------------------------
 //checks for double-counted events
-class KDoubleCountSelector : public KSelector<KBuilder> {
+class KDoubleCountSelector : public KSelector {
 	public:
 		//constructor
-		KDoubleCountSelector() : KSelector<KBuilder>() { }
-		KDoubleCountSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_) { }
+		KDoubleCountSelector() : KSelector() { }
+		KDoubleCountSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
 		virtual void CheckBranches(){
 			looper->fChain->SetBranchStatus("RunNum",1);
 			looper->fChain->SetBranchStatus("EvtNum",1);
@@ -522,11 +524,11 @@ class KDoubleCountSelector : public KSelector<KBuilder> {
 
 //---------------------------------------------------------------
 //applies photon ID to candidates
-class KPhotonIDSelector : public KSelector<KBuilder> {
+class KPhotonIDSelector : public KSelector {
 	public:
 		//constructor
-		KPhotonIDSelector() : KSelector<KBuilder>() { }
-		KPhotonIDSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_) { 
+		KPhotonIDSelector() : KSelector() { }
+		KPhotonIDSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { 
 			canfail = false;
 		}
 		virtual void CheckBranches(){
@@ -563,11 +565,11 @@ class KPhotonIDSelector : public KSelector<KBuilder> {
 
 //---------------------------------------------------------------
 //applies MET filters
-class KMETFilterSelector : public KSelector<KBuilder> {
+class KMETFilterSelector : public KSelector {
 	public:
 		//constructor
-		KMETFilterSelector() : KSelector<KBuilder>() { }
-		KMETFilterSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_) {
+		KMETFilterSelector() : KSelector() { }
+		KMETFilterSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
 			localOpt->Get("filterfiles",filterfiles);
 			for(unsigned f = 0; f < filterfiles.size(); ++f){
 				filters.push_back(new EventListFilter(filterfiles[f]));
@@ -592,14 +594,14 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 				looper->fChain->SetBranchStatus("EvtNum",1);				
 			}
 		}
-		virtual void CheckLooper(){
+		virtual void CheckBase(){
 			//check fastsim stuff
-			bool fastsim = looper->localOpt->Get("fastsim",false);
+			bool fastsim = base->GetLocalOpt()->Get("fastsim",false);
 			if(fastsim){
 				//disable this for fastsim
 				dummy = true;
 			}
-			bool data = looper->localOpt->Get("data",false);
+			bool data = base->GetLocalOpt()->Get("data",false);
 			if(onlydata and !data){
 				//disable this for non-data if desired
 				dummy = true;
@@ -633,11 +635,11 @@ class KMETFilterSelector : public KSelector<KBuilder> {
 //---------------------------------------------------------------
 //eta regions for PFJetID: 0 = 0.0 < |eta| < 2.4; 1 = 0.0 < |eta| < 3.0; 2 = 3.0 < |eta|
 //all require pt > 30
-class KJetEtaRegionSelector : public KSelector<KBuilder> {
+class KJetEtaRegionSelector : public KSelector {
 	public:
 		//constructor
-		KJetEtaRegionSelector() : KSelector<KBuilder>() { }
-		KJetEtaRegionSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), region(0) { 
+		KJetEtaRegionSelector() : KSelector() { }
+		KJetEtaRegionSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), region(0) { 
 			localOpt->Get("region",region);
 			canfail = false;
 		}
@@ -667,11 +669,11 @@ class KJetEtaRegionSelector : public KSelector<KBuilder> {
 
 //---------------------------------------------------------------
 //recalculate NJets and BTags in a hemisphere around MHT_Phi
-class KHemisphereSelector : public KSelector<KBuilder> {
+class KHemisphereSelector : public KSelector {
 	public:
 		//constructor
-		KHemisphereSelector() : KSelector<KBuilder>() { }
-		KHemisphereSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_) { 
+		KHemisphereSelector() : KSelector() { }
+		KHemisphereSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { 
 			canfail = false;
 		}
 		virtual void CheckBranches(){
@@ -711,11 +713,11 @@ class KHemisphereSelector : public KSelector<KBuilder> {
 
 //---------------------------------------------------------------
 //calculates btag scale factors
-class KBTagSFSelector : public KSelector<KBuilder> {
+class KBTagSFSelector : public KSelector {
 	public:
 		//constructor
-		KBTagSFSelector() : KSelector<KBuilder>() { }
-		KBTagSFSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_)
+		KBTagSFSelector() : KSelector() { }
+		KBTagSFSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_)
 		{ 
 			canfail = false;
 			
@@ -733,28 +735,27 @@ class KBTagSFSelector : public KSelector<KBuilder> {
 		}
 		virtual void CheckLooper(){
 			//check for option
-			int btagSFunc = 0; looper->globalOpt->Get("btagSFunc",btagSFunc); btagcorr.SetBtagSFunc(btagSFunc);
-			int mistagSFunc = 0; looper->globalOpt->Get("mistagSFunc",mistagSFunc); btagcorr.SetMistagSFunc(mistagSFunc);
-
-			//get efficiency histograms
-			btagcorr.SetEffs(looper->MyBase->GetFile());
+			int btagSFunc = 0; looper->GetGlobalOpt()->Get("btagSFunc",btagSFunc); btagcorr.SetBtagSFunc(btagSFunc);
+			int mistagSFunc = 0; looper->GetGlobalOpt()->Get("mistagSFunc",mistagSFunc); btagcorr.SetMistagSFunc(mistagSFunc);
+			int btagCFunc = 0; looper->GetGlobalOpt()->Get("btagCFunc",btagCFunc); btagcorr.SetBtagCFunc(btagCFunc);
+			int ctagCFunc = 0; looper->GetGlobalOpt()->Get("ctagCFunc",ctagCFunc); btagcorr.SetCtagCFunc(ctagCFunc);
+			int mistagCFunc = 0; looper->GetGlobalOpt()->Get("mistagCFunc",mistagCFunc);  btagcorr.SetMistagCFunc(mistagCFunc);
 			
 			if(!btagcorr.h_eff_b || !btagcorr.h_eff_c || !btagcorr.h_eff_udsg){
 				cout << "Input error: b-tag efficiency histograms missing!" << endl;
 				depfailed = true;
 			}
+		}
+		virtual void CheckBase(){
+			//get efficiency histograms
+			btagcorr.SetEffs(base->GetFile());
 			
 			//check fastsim stuff
-			bool fastsim = looper->localOpt->Get("fastsim",false); btagcorr.SetFastSim(fastsim);
+			bool fastsim = base->GetLocalOpt()->Get("fastsim",false); btagcorr.SetFastSim(fastsim);
 			if(fastsim){
 				//initialize btag corrector fastsim calibrations
 				//todo: check the sample name and choose the appropriate CFs (once available)
 				btagcorr.SetCalibFastSim("btag/CSV_13TEV_Combined_14_7_2016.csv");
-				
-				//check for option
-				int btagCFunc = 0; looper->globalOpt->Get("btagCFunc",btagCFunc); btagcorr.SetBtagCFunc(btagCFunc);
-				int ctagCFunc = 0; looper->globalOpt->Get("ctagCFunc",ctagCFunc); btagcorr.SetCtagCFunc(ctagCFunc);
-				int mistagCFunc = 0; looper->globalOpt->Get("mistagCFunc",mistagCFunc);  btagcorr.SetMistagCFunc(mistagCFunc);
 			}
 		}
 		
@@ -797,11 +798,11 @@ class KValue {
 //----------------------------------------------------
 //final selector to fill histograms
 //(accounts for dependence on other selectors)
-class KHistoSelector : public KSelector<KBuilder> {
+class KHistoSelector : public KSelector {
 	public:
 		//constructor
-		KHistoSelector() : KSelector<KBuilder>() { }
-		KHistoSelector(string name_, OptionMap* localOpt_) : KSelector<KBuilder>(name_,localOpt_), RA2Bin(NULL), PhotonID(NULL), BTagSF(NULL), JetEtaRegion(NULL), Hemisphere(NULL), FakeHLT(NULL) { 
+		KHistoSelector() : KSelector() { }
+		KHistoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), RA2Bin(NULL), PhotonID(NULL), BTagSF(NULL), JetEtaRegion(NULL), Hemisphere(NULL), FakeHLT(NULL) { 
 			canfail = false;
 		}
 		
@@ -823,9 +824,23 @@ class KHistoSelector : public KSelector<KBuilder> {
 				looper->fChain->SetBranchStatus("EvtNum",1);
 			}
 		}
-		virtual void CheckLooper(){
-			looper->localOpt->Get("mother",mother);
-			deltaM = 0; looper->localOpt->Get("deltaM",deltaM);
+		virtual void CheckBase(){
+			//initial loop to get histo variables
+			int table_size = base->GetTable().size();
+			vars.clear(); vars.reserve(table_size);
+			htmp.clear(); htmp.reserve(table_size);
+			for(auto& sit : base->GetTable()){
+				//get histo name
+				string stmp = sit.first;
+				htmp.push_back(sit.second);
+				//split up histo variable names
+				vector<string> vars_tmp;
+				KParser::process(stmp,'_',vars_tmp);
+				vars.push_back(vars_tmp);
+			}
+			
+			base->GetLocalOpt()->Get("mother",mother);
+			deltaM = 0; base->GetLocalOpt()->Get("deltaM",deltaM);
 		}
 		
 		//used for non-dummy selectors
@@ -833,12 +848,12 @@ class KHistoSelector : public KSelector<KBuilder> {
 			double w = looper->GetWeight();
 			if(FakeHLT) w *= FakeHLT->weight;
 			
-			for(unsigned h = 0; h < looper->htmp.size(); h++){
-				unsigned vsize = looper->vars[h].size();
+			for(unsigned h = 0; h < htmp.size(); h++){
+				unsigned vsize = vars[h].size();
 				vector<KValue> values(vsize);				
 			
 				for(unsigned i = 0; i < vsize; i++){
-					string vname = looper->vars[h][i];
+					string vname = vars[h][i];
 					//list of cases for histo calculation and filling
 					if(vname=="RA2bin" && RA2Bin){ //plot yield vs. bin of RA2 search -> depends on RA2Bin selector
 						if(RA2Bin->RA2Exclusive) {
@@ -1069,10 +1084,9 @@ class KHistoSelector : public KSelector<KBuilder> {
 				}
 				
 				//now fill the histogram
-				TH1* htmp = looper->htmp[h];
 				if(vsize==1){
 					for(int ix = 0; ix < values[0].GetSize(); ix++){
-						htmp->Fill(values[0].GetValue(ix), values[0].GetWeight(ix));
+						htmp[h]->Fill(values[0].GetValue(ix), values[0].GetWeight(ix));
 					}
 				}
 				else if(vsize==2){
@@ -1080,26 +1094,26 @@ class KHistoSelector : public KSelector<KBuilder> {
 					//these three cases allow for various x vs. y comparisons: same # entries per event, or 1 vs. N per event
 					if(values[0].GetSize()==values[1].GetSize()) {
 						for(int i = 0; i < values[0].GetSize(); i++){
-							if(htmp->GetDimension()==1)
-								static_cast<TProfile*>(htmp)->Fill(values[0].GetValue(i), values[1].GetValue(i), values[0].GetWeight(i)); //pick the x weight by default
-							else if(htmp->GetDimension()==2)
-								static_cast<TH2*>(htmp)->Fill(values[0].GetValue(i), values[1].GetValue(i), values[0].GetWeight(i)); //pick the x weight by default
+							if(htmp[h]->GetDimension()==1)
+								static_cast<TProfile*>(htmp[h])->Fill(values[0].GetValue(i), values[1].GetValue(i), values[0].GetWeight(i)); //pick the x weight by default
+							else if(htmp[h]->GetDimension()==2)
+								static_cast<TH2*>(htmp[h])->Fill(values[0].GetValue(i), values[1].GetValue(i), values[0].GetWeight(i)); //pick the x weight by default
 						}
 					}
 					else if(values[0].GetSize()==1){
 						for(int iy = 0; iy < values[1].GetSize(); iy++){
-							if(htmp->GetDimension()==1)
-								static_cast<TProfile*>(htmp)->Fill(values[0].GetValue(0), values[1].GetValue(iy), values[1].GetWeight(iy));
-							else if(htmp->GetDimension()==2)
-								static_cast<TH2*>(htmp)->Fill(values[0].GetValue(0), values[1].GetValue(iy), values[1].GetWeight(iy));
+							if(htmp[h]->GetDimension()==1)
+								static_cast<TProfile*>(htmp[h])->Fill(values[0].GetValue(0), values[1].GetValue(iy), values[1].GetWeight(iy));
+							else if(htmp[h]->GetDimension()==2)
+								static_cast<TH2*>(htmp[h])->Fill(values[0].GetValue(0), values[1].GetValue(iy), values[1].GetWeight(iy));
 						}
 					}
 					else if(values[1].GetSize()==1){
 						for(int ix = 0; ix < values[0].GetSize(); ix++){
-							if(htmp->GetDimension()==1)
-								static_cast<TProfile*>(htmp)->Fill(values[0].GetValue(ix), values[1].GetValue(0), values[0].GetWeight(ix));
-							else if(htmp->GetDimension()==2)
-								static_cast<TH2*>(htmp)->Fill(values[0].GetValue(ix), values[1].GetValue(0), values[0].GetWeight(ix));
+							if(htmp[h]->GetDimension()==1)
+								static_cast<TProfile*>(htmp[h])->Fill(values[0].GetValue(ix), values[1].GetValue(0), values[0].GetWeight(ix));
+							else if(htmp[h]->GetDimension()==2)
+								static_cast<TH2*>(htmp[h])->Fill(values[0].GetValue(ix), values[1].GetValue(0), values[0].GetWeight(ix));
 						}
 					}
 				}
@@ -1109,8 +1123,34 @@ class KHistoSelector : public KSelector<KBuilder> {
 			
 			return true;
 		}
+		virtual void Finalize(TFile* file){
+			if(sel->GetGlobalOpt()->Get("plotoverflow",false)){
+				for(unsigned h = 0; h < htmp.size(); h++){
+					if(vars[h].size()==2) continue; //not implemented for 2D histos or profiles yet
+					
+					//temporary histo to calculate error correctly when adding overflow bin to last bin
+					TH1* otmp = (TH1*)htmp[h]->Clone();
+					otmp->Reset("ICEM");
+					int ovbin = htmp[h]->GetNbinsX()+1;
+					double err = 0.;
+					otmp->SetBinContent(ovbin-1,htmp[h]->IntegralAndError(ovbin,ovbin,err));
+					otmp->SetBinError(ovbin-1,err);
+					
+					//add overflow bin to last bin
+					htmp[h]->Add(otmp);
+					
+					//remove overflow bin from htmp[h] (for consistent integral/yield)
+					htmp[h]->SetBinContent(ovbin,0);
+					htmp[h]->SetBinError(ovbin,0);
+					
+					delete otmp;
+				}
+			}
+		}
 		
 		//member variables
+		vector<vector<string> > vars;
+		vector<TH1*> htmp;
 		KRA2BinSelector* RA2Bin;
 		KPhotonIDSelector* PhotonID;
 		KBTagSFSelector* BTagSF;
@@ -1124,9 +1164,8 @@ class KHistoSelector : public KSelector<KBuilder> {
 //-------------------------------------------------------------
 //addition to KParser to create selectors
 namespace KParser {
-	template <>
-	KSelector<KBuilder>* processSelector<KBuilder>(KNamed* tmp){
-		KSelector<KBuilder>* srtmp = 0;
+	KSelector* processSelector(KNamed* tmp){
+		KSelector* srtmp = 0;
 		string sname = tmp->first;
 		OptionMap* omap = tmp->second;
 		
