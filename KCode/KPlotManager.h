@@ -331,18 +331,16 @@ class KPlotManager : public KManager {
 			}
 		
 			//load histos into sets
-			PMit p;
-			for(p = MyPlots.GetTable().begin(); p != MyPlots.GetTable().end(); p++){
+			for(auto& p : MyPlots.GetTable()){
 				for(unsigned s = 0; s < MySets.size(); s++){
-					MySets[s]->AddHisto(p->first,p->second->GetHisto());
+					MySets[s]->AddHisto(p.first,p.second->GetHisto());
 				}
 			}
-			PMMit pm;
-			for(pm = MyPlots2D.GetTable().begin(); pm != MyPlots2D.GetTable().end(); pm++){
-				PlotMap* p2map = pm->second;
+			for(auto& pm : MyPlots2D.GetTable()){
+				PlotMap* p2map = pm.second;
 				for(unsigned s = 0; s < MySets.size(); s++){
 					KPlot* ptmp = p2map->Get(MySets[s]->GetName());
-					if(ptmp) MySets[s]->AddHisto(pm->first,ptmp->GetHisto());
+					if(ptmp) MySets[s]->AddHisto(pm.first,ptmp->GetHisto());
 				}
 			}
 			
@@ -354,8 +352,8 @@ class KPlotManager : public KManager {
 			//skip all the histo drawing in roc curve mode (by default)
 			if(globalOpt->Get("roc",false) && globalOpt->Get("skiphistos",true)) {
 				//close canvases
-				for(p = MyPlots.GetTable().begin(); p != MyPlots.GetTable().end(); p++){
-					TCanvas* can = p->second->GetCanvas();
+				for(auto& p : MyPlots.GetTable()){
+					TCanvas* can = p.second->GetCanvas();
 					can->Close();
 				}
 				DrawROC();
@@ -363,17 +361,17 @@ class KPlotManager : public KManager {
 			}
 			
 			//draw each plot - normalization, legend, ratio
-			for(p = MyPlots.GetTable().begin(); p != MyPlots.GetTable().end(); p++){
+			for(auto& p : MyPlots.GetTable()){
 				//get drawing objects from KPlot
-				TCanvas* can = p->second->GetCanvas();
-				TPad* pad1 = p->second->GetPad1();
+				TCanvas* can = p.second->GetCanvas();
+				TPad* pad1 = p.second->GetPad1();
 				
 				//get legend
-				KLegend* kleg = p->second->GetLegend();
+				KLegend* kleg = p.second->GetLegend();
 				
 				//select current histogram in sets
 				for(unsigned s = 0; s < MySets.size(); s++){
-					MySets[s]->GetHisto(p->first);
+					MySets[s]->GetHisto(p.first);
 				}
 				
 				//check if normalization to yield is desired (disabled by default)
@@ -386,24 +384,24 @@ class KPlotManager : public KManager {
 				//and add to legend
 				double yield = 0;
 				if(yieldref) yield = yieldref->GetYield();
-				if(globalOpt->Get("printyield",false)) cout << p->first << " yield:" << endl;
+				if(globalOpt->Get("printyield",false)) cout << p.first << " yield:" << endl;
 				for(unsigned s = 0; s < MySets.size(); s++){
-					if(yieldref && p->second->GetLocalOpt()->Get("yieldnorm",false) && yield>0 && MySets[s] != yieldref) MySets[s]->Normalize(yield);
+					if(yieldref && p.second->GetLocalOpt()->Get("yieldnorm",false) && yield>0 && MySets[s] != yieldref) MySets[s]->Normalize(yield);
 					if(globalOpt->Get("printyield",false)) MySets[s]->PrintYield();
 					if(globalOpt->Get("unitnorm",false)) MySets[s]->Normalize(1,true);
-					if(p->second->GetLocalOpt()->Get("bindivide",false)) MySets[s]->BinDivide();
+					if(p.second->GetLocalOpt()->Get("bindivide",false)) MySets[s]->BinDivide();
 					MySets[s]->AddToLegend(kleg);
 				}
 				if(globalOpt->Get("printyield",false)) cout << endl;
-				if(p->second->GetLocalOpt()->Get("yieldnorm",false) && !yieldref){
-					cout << "Input error: normalization to yield requested for " << p->first << ", but yieldref not set. Normalization will not be performed." << endl;
+				if(p.second->GetLocalOpt()->Get("yieldnorm",false) && !yieldref){
+					cout << "Input error: normalization to yield requested for " << p.first << ", but yieldref not set. Normalization will not be performed." << endl;
 				}
 				
 				//build legend
 				kleg->Build();
 
 				//draw blank histo for axes
-				p->second->DrawHist();
+				p.second->DrawHist();
 				//draw sets (reverse order, so first set is on top)
 				for(int s = MySets.size()-1; s >= 0; s--){
 					MySets[s]->Draw(pad1);
@@ -411,46 +409,46 @@ class KPlotManager : public KManager {
 					//save histos in root file if requested
 					if(out_file){
 						out_file->cd();
-						string oname = p->first + "_" + MySets[s]->GetName();
+						string oname = p.first + "_" + MySets[s]->GetName();
 						MySets[s]->GetHisto()->SetName(oname.c_str());
 						MySets[s]->GetHisto()->Write(oname.c_str());
 					}
 				}
-				p->second->GetHisto()->Draw("sameaxis"); //draw again so axes on top
-				p->second->DrawText();
+				p.second->GetHisto()->Draw("sameaxis"); //draw again so axes on top
+				p.second->DrawText();
 				
 				//ratio (enabled by default, auto-disabled above if components not set)
-				if(p->second->GetLocalOpt()->Get("ratio",true)){
-					TPad* pad2 = p->second->GetPad2();
+				if(p.second->GetLocalOpt()->Get("ratio",true)){
+					TPad* pad2 = p.second->GetPad2();
 
-					p->second->DrawRatio();
+					p.second->DrawRatio();
 					
 					for(unsigned r = 0; r < MyRatios.size(); ++r){
-						MyRatios[r]->Build(p->second->GetHisto());
+						MyRatios[r]->Build(p.second->GetHisto());
 						MyRatios[r]->Draw(pad2);
 					}
-					p->second->DrawLine();
+					p.second->DrawLine();
 				}
 				
 				//if printing not enabled, does nothing
-				PrintCanvas(p->first,can);
+				PrintCanvas(p.first,can);
 			}
 
 			//draw each 2D plot - normalization, etc.
-			for(pm = MyPlots2D.GetTable().begin(); pm != MyPlots2D.GetTable().end(); pm++){
-				PlotMap* p2map = pm->second;
+			for(auto& pm : MyPlots2D.GetTable()){
+				PlotMap* p2map = pm.second;
 				
 				//select current histogram in sets
 				//needs to happen first in case of normalization to yield
 				for(unsigned s = 0; s < MySets.size(); s++){
-					MySets[s]->GetHisto(pm->first);
+					MySets[s]->GetHisto(pm.first);
 				}
 				double yield = 0;
 				if(p2map->GetTable().begin()->second->GetLocalOpt()->Get("yieldnorm",false) && yieldref){
 						yield = yieldref->GetYield();
 				}
 				else if(p2map->GetTable().begin()->second->GetLocalOpt()->Get("yieldnorm",false) && !yieldref){
-					cout << "Input error: normalization to yield requested for " << pm->first << ", but yieldref not set. Normalization will not be performed." << endl;
+					cout << "Input error: normalization to yield requested for " << pm.first << ", but yieldref not set. Normalization will not be performed." << endl;
 				}
 				
 				double zmin = 1e100;
@@ -459,7 +457,7 @@ class KPlotManager : public KManager {
 				//BEFORE printing yields
 				//then print yield if enabled
 				//BEFORE division by bin width if requested
-				if(globalOpt->Get("printyield",false)) cout << pm->first << " yield:" << endl;
+				if(globalOpt->Get("printyield",false)) cout << pm.first << " yield:" << endl;
 				for(unsigned s = 0; s < MySets.size(); s++){
 					KBase* theSet = MySets[s];
 					KPlot* ptmp = p2map->Get(theSet->GetName());
@@ -514,7 +512,7 @@ class KPlotManager : public KManager {
 					//save histo in root file if requested
 					if(out_file){
 						out_file->cd();
-						string oname = pm->first + "_" + theSet->GetName();
+						string oname = pm.first + "_" + theSet->GetName();
 						theSet->GetHisto()->SetName(oname.c_str());
 						theSet->GetHisto()->Write(oname.c_str());
 					}
@@ -522,7 +520,7 @@ class KPlotManager : public KManager {
 					ptmp->DrawText();
 					
 					//if printing not enabled, does nothing
-					PrintCanvas(pm->first+"_"+theSet->GetName(),can);
+					PrintCanvas(pm.first+"_"+theSet->GetName(),can);
 				}
 			}
 			
@@ -578,11 +576,10 @@ class KPlotManager : public KManager {
 					//loop over histos and make graphs
 					vector<TGraph*> graphs;
 					vector<KStyle*> graphstyles;
-					PMit p;
-					for(p = MyPlots.GetTable().begin(); p != MyPlots.GetTable().end(); p++){
+					for(auto& p : MyPlots.GetTable()){
 						//select current histogram in sets
-						TH1F* h_sig = (TH1F*)(roc_sig[s]->GetHisto(p->first));
-						TH1F* h_bkg = (TH1F*)(roc_bkg[b]->GetHisto(p->first)); //unused right now
+						TH1F* h_sig = (TH1F*)(roc_sig[s]->GetHisto(p.first));
+						TH1F* h_bkg = (TH1F*)(roc_bkg[b]->GetHisto(p.first)); //unused right now
 						
 						//get efficiencies
 						//(cached results will be returned if the calculation was already done)
@@ -591,7 +588,7 @@ class KPlotManager : public KManager {
 
 						//create graph
 						TGraph* gtmp = new TGraph(h_sig->GetNbinsX()+2,eff_sig,eff_bkg);
-						gtmp->SetName(p->first.c_str());
+						gtmp->SetName(p.first.c_str());
 						gtmp->SetTitle("");
 						
 						//format graph using KPlot local options for this histo/qty
@@ -599,13 +596,13 @@ class KPlotManager : public KManager {
 						KStyle* stytmp = NULL;
 						if(allStyles.Has(styleName)){
 							KNamed* ntmp = KParser::processNamed(styleName+"\t"+allStyles.Get(styleName));
-							stytmp = new KStyle(ntmp->first,ntmp->second,p->second->GetLocalOpt());
+							stytmp = new KStyle(ntmp->first,ntmp->second,p.second->GetLocalOpt());
 						}
 						stytmp->Format(gtmp);
 						
 						//add to legend using histo x-name & panel
 						int panel_tmp = 0;
-						p->second->GetLocalOpt()->Get("panel",panel_tmp);
+						p.second->GetLocalOpt()->Get("panel",panel_tmp);
 						kleg->AddEntry(gtmp,h_sig->GetXaxis()->GetTitle(),stytmp->GetLegOpt(),panel_tmp);
 						
 						//store graph

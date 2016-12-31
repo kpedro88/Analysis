@@ -64,10 +64,9 @@ class KSet : public KBase {
 				children[c]->Build();
 			}
 			//then loop to add up histos (only resetting current histo for children once)
-			HMit sit;
-			for(sit = MyHistos.GetTable().begin(); sit != MyHistos.GetTable().end(); sit++){
-				GetHisto(sit->first); //this will propagate to children
-				if(CheckSpecialHistos(sit->first,false)) continue; //don't hadd special histos
+			for(auto& sit : MyHistos.GetTable()){
+				GetHisto(sit.first); //this will propagate to children
+				if(CheckSpecialHistos(sit.first,false)) continue; //don't hadd special histos
 				for(unsigned c = 0; c < children.size(); c++){ //include option to subtract histos, off by default
 					htmp->Add(children[c]->GetHisto(), children[c]->GetLocalOpt()->Get("subtract",false) ? -1 : 1);				
 				}
@@ -297,9 +296,8 @@ class KSetMCStack : public KSet {
 			}
 			
 			//then loop to add up histos (only resetting current histo for children once)
-			SMit sit;
-			for(sit = MyStacks.GetTable().begin(); sit != MyStacks.GetTable().end(); sit++){
-				GetHisto(sit->first); //this will propagate to children
+			for(auto& sit : MyStacks.GetTable()){
+				GetHisto(sit.first); //this will propagate to children
 				
 				//sort vector of children according to current histo - BEFORE adding to stack
 				//unless disabled by user

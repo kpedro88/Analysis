@@ -31,7 +31,7 @@ class KMap {
 		typename map<string,T>::iterator Add(string name, T obj){
 			//finding lower bound is faster for inserting
 			//lower bound: first element in map with key >= name
-			typename map<string,T>::iterator lb = table.lower_bound(name);
+			auto lb = table.lower_bound(name);
 			
 			//key_comp: false if name >= key, true if name < key
 			if(lb != table.end() && !(table.key_comp()(name,lb->first))){
@@ -50,14 +50,14 @@ class KMap {
 		T Get(string name) {
 			if(stmp==name) return itmp->second;
 			else{
-				typename map<string,T>::iterator it = table.find(name);
+				auto it = table.find(name);
 				if(it == table.end()) return T(); //default object
 				else return it->second;
 			}
 		}
 		//check if entry exists
 		bool Has(string name) {
-			typename map<string,T>::iterator it = table.find(name);
+			auto it = table.find(name);
 			if(it == table.end()) return false; //entry not present
 			else {
 				//store in tmps in case of subsequent Get()
@@ -86,7 +86,7 @@ class KMap<T*> {
 		typename map<string,T*>::iterator Add(string name, T* obj){
 			//finding lower bound is faster for inserting
 			//lower bound: first element in map with key >= name
-			typename map<string,T*>::iterator lb = table.lower_bound(name);
+			auto lb = table.lower_bound(name);
 			
 			//key_comp: false if name >= key, true if name < key
 			if(lb != table.end() && !(table.key_comp()(name,lb->first))){
@@ -104,7 +104,7 @@ class KMap<T*> {
 		map<string,T*>& GetTable() { return table; }
 		//accessor
 		T* Get(string name) {
-			typename map<string,T*>::iterator it = table.find(name);
+			auto it = table.find(name);
 			if(it == table.end()) return NULL;
 			else return it->second;
 		}
@@ -139,8 +139,8 @@ std::ostream& operator<< (std::ostream& out, const pair<T1,T2>& p) {
 template <typename T1, typename T2>
 std::ostream& operator<< (std::ostream& out, const map<T1,T2>& m) {
 	if ( !m.empty() ) {
-		for(typename map<T1,T2>::const_iterator mit = m.begin(); mit != m.end(); ++mit){
-			cout << *mit << endl;
+		for(auto& mit : m){
+			cout << mit << endl;
 		}
 	}
 	else {
@@ -200,7 +200,7 @@ class OptionMap : public KMap<KOpt*> {
 		
 		//check if entry exists
 		bool Has(string name) {
-			typename map<string,KOpt*>::iterator it = table.find(name);
+			auto it = table.find(name);
 			return it != table.end();
 		}
 };
@@ -209,18 +209,11 @@ class OptionMap : public KMap<KOpt*> {
 
 class KPlot;
 typedef pair<string, OptionMap*> KNamed;
-typedef map<string,KOpt*>::iterator OMit;
-typedef map<string,TH1*>::iterator HMit;
-typedef map<string,THStack*>::iterator SMit;
-typedef map<string,TGraphAsymmErrors*>::iterator EMit;
-typedef map<string,KPlot*>::iterator PMit;
-typedef map<string,OptionMap*>::iterator OMMit;
 typedef KMap<TH1*> HistoMap;
 typedef KMap<THStack*> StackMap;
 typedef KMap<TGraphAsymmErrors*> ErrorMap;
 typedef KMap<KPlot*> PlotMap;
 typedef KMap<OptionMap*> OptionMapMap;
 typedef KMap<PlotMap*> PlotMapMap;
-typedef map<string,PlotMap*>::iterator PMMit;
 
 #endif

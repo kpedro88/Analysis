@@ -71,11 +71,10 @@ class KBuilder : public NtupleClass {
 			int table_size = MyBase->GetTable().size();
 			vars.clear(); vars.reserve(table_size);
 			htmp.clear(); htmp.reserve(table_size);
-			HMit sit;
-			for(sit = MyBase->GetTable().begin(); sit != MyBase->GetTable().end(); sit++){
+			for(auto& sit : MyBase->GetTable()){
 				//get histo name
-				string stmp = sit->first;
-				htmp.push_back(sit->second);
+				string stmp = sit.first;
+				htmp.push_back(sit.second);
 				//split up histo variable names
 				vector<string> vars_tmp;
 				KParser::process(stmp,'_',vars_tmp);

@@ -219,7 +219,6 @@ class KManager {
 		//accessors
 		OptionMap* GetGlobalOpt() { return globalOpt; }
 		void ListOptions() {
-			OMit it;
 			cout << globalOpt->GetTable() << endl;
 		}
 		
