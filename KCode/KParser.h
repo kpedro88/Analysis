@@ -21,6 +21,51 @@
 class KSelector;
 class KVariator;
 
+class KChain {
+	public:
+		//general constructors
+		KChain() {}
+		KChain(vector<string> fields_) {
+			//chains can be lumped together
+			for(unsigned i = 0; i < fields_.size()-3; i+=4){
+				*this += MakeChain(vector<string>(fields_.begin()+i,fields_.begin()+min(i+4,unsigned(fields_.size()))));
+			}
+		}
+		//standalone constructor
+		static KChain MakeChain(vector<string> fields_);
+		//operators
+		KChain& operator+=(const KChain& ch2){
+			fields.insert(fields.end(),ch2.fields.begin(),ch2.fields.end());
+			if(name.size()>0) name += "_" + ch2.name;
+			else name = ch2.name;
+			files.insert(files.end(),ch2.files.begin(),ch2.files.end());
+			return *this;
+		}
+		KChain operator+(const KChain& ch2){
+			KChain ch1(*this);
+			ch1.fields.insert(ch1.fields.end(),ch2.fields.begin(),ch2.fields.end());
+			if(name.size()>0) ch1.name += "_" + ch2.name;
+			else ch1.name = ch2.name;
+			ch1.files.insert(ch1.files.end(),ch2.files.begin(),ch2.files.end());
+			return ch1;
+		}
+		//accessors
+		const vector<string>& GetFields() const { return fields; }
+		const string& GetName() const { return name; }
+		const vector<string>& GetFiles() const { return files; }
+		
+	private:
+		//member variables
+		vector<string> fields;
+		string name;
+		vector<string> files;
+};
+
+std::ostream& operator<< (std::ostream& out, const KChain& ch) {
+	out << ch.GetName();
+	return out;
+}
+
 namespace KParser {
 	//generalization for processing a line
 	void process(string line, char delim, vector<string>& fields){
@@ -118,36 +163,6 @@ namespace KParser {
 	template <> Color_t getOptionValue<Color_t>(string val){
 		return processColor(val);
 	}
-	//special case: chains
-	vector<string> getOptionValueChain(vector<string> fields){
-		if(fields.size()!=4) {
-			cout << "Input error: chain type needs 4 fields (filepre, filemin, filemax, filesuff), given " << fields.size() << ". This chain will not be initialized." << endl;
-			return vector<string>();
-		}
-		
-		//chain has: filepre, filemin, filemax, filesuff
-		string filepre = getOptionValue<string>(fields[0]);
-		int filemin = getOptionValue<int>(fields[1]);
-		int filemax = getOptionValue<int>(fields[2]);
-		string filesuff = getOptionValue<string>(fields[3]);
-		
-		if(filemin>filemax){
-			cout << "Input error: chain specified incorrectly with filemin > filemax. This chain will not be initialized." << endl;
-			return vector<string>();
-		}
-		
-		//loop over ranges (inclusive)
-		//todo: add option to exclude certain files?
-		vector<string> filenames;
-		filenames.reserve(filemax-filemin+1);
-		for(int f = filemin; f <= filemax; f++){
-			stringstream fs;
-			fs << filepre << f << filesuff;
-			filenames.push_back(fs.str());
-		}
-		
-		return filenames;
-	}
 	//handles vector and non-vector options
 	template <class O> void addOption(OptionMap* option, string name, string val, bool isvector){
 		if(isvector){
@@ -165,26 +180,21 @@ namespace KParser {
 		}
 	}
 	//special handling for chains
-	void addOptionChain(OptionMap* option, string name, string val, bool isvector){
+	template <> void addOption<KChain>(OptionMap* option, string name, string val, bool isvector){
 		//comma-separated values
 		vector<string> fields;
 		process(val,',',fields);
 		
 		if(isvector){
-			vector<vector<string> > vtmp;
+			vector<KChain> vtmp;
 			for(unsigned i = 0; i < fields.size()-3; i+=4){
-				vtmp.push_back(getOptionValueChain(vector<string>(fields.begin()+i,fields.begin()+min(i+4,unsigned(fields.size())))));
+				vtmp.emplace_back(vector<string>(fields.begin()+i,fields.begin()+min(i+4,unsigned(fields.size()))));
 			}
 			option->Set(name,vtmp);
 		}
 		else {
-			//chains can be lumped together
-			vector<string> vlump;
-			for(unsigned i = 0; i < fields.size()-3; i+=4){
-				vector<string> vtmp = getOptionValueChain(vector<string>(fields.begin()+i,fields.begin()+min(i+4,unsigned(fields.size()))));
-				vlump.insert(vlump.end(),vtmp.begin(),vtmp.end());
-			}
-			option->Set(name, vlump);
+			KChain ch(fields);
+			option->Set(name,ch);
 		}
 	}
 	//helper functions
@@ -222,7 +232,7 @@ namespace KParser {
 			else if(type=="double" || type=="d") addOption<double>(option,name,val,isvector);
 			else if(type=="string" || type=="s") addOption<string>(option,name,val,isvector);
 			else if(type=="color" || type=="c") addOption<Color_t>(option,name,val,isvector);
-			else if(type=="chain" || type=="ch") addOptionChain(option,name,val,isvector);
+			else if(type=="chain" || type=="ch") addOption<KChain>(option,name,val,isvector);
 			else {
 				cout << "Unknown option type: " << line << endl;
 			}
@@ -246,6 +256,38 @@ namespace KParser {
 	}
 	KSelector* processSelector(KNamed* tmp);
 	KVariator* processVariator(KNamed* tmp);
+}
+
+KChain KChain::MakeChain(vector<string> fields_){
+	KChain ch;
+	ch.fields = fields_;
+	//concatenate to get short name
+	for(auto& field : ch.fields) ch.name += field;
+	
+	if(ch.fields.size()!=4) {
+		cout << "Input error: chain type needs 4 fields (filepre, filemin, filemax, filesuff), given " << ch.fields.size() << ". The chain " << ch.name << " will not be initialized." << endl;
+	}
+	
+	//chain has: filepre, filemin, filemax, filesuff
+	string filepre = KParser::getOptionValue<string>(ch.fields[0]);
+	int filemin = KParser::getOptionValue<int>(ch.fields[1]);
+	int filemax = KParser::getOptionValue<int>(ch.fields[2]);
+	string filesuff = KParser::getOptionValue<string>(ch.fields[3]);
+	
+	if(filemin>filemax){
+		cout << "Input error: chain specified incorrectly with filemin > filemax. The chain " << ch.name << " will not be initialized." << endl;
+	}
+	
+	//loop over ranges (inclusive)
+	//todo: add option to exclude certain files?
+	ch.files.reserve(filemax-filemin+1);
+	for(int f = filemin; f <= filemax; f++){
+		stringstream fs;
+		fs << filepre << f << filesuff;
+		ch.files.push_back(fs.str());
+	}
+	
+	return ch;
 }
 
 //NOTE: namespace also includes:

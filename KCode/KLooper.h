@@ -28,16 +28,17 @@ class KOpener {
 			//local map not stored, just used for initialization
 			if(localOpt==0) localOpt = new OptionMap();
 			
-			string name = ""; localOpt->Get("name",name);
 			string filename;
 			string treedir;
 			bool use_treedir = globalOpt->Get("treedir",treedir);
 			if(localOpt->Get("chain",false)){
-				vector<string> filenames;
-				if(!localOpt->Get("filenames",filenames) || filenames.size()==0){
-					cout << "Input error: filenames not specified for chain. Object " << name << " will not be initialized." << endl;
+				KChain chain;
+				if(!localOpt->Get("filenames",chain) || chain.GetFiles().size()==0){
+					cout << "Input error: filenames not specified for chain. Object " << chain.GetName() << " will not be initialized." << endl;
 					return;
 				}
+				name = chain.GetName();
+				const vector<string>& filenames = chain.GetFiles();
 				
 				//add filenames to chain
 				tree = new TChain(("tree_"+name).c_str());
@@ -95,10 +96,11 @@ class KOpener {
 			else if(localOpt->Get("filename",filename)){
 				//get directory from global
 				if(use_treedir) filename = treedir + "/" + filename;
+				name = filename; KParser::clean(name,'_');
 				//open file
 				file = TFile::Open(filename.c_str());
 				if(!file) {
-					cout << "Input error: file " << filename << " cannot be found or opened. Object " << name << " will not be fully initialized." << endl;
+					cout << "Input error: file " << filename << " cannot be found or opened. Object will not be initialized." << endl;
 					return;
 				}
 				//get tree
@@ -113,6 +115,7 @@ class KOpener {
 		//destructor
 		virtual ~KOpener() {}
 		//accessors
+		string GetName() { return name; }
 		OptionMap* GetGlobalOpt() { return globalOpt; }
 		void SetGlobalOpt(OptionMap* opt) { globalOpt = opt ? opt : new OptionMap(); } //must always have an option map
 		TFile* GetFile() { return file; }
@@ -123,6 +126,7 @@ class KOpener {
 
 	protected:
 		//member variables
+		string name;
 		OptionMap* globalOpt;
 		TFile* file;
 		TTree* tree;
