@@ -802,7 +802,9 @@ class KHistoSelector : public KSelector {
 	public:
 		//constructor
 		KHistoSelector() : KSelector() { }
-		KHistoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), RA2Bin(NULL), PhotonID(NULL), BTagSF(NULL), JetEtaRegion(NULL), Hemisphere(NULL), FakeHLT(NULL) { 
+		KHistoSelector(string name_, OptionMap* localOpt_) : 
+			KSelector(name_,localOpt_), initialized(false), RA2Bin(NULL), PhotonID(NULL), BTagSF(NULL), JetEtaRegion(NULL), Hemisphere(NULL), FakeHLT(NULL) 
+		{ 
 			canfail = false;
 		}
 		
@@ -825,6 +827,11 @@ class KHistoSelector : public KSelector {
 			}
 		}
 		virtual void CheckBase(){
+			base->GetLocalOpt()->Get("mother",mother);
+			deltaM = 0; base->GetLocalOpt()->Get("deltaM",deltaM);
+		}
+		void Initialize(){
+			if(initialized) return;
 			//initial loop to get histo variables
 			int table_size = base->GetTable().size();
 			vars.clear(); vars.reserve(table_size);
@@ -838,13 +845,13 @@ class KHistoSelector : public KSelector {
 				KParser::process(stmp,'_',vars_tmp);
 				vars.push_back(vars_tmp);
 			}
-			
-			base->GetLocalOpt()->Get("mother",mother);
-			deltaM = 0; base->GetLocalOpt()->Get("deltaM",deltaM);
+			initialized = true;
 		}
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
+			if(!initialized) Initialize();
+			
 			double w = looper->GetWeight();
 			if(FakeHLT) w *= FakeHLT->weight;
 			
@@ -1149,6 +1156,7 @@ class KHistoSelector : public KSelector {
 		}
 		
 		//member variables
+		bool initialized;
 		vector<vector<string> > vars;
 		vector<TH1*> htmp;
 		KRA2BinSelector* RA2Bin;
