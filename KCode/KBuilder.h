@@ -38,12 +38,9 @@ class KBuilder : public KLooper {
 		KBuilder(KBase* MyBase_) : 
 			KLooper(MyBase_->GetLocalOpt(),MyBase_->GetGlobalOpt()), MyBase(MyBase_), 
 			localOpt(MyBase->GetLocalOpt() ? MyBase->GetLocalOpt() : new OptionMap()), 
-			globalOpt(MyBase->GetGlobalOpt() ? MyBase->GetGlobalOpt() : new OptionMap()), 
-			MySelection(MyBase->GetSelection())
-		{
-			//pass self to selection; also sets looper for selectors, variation, variators
-			MySelection->SetLooper(this); 
-		}
+			globalOpt(MyBase->GetGlobalOpt() ? MyBase->GetGlobalOpt() : new OptionMap()),
+			MySelection(0)
+		{}
 		//destructor
 		virtual ~KBuilder() {}
 
@@ -57,6 +54,7 @@ class KBuilder : public KLooper {
 		virtual double GetWeight() { return 1.; }
 		virtual void Loop() {
 			if (fChain == 0) return;
+			MySelection = MyBase->GetSelection();
 			
 			//check for branches to enable/disable
 			vector<string> disable_branches;

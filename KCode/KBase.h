@@ -103,7 +103,7 @@ class KBase {
 			return legname;
 		}
 		KLooper* GetLooper() { return MyLooper; }
-		void SetSelection(KSelection* sel_) { MySelection = sel_; MySelection->SetBase(this); }
+		void SetSelection(KSelection* sel_) { MySelection = sel_; MySelection->SetBase(this); MySelection->SetLooper(MyLooper); }
 		KSelection* GetSelection() { return MySelection; }
 		//add a blank histo for future building
 		virtual TH1* AddHisto(string s, TH1* h){
