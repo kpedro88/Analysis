@@ -16,6 +16,7 @@
 #include <iomanip>
 #include <utility>
 #include <cmath>
+#include <set>
 
 //forward declarations
 class KSelector;
@@ -201,6 +202,18 @@ namespace KParser {
 	}
 	//special handling for input files
 	void getOptionValueInput(OptionMap* option, string val){
+		//infinite loop detection
+		set<string> inputs; option->Get("inputs",inputs);
+		if(inputs.find(val)!=inputs.end()){
+			cout << "Input warning: infinite loop detected! File " << val << " has already been parsed. Check your input files." << endl;
+			//averts infinite loop, but parsing can continue
+			return;
+		}
+		else {
+			inputs.insert(val);
+			//reset input list
+			option->Set("inputs",inputs);
+		}
 		ifstream instream(val.c_str());
 		string line;
 		if(instream.is_open()){

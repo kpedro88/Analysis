@@ -10,6 +10,7 @@
 //STL headers
 #include <string>
 #include <map>
+#include <set>
 #include <vector>
 #include <utility>
 #include <algorithm>
@@ -145,6 +146,19 @@ std::ostream& operator<< (std::ostream& out, const map<T1,T2>& m) {
 	}
 	else {
 		out << "[empty map]";
+	}
+	return out;
+}
+//overloaded operator<< for printing STL sets
+template <typename T>
+std::ostream& operator<< (std::ostream& out, const set<T>& s) {
+	if ( !s.empty() ) {
+		for(auto& sit : s){
+			cout << sit << endl;
+		}
+	}
+	else {
+		out << "[empty set]";
 	}
 	return out;
 }
