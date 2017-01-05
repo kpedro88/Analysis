@@ -185,6 +185,9 @@ class KSetData: public KSet {
 		virtual void SetStyle(KMap<string>& allStyles, string styleName="") {
 			KBase::SetStyle(allStyles,"data");
 		}
+		//accessors
+		virtual bool IsData() { return true; }
+		virtual bool IsMC() { return false; }
 };
 
 //------------------------------
@@ -242,6 +245,9 @@ class KSetMC: public KSet {
 			if(!localOpt->Has("fillcolor")) localOpt->Set("fillcolor",kWhite);
 			KBase::SetStyle(allStyles,"hist");
 		}
+		//accessors
+		virtual bool IsData() { return false; }
+		virtual bool IsMC() { return true; }
 		
 };
 
@@ -451,6 +457,9 @@ class KSetMCStack : public KSet {
 		virtual void SetStyle(KMap<string>& allStyles, string styleName="") {
 			KBase::SetStyle(allStyles,"stack");
 		}
+		//accessors
+		virtual bool IsData() { return false; }
+		virtual bool IsMC() { return true; }
 		
 	protected:
 		//new stack-based member variables

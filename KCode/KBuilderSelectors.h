@@ -593,8 +593,7 @@ class KMETFilterSelector : public KSelector {
 				//disable this for fastsim
 				dummy = true;
 			}
-			bool data = base->GetLocalOpt()->Get("data",false);
-			if(onlydata and !data){
+			if(onlydata and !base->IsData()){
 				//disable this for non-data if desired
 				dummy = true;
 			}

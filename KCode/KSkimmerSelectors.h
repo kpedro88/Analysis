@@ -92,10 +92,8 @@ class KBlindSelector : public KSelector {
 			localOpt->Get("lastUnblindRun",lastUnblindRun);
 		}
 		virtual void CheckBase(){
-			//check if data
-			bool data = base->GetLocalOpt()->Get("data",false);
 			//disable this for non-data
-			if(!data) dummy = true;
+			if(!base->IsData()) dummy = true;
 		}
 		
 		//this selector doesn't add anything to tree
@@ -847,10 +845,8 @@ class KPDFNormSelector : public KSelector {
 			h_norm = new TH1F("PDFNorm","",5,0.5,5.5);
 		}
 		virtual void CheckBase(){
-			//check if data
-			bool data = base->GetLocalOpt()->Get("data",false);
 			//disable this for data
-			if(data) {
+			if(base->IsData()) {
 				dummy = true;
 				delete h_norm;
 			}
@@ -931,10 +927,8 @@ class KCSCFilterSelector : public KSelector {
 			canfail = false;
 		}
 		virtual void CheckBase(){
-			//check if data
-			bool data = base->GetLocalOpt()->Get("data",false);
 			//disable this for non-data
-			if(!data) dummy = true;
+			if(!base->IsData()) dummy = true;
 			else {
 				localOpt->Get("inputfile",inputfile);
 				if(inputfile.size()>0){

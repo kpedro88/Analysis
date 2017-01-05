@@ -217,6 +217,8 @@ class KBase {
 			MyStyle->SetLocalOpt(localOpt);
 		}
 		virtual KStyle* GetStyle() { return MyStyle; }
+		virtual bool IsData() { return localOpt->Get("data",false); }
+		virtual bool IsMC() { return !localOpt->Get("data",true); }
 		
 		//other virtual functions (unimplemented at this level)
 		virtual void Draw(TPad*) {}

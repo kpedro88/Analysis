@@ -152,6 +152,9 @@ class KBaseData : public KBase {
 		}
 		//destructor
 		virtual ~KBaseData() {}
+		//accessors
+		virtual bool IsData() { return true; }
+		virtual bool IsMC() { return false; }
 
 		//functions for histo creation
 		using KBase::Build;
@@ -429,6 +432,8 @@ class KBaseMC : public KBase {
 		}
 		//destructor
 		virtual ~KBaseMC() {}
+		virtual bool IsData() { return false; }
+		virtual bool IsMC() { return true; }
 		
 		//functions for histo creation
 		using KBase::Build;
