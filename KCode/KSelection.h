@@ -3,6 +3,7 @@
 
 //custom headers
 #include "KMap.h"
+#include "KBase.h"
 #include "KLooper.h"
 #include "KMath.h"
 #include "KVariation.h"
@@ -23,7 +24,6 @@
 using namespace std;
 
 //forward declarations
-class KBase;
 class KSelection;
 
 //helper class for cutflow histos
@@ -59,9 +59,8 @@ class KSelector {
 		//accessors
 		string GetName() { return name; }
 		virtual void SetSelection(KSelection* sel_) { sel = sel_; CheckDeps(); } //set dependencies here if desired
-		virtual void SetLooper(KLooper* looper_) { looper = looper_; CheckLooper(); }
 		virtual void SetTree(TTree* tree_) { tree = tree_; SetBranches(); } //set tree branches here if desired
-		virtual void SetBase(KBase* base_) { base = base_; CheckBase(); }
+		virtual void SetBase(KBase* base_) { base = base_; looper = base->GetLooper(); CheckBase(); }
 		int GetCounter() { return counter; }
 		bool Dummy() { return dummy; }
 		bool CanFail() { return canfail; }
@@ -84,11 +83,9 @@ class KSelector {
 		virtual void SetBranches() {}
 		//to check dependencies on other selectors
 		virtual void CheckDeps() {}
-		//to check dependencies on the looper
-		virtual void CheckLooper() {}
 		//to allow selectors to turn on branches they need
 		virtual void CheckBranches() {}
-		//to check dependencies on the base
+		//to check dependencies on the base (and the looper)
 		virtual void CheckBase() {}
 		
 	protected:
@@ -129,22 +126,18 @@ class KSelection {
 			selectors.Add(sel_->GetName(),sel_);
 			sel_->SetSelection(this);
 		}
-		void SetLooper(KLooper* looper_){
-			looper = looper_;
+		//set base and looper together
+		void SetBase(KBase* base_){
+			base = base_;
+			looper = base->GetLooper();
 			for(unsigned s = 0; s < selectorList.size(); s++){
-				selectorList[s]->SetLooper(looper_);
+				selectorList[s]->SetBase(base_);
 			}
-			if(variation) variation->SetLooper(looper_);
+			if(variation) variation->SetBase(base_);
 			if(filter){
 				looper->fChain->SetBranchStatus("RunNum",1);
 				looper->fChain->SetBranchStatus("LumiBlockNum",1);
 				looper->fChain->SetBranchStatus("EvtNum",1);
-			}
-		}
-		void SetBase(KBase* base_){
-			base = base_;
-			for(unsigned s = 0; s < selectorList.size(); s++){
-				selectorList[s]->SetBase(base_);
 			}
 		}
 		void DoVariation() { if(variation) variation->DoVariation(); }
@@ -301,5 +294,8 @@ class KSelection {
 		string eventlist;
 		KBase* base;
 };
+
+//defined here to avoid circular dependency
+void KBase::SetSelection(KSelection* sel_) { MySelection = sel_; MySelection->SetBase(this); }
 
 #endif

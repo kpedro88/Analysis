@@ -117,11 +117,9 @@ class KFakeHLTSelector : public KSelector {
 			looper->fChain->SetBranchStatus("Jets",1);
 			looper->fChain->SetBranchStatus("Jets_bDiscriminatorCSV",1);
 		}
-		virtual void CheckLooper(){
-			//check MC stuff
-			realMET = localOpt->Get("realMET",true);
-		}
 		virtual void CheckBase(){
+			//check MC stuff
+			realMET = base->GetLocalOpt()->Get("realMET",true);
 			signal = base->GetLocalOpt()->Get("signal",false);
 		}
 		
@@ -724,22 +722,18 @@ class KBTagSFSelector : public KSelector {
 			looper->fChain->SetBranchStatus("Jets_hadronFlavor",1);
 			if(debug) looper->fChain->SetBranchStatus("BTags",1);
 		}
-		virtual void CheckLooper(){
+		virtual void CheckBase(){
 			//check for option
 			int btagSFunc = 0; looper->GetGlobalOpt()->Get("btagSFunc",btagSFunc); btagcorr.SetBtagSFunc(btagSFunc);
 			int mistagSFunc = 0; looper->GetGlobalOpt()->Get("mistagSFunc",mistagSFunc); btagcorr.SetMistagSFunc(mistagSFunc);
-			int btagCFunc = 0; looper->GetGlobalOpt()->Get("btagCFunc",btagCFunc); btagcorr.SetBtagCFunc(btagCFunc);
-			int ctagCFunc = 0; looper->GetGlobalOpt()->Get("ctagCFunc",ctagCFunc); btagcorr.SetCtagCFunc(ctagCFunc);
-			int mistagCFunc = 0; looper->GetGlobalOpt()->Get("mistagCFunc",mistagCFunc);  btagcorr.SetMistagCFunc(mistagCFunc);
+			
+			//get efficiency histograms
+			btagcorr.SetEffs(base->GetFile());
 			
 			if(!btagcorr.h_eff_b || !btagcorr.h_eff_c || !btagcorr.h_eff_udsg){
 				cout << "Input error: b-tag efficiency histograms missing!" << endl;
 				depfailed = true;
 			}
-		}
-		virtual void CheckBase(){
-			//get efficiency histograms
-			btagcorr.SetEffs(base->GetFile());
 			
 			//check fastsim stuff
 			bool fastsim = base->GetLocalOpt()->Get("fastsim",false); btagcorr.SetFastSim(fastsim);
@@ -747,7 +741,12 @@ class KBTagSFSelector : public KSelector {
 				//initialize btag corrector fastsim calibrations
 				//todo: check the sample name and choose the appropriate CFs (once available)
 				btagcorr.SetCalibFastSim("btag/CSV_13TEV_Combined_14_7_2016.csv");
-			}
+				
+				//check for option
+				int btagCFunc = 0; looper->GetGlobalOpt()->Get("btagCFunc",btagCFunc); btagcorr.SetBtagCFunc(btagCFunc);
+				int ctagCFunc = 0; looper->GetGlobalOpt()->Get("ctagCFunc",ctagCFunc); btagcorr.SetCtagCFunc(ctagCFunc);
+				int mistagCFunc = 0; looper->GetGlobalOpt()->Get("mistagCFunc",mistagCFunc);  btagcorr.SetMistagCFunc(mistagCFunc);
+			}			
 		}
 		
 		//used for non-dummy selectors

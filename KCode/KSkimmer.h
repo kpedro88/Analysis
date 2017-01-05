@@ -94,8 +94,7 @@ class KSkimmer : public KLooper {
 			}
 		}
 		void AddSelection(KSelection* sel) {
-			sel->SetLooper(this); //also sets looper for selectors, variation, variators
-			sel->SetBase(MyBase);
+			sel->SetBase(MyBase); //also sets looper for selectors, variation, variators
 			theSelections.push_back(sel);
 		}
 		//implemented in KSkimmerSelectors for future reasons

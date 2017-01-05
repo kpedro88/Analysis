@@ -3,6 +3,7 @@
 
 //custom headers
 #include "KLooper.h"
+#include "KBase.h"
 #include "KMap.h"
 
 //ROOT headers
@@ -28,7 +29,7 @@ class KVariator {
 		}
 		//accessors
 		string GetName() { return name; }
-		void SetLooper(KLooper* looper_) { looper = looper_; }
+		void SetBase(KBase* base_) { base = base_; }
 		//functions
 		virtual void CheckBranches() {}
 		virtual void DoVariation() {}
@@ -39,6 +40,7 @@ class KVariator {
 		string name;
 		OptionMap* localOpt;
 		KLooper* looper;
+		KBase* base;
 };
 
 //----------------------------------------------------------------
@@ -55,10 +57,11 @@ class KVariation {
 		void AddVariator(KVariator* var_){
 			variatorList.push_back(var_);
 		}
-		void SetLooper(KLooper* looper_){ 
-			looper = looper_;
+		void SetBase(KBase* base_){
+			base = base_;
+			looper = base->GetLooper();
 			for(unsigned v = 0; v < variatorList.size(); v++){
-				variatorList[v]->SetLooper(looper_);
+				variatorList[v]->SetBase(base_);
 			}
 		}
 		void CheckBranches() { 
@@ -82,6 +85,7 @@ class KVariation {
 		string name;
 		KLooper* looper;
 		vector<KVariator*> variatorList;
+		KBase* base;
 };
 
 #endif

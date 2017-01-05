@@ -5,7 +5,6 @@
 #include "KMap.h"
 #include "KLooper.h"
 #include "KLegend.h"
-#include "KSelection.h"
 #include "KStyle.h"
 #include "KCutflow.h"
 
@@ -27,6 +26,9 @@
 #include <iostream>
 
 using namespace std;
+
+//forward declaration
+class KSelection;
 
 //------------------------------------------------------------------------------------------------------------------
 //base class: virtual methods and info for bases, other base/set classes inherit from it
@@ -103,7 +105,7 @@ class KBase {
 			return legname;
 		}
 		KLooper* GetLooper() { return MyLooper; }
-		void SetSelection(KSelection* sel_) { MySelection = sel_; MySelection->SetBase(this); MySelection->SetLooper(MyLooper); }
+		void SetSelection(KSelection* sel_); //defined in KSelection.h
 		KSelection* GetSelection() { return MySelection; }
 		//add a blank histo for future building
 		virtual TH1* AddHisto(string s, TH1* h){
