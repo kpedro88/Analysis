@@ -67,6 +67,8 @@ std::ostream& operator<< (std::ostream& out, const KChain& ch) {
 }
 
 namespace KParser {
+	//forward declaration
+	void processOption(string line, OptionMap* option);
 	//generalization for processing a line
 	void process(string line, char delim, vector<string>& fields){
 		stringstream ss(line);
@@ -197,6 +199,41 @@ namespace KParser {
 			option->Set(name,ch);
 		}
 	}
+	//special handling for input files
+	void getOptionValueInput(OptionMap* option, string val){
+		ifstream instream(val.c_str());
+		string line;
+		if(instream.is_open()){
+			while(getline(instream,line)){
+				//skip commented lines
+				if(line[0]=='#') continue;
+				//skip blank lines
+				if(line.size()<2) continue;
+				
+				//check for carriage returns (not allowed)
+				if(line.back()=='\r') {
+					line.pop_back();
+				}
+				
+				//process line
+				KParser::processOption(line,option);
+			}
+		}
+	}
+	void addOptionInput(OptionMap* option, string name, string val, bool isvector){
+		//name is not used
+		if(isvector){
+			//comma-separated values
+			vector<string> fields;
+			process(val,',',fields);
+			for(unsigned i = 0; i < fields.size(); i++){
+				getOptionValueInput(option,fields[i]);
+			}
+		}
+		else {
+			getOptionValueInput(option,val);
+		}
+	}
 	//helper functions
 	void processOption(string line, OptionMap* option){
 		//type:name[value]
@@ -233,6 +270,7 @@ namespace KParser {
 			else if(type=="string" || type=="s") addOption<string>(option,name,val,isvector);
 			else if(type=="color" || type=="c") addOption<Color_t>(option,name,val,isvector);
 			else if(type=="chain" || type=="ch") addOption<KChain>(option,name,val,isvector);
+			else if(type=="input" || type=="in") addOptionInput(option,name,val,isvector);
 			else {
 				cout << "Unknown option type: " << line << endl;
 			}
