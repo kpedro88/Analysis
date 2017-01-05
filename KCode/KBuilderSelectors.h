@@ -308,91 +308,82 @@ class KRA2BinSelector : public KSelector {
 	public:
 		//constructor
 		KRA2BinSelector() : KSelector() { }
-		KRA2BinSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), RA2Exclusive(true), DoBTagSF(false), debug(0) { }
-		virtual void CheckDeps(){
-			//check if initial reading of input has already been done
-			if(sel->GetGlobalOpt()->Get("prepared_RA2bin",false)){
-				//if the initial reading failed, abort
-				if(sel->GetGlobalOpt()->Get("failed_RA2bin",false)){
+		KRA2BinSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), RA2Exclusive(true), DoBTagSF(false), debug(0) { 
+			//assemble member vars from user input
+			localOpt->Get("RA2VarNames",RA2VarNames);
+			
+			for(unsigned q = 0; q < RA2VarNames.size(); ++q){
+				stringstream pre;
+				pre << "RA2Var" << q;
+				
+				vector<float> min, max;
+				localOpt->Get(pre.str()+"Min",min);
+				localOpt->Get(pre.str()+"Max",max);
+				if(min.size() != max.size()){
+					cout << "Input error: vector length mismatches in " << pre.str() << " min and max specification. RA2 binning will not be computed." << endl;
 					depfailed = true;
 					return;
 				}
 				
-				//otherwise grab assembled member vars
-				sel->GetGlobalOpt()->Get("IDtoBinNumber",IDtoBinNumber);
-				sel->GetGlobalOpt()->Get("RA2VarNames",RA2VarNames);
-				sel->GetGlobalOpt()->Get("RA2VarMin",RA2VarMin);
-				sel->GetGlobalOpt()->Get("RA2VarMax",RA2VarMax);
-				sel->GetGlobalOpt()->Get("RA2bin_labels",labels);
-			}
-			else { //assemble member vars from user input
-				sel->GetGlobalOpt()->Get("RA2VarNames",RA2VarNames);
-				
-				vector<vector<unsigned> > all_bins;
-				for(unsigned q = 0; q < RA2VarNames.size(); ++q){
-					stringstream pre;
-					pre << "RA2Var" << q;
-					
-					vector<float> min, max;
-					sel->GetGlobalOpt()->Get(pre.str()+"Min",min);
-					sel->GetGlobalOpt()->Get(pre.str()+"Max",max);
-					if(min.size() != max.size()){
-						cout << "Input error: vector length mismatches in " << pre.str() << " min and max specification. RA2 binning will not be computed." << endl;
-						depfailed = true;
-						sel->GetGlobalOpt()->Set<bool>("prepared_RA2bin",true);
-						sel->GetGlobalOpt()->Set<bool>("failed_RA2bin",true);
-						return;
-					}
-					
-					vector<unsigned> bins;
-					sel->GetGlobalOpt()->Get(pre.str()+"Bins",bins);
-					if(q>0 && bins.size()!=all_bins[0].size()){
-						cout << "Input error: vector length mismatches in " << pre.str() << " bins specification. RA2 binning will not be computed." << endl;
-						depfailed = true;
-						sel->GetGlobalOpt()->Set<bool>("prepared_RA2bin",true);
-						sel->GetGlobalOpt()->Set<bool>("failed_RA2bin",true);
-						return;	
-					}
-					
-					//store member vars
-					RA2VarMin.push_back(min);
-					RA2VarMax.push_back(max);
-					all_bins.push_back(bins);
+				vector<unsigned> bins;
+				localOpt->Get(pre.str()+"Bins",bins);
+				if(q>0 && bins.size()!=all_bins[0].size()){
+					cout << "Input error: vector length mismatches in " << pre.str() << " bins specification. RA2 binning will not be computed." << endl;
+					depfailed = true;
+					return;	
 				}
 				
-				//create map of RA2 bin IDs to bin numbers
-				//and associated bin labels (in case they are requested)
+				//store member vars
+				RA2VarMin.push_back(min);
+				RA2VarMax.push_back(max);
+				all_bins.push_back(bins);
+			}
+			
+			//create map of RA2 bin IDs to bin numbers
+			for(unsigned b = 0; b < all_bins[0].size(); ++b){
+				vector<unsigned> bin_id;
+				bin_id.reserve(all_bins.size());
+				for(unsigned q = 0; q < all_bins.size(); ++q){
+					bin_id.push_back(all_bins[q][b]);
+				}
+				IDtoBinNumber[bin_id] = b+1; //bin numbers start at 1
+			}
+			
+			//check other options
+			RA2Exclusive = localOpt->Get("RA2Exclusive",true);
+			localOpt->Get("RA2debug",debug);
+		}
+		virtual void CheckDeps(){
+			//check if (shared) bin labels have already been created
+			if(sel->GetGlobalOpt()->Has("RA2bin_labels")){
+				sel->GetGlobalOpt()->Get("RA2bin_labels",labels);
+			}
+			else {
+				//create map of bin labels (in case they are requested)
 				labels.reserve(all_bins[0].size());
 				string prefix = "";
-				sel->GetGlobalOpt()->Get("RA2prefix",prefix);
-				bool suffix = sel->GetGlobalOpt()->Get("RA2suffix",true);
+				localOpt->Get("RA2prefix",prefix);
+				bool suffix = localOpt->Get("RA2suffix",true);
 				for(unsigned b = 0; b < all_bins[0].size(); ++b){
-					vector<unsigned> bin_id;
-					bin_id.reserve(all_bins.size());
 					stringstream label;
-					if(prefix.size()>0) label << prefix;
-					if(suffix) label << "_";
+					if(prefix.size()>0) {
+						label << prefix;
+						if(suffix) label << "_";
+					}
 					for(unsigned q = 0; q < all_bins.size(); ++q){
-						bin_id.push_back(all_bins[q][b]);
 						if(!suffix) continue;
 						label << RA2VarNames[q] << all_bins[q][b]; //the specific bin label: currently just the bin number
 						if(q<all_bins.size()-1) label << "_";
 					}
-					IDtoBinNumber[bin_id] = b+1; //bin numbers start at 1
 					labels.push_back(label.str());
 				}
 				
-				//store assembled member vars with global options
-				sel->GetGlobalOpt()->Set<map<vector<unsigned>,unsigned> >("IDtoBinNumber",IDtoBinNumber);
-				sel->GetGlobalOpt()->Set<vector<vector<float> > >("RA2VarMin",RA2VarMin);
-				sel->GetGlobalOpt()->Set<vector<vector<float> > >("RA2VarMax",RA2VarMax);
+				//store labels in global options
 				sel->GetGlobalOpt()->Set<vector<string> >("RA2bin_labels",labels);
 			}
 			
 			//check other options
-			RA2Exclusive = sel->GetGlobalOpt()->Get("RA2Exclusive",true);
 			DoBTagSF = sel->GetGlobalOpt()->Get("btagcorr",false);
-			sel->GetGlobalOpt()->Get("RA2debug",debug);
 		}
 		virtual void CheckBranches(){
 			for(unsigned q = 0; q < RA2VarNames.size(); ++q){
@@ -487,6 +478,7 @@ class KRA2BinSelector : public KSelector {
 		//member variables
 		bool RA2Exclusive, DoBTagSF;
 		int debug;
+		vector<vector<unsigned> > all_bins;
 		vector<unsigned> RA2bins;
 		vector<vector<unsigned> > RA2binVec;
 		map<vector<unsigned>, unsigned> IDtoBinNumber;
