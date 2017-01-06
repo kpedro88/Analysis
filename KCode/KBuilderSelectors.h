@@ -55,7 +55,7 @@ class KMCWeightSelector : public KSelector {
 			puhistDown = NULL;
 			if(pucorr){
 				string puname = ""; localOpt->Get("puname",puname);
-				HistoMap* hmtmp = puhistMap.Get(puname);
+				HistoMap* hmtmp = puhistMap().Get(puname);
 				if(puname.size()==0){
 					cout << "Input error: no pileup weight file specified!" << endl;
 				}
@@ -72,7 +72,7 @@ class KMCWeightSelector : public KSelector {
 						puhist = (TH1*)pufile->Get("pu_weights_central"); puhist->SetDirectory(0); hmtmp->Add("puhist",puhist);
 						puhistUp = (TH1*)pufile->Get("pu_weights_up"); puhistUp->SetDirectory(0); hmtmp->Add("puhistUp",puhistUp);
 						puhistDown = (TH1*)pufile->Get("pu_weights_down"); puhistDown->SetDirectory(0); hmtmp->Add("puhistDown",puhistDown);
-						puhistMap.Add(puname,hmtmp);
+						puhistMap().Add(puname,hmtmp);
 						pufile->Close();
 					}
 					else {
@@ -98,7 +98,7 @@ class KMCWeightSelector : public KSelector {
 				TH1* isrhistUp = NULL;
 				TH1* isrhistDown = NULL;
 				string isrname = ""; localOpt->Get("isrname",isrname);
-				HistoMap* hmtmp = isrhistMap.Get(isrname);
+				HistoMap* hmtmp = isrhistMap().Get(isrname);
 				if(isrname.size()==0){
 					cout << "Input error: no ISR weight file specified!" << endl;
 				}
@@ -115,7 +115,7 @@ class KMCWeightSelector : public KSelector {
 						isrhist = (TH1*)isrfile->Get("isr_weights_central"); isrhist->SetDirectory(0); hmtmp->Add("isrhist",isrhist);
 						isrhistUp = (TH1*)isrfile->Get("isr_weights_up"); isrhistUp->SetDirectory(0); hmtmp->Add("isrhistUp",isrhistUp);
 						isrhistDown = (TH1*)isrfile->Get("isr_weights_down"); isrhistDown->SetDirectory(0); hmtmp->Add("isrhistDown",isrhistDown);
-						isrhistMap.Add(isrname,hmtmp);
+						isrhistMap().Add(isrname,hmtmp);
 						isrfile->Close();
 					}
 					else {
@@ -301,6 +301,15 @@ class KMCWeightSelector : public KSelector {
 			
 			return w;
 		}
+		//static members - kept in functions for safety
+		static HistoMapMap& puhistMap(){
+			static HistoMapMap puhistMap_;
+			return puhistMap_;
+		}
+		static HistoMapMap& isrhistMap(){
+			static HistoMapMap isrhistMap_;
+			return isrhistMap_;
+		}
 		
 		//this selector doesn't add anything to tree
 		
@@ -317,10 +326,6 @@ class KMCWeightSelector : public KSelector {
 			return goodEvent;
 		}
 		
-		//static member variables
-		static HistoMapMap puhistMap;
-		static HistoMapMap isrhistMap;
-		
 		//member variables
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, debugWeight, didDebugWeight;
 		bool pucorr, trigcorr, isrcorr, realMET, signal, fastsim, jetidcorr, isotrackcorr, lumicorr;
@@ -335,9 +340,6 @@ class KMCWeightSelector : public KSelector {
 		double xsection, norm;
 		ISRCorrector isrcorror;
 };
-HistoMapMap KMCWeightSelector::puhistMap;
-HistoMapMap KMCWeightSelector::isrhistMap;
-
 
 //----------------------------------------------------
 //selects events based on HLT line
