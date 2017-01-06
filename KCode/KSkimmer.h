@@ -97,8 +97,12 @@ class KSkimmer : public KLooper {
 			sel->SetBase(MyBase); //also sets looper for selectors, variation, variators
 			theSelections.push_back(sel);
 		}
-		//implemented in KSkimmerSelectors for future reasons
-		int GetEventSign();
+		//implemented in KSkimmerSelectors for future reasons (temporarily moved back here)
+		int GetEventSign() {
+			if(Weight<0) return -1;
+			else return 1;
+		}
+
 		
 		//member variables
 		KBase* MyBase;

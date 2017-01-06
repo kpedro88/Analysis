@@ -24,10 +24,10 @@
 using namespace std;
 
 //implementation of NtupleClass-member-dependent KSkimmer function
-int KSkimmer::GetEventSign() {
-	if(Weight<0) return -1;
-	else return 1;
-}
+//int KSkimmer::GetEventSign() {
+//	if(Weight<0) return -1;
+//	else return 1;
+//}
 
 //base class for Selectors is in KSelection.h
 
