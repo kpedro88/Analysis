@@ -30,7 +30,6 @@ using namespace std;
 
 //--------------------------------------------------------------------------
 //does cross section normalization, data/MC corrections, uncertainties, etc.
-
 class KMCWeightSelector : public KSelector {
 	public:
 		//constructor
@@ -51,30 +50,33 @@ class KMCWeightSelector : public KSelector {
 			//PU options
 			pucorr = localOpt->Get("pucorr",false);
 			puunc = 0; localOpt->Get("puunc",puunc);
+			puhist = NULL;
+			puhistUp = NULL;
+			puhistDown = NULL;
 			if(pucorr){
-				if(base->GetGlobalOpt()->Get("setpuhist",false)){
-					puhist = NULL; base->GetGlobalOpt()->Get("puhist",puhist);
-					puhistUp = NULL; base->GetGlobalOpt()->Get("puhistUp",puhistUp);
-					puhistDown = NULL; base->GetGlobalOpt()->Get("puhistDown",puhistDown);
+				string puname = ""; localOpt->Get("puname",puname);
+				HistoMap* hmtmp = puhistMap.Get(puname);
+				if(puname.size()==0){
+					cout << "Input error: no pileup weight file specified!" << endl;
+				}
+				else if(hmtmp){
+					puhist = hmtmp->Get("puhist");
+					puhistUp = hmtmp->Get("puhistUp");
+					puhistDown = hmtmp->Get("puhistDown");
 				}
 				else{
-					//store correction root files centrally
-					string puname = ""; localOpt->Get("puname",puname);
-					if(puname.size()>0 && pucorr) {
-						TFile* pufile = TFile::Open(puname.c_str(),"READ");
-						if(pufile){
-							puhist = (TH1*)pufile->Get("pu_weights_central"); puhist->SetDirectory(0); base->GetGlobalOpt()->Set<TH1*>("puhist",puhist);
-							puhistUp = (TH1*)pufile->Get("pu_weights_up"); puhistUp->SetDirectory(0); base->GetGlobalOpt()->Set<TH1*>("puhistUp",puhistUp);
-							puhistDown = (TH1*)pufile->Get("pu_weights_down"); puhistDown->SetDirectory(0); base->GetGlobalOpt()->Set<TH1*>("puhistDown",puhistDown);
-							base->GetGlobalOpt()->Set("setpuhist",true);
-							pufile->Close();
-						}
-						else {
-							cout << "Input error: could not open pileup weight file " << puname << "." << endl;
-						}
+					//store correction root files in map
+					TFile* pufile = TFile::Open(puname.c_str(),"READ");
+					if(pufile){
+						hmtmp = new HistoMap();
+						puhist = (TH1*)pufile->Get("pu_weights_central"); puhist->SetDirectory(0); hmtmp->Add("puhist",puhist);
+						puhistUp = (TH1*)pufile->Get("pu_weights_up"); puhistUp->SetDirectory(0); hmtmp->Add("puhistUp",puhistUp);
+						puhistDown = (TH1*)pufile->Get("pu_weights_down"); puhistDown->SetDirectory(0); hmtmp->Add("puhistDown",puhistDown);
+						puhistMap.Add(puname,hmtmp);
+						pufile->Close();
 					}
 					else {
-						cout << "Input error: no pileup weight file specified!" << endl;
+						cout << "Input error: could not open pileup weight file " << puname << "." << endl;
 					}
 				}
 			}
@@ -92,30 +94,38 @@ class KMCWeightSelector : public KSelector {
 			base->GetLocalOpt()->Get("mother",mother);
 			isrunc = 0; localOpt->Get("isrunc", isrunc);
 			if(isrcorr){
-				if(!base->GetGlobalOpt()->Get("setisrhist",false)){
+				TH1* isrhist = NULL;
+				TH1* isrhistUp = NULL;
+				TH1* isrhistDown = NULL;
+				string isrname = ""; localOpt->Get("isrname",isrname);
+				HistoMap* hmtmp = isrhistMap.Get(isrname);
+				if(isrname.size()==0){
+					cout << "Input error: no ISR weight file specified!" << endl;
+				}
+				else if(hmtmp){
+					isrhist = hmtmp->Get("isrhist");
+					isrhistUp = hmtmp->Get("isrhistUp");
+					isrhistDown = hmtmp->Get("isrhistDown");
+				}
+				else{
 					//store correction files centrally
-					string isrname = ""; localOpt->Get("isrname",isrname);
-					if(isrname.size()>0){
-						TFile* isrfile = TFile::Open(isrname.c_str(),"READ");
-						if(isrfile){
-							TH1* isrhist = (TH1*)isrfile->Get("isr_weights_central"); isrhist->SetDirectory(0); base->GetGlobalOpt()->Set<TH1*>("isrhist",isrhist);
-							TH1* isrhistUp = (TH1*)isrfile->Get("isr_weights_up"); isrhistUp->SetDirectory(0); base->GetGlobalOpt()->Set<TH1*>("isrhistUp",isrhistUp);
-							TH1* isrhistDown = (TH1*)isrfile->Get("isr_weights_down"); isrhistDown->SetDirectory(0); base->GetGlobalOpt()->Set<TH1*>("isrhistDown",isrhistDown);
-							base->GetGlobalOpt()->Set("setisrhist",true);
-							isrfile->Close();
-						}
-						else {
-							cout << "Input error: could not open ISR weight file " << isrname << "." << endl;
-						}
+					TFile* isrfile = TFile::Open(isrname.c_str(),"READ");
+					if(isrfile){
+						hmtmp = new HistoMap();
+						isrhist = (TH1*)isrfile->Get("isr_weights_central"); isrhist->SetDirectory(0); hmtmp->Add("isrhist",isrhist);
+						isrhistUp = (TH1*)isrfile->Get("isr_weights_up"); isrhistUp->SetDirectory(0); hmtmp->Add("isrhistUp",isrhistUp);
+						isrhistDown = (TH1*)isrfile->Get("isr_weights_down"); isrhistDown->SetDirectory(0); hmtmp->Add("isrhistDown",isrhistDown);
+						isrhistMap.Add(isrname,hmtmp);
+						isrfile->Close();
 					}
 					else {
-						cout << "Input error: no ISR weight file specified!" << endl;
+						cout << "Input error: could not open ISR weight file " << isrname << "." << endl;
 					}
 				}
 				TH1* isrtmp = NULL;
-				if(isrunc==1) base->GetGlobalOpt()->Get("isrhistUp",isrtmp);
-				else if(isrunc==-1) base->GetGlobalOpt()->Get("isrhistDown",isrtmp);
-				else base->GetGlobalOpt()->Get("isrhist",isrtmp);
+				if(isrunc==1) isrtmp = isrhistUp;
+				else if(isrunc==-1) isrtmp = isrhistDown;
+				else isrtmp = isrhist;
 				isrcorror.SetWeights(isrtmp,(TH1*)base->GetFile()->Get("NJetsISR"));
 			}
 			
@@ -307,6 +317,10 @@ class KMCWeightSelector : public KSelector {
 			return goodEvent;
 		}
 		
+		//static member variables
+		static HistoMapMap puhistMap;
+		static HistoMapMap isrhistMap;
+		
 		//member variables
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, debugWeight, didDebugWeight;
 		bool pucorr, trigcorr, isrcorr, realMET, signal, fastsim, jetidcorr, isotrackcorr, lumicorr;
@@ -321,6 +335,8 @@ class KMCWeightSelector : public KSelector {
 		double xsection, norm;
 		ISRCorrector isrcorror;
 };
+HistoMapMap KMCWeightSelector::puhistMap;
+HistoMapMap KMCWeightSelector::isrhistMap;
 
 
 //----------------------------------------------------

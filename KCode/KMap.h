@@ -229,5 +229,6 @@ typedef KMap<TGraphAsymmErrors*> ErrorMap;
 typedef KMap<KPlot*> PlotMap;
 typedef KMap<OptionMap*> OptionMapMap;
 typedef KMap<PlotMap*> PlotMapMap;
+typedef KMap<HistoMap*> HistoMapMap;
 
 #endif
