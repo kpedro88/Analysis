@@ -28,6 +28,301 @@ using namespace std;
 
 //base class for Selectors is in KSelection.h
 
+//--------------------------------------------------------------------------
+//does cross section normalization, data/MC corrections, uncertainties, etc.
+
+class KMCWeightSelector : public KSelector {
+	public:
+		//constructor
+		KMCWeightSelector() : KSelector() {}
+		KMCWeightSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { 
+		}
+		virtual void CheckBase(){
+			//standard weight options
+			normtype = ""; base->GetLocalOpt()->Get("normtype",normtype); GetNormTypeEnum();
+			unweighted = base->GetLocalOpt()->Get("unweighted",false);
+			useTreeWeight = base->GetGlobalOpt()->Get("useTreeWeight",false);
+			nEventProc = 0; got_nEventProc = base->GetLocalOpt()->Get("nEventProc",nEventProc);
+			xsection = 0; got_xsection = base->GetLocalOpt()->Get("xsection",xsection);
+			norm = 0; got_luminorm = base->GetGlobalOpt()->Get("luminorm",norm);
+			debugWeight = base->GetGlobalOpt()->Get("debugWeight",false); didDebugWeight = false;
+			fastsim = base->GetLocalOpt()->Get("fastsim",false);
+			
+			//PU options
+			pucorr = localOpt->Get("pucorr",false);
+			puunc = 0; localOpt->Get("puunc",puunc);
+			if(pucorr){
+				if(base->GetGlobalOpt()->Get("setpuhist",false)){
+					puhist = NULL; base->GetGlobalOpt()->Get("puhist",puhist);
+					puhistUp = NULL; base->GetGlobalOpt()->Get("puhistUp",puhistUp);
+					puhistDown = NULL; base->GetGlobalOpt()->Get("puhistDown",puhistDown);
+				}
+				else{
+					//store correction root files centrally
+					string puname = ""; localOpt->Get("puname",puname);
+					if(puname.size()>0 && pucorr) {
+						TFile* pufile = TFile::Open(puname.c_str(),"READ");
+						if(pufile){
+							puhist = (TH1*)pufile->Get("pu_weights_central"); puhist->SetDirectory(0); base->GetGlobalOpt()->Set<TH1*>("puhist",puhist);
+							puhistUp = (TH1*)pufile->Get("pu_weights_up"); puhistUp->SetDirectory(0); base->GetGlobalOpt()->Set<TH1*>("puhistUp",puhistUp);
+							puhistDown = (TH1*)pufile->Get("pu_weights_down"); puhistDown->SetDirectory(0); base->GetGlobalOpt()->Set<TH1*>("puhistDown",puhistDown);
+							base->GetGlobalOpt()->Set("setpuhist",true);
+							pufile->Close();
+						}
+						else {
+							cout << "Input error: could not open pileup weight file " << puname << "." << endl;
+						}
+					}
+					else {
+						cout << "Input error: no pileup weight file specified!" << endl;
+					}
+				}
+			}
+			
+			//trig corr options
+			trigcorr = localOpt->Get("trigcorr",false);
+			string treedir = ""; base->GetGlobalOpt()->Get("treedir",treedir);
+			if(treedir.find("genMHT")!=string::npos) trigcorr = false; //disabled for genMHT variation
+			trigunc = 0; localOpt->Get("trigunc", trigunc);
+			realMET = base->GetLocalOpt()->Get("realMET",true);
+			signal = base->GetLocalOpt()->Get("signal",false);
+			
+			//ISR corr options
+			isrcorr = localOpt->Get("isrcorr",false);
+			base->GetLocalOpt()->Get("mother",mother);
+			isrunc = 0; localOpt->Get("isrunc", isrunc);
+			if(isrcorr){
+				if(!base->GetGlobalOpt()->Get("setisrhist",false)){
+					//store correction files centrally
+					string isrname = ""; localOpt->Get("isrname",isrname);
+					if(isrname.size()>0){
+						TFile* isrfile = TFile::Open(isrname.c_str(),"READ");
+						if(isrfile){
+							TH1* isrhist = (TH1*)isrfile->Get("isr_weights_central"); isrhist->SetDirectory(0); base->GetGlobalOpt()->Set<TH1*>("isrhist",isrhist);
+							TH1* isrhistUp = (TH1*)isrfile->Get("isr_weights_up"); isrhistUp->SetDirectory(0); base->GetGlobalOpt()->Set<TH1*>("isrhistUp",isrhistUp);
+							TH1* isrhistDown = (TH1*)isrfile->Get("isr_weights_down"); isrhistDown->SetDirectory(0); base->GetGlobalOpt()->Set<TH1*>("isrhistDown",isrhistDown);
+							base->GetGlobalOpt()->Set("setisrhist",true);
+							isrfile->Close();
+						}
+						else {
+							cout << "Input error: could not open ISR weight file " << isrname << "." << endl;
+						}
+					}
+					else {
+						cout << "Input error: no ISR weight file specified!" << endl;
+					}
+				}
+				TH1* isrtmp = NULL;
+				if(isrunc==1) base->GetGlobalOpt()->Get("isrhistUp",isrtmp);
+				else if(isrunc==-1) base->GetGlobalOpt()->Get("isrhistDown",isrtmp);
+				else base->GetGlobalOpt()->Get("isrhist",isrtmp);
+				isrcorror.SetWeights(isrtmp,(TH1*)base->GetFile()->Get("NJetsISR"));
+			}
+			
+			//jet ID corr options - only for fastsim
+			jetidcorrval = 1;
+			jetidcorr = localOpt->Get("jetidcorr",false);
+			int jetidunc = 0; localOpt->Get("jetidunc",jetidunc);
+			vector<double> jetidcorrvals;
+			if(fastsim && localOpt->Get("jetidcorrvals",jetidcorrvals) && jetidcorrvals.size()==3){
+				//vector has down, central, up
+				jetidcorrval = jetidunc==0 ? jetidcorrvals[1] : ( jetidunc==1 ? jetidcorrvals[2] : jetidcorrvals[0] );
+			}
+			
+			//isotrack eff corr options - only for signals with leptonic decays
+			isotrackcorrval = 1;
+			isotrackcorr = localOpt->Get("isotrackcorr",false);
+			int isotrackunc = 0; localOpt->Get("isotrackunc",isotrackunc);
+			vector<string> isotracksiglist; localOpt->Get("isotracksiglist",isotracksiglist);
+			bool inisotracksiglist = false;
+			for(const auto& sig : isotracksiglist){
+				if(base->GetName().find(sig)!=string::npos){
+					inisotracksiglist = true;
+					break;
+				}
+			}
+			vector<double> isotrackcorrvals;
+			if(inisotracksiglist && localOpt->Get("isotrackcorrvals",isotrackcorrvals) && isotrackcorrvals.size()==3){
+				//vector has down, central, up
+				isotrackcorrval = isotrackunc==0 ? isotrackcorrvals[1] : ( isotrackunc==1 ? isotrackcorrvals[2] : isotrackcorrvals[0] );
+			}
+			
+			//lumi corr options
+			lumicorrval = 1;
+			lumicorr = localOpt->Get("lumicorr",false);
+			int lumiunc = 0; localOpt->Get("lumiunc",lumiunc);
+			vector<double> lumicorrvals;
+			if(localOpt->Get("lumicorrvals",lumicorrvals) && lumicorrvals.size()==3){
+				//vector has down, central, up
+				lumicorrval = lumiunc==0 ? lumicorrvals[1] : ( lumiunc==1 ? lumicorrvals[2] : lumicorrvals[0] );
+			}
+			
+			//other uncertainty options
+			pdfunc = 0; localOpt->Get("pdfunc",pdfunc);
+			scaleunc = 0; localOpt->Get("scaleunc",scaleunc);
+			if(pdfunc!=0 || scaleunc!=0){
+				//get the normalizations for pdf/scale uncertainties
+				TH1F* h_norm = (TH1F*)base->GetFile()->Get("PDFNorm");
+				pdfnorms = vector<double>(4,1.0);
+				//0: PDF up, 1: PDF down, 2: scale up, 3: scale down
+				if(h_norm){
+					double nominal = h_norm->GetBinContent(1);
+					for(unsigned n = 0; n < 4; ++n){
+						//(bin in histo = index + 2)
+						pdfnorms[n] = nominal/h_norm->GetBinContent(n+2);
+					}
+				}
+			}
+		}
+		virtual void CheckBranches(){
+			//force enable branches needed for cuts/weights/etc.
+			looper->fChain->SetBranchStatus("Weight",1); //needed for negative weights even if useTreeWeight==false
+			if(pucorr){
+				looper->fChain->SetBranchStatus("TrueNumInteractions",1);
+				looper->fChain->SetBranchStatus("NVtx",1);
+				if(puunc==1) looper->fChain->SetBranchStatus("puSysUp",1);
+				else if(puunc==-1) looper->fChain->SetBranchStatus("puSysDown",1);
+				else looper->fChain->SetBranchStatus("puWeight",1);
+			}
+			if(isrcorr){
+				looper->fChain->SetBranchStatus("NJetsISR",1);
+			}
+			if(NTenum==ttbarLowHT || NTenum==ttbarLowHThad || NTenum==ttbarHighHT) looper->fChain->SetBranchStatus("madHT",1);
+			if(NTenum==ttbarLowHThad){
+				looper->fChain->SetBranchStatus("GenElectrons",1);
+				looper->fChain->SetBranchStatus("GenMuons",1);
+				looper->fChain->SetBranchStatus("GenTaus",1);
+			}
+			if(pdfunc!=0){
+				looper->fChain->SetBranchStatus("PDFweights",1);
+			}
+			if(scaleunc!=0){
+				looper->fChain->SetBranchStatus("ScaleWeights",1);
+			}
+		}
+		//enum for normtypes
+		enum normtypes { NoNT=0, ttbarLowHT=1, ttbarLowHThad=2, ttbarHighHT=3 };
+		//convert normtype from string to enum for quicker compares
+		void GetNormTypeEnum(){
+			if(normtype=="ttbarLowHT") NTenum = ttbarLowHT;
+			else if(normtype=="ttbarLowHThad") NTenum = ttbarLowHThad;
+			else if(normtype=="ttbarHighHT") NTenum = ttbarHighHT;
+			else NTenum = NoNT;
+		}
+		double GetWeight(){
+			double w = 1.;
+			if(unweighted) return w;
+			
+			//check option in case correction types are disabled globally
+			//(enabled by default
+			//(*disabled* until 2015 data is available)
+			
+			if(pucorr) {
+				//use TreeMaker weights if no histo provided
+				if(puunc==1){
+					w *= puhistUp ? puhistUp->GetBinContent(puhistUp->GetXaxis()->FindBin(min(looper->TrueNumInteractions,puhistUp->GetBinLowEdge(puhistUp->GetNbinsX()+1)))) : looper->puSysUp;
+				}
+				else if(puunc==-1){
+					w *= puhistDown ? puhistDown->GetBinContent(puhistDown->GetXaxis()->FindBin(min(looper->TrueNumInteractions,puhistDown->GetBinLowEdge(puhistDown->GetNbinsX()+1)))) : looper->puSysDown;
+				}
+				else {
+					w *= puhist ? puhist->GetBinContent(puhist->GetXaxis()->FindBin(min(looper->TrueNumInteractions,puhist->GetBinLowEdge(puhist->GetNbinsX()+1)))) : looper->puWeight;
+				}
+			}
+			
+			if(trigcorr){
+				unsigned effindex = trigunc==-1 ? 2 : trigunc;
+				w *= Eff_MetMhtSextetReal_CenterUpDown(looper->HT, looper->MHT, looper->NJets)[effindex];
+			}
+			
+			if(isrcorr){
+				w *= isrcorror.GetCorrection(looper->NJetsISR);
+			}
+			
+			if(pdfunc!=0){
+				if(pdfunc==1) w *= *(TMath::LocMax(looper->PDFweights->begin(),looper->PDFweights->end()))*pdfnorms[0];
+				else if(pdfunc==-1) w *= *(TMath::LocMin(looper->PDFweights->begin(),looper->PDFweights->end()))*pdfnorms[1];
+			}
+			
+			if(scaleunc!=0){
+				vector<double> ScaleWeightsMod = *looper->ScaleWeights;
+				//remove unwanted variations
+				if(ScaleWeightsMod.size()>7) ScaleWeightsMod.erase(ScaleWeightsMod.begin()+7);
+				if(ScaleWeightsMod.size()>5) ScaleWeightsMod.erase(ScaleWeightsMod.begin()+5);
+				if(ScaleWeightsMod.size()>0) ScaleWeightsMod.erase(ScaleWeightsMod.begin());
+				
+				if(scaleunc==1) w *= *(TMath::LocMax(ScaleWeightsMod.begin(),ScaleWeightsMod.end()))*pdfnorms[2];
+				else if(scaleunc==-1) w *= *(TMath::LocMin(ScaleWeightsMod.begin(),ScaleWeightsMod.end()))*pdfnorms[3];
+			}
+			
+			//correct for expected FullSim PFJetID efficiency
+			if(jetidcorr){
+				w *= jetidcorrval;
+			}
+			
+			if(isotrackcorr){
+				w *= isotrackcorrval;
+			}
+			
+			if(lumicorr){
+				w *= lumicorrval;
+			}
+			
+			//now do scaling: norm*xsection/nevents
+			if(useTreeWeight && !fastsim) w *= looper->Weight;
+			else if(got_nEventProc && nEventProc>0 && got_xsection){
+				w *= xsection/nEventProc;
+				//account for negative weight events
+				if(looper->Weight<0) w *= -1;
+				
+				//debugging
+				if(debugWeight && !didDebugWeight){
+					int oldprec = cout.precision(20);
+					cout << base->GetName() << endl;
+					cout << "TreeMaker: " << fabs(looper->Weight) << endl;
+					cout << "    KCode: " << xsection/nEventProc << " = " << xsection << " / " << nEventProc << endl;
+					didDebugWeight = true;
+					cout.precision(oldprec);
+				}
+			}
+			
+			//use lumi norm (default)
+			if(got_luminorm) w *= norm;
+			
+			return w;
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			bool goodEvent = true;
+			
+			//check normalization type here
+			if(NTenum==ttbarLowHT) { goodEvent &= looper->madHT < 600; }
+			else if(NTenum==ttbarLowHThad) { goodEvent &= looper->madHT < 600 && looper->GenElectrons->size()==0 && looper->GenMuons->size()==0 && looper->GenTaus->size()==0; }
+			else if(NTenum==ttbarHighHT) { goodEvent &= looper->madHT >= 600; }
+		
+			//KBuilder::Cut() comes *last* because it includes histo filling selector
+			return goodEvent;
+		}
+		
+		//member variables
+		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, debugWeight, didDebugWeight;
+		bool pucorr, trigcorr, isrcorr, realMET, signal, fastsim, jetidcorr, isotrackcorr, lumicorr;
+		double jetidcorrval, isotrackcorrval, lumicorrval;
+		int puunc, pdfunc, isrunc, scaleunc, trigunc;
+		vector<int> mother;
+		TH1 *puhist, *puhistUp, *puhistDown;
+		vector<double> pdfnorms;
+		string normtype;
+		normtypes NTenum;
+		int nEventProc;
+		double xsection, norm;
+		ISRCorrector isrcorror;
+};
+
+
 //----------------------------------------------------
 //selects events based on HLT line
 class KHLTSelector : public KSelector {
@@ -751,6 +1046,7 @@ class KBTagSFSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
+			if(depfailed) return false;
 			//get probabilities
 			prob = btagcorr.GetCorrections(looper->Jets,looper->Jets_hadronFlavor,looper->Jets_HTMask);
 			if(debug) cout << "BTags = " << looper->BTags << endl;
@@ -793,13 +1089,14 @@ class KHistoSelector : public KSelector {
 		//constructor
 		KHistoSelector() : KSelector() { }
 		KHistoSelector(string name_, OptionMap* localOpt_) : 
-			KSelector(name_,localOpt_), initialized(false), RA2Bin(NULL), PhotonID(NULL), BTagSF(NULL), JetEtaRegion(NULL), Hemisphere(NULL), FakeHLT(NULL) 
+			KSelector(name_,localOpt_), initialized(false), MCWeight(NULL), RA2Bin(NULL), PhotonID(NULL), BTagSF(NULL), JetEtaRegion(NULL), Hemisphere(NULL), FakeHLT(NULL) 
 		{ 
 			canfail = false;
 		}
 		
 		virtual void CheckDeps(){
 			//set dependencies here
+			MCWeight = sel->Get<KMCWeightSelector*>("MCWeight");
 			RA2Bin = sel->Get<KRA2BinSelector*>("RA2Bin");
 			PhotonID = sel->Get<KPhotonIDSelector*>("PhotonID");
 			bool DoBTagSF = sel->GetGlobalOpt()->Get("btagcorr",false);
@@ -819,6 +1116,10 @@ class KHistoSelector : public KSelector {
 		virtual void CheckBase(){
 			base->GetLocalOpt()->Get("mother",mother);
 			deltaM = 0; base->GetLocalOpt()->Get("deltaM",deltaM);
+			//do not use MCWeight with data
+			if(base->IsData()) MCWeight = NULL;
+			//but require it for MC
+			else if(base->IsMC() && !MCWeight) depfailed = true;
 		}
 		void Initialize(){
 			if(initialized) return;
@@ -841,8 +1142,10 @@ class KHistoSelector : public KSelector {
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			if(!initialized) Initialize();
+			if(depfailed) return false;
 			
-			double w = looper->GetWeight();
+			double w = 1.0;
+			if(MCWeight) w = MCWeight->GetWeight();
 			if(FakeHLT) w *= FakeHLT->weight;
 			
 			for(unsigned h = 0; h < htmp.size(); h++){
@@ -1149,6 +1452,7 @@ class KHistoSelector : public KSelector {
 		bool initialized;
 		vector<vector<string> > vars;
 		vector<TH1*> htmp;
+		KMCWeightSelector* MCWeight;
 		KRA2BinSelector* RA2Bin;
 		KPhotonIDSelector* PhotonID;
 		KBTagSFSelector* BTagSF;
@@ -1169,6 +1473,7 @@ namespace KParser {
 		
 		//check for all known selectors
 		if(sname=="Histo") srtmp = new KHistoSelector(sname,omap);
+		else if(sname=="MCWeight") srtmp = new KMCWeightSelector(sname,omap);
 		else if(sname=="DoubleCount") srtmp = new KDoubleCountSelector(sname,omap);
 		else if(sname=="RA2Bin") srtmp = new KRA2BinSelector(sname,omap);
 		else if(sname=="PhotonID") srtmp = new KPhotonIDSelector(sname,omap);

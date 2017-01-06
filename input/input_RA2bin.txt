@@ -21,6 +21,7 @@ vstring:disable_branches[*]
 
 SELECTION
 ra2bin
+	MCWeight
 	RA2Bin	in:options[input/input_RA2bin_options.txt]
 	Histo
 

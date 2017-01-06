@@ -38,20 +38,6 @@ class KPlotManager : public KManager {
 			
 			//final checks and initializations
 
-			//store correction root files centrally
-			string puname = ""; globalOpt->Get("puname",puname);
-			if(puname.size()>0 && globalOpt->Get("pucorr",false)) {
-				TFile* pufile = TFile::Open(puname.c_str(),"READ");
-				if(pufile){
-					TH1* puhist = (TH1*)pufile->Get("pu_weights_central"); puhist->SetDirectory(0); globalOpt->Set<TH1*>("puhist",puhist);
-					TH1* puhistUp = (TH1*)pufile->Get("pu_weights_up"); puhistUp->SetDirectory(0); globalOpt->Set<TH1*>("puhistUp",puhistUp);
-					TH1* puhistDown = (TH1*)pufile->Get("pu_weights_down"); puhistDown->SetDirectory(0); globalOpt->Set<TH1*>("puhistDown",puhistDown);
-					pufile->Close();
-				}
-				else {
-					cout << "Input error: could not open pileup weight file " << puname << "." << endl;
-				}
-			}
 			string isrname = ""; globalOpt->Get("isrname",isrname);
 			if(globalOpt->Get("isrcorr",false)){
 				if(isrname.size()>0){
