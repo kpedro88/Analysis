@@ -145,7 +145,6 @@ class KLooper : public KOpener, public NtupleClass {
 		virtual ~KLooper() {}
 		//virtual functions
 		virtual void Loop() {}
-		virtual double GetWeight() { return 1.; }
 		
 	protected:
 		//member variables

@@ -51,7 +51,6 @@ class KBuilder : public KLooper {
 		
 			return (goodEvent && MySelection->DoSelection());
 		}
-		virtual double GetWeight() { return 1.; }
 		virtual void Loop() {
 			if (fChain == 0) return;
 			MySelection = MyBase->GetSelection();
