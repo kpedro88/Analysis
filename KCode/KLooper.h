@@ -15,6 +15,9 @@
 #include <TChain.h>
 #include <TH1.h>
 
+//forward declaration
+class KBase;
+
 void NtupleClass::Loop() {}
 
 //file opening base class
@@ -136,15 +139,37 @@ class KOpener {
 //use first base class to get tree before initializing MakeClass base
 class KLooper : public KOpener, public NtupleClass {
 	public:
+		typedef KMap<KLooper*> LooperMap;
 		//constructors
 		KLooper() : KOpener(), NtupleClass() {}
 		KLooper(OptionMap* localOpt, OptionMap* globalOpt_) : KOpener(localOpt, globalOpt_), NtupleClass(tree) {
-			
+			AddLooper(this);
 		}
 		//destructor
 		virtual ~KLooper() {}
 		//virtual functions
 		virtual void Loop() {}
+		virtual void AddBase(KBase* base) {}
+		//static functions
+		static LooperMap& GetLooperMap(){
+			static LooperMap lmap;
+			return lmap;
+		}
+		static KLooper* FindLooper(OptionMap* localOpt){
+			string filename;
+			if(localOpt->Get("chain",false)){
+				KChain chain;
+				localOpt->Get("filenames",chain);
+				return GetLooperMap().Get(chain.GetName());
+			}
+			else if(localOpt->Get("filename",filename)){
+				return GetLooperMap().Get(filename);
+			}
+			else return NULL;
+		}
+		static void AddLooper(KLooper* ltmp){
+			GetLooperMap().Add(ltmp->GetName(),ltmp);
+		}
 		
 	protected:
 		//member variables

@@ -198,9 +198,9 @@ class KBaseScan : public KBase {
 		//constructors
 		KBaseScan() : KBase() {}
 		KBaseScan(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KBase(name_, localOpt_, globalOpt_) {
-			KScanner* ltmp = new KScanner(this);
-			SetLooper(ltmp);
+			SetLooper();
 		}
+		virtual KLooper* MakeLooper() { return new KScanner(this); }
 };
 
 #endif

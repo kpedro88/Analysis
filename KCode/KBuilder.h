@@ -34,26 +34,21 @@ using namespace std;
 class KBuilder : public KLooper {
 	public:
 		//constructors
-		KBuilder() : KLooper(), MyBase(0), localOpt(new OptionMap()), globalOpt(new OptionMap()), MySelection(0) {}
-		KBuilder(KBase* MyBase_) : 
-			KLooper(MyBase_->GetLocalOpt(),MyBase_->GetGlobalOpt()), MyBase(MyBase_), 
-			localOpt(MyBase->GetLocalOpt() ? MyBase->GetLocalOpt() : new OptionMap()), 
-			globalOpt(MyBase->GetGlobalOpt() ? MyBase->GetGlobalOpt() : new OptionMap()),
-			MySelection(0)
-		{}
+		KBuilder() : KLooper(), localOpt(new OptionMap()), globalOpt(new OptionMap()) {}
+		KBuilder(KBase* base) : 
+			KLooper(base->GetLocalOpt(),base->GetGlobalOpt()),
+			localOpt(base->GetLocalOpt() ? base->GetLocalOpt() : new OptionMap()), 
+			globalOpt(base->GetGlobalOpt() ? base->GetGlobalOpt() : new OptionMap())
+		{
+			AddBase(base);
+		}
 		//destructor
 		virtual ~KBuilder() {}
 
 		//functions for histo creation
-		using NtupleClass::Cut;
-		virtual bool Cut() { //this implements the set of cuts common between data and MC
-			bool goodEvent = true;
-		
-			return (goodEvent && MySelection->DoSelection());
-		}
 		virtual void Loop() {
-			if (fChain == 0) return;
-			MySelection = MyBase->GetSelection();
+			if(fChain == 0) return;
+			if(MyBases.size() == 0) return;
 			
 			//check for branches to enable/disable
 			vector<string> disable_branches;
@@ -67,8 +62,9 @@ class KBuilder : public KLooper {
 				fChain->SetBranchStatus(enable_branches[b].c_str(),1);
 			}
 			//check for any necessary branches
-			CheckBranches();
-			MySelection->CheckBranches();
+			for(auto& base : MyBases){
+				base->GetSelection()->CheckBranches();
+			}
 			
 			//loop over ntuple tree
 			Long64_t nentries = fChain->GetEntries();
@@ -80,30 +76,37 @@ class KBuilder : public KLooper {
 				Long64_t ientry = LoadTree(jentry);
 				if (ientry < 0) break;
 				nb = fChain->GetEntry(jentry);   nbytes += nb;
-				if(debugloop && jentry % 10000 == 0) cout << MyBase->GetName() << " " << jentry << "/" << nentries << endl;
+				if(debugloop && jentry % 10000 == 0) cout << MyBases[0]->GetName() << " " << jentry << "/" << nentries << endl;
 				
-				Cut();
+				for(auto& base : MyBases){
+					base->GetSelection()->DoSelection();
+				}
 			}
 			
 			//final steps
 			if(globalOpt->Get("debugcut",false)) {
-				cout << MyBase->GetName() << endl;
-				MySelection->PrintEfficiency(nentries,sqrt((double)nentries));
+				for(auto& base : MyBases){
+					cout << base->GetName() << endl;
+					base->GetSelection()->PrintEfficiency(nentries,sqrt((double)nentries));
+				}
 			}
 			
 			//finalize histos
-			KSelector* Histo = MySelection->Get<KSelector*>("Histo");
-			Histo->Finalize(NULL);
+			for(auto& base : MyBases){
+				base->SetBuilt();
+				KSelector* Histo = base->GetSelection()->Get<KSelector*>("Histo");
+				Histo->Finalize(NULL);
+			}
 		}
-		//unimplemented
-		virtual void CheckBranches() {}
+		virtual void AddBase(KBase* base){
+			MyBases.push_back(base);
+		}
 
 	public:
 		//member variables
-		KBase* MyBase;
+		vector<KBase*> MyBases;
 		OptionMap* localOpt;
 		OptionMap* globalOpt;
-		KSelection* MySelection;
 };
 
 //---------------------------------------------------------------
@@ -114,9 +117,9 @@ class KBaseData : public KBase {
 		KBaseData() : KBase() { localOpt->Set<double>("intlumi",0.0); }
 		KBaseData(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KBase(name_, localOpt_, globalOpt_) { 
 			if(!localOpt->Has("intlumi")) localOpt->Set<double>("intlumi",0.0);
-			KBuilder* ltmp = new KBuilder(this);
-			SetLooper(ltmp);
+			SetLooper();
 		}
+		virtual KLooper* MakeLooper() { return new KBuilder(this); }
 		//destructor
 		virtual ~KBaseData() {}
 		//accessors
@@ -145,9 +148,9 @@ class KBaseMC : public KBase {
 		KBaseMC(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KBase(name_, localOpt_, globalOpt_) {
 			if(!localOpt->Has("normtype")) localOpt->Set<string>("normtype","MC");
 			if(!localOpt->Has("xsection")) localOpt->Set<double>("xsection",0.0);
-			KBuilder* ltmp = new KBuilder(this);
-			SetLooper(ltmp);
+			SetLooper();
 		}
+		virtual KLooper* MakeLooper() { return new KBuilder(this); }
 		//destructor
 		virtual ~KBaseMC() {}
 		virtual bool IsData() { return false; }

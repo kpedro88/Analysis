@@ -120,9 +120,9 @@ class KBaseSkim : public KBase {
 		//constructors
 		KBaseSkim() : KBase() {}
 		KBaseSkim(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KBase(name_, localOpt_, globalOpt_) {
-			KSkimmer* ltmp = new KSkimmer(this);
-			SetLooper(ltmp);
+			SetLooper();
 		}
+		virtual KLooper* MakeLooper() { return new KSkimmer(this); }
 };
 
 #endif

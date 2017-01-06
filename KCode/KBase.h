@@ -52,9 +52,12 @@ class KBase {
 			localOpt->Set("name",name);
 		}
 		//subsequent initialization
-		virtual void SetLooper(KLooper* looper){
-			if(!looper) return;
-			MyLooper = looper;
+		virtual void SetLooper(){
+			//try to find existing looper
+			MyLooper = KLooper::FindLooper(localOpt);
+			//if none, make one
+			if(!MyLooper) MyLooper = MakeLooper();
+			else MyLooper->AddBase(this); //in case of KBuilder
 			file = MyLooper->GetFile();
 			tree = MyLooper->GetTree();
 			nEventHist = MyLooper->GetNEventHist();
@@ -69,6 +72,7 @@ class KBase {
 			}
 			localOpt->Set("nEventProc",max(nEventProc,1));
 		}
+		virtual KLooper* MakeLooper() { return new KLooper(localOpt,globalOpt); }
 		//destructor
 		virtual ~KBase() {}
 
@@ -221,6 +225,7 @@ class KBase {
 		virtual KStyle* GetStyle() { return MyStyle; }
 		virtual bool IsData() { return localOpt->Get("data",false); }
 		virtual bool IsMC() { return !localOpt->Get("data",true); }
+		virtual void SetBuilt() { isBuilt = true; }
 		
 		//other virtual functions (unimplemented at this level)
 		virtual void Draw(TPad*) {}
