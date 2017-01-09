@@ -94,7 +94,7 @@ class KPlotManager : public KManager {
 			//loop over top level set options
 			//to generate sets for each selection
 			for(auto& ntmp : MySetOptions){
-				bool hasLocalSel = ntmp->localOpt->Get("selections",lselection);
+				bool hasLocalSel = ntmp->localOpt()->Get("selections",lselection);
 				for(auto& stmp : (hasLocalSel ? lselection : gselection)){
 					KBase* tmp = finalizeSet(ntmp,NULL,stmp);
 					//set style at the end, in case parent modifies child's style options
@@ -134,8 +134,10 @@ class KPlotManager : public KManager {
 		void processHisto(string line, int dim){
 			KNamed* tmp = KParser::processNamed<1>(line);
 			
-			//keep track of histo dimension
-			tmp->localOpt->Set("dimension",dim);
+			//keep track of histo dimension (use input format b/c localOpt created on the fly)
+			stringstream os;
+			os << "i:dimension[" << dim << "]";
+			tmp->optfields.push_back(os.str());
 			
 			//check for cutflows
 			if(tmp->fields[0].find("cutflow")!=string::npos) globalOpt->Set<bool>("doCutflow",true);
@@ -263,8 +265,9 @@ class KPlotManager : public KManager {
 			//in 2D case, one plot for each top-level set
 			for(unsigned p = 0; p < MyPlotOptions.size(); p++){
 				KNamed* ntmp = MyPlotOptions[p];
-				if(ntmp->localOpt->Get("ratio",true) && !ratio_allowed){ //ratios turned on by default
-					ntmp->localOpt->Set("ratio",false); //disable ratios if components not available
+				OptionMap* omap = ntmp->localOpt();
+				if(omap->Get("ratio",true) && !ratio_allowed){ //ratios turned on by default
+					omap->Set("ratio",false); //disable ratios if components not available
 					if(!globalOpt->Get("roc",false)){
 						cout << "Input error: ratio requested for histo " << ntmp->fields[0] << ", but ";
 						if(numers.size()>0 && denoms.size()>0) cout << "numers and denoms both > 1. Pick one!";
@@ -278,9 +281,9 @@ class KPlotManager : public KManager {
 					}
 				}
 				int dim = 0;
-				ntmp->localOpt->Get("dimension",dim);
+				omap->Get("dimension",dim);
 				if(dim==1){
-					KPlot* ptmp = new KPlot(ntmp->fields[0],ntmp->localOpt,globalOpt);
+					KPlot* ptmp = new KPlot(ntmp->fields[0],omap,globalOpt);
 					TH1* hptmp = NULL;
 					if(MySets[0]->CheckSpecialHistos(ntmp->fields[0])) {
 						hptmp = (TH1*)(MySets[0]->GetHisto())->Clone();
@@ -294,7 +297,7 @@ class KPlotManager : public KManager {
 				}
 				else if(dim==2){
 					PlotMap* p2map = new PlotMap();
-					bool ntmp_ratio = ntmp->localOpt->Get("ratio",true);
+					bool ntmp_ratio = omap->Get("ratio",true);
 					for(unsigned s = 0; s < MySets.size()+MyRatios.size(); s++){
 						KBase* theSet;
 						string rationame2D = "";
@@ -307,7 +310,7 @@ class KPlotManager : public KManager {
 						}
 						else theSet = MySets[s];
 						
-						KPlot* ptmp = new KPlot2D(ntmp->fields[0],theSet->GetName(),ntmp->localOpt,globalOpt);
+						KPlot* ptmp = new KPlot2D(ntmp->fields[0],theSet->GetName(),omap,globalOpt);
 						if(ptmp->Initialize()) {
 							if(!rationame2D.empty()) ptmp->GetLocalOpt()->Set<string>(theSet->GetName()+"_name2D",rationame2D);
 							p2map->Add(theSet->GetName(),ptmp);
@@ -592,7 +595,7 @@ class KPlotManager : public KManager {
 						KStyle* stytmp = NULL;
 						if(allStyles.Has(styleName)){
 							KNamed* ntmp = KParser::processNamed<1>(styleName+"\t"+allStyles.Get(styleName));
-							stytmp = new KStyle(ntmp->fields[0],ntmp->localOpt,p.second->GetLocalOpt());
+							stytmp = new KStyle(ntmp->fields[0],ntmp->localOpt(),p.second->GetLocalOpt());
 						}
 						stytmp->Format(gtmp);
 						

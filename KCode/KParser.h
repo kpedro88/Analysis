@@ -27,10 +27,23 @@ template <size_t N>
 class KNamedN {
 	public:
 		//constructor defined below, uses KParser functions
-		KNamedN(vector<string> fields_);
+		KNamedN(vector<string> fields_) {
+			assert(fields_.size()>N);
+			for(size_t i = 0; i < N; ++i){
+				fields[i] = fields_[i];
+			}
+			//everything after the starting fields is an option
+			optfields.reserve(fields_.size()-N);
+			optfields.insert(optfields.end(),fields_.begin()+N,fields_.end());
+		}
+		
+		//generate option map on the fly (to avoid sharing)
+		//defined below, uses KParser
+		OptionMap* localOpt();
 		
 		//members
 		array<string,N> fields;
+		vector<string> optfields;
 		OptionMap* localOpt;
 		vector<KNamedN<N>*> children;
 };
@@ -318,15 +331,12 @@ namespace KParser {
 }
 
 template<size_t N>
-KNamedN<N>::KNamedN(vector<string> fields_) : localOpt(new OptionMap()) {
-	assert(fields_.size()>N);
-	for(size_t i = 0; i < N; ++i){
-		fields[i] = fields_[i];
+OptionMap* KNamedN<N>::localOpt() {
+	OptionMap* omap;
+	for(auto& field : optfields){
+		KParser::processOption(field,omap);
 	}
-	//everything after the starting fields is an option
-	for(unsigned i = N; i < fields_.size(); i++){
-		KParser::processOption(fields_[i],localOpt);
-	}
+	return omap;
 }
 
 KChain KChain::MakeChain(vector<string> fields_){

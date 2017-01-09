@@ -681,7 +681,7 @@ namespace KParser {
 		string type = named->fields[0];
 		string subtype = named->fields[1];
 		string name = named->fields[2];
-		OptionMap* omap = named->localOpt;
+		OptionMap* omap = named->localOpt();
 	
 		//create object
 		KBase* tmp = 0;
