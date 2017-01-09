@@ -129,7 +129,7 @@ class KManager {
 		virtual void processVariation(string line){
 			if(line[0]=='\t'){ //variator
 				line.erase(0,1);
-				KNamed* tmp = KParser::processNamed(line);
+				KNamed* tmp = KParser::processNamed<1>(line);
 				if(curr_var==allVariations.GetTable().end()){
 					cout << "Input error: no variation for variator:" << endl << line << endl << "Check the indents. This input will be skipped." << endl;
 					return;
@@ -145,7 +145,7 @@ class KManager {
 		virtual void processSelection(string line){
 			if(line[0]=='\t'){ //selector
 				line.erase(0,1);
-				KNamed* tmp = KParser::processNamed(line);
+				KNamed* tmp = KParser::processNamed<1>(line);
 				if(curr_sel==allSelections.GetTable().end()){
 					cout << "Input error: no selection for selector:" << endl << line << endl << "Check the indents. This input will be skipped." << endl;
 					return;

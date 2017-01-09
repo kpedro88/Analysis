@@ -676,28 +676,13 @@ class KSetRatio: public KSet {
 
 //extension of namespace for processing bases/sets
 namespace KParser {
-	KBase* processBase(string line, OptionMap* globalOpt){
-		//tab separated input
-		vector<string> fields;
-		process(line,'\t',fields);
-		
-		//check for necessary options
-		if(fields.size()<3) {
-			cout << "Input error: not enough fields in this line:" << endl << line << endl << "Check that all fields are tab-separated. This input will be ignored." << endl;
-			return NULL;
-		}
-		
+	KBase* processBase(KNamedBase* named, OptionMap* globalOpt){
 		//universal variables
-		string type = fields[0];
-		string subtype = fields[1];
-		string name = fields[2];
-		
-		OptionMap* omap = new OptionMap(); //for local options
-		//process local options before constructing objects
-		for(unsigned i = 3; i < fields.size(); i++){
-			processOption(fields[i],omap);
-		}
-		
+		string type = named->fields[0];
+		string subtype = named->fields[1];
+		string name = named->fields[2];
+		OptionMap* omap = named->localOpt;
+	
 		//create object
 		KBase* tmp = 0;
 		if(type=="base"){
@@ -718,6 +703,9 @@ namespace KParser {
 		}
 		
 		return tmp;
+	}
+	KBase* processBase(string line, OptionMap* globalOpt){
+		return processBase(processNamed<3>(line),globalOpt);
 	}
 }
 

@@ -214,7 +214,7 @@ class KBase {
 			
 			//search the list of default styles
 			if(allStyles.Has(styleName)){
-				KNamed* ntmp = KParser::processNamed(styleName+"\t"+allStyles.Get(styleName));
+				KNamed* ntmp = KParser::processNamed<1>(styleName+"\t"+allStyles.Get(styleName));
 				MyStyle = new KStyle(ntmp->fields[0],ntmp->localOpt,localOpt);
 			}
 		}

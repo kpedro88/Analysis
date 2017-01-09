@@ -32,6 +32,7 @@ class KNamedN {
 		//members
 		array<string,N> fields;
 		OptionMap* localOpt;
+		vector<KNamedN<N>*> children;
 };
 //typedefs
 typedef KNamedN<1> KNamed;
@@ -304,11 +305,12 @@ namespace KParser {
 			}
 		}
 	}
-	KNamed* processNamed(string line){
+	template <size_t N>
+	KNamedN<N>* processNamed(string line){
 		//tab separated input
 		vector<string> fields;
 		process(line,'\t',fields);
-		KNamed* tmp = new KNamed(fields);
+		KNamedN<N>* tmp = new KNamedN<N>(fields);
 		return tmp;
 	}
 	KSelector* processSelector(KNamed* tmp);

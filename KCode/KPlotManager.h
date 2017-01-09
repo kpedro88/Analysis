@@ -112,7 +112,7 @@ class KPlotManager : public KManager {
 			}
 		}
 		void processHisto(string line, int dim){
-			KNamed* tmp = KParser::processNamed(line);
+			KNamed* tmp = KParser::processNamed<1>(line);
 			
 			//keep track of histo dimension
 			tmp->localOpt->Set("dimension",dim);
@@ -581,7 +581,7 @@ class KPlotManager : public KManager {
 						string styleName = "roc";
 						KStyle* stytmp = NULL;
 						if(allStyles.Has(styleName)){
-							KNamed* ntmp = KParser::processNamed(styleName+"\t"+allStyles.Get(styleName));
+							KNamed* ntmp = KParser::processNamed<1>(styleName+"\t"+allStyles.Get(styleName));
 							stytmp = new KStyle(ntmp->fields[0],ntmp->localOpt,p.second->GetLocalOpt());
 						}
 						stytmp->Format(gtmp);
