@@ -3,6 +3,7 @@
 
 #ifndef NtupleClass_cxx
 #define NtupleClass_cxx
+#endif
 
 //custom headers
 #include "KMap.h"
@@ -175,5 +176,4 @@ class KLooper : public KOpener, public NtupleClass {
 		//member variables
 };
 
-#endif
 #endif
