@@ -49,7 +49,6 @@ class KBase {
 			MyLooper(0), MySelection(0), stmp(""), htmp(0), etmp(0), isBuilt(false), MyStyle(0)
 		{
 			debugroc = globalOpt->Get("debugroc",false);
-			localOpt->Set("name",name);
 		}
 		//subsequent initialization
 		virtual void SetLooper(){
@@ -102,10 +101,7 @@ class KBase {
 		
 		//accessors
 		string GetName() { return name; }
-		void SetName(string n) { \
-			name = n;
-			localOpt->Set("name",name);
-		}
+		void SetName(string n) { name = n; }
 		string GetLegName() {
 			string legname = name;
 			localOpt->Get("legname",legname);
