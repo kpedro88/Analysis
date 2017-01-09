@@ -115,10 +115,10 @@ class KPlotManager : public KManager {
 			KNamed* tmp = KParser::processNamed(line);
 			
 			//keep track of histo dimension
-			tmp->second->Set("dimension",dim);
+			tmp->localOpt->Set("dimension",dim);
 			
 			//check for cutflows
-			if(tmp->first.find("cutflow")!=string::npos) globalOpt->Set<bool>("doCutflow",true);
+			if(tmp->fields[0].find("cutflow")!=string::npos) globalOpt->Set<bool>("doCutflow",true);
 			
 			//store local plot options for later use
 			MyPlotOptions.push_back(tmp);
@@ -253,10 +253,10 @@ class KPlotManager : public KManager {
 			//in 2D case, one plot for each top-level set
 			for(unsigned p = 0; p < MyPlotOptions.size(); p++){
 				KNamed* ntmp = MyPlotOptions[p];
-				if(ntmp->second->Get("ratio",true) && !ratio_allowed){ //ratios turned on by default
-					ntmp->second->Set("ratio",false); //disable ratios if components not available
+				if(ntmp->localOpt->Get("ratio",true) && !ratio_allowed){ //ratios turned on by default
+					ntmp->localOpt->Set("ratio",false); //disable ratios if components not available
 					if(!globalOpt->Get("roc",false)){
-						cout << "Input error: ratio requested for histo " << ntmp->first << ", but ";
+						cout << "Input error: ratio requested for histo " << ntmp->fields[0] << ", but ";
 						if(numers.size()>0 && denoms.size()>0) cout << "numers and denoms both > 1. Pick one!";
 						else {
 							if(numers.size()==0 && denoms.size()==0) cout << "numer(s) and denom(s)";
@@ -268,23 +268,23 @@ class KPlotManager : public KManager {
 					}
 				}
 				int dim = 0;
-				ntmp->second->Get("dimension",dim);
+				ntmp->localOpt->Get("dimension",dim);
 				if(dim==1){
-					KPlot* ptmp = new KPlot(ntmp->first,ntmp->second,globalOpt);
+					KPlot* ptmp = new KPlot(ntmp->fields[0],ntmp->localOpt,globalOpt);
 					TH1* hptmp = NULL;
-					if(MySets[0]->CheckSpecialHistos(ntmp->first)) {
+					if(MySets[0]->CheckSpecialHistos(ntmp->fields[0])) {
 						hptmp = (TH1*)(MySets[0]->GetHisto())->Clone();
 						hptmp->Reset();
 					}
-					if(ptmp->Initialize(hptmp)) MyPlots.Add(ntmp->first,ptmp);
+					if(ptmp->Initialize(hptmp)) MyPlots.Add(ntmp->fields[0],ptmp);
 					else {
-						cout << "Input error: unable to build histo " << ntmp->first << ". Check binning options." << endl;
+						cout << "Input error: unable to build histo " << ntmp->fields[0] << ". Check binning options." << endl;
 						delete ptmp;
 					}
 				}
 				else if(dim==2){
 					PlotMap* p2map = new PlotMap();
-					bool ntmp_ratio = ntmp->second->Get("ratio",true);
+					bool ntmp_ratio = ntmp->localOpt->Get("ratio",true);
 					for(unsigned s = 0; s < MySets.size()+MyRatios.size(); s++){
 						KBase* theSet;
 						string rationame2D = "";
@@ -297,20 +297,20 @@ class KPlotManager : public KManager {
 						}
 						else theSet = MySets[s];
 						
-						KPlot* ptmp = new KPlot2D(ntmp->first,theSet->GetName(),ntmp->second,globalOpt);
+						KPlot* ptmp = new KPlot2D(ntmp->fields[0],theSet->GetName(),ntmp->localOpt,globalOpt);
 						if(ptmp->Initialize()) {
 							if(!rationame2D.empty()) ptmp->GetLocalOpt()->Set<string>(theSet->GetName()+"_name2D",rationame2D);
 							p2map->Add(theSet->GetName(),ptmp);
 						}
 						else {
-							cout << "Input error: unable to build 2D histo " << ntmp->first << " for set " << theSet->GetName() << ". Check binning options." << endl;
+							cout << "Input error: unable to build 2D histo " << ntmp->fields[0] << " for set " << theSet->GetName() << ". Check binning options." << endl;
 							delete ptmp;
 						}
 					}
 					
-					if(p2map->GetTable().begin() != p2map->GetTable().end()) MyPlots2D.Add(ntmp->first,p2map);
+					if(p2map->GetTable().begin() != p2map->GetTable().end()) MyPlots2D.Add(ntmp->fields[0],p2map);
 					else {
-						cout << "Input error: unable to build any 2D histos " << ntmp->first << ". Check binning options." << endl;
+						cout << "Input error: unable to build any 2D histos " << ntmp->fields[0] << ". Check binning options." << endl;
 						delete p2map;
 					}
 				}
@@ -582,7 +582,7 @@ class KPlotManager : public KManager {
 						KStyle* stytmp = NULL;
 						if(allStyles.Has(styleName)){
 							KNamed* ntmp = KParser::processNamed(styleName+"\t"+allStyles.Get(styleName));
-							stytmp = new KStyle(ntmp->first,ntmp->second,p.second->GetLocalOpt());
+							stytmp = new KStyle(ntmp->fields[0],ntmp->localOpt,p.second->GetLocalOpt());
 						}
 						stytmp->Format(gtmp);
 						

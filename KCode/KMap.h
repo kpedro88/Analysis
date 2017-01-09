@@ -222,7 +222,6 @@ class OptionMap : public KMap<KOpt*> {
 
 
 class KPlot;
-typedef pair<string, OptionMap*> KNamed;
 typedef KMap<TH1*> HistoMap;
 typedef KMap<THStack*> StackMap;
 typedef KMap<TGraphAsymmErrors*> ErrorMap;

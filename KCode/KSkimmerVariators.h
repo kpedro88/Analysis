@@ -502,8 +502,8 @@ class KJetLeptonVariator : public KVariator {
 namespace KParser {
 	KVariator* processVariator(KNamed* tmp){
 		KVariator* vtmp = 0;
-		string vname = tmp->first;
-		OptionMap* omap = tmp->second;
+		string vname = tmp->fields[0];
+		OptionMap* omap = tmp->localOpt;
 		
 		//check for all known variators
 		if(vname=="Jet") vtmp = new KJetVariator(vname,omap);

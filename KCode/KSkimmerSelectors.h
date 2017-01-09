@@ -1507,8 +1507,8 @@ class KIsoPionTrackSelector : public KSyncSelector {
 namespace KParser {
 	KSelector* processSelector(KNamed* tmp){
 		KSelector* srtmp = 0;
-		string sname = tmp->first;
-		OptionMap* omap = tmp->second;
+		string sname = tmp->fields[0];
+		OptionMap* omap = tmp->localOpt;
 		
 		//check for all known selectors
 		if(sname=="HLT") srtmp = new KHLTSelector(sname,omap);

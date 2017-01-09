@@ -17,10 +17,25 @@
 #include <utility>
 #include <cmath>
 #include <set>
+#include <array>
 
 //forward declarations
 class KSelector;
 class KVariator;
+
+template <size_t N>
+class KNamedN {
+	public:
+		//constructor defined below, uses KParser functions
+		KNamedN(vector<string> fields_);
+		
+		//members
+		array<string,N> fields;
+		OptionMap* localOpt;
+};
+//typedefs
+typedef KNamedN<1> KNamed;
+typedef KNamedN<3> KNamedBase;
 
 class KChain {
 	public:
@@ -293,20 +308,23 @@ namespace KParser {
 		//tab separated input
 		vector<string> fields;
 		process(line,'\t',fields);
-		string name = fields[0];
-		OptionMap* omap = new OptionMap();
-		
-		//everything after the name is an option
-		for(unsigned i = 1; i < fields.size(); i++){
-			processOption(fields[i],omap);
-		}
-		
-		//return local options for later use
-		KNamed* tmp = new pair<string,OptionMap*>(name,omap);
+		KNamed* tmp = new KNamed(fields);
 		return tmp;
 	}
 	KSelector* processSelector(KNamed* tmp);
 	KVariator* processVariator(KNamed* tmp);
+}
+
+template<size_t N>
+KNamedN<N>::KNamedN(vector<string> fields_) : localOpt(new OptionMap()) {
+	assert(fields_.size()>N);
+	for(size_t i = 0; i < N; ++i){
+		fields[i] = fields_[i];
+	}
+	//everything after the starting fields is an option
+	for(unsigned i = N; i < fields_.size(); i++){
+		KParser::processOption(fields_[i],localOpt);
+	}
 }
 
 KChain KChain::MakeChain(vector<string> fields_){

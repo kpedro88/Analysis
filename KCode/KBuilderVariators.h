@@ -19,7 +19,7 @@ using namespace std;
 namespace KParser {
 	KVariator* processVariator(KNamed* tmp){
 		KVariator* vtmp = 0;
-		string vname = tmp->first;
+		string vname = tmp->fields[0];
 		//OptionMap* omap = tmp->second; //unused right now
 		
 		//check for all known variators
