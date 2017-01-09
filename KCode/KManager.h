@@ -124,37 +124,36 @@ class KManager {
 		//virtual input processing functions
 		virtual void processSet(string) {}
 		virtual void processHisto(string, int) {}
-		//wait to construct variations until we know which are desired and with which selections to use them
-		//for now, just store the lines for each defined variation in a vector, and construct variators with them later
-		virtual void processVariation(string line){
-			if(line[0]=='\t'){ //variator
-				line.erase(0,1);
-				KNamed* tmp = KParser::processNamed<1>(line);
-				if(curr_var==allVariations.GetTable().end()){
-					cout << "Input error: no variation for variator:" << endl << line << endl << "Check the indents. This input will be skipped." << endl;
+		//wait to construct Xtions until we know which are desired and with which others they may be combined
+		//for now, just store the lines for each defined Xtion in a vector, and construct Xtors with them later
+		virtual void processXtion(string line, KMap<vector<KNamed*>>& allXtions, map<string,vector<KNamed*>>::iterator& curr, string pname, string cname){
+			if(line[0]=='\t'){ //Xtor
+				if(curr_sel==allXtions.GetTable().end()){
+					cout << "Input error: no " << pname << " for " << cname << ":" << endl << line << endl << "Check the indents. This input will be skipped." << endl;
 					return;
 				}
-				curr_var->second.push_back(tmp);
+				//clean input
+				line.erase(0,1);
+				if(line.back()=='\n') line.pop_back();
+				//check if this is Xtion instead of Xtor
+				//infinite loop detection not needed b/c Xtions must be defined in order
+				if(allXtions.Has(line)){
+					curr->second.insert(curr->second.end(),allXtions.Get(line).begin(),allXtions.Get(line).end());
+				}
+				else {
+					KNamed* tmp = KParser::processNamed<1>(line);
+					curr->second.push_back(tmp);
+				}
 			}
-			else { //variation
-				curr_var = allVariations.Add(line,vector<KNamed*>());
+			else { //Xtion
+				curr = allXtions.Add(line,vector<KNamed*>());
 			}
 		}
-		//wait to construct selections until we know which are desired and what systematic variations to use
-		//for now, just store the lines for each defined selection in a vector, and construct selectors with them later
+		virtual void processVariation(string line){
+			processXtion(line, allVariations, curr_var, "variation", "variator");
+		}
 		virtual void processSelection(string line){
-			if(line[0]=='\t'){ //selector
-				line.erase(0,1);
-				KNamed* tmp = KParser::processNamed<1>(line);
-				if(curr_sel==allSelections.GetTable().end()){
-					cout << "Input error: no selection for selector:" << endl << line << endl << "Check the indents. This input will be skipped." << endl;
-					return;
-				}
-				curr_sel->second.push_back(tmp);
-			}
-			else { //selection
-				curr_sel = allSelections.Add(line,vector<KNamed*>());
-			}
+			processXtion(line, allSelections, curr_sel, "selection", "selector");
 		}
 		//generalized function to make selection
 		KSelection* makeSelection(string selection){
@@ -165,7 +164,7 @@ class KManager {
 			string unc = "";
 			if(sel_unc.size()>1) unc = sel_unc[1];
 			
-			//check in full list (selections may be repeated with different systematics, so never remove things from the full list)
+			//check in full list (selections may be repeated with different systematics or sets, so never remove things from the full list)
 			if(allSelections.Has(sel)){
 				KVariation* vntmp = 0;
 				if(unc.size()>0) {
@@ -227,8 +226,8 @@ class KManager {
 		bool parsed;
 		set<string> inputs;
 		KMap<string> allStyles;
-		KMap<vector<KNamed*> > allSelections, allVariations;
-		map<string,vector<KNamed*> >::iterator curr_sel, curr_var;
+		KMap<vector<KNamed*>> allSelections, allVariations;
+		map<string,vector<KNamed*>>::iterator curr_sel, curr_var;
 };
 
 #endif
