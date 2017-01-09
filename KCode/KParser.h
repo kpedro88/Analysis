@@ -44,7 +44,6 @@ class KNamedN {
 		//members
 		array<string,N> fields;
 		vector<string> optfields;
-		OptionMap* localOpt;
 		vector<KNamedN<N>*> children;
 };
 //typedefs
