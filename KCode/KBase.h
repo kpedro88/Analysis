@@ -102,7 +102,10 @@ class KBase {
 		
 		//accessors
 		string GetName() { return name; }
-		void SetName(string n) { name = n; }
+		void SetName(string n) { \
+			name = n;
+			localOpt->Set("name",name);
+		}
 		string GetLegName() {
 			string legname = name;
 			localOpt->Get("legname",legname);

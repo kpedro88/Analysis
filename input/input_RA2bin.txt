@@ -13,7 +13,7 @@ OPTION
 double:sizeLeg[22]
 double:canvasW[1200]
 double:NdivX[518]
-string:selection[ra2bin]
+vstring:selections[ra2bin]
 vstring:extra_text[#color[2]{n_{j} bin},#color[4]{n_{b} bin}]
 vstring:disable_branches[*]
 #bool:useTreeWeight[1]

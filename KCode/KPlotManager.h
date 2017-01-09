@@ -37,25 +37,7 @@ class KPlotManager : public KManager {
 			Initialize(input_,direct_);
 			
 			//final checks and initializations
-
-			string isrname = ""; globalOpt->Get("isrname",isrname);
-			if(globalOpt->Get("isrcorr",false)){
-				if(isrname.size()>0){
-					TFile* isrfile = TFile::Open(isrname.c_str(),"READ");
-					if(isrfile){
-						TH1* isrhist = (TH1*)isrfile->Get("isr_weights_central"); isrhist->SetDirectory(0); globalOpt->Set<TH1*>("isrhist",isrhist);
-						TH1* isrhistUp = (TH1*)isrfile->Get("isr_weights_up"); isrhistUp->SetDirectory(0); globalOpt->Set<TH1*>("isrhistUp",isrhistUp);
-						TH1* isrhistDown = (TH1*)isrfile->Get("isr_weights_down"); isrhistDown->SetDirectory(0); globalOpt->Set<TH1*>("isrhistDown",isrhistDown);
-						isrfile->Close();
-					}
-					else {
-						cout << "Input error: could not open ISR weight file " << isrname << "." << endl;
-					}
-				}
-				else {
-					cout << "Input error: no ISR weight file specified!" << endl;
-				}
-			}
+			finalizeSets();
 		}
 		//destructor
 		virtual ~KPlotManager() {}
@@ -69,47 +51,85 @@ class KPlotManager : public KManager {
 			}
 
 			//create set from input
-			KBase* tmp = KParser::processBase(line,globalOpt);
+			KNamedBase* tmp = KParser::processNamed<3>(line);
 			
 			//debug: print the contents of curr_sets
-			/*map<int,KBase*>::iterator dit;
-			for(dit = curr_sets.begin(); dit != curr_sets.end(); dit++){
-				cout << dit->second->GetName() << ", ";
+			/*for(auto& dit : curr_sets){
+				cout << dit.second->fields[2] << ", ";
 			}
 			cout << endl;*/
 
 			if(tmp){
 				//check corner cases for indent
-				if(indent==0 && line.compare(0,4,"base")==0){
-					cout << "Input error: base must have a parent set! This input will be ignored." << endl;
+				if(indent==0 && tmp->fields[0]=="base"){
+					cout << "Input error: base must have a parent set for plotting! This input will be ignored." << endl;
 					return;
 				}
 				else if(indent>0){
-					map<int,KBase*>::iterator it = curr_sets.find(indent-1);
+					map<int,KNamedBase*>::iterator it = curr_sets.find(indent-1);
 					if(it == curr_sets.end()){
-						cout << "Input error: no parent can be identified for the set " << tmp->GetName() << "! There may be too many indents, or the parent was not input properly. This input will be ignored." << endl;
+						cout << "Input error: no parent can be identified for the set " << tmp->fields[2] << "! There may be too many indents, or the parent was not input properly. This input will be ignored." << endl;
 						return;
 					}
 				}
 				
-				//keep a separate list of "base" objects, so selections can be added later
-				if(line.compare(0,4,"base")==0) MyBases.push_back(tmp);
-				
 				//reset entries in the map of current sets that have higher (or equal) indents vs. current line
-				map<int,KBase*>::iterator it = curr_sets.lower_bound(indent);
+				map<int,KNamedBase*>::iterator it = curr_sets.lower_bound(indent);
 				curr_sets.erase(it,curr_sets.end());
 			
 				//store and add to parent set
 				curr_sets[indent] = tmp;
-				if(indent==0) MySets.push_back(curr_sets[indent]); //add top-level set to manager
+				if(indent==0) MySetOptions.push_back(curr_sets[indent]); //add top-level set to manager
 				else {
-					curr_sets[indent-1]->AddChild(tmp);
-					//cout << curr_sets[indent-1]->GetName() << "->AddChild(" << tmp->GetName() << ")" << endl;
+					curr_sets[indent-1]->children.push_back(tmp);
+					//cout << curr_sets[indent-1]->fields[2] << "->children.push_back(" << tmp->GetName() << ")" << endl;
 				}
-				
-				//set style at the end, in case parent modifies child's style options
-				tmp->SetStyle(allStyles);
 			}
+		}
+		void finalizeSets(){
+			vector<string> gselection;
+			globalOpt->Get("selections",gselection);
+			vector<string> lselection;
+			
+			//loop over top level set options
+			//to generate sets for each selection
+			for(auto& ntmp : MySetOptions){
+				bool hasLocalSel = ntmp->localOpt->Get("selections",lselection);
+				for(auto& stmp : (hasLocalSel ? lselection : gselection)){
+					KBase* tmp = finalizeSet(ntmp,NULL,stmp);
+					//set style at the end, in case parent modifies child's style options
+					tmp->SetStyle(allStyles);
+				}
+			}
+		}
+		KBase* finalizeSet(KNamedBase* ntmp, KBase* parent, string& selection){
+			//append selection to name
+			string oldname = ntmp->fields[2];
+			ntmp->fields[2] += "_"+selection;
+			
+			KBase* tmp = KParser::processBase(ntmp,globalOpt);
+			
+			//set selection for base
+			if(ntmp->fields[0]=="base"){
+				KSelection* sntmp = makeSelection(selection);
+				if(sntmp) tmp->SetSelection(sntmp);				
+			}
+			
+			//add top-level set to manager
+			if(!parent) MySets.push_back(tmp);
+			else {
+				parent->AddChild(tmp);
+			}
+			
+			//recurse (if necessary) to set up children
+			for(auto& ctmp : ntmp->children){
+				finalizeSet(ctmp,tmp,selection);
+			}
+			
+			//reset tmp name
+			ntmp->fields[2] = oldname;
+			
+			return tmp;
 		}
 		void processHisto(string line, int dim){
 			KNamed* tmp = KParser::processNamed<1>(line);
@@ -237,16 +257,6 @@ class KPlotManager : public KManager {
 						MyRatios.push_back(rtmp);
 					}
 				}
-			}			
-			
-			//make selections for base builders
-			//BEFORE creating plots, in order to create bin labels in global opt for certain cases
-			string selection = "";
-			globalOpt->Get("selection",selection);
-			for(unsigned b = 0; b < MyBases.size(); b++){
-				//make selection
-				KSelection* sntmp = makeSelection(selection);
-				if(sntmp) MyBases[b]->SetSelection(sntmp);
 			}
 			
 			//create plots from local options
@@ -666,14 +676,14 @@ class KPlotManager : public KManager {
 		PlotMap MyPlots;
 		PlotMapMap MyPlots2D;
 		vector<KNamed*> MyPlotOptions;
+		vector<KNamedBase*> MySetOptions;
 		vector<KBase*> MySets;
-		vector<KBase*> MyBases;
 		vector<KSetRatio*> MyRatios;
 		vector<KBase*> numers, denoms;
 		KBase *yieldref; //pointers to special sets
 		vector<KBase*> roc_sig, roc_bkg;
 		bool doPrint;
-		map<int,KBase*> curr_sets;
+		map<int,KNamedBase*> curr_sets;
 		TFile* out_file;
 };
 

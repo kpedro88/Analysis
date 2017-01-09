@@ -14,7 +14,7 @@ double:sizeLeg[22]
 double:canvasW[1200]
 double:marginB[300]
 double:NdivX[518]
-string:selection[ra2bin]
+vstring:selections[ra2bin]
 vstring:disable_branches[*]
 
 SELECTION
