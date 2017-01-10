@@ -331,7 +331,7 @@ namespace KParser {
 
 template<size_t N>
 OptionMap* KNamedN<N>::localOpt() {
-	OptionMap* omap;
+	OptionMap* omap = new OptionMap();
 	for(auto& field : optfields){
 		KParser::processOption(field,omap);
 	}
