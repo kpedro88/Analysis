@@ -12,127 +12,79 @@ bool:doClone[1]
 vstring:disable_branches[*clean*,*JECdown*,*JECup*,*JERdown*,*JERup*]
 
 SELECTION
-signal
+common
 	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
 	NJetsISR	vd:xbins[0,1,2,3,4,5,6,7]
 	PDFNorm
-	NJet	i:njet[3]
-	HT	d:HTmin[300]
-	MHT	d:MHTmin[300]
+veto
 	MuonVeto
 	IsoMuonTrackVeto
 	ElectronVeto
 	IsoElectronTrackVeto
 	IsoPionTrackVeto
+dphi
 	DeltaPhiJ1	d:DeltaPhi[0.5]	i:jet[1]
 	DeltaPhiJ2	d:DeltaPhi[0.5]	i:jet[2]
 	DeltaPhiJ3	d:DeltaPhi[0.3]	i:jet[3]
 	DeltaPhiJ4	d:DeltaPhi[0.3]	i:jet[4]
+signal
+	common
+	NJet	i:njet[3]
+	HT	d:HTmin[300]
+	MHT	d:MHTmin[300]
+	veto
+	dphi
 	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
 signalMinusNJet
-	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
-	NJetsISR	vd:xbins[0,1,2,3,4,5,6,7]
-	PDFNorm
+	common
 #	NJet	i:njet[3]
 	HT	d:HTmin[300]
 	MHT	d:MHTmin[300]
-	MuonVeto
-	IsoMuonTrackVeto
-	ElectronVeto
-	IsoElectronTrackVeto
-	IsoPionTrackVeto
-	DeltaPhiJ1	d:DeltaPhi[0.5]	i:jet[1]
-	DeltaPhiJ2	d:DeltaPhi[0.5]	i:jet[2]
-	DeltaPhiJ3	d:DeltaPhi[0.3]	i:jet[3]
-	DeltaPhiJ4	d:DeltaPhi[0.3]	i:jet[4]
+	veto
+	dphi
 	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
 signalMinusHT
-	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
-	NJetsISR	vd:xbins[0,1,2,3,4,5,6,7]
-	PDFNorm
+	common
 	NJet	i:njet[3]
 #	HT	d:HTmin[300]
 	MHT	d:MHTmin[300]
-	MuonVeto
-	IsoMuonTrackVeto
-	ElectronVeto
-	IsoElectronTrackVeto
-	IsoPionTrackVeto
-	DeltaPhiJ1	d:DeltaPhi[0.5]	i:jet[1]
-	DeltaPhiJ2	d:DeltaPhi[0.5]	i:jet[2]
-	DeltaPhiJ3	d:DeltaPhi[0.3]	i:jet[3]
-	DeltaPhiJ4	d:DeltaPhi[0.3]	i:jet[4]
+	veto
+	dphi
 	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
 signalMinusMHT
-	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
-	NJetsISR	vd:xbins[0,1,2,3,4,5,6,7]
-	PDFNorm
+	common
 	NJet	i:njet[3]
 	HT	d:HTmin[300]
 #	MHT	d:MHTmin[300]
-	MuonVeto
-	IsoMuonTrackVeto
-	ElectronVeto
-	IsoElectronTrackVeto
-	IsoPionTrackVeto
-	DeltaPhiJ1	d:DeltaPhi[0.5]	i:jet[1]
-	DeltaPhiJ2	d:DeltaPhi[0.5]	i:jet[2]
-	DeltaPhiJ3	d:DeltaPhi[0.3]	i:jet[3]
-	DeltaPhiJ4	d:DeltaPhi[0.3]	i:jet[4]
+	veto
+	dphi
 	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
 signalHighPU
-	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
-	NJetsISR	vd:xbins[0,1,2,3,4,5,6,7]
-	PDFNorm
+	common
 	NVtx	i:num[20]
 	NJet	i:njet[3]
 	HT	d:HTmin[300]
 	MHT	d:MHTmin[300]
-	MuonVeto
-	IsoMuonTrackVeto
-	ElectronVeto
-	IsoElectronTrackVeto
-	IsoPionTrackVeto
-	DeltaPhiJ1	d:DeltaPhi[0.5]	i:jet[1]
-	DeltaPhiJ2	d:DeltaPhi[0.5]	i:jet[2]
-	DeltaPhiJ3	d:DeltaPhi[0.3]	i:jet[3]
-	DeltaPhiJ4	d:DeltaPhi[0.3]	i:jet[4]
+	veto
+	dphi
 	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
 signalLowPU
-	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
-	NJetsISR	vd:xbins[0,1,2,3,4,5,6,7]
-	PDFNorm
+	common
 	NVtx	i:num[20]	b:invert[1]
 	NJet	i:njet[3]
 	HT	d:HTmin[300]
 	MHT	d:MHTmin[300]
-	MuonVeto
-	IsoMuonTrackVeto
-	ElectronVeto
-	IsoElectronTrackVeto
-	IsoPionTrackVeto
-	DeltaPhiJ1	d:DeltaPhi[0.5]	i:jet[1]
-	DeltaPhiJ2	d:DeltaPhi[0.5]	i:jet[2]
-	DeltaPhiJ3	d:DeltaPhi[0.3]	i:jet[3]
-	DeltaPhiJ4	d:DeltaPhi[0.3]	i:jet[4]
+	veto
+	dphi
 	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
 signalAllPU
-	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
-	NJetsISR	vd:xbins[0,1,2,3,4,5,6,7]
-	PDFNorm
+	common
 	NVtx	i:num[0]
 	NJet	i:njet[3]
 	HT	d:HTmin[300]
 	MHT	d:MHTmin[300]
-	MuonVeto
-	IsoMuonTrackVeto
-	ElectronVeto
-	IsoElectronTrackVeto
-	IsoPionTrackVeto
-	DeltaPhiJ1	d:DeltaPhi[0.5]	i:jet[1]
-	DeltaPhiJ2	d:DeltaPhi[0.5]	i:jet[2]
-	DeltaPhiJ3	d:DeltaPhi[0.3]	i:jet[3]
-	DeltaPhiJ4	d:DeltaPhi[0.3]	i:jet[4]
+	veto
+	dphi
 	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
 
 VARIATION
