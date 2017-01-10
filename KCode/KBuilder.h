@@ -4,12 +4,9 @@
 //custom headers
 #include "KLooper.h"
 #include "KMap.h"
-#include "KMath.h"
 #include "KParser.h"
 #include "KBase.h"
 #include "KSelection.h"
-#include "../corrections/TriggerEfficiencySextet.cpp"
-#include "../corrections/ISRCorrector.h"
 
 //ROOT headers
 #include <TROOT.h>

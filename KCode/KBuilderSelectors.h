@@ -10,6 +10,8 @@
 #include "../corrections/GetTriggerEffCorr.C"
 #include "../corrections/Quad76x.h"
 #include "../corrections/Double76x.h"
+#include "../corrections/TriggerEfficiencySextet.cpp"
+#include "../corrections/ISRCorrector.h"
 
 //ROOT headers
 #include <TROOT.h>
