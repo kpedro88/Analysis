@@ -28,7 +28,7 @@ class KNamedN {
 	public:
 		//constructor defined below, uses KParser functions
 		KNamedN(vector<string> fields_) {
-			assert(fields_.size()>N);
+			assert(fields_.size()>=N);
 			for(size_t i = 0; i < N; ++i){
 				fields[i] = fields_[i];
 			}
