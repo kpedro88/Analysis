@@ -15,16 +15,10 @@ double:sizeLeg[22]
 double:canvasW[1200]
 double:marginB[300]
 double:NdivX[518]
-vstring:selections[ra2bin]
 vstring:disable_branches[*]
 
-SELECTION
-ra2bin
-	MCWeight	in:options[input/input_MCWeight_options.txt]
-	METFilter	b:onlydata[1]
-	BTagSF
-	RA2Bin	in:options[input/input_RA2bin_options.txt]	b:RA2Exclusive[0]
-	Histo
+INPUT
+input/input_selection_syst.txt
 
 HISTO
 RA2bin	i:xnum[174]	d:xmin[0.5]	d:xmax[174.5]	s:xtitle[RA2 bin [^{}n_{j},^{}n_{b},^{}H_{T}^{miss},^{}H_{T}]]	s:ytitle[number of events]	b:ratio[0]	b:xbinlabel[1]

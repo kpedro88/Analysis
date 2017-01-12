@@ -10,12 +10,14 @@
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
+#include <iterator>
 
 using namespace std;
 
 //recompile:
 //root -b -l -q MakeAllDCsyst.C++
-void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV7", string systTypes="nominal,scaleunc,isrunc,trigunc,JEC,JER,btagSFunc,mistagSFunc,isotrackunc,lumiunc", string contamTypes="", int part=-1, string suffix=""){
+void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV11", string systTypes="nominal,scaleuncUp,scaleuncDown,isruncUp,isruncDown,triguncUp,triguncDown,btagSFuncUp,btagSFuncDown,mistagSFuncUp,mistagSFuncDown,isotrackuncUp,isotrackuncDown,lumiuncUp,lumiuncDown", string varTypes="JECup,JECdown,JERup,JERdown"){
 	gErrorIgnoreLevel = kBreak;
 	
 	if(mode==-1){
@@ -33,88 +35,52 @@ void MakeAllDCsyst(int mode=-1, string indir="root://cmseos.fnal.gov//store/user
 	string setlist = "";
 	string osuff = "";
 	
-	//process syst/contam types - comma-separated input
-	vector<string> contams;
-	KParser::process(contamTypes,',',contams);
-	vector<string> systs;
-	KParser::process(systTypes,',',systs);
+	//process variaton types - comma-separated input, need to be run separately
+	vector<string> vars;
+	KParser::process(varTypes,',',vars);
 	if(mode==1){
-		if(part==-1){
-			outdir = "datacards_fast"+suffix+"/";
-			setlist = "input/input_sets_DC_fast"+suffix+".txt";
-		}
-		else { //batch mode
-			stringstream ss;
-			ss << "input/fast"+suffix+"/input_sets_DC_fast"+suffix+"_" << part << ".txt";
-			setlist = ss.str();
-			ss.str(string());
-			ss << "_part" << part;
-			osuff = ss.str();
-		}
+		outdir = "datacards_fast/";
+		setlist = "input/fast/input_set_DC_"+setname+".txt";
+		osuff = "_"+setname;
 	}
 	else {
-		outdir = "datacards/";
-		if(suffix.size()>0) outdir = "datacards_"+suffix+"/";
-		setlist = "input/input_sets_DC_syst.txt";
+		outdir = "datacards_syst/";
+		setlist = "input/input_set_DC_"+setname+".txt";
+		osuff = "_"+setname;
 	}
 	
 	//check for directory
 	if(outdir.size()>0) system(("mkdir -p "+outdir).c_str());
 	
-	//do the variations
-	for(unsigned i = 0; i < systs.size(); ++i){
-		//special cases
-		//skip all in batch mode
-		if(systs[i]=="none") break;
-		//the nominal version
-		else if(systs[i]=="nominal"){
-			cout << "nominal" << endl;
-			KPlotDriver(indir+inpre+region,{input,setlist},{"OPTION","string:rootfile["+outdir+outpre+region+osuff+"]"});
-			continue;
-		}
-		//qcd sideband
-		//else if(systs[i]=="QCD"){
-		//	cout << "QCD sideband" << endl;
-		//	KPlotDriver(indir+inpre+region,{inputQCD,setlist},{"OPTION","string:rootfile["+outdir+outpre+region+"_QCD"+osuff+"]"});
-		//	continue;
-		//}
-		
-		string ovar = "";
-		string nosuff = "bool:RA2suffix[0]";
-		string labelopt = "string:RA2prefix["+systs[i]+"]";
-		//up
-		cout << systs[i] << " up" << endl;
-		if(systs[i]=="JEC") region = "signal_JECup";
-		else if(systs[i]=="JER") region = "signal_JERup";
-		else ovar = "_"+systs[i]+"Up";
-		stringstream ssystup;
-		ssystup << "int:" << systs[i] << "[" << 1 << "]";
-		KPlotDriver(indir+inpre+region,{input,setlist},{"OPTION","string:rootfile["+outdir+outpre+region+ovar+osuff+"]",nosuff,labelopt,ssystup.str()});
-		//down
-		cout << systs[i] << " down" << endl;
-		if(systs[i]=="JEC") region = "signal_JECdown";
-		else if(systs[i]=="JER") region = "signal_JERdown";
-		else ovar = "_"+systs[i]+"Down";
-		stringstream ssystdown;
-		ssystdown << "int:" << systs[i] << "[" << -1 << "]";
-		KPlotDriver(indir+inpre+region,{input,setlist},{"OPTION","string:rootfile["+outdir+outpre+region+ovar+osuff+"]",nosuff,labelopt,ssystdown.str()});
-		
-		//reset region if altered for jet syst
-		if(systs[i]=="JEC" || systs[i]=="JER") region = "signal";
+	//keep a list of root files
+	vector<string> rootfiles;
+	
+	//do the simple systematics all at once
+	rootfiles.push_back(outdir+outpre+region+osuff);
+	KPlotDriver(indir+inpre+region,{input,setlist},{"OPTION","string:rootfile["+rootfiles.back()+"]","vstring:selections["+systTypes+"]"});
+	
+	//do the full variations separately
+	//produce a selection for each variation on the fly, cloned from nominal
+	for(auto& ivar : vars){
+		//change region
+		string region_ = region + "_"+ivar;
+		rootfiles.push_back(outdir+outpre+region_+osuff);
+		KPlotDriver(indir+inpre+region_,{input,setlist},{"OPTION","string:rootfile["+rootfiles.back()+"]","vstring:selections["+ivar+"]","SELECTION",ivar,"\tnominal"});
 	}
 	
-	//now do the contaminations
-	for(unsigned i = 0; i < contams.size(); ++i){
-		if(contams[i]=="none") break;
-		cout << contams[i] << endl;
-		KPlotDriver(indir+inpre+contams[i],{input,setlist},{"OPTION","string:rootfile["+outdir+outpre+contams[i]+osuff+"]"});
-		
-		//qcd sideband for LDP & genMHT
-		//if(contams[i]=="LDP" || contams[i]=="signal_genMHT" || contams[i]=="LDP_genMHT"){
-		//	cout << contams[i] << " QCD sideband" << endl;
-		//	KPlotDriver(indir+inpre+contams[i],{inputQCD,setlist},{"OPTION","string:rootfile["+outdir+outpre+contams[i]+"_QCD"+osuff+"]"});
-		//	continue;
-		//}
-	}
-
+	//hadd
+	stringstream slist;
+	copy(rootfiles.begin(),rootfiles.end(),ostream_iterator<string>(slist," "));
+	string therootfile = outpre+osuff;
+	string cmd = "hadd -f "+therootfile+" "+slist.str();
+	system(cmd.c_str());
+	
+	//further processing
+	/*
+	TFile* infile = TFile::Open(therootfile.c_str());
+	
+	
+	string thenewfile = outpre+"proc"+osuff;
+	TFile* outfile = TFile::Open(thenewfile.c_str(),"RECREATE");
+	*/
 }
