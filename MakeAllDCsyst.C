@@ -3,6 +3,8 @@
 
 //ROOT headers
 #include <TError.h>
+#include <TCollection.h>
+#include <TKey.h>
 
 //STL headers
 #include <vector>
@@ -77,11 +79,62 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	system(cmd.c_str());
 	
 	//further processing
-	/*
 	TFile* infile = TFile::Open(therootfile.c_str());
+	TH1F* nominal = NULL;
+	vector<TH1F*> hsyst;
+	TKey *key;
+	TIter next(infile->GetListOfKeys());
+	while ((key = (TKey*)next())) {
+		string ntmp = key->GetName();
+		TH1F* htmp = (TH1F*)infile->Get(ntmp.c_str());
+		if(ntmp.find("nominal")!=string::npos) nominal = htmp;
+		else hsyst.push_back(htmp);
+	}
 	
+	//divide, bound, set labels
+	for(auto isyst : hsyst){
+		vector<string> inames;
+		KParser::process(isyst->GetName(),'_',inames);
+		string binname;
+		bool up = (inames.back().find("up")!=string::npos or inames.back().find("Up")!=string::npos);
+		if(up) binname = inames.back().substr(0,inames.back().size()-2);
+		else binname = inames.back().substr(0,inames.back().size()-4); //down
+		for(unsigned b = 1; b <= isyst->GetNbinsX(); ++b){
+			//divide
+			double unc = 1.0;
+			if(up && isyst->GetBinContent(b)>0.) unc = nominal->GetBinContent(b)/isyst->GetBinContent(b);
+			else if(!up && nominal->GetBinContent(b)>0.) unc = isyst->GetBinContent(b)/nominal->GetBinContent(b);
+			//bound
+			unc = min(max(unc,0.01),3.0);
+			//set
+			isyst->SetBinContent(b,unc);
+			isyst->GetXaxis()->SetBinLabel(b,binname.c_str());
+		}
+	}
 	
-	string thenewfile = outpre+"proc"+osuff;
+	//make stat error
+	vector<string> snames;
+	KParser::process(nominal->GetName(),'_',snames);
+	snames.back() = "MCStatErr";
+	stringstream ssname;
+	copy(snames.begin(),snames.end(),ostream_iterator<string>(ssname,"_"));
+	string sname = ssname.str(); sname.pop_back(); //remove trailing _
+	TH1F* ssyst = (TH1F*)nominal->Clone(sname.c_str());
+	for(unsigned b = 1; b <= ssyst->GetNbinsX(); ++b){
+		//label
+		string slabel = "MCStatErr_";
+		slabel += ssyst->GetXaxis()->GetBinLabel(b);
+		ssyst->GetXaxis()->SetBinLabel(b,slabel.c_str());
+		//divide
+		if(ssyst->GetBinContent(b)>0.) ssyst->SetBinContent(b, 1.0+ssyst->GetBinError(b)/ssyst->GetBinContent(b));
+		else ssyst->SetBinContent(b, 1.0+ssyst->GetBinError(b));
+	}
+	hsyst.push_back(ssyst);
+	
+	string thenewfile = outpre+"proc"+osuff+".root";
 	TFile* outfile = TFile::Open(thenewfile.c_str(),"RECREATE");
-	*/
+	outfile->cd();
+	nominal->Write();
+	for(auto isyst : hsyst) isyst->Write();
+	outfile->Close();
 }
