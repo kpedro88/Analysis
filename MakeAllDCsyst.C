@@ -95,6 +95,8 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	for(auto isyst : hsyst){
 		vector<string> inames;
 		KParser::process(isyst->GetName(),'_',inames);
+		//don't treat genMHT like a syst
+		if(inames.back().find("genMHT")!=string::npos) continue;
 		string binname;
 		bool up = (inames.back().find("up")!=string::npos or inames.back().find("Up")!=string::npos);
 		if(up) binname = inames.back().substr(0,inames.back().size()-2);
