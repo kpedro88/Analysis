@@ -12,7 +12,6 @@ def wt_callback(option, opt, value, parser):
 # define options
 parser = OptionParser()
 parser.add_option("-d", "--dir", dest="dir", default="/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV8/scan/", help="location of root files (LFN)")
-parser.add_option("-n", "--nfiles", dest="nfiles", default=0, help="number of files per part for datacard input")
 parser.add_option("-s", "--signals", dest="signals", type='string', action='callback', callback=sig_callback, help="list of signal model names")
 parser.add_option("-w", "--weights", dest="weights", type='string', action='callback', callback=wt_callback, help="list of signal model weights")
 parser.add_option("-x", "--suffix", dest="suffix", default="Mixed", help="suffix for output files")
@@ -67,7 +66,6 @@ for ind,file in enumerate(files):
     
 present_list = []
 missing_list = []
-dline_list = []
 for masspt, models in sorted(masspts.iteritems()):
     #print "%s: "%(masspt,) + str(models).strip('[]')
     mMother = masspt[0]
@@ -94,35 +92,15 @@ for masspt, models in sorted(masspts.iteritems()):
         dline += makeLineDCBase(short_name,this_xsec,mother_ID)
 
     dfile.write(dline)
-    dline_list.append(dline)
+    # make per-set list
+    with open("input/fast/input_set_DC_"+short_name_comb+".txt",'w') as ofile:
+        ofile.write("SET\n")
+        ofile.write(dline)
     # make script to export array of sample names
     sline = short_name_comb + " \\\n"
     sfile.write(sline)
 
 sfile.write(")\n")
-
-#number of sets unknown until the end
-nfiles = int(options.nfiles)
-if nfiles>0:
-    # check for directory
-    if not os.path.isdir("input/fast"+options.suffix):
-        os.mkdir("input/fast"+options.suffix)
-    nparts = len(dline_list)/nfiles + int(len(dline_list)%nfiles!=0)
-    dfiles = ["input/fast"+options.suffix+"/input_sets_DC_fast"+options.suffix+"_"+str(x)+".txt" for x in range(nparts)]
-    # preamble
-    for df in dfiles:
-        with open(df,'w') as dftmp:
-            dftmp.write("SET\n")
-    # make split set lists
-    dftmp = None
-    curr_ind = -1
-    for ind,dline in enumerate(dline_list):
-        if ind/nfiles != curr_ind:
-            if curr_ind > -1: dftmp.close()
-            curr_ind = ind/nfiles
-            dftmp = open(dfiles[curr_ind],'a')
-        dftmp.write(dline)
-    dftmp.close()
 
 # report on missing mass points
 print "Mass points present for  all signal models: %s" % (len(present_list))

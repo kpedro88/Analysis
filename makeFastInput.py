@@ -18,8 +18,11 @@ def msplit(line):
 # define options
 parser = OptionParser()
 parser.add_option("-d", "--dir", dest="dir", default="/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV8/scan/", help="location of root files (LFN)")
-parser.add_option("-n", "--nfiles", dest="nfiles", default=0, help="number of files per part for datacard input")
+parser.add_option("-k", "--skip", dest="skip", default="", help="topologies to skip (comma-separated)")
 (options, args) = parser.parse_args()
+
+# parse skip list
+skiplist = options.skip.split(",")
 
 # find the root files
 files = filter(None,os.popen("xrdfs root://cmseos.fnal.gov/ ls "+options.dir).read().split('\n'))
@@ -31,15 +34,6 @@ wfile = open("input/input_sets_skim_fast.txt",'w')
 dfile = open("input/input_sets_DC_fast.txt",'w')
 sfile = open("batch/exportFast.sh",'w')
 
-nfiles = int(options.nfiles)
-if nfiles>0: 
-    nparts = len(files)/nfiles + int(len(files)%nfiles!=0)
-    dfiles = ["input/fast/input_sets_DC_fast_"+str(x)+".txt" for x in range(nparts)]
-    #preamble
-    for df in dfiles:
-        with open(df,'w') as dftmp:
-            dftmp.write("SET\n")
-
 # preamble for script
 sfile.write("#!/bin/bash\n")
 sfile.write("\n")
@@ -49,9 +43,14 @@ sfile.write("export SAMPLES=(\n")
 wfile.write("SET\n")
 dfile.write("SET\n")
 
-dftmp = None
-curr_ind = -1
-for ind,file in enumerate(files):
+for file in files:
+    # check skiplist
+    skip = False
+    for topo in skiplist:
+        if topo in file:
+            skip = True
+            break
+    if skip: continue
     # parse filename: model, mMother-X, mLSP-Y, fast.root
     fsplit = file.split('_')
     model = '_'.join(fsplit[0:-3])
@@ -69,17 +68,13 @@ for ind,file in enumerate(files):
     dline = makeLineDCHist(short_name)
     dline += makeLineDCBase(short_name,this_xsec,mother_ID)
     dfile.write(dline)
-    # make split set lists
-    if nfiles>0:
-        if ind/nfiles != curr_ind:
-            if curr_ind > -1: dftmp.close()
-            curr_ind = ind/nfiles
-            dftmp = open(dfiles[curr_ind],'a')
-        dftmp.write(dline)
+    # make per-set list
+    with open("input/fast/input_set_DC_"+short_name+".txt",'w') as ofile:
+        ofile.write("SET\n")
+        ofile.write(dline)
     # make script to export array of sample names
     sline = short_name + " \\\n"
     sfile.write(sline)
-dftmp.close()
     
 sfile.write(")\n")
 

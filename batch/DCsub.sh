@@ -5,15 +5,13 @@ source exportProd.sh
 JOBDIR=jobs
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/${RUN2PRODV}/scan
 STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Datacards/${RUN2PRODV}
-SYSTS=nominal,scaleunc,isrunc,JEC,JER
-SYSTS2=btagSFunc,mistagSFunc,btagCFunc,ctagCFunc,mistagCFunc
-SYSTS3=trigunc,jetidunc,isotrackunc,lumiunc
-CONTAMS=signal_genMHT
+SYSTS=nominal,scaleuncUp,scaleuncDown,isruncUp,isruncDown,triguncUp,triguncDown,btagSFuncUp,btagSFuncDown,mistagSFuncUp,mistagSFuncDown,btagCFuncUp,btagCFuncDown,ctagCFuncUp,ctagCFuncDown,mistagCFuncUp,mistagCFuncDown,isotrackuncUp,isotrackuncDown,lumiuncUp,lumiuncDown,jetiduncUp,jetiduncDown
+VARS=JECup,JECdown,JERup,JERdown,genMHT
 CHECKARGS=""
 SUFFIX=""
 
 #check arguments
-while getopts "kx:g" opt; do
+while getopts "kx:" opt; do
   case "$opt" in
   k) CHECKARGS="${CHECKARGS} -k"
     ;;
@@ -23,18 +21,13 @@ while getopts "kx:g" opt; do
 done
 
 if [ -n "$SUFFIX" ]; then
-  STORE=${STORE}/${SUFFIX}
+  source exportFast${SUFFIX}.sh
+else
+  source exportFast.sh
 fi
 
 ./SKcheck.sh ${CHECKARGS}
 
-nparts=`ls -1 ../input/fast${SUFFIX}/input_sets_DC_fast${SUFFIX}_*.txt | wc -l`
-nparts=$(($nparts-1))
-
-echo "Submitting parts 0.."$nparts
-
-for PART in $(seq 0 $nparts); do
-  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} none ${PART} ${STORE} ${SUFFIX}
-  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS2} none ${PART} ${STORE} ${SUFFIX}
-  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS3} ${CONTAMS} ${PART} ${STORE} ${SUFFIX}
+for SAMPLE in ${SAMPLES[@]}; do
+  ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} ${VARS} ${STORE} ${SAMPLE}
 done

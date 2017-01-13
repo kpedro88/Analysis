@@ -3,12 +3,11 @@
 JOBDIR=$1
 INDIR=$2
 SYSTS=$3
-CONTAMS=$4
-PART=$5
-STORE=$6
-SUFF=$7
+VARS=$4
+STORE=$5
+SAMPLE=$6
 echo ""
-echo ">> `/bin/date` Submitting condor job(s) : $1 $2 $3 $4 $5 $7"
+echo ">> `/bin/date` Submitting condor job(s) : $1 $2 $3 $4 $5 $6"
 
 mkdir -p ${JOBDIR}
 
@@ -16,12 +15,11 @@ cat ./jobExecCondorDC.jdl \
 | sed -e s/CMSSWVER/${CMSSW_VERSION}/ \
 | sed -e s~INDIR~${INDIR}~ \
 | sed -e s/SYSTS/${SYSTS}/ \
-| sed -e s/CONTAMS/${CONTAMS}/ \
-| sed -e s/PART/${PART}/ \
+| sed -e s/VARS/${VARS}/ \
 | sed -e s~STORE~${STORE}~ \
-| sed -e s/SUFF/${SUFF}/ \
-> ${JOBDIR}/jobExecCondor_MakeAllDCsyst_${SYSTS}_${CONTAMS}_${SUFF}${PART}.jdl
+| sed -e s/SAMPLE/${SAMPLE}/ \
+> ${JOBDIR}/jobExecCondor_MakeAllDCsyst_${SAMPLE}.jdl
 
 cd ${JOBDIR}
-condor_submit jobExecCondor_MakeAllDCsyst_${SYSTS}_${CONTAMS}_${SUFF}${PART}.jdl
+condor_submit jobExecCondor_MakeAllDCsyst_${SAMPLE}.jdl
 cd -

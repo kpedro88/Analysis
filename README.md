@@ -77,15 +77,14 @@ After the jobs finish, the split output files should be combined (in batch mode 
 
 To make the input lists of model points automatically for skimming, plotting, and datacards, after the scan jobs are finished and combined:
 ```
-python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV11/scan/ -n 10
+python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV11/scan/
 ```
-The last argument splits the datacard input list into multiple lists (each containing `n` model points) for batch submission.
 
 <a name="combined"></a>A separate script is available to create a "combined" model by adding together multiple signal models with different weights.
 This script creates input lists for plotting and datacards (the existing skims are re-used).
 ```
-python makeFastInputMixed.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV11/scan/ -n 5 -s T1tbtb,T1tbbb,T1bbbb -w 0.25,0.5,0.25 -x T1tbtbT1tbbbT1bbbb
-python makeFastInputMixed.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV11/scan/ -n 5 -s T1tbtb,T1tbtt,T1tttt -w 0.25,0.5,0.25 -x T1tbtbT1tbttT1tttt
+python makeFastInputMixed.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV11/scan/ -s T1tbtb,T1tbbb,T1bbbb -w 0.25,0.5,0.25 -x T1tbtbT1tbbbT1bbbb
+python makeFastInputMixed.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV11/scan/ -s T1tbtb,T1tbtt,T1tttt -w 0.25,0.5,0.25 -x T1tbtbT1tbttT1tttt
 ```
 If weights are not explicitly specified (using the `-w` option), each sample is weighted equally. The weights are always normalized so sum(weights) = 1.
 
@@ -114,25 +113,20 @@ root -b -l -q 'MakeAllDCdata.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/S
 
 ### Signal systematics
 
-To save the individual histograms for the FullSim signal processes to a ROOT file for each different variation of systematic uncertainty and control region contamination:
+To save the individual histograms for a FullSim signal process to a ROOT file for each different variation of systematic uncertainty:
 ```
-root -b -l -q 'MakeAllDCsyst.C+(0,"root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV11")'
+root -b -l -q 'MakeAllDCsyst.C+(0,"T1tttt_1500_100","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV11")'
 ```
 
-To check specific systematics or contaminations, there are extra arguments. E.g., to check only the PDF uncertainty and no contaminations:
+To check specific systematics or variations, there are extra arguments. E.g., to check only the PDF uncertainty and no variations:
 ```
-root -b -l -q 'MakeAllDCsyst.C+(0,"root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV11","pdfunc","")'
+root -b -l -q 'MakeAllDCsyst.C+(0,"T1tttt_1500_100","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV11","pdfunc","")'
 ```
 
 Because of the large number of model points in the FastSim signal samples, batch mode should be used to run over them:
 ```
 cd batch
 ./DCsub.sh
-```
-
-After the jobs finish, the split output files should be combined:
-```
-./hadd_DC.sh -r
 ```
 
 Currently available uncertainties:
@@ -150,5 +144,3 @@ Currently available uncertainties:
 * b-tagging correction factors (fastsim only)
 * c-tagging correction factors (fastsim only)
 * mistagging correction factors (fastsim only)
-
-Signal contamination can be checked in the LowDeltaPhi, Gamma+Jets, SingleLepton, and LowMHT (QCD) control regions.
