@@ -71,8 +71,8 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	
 	//hadd
 	stringstream slist;
-	copy(rootfiles.begin(),rootfiles.end(),ostream_iterator<string>(slist," "));
-	string therootfile = outpre+osuff;
+	copy(rootfiles.begin(),rootfiles.end(),ostream_iterator<string>(slist,".root "));
+	string therootfile = outpre+region+osuff+".root";
 	string cmd = "hadd -f "+therootfile+" "+slist.str();
 	system(cmd.c_str());
 	
