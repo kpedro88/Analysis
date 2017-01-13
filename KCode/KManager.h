@@ -138,7 +138,8 @@ class KManager {
 				//check if this is Xtion instead of Xtor
 				//infinite loop detection not needed b/c Xtions must be defined in order
 				if(allXtions.Has(line)){
-					curr->second.insert(curr->second.end(),allXtions.Get(line).begin(),allXtions.Get(line).end());
+					auto tmp = allXtions.Get(line);
+					curr->second.insert(curr->second.end(),tmp.begin(),tmp.end());
 				}
 				else {
 					KNamed* tmp = KParser::processNamed<1>(line);
