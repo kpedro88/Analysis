@@ -169,6 +169,14 @@ class KMCWeightSelector : public KSelector {
 				lumicorrval = lumiunc==0 ? lumicorrvals[1] : ( lumiunc==1 ? lumicorrvals[2] : lumicorrvals[0] );
 			}
 			
+			//btag corr options - used in BTagSF
+			btagcorr = localOpt->Get("btagcorr",false);
+			btagSFunc = 0; localOpt->Get("btagSFunc",btagSFunc);
+			mistagSFunc = 0; localOpt->Get("mistagSFunc",mistagSFunc);
+			btagCFunc = 0; localOpt->Get("btagCFunc",btagCFunc);
+			ctagCFunc = 0; localOpt->Get("ctagCFunc",ctagCFunc);
+			mistagCFunc = 0; localOpt->Get("mistagCFunc",mistagCFunc);
+			
 			//other uncertainty options
 			pdfunc = 0; localOpt->Get("pdfunc",pdfunc);
 			scaleunc = 0; localOpt->Get("scaleunc",scaleunc);
@@ -330,9 +338,9 @@ class KMCWeightSelector : public KSelector {
 		
 		//member variables
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, debugWeight, didDebugWeight;
-		bool pucorr, trigcorr, isrcorr, realMET, signal, fastsim, jetidcorr, isotrackcorr, lumicorr;
+		bool pucorr, trigcorr, isrcorr, realMET, signal, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr;
 		double jetidcorrval, isotrackcorrval, lumicorrval;
-		int puunc, pdfunc, isrunc, scaleunc, trigunc;
+		int puunc, pdfunc, isrunc, scaleunc, trigunc, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc;
 		vector<int> mother;
 		TH1 *puhist, *puhistUp, *puhistDown;
 		vector<double> pdfnorms;
@@ -693,10 +701,15 @@ class KRA2BinSelector : public KSelector {
 				
 				//store labels in global options
 				sel->GetGlobalOpt()->Set<vector<string> >("RA2bin_labels",labels);
+				
+				
 			}
 			
 			//check other options
-			DoBTagSF = sel->GetGlobalOpt()->Get("btagcorr",false);
+			MCWeight = sel->Get<KMCWeightSelector*>("MCWeight");
+		}
+		virtual void CheckBase(){
+			DoBTagSF = MCWeight ? MCWeight->btagcorr : false;
 		}
 		virtual void CheckBranches(){
 			for(unsigned q = 0; q < RA2VarNames.size(); ++q){
@@ -798,6 +811,7 @@ class KRA2BinSelector : public KSelector {
 		vector<string> RA2VarNames;
 		vector<vector<float> > RA2VarMin, RA2VarMax;
 		vector<string> labels;
+		KMCWeightSelector* MCWeight;
 };
 
 //---------------------------------------------------------------
@@ -1021,15 +1035,21 @@ class KBTagSFSelector : public KSelector {
 	public:
 		//constructor
 		KBTagSFSelector() : KSelector() { }
-		KBTagSFSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_)
+		KBTagSFSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), debug(0), MCWeight(NULL)
 		{ 
 			canfail = false;
 			
 			//check for option
-			debug = localOpt->Get("debug",false); btagcorr.SetDebug(debug);
+			localOpt->Get("debug",debug);
+			if(debug==2) btagcorr.SetDebug(true);
 			
 			//initialize btag corrector calibrations
 			btagcorr.SetCalib("btag/CSVv2_ichep.csv");
+		}
+		virtual void CheckDeps(){
+			//set dependencies here
+			MCWeight = sel->Get<KMCWeightSelector*>("MCWeight");
+			if(!MCWeight) depfailed = true;
 		}
 		virtual void CheckBranches(){
 			looper->fChain->SetBranchStatus("Jets_HTMask",1);
@@ -1038,9 +1058,11 @@ class KBTagSFSelector : public KSelector {
 			if(debug) looper->fChain->SetBranchStatus("BTags",1);
 		}
 		virtual void CheckBase(){
+			//don't even bother
+			if(depfailed) return;
 			//check for option
-			int btagSFunc = 0; looper->GetGlobalOpt()->Get("btagSFunc",btagSFunc); btagcorr.SetBtagSFunc(btagSFunc);
-			int mistagSFunc = 0; looper->GetGlobalOpt()->Get("mistagSFunc",mistagSFunc); btagcorr.SetMistagSFunc(mistagSFunc);
+			int btagSFunc = MCWeight->btagSFunc; btagcorr.SetBtagSFunc(btagSFunc);
+			int mistagSFunc = MCWeight->mistagSFunc; btagcorr.SetMistagSFunc(mistagSFunc);
 			
 			//get efficiency histograms
 			btagcorr.SetEffs(base->GetFile());
@@ -1058,9 +1080,9 @@ class KBTagSFSelector : public KSelector {
 				btagcorr.SetCalibFastSim("btag/CSV_13TEV_Combined_14_7_2016.csv");
 				
 				//check for option
-				int btagCFunc = 0; looper->GetGlobalOpt()->Get("btagCFunc",btagCFunc); btagcorr.SetBtagCFunc(btagCFunc);
-				int ctagCFunc = 0; looper->GetGlobalOpt()->Get("ctagCFunc",ctagCFunc); btagcorr.SetCtagCFunc(ctagCFunc);
-				int mistagCFunc = 0; looper->GetGlobalOpt()->Get("mistagCFunc",mistagCFunc);  btagcorr.SetMistagCFunc(mistagCFunc);
+				int btagCFunc = MCWeight->btagCFunc; btagcorr.SetBtagCFunc(btagCFunc);
+				int ctagCFunc = MCWeight->ctagCFunc; btagcorr.SetCtagCFunc(ctagCFunc);
+				int mistagCFunc = MCWeight->mistagCFunc;  btagcorr.SetMistagCFunc(mistagCFunc);
 			}			
 		}
 		
@@ -1069,14 +1091,20 @@ class KBTagSFSelector : public KSelector {
 			if(depfailed) return false;
 			//get probabilities
 			prob = btagcorr.GetCorrections(looper->Jets,looper->Jets_hadronFlavor,looper->Jets_HTMask);
-			if(debug) cout << "BTags = " << looper->BTags << endl;
+			if(debug>0) {
+				cout << "BTags = " << looper->BTags << endl;
+				cout << "prob = ";
+				copy(prob.begin(),prob.end(),ostream_iterator<double>(cout," "));
+				cout << endl;
+			}
 			return true;
 		}
 		
 		//member variables
-		bool debug;
+		int debug;
 		BTagCorrector btagcorr;
 		vector<double> prob;
+		KMCWeightSelector* MCWeight;
 };
 
 //---------------------------------------------------------------
@@ -1119,9 +1147,8 @@ class KHistoSelector : public KSelector {
 			MCWeight = sel->Get<KMCWeightSelector*>("MCWeight");
 			RA2Bin = sel->Get<KRA2BinSelector*>("RA2Bin");
 			PhotonID = sel->Get<KPhotonIDSelector*>("PhotonID");
-			bool DoBTagSF = sel->GetGlobalOpt()->Get("btagcorr",false);
 			
-			if(DoBTagSF) BTagSF = sel->Get<KBTagSFSelector*>("BTagSF");
+			BTagSF = sel->Get<KBTagSFSelector*>("BTagSF");
 			JetEtaRegion = sel->Get<KJetEtaRegionSelector*>("JetEtaRegion");
 			Hemisphere = sel->Get<KHemisphereSelector*>("Hemisphere");
 			FakeHLT = sel->Get<KFakeHLTSelector*>("FakeHLT");
@@ -1140,6 +1167,8 @@ class KHistoSelector : public KSelector {
 			if(base->IsData()) MCWeight = NULL;
 			//but require it for MC
 			else if(base->IsMC() && !MCWeight) depfailed = true;
+			bool DoBTagSF = MCWeight ? MCWeight->btagcorr : false;
+			if(!DoBTagSF) BTagSF = NULL;
 		}
 		void Initialize(){
 			if(initialized) return;
