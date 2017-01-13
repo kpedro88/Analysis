@@ -124,5 +124,6 @@ class KBaseSkim : public KBase {
 		}
 		virtual KLooper* MakeLooper() { return new KSkimmer(this); }
 };
+REGISTER_SET(KBaseSkim,base,skim);
 
 #endif

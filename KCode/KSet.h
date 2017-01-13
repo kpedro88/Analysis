@@ -5,10 +5,6 @@
 #include "KMap.h"
 #include "KBase.h"
 #include "KLegend.h"
-//TEMPORARY dependencies - todo: replace w/ factory
-#include "KScanner.h"
-#include "KSkimmer.h"
-#include "KBuilder.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -189,6 +185,7 @@ class KSetData: public KSet {
 		virtual bool IsData() { return true; }
 		virtual bool IsMC() { return false; }
 };
+REGISTER_SET(KSetData,hist,data);
 
 //------------------------------
 //specialization for MC histos
@@ -250,6 +247,7 @@ class KSetMC: public KSet {
 		virtual bool IsMC() { return true; }
 		
 };
+REGISTER_SET(KSetMC,hist,mc);
 
 //----------------------------
 //specialization for MC stacks
@@ -466,6 +464,7 @@ class KSetMCStack : public KSet {
 		THStack* shtmp;
 		StackMap MyStacks;
 };
+REGISTER_SET(KSetMCStack,stack,mc);
 
 //-------------------------
 //specialization for ratios
@@ -671,42 +670,7 @@ class KSetRatio: public KSet {
 		ErrorMap MyBinoms;
 		ratiocalc calc;
 		bool setCalc;
-		
 };
-
-//extension of namespace for processing bases/sets
-namespace KParser {
-	KBase* processBase(KNamedBase* named, OptionMap* globalOpt){
-		//universal variables
-		string type = named->fields[0];
-		string subtype = named->fields[1];
-		string name = named->fields[2];
-		OptionMap* omap = named->localOpt();
-	
-		//create object
-		KBase* tmp = 0;
-		if(type=="base"){
-			if(subtype=="ext") tmp = new KBaseExt(name,omap,globalOpt);
-			else if(subtype=="data") tmp = new KBaseData(name,omap,globalOpt); 
-			else if(subtype=="mc") tmp = new KBaseMC(name,omap,globalOpt);
-			else if(subtype=="skim") tmp = new KBaseSkim(name,omap,globalOpt);
-			else if(subtype=="scan") tmp = new KBaseScan(name,omap,globalOpt);
-		}
-		else {
-			if(type=="hist" && subtype=="data") tmp = new KSetData(name,omap,globalOpt);
-			else if(type=="hist" && subtype=="mc") tmp = new KSetMC(name,omap,globalOpt);
-			else if(type=="stack" && subtype=="mc") tmp = new KSetMCStack(name,omap,globalOpt);
-		}
-		
-		if(!tmp){
-			cout << "Input error: set type \"" << type << " " << subtype << "\" is not recognized. This input will be ignored." << endl;
-		}
-		
-		return tmp;
-	}
-	KBase* processBase(string line, OptionMap* globalOpt){
-		return processBase(processNamed<3>(line),globalOpt);
-	}
-}
+//not registered
 
 #endif

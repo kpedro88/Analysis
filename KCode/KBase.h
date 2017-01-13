@@ -3,6 +3,7 @@
 
 //custom headers
 #include "KMap.h"
+#include "KFactory.h"
 #include "KLooper.h"
 #include "KLegend.h"
 #include "KStyle.h"
@@ -257,6 +258,8 @@ class KBase {
 		bool debugroc;
 		KStyle* MyStyle;
 };
+typedef KFactory<KBase,string,OptionMap*,OptionMap*> KBaseFactory;
+#define REGISTER_SET(a,b,c) REGISTER_MACRO2(KBaseFactory,a,b##c)
 
 //-------------------------------------------
 //extension of base class for external histos
@@ -322,6 +325,7 @@ class KBaseExt : public KBase {
 		//member variables
 		bool add_ext;
 };
+REGISTER_SET(KBaseExt,base,ext);
 
 //------------------------------------------------
 //sort children by peak height of a specific histo
@@ -367,5 +371,28 @@ class KComp {
 		//member variable
 		string name;
 };
+
+//extension of namespace for processing bases/sets
+namespace KParser {
+	KBase* processBase(KNamedBase* named, OptionMap* globalOpt){
+		//universal variables
+		string type = named->fields[0];
+		string subtype = named->fields[1];
+		string name = named->fields[2];
+		OptionMap* omap = named->localOpt();
+	
+		//create object
+		KBase* tmp = KBaseFactory::GetFactory().construct(type+subtype,name,omap,globalOpt);
+		
+		if(!tmp){
+			cout << "Input error: set type \"" << type << " " << subtype << "\" is not recognized. This input will be ignored." << endl;
+		}
+		
+		return tmp;
+	}
+	KBase* processBase(string line, OptionMap* globalOpt){
+		return processBase(processNamed<3>(line),globalOpt);
+	}
+}
 
 #endif

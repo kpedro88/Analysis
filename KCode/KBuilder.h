@@ -132,6 +132,7 @@ class KBaseData : public KBase {
 			}
 		}
 };
+REGISTER_SET(KBaseData,base,data);
 
 //--------------------------------------------------------------------------------
 //extension of base class for MC - has error band calc, default cross section & norm type
@@ -162,5 +163,6 @@ class KBaseMC : public KBase {
 			}
 		}
 };
+REGISTER_SET(KBaseMC,base,mc);
 
 #endif

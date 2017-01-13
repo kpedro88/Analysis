@@ -202,5 +202,6 @@ class KBaseScan : public KBase {
 		}
 		virtual KLooper* MakeLooper() { return new KScanner(this); }
 };
+REGISTER_SET(KBaseScan,base,scan);
 
 #endif
