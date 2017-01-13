@@ -53,7 +53,7 @@ class KBase {
 		//subsequent initialization
 		virtual void SetLooper(){
 			//try to find existing looper
-			MyLooper = KLooper::FindLooper(localOpt);
+			MyLooper = KLooper::FindLooper(localOpt,globalOpt);
 			//if none, make one
 			if(!MyLooper) MyLooper = MakeLooper();
 			else MyLooper->AddBase(this); //in case of KBuilder

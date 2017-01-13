@@ -38,6 +38,7 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	//process variaton types - comma-separated input, need to be run separately
 	vector<string> vars;
 	KParser::process(varTypes,',',vars);
+	
 	if(mode==1){
 		outdir = "datacards_fast/";
 		setlist = "input/fast/input_set_DC_"+setname+".txt";

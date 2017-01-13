@@ -21,6 +21,36 @@ class KBase;
 
 void NtupleClass::Loop() {}
 
+//helper
+class KOpenerName {
+	public:
+		//constructor
+		KOpenerName(OptionMap* localOpt, OptionMap* globalOpt) : name(""), filename(""), treedir(""), use_treedir(false), is_chain(false), failed_chain(false) {
+			use_treedir = globalOpt->Get("treedir",treedir);
+			if(localOpt->Get("chain",false)){
+				is_chain = true;
+				if(!localOpt->Get("filenames",chain) || chain.GetFiles().size()==0){
+					failed_chain = true;
+				}
+				if(use_treedir) name = treedir+"_";
+				name += chain.GetName();
+			}
+			else if(localOpt->Get("filename",filename)){
+				if(use_treedir) name = treedir+"_";
+				name += filename;
+			}
+			KParser::clean(name,'_');
+		}
+		
+		//member variables
+		string name;
+		string filename;
+		string treedir;
+		KChain chain;
+		bool use_treedir;
+		bool is_chain, failed_chain;
+};
+
 //file opening base class
 class KOpener {
 	public:
@@ -32,16 +62,17 @@ class KOpener {
 			//local map not stored, just used for initialization
 			if(localOpt==0) localOpt = new OptionMap();
 			
-			string filename;
-			string treedir;
-			bool use_treedir = globalOpt->Get("treedir",treedir);
-			if(localOpt->Get("chain",false)){
-				KChain chain;
-				if(!localOpt->Get("filenames",chain) || chain.GetFiles().size()==0){
+			KOpenerName helper(localOpt,globalOpt);
+			name = helper.name;
+			string filename = helper.filename;
+			string treedir = helper.treedir;
+			bool use_treedir = helper.use_treedir;
+			if(helper.is_chain){
+				KChain& chain = helper.chain;
+				if(helper.failed_chain){
 					cout << "Input error: filenames not specified for chain. Object " << chain.GetName() << " will not be initialized." << endl;
 					return;
 				}
-				name = chain.GetName();
 				const vector<string>& filenames = chain.GetFiles();
 				
 				//add filenames to chain
@@ -97,10 +128,9 @@ class KOpener {
 					return;
 				}
 			}
-			else if(localOpt->Get("filename",filename)){
+			else{
 				//get directory from global
 				if(use_treedir) filename = treedir + "/" + filename;
-				name = filename; KParser::clean(name,'_');
 				//open file
 				file = TFile::Open(filename.c_str());
 				if(!file) {
@@ -156,17 +186,10 @@ class KLooper : public KOpener, public NtupleClass {
 			static LooperMap lmap;
 			return lmap;
 		}
-		static KLooper* FindLooper(OptionMap* localOpt){
-			string filename;
-			if(localOpt->Get("chain",false)){
-				KChain chain;
-				localOpt->Get("filenames",chain);
-				return GetLooperMap().Get(chain.GetName());
-			}
-			else if(localOpt->Get("filename",filename)){
-				return GetLooperMap().Get(filename);
-			}
-			else return NULL;
+		static KLooper* FindLooper(OptionMap* localOpt, OptionMap* globalOpt){
+			//standardize name processing
+			KOpenerName helper(localOpt,globalOpt);
+			return GetLooperMap().Get(helper.name);
 		}
 		static void AddLooper(KLooper* ltmp){
 			GetLooperMap().Add(ltmp->GetName(),ltmp);
