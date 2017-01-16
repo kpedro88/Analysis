@@ -40,12 +40,12 @@ class KSkimmer : public KLooper {
 			}
 			//make negative weight selector
 			NegativeWeight = KSelectorFactory::GetFactory().construct("NegativeWeight","NegativeWeight",NULL);
-			NegativeWeight->SetBase(MyBase);
 		}
 		//destructor
 		virtual ~KSkimmer() {}
 		//functions
 		virtual void Loop(){
+			NegativeWeight->SetBase(MyBase);
 			if (fChain == 0) {
 				cout << "Error: fChain is null!" << endl;
 				return;
