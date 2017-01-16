@@ -13,9 +13,16 @@
 #include <vector>
 #include <iostream>
 #include <stdlib.h>
+#include "vdt/vdtMath.h"
 //-----------------------------------------------------------------------------
 // Make following visible only to this programming unit
 namespace {
+  //faster tanh calculation using vdt library
+  inline double tanh(const double x) {
+    const auto y = vdt::fast_exp(-2.0*x);
+    return ( 1.0 - y ) / ( 1.0 + y );
+  }
+
   // NOTE: Network indices start at 0
   static const int nnetworks=200;
   static const int ninputs  =3;
