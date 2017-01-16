@@ -23,13 +23,26 @@
 
 using namespace std;
 
-//implementation of NtupleClass-member-dependent KSkimmer function
-//int KSkimmer::GetEventSign() {
-//	if(Weight<0) return -1;
-//	else return 1;
-//}
-
 //base class for Selectors is in KSelection.h
+
+//----------------------------------------------------
+//selects negative-weight events (used for KSkimmer)
+class KNegativeWeightSelector : public KSelector {
+	public:
+		//constructor
+		KNegativeWeightSelector() : KSelector() { }
+		KNegativeWeightSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return looper->Weight<0;
+		}
+		
+		//member variables
+};
+REGISTER_SELECTOR(NegativeWeight);
 
 //----------------------------------------------------
 //selects events based on HLT line
