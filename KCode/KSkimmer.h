@@ -24,7 +24,8 @@ class KSkimmer : public KLooper {
 	public :
 		//constructor
 		KSkimmer(KBase* MyBase_) : 
-			KLooper(MyBase_->GetLocalOpt(),MyBase_->GetGlobalOpt()), MyBase(MyBase_), nEventHist(MyBase->GetNEventHist()), nEventNegHist(MyBase->GetNEventNegHist()), nentries(0), NegativeWeight(NULL)
+			KLooper(MyBase_->GetLocalOpt(),MyBase_->GetGlobalOpt()), MyBase(MyBase_), nEventHist(MyBase->GetNEventHist()), nEventNegHist(MyBase->GetNEventNegHist()), 
+			globalOpt(MyBase_->GetGlobalOpt()), nentries(0), NegativeWeight(NULL)
 		{
 			//check for branches to enable/disable
 			vector<string> disable_branches;
