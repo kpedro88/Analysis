@@ -42,6 +42,9 @@ class KVariator {
 		KLooper* looper;
 		KBase* base;
 };
+typedef KFactory<KVariator,string,OptionMap*> KVariatorFactory;
+#define REGISTER_VARIATOR(a) REGISTER_MACRO2(KVariatorFactory,K##a##Variator,a)
+#define REGISTER_VARIATOR2(a,b) REGISTER_MACRO2(KVariatorFactory,K##a##Variator,b)
 
 //----------------------------------------------------------------
 //class to keep track of a list of Variators
@@ -87,5 +90,20 @@ class KVariation {
 		vector<KVariator*> variatorList;
 		KBase* base;
 };
+
+//-------------------------------------------------------------
+//addition to KParser to create variators
+namespace KParser {
+	KVariator* processVariator(KNamed* tmp){
+		string vname = tmp->fields[0];
+		OptionMap* omap = tmp->localOpt();
+		
+		KVariator* vtmp = KVariatorFactory::GetFactory().construct(vname,vname,omap);;
+		
+		if(!vtmp) cout << "Input error: unknown variator " << vname << ". This variator will be skipped." << endl;
+
+		return vtmp;
+	}
+}
 
 #endif

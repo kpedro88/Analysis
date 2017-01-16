@@ -350,6 +350,7 @@ class KMCWeightSelector : public KSelector {
 		double xsection, norm;
 		ISRCorrector isrcorror;
 };
+REGISTER_SELECTOR(MCWeight);
 
 //----------------------------------------------------
 //selects events based on HLT line
@@ -413,6 +414,7 @@ class KHLTSelector : public KSelector {
 		vector<unsigned> HLTIndices;
 		bool debug;
 };
+REGISTER_SELECTOR(HLT);
 
 //----------------------------------------------------
 //simulates some interesting triggers
@@ -542,6 +544,7 @@ class KFakeHLTSelector : public KSelector {
 		bool signal, realMET;
 		double weight;
 };
+REGISTER_SELECTOR(FakeHLT);
 
 //----------------------------------------------------
 //selects events based on HT value
@@ -567,6 +570,7 @@ class KHTSelector : public KSelector {
 		//member variables
 		double HTmin;
 };
+REGISTER_SELECTOR(HT);
 
 //----------------------------------------------------
 //selects events based on MHT value
@@ -597,6 +601,7 @@ class KMHTSelector : public KSelector {
 		bool debug;
 		double minPtMHT, maxEtaMHT;
 };
+REGISTER_SELECTOR(MHT);
 
 //----------------------------------------------------
 //selects events based on leading jet pt
@@ -622,6 +627,7 @@ class KLeadJetPtSelector : public KSelector {
 		//member variables
 		double pTmin;
 };
+REGISTER_SELECTOR(LeadJetPt);
 
 //---------------------------------------------------------------
 //class to store and apply RA2 binning
@@ -813,6 +819,7 @@ class KRA2BinSelector : public KSelector {
 		vector<string> labels;
 		KMCWeightSelector* MCWeight;
 };
+REGISTER_SELECTOR(RA2Bin);
 
 //---------------------------------------------------------------
 //checks for double-counted events
@@ -840,6 +847,7 @@ class KDoubleCountSelector : public KSelector {
 		//member variables
 		map<pair<unsigned,unsigned long long>,int> countmap;
 };
+REGISTER_SELECTOR(DoubleCount);
 
 //---------------------------------------------------------------
 //applies photon ID to candidates
@@ -881,6 +889,7 @@ class KPhotonIDSelector : public KSelector {
 		//member variables
 		vector<unsigned> goodPhotons;
 };
+REGISTER_SELECTOR(PhotonID);
 
 //---------------------------------------------------------------
 //applies MET filters
@@ -949,6 +958,7 @@ class KMETFilterSelector : public KSelector {
 		vector<string> filterfiles;
 		vector<EventListFilter*> filters;
 };
+REGISTER_SELECTOR(METFilter);
 
 //---------------------------------------------------------------
 //eta regions for PFJetID: 0 = 0.0 < |eta| < 2.4; 1 = 0.0 < |eta| < 3.0; 2 = 3.0 < |eta|
@@ -984,6 +994,7 @@ class KJetEtaRegionSelector : public KSelector {
 		int region;
 		vector<bool> mask;
 };
+REGISTER_SELECTOR(JetEtaRegion);
 
 //---------------------------------------------------------------
 //recalculate NJets and BTags in a hemisphere around MHT_Phi
@@ -1028,6 +1039,7 @@ class KHemisphereSelector : public KSelector {
 		int NJets, BTags;
 		int NJetsOpp, BTagsOpp;
 };
+REGISTER_SELECTOR(Hemisphere);
 
 //---------------------------------------------------------------
 //calculates btag scale factors
@@ -1106,6 +1118,7 @@ class KBTagSFSelector : public KSelector {
 		vector<double> prob;
 		KMCWeightSelector* MCWeight;
 };
+REGISTER_SELECTOR(BTagSF);
 
 //---------------------------------------------------------------
 //little class to store value & weight pairs for filling histos
@@ -1511,36 +1524,6 @@ class KHistoSelector : public KSelector {
 		vector<int> mother;
 		double deltaM;
 };
-
-//-------------------------------------------------------------
-//addition to KParser to create selectors
-namespace KParser {
-	KSelector* processSelector(KNamed* tmp){
-		KSelector* srtmp = 0;
-		string sname = tmp->fields[0];
-		OptionMap* omap = tmp->localOpt();
-		
-		//check for all known selectors
-		if(sname=="Histo") srtmp = new KHistoSelector(sname,omap);
-		else if(sname=="MCWeight") srtmp = new KMCWeightSelector(sname,omap);
-		else if(sname=="DoubleCount") srtmp = new KDoubleCountSelector(sname,omap);
-		else if(sname=="RA2Bin") srtmp = new KRA2BinSelector(sname,omap);
-		else if(sname=="PhotonID") srtmp = new KPhotonIDSelector(sname,omap);
-		else if(sname=="BTagSF") srtmp = new KBTagSFSelector(sname,omap);
-		else if(sname=="METFilter") srtmp = new KMETFilterSelector(sname,omap);
-		else if(sname=="HLT") srtmp = new KHLTSelector(sname,omap);
-		else if(sname=="FakeHLT") srtmp = new KFakeHLTSelector(sname,omap);
-		else if(sname=="HT") srtmp = new KHTSelector(sname,omap);
-		else if(sname=="MHT") srtmp = new KMHTSelector(sname,omap);
-		else if(sname=="LeadJetPt") srtmp = new KLeadJetPtSelector(sname,omap);
-		else if(sname=="JetEtaRegion") srtmp = new KJetEtaRegionSelector(sname,omap);
-		else if(sname=="Hemisphere") srtmp = new KHemisphereSelector(sname,omap);
-		else {} //skip unknown selectors
-		
-		if(!srtmp) cout << "Input error: unknown selector " << sname << ". This selector will be skipped." << endl;
-		
-		return srtmp;
-	}
-}
+REGISTER_SELECTOR(Histo);
 
 #endif

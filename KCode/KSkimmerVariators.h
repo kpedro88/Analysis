@@ -327,6 +327,7 @@ class KJetVariator : public KVariator {
 		Double_t        DeltaPhi3;
 		Double_t        DeltaPhi4;
 };
+REGISTER_VARIATOR(Jet);
 
 class KGenMHTVariator : public KVariator {
 	public:
@@ -354,7 +355,7 @@ class KGenMHTVariator : public KVariator {
 		double MHT;
 		double HT;
 };
-
+REGISTER_VARIATOR(GenMHT);
 
 class KJetLeptonVariator : public KVariator {
 	public:
@@ -498,23 +499,6 @@ class KJetLeptonVariator : public KVariator {
 		Double_t        DeltaPhi3;
 		Double_t        DeltaPhi4;
 };
-
-namespace KParser {
-	KVariator* processVariator(KNamed* tmp){
-		KVariator* vtmp = 0;
-		string vname = tmp->fields[0];
-		OptionMap* omap = tmp->localOpt();
-		
-		//check for all known variators
-		if(vname=="Jet") vtmp = new KJetVariator(vname,omap);
-		if(vname=="GenMHT") vtmp = new KGenMHTVariator(vname,omap);
-		if(vname=="JetLepton") vtmp = new KJetLeptonVariator(vname,omap);
-		else {} //skip unknown variators
-
-		if(!vtmp) cout << "Input error: unknown variator " << vname << ". This variator will be skipped." << endl;
-
-		return vtmp;
-	}
-}
+REGISTER_VARIATOR(JetLepton);
 
 #endif

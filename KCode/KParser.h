@@ -371,6 +371,6 @@ KChain KChain::MakeChain(vector<string> fields_){
 }
 
 //NOTE: namespace also includes:
-// processBase() defined in KSet.h, processSelector() defined in K*Selectors.h, processVariator() defined in K*Variators.h
+// processBase() defined in KBase.h, processSelector() defined in KSelection.h, processVariator() defined in KVariation.h
 
 #endif

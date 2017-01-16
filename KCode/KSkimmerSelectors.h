@@ -79,6 +79,7 @@ class KHLTSelector : public KSelector {
 		vector<string> HLTLines;
 		vector<unsigned> HLTIndices;
 };
+REGISTER_SELECTOR(HLT);
 
 //------------------------------------------------------
 //selects events based on run number (for blinding data)
@@ -106,6 +107,7 @@ class KBlindSelector : public KSelector {
 		//member variables
 		int firstUnblindRun, lastUnblindRun;
 };
+REGISTER_SELECTOR(Blind);
 
 //----------------------------------------------------
 //selects events based on number of jets
@@ -128,6 +130,7 @@ class KNJetSelector : public KSelector {
 		//member variables
 		int njet;
 };
+REGISTER_SELECTOR(NJet);
 
 //----------------------------------------------------
 //selects events based on HT value
@@ -153,6 +156,7 @@ class KHTSelector : public KSelector {
 		double HTmin;
 		bool doGen;
 };
+REGISTER_SELECTOR(HT);
 
 //----------------------------------------------------
 //selects events based on MHT value
@@ -178,6 +182,7 @@ class KMHTSelector : public KSelector {
 		double MHTmin;
 		bool doGen;
 };
+REGISTER_SELECTOR(MHT);
 
 //----------------------------------------------------
 //low MHT selection for single photon test
@@ -200,6 +205,7 @@ class KLowMHTSelector : public KSelector {
 		//member variables
 		double MHTmax;
 };
+REGISTER_SELECTOR(LowMHT);
 
 //-------------------------------------------------------------
 //vetos events with muons
@@ -218,6 +224,7 @@ class KMuonVetoSelector : public KSelector {
 		
 		//member variables
 };
+REGISTER_SELECTOR(MuonVeto);
 
 //-------------------------------------------------------------
 //vetos events with electrons
@@ -236,6 +243,7 @@ class KElectronVetoSelector : public KSelector {
 		
 		//member variables
 };
+REGISTER_SELECTOR(ElectronVeto);
 
 //------------------------------------------------------
 //single muon selector
@@ -264,6 +272,7 @@ class KMuonSelector : public KSelector {
 		//member variables
 		bool doMTcut;
 };
+REGISTER_SELECTOR(Muon);
 
 //------------------------------------------------------
 //single electron selector
@@ -292,6 +301,7 @@ class KElectronSelector : public KSelector {
 		//member variables
 		bool doMTcut;
 };
+REGISTER_SELECTOR(Electron);
 
 //------------------------------------------------------
 //single photon selector
@@ -329,6 +339,7 @@ class KPhotonSelector : public KSelector {
 		bool veto;
 		bool trigger;
 };
+REGISTER_SELECTOR(Photon);
 
 //------------------------------------------------------
 //dimuon selector
@@ -348,6 +359,7 @@ class KDiMuonSelector : public KSelector {
 		
 		//member variables
 };
+REGISTER_SELECTOR(DiMuon);
 
 //------------------------------------------------------
 //dielectron selector
@@ -367,6 +379,7 @@ class KDiElectronSelector : public KSelector {
 		
 		//member variables
 };
+REGISTER_SELECTOR(DiElectron);
 
 //------------------------------------------------------
 //muon selector for trigger study
@@ -394,6 +407,7 @@ class KMuonTriggerSelector : public KSelector {
 		//member variables
 		double pTmin;
 };
+REGISTER_SELECTOR(MuonTrigger);
 
 //------------------------------------------------------
 //electron selector for trigger study
@@ -421,6 +435,7 @@ class KElectronTriggerSelector : public KSelector {
 		//member variables
 		double pTmin;
 };
+REGISTER_SELECTOR(ElectronTrigger);
 
 //----------------------------------------------------
 //selects events based on minDeltaPhi value
@@ -448,6 +463,7 @@ class KMinDeltaPhiSelector : public KSelector {
 		double minDeltaPhi;
 		bool invert;
 };
+REGISTER_SELECTOR(MinDeltaPhi);
 
 //----------------------------------------------------
 //selects events based on DeltaPhi values
@@ -474,6 +490,7 @@ class KDeltaPhiSelector : public KSelector {
 		vector<double> DeltaPhi;
 		bool invert;
 };
+REGISTER_SELECTOR(DeltaPhi);
 
 //----------------------------------------------------
 //selects events based on single DeltaPhi value
@@ -502,6 +519,11 @@ class KDeltaPhiJSelector : public KSelector {
 		double DeltaPhi;
 		int jet;
 };
+//allow multiple instances
+REGISTER_SELECTOR2(DeltaPhiJ,DeltaPhiJ1);
+REGISTER_SELECTOR2(DeltaPhiJ,DeltaPhiJ2);
+REGISTER_SELECTOR2(DeltaPhiJ,DeltaPhiJ3);
+REGISTER_SELECTOR2(DeltaPhiJ,DeltaPhiJ4);
 
 //-------------------------------------------------------------
 //vetos events with isolated electron tracks
@@ -520,6 +542,7 @@ class KIsoElectronTrackVetoSelector : public KSelector {
 		
 		//member variables
 };
+REGISTER_SELECTOR(IsoElectronTrackVeto);
 
 //-------------------------------------------------------------
 //vetos events with isolated muon tracks
@@ -538,6 +561,7 @@ class KIsoMuonTrackVetoSelector : public KSelector {
 		
 		//member variables
 };
+REGISTER_SELECTOR(IsoMuonTrackVeto);
 
 //-------------------------------------------------------------
 //vetos events with isolated charged hadron tracks
@@ -556,6 +580,7 @@ class KIsoPionTrackVetoSelector : public KSelector {
 		
 		//member variables
 };
+REGISTER_SELECTOR(IsoPionTrackVeto);
 
 //-------------------------------------------------------------
 //vetos events with bad jets (using PFJetID loose WP)
@@ -620,6 +645,7 @@ class KEventCleaningSelector : public KSelector {
 		//member variables
 		bool doJetID, doMETRatio, doMuonJet, doFakeJet;
 };
+REGISTER_SELECTOR(EventCleaning);
 
 //-------------------------------------------------------------
 //selects based on nvtx
@@ -643,6 +669,7 @@ class KNVtxSelector : public KSelector {
 		bool invert;
 		int num;
 };
+REGISTER_SELECTOR(NVtx);
 
 //----------------------------------------------------
 //selects events based on number of b-jets
@@ -666,6 +693,7 @@ class KNBJetSelector : public KSelector {
 		//member variables
 		int nbjet_min, nbjet_max;
 };
+REGISTER_SELECTOR(NBJet);
 
 //----------------------------------------------------
 //selects events based on genHT bin
@@ -707,6 +735,7 @@ class KGenHTBinSelector : public KSelector {
 		vector<double> genHTbins;
 		vector<unsigned> count;
 };
+REGISTER_SELECTOR(GenHTBin);
 
 //----------------------------------------------------
 //calculate b-tagging & mistagging efficiencies
@@ -791,6 +820,7 @@ class KBTagEfficiencySelector : public KSelector {
 		TH2F *n_eff_b, *n_eff_c, *n_eff_udsg;
 		TH2F *d_eff_b, *d_eff_c, *d_eff_udsg;
 };
+REGISTER_SELECTOR(BTagEfficiency);
 
 //-----------------------------------------------------------------
 //stores the NJetISR distribution
@@ -829,6 +859,7 @@ class KNJetsISRSelector : public KSelector {
 		TH1 *h_njetsisr;
 		vector<double> xbins;
 };
+REGISTER_SELECTOR(NJetsISR);
 
 //-----------------------------------------------------------------
 //stores info for normalizing PDF and r/f scale uncertainties
@@ -894,6 +925,7 @@ class KPDFNormSelector : public KSelector {
 		//member variables
 		TH1F *h_norm;
 };
+REGISTER_SELECTOR(PDFNorm);
 
 //-------------------------------------------------------------
 //look at only a specific range of events
@@ -916,6 +948,7 @@ class KEventRangeSelector : public KSelector {
 		//member variables
 		unsigned start, finish;
 };
+REGISTER_SELECTOR(EventRange);
 
 //---------------------------------------------------------------
 //updates CSC filter
@@ -949,6 +982,7 @@ class KCSCFilterSelector : public KSelector {
 		string inputfile;
 		EventListFilter filter;
 };
+REGISTER_SELECTOR(CSCFilter);
 
 //-------------------------------------------------------------
 //special version of selector class for object sync
@@ -1026,6 +1060,7 @@ class KJetEtaRegionSelector : public KSyncSelector {
 		//member variables
 		int region;
 };
+REGISTER_SELECTOR(JetEtaRegion);
 
 //---------------------------------------------------------------
 //neutral hadron fraction selector for jet ID check
@@ -1051,6 +1086,7 @@ class KNeutralHadronFractionSelector : public KSyncSelector {
 			else return true;
 		}
 };
+REGISTER_SELECTOR(NeutralHadronFraction);
 
 //---------------------------------------------------------------
 //photon (neutral em) fraction selector for jet ID check
@@ -1076,6 +1112,7 @@ class KPhotonFractionSelector : public KSyncSelector {
 			else return true;
 		}
 };
+REGISTER_SELECTOR(PhotonFraction);
 
 //---------------------------------------------------------------
 //num constit selector for jet ID check
@@ -1101,6 +1138,7 @@ class KNumConstitSelector : public KSyncSelector {
 			else return true;
 		}
 };
+REGISTER_SELECTOR(NumConstit);
 
 //---------------------------------------------------------------
 //charged hadron fraction selector for jet ID check
@@ -1126,6 +1164,7 @@ class KChargedHadronFractionSelector : public KSyncSelector {
 			else return true;
 		}
 };
+REGISTER_SELECTOR(ChargedHadronFraction);
 
 //---------------------------------------------------------------
 //charged mult selector for jet ID check
@@ -1151,6 +1190,7 @@ class KChargedMultSelector : public KSyncSelector {
 			else return true;
 		}
 };
+REGISTER_SELECTOR(ChargedMult);
 
 //---------------------------------------------------------------
 //charged EM fraction selector for jet ID check
@@ -1176,6 +1216,7 @@ class KChargedEmFractionSelector : public KSyncSelector {
 			else return true;
 		}
 };
+REGISTER_SELECTOR(ChargedEmFraction);
 
 //---------------------------------------------------------------
 //photon (neutral em) fraction selector for jet ID check - HF
@@ -1201,6 +1242,7 @@ class KPhotonFractionHFSelector : public KSyncSelector {
 			else return true;
 		}
 };
+REGISTER_SELECTOR(PhotonFractionHF);
 
 //---------------------------------------------------------------
 //neutral mult selector for jet ID check
@@ -1231,6 +1273,7 @@ class KNeutralMultSelector : public KSyncSelector {
 		//member variables
 		int cut;
 };
+REGISTER_SELECTOR(NeutralMult);
 
 //-------------------------------------------------------------
 //photon all selector for object sync
@@ -1253,6 +1296,7 @@ class KPhotonAllSelector : public KSyncSelector {
 		
 		//member variables
 };
+REGISTER_SELECTOR(PhotonAll);
 
 //-------------------------------------------------------------
 //photon eta selector for object sync
@@ -1279,6 +1323,7 @@ class KPhotonEtaSelector : public KSyncSelector {
 		
 		//member variables
 };
+REGISTER_SELECTOR(PhotonEta);
 
 //-------------------------------------------------------------
 //photon pt selector for object sync
@@ -1309,6 +1354,7 @@ class KPhotonPtSelector : public KSyncSelector {
 			else return true;
 		}
 };
+REGISTER_SELECTOR(PhotonPt);
 
 //-------------------------------------------------------------
 //photon ID selector for object sync
@@ -1351,6 +1397,7 @@ class KPhotonIDSelector : public KSyncSelector {
 		//member variables
 		int vetoType;
 };
+REGISTER_SELECTOR(PhotonID);
 
 //-------------------------------------------------------------
 //photon CH iso selector for object sync
@@ -1381,6 +1428,7 @@ class KPhotonCHIsoSelector : public KSyncSelector {
 			else return true;
 		}
 };
+REGISTER_SELECTOR(PhotonCHIso);
 
 //-------------------------------------------------------------
 //photon NH iso selector for object sync
@@ -1411,6 +1459,7 @@ class KPhotonNHIsoSelector : public KSyncSelector {
 			else return true;
 		}
 };
+REGISTER_SELECTOR(PhotonNHIso);
 
 //-------------------------------------------------------------
 //photon PH iso selector for object sync
@@ -1444,6 +1493,7 @@ class KPhotonPHIsoSelector : public KSyncSelector {
 			else { if(debug){ cout << "found " << goodObjects.size() << " photons" << endl; } return true; }
 		}
 };
+REGISTER_SELECTOR(PhotonPHIso);
 
 //-------------------------------------------------------------
 //selects events with isolated electron tracks (for sync)
@@ -1463,6 +1513,7 @@ class KIsoElectronTrackSelector : public KSyncSelector {
 		
 		//member variables
 };
+REGISTER_SELECTOR(IsoElectronTrack);
 
 //-------------------------------------------------------------
 //selects events with isolated muon tracks (for sync)
@@ -1482,6 +1533,7 @@ class KIsoMuonTrackSelector : public KSyncSelector {
 		
 		//member variables
 };
+REGISTER_SELECTOR(IsoMuonTrack);
 
 //-------------------------------------------------------------
 //selects events with isolated charged hadron tracks (for sync)
@@ -1501,71 +1553,6 @@ class KIsoPionTrackSelector : public KSyncSelector {
 		
 		//member variables
 };
-
-//-------------------------------------------------------------
-//addition to KParser to create selectors
-namespace KParser {
-	KSelector* processSelector(KNamed* tmp){
-		KSelector* srtmp = 0;
-		string sname = tmp->fields[0];
-		OptionMap* omap = tmp->localOpt();
-		
-		//check for all known selectors
-		if(sname=="HLT") srtmp = new KHLTSelector(sname,omap);
-		else if(sname=="Blind") srtmp = new KBlindSelector(sname,omap);
-		else if(sname=="NJet") srtmp = new KNJetSelector(sname,omap);
-		else if(sname=="HT") srtmp = new KHTSelector(sname,omap);
-		else if(sname=="MHT") srtmp = new KMHTSelector(sname,omap);
-		else if(sname=="LowMHT") srtmp = new KLowMHTSelector(sname,omap);
-		else if(sname=="MuonVeto") srtmp = new KMuonVetoSelector(sname,omap);
-		else if(sname=="ElectronVeto") srtmp = new KElectronVetoSelector(sname,omap);
-		else if(sname=="Muon") srtmp = new KMuonSelector(sname,omap);
-		else if(sname=="Electron") srtmp = new KElectronSelector(sname,omap);
-		else if(sname=="Photon") srtmp = new KPhotonSelector(sname,omap);
-		else if(sname=="DiMuon") srtmp = new KDiMuonSelector(sname,omap);
-		else if(sname=="DiElectron") srtmp = new KDiElectronSelector(sname,omap);
-		else if(sname=="MuonTrigger") srtmp = new KMuonTriggerSelector(sname,omap);
-		else if(sname=="ElectronTrigger") srtmp = new KElectronTriggerSelector(sname,omap);
-		else if(sname=="IsoElectronTrackVeto") srtmp = new KIsoElectronTrackVetoSelector(sname,omap);
-		else if(sname=="IsoMuonTrackVeto") srtmp = new KIsoMuonTrackVetoSelector(sname,omap);
-		else if(sname=="IsoPionTrackVeto") srtmp = new KIsoPionTrackVetoSelector(sname,omap);
-		else if(sname=="MinDeltaPhi") srtmp = new KMinDeltaPhiSelector(sname,omap);
-		else if(sname=="DeltaPhi") srtmp = new KDeltaPhiSelector(sname,omap);
-		else if(sname.find("DeltaPhiJ")!=string::npos) srtmp = new KDeltaPhiJSelector(sname,omap); //allow multiple instances
-		else if(sname=="EventCleaning") srtmp = new KEventCleaningSelector(sname,omap);
-		else if(sname=="NVtx") srtmp = new KNVtxSelector(sname,omap);
-		else if(sname=="NBJet") srtmp = new KNBJetSelector(sname,omap);
-		else if(sname=="GenHTBin") srtmp = new KGenHTBinSelector(sname,omap);
-		else if(sname=="BTagEfficiency") srtmp = new KBTagEfficiencySelector(sname,omap);
-		else if(sname=="NJetsISR") srtmp = new KNJetsISRSelector(sname,omap);
-		else if(sname=="PDFNorm") srtmp = new KPDFNormSelector(sname,omap);
-		else if(sname=="EventRange") srtmp = new KEventRangeSelector(sname,omap);
-		else if(sname=="CSCFilter") srtmp = new KCSCFilterSelector(sname,omap);
-		else if(sname=="JetEtaRegion") srtmp = new KJetEtaRegionSelector(sname,omap);
-		else if(sname=="NeutralHadronFraction") srtmp = new KNeutralHadronFractionSelector(sname,omap);
-		else if(sname=="PhotonFraction") srtmp = new KPhotonFractionSelector(sname,omap);
-		else if(sname=="PhotonFractionHF") srtmp = new KPhotonFractionHFSelector(sname,omap);
-		else if(sname=="NumConstit") srtmp = new KNumConstitSelector(sname,omap);
-		else if(sname=="ChargedHadronFraction") srtmp = new KChargedHadronFractionSelector(sname,omap);
-		else if(sname=="ChargedMult") srtmp = new KChargedMultSelector(sname,omap);
-		else if(sname=="ChargedEmFraction") srtmp = new KChargedEmFractionSelector(sname,omap);
-		else if(sname=="NeutralMult") srtmp = new KNeutralMultSelector(sname,omap);
-		else if(sname=="PhotonAll") srtmp = new KPhotonAllSelector(sname,omap);
-		else if(sname=="PhotonEta") srtmp = new KPhotonEtaSelector(sname,omap);
-		else if(sname=="PhotonPt") srtmp = new KPhotonPtSelector(sname,omap);
-		else if(sname=="PhotonID") srtmp = new KPhotonIDSelector(sname,omap);
-		else if(sname=="PhotonCHIso") srtmp = new KPhotonCHIsoSelector(sname,omap);
-		else if(sname=="PhotonNHIso") srtmp = new KPhotonNHIsoSelector(sname,omap);
-		else if(sname=="PhotonPHIso") srtmp = new KPhotonPHIsoSelector(sname,omap);
-		else if(sname=="IsoElectronTrack") srtmp = new KIsoElectronTrackSelector(sname,omap);
-		else if(sname=="IsoMuonTrack") srtmp = new KIsoMuonTrackSelector(sname,omap);
-		else if(sname=="IsoPionTrack") srtmp = new KIsoPionTrackSelector(sname,omap);
-		else {} //skip unknown selectors
-		
-		if(!srtmp) cout << "Input error: unknown selector " << sname << ". This selector will be skipped." << endl;
-		
-		return srtmp;
-	}
-}
+REGISTER_SELECTOR(IsoPionTrack);
 
 #endif

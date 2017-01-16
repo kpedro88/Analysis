@@ -99,6 +99,9 @@ class KSelector {
 		bool dummy, canfail, depfailed;
 		KBase* base;
 };
+typedef KFactory<KSelector,string,OptionMap*> KSelectorFactory;
+#define REGISTER_SELECTOR(a) REGISTER_MACRO2(KSelectorFactory,K##a##Selector,a)
+#define REGISTER_SELECTOR2(a,b) REGISTER_MACRO2(KSelectorFactory,K##a##Selector,b)
 
 //----------------------------------------------------------------
 //class to keep track of a list of Selectors
@@ -297,5 +300,20 @@ class KSelection {
 
 //defined here to avoid circular dependency
 void KBase::SetSelection(KSelection* sel_) { MySelection = sel_; MySelection->SetBase(this); }
+
+//-------------------------------------------------------------
+//addition to KParser to create selectors
+namespace KParser {
+	KSelector* processSelector(KNamed* tmp){
+		string sname = tmp->fields[0];
+		OptionMap* omap = tmp->localOpt();
+		
+		KSelector* srtmp = KSelectorFactory::GetFactory().construct(sname,sname,omap);
+		
+		if(!srtmp) cout << "Input error: unknown selector " << sname << ". This selector will be skipped." << endl;
+		
+		return srtmp;
+	}
+}
 
 #endif
