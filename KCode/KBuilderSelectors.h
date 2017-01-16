@@ -1044,7 +1044,7 @@ class KBTagSFSelector : public KSelector {
 			if(debug==2) btagcorr.SetDebug(true);
 			
 			//initialize btag corrector calibrations
-			btagcorr.SetCalib("btag/CSVv2_ichep.csv");
+			btagcorr.SetCalib("btag/CSVv2_ichep_mod.csv");
 		}
 		virtual void CheckDeps(){
 			//set dependencies here
