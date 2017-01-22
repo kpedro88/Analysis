@@ -39,6 +39,14 @@ signalUnblind
 	veto
 	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
 	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
+signalUnclean
+	common
+	NJet	i:njet[2]
+	HT	d:HTmin[200]
+	MHT	d:MHTmin[200]
+	veto
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
+	EventCleaning	b:JetID[1]	b:METRatio[0]	b:MuonJet[0]	b:FakeJet[1]
 signalTight
 	Blind	i:run[275125]
 	common
@@ -74,6 +82,14 @@ LDP
 	veto
 	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]	b:invert[1]
 	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
+LDPUnclean
+	common
+	NJet	i:njet[2]
+	HT	d:HTmin[200]
+	MHT	d:MHTmin[200]
+	veto
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]	b:invert[1]
+	EventCleaning	b:JetID[1]	b:METRatio[0]	b:MuonJet[0]	b:FakeJet[1]
 SLm
 	common
 	NJet	i:njet[2]
@@ -92,6 +108,24 @@ SLe
 	Electron
 	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
 	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
+SLmUnclean
+	common
+	NJet	i:njet[2]
+	HT	d:HTmin[200]
+	MHT	d:MHTmin[200]
+	Muon
+	ElectronVeto
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
+	EventCleaning	b:JetID[1]	b:METRatio[0]	b:MuonJet[0]	b:FakeJet[1]
+SLeUnclean
+	common
+	NJet	i:njet[2]
+	HT	d:HTmin[200]
+	MHT	d:MHTmin[200]
+	MuonVeto
+	Electron
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
+	EventCleaning	b:JetID[1]	b:METRatio[0]	b:MuonJet[0]	b:FakeJet[1]
 SLmLDP
 	common
 	NJet	i:njet[2]
