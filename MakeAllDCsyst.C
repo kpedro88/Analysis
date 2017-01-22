@@ -17,6 +17,7 @@
 
 using namespace std;
 
+//helper
 string changeHistoName(string name, string suff){
 	vector<string> snames;
 	KParser::process(name,'_',snames);
@@ -108,6 +109,8 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 		return;
 	}
 	
+	//todo: factorize the operations below
+	
 	//divide, bound, set labels
 	for(auto isyst : hsyst){
 		vector<string> inames;
@@ -146,20 +149,21 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	//genMHT correction and unc for fastsim
 	if(genMHT){
 		//keep original nominal histogram
-		string nname = changeHistoName(nominal->GetName(),"nominalOrig");
-		TH1F* nominalOrig = (TH1F*)nominal->Clone(nname.c_str());
+		//string nname = changeHistoName(nominal->GetName(),"nominalOrig");
+		//TH1F* nominalOrig = (TH1F*)nominal->Clone(nname.c_str());
 		string gname = changeHistoName(nominal->GetName(),"MHTSyst");
 		TH1F* gsyst = (TH1F*)nominal->Clone(gname.c_str());
 		
 		//modify nominal as average of nominal and genMHT & compute syst as difference
 		for(unsigned b = 1; b <= nominal->GetNbinsX(); ++b){
 			gsyst->SetBinContent(b, 1.0+abs(nominal->GetBinContent(b) - genMHT->GetBinContent(b))/2.0);
+			gsyst->GetXaxis()->SetBinLabel(b,"MHTSyst");
 			nominal->SetBinContent(b, (nominal->GetBinContent(b) + genMHT->GetBinContent(b))/2.0);
 		}
 		
 		hsyst.push_back(gsyst);
-		hsyst.push_back(nominalOrig);
-		hsyst.push_back(genMHT);
+		//hsyst.push_back(nominalOrig);
+		//hsyst.push_back(genMHT);
 	}
 	
 	string thenewfile = outpre+"proc"+osuff+".root";
