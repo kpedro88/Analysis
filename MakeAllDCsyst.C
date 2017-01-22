@@ -17,6 +17,16 @@
 
 using namespace std;
 
+string changeHistoName(string name, string suff){
+	vector<string> snames;
+	KParser::process(name,'_',snames);
+	snames.back() = suff;
+	stringstream ssname;
+	copy(snames.begin(),snames.end(),ostream_iterator<string>(ssname,"_"));
+	string sname = ssname.str(); sname.pop_back(); //remove trailing _
+	return sname;
+}
+
 //recompile:
 //root -b -l -q MakeAllDCsyst.C++
 void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV11", string systTypes="nominal,scaleuncUp,scaleuncDown,isruncUp,isruncDown,triguncUp,triguncDown,btagSFuncUp,btagSFuncDown,mistagSFuncUp,mistagSFuncDown,isotrackuncUp,isotrackuncDown,lumiuncUp,lumiuncDown", string varTypes="JECup,JECdown,JERup,JERdown"){
@@ -81,6 +91,7 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	//further processing
 	TFile* infile = TFile::Open(therootfile.c_str());
 	TH1F* nominal = NULL;
+	TH1F* genMHT = NULL;
 	vector<TH1F*> hsyst;
 	TKey *key;
 	TIter next(infile->GetListOfKeys());
@@ -88,15 +99,19 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 		string ntmp = key->GetName();
 		TH1F* htmp = (TH1F*)infile->Get(ntmp.c_str());
 		if(ntmp.find("nominal")!=string::npos) nominal = htmp;
+		else if(ntmp.find("genMHT")!=string::npos) genMHT = htmp;
 		else hsyst.push_back(htmp);
+	}
+	
+	if(!nominal){
+		cout << "Nominal histogram not found, will not make relative systematics." << endl;
+		return;
 	}
 	
 	//divide, bound, set labels
 	for(auto isyst : hsyst){
 		vector<string> inames;
 		KParser::process(isyst->GetName(),'_',inames);
-		//don't treat genMHT like a syst
-		if(inames.back().find("genMHT")!=string::npos) continue;
 		string binname;
 		bool up = (inames.back().find("up")!=string::npos or inames.back().find("Up")!=string::npos);
 		if(up) binname = inames.back().substr(0,inames.back().size()-2);
@@ -115,12 +130,7 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	}
 	
 	//make stat error
-	vector<string> snames;
-	KParser::process(nominal->GetName(),'_',snames);
-	snames.back() = "MCStatErr";
-	stringstream ssname;
-	copy(snames.begin(),snames.end(),ostream_iterator<string>(ssname,"_"));
-	string sname = ssname.str(); sname.pop_back(); //remove trailing _
+	string sname = changeHistoName(nominal->GetName(),"MCStatErr");
 	TH1F* ssyst = (TH1F*)nominal->Clone(sname.c_str());
 	for(unsigned b = 1; b <= ssyst->GetNbinsX(); ++b){
 		//label
@@ -132,6 +142,25 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 		else ssyst->SetBinContent(b, 1.0+ssyst->GetBinError(b));
 	}
 	hsyst.push_back(ssyst);
+	
+	//genMHT correction and unc for fastsim
+	if(genMHT){
+		//keep original nominal histogram
+		string nname = changeHistoName(nominal->GetName(),"nominalOrig");
+		TH1F* nominalOrig = (TH1F*)nominal->Clone(nname.c_str());
+		string gname = changeHistoName(nominal->GetName(),"MHTSyst");
+		TH1F* gsyst = (TH1F*)nominal->Clone(gname.c_str());
+		
+		//modify nominal as average of nominal and genMHT & compute syst as difference
+		for(unsigned b = 1; b <= nominal->GetNbinsX(); ++b){
+			gsyst->SetBinContent(b, 1.0+abs(nominal->GetBinContent(b) - genMHT->GetBinContent(b))/2.0);
+			nominal->SetBinContent(b, (nominal->GetBinContent(b) + genMHT->GetBinContent(b))/2.0);
+		}
+		
+		hsyst.push_back(gsyst);
+		hsyst.push_back(nominalOrig);
+		hsyst.push_back(genMHT);
+	}
 	
 	string thenewfile = outpre+"proc"+osuff+".root";
 	TFile* outfile = TFile::Open(thenewfile.c_str(),"RECREATE");
