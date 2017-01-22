@@ -16,6 +16,7 @@ double:canvasW[1200]
 double:marginB[300]
 double:NdivX[518]
 vstring:disable_branches[*]
+bool:closefiles[1]
 
 INPUT
 input/input_selection_syst.txt
