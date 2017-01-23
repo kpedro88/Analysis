@@ -1,0 +1,32 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+#root -l 'KPlotDriver.C+(".","input/input_puweights.txt",1)'
+
+INPUT
+input/input_global.txt
+
+OPTION
+vstring:printformat[png]
+double:luminorm[22000.0]
+string:luminormunit[fbinv]
+bool:printyield[1]
+int:yieldprecision[2]
+bool:plotoverflow[1]
+vstring:disable_branches[*]
+int:npanel[1]
+bool:treesuffix[0]
+string:printsuffix[puWeight]
+double:ymin[4e-4]
+
+HISTO
+numint	i:xnum[100]	d:xmin[0]	d:xmax[100]	s:xtitle[number of interactions]	s:ytitle[weight [data/MC]]	b:ratio[0]
+
+SET
+hist	data	puWeight	c:color[kBlack]	i:panel[0]
+	base	ext	puWeight	s:extfilename[/uscms_data/d3/pedrok/SUSY2015/upgrade/CMSSW_8_0_18/src/TreeMaker/Production/test/data/PileupHistograms_0905_63mb_pm5.root]	vs:exthisto_in[pu_weights_central]	vs:exthisto_out[numint]

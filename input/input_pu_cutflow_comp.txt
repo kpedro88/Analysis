@@ -1,0 +1,17 @@
+INPUT
+input/input_global.txt
+
+OPTION
+string:prelim_text[Simulation]
+string:lumi_text[(13 TeV)]
+int:npanel[1]
+vstring:disable_branches[*]
+bool:cutflownorm[1]
+string:rationame[#frac{Low|High}{All}]
+double:ratiomax[1.05]
+double:ratiomin[0.95]
+double:marginR[85]
+double:canvasW[750]
+
+HISTO
+cutflowAbs	b:ratio[1]	s:ytitle[Abs. Eff. [%]]	b:logy[0]

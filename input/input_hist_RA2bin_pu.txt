@@ -1,0 +1,7 @@
+OPTION
+double:sizeLeg[22]
+double:canvasW[1200]
+double:NdivX[518]
+
+HISTO
+RA2bin	i:xnum[160]	d:xmin[0.5]	d:xmax[160.5]	s:xtitle[Search region bin number]	s:ytitle[arbitrary units]	b:ratio[1]	vd:xcuts[40.5,80.5,120.5]

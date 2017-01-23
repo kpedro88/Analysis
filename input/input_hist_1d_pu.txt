@@ -1,0 +1,5 @@
+HISTO
+njets	i:xnum[10]	d:xmin[-0.5]	d:xmax[9.5]	s:xtitle[N_{jet} (p_{T} > 30 GeV)]	s:ytitle[arbitrary units]	b:ratio[1]
+nbjets	i:xnum[4]	d:xmin[-0.5]	d:xmax[3.5]	s:xtitle[N_{b-jet} (p_{T} > 30 GeV)]	s:ytitle[arbitrary units]	b:ratio[1]
+ht	i:xnum[30]	d:xmin[0]	d:xmax[2000]	s:xtitle[H_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[1]
+mht	i:xnum[20]	d:xmin[0]	d:xmax[1000]	s:xtitle[H_{T}^{miss} [GeV]]	s:ytitle[arbitrary units]	b:ratio[1]

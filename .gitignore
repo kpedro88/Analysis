@@ -16,6 +16,7 @@
 
 # Other Stuff
 *.d
+*.pyc
 
 # Fortran module files
 *.mod
