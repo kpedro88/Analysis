@@ -111,7 +111,7 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	
 	//todo: factorize the operations below
 	
-	//divide, bound, set labels
+	//divide, bound, set labels (prepended w/ "signal_")
 	for(auto isyst : hsyst){
 		vector<string> inames;
 		KParser::process(isyst->GetName(),'_',inames);
@@ -119,11 +119,14 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 		bool up = (inames.back().find("up")!=string::npos or inames.back().find("Up")!=string::npos);
 		if(up) binname = inames.back().substr(0,inames.back().size()-2);
 		else binname = inames.back().substr(0,inames.back().size()-4); //down
+		binname = "signal_"+binname;
 		for(unsigned b = 1; b <= isyst->GetNbinsX(); ++b){
 			//divide
 			double unc = 1.0;
-			if(up && isyst->GetBinContent(b)>0.) unc = nominal->GetBinContent(b)/isyst->GetBinContent(b);
-			else if(!up && nominal->GetBinContent(b)>0.) unc = isyst->GetBinContent(b)/nominal->GetBinContent(b);
+			double denom = nominal->GetBinContent(b);
+			//if central value is zero, treat syst as a shift
+			if(denom==0.) denom = 1.0;
+			unc = isyst->GetBinContent(b)/denom;
 			//bound
 			unc = min(max(unc,0.01),3.0);
 			//set
@@ -137,7 +140,7 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	TH1F* ssyst = (TH1F*)nominal->Clone(sname.c_str());
 	for(unsigned b = 1; b <= ssyst->GetNbinsX(); ++b){
 		//label
-		string slabel = "MCStatErr_";
+		string slabel = "signal_MCStatErr_";
 		slabel += ssyst->GetXaxis()->GetBinLabel(b);
 		ssyst->GetXaxis()->SetBinLabel(b,slabel.c_str());
 		//divide
@@ -149,21 +152,21 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	//genMHT correction and unc for fastsim
 	if(genMHT){
 		//keep original nominal histogram
-		//string nname = changeHistoName(nominal->GetName(),"nominalOrig");
-		//TH1F* nominalOrig = (TH1F*)nominal->Clone(nname.c_str());
+		string nname = changeHistoName(nominal->GetName(),"nominalOrig");
+		TH1F* nominalOrig = (TH1F*)nominal->Clone(nname.c_str());
 		string gname = changeHistoName(nominal->GetName(),"MHTSyst");
 		TH1F* gsyst = (TH1F*)nominal->Clone(gname.c_str());
 		
 		//modify nominal as average of nominal and genMHT & compute syst as difference
 		for(unsigned b = 1; b <= nominal->GetNbinsX(); ++b){
 			gsyst->SetBinContent(b, 1.0+abs(nominal->GetBinContent(b) - genMHT->GetBinContent(b))/2.0);
-			gsyst->GetXaxis()->SetBinLabel(b,"MHTSyst");
+			gsyst->GetXaxis()->SetBinLabel(b,"signal_MHTSyst");
 			nominal->SetBinContent(b, (nominal->GetBinContent(b) + genMHT->GetBinContent(b))/2.0);
 		}
 		
 		hsyst.push_back(gsyst);
-		//hsyst.push_back(nominalOrig);
-		//hsyst.push_back(genMHT);
+		hsyst.push_back(nominalOrig);
+		hsyst.push_back(genMHT);
 	}
 	
 	string thenewfile = outpre+"proc"+osuff+".root";
