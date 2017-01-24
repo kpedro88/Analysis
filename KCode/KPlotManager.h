@@ -90,22 +90,25 @@ class KPlotManager : public KManager {
 			vector<string> gselection;
 			globalOpt->Get("selections",gselection);
 			vector<string> lselection;
+			bool globalAppend = globalOpt->Get("appendsel",true);
 			
 			//loop over top level set options
 			//to generate sets for each selection
 			for(auto& ntmp : MySetOptions){
 				bool hasLocalSel = ntmp->localOpt()->Get("selections",lselection);
+				//can avoid appending if only one selection specified for this set
+				bool localAppend = globalAppend && (hasLocalSel ? lselection.size()==1 : gselection.size()==1);
 				for(auto& stmp : (hasLocalSel ? lselection : gselection)){
-					KBase* tmp = finalizeSet(ntmp,NULL,stmp);
+					KBase* tmp = finalizeSet(ntmp,NULL,stmp,localAppend);
 					//set style at the end, in case parent modifies child's style options
 					tmp->SetStyle(allStyles);
 				}
 			}
 		}
-		KBase* finalizeSet(KNamedBase* ntmp, KBase* parent, string& selection){
+		KBase* finalizeSet(KNamedBase* ntmp, KBase* parent, string& selection, bool append){
 			//append selection to name
 			string oldname = ntmp->fields[2];
-			ntmp->fields[2] += "_"+selection;
+			if(append) ntmp->fields[2] += "_"+selection;
 			
 			KBase* tmp = KParser::processBase(ntmp,globalOpt);
 			
@@ -123,7 +126,7 @@ class KPlotManager : public KManager {
 			
 			//recurse (if necessary) to set up children
 			for(auto& ctmp : ntmp->children){
-				finalizeSet(ctmp,tmp,selection);
+				finalizeSet(ctmp,tmp,selection,append);
 			}
 			
 			//reset tmp name

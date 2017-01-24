@@ -19,6 +19,7 @@ double:NdivX[518]
 vstring:selections[ra2bin]
 vstring:disable_branches[*]
 bool:debugcut[1]
+bool:appendsel[0]
 
 SELECTION
 ra2bin
