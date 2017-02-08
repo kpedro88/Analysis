@@ -671,6 +671,7 @@ HTMHT_2016H3 \
 JetHT_2016H3 \
 MET_2016H3 \
 SingleElectron_2016H3 \
-SingleMuon_2016H3 \
+SingleMuon_2016H3_block0 \
+SingleMuon_2016H3_block1 \
 SinglePhoton_2016H3 \
 )

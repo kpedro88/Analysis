@@ -45,7 +45,7 @@ flist = [
 [['Summer16.TTJets_HT-600to800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1'],            ['TTJets_HT-600to800']],
 [['Summer16.TTJets_HT-800to1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1'],           ['TTJets_HT-800to1200']],
 [['Summer16.TTJets_HT-1200to2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1'],          ['TTJets_HT-1200to2500']],
-[['Summer16.TTJets_HT-2500toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'],                ['TTJets_HT-2500toInf']],
+[['Summer16.TTJets_HT-2500toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1'],           ['TTJets_HT-2500toInf']],
 [['Summer16.DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
   'Summer16.DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1'],   ['DYJetsToLL_M-50_HT-100to200']],
 [['Summer16.DYJetsToLL_M-50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
@@ -107,6 +107,6 @@ flist = [
 [['Summer16.TTZToQQ_TuneCUETP8M1_13TeV-amcatnlo-pythia8'],                               ['TTZToQQ']],
 [['Summer16.TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8_ext1'],                 ['TTZToLLNuNu']],
 [['Summer16.TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8',
-[['Summer16.TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8_ext1'],              ['TTGJets']],
-[['Summer16.TTTT_TuneCUETP8M1_13TeV-amcatnlo-pythia8_ext1'],                             ['TTTT']],
+  'Summer16.TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8_ext1'],              ['TTGJets']],
+[['Summer16.TTTT_TuneCUETP8M1_13TeV-amcatnlo-pythia8'],                                  ['TTTT']],
 ]
