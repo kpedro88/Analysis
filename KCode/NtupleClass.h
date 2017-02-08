@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Thu Nov  3 17:34:27 2016 by ROOT version 6.06/01
+// Wed Feb  8 16:32:19 2017 by ROOT version 6.06/01
 // from TTree PreSelection/PreSelection
-// found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV11/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
+// found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV12/Summer16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
 //////////////////////////////////////////////////////////
 
 #ifndef NtupleClass_h
@@ -12,8 +12,6 @@
 #include <TChain.h>
 #include <TFile.h>
 #include <TLorentzVector.h>
-
-// Header file for the classes stored in the TTree if any.
 #include <vector>
 #include <string>
 
@@ -29,7 +27,11 @@ public :
    UInt_t          LumiBlockNum;
    ULong64_t       EvtNum;
    Bool_t          BadChargedCandidateFilter;
+   Bool_t          BadGlobalMuon;
+   Double_t        BadGlobalMuonLeadPt;
    Bool_t          BadPFMuonFilter;
+   Bool_t          BadTrkGlobalMuon;
+   Double_t        BadTrkGlobalMuonLeadPt;
    Int_t           BTags;
    Int_t           BTagsclean;
    Int_t           BTagsJECdown;
@@ -70,6 +72,8 @@ public :
    Double_t        DeltaPhi4JECup;
    Double_t        DeltaPhi4JERdown;
    Double_t        DeltaPhi4JERup;
+   Bool_t          DupGlobalMuon;
+   Double_t        DupGlobalMuonLeadPt;
    Int_t           EcalDeadCellTriggerPrimitiveFilter;
    Int_t           eeBadScFilter;
    vector<TLorentzVector> *Electrons;
@@ -117,18 +121,22 @@ public :
    vector<double>  *GenTaus_LeadRecoTrkIso;
    vector<TLorentzVector> *GenTaus_LeadTrk;
    vector<double>  *GenTaus_MT2Activity;
+   vector<int>     *GenTaus_NNeutralHadrons;
    vector<int>     *GenTaus_NProngs;
    vector<TLorentzVector> *GenTaus_Nu;
+   vector<TLorentzVector> *GenTops;
+   Double_t        GenTopWeight;
    Int_t           globalTightHalo2016Filter;
+   Bool_t          hasGenPromptPhoton;
    Int_t           HBHEIsoNoiseFilter;
    Int_t           HBHENoiseFilter;
    Double_t        HT;
    Double_t        HTclean;
    Double_t        HTJECdown;
+   Double_t        HTOnline;
    Double_t        HTJECup;
    Double_t        HTJERdown;
    Double_t        HTJERup;
-   Double_t        HTOnline;
    Int_t           isoElectronTracks;
    Int_t           isoElectronTracksclean;
    Int_t           isoMuonTracks;
@@ -137,6 +145,7 @@ public :
    Int_t           isoPionTracksclean;
    Bool_t          JetID;
    Bool_t          JetIDAK8;
+   Bool_t          JetIDAK8Clean;
    Bool_t          JetIDclean;
    Bool_t          JetIDJECdown;
    Bool_t          JetIDJECup;
@@ -185,6 +194,15 @@ public :
    vector<int>     *JetsAK8_NumBhadrons;
    vector<int>     *JetsAK8_NumChadrons;
    vector<double>  *JetsAK8_prunedMass;
+   vector<TLorentzVector> *JetsAK8Clean;
+   vector<double>  *JetsAK8Clean_doubleBDiscriminator;
+   vector<bool>    *JetsAK8Clean_ID;
+   vector<double>  *JetsAK8Clean_NsubjettinessTau1;
+   vector<double>  *JetsAK8Clean_NsubjettinessTau2;
+   vector<double>  *JetsAK8Clean_NsubjettinessTau3;
+   vector<int>     *JetsAK8Clean_NumBhadrons;
+   vector<int>     *JetsAK8Clean_NumChadrons;
+   vector<double>  *JetsAK8Clean_prunedMass;
    vector<TLorentzVector> *Jetsclean;
    vector<double>  *Jetsclean_bDiscriminatorCSV;
    vector<double>  *Jetsclean_bDiscriminatorMVA;
@@ -258,10 +276,10 @@ public :
    Double_t        MHT;
    Double_t        MHTclean;
    Double_t        MHTJECdown;
+   Double_t        MHTOnline;
    Double_t        MHTJECup;
    Double_t        MHTJERdown;
    Double_t        MHTJERup;
-   Double_t        MHTOnline;
    Double_t        MHTPhi;
    Double_t        MHTPhiclean;
    Double_t        MHTPhiJECdown;
@@ -300,6 +318,7 @@ public :
    vector<double>  *PDFweights;
    Double_t        PFCaloMETRatio;
    vector<TLorentzVector> *Photons;
+   vector<bool>    *Photons_electronFakes;
    vector<bool>    *Photons_fullID;
    vector<double>  *Photons_genMatched;
    vector<double>  *Photons_hadTowOverEM;
@@ -314,7 +333,7 @@ public :
    vector<double>  *Photons_pfNeutralIso;
    vector<double>  *Photons_pfNeutralIsoRhoCorr;
    vector<double>  *Photons_sigmaIetaIeta;
-   vector<string>  *PmssmId;
+   Double_t        PmssmId;
    Double_t        PrescaleWeightHT;
    Double_t        puSysDown;
    Double_t        puSysUp;
@@ -357,7 +376,11 @@ public :
    TBranch        *b_LumiBlockNum;   //!
    TBranch        *b_EvtNum;   //!
    TBranch        *b_BadChargedCandidateFilter;   //!
+   TBranch        *b_BadGlobalMuon;   //!
+   TBranch        *b_BadGlobalMuonLeadPt;   //!
    TBranch        *b_BadPFMuonFilter;   //!
+   TBranch        *b_BadTrkGlobalMuon;   //!
+   TBranch        *b_BadTrkGlobalMuonLeadPt;   //!
    TBranch        *b_BTags;   //!
    TBranch        *b_BTagsclean;   //!
    TBranch        *b_BTagsJECdown;   //!
@@ -398,6 +421,8 @@ public :
    TBranch        *b_DeltaPhi4JECup;   //!
    TBranch        *b_DeltaPhi4JERdown;   //!
    TBranch        *b_DeltaPhi4JERup;   //!
+   TBranch        *b_DupGlobalMuon;   //!
+   TBranch        *b_DupGlobalMuonLeadPt;   //!
    TBranch        *b_EcalDeadCellTriggerPrimitiveFilter;   //!
    TBranch        *b_eeBadScFilter;   //!
    TBranch        *b_Electrons;   //!
@@ -445,18 +470,22 @@ public :
    TBranch        *b_GenTaus_LeadRecoTrkIso;   //!
    TBranch        *b_GenTaus_LeadTrk;   //!
    TBranch        *b_GenTaus_MT2Activity;   //!
+   TBranch        *b_GenTaus_NNeutralHadrons;   //!
    TBranch        *b_GenTaus_NProngs;   //!
    TBranch        *b_GenTaus_Nu;   //!
+   TBranch        *b_GenTops;   //!
+   TBranch        *b_GenTopWeight;   //!
    TBranch        *b_globalTightHalo2016Filter;   //!
+   TBranch        *b_hasGenPromptPhoton;   //!
    TBranch        *b_HBHEIsoNoiseFilter;   //!
    TBranch        *b_HBHENoiseFilter;   //!
    TBranch        *b_HT;   //!
    TBranch        *b_HTclean;   //!
    TBranch        *b_HTJECdown;   //!
+   TBranch        *b_HTOnline;   //!
    TBranch        *b_HTJECup;   //!
    TBranch        *b_HTJERdown;   //!
    TBranch        *b_HTJERup;   //!
-   TBranch        *b_HTOnline;   //!
    TBranch        *b_isoElectronTracks;   //!
    TBranch        *b_isoElectronTracksclean;   //!
    TBranch        *b_isoMuonTracks;   //!
@@ -465,6 +494,7 @@ public :
    TBranch        *b_isoPionTracksclean;   //!
    TBranch        *b_JetID;   //!
    TBranch        *b_JetIDAK8;   //!
+   TBranch        *b_JetIDAK8Clean;   //!
    TBranch        *b_JetIDclean;   //!
    TBranch        *b_JetIDJECdown;   //!
    TBranch        *b_JetIDJECup;   //!
@@ -513,6 +543,15 @@ public :
    TBranch        *b_JetsAK8_NumBhadrons;   //!
    TBranch        *b_JetsAK8_NumChadrons;   //!
    TBranch        *b_JetsAK8_prunedMass;   //!
+   TBranch        *b_JetsAK8Clean;   //!
+   TBranch        *b_JetsAK8Clean_doubleBDiscriminator;   //!
+   TBranch        *b_JetsAK8Clean_ID;   //!
+   TBranch        *b_JetsAK8Clean_NsubjettinessTau1;   //!
+   TBranch        *b_JetsAK8Clean_NsubjettinessTau2;   //!
+   TBranch        *b_JetsAK8Clean_NsubjettinessTau3;   //!
+   TBranch        *b_JetsAK8Clean_NumBhadrons;   //!
+   TBranch        *b_JetsAK8Clean_NumChadrons;   //!
+   TBranch        *b_JetsAK8Clean_prunedMass;   //!
    TBranch        *b_Jetsclean;   //!
    TBranch        *b_Jetsclean_bDiscriminatorCSV;   //!
    TBranch        *b_Jetsclean_bDiscriminatorMVA;   //!
@@ -586,10 +625,10 @@ public :
    TBranch        *b_MHT;   //!
    TBranch        *b_MHTclean;   //!
    TBranch        *b_MHTJECdown;   //!
+   TBranch        *b_MHTOnline;   //!
    TBranch        *b_MHTJECup;   //!
    TBranch        *b_MHTJERdown;   //!
    TBranch        *b_MHTJERup;   //!
-   TBranch        *b_MHTOnline;   //!
    TBranch        *b_MHTPhi;   //!
    TBranch        *b_MHTPhiclean;   //!
    TBranch        *b_MHTPhiJECdown;   //!
@@ -628,6 +667,7 @@ public :
    TBranch        *b_PDFweights;   //!
    TBranch        *b_PFCaloMETRatio;   //!
    TBranch        *b_Photons;   //!
+   TBranch        *b_Photons_electronFakes;   //!
    TBranch        *b_Photons_fullID;   //!
    TBranch        *b_Photons_genMatched;   //!
    TBranch        *b_Photons_hadTowOverEM;   //!
@@ -694,16 +734,16 @@ public :
 #endif
 
 #ifdef NtupleClass_cxx
-NtupleClass::NtupleClass(TTree *tree) : fChain(0) 
+NtupleClass::NtupleClass(TTree *tree) : fChain(0)
 {
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV11/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV12/Summer16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV11/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
+         f = new TFile("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV12/Summer16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
       }
-      TDirectory * dir = (TDirectory*)f->Get("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV11/Spring16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root:/TreeMaker2");
+      TDirectory * dir = (TDirectory*)f->Get("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV12/Summer16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root:/TreeMaker2");
       dir->GetObject("PreSelection",tree);
 
    }
@@ -786,8 +826,10 @@ void NtupleClass::Init(TTree *tree)
    GenTaus_LeadRecoTrkIso = 0;
    GenTaus_LeadTrk = 0;
    GenTaus_MT2Activity = 0;
+   GenTaus_NNeutralHadrons = 0;
    GenTaus_NProngs = 0;
    GenTaus_Nu = 0;
+   GenTops = 0;
    Jets = 0;
    Jets_bDiscriminatorCSV = 0;
    Jets_bDiscriminatorMVA = 0;
@@ -831,6 +873,15 @@ void NtupleClass::Init(TTree *tree)
    JetsAK8_NumBhadrons = 0;
    JetsAK8_NumChadrons = 0;
    JetsAK8_prunedMass = 0;
+   JetsAK8Clean = 0;
+   JetsAK8Clean_doubleBDiscriminator = 0;
+   JetsAK8Clean_ID = 0;
+   JetsAK8Clean_NsubjettinessTau1 = 0;
+   JetsAK8Clean_NsubjettinessTau2 = 0;
+   JetsAK8Clean_NsubjettinessTau3 = 0;
+   JetsAK8Clean_NumBhadrons = 0;
+   JetsAK8Clean_NumChadrons = 0;
+   JetsAK8Clean_prunedMass = 0;
    Jetsclean = 0;
    Jetsclean_bDiscriminatorCSV = 0;
    Jetsclean_bDiscriminatorMVA = 0;
@@ -908,6 +959,7 @@ void NtupleClass::Init(TTree *tree)
    PDFids = 0;
    PDFweights = 0;
    Photons = 0;
+   Photons_electronFakes = 0;
    Photons_fullID = 0;
    Photons_genMatched = 0;
    Photons_hadTowOverEM = 0;
@@ -922,7 +974,6 @@ void NtupleClass::Init(TTree *tree)
    Photons_pfNeutralIso = 0;
    Photons_pfNeutralIsoRhoCorr = 0;
    Photons_sigmaIetaIeta = 0;
-   PmssmId = 0;
    ScaleWeights = 0;
    SoftJets = 0;
    SoftJets_bDiscriminatorCSV = 0;
@@ -961,7 +1012,11 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("LumiBlockNum", &LumiBlockNum, &b_LumiBlockNum);
    fChain->SetBranchAddress("EvtNum", &EvtNum, &b_EvtNum);
    fChain->SetBranchAddress("BadChargedCandidateFilter", &BadChargedCandidateFilter, &b_BadChargedCandidateFilter);
+   fChain->SetBranchAddress("BadGlobalMuon", &BadGlobalMuon, &b_BadGlobalMuon);
+   fChain->SetBranchAddress("BadGlobalMuonLeadPt", &BadGlobalMuonLeadPt, &b_BadGlobalMuonLeadPt);
    fChain->SetBranchAddress("BadPFMuonFilter", &BadPFMuonFilter, &b_BadPFMuonFilter);
+   fChain->SetBranchAddress("BadTrkGlobalMuon", &BadTrkGlobalMuon, &b_BadTrkGlobalMuon);
+   fChain->SetBranchAddress("BadTrkGlobalMuonLeadPt", &BadTrkGlobalMuonLeadPt, &b_BadTrkGlobalMuonLeadPt);
    fChain->SetBranchAddress("BTags", &BTags, &b_BTags);
    fChain->SetBranchAddress("BTagsclean", &BTagsclean, &b_BTagsclean);
    fChain->SetBranchAddress("BTagsJECdown", &BTagsJECdown, &b_BTagsJECdown);
@@ -1002,6 +1057,8 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("DeltaPhi4JECup", &DeltaPhi4JECup, &b_DeltaPhi4JECup);
    fChain->SetBranchAddress("DeltaPhi4JERdown", &DeltaPhi4JERdown, &b_DeltaPhi4JERdown);
    fChain->SetBranchAddress("DeltaPhi4JERup", &DeltaPhi4JERup, &b_DeltaPhi4JERup);
+   fChain->SetBranchAddress("DupGlobalMuon", &DupGlobalMuon, &b_DupGlobalMuon);
+   fChain->SetBranchAddress("DupGlobalMuonLeadPt", &DupGlobalMuonLeadPt, &b_DupGlobalMuonLeadPt);
    fChain->SetBranchAddress("EcalDeadCellTriggerPrimitiveFilter", &EcalDeadCellTriggerPrimitiveFilter, &b_EcalDeadCellTriggerPrimitiveFilter);
    fChain->SetBranchAddress("eeBadScFilter", &eeBadScFilter, &b_eeBadScFilter);
    fChain->SetBranchAddress("Electrons", &Electrons, &b_Electrons);
@@ -1049,18 +1106,22 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("GenTaus_LeadRecoTrkIso", &GenTaus_LeadRecoTrkIso, &b_GenTaus_LeadRecoTrkIso);
    fChain->SetBranchAddress("GenTaus_LeadTrk", &GenTaus_LeadTrk, &b_GenTaus_LeadTrk);
    fChain->SetBranchAddress("GenTaus_MT2Activity", &GenTaus_MT2Activity, &b_GenTaus_MT2Activity);
+   fChain->SetBranchAddress("GenTaus_NNeutralHadrons", &GenTaus_NNeutralHadrons, &b_GenTaus_NNeutralHadrons);
    fChain->SetBranchAddress("GenTaus_NProngs", &GenTaus_NProngs, &b_GenTaus_NProngs);
    fChain->SetBranchAddress("GenTaus_Nu", &GenTaus_Nu, &b_GenTaus_Nu);
+   fChain->SetBranchAddress("GenTops", &GenTops, &b_GenTops);
+   fChain->SetBranchAddress("GenTopWeight", &GenTopWeight, &b_GenTopWeight);
    fChain->SetBranchAddress("globalTightHalo2016Filter", &globalTightHalo2016Filter, &b_globalTightHalo2016Filter);
+   fChain->SetBranchAddress("hasGenPromptPhoton", &hasGenPromptPhoton, &b_hasGenPromptPhoton);
    fChain->SetBranchAddress("HBHEIsoNoiseFilter", &HBHEIsoNoiseFilter, &b_HBHEIsoNoiseFilter);
    fChain->SetBranchAddress("HBHENoiseFilter", &HBHENoiseFilter, &b_HBHENoiseFilter);
    fChain->SetBranchAddress("HT", &HT, &b_HT);
    fChain->SetBranchAddress("HTclean", &HTclean, &b_HTclean);
    fChain->SetBranchAddress("HTJECdown", &HTJECdown, &b_HTJECdown);
+   fChain->SetBranchAddress("HTOnline", &HTOnline, &b_HTOnline);
    fChain->SetBranchAddress("HTJECup", &HTJECup, &b_HTJECup);
    fChain->SetBranchAddress("HTJERdown", &HTJERdown, &b_HTJERdown);
    fChain->SetBranchAddress("HTJERup", &HTJERup, &b_HTJERup);
-   fChain->SetBranchAddress("HTOnline", &HTOnline, &b_HTOnline);
    fChain->SetBranchAddress("isoElectronTracks", &isoElectronTracks, &b_isoElectronTracks);
    fChain->SetBranchAddress("isoElectronTracksclean", &isoElectronTracksclean, &b_isoElectronTracksclean);
    fChain->SetBranchAddress("isoMuonTracks", &isoMuonTracks, &b_isoMuonTracks);
@@ -1069,6 +1130,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("isoPionTracksclean", &isoPionTracksclean, &b_isoPionTracksclean);
    fChain->SetBranchAddress("JetID", &JetID, &b_JetID);
    fChain->SetBranchAddress("JetIDAK8", &JetIDAK8, &b_JetIDAK8);
+   fChain->SetBranchAddress("JetIDAK8Clean", &JetIDAK8Clean, &b_JetIDAK8Clean);
    fChain->SetBranchAddress("JetIDclean", &JetIDclean, &b_JetIDclean);
    fChain->SetBranchAddress("JetIDJECdown", &JetIDJECdown, &b_JetIDJECdown);
    fChain->SetBranchAddress("JetIDJECup", &JetIDJECup, &b_JetIDJECup);
@@ -1117,6 +1179,15 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("JetsAK8_NumBhadrons", &JetsAK8_NumBhadrons, &b_JetsAK8_NumBhadrons);
    fChain->SetBranchAddress("JetsAK8_NumChadrons", &JetsAK8_NumChadrons, &b_JetsAK8_NumChadrons);
    fChain->SetBranchAddress("JetsAK8_prunedMass", &JetsAK8_prunedMass, &b_JetsAK8_prunedMass);
+   fChain->SetBranchAddress("JetsAK8Clean", &JetsAK8Clean, &b_JetsAK8Clean);
+   fChain->SetBranchAddress("JetsAK8Clean_doubleBDiscriminator", &JetsAK8Clean_doubleBDiscriminator, &b_JetsAK8Clean_doubleBDiscriminator);
+   fChain->SetBranchAddress("JetsAK8Clean_ID", &JetsAK8Clean_ID, &b_JetsAK8Clean_ID);
+   fChain->SetBranchAddress("JetsAK8Clean_NsubjettinessTau1", &JetsAK8Clean_NsubjettinessTau1, &b_JetsAK8Clean_NsubjettinessTau1);
+   fChain->SetBranchAddress("JetsAK8Clean_NsubjettinessTau2", &JetsAK8Clean_NsubjettinessTau2, &b_JetsAK8Clean_NsubjettinessTau2);
+   fChain->SetBranchAddress("JetsAK8Clean_NsubjettinessTau3", &JetsAK8Clean_NsubjettinessTau3, &b_JetsAK8Clean_NsubjettinessTau3);
+   fChain->SetBranchAddress("JetsAK8Clean_NumBhadrons", &JetsAK8Clean_NumBhadrons, &b_JetsAK8Clean_NumBhadrons);
+   fChain->SetBranchAddress("JetsAK8Clean_NumChadrons", &JetsAK8Clean_NumChadrons, &b_JetsAK8Clean_NumChadrons);
+   fChain->SetBranchAddress("JetsAK8Clean_prunedMass", &JetsAK8Clean_prunedMass, &b_JetsAK8Clean_prunedMass);
    fChain->SetBranchAddress("Jetsclean", &Jetsclean, &b_Jetsclean);
    fChain->SetBranchAddress("Jetsclean_bDiscriminatorCSV", &Jetsclean_bDiscriminatorCSV, &b_Jetsclean_bDiscriminatorCSV);
    fChain->SetBranchAddress("Jetsclean_bDiscriminatorMVA", &Jetsclean_bDiscriminatorMVA, &b_Jetsclean_bDiscriminatorMVA);
@@ -1190,10 +1261,10 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("MHT", &MHT, &b_MHT);
    fChain->SetBranchAddress("MHTclean", &MHTclean, &b_MHTclean);
    fChain->SetBranchAddress("MHTJECdown", &MHTJECdown, &b_MHTJECdown);
+   fChain->SetBranchAddress("MHTOnline", &MHTOnline, &b_MHTOnline);
    fChain->SetBranchAddress("MHTJECup", &MHTJECup, &b_MHTJECup);
    fChain->SetBranchAddress("MHTJERdown", &MHTJERdown, &b_MHTJERdown);
    fChain->SetBranchAddress("MHTJERup", &MHTJERup, &b_MHTJERup);
-   fChain->SetBranchAddress("MHTOnline", &MHTOnline, &b_MHTOnline);
    fChain->SetBranchAddress("MHTPhi", &MHTPhi, &b_MHTPhi);
    fChain->SetBranchAddress("MHTPhiclean", &MHTPhiclean, &b_MHTPhiclean);
    fChain->SetBranchAddress("MHTPhiJECdown", &MHTPhiJECdown, &b_MHTPhiJECdown);
@@ -1232,6 +1303,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("PDFweights", &PDFweights, &b_PDFweights);
    fChain->SetBranchAddress("PFCaloMETRatio", &PFCaloMETRatio, &b_PFCaloMETRatio);
    fChain->SetBranchAddress("Photons", &Photons, &b_Photons);
+   fChain->SetBranchAddress("Photons_electronFakes", &Photons_electronFakes, &b_Photons_electronFakes);
    fChain->SetBranchAddress("Photons_fullID", &Photons_fullID, &b_Photons_fullID);
    fChain->SetBranchAddress("Photons_genMatched", &Photons_genMatched, &b_Photons_genMatched);
    fChain->SetBranchAddress("Photons_hadTowOverEM", &Photons_hadTowOverEM, &b_Photons_hadTowOverEM);
