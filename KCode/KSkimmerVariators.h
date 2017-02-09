@@ -27,7 +27,7 @@ class KJetVariator : public KVariator {
 		//constructor
 		KJetVariator() : KVariator() { }
 		KJetVariator(string name_, OptionMap* localOpt_) : KVariator(name_,localOpt_), vtype(NoVar),
-			b_Jets(true),b_Jets_HTMask(true),b_Jets_MHTMask(true),b_Jets_ISRMask(true),b_Jets_LeptonMask(true),b_Jets_ID(true),b_Jets_partonFlavor(true),b_Jets_hadronFlavor(true),b_Jets_bDiscriminatorCSV(true),b_Jets_bDiscriminatorMVA(true),b_Jets_muonEnergyFraction(true),b_Jets_chargedHadronEnergyFraction(true)
+			b_Jets(true),b_Jets_HTMask(true),b_Jets_MHTMask(true),b_Jets_ISRMask(true),b_Jets_LeptonMask(true),b_Jets_ID(true),b_Jets_partonFlavor(true),b_Jets_hadronFlavor(true),b_Jets_bDiscriminatorCSV(true),b_Jets_bDiscriminatorMVA(true),b_Jets_muonEnergyFraction(true),b_Jets_chargedHadronEnergyFraction(true),b_JetsAK8(false),b_JetsAK8_doubleBDiscriminator(false),b_JetsAK8_ID(false),b_JetsAK8_NsubjettinessTau1(false),b_JetsAK8_NsubjettinessTau2(false),b_JetsAK8_NsubjettinessTau3(false),b_JetsAK8_NumBhadrons(false),b_JetsAK8_NumChadrons(false),b_JetsAK8_prunedMass(false)
 		{
 			//check options
 			string vname = "";
@@ -50,7 +50,7 @@ class KJetVariator : public KVariator {
 			}
 		}
 		virtual void CheckBranches(){
-			vector<bool*> flaglist = {&b_Jets,&b_Jets_HTMask,&b_Jets_MHTMask,&b_Jets_ISRMask,&b_Jets_LeptonMask,&b_Jets_ID,&b_Jets_partonFlavor,&b_Jets_hadronFlavor,&b_Jets_bDiscriminatorCSV,&b_Jets_bDiscriminatorMVA,&b_Jets_muonEnergyFraction,&b_Jets_chargedHadronEnergyFraction};
+			vector<bool*> flaglist = {&b_Jets,&b_Jets_HTMask,&b_Jets_MHTMask,&b_Jets_ISRMask,&b_Jets_LeptonMask,&b_Jets_ID,&b_Jets_partonFlavor,&b_Jets_hadronFlavor,&b_Jets_bDiscriminatorCSV,&b_Jets_bDiscriminatorMVA,&b_Jets_muonEnergyFraction,&b_Jets_chargedHadronEnergyFraction,&b_JetsAK8,&b_JetsAK8_doubleBDiscriminator,&b_JetsAK8_ID,&b_JetsAK8_NsubjettinessTau1,&b_JetsAK8_NsubjettinessTau2,&b_JetsAK8_NsubjettinessTau3,&b_JetsAK8_NumBhadrons,&b_JetsAK8_NumChadrons,&b_JetsAK8_prunedMass};
 			
 			if(vtype==JECup){
 				vector<string> pbranchlist = {"JetsJECup","JetsJECup_HTMask","JetsJECup_MHTMask","JetsJECup_ISRMask","JetsJECup_LeptonMask","JetsJECup_ID","JetsJECup_partonFlavor","JetsJECup_hadronFlavor","JetsJECup_bDiscriminatorCSV","JetsJECup_bDiscriminatorMVA","JetsJECup_muonEnergyFraction","JetsJECup_chargedHadronEnergyFraction"};
@@ -81,7 +81,7 @@ class KJetVariator : public KVariator {
 				EnableBranches(branchlist);
 			}
 			else if(vtype==clean){
-				vector<string> pbranchlist = {"Jetsclean","Jetsclean_HTMask","Jetsclean_MHTMask","Jetsclean_ISRMask","Jetsclean_LeptonMask","Jetsclean_ID","Jetsclean_partonFlavor","Jetsclean_hadronFlavor","Jetsclean_bDiscriminatorCSV","Jetsclean_bDiscriminatorMVA","Jetsclean_muonEnergyFraction","Jetsclean_chargedHadronEnergyFraction"};
+				vector<string> pbranchlist = {"Jetsclean","Jetsclean_HTMask","Jetsclean_MHTMask","Jetsclean_ISRMask","Jetsclean_LeptonMask","Jetsclean_ID","Jetsclean_partonFlavor","Jetsclean_hadronFlavor","Jetsclean_bDiscriminatorCSV","Jetsclean_bDiscriminatorMVA","Jetsclean_muonEnergyFraction","Jetsclean_chargedHadronEnergyFraction","JetsAK8Clean","JetsAK8Clean_doubleBDiscriminator","JetsAK8Clean_ID","JetsAK8Clean_NsubjettinessTau1","JetsAK8Clean_NsubjettinessTau2","JetsAK8Clean_NsubjettinessTau3","JetsAK8Clean_NumBhadrons","JetsAK8Clean_NumChadrons","JetsAK8Clean_prunedMass"};
 				EnableBranches(pbranchlist);
 				ExistBranches(pbranchlist,flaglist);
 				vector<string> branchlist = {"JetIDclean","NJetsclean","NJetsISRclean","BTagsclean","BTagsMVAclean","HTclean","MHTclean","MHTPhiclean","METclean","METPhiclean","DeltaPhi1clean","DeltaPhi2clean","DeltaPhi3clean","DeltaPhi4clean","isoElectronTracksclean","isoMuonTracksclean","isoPionTracksclean"};
@@ -89,7 +89,7 @@ class KJetVariator : public KVariator {
 			}
 			
 			//check pointer branches			
-			vector<string> pbranchlist = {"Jets","Jets_HTMask","Jets_MHTMask","Jets_ISRMask","Jets_LeptonMask","Jets_ID","Jets_partonFlavor","Jets_hadronFlavor","Jets_bDiscriminatorCSV","Jets_bDiscriminatorMVA","Jets_muonEnergyFraction","Jets_chargedHadronEnergyFraction"};
+			vector<string> pbranchlist = {"Jets","Jets_HTMask","Jets_MHTMask","Jets_ISRMask","Jets_LeptonMask","Jets_ID","Jets_partonFlavor","Jets_hadronFlavor","Jets_bDiscriminatorCSV","Jets_bDiscriminatorMVA","Jets_muonEnergyFraction","Jets_chargedHadronEnergyFraction","JetsAK8","JetsAK8_doubleBDiscriminator","JetsAK8_ID","JetsAK8_NsubjettinessTau1","JetsAK8_NsubjettinessTau2","JetsAK8_NsubjettinessTau3","JetsAK8_NumBhadrons","JetsAK8_NumChadrons","JetsAK8_prunedMass"};
 			ExistBranches(pbranchlist,flaglist);
 		}
 		//functions
@@ -107,6 +107,15 @@ class KJetVariator : public KVariator {
 			if(b_Jets_bDiscriminatorMVA) Jets_bDiscriminatorMVA = *(looper->Jets_bDiscriminatorMVA);
 			if(b_Jets_muonEnergyFraction) Jets_muonEnergyFraction = *(looper->Jets_muonEnergyFraction);
 			if(b_Jets_chargedHadronEnergyFraction) Jets_chargedHadronEnergyFraction = *(looper->Jets_chargedHadronEnergyFraction);
+			if(b_JetsAK8) JetsAK8 = *(looper->JetsAK8);
+			if(b_JetsAK8_doubleBDiscriminator) JetsAK8_doubleBDiscriminator = *(looper->JetsAK8_doubleBDiscriminator);
+			if(b_JetsAK8_ID) JetsAK8_ID = *(looper->JetsAK8_ID);
+			if(b_JetsAK8_NsubjettinessTau1) JetsAK8_NsubjettinessTau1 = *(looper->JetsAK8_NsubjettinessTau1);
+			if(b_JetsAK8_NsubjettinessTau2) JetsAK8_NsubjettinessTau2 = *(looper->JetsAK8_NsubjettinessTau2);
+			if(b_JetsAK8_NsubjettinessTau3) JetsAK8_NsubjettinessTau3 = *(looper->JetsAK8_NsubjettinessTau3);
+			if(b_JetsAK8_NumBhadrons) JetsAK8_NumBhadrons = *(looper->JetsAK8_NumBhadrons);
+			if(b_JetsAK8_NumChadrons) JetsAK8_NumChadrons = *(looper->JetsAK8_NumChadrons);
+			if(b_JetsAK8_prunedMass) JetsAK8_prunedMass = *(looper->JetsAK8_prunedMass);
 			JetID = looper->JetID;
 			NJets = looper->NJets;
 			NJetsISR = looper->NJetsISR;
@@ -242,6 +251,15 @@ class KJetVariator : public KVariator {
 				if(b_Jets_bDiscriminatorMVA) *(looper->Jets_bDiscriminatorMVA) = *(looper->Jetsclean_bDiscriminatorMVA);
 				if(b_Jets_muonEnergyFraction) *(looper->Jets_muonEnergyFraction) = *(looper->Jetsclean_muonEnergyFraction);
 				if(b_Jets_chargedHadronEnergyFraction) *(looper->Jets_chargedHadronEnergyFraction) = *(looper->Jetsclean_chargedHadronEnergyFraction);
+				if(b_JetsAK8) *(looper->JetsAK8) = *(looper->JetsAK8Clean);
+				if(b_JetsAK8_doubleBDiscriminator) *(looper->JetsAK8_doubleBDiscriminator) = *(looper->JetsAK8Clean_doubleBDiscriminator);
+				if(b_JetsAK8_ID) *(looper->JetsAK8_ID) = *(looper->JetsAK8Clean_ID);
+				if(b_JetsAK8_NsubjettinessTau1) *(looper->JetsAK8_NsubjettinessTau1) = *(looper->JetsAK8Clean_NsubjettinessTau1);
+				if(b_JetsAK8_NsubjettinessTau2) *(looper->JetsAK8_NsubjettinessTau2) = *(looper->JetsAK8Clean_NsubjettinessTau2);
+				if(b_JetsAK8_NsubjettinessTau3) *(looper->JetsAK8_NsubjettinessTau3) = *(looper->JetsAK8Clean_NsubjettinessTau3);
+				if(b_JetsAK8_NumBhadrons) *(looper->JetsAK8_NumBhadrons) = *(looper->JetsAK8Clean_NumBhadrons);
+				if(b_JetsAK8_NumChadrons) *(looper->JetsAK8_NumChadrons) = *(looper->JetsAK8Clean_NumChadrons);
+				if(b_JetsAK8_prunedMass) *(looper->JetsAK8_prunedMass) = *(looper->JetsAK8Clean_prunedMass);
 				looper->JetID = looper->JetIDclean;
 				looper->NJets = looper->NJetsclean;
 				looper->NJetsISR = looper->NJetsISRclean;
@@ -275,6 +293,15 @@ class KJetVariator : public KVariator {
 			if(b_Jets_bDiscriminatorMVA) *(looper->Jets_bDiscriminatorMVA) = Jets_bDiscriminatorMVA;
 			if(b_Jets_muonEnergyFraction) *(looper->Jets_muonEnergyFraction) = Jets_muonEnergyFraction;
 			if(b_Jets_chargedHadronEnergyFraction) *(looper->Jets_chargedHadronEnergyFraction) = Jets_chargedHadronEnergyFraction;
+			if(b_JetsAK8) *(looper->JetsAK8) = JetsAK8;
+			if(b_JetsAK8_doubleBDiscriminator) *(looper->JetsAK8_doubleBDiscriminator) = JetsAK8_doubleBDiscriminator;
+			if(b_JetsAK8_ID) *(looper->JetsAK8_ID) = JetsAK8_ID;
+			if(b_JetsAK8_NsubjettinessTau1) *(looper->JetsAK8_NsubjettinessTau1) = JetsAK8_NsubjettinessTau1;
+			if(b_JetsAK8_NsubjettinessTau2) *(looper->JetsAK8_NsubjettinessTau2) = JetsAK8_NsubjettinessTau2;
+			if(b_JetsAK8_NsubjettinessTau3) *(looper->JetsAK8_NsubjettinessTau3) = JetsAK8_NsubjettinessTau3;
+			if(b_JetsAK8_NumBhadrons) *(looper->JetsAK8_NumBhadrons) = JetsAK8_NumBhadrons;
+			if(b_JetsAK8_NumChadrons) *(looper->JetsAK8_NumChadrons) = JetsAK8_NumChadrons;
+			if(b_JetsAK8_prunedMass) *(looper->JetsAK8_prunedMass) = JetsAK8_prunedMass;
 			looper->JetID = JetID;
 			looper->NJets = NJets;
 			looper->NJetsISR = NJetsISR;
@@ -295,7 +322,7 @@ class KJetVariator : public KVariator {
 		}
 		
 		//member variables
-		bool b_Jets,b_Jets_HTMask,b_Jets_MHTMask,b_Jets_ISRMask,b_Jets_LeptonMask,b_Jets_ID,b_Jets_partonFlavor,b_Jets_hadronFlavor,b_Jets_bDiscriminatorCSV,b_Jets_bDiscriminatorMVA,b_Jets_muonEnergyFraction,b_Jets_chargedHadronEnergyFraction;
+		bool b_Jets,b_Jets_HTMask,b_Jets_MHTMask,b_Jets_ISRMask,b_Jets_LeptonMask,b_Jets_ID,b_Jets_partonFlavor,b_Jets_hadronFlavor,b_Jets_bDiscriminatorCSV,b_Jets_bDiscriminatorMVA,b_Jets_muonEnergyFraction,b_Jets_chargedHadronEnergyFraction, b_JetsAK8, b_JetsAK8_doubleBDiscriminator, b_JetsAK8_ID, b_JetsAK8_NsubjettinessTau1, b_JetsAK8_NsubjettinessTau2, b_JetsAK8_NsubjettinessTau3, b_JetsAK8_NumBhadrons, b_JetsAK8_NumChadrons, b_JetsAK8_prunedMass;
 		vartypes vtype;
 		vector<TLorentzVector> Jets;
 		vector<bool> Jets_HTMask;
@@ -309,6 +336,15 @@ class KJetVariator : public KVariator {
 		vector<double> Jets_bDiscriminatorMVA;
 		vector<double> Jets_muonEnergyFraction;
 		vector<double> Jets_chargedHadronEnergyFraction;
+		vector<TLorentzVector> JetsAK8;
+		vector<double>  JetsAK8_doubleBDiscriminator;
+		vector<bool>    JetsAK8_ID;
+		vector<double>  JetsAK8_NsubjettinessTau1;
+		vector<double>  JetsAK8_NsubjettinessTau2;
+		vector<double>  JetsAK8_NsubjettinessTau3;
+		vector<int>     JetsAK8_NumBhadrons;
+		vector<int>     JetsAK8_NumChadrons;
+		vector<double>  JetsAK8_prunedMass;
 		Bool_t          JetID;
 		Int_t           NJets;
 		Int_t           NJetsISR;
