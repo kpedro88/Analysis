@@ -180,7 +180,7 @@ class BTagCorrector {
 				if(debug) cout << "Jet " << ja << ": " << Jets->at(ja).Pt() << ", " << fabs(Jets->at(ja).Eta()) << ", " << abs(Jets_flavor->at(ja))  << ", " << Jets_bDiscriminatorCSV->at(ja)
 								<< ", " << sfEffLists[ja][0] << ", " << sfEffLists[ja][1] << ", " << sfEffLists[ja][2] << endl;
 							
-				if(Jets_bDiscriminatorCSV->at(ja) > 0.800){
+				if(Jets_bDiscriminatorCSV->at(ja) > 0.8484){
 					c_numer *= eff_a;
 					c_denom *= eff_a*sf_a;
 				}

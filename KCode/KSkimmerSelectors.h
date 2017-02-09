@@ -654,7 +654,7 @@ class KBTagEfficiencySelector : public KSelector {
 	public:
 		//constructor
 		KBTagEfficiencySelector() : KSelector() { }
-		KBTagEfficiencySelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
+		KBTagEfficiencySelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), CSVv2WP(0.8484) {
 			canfail = false;
 			//initialize histograms using KPlot2D::CreateHist() method
 			TH1::AddDirectory(kFALSE);
@@ -689,15 +689,15 @@ class KBTagEfficiencySelector : public KSelector {
 				double eta = fabs(looper->Jets->at(ja).Eta());
 				if(flav==5){
 					d_eff_b->Fill(pt,eta);
-					if(csv > 0.800) n_eff_b->Fill(pt,eta);
+					if(csv > CSVv2WP) n_eff_b->Fill(pt,eta);
 				}
 				else if(flav==4){
 					d_eff_c->Fill(pt,eta);
-					if(csv > 0.800) n_eff_c->Fill(pt,eta);
+					if(csv > CSVv2WP) n_eff_c->Fill(pt,eta);
 				}
 				else if(flav<4 || flav==21){
 					d_eff_udsg->Fill(pt,eta);
-					if(csv > 0.800) n_eff_udsg->Fill(pt,eta);
+					if(csv > CSVv2WP) n_eff_udsg->Fill(pt,eta);
 				}
 			}
 			
@@ -728,6 +728,7 @@ class KBTagEfficiencySelector : public KSelector {
 		}
 		
 		//member variables
+		double CSVv2WP;
 		TH2F *n_eff_b, *n_eff_c, *n_eff_udsg;
 		TH2F *d_eff_b, *d_eff_c, *d_eff_udsg;
 };

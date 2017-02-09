@@ -935,7 +935,7 @@ class KBTagSFSelector : public KSelector {
 			if(debug==2) btagcorr.SetDebug(true);
 			
 			//initialize btag corrector calibrations
-			btagcorr.SetCalib("btag/CSVv2_ichep_mod.csv");
+			btagcorr.SetCalib("btag/CSVv2_Moriond17_B_H_mod.csv");
 		}
 		virtual void CheckDeps(){
 			//set dependencies here
@@ -968,7 +968,7 @@ class KBTagSFSelector : public KSelector {
 			if(fastsim){
 				//initialize btag corrector fastsim calibrations
 				//todo: check the sample name and choose the appropriate CFs (once available)
-				btagcorr.SetCalibFastSim("btag/CSV_13TEV_Combined_14_7_2016.csv");
+				btagcorr.SetCalibFastSim("btag/fastsim_csvv2_ttbar_26_1_2017.csv");
 				
 				//check for option
 				int btagCFunc = MCWeight->btagCFunc; btagcorr.SetBtagCFunc(btagCFunc);

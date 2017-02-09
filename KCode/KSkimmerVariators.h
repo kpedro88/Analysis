@@ -459,7 +459,7 @@ class KJetLeptonVariator : public KVariator {
 					if(looper->Jets_HTMask->at(j)){
 						HT_ += looper->Jets->at(j).Pt();
 						++NJets_;
-						if(looper->Jets_bDiscriminatorCSV->at(j)>0.800) ++BTags_;
+						if(looper->Jets_bDiscriminatorCSV->at(j)>0.8484) ++BTags_;
 					}
 					if(looper->Jets_MHTMask->at(j)){
 						MHTvec -= looper->Jets->at(j);
