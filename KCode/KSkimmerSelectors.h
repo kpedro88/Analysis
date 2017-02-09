@@ -25,6 +25,12 @@ using namespace std;
 
 //base class for Selectors is in KSelection.h
 
+//avoid unwanted dependency
+void KRA2BinSelector::CheckDeps(){
+}
+void KRA2BinSelector::CheckBase(){
+}
+
 //----------------------------------------------------
 //selects negative-weight events (used for KSkimmer)
 class KNegativeWeightSelector : public KSelector {
