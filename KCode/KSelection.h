@@ -45,14 +45,15 @@ class KCutflowEntry {
 class KSelector {
 	public:
 		//constructor
-		KSelector() : name(""), localOpt(0), sel(0), looper(0), tree(0), counter(0), dummy(0), canfail(1), depfailed(0), base(0) {
+		KSelector() : name(""), localOpt(0), sel(0), looper(0), tree(0), counter(0), dummy(0), canfail(1), depfailed(0), forceadd(0), base(0) {
 			//must always have local option map
 			if(localOpt==0) localOpt = new OptionMap();
 		}
-		KSelector(string name_, OptionMap* localOpt_) : name(name_), localOpt(localOpt_), sel(0), looper(0), tree(0), counter(0), dummy(0), canfail(1), depfailed(0), base(0) {
+		KSelector(string name_, OptionMap* localOpt_) : name(name_), localOpt(localOpt_), sel(0), looper(0), tree(0), counter(0), dummy(0), canfail(1), depfailed(0), forceadd(0), base(0) {
 			//must always have local option map
 			if(localOpt==0) localOpt = new OptionMap();
 			dummy = localOpt->Get("dummy",false);
+			forceadd = localOpt->Get("forceadd",false);
 		}
 		//destructor
 		virtual ~KSelector() {}
@@ -65,6 +66,7 @@ class KSelector {
 		bool Dummy() { return dummy; }
 		bool CanFail() { return canfail; }
 		bool FailedDependency() { return depfailed; }
+		bool ForceAdd() { return forceadd; }
 		//selection function, checks dummy first
 		virtual bool Select(){
 			bool result = dummy || Cut();
@@ -96,7 +98,7 @@ class KSelector {
 		KLooper* looper;
 		TTree* tree;
 		int counter;
-		bool dummy, canfail, depfailed;
+		bool dummy, canfail, depfailed, forceadd;
 		KBase* base;
 };
 typedef KFactory<KSelector,string,OptionMap*> KSelectorFactory;
@@ -167,7 +169,10 @@ class KSelection {
 			else{ //only add non-cloned trees to Selectors
 				string treedesc = "selected observables, " + name;
 				tree = new TTree("tree", treedesc.c_str());
-				for(unsigned s = 0; s < selectorList.size(); s++){
+			}
+			//allow to force add branches even if cloned tree
+			for(unsigned s = 0; s < selectorList.size(); s++){
+				if(!clone or selectorList[s]->ForceAdd()){
 					selectorList[s]->SetTree(tree);
 				}
 			}

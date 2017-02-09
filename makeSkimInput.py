@@ -6,7 +6,7 @@ def makeSkimLine(short_name,full_names,file_mins,file_maxs,mothers,btype="skim",
     the_name = short_name + ("_block"+str(block) if block >= 0 else "")
     line = "base" + "\t" + btype + "\t" + the_name + ("\t" + "u:block[" + str(block) + "]" if block >= 0 else "") + "\t" + "b:chain[1]" + "\t"
     line += "ch:filenames[" + str(','.join(full_names[i]+"_,"+str(file_mins[i])+","+str(file_maxs[i])+","+"_RA2AnalysisTree.root" for i, x in enumerate(full_names))) + "]" + "\t" 
-    line += "s:chainsuff[/TreeMaker2/PreSelection]" + ("\t"+"vi:mother["+str(','.join(str(m) for m in mothers))+"]" if len(mothers) > 0 else "") + ("\t"+"b:data[1]" if data else "") + "\n"
+    line += "s:chainsuff[/TreeMaker2/PreSelection]" + ("\t"+"vi:mother["+str(','.join(str(m) for m in mothers))+"]" if len(mothers) > 0 else "") + ("\t"+"b:data[1]" if data else "\t"+"b:data[0]") + "\n"
     expline = the_name + " \\\n"
     return (line,expline)
 

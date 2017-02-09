@@ -74,11 +74,11 @@ class KSkimManager : public KManager {
 				KSelection* sntmp = makeSelection(fields[i]);
 				
 				if(sntmp){
-					//setup output tree
-					sntmp->MakeTree(outdir,MyBase->GetName(), (globalOpt->Get("doClone",false) ? MySkimmer->fChain : NULL));
-
 					//add to list
 					MySkimmer->AddSelection(sntmp);
+					
+					//setup output tree
+					sntmp->MakeTree(outdir, MyBase->GetName(), (globalOpt->Get("doClone",false) ? MySkimmer->fChain : NULL));
 				}
 				else {
 					continue;

@@ -192,6 +192,7 @@ class KRA2BinSelector : public KSelector {
 			//check other options
 			RA2Exclusive = localOpt->Get("RA2Exclusive",true);
 			localOpt->Get("RA2debug",debug);
+			if(forceadd and not depfailed) canfail = false;
 		}
 		void CheckLabels(){
 			//check if (shared) bin labels have already been created
@@ -230,12 +231,45 @@ class KRA2BinSelector : public KSelector {
 				looper->fChain->SetBranchStatus(RA2VarNames[q].c_str(),1);
 			}
 		}
+		virtual void SetBranches(){
+			if(!tree) return;
+
+			//default values
+			RA2binBranch = 0;
+			RA2binsBranch = NULL;			
+			tree->Branch("RA2bin",&RA2binBranch,"RA2binBranch/i");
+			//only for mc
+			if(base->IsMC()) tree->Branch("RA2bins","std::vector<unsigned>",&RA2binsBranch);
+		}
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			if(depfailed) return false;
 			
-			RA2bins = GetBinNumbers(RA2binVec);
+			//mode to add tree branches
+			if(forceadd){
+				//reset vars
+				RA2binBranch = 0;
+				
+				DoBTagSF = false;
+				vector<vector<unsigned>> RA2binVectmp;
+				vector<unsigned> RA2binstmp = GetBinNumbers(RA2binVectmp);
+				if(RA2binstmp.size()>0) RA2binBranch = RA2binstmp[0];
+				
+				//check all separate btag bins for SFs
+				if(base->IsMC()){
+					delete RA2binsBranch; RA2binsBranch = new vector<unsigned>();
+					DoBTagSF = true;
+					vector<unsigned> RA2binstmp = GetBinNumbers(RA2binVectmp);
+					*(RA2binsBranch) = RA2binstmp;
+				}
+				
+				//passthrough
+				return true;
+			}
+			else {
+				RA2bins = GetBinNumbers(RA2binVec);
+			}
 			
 			return RA2bins.size()!=0;
 		}
@@ -326,6 +360,8 @@ class KRA2BinSelector : public KSelector {
 		vector<vector<float> > RA2VarMin, RA2VarMax;
 		vector<string> labels;
 		KMCWeightSelector* MCWeight;
+		unsigned RA2binBranch;
+		vector<unsigned>* RA2binsBranch;
 };
 REGISTER_SELECTOR(RA2Bin);
 
