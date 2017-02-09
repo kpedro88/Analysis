@@ -29,7 +29,7 @@ class KVariator {
 		}
 		//accessors
 		string GetName() { return name; }
-		void SetBase(KBase* base_) { base = base_; }
+		void SetBase(KBase* base_) { base = base_; looper = base->GetLooper(); }
 		//functions
 		virtual void CheckBranches() {}
 		virtual void DoVariation() {}
