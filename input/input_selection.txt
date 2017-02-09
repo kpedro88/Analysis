@@ -24,33 +24,45 @@ veto
 	IsoPionTrackVeto
 ra2bin
 	RA2Bin	in:options[input/input_RA2bin_options.txt]	b:forceadd[1]
-signal
-	Blind	i:firstUnblindRun[278820]	i:lastUnblindRun[279931]
-	common
+evtclean
+	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
+evtcleannomu
+	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[0]	b:FakeJet[1]
+evtunclean
+	EventCleaning	b:JetID[1]	b:METRatio[0]	b:MuonJet[0]	b:FakeJet[1]
+baseline
 	NJet	i:njet[2]
 	HT	d:HTmin[200]
 	MHT	d:MHTmin[200]
-	veto
+baselinegj
+	NJet	i:njet[2]
+	HT	d:HTmin[200]
+	MHT	d:MHTmin[100]
+dphi
 	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
+dphiinv
+	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]	b:invert[1]
+signal
+#	Blind	i:firstUnblindRun[278820]	i:lastUnblindRun[279931]
+	common
+	baseline
+	veto
+	dphi
+	evtclean
 	ra2bin
 signalUnblind
 	common
-	NJet	i:njet[2]
-	HT	d:HTmin[200]
-	MHT	d:MHTmin[200]
+	baseline
 	veto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
+	dphi
+	evtclean
 	ra2bin
 signalUnclean
 	common
-	NJet	i:njet[2]
-	HT	d:HTmin[200]
-	MHT	d:MHTmin[200]
+	baseline
 	veto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
-	EventCleaning	b:JetID[1]	b:METRatio[0]	b:MuonJet[0]	b:FakeJet[1]
+	dphi
+	evtunclean
 	ra2bin
 signalTight
 	Blind	i:run[275125]
@@ -59,8 +71,8 @@ signalTight
 	HT	d:HTmin[300]
 	MHT	d:MHTmin[300]
 	veto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
+	dphi
+	evtclean
 	ra2bin
 signalTight250
 	Blind	i:run[275125]
@@ -69,8 +81,8 @@ signalTight250
 	HT	d:HTmin[300]
 	MHT	d:MHTmin[250]
 	veto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
+	dphi
+	evtclean
 	ra2bin
 signal2015
 	Blind	i:run[275125]
@@ -79,174 +91,142 @@ signal2015
 	HT	d:HTmin[500]
 	MHT	d:MHTmin[200]
 	veto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
+	dphi
+	evtclean
 	ra2bin
 LDP
 	common
-	NJet	i:njet[2]
-	HT	d:HTmin[200]
-	MHT	d:MHTmin[200]
+	baseline
 	veto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]	b:invert[1]
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
+	dphiinv
+	evtclean
 	ra2bin
 LDPUnclean
 	common
-	NJet	i:njet[2]
-	HT	d:HTmin[200]
-	MHT	d:MHTmin[200]
+	baseline
 	veto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]	b:invert[1]
-	EventCleaning	b:JetID[1]	b:METRatio[0]	b:MuonJet[0]	b:FakeJet[1]
+	dphiinv
+	evtunclean
 	ra2bin
 SLm
 	common
-	NJet	i:njet[2]
-	HT	d:HTmin[200]
-	MHT	d:MHTmin[200]
+	baseline
 	Muon
 	ElectronVeto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
+	dphi
+	evtclean
 	ra2bin
 SLe
 	common
-	NJet	i:njet[2]
-	HT	d:HTmin[200]
-	MHT	d:MHTmin[200]
+	baseline
 	MuonVeto
 	Electron
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
+	dphi
+	evtclean
 	ra2bin
 SLmUnclean
 	common
-	NJet	i:njet[2]
-	HT	d:HTmin[200]
-	MHT	d:MHTmin[200]
+	baseline
 	Muon
 	ElectronVeto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
-	EventCleaning	b:JetID[1]	b:METRatio[0]	b:MuonJet[0]	b:FakeJet[1]
+	dphi
+	evtunclean
 	ra2bin
 SLeUnclean
 	common
-	NJet	i:njet[2]
-	HT	d:HTmin[200]
-	MHT	d:MHTmin[200]
+	baseline
 	MuonVeto
 	Electron
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
-	EventCleaning	b:JetID[1]	b:METRatio[0]	b:MuonJet[0]	b:FakeJet[1]
+	dphi
+	evtunclean
 	ra2bin
 SLmLDP
 	common
-	NJet	i:njet[2]
-	HT	d:HTmin[200]
-	MHT	d:MHTmin[200]
+	baseline
 	Muon
 	ElectronVeto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]	b:invert[1]
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
+	dphiinv
+	evtclean
 	ra2bin
 SLeLDP
 	common
-	NJet	i:njet[2]
-	HT	d:HTmin[200]
-	MHT	d:MHTmin[200]
+	baseline
 	MuonVeto
 	Electron
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]	b:invert[1]
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
+	dphiinv
+	evtclean
 	ra2bin
 GJet
 	common
-	NJet	i:njet[2]
-	HT	d:HTmin[200]
-	MHT	d:MHTmin[100]
+	baselinegj
 	Photon	b:loose[0]
 	veto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[0]	b:FakeJet[1]
+	dphi
+	evtcleannomu
 	ra2bin
 GJetLoose
 	common
-	NJet	i:njet[2]
-	HT	d:HTmin[200]
-	MHT	d:MHTmin[100]
+	baselinegj
 	Photon
 	veto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[0]	b:FakeJet[1]
+	dphi
+	evtcleannomu
 	ra2bin
 DYm
 	common
-	NJet	i:njet[2]
-	HT	d:HTmin[200]
-	MHT	d:MHTmin[100]
+	baselinegj
 	DiMuon
 	ElectronVeto
 	IsoElectronTrackVeto
 	IsoPionTrackVeto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[0]	b:FakeJet[1]
+	dphi
+	evtcleannomu
 	ra2bin
 DYe
 	common
-	NJet	i:njet[2]
-	HT	d:HTmin[200]
-	MHT	d:MHTmin[100]
+	baselinegj
 	MuonVeto
 	DiElectron
 	IsoMuonTrackVeto
 	IsoPionTrackVeto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[0]	b:FakeJet[1]
+	dphi
+	evtcleannomu
 	ra2bin
 GJetLDP
 	common
-	NJet	i:njet[2]
-	HT	d:HTmin[200]
-	MHT	d:MHTmin[100]
+	baselinegj
 	Photon	b:loose[0]
 	veto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]	b:invert[1]
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[0]	b:FakeJet[1]
+	dphiinv
+	evtcleannomu
 	ra2bin
 GJetLooseLDP
 	common
-	NJet	i:njet[2]
-	HT	d:HTmin[200]
-	MHT	d:MHTmin[100]
+	baselinegj
 	Photon
 	veto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]	b:invert[1]
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[0]	b:FakeJet[1]
+	dphiinv
+	evtcleannomu
 	ra2bin
 DYmLDP
 	common
-	NJet	i:njet[2]
-	HT	d:HTmin[200]
-	MHT	d:MHTmin[100]
+	baselinegj
 	DiMuon
 	ElectronVeto
 	IsoElectronTrackVeto
 	IsoPionTrackVeto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]	b:invert[1]
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[0]	b:FakeJet[1]
+	dphiinv
+	evtcleannomu
 	ra2bin
 DYeLDP
 	common
-	NJet	i:njet[2]
-	HT	d:HTmin[200]
-	MHT	d:MHTmin[100]
+	baselinegj
 	MuonVeto
 	DiElectron
 	IsoMuonTrackVeto
 	IsoPionTrackVeto
-	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]	b:invert[1]
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[0]	b:FakeJet[1]
+	dphiinv
+	evtcleannomu
 	ra2bin
 
 VARIATION
