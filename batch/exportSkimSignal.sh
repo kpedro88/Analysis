@@ -2,6 +2,7 @@
 
 export SAMPLES=(
 T1bbbb_1000_900 \
+T1bbbb_1500_100 \
 T1qqqq_1000_800 \
 T1qqqq_1400_100 \
 T1tttt_1200_800 \

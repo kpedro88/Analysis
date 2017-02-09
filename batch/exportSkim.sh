@@ -302,6 +302,15 @@ ST_t-channel_antitop_block5 \
 ST_t-channel_antitop_block6 \
 ST_t-channel_antitop_block7 \
 ST_t-channel_antitop_block8 \
+ST_tW_top_block0 \
+ST_tW_top_block1 \
+ST_tW_top_block2 \
+ST_tW_top_block3 \
+ST_tW_top_block4 \
+ST_tW_antitop_block0 \
+ST_tW_antitop_block1 \
+ST_tW_antitop_block2 \
+ST_tW_antitop_block3 \
 WGJets_MonoPhoton_PtG-40to130_block0 \
 WGJets_MonoPhoton_PtG-40to130_block1 \
 WGJets_MonoPhoton_PtG-130 \
