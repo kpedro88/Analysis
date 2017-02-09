@@ -524,7 +524,7 @@ class KEventCleaningSelector : public KSelector {
 			if(doMuonJet){
 				bool noMuonJet = true;
 				for(unsigned j = 0; j < looper->Jets->size(); ++j){
-					if(looper->Jets->at(j).Pt() > 200 && looper->Jets_muonEnergyFraction->at(j) > 0.5 && KMath::DeltaPhi(looper->Jets->at(j).Phi(),looper->METPhi) > (TMath::Pi() - 0.4)){
+					if(looper->Jets->at(j).Pt() > 200 && looper->Jets_muonEnergyFraction->at(j) > 0.5 && fabs(KMath::DeltaPhi(looper->Jets->at(j).Phi(),looper->METPhi)) > (TMath::Pi() - 0.4)){
 						noMuonJet = false;
 						break;
 					}
@@ -755,7 +755,8 @@ class KNJetsISRSelector : public KSelector {
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			//fill histo
-			h_njetsisr->Fill(min(double(looper->NJetsISR),xbins[xbins.size()-2]));
+			double weight = looper->Weight<0 ? -1.0 : 1.0;
+			h_njetsisr->Fill(min(double(looper->NJetsISR),xbins[xbins.size()-2]),weight);
 			
 			return true;
 		}
@@ -800,14 +801,15 @@ class KPDFNormSelector : public KSelector {
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			//get weights
+			double weight = looper->Weight<0 ? -1.0 : 1.0;
 			
 			//nominal
-			h_norm->Fill(1);
+			h_norm->Fill(1,weight);
 			if(looper->PDFweights->size()>0){
 				//PDF up
-				h_norm->Fill(2,*(TMath::LocMax(looper->PDFweights->begin(),looper->PDFweights->end())));
+				h_norm->Fill(2,*(TMath::LocMax(looper->PDFweights->begin(),looper->PDFweights->end()))*weight);
 				//PDF down
-				h_norm->Fill(3,*(TMath::LocMin(looper->PDFweights->begin(),looper->PDFweights->end())));
+				h_norm->Fill(3,*(TMath::LocMin(looper->PDFweights->begin(),looper->PDFweights->end()))*weight);
 			}
 			
 			if(looper->ScaleWeights->size()>0){
@@ -818,9 +820,9 @@ class KPDFNormSelector : public KSelector {
 				if(ScaleWeightsMod.size()>0) ScaleWeightsMod.erase(ScaleWeightsMod.begin());
 				
 				//scale up
-				h_norm->Fill(4,*(TMath::LocMax(ScaleWeightsMod.begin(),ScaleWeightsMod.end())));
+				h_norm->Fill(4,*(TMath::LocMax(ScaleWeightsMod.begin(),ScaleWeightsMod.end()))*weight);
 				//scale down
-				h_norm->Fill(5,*(TMath::LocMin(ScaleWeightsMod.begin(),ScaleWeightsMod.end())));
+				h_norm->Fill(5,*(TMath::LocMin(ScaleWeightsMod.begin(),ScaleWeightsMod.end()))*weight);
 			}
 			
 			return true;
