@@ -9,16 +9,22 @@ SYSTS=nominal,scaleuncUp,scaleuncDown,isruncUp,isruncDown,triguncUp,triguncDown,
 VARS=JECup,JECdown,JERup,JERdown,genMHT
 CHECKARGS=""
 SUFFIX=""
+SKIPFILE=""
 
 #check arguments
-while getopts "kx:" opt; do
+while getopts "kx:s:" opt; do
   case "$opt" in
   k) CHECKARGS="${CHECKARGS} -k"
     ;;
   x) SUFFIX=$OPTARG
     ;;
+  s) SKIPFILE=$OPTARG
   esac
 done
+
+if [ -n "SKIPFILE" ]; then
+  source ${SKIPFILE}
+fi
 
 if [ -n "$SUFFIX" ]; then
   source exportFast${SUFFIX}.sh
@@ -29,5 +35,17 @@ fi
 ./SKcheck.sh ${CHECKARGS}
 
 for SAMPLE in ${SAMPLES[@]}; do
+  # check skips
+  SKIPTHIS=""
+  for SKIP in ${SKIPLIST[@]}; do
+    if [[ $SAMPLE == "$SKIP"* ]]; then
+      SKIPTHIS=yes
+      break
+    fi
+  done
+  if [[ -n "$SKIPTHIS" ]]; then
+    continue
+  fi
+  
   ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} ${VARS} ${STORE} ${SAMPLE}
 done
