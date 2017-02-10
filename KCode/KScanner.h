@@ -32,7 +32,7 @@ class KScanner : public KLooper {
 	
 		//constructor
 		KScanner(KBase* MyBase_) :
-			KLooper(MyBase_->GetLocalOpt(),MyBase_->GetGlobalOpt()), MyBase(MyBase_), nentries(0), outpre(""), outsuff("")
+			KLooper(MyBase_->GetLocalOpt(),MyBase_->GetGlobalOpt()), MyBase(MyBase_), globalOpt(MyBase_->GetGlobalOpt()), nentries(0), outpre(""), outsuff("")
 		{
 			//get options
 			globalOpt->Get("outpre",outpre);

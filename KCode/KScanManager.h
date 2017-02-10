@@ -50,6 +50,18 @@ class KScanManager : public KManager {
 			KParser::process(line,'\t',fields);
 			//only process the set of interest
 			if(fields.size()>2 && fields[2]==setname) {
+				//name check
+				vector<string> outprelist;
+				string outpre = "";
+				if(globalOpt->Get("outprelist",outprelist)){
+					for(unsigned s = 0; s < outprelist.size(); ++s){
+						if(setname.find(outprelist[s])!=string::npos){
+							outpre = outprelist[s];
+							break;
+						}
+					}
+					if(outpre.size()>0) globalOpt->Set<string>("outpre",outpre);
+				}
 				MyBase = KParser::processBase(line,globalOpt);
 				MyScanner = static_cast<KScanner*>(MyBase->GetLooper());
 			}
@@ -57,19 +69,6 @@ class KScanManager : public KManager {
 		//where the magic happens
 		void Scan(){
 			if(!parsed) return;
-			
-			//name check
-			vector<string> outprelist;
-			string outpre = "";
-			if(globalOpt->Get("outprelist",outprelist)){
-				for(unsigned s = 0; s < outprelist.size(); ++s){
-					if(MyBase->GetName().find(outprelist[s])!=string::npos){
-						outpre = outprelist[s];
-						break;
-					}
-				}
-				if(outpre.size()>0) globalOpt->Set<string>("outpre",outpre);
-			}
 			
 			//scanner does the rest
 			MyScanner->Loop();
