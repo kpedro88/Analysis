@@ -47,7 +47,7 @@ fi
 if [[ $SAMPLE == "T1ttbb"* ]]; then
 	for FILE in *.root; do
 		FILEBASE=`basename $FILE .root`
-		SETDESC="base\tskim\t$FILEBASE\ts:filename[$FILE]"
+		SETDESC="base\tscan\t$FILEBASE\ts:filename[$FILE]"
 		echo "run: root -b -q -l 'KScanDriver.C+(\"$FILEBASE\",\".\",{\"$INPUT\"},{\"OPTION\",\"b:splitT1ttbb[1]\",\"SET\",\"$SETDESC\"})' 2>&1"
 		root -b -q -l 'KScanDriver.C+("'$FILEBASE'",".",{"'$INPUT'"},{"OPTION","b:splitT1ttbb[1]","SET","'$SETDESC'"})' 2>&1
 		
