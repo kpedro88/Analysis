@@ -22,7 +22,7 @@ parser.add_option("-k", "--skip", dest="skip", default="", help="topologies to s
 (options, args) = parser.parse_args()
 
 # parse skip list
-skiplist = options.skip.split(",")
+skiplist = options.skip.split(",") if len(options.skip)>0 else []
 
 # find the root files
 files = filter(None,os.popen("xrdfs root://cmseos.fnal.gov/ ls "+options.dir).read().split('\n'))
