@@ -97,7 +97,7 @@ class KPlotManager : public KManager {
 			for(auto& ntmp : MySetOptions){
 				bool hasLocalSel = ntmp->localOpt()->Get("selections",lselection);
 				//can avoid appending if only one selection specified for this set
-				bool localAppend = globalAppend && (hasLocalSel ? lselection.size()==1 : gselection.size()==1);
+				bool localAppend = globalAppend || (hasLocalSel ? lselection.size()>1 : gselection.size()>1);
 				for(auto& stmp : (hasLocalSel ? lselection : gselection)){
 					KBase* tmp = finalizeSet(ntmp,NULL,stmp,localAppend);
 					//set style at the end, in case parent modifies child's style options
