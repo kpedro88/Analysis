@@ -32,7 +32,7 @@ class KMap {
 		typename map<string,T>::iterator Add(string name, T obj){
 			//finding lower bound is faster for inserting
 			//lower bound: first element in map with key >= name
-			auto lb = table.lower_bound(name);
+			auto lb = (name==stmp) ? itmp : table.lower_bound(name);
 			
 			//key_comp: false if name >= key, true if name < key
 			if(lb != table.end() && !(table.key_comp()(name,lb->first))){

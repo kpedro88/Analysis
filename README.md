@@ -129,6 +129,17 @@ cd batch
 ./DCsub.sh
 ```
 
+This driver produces two files for each mass point of each model:
+one containing the nominal signal region histogram and all variations,
+and another with the relative effect per bin of each systematic.
+This driver also produces trees which store the effect of each systematic on the yield. These trees can be combined and analyzed:
+```
+cd batch
+./HSsub.sh -d /store/user/pedrok/SUSY2015/Analysis/Datacards/Run2ProductionV12 -r
+cd ..
+python summarizeSyst.py -d /store/user/pedrok/SUSY2015/Analysis/Datacards/Run2ProductionV12
+```
+
 Currently available uncertainties:
 * pileup reweighting (not used)
 * scale weights (renormalization/factorization)
@@ -144,3 +155,5 @@ Currently available uncertainties:
 * b-tagging correction factors (fastsim only)
 * c-tagging correction factors (fastsim only)
 * mistagging correction factors (fastsim only)
+* genMHT correction (fastsim only)
+* MC statistics
