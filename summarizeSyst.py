@@ -116,24 +116,19 @@ if __name__ == "__main__":
         output2[syst]["Overall"] = [tmin,tmax]
 
     # make table header
-    # range format: xx.xxx--yy.yy
     sigfig = 2
     maxdec = 4
     allModels = sorted(models)+["Overall"]
-    systRangeLength = 6+2+5
     col0 = "Systematic"
     systMaxLength = max([len(syst) for syst in output2.keys()])
     columnLengths = [max(len(col0),systMaxLength)]
-    header = "| "+"{0:<{1}} | ".format(col0,columnLengths[0])
     for im,model in enumerate(allModels):
-        columnLengths.append(max(len(model),systRangeLength))
-        header += "{0:<{1}} | ".format(model,columnLengths[im+1])        
-    print header
+        columnLengths.append(len(model))
     
-    # print syst ranges
-    totalrow = ""
+    # get column widths
+    rowslist = []
     for syst,vals in sorted(output2.iteritems(),key=lambda s: s[0].lower()):
-        row = "| "+"{0:<{1}} | ".format(syst,columnLengths[0])
+        rowlist = [syst]
         for im,model in enumerate(allModels):
             hasModel = (model in vals.keys())
             tmin = vals[model][0] if hasModel else 0
@@ -145,10 +140,23 @@ if __name__ == "__main__":
                 trange = smin+"--"+smax
             else:
                 trange = smax
-            row += "{0:>{1}} | ".format(trange,columnLengths[im+1])
+            columnLengths[im+1] = max(columnLengths[im+1],len(trange))
+            rowlist.append(trange)
+        rowslist.append(rowlist)
+    
+    # print header and syst ranges
+    header = "| "+"{0:<{1}} | ".format(col0,columnLengths[0])
+    for im,model in enumerate(allModels):
+        header += "{0:<{1}} | ".format(model,columnLengths[im+1])        
+    print header
+    totalrow = ""    
+    for rowlist in rowslist:
+        syst = rowlist[0]
+        row = "| "+"{0:<{1}} | ".format(syst,columnLengths[0])
+        for im,rowitem in enumerate(rowlist[1:]):
+            row += "{0:>{1}} | ".format(rowitem,columnLengths[im+1])
         if syst=="total":
             totalrow = row
             continue
         print row
-    # make sure total is last
     print totalrow
