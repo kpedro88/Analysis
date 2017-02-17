@@ -86,15 +86,15 @@ if __name__ == "__main__":
         output2[syst]["Overall"] = [tmin,tmax]
 
     # make table header
-    # range format: xx.xx--yy.yy
+    # range format: xx.xxx--yy.yy
     allModels = sorted(models)+["Overall"]
-    systRangeLength = 5+2+5
+    systRangeLength = 6+2+5
     col0 = "Systematic"
     systMaxLength = max([len(syst) for syst in output2.keys()])
     columnLengths = [max(len(col0),systMaxLength)]
     header = "| "+"{0:<{1}} | ".format(col0,columnLengths[0])
     for im,model in enumerate(allModels):
-        columnLengths.append(systRangeLength)
+        columnLengths.append(max(len(model),systRangeLength))
         header += "{0:<{1}} | ".format(model,columnLengths[im+1])        
     print header
     
@@ -108,7 +108,7 @@ if __name__ == "__main__":
             tmax = vals[model][1] if hasModel else 0
             # don't bother to display a range if values are within 0.01
             if abs(tmax-tmin)>0.01:
-                trange = "{0:>.2f}--{1:>.2f}".format(tmin,tmax)
+                trange = "{0:>.3f}--{1:>.2f}".format(tmin,tmax)
                 row += "{0:>{1}} | ".format(trange,columnLengths[im+1])
             else:
                 row += "{0:>{1}.2f} | ".format(tmax,columnLengths[im+1])
