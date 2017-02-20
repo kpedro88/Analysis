@@ -879,6 +879,8 @@ class KHistoSelector : public KSelector {
 			else if(base->IsMC() && !MCWeight) depfailed = true;
 			bool DoBTagSF = MCWeight ? MCWeight->btagcorr : false;
 			if(!DoBTagSF) BTagSF = NULL;
+			
+			if(depfailed) canfail = true;
 		}
 		void Initialize(){
 			if(initialized) return;

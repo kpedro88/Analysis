@@ -100,8 +100,6 @@ class KPlotManager : public KManager {
 				bool localAppend = globalAppend || (hasLocalSel ? lselection.size()>1 : gselection.size()>1);
 				for(auto& stmp : (hasLocalSel ? lselection : gselection)){
 					KBase* tmp = finalizeSet(ntmp,NULL,stmp,localAppend);
-					//set style at the end, in case parent modifies child's style options
-					tmp->SetStyle(allStyles);
 				}
 			}
 		}
@@ -123,6 +121,9 @@ class KPlotManager : public KManager {
 			else {
 				parent->AddChild(tmp);
 			}
+
+			//set style at the end, in case parent modifies child's style options
+			tmp->SetStyle(allStyles);
 			
 			//recurse (if necessary) to set up children
 			for(auto& ctmp : ntmp->children){
