@@ -30,6 +30,3 @@ ra2bin
 
 HISTO
 RA2bin	i:xnum[174]	d:xmin[0.5]	d:xmax[174.5]	s:xtitle[RA2 bin [^{}n_{j},^{}n_{b},^{}H_{T}^{miss},^{}H_{T}]]	s:ytitle[number of events]	b:ratio[0]	b:xbinlabel[1]
-
-INPUT
-input/input_sets_DC_data.txt
