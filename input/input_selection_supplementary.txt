@@ -23,10 +23,10 @@ veto
 	IsoElectronTrackVeto
 	IsoPionTrackVeto
 dphi
-	DeltaPhiJ1	d:DeltaPhi[0.5]	i:jet[1]
-	DeltaPhiJ2	d:DeltaPhi[0.5]	i:jet[2]
-	DeltaPhiJ3	d:DeltaPhi[0.3]	i:jet[3]
-	DeltaPhiJ4	d:DeltaPhi[0.3]	i:jet[4]
+	DeltaPhiJ	s:name[DeltaPhiJ1]	d:DeltaPhi[0.5]	i:jet[1]
+	DeltaPhiJ	s:name[DeltaPhiJ2]	d:DeltaPhi[0.5]	i:jet[2]
+	DeltaPhiJ	s:name[DeltaPhiJ3]	d:DeltaPhi[0.3]	i:jet[3]
+	DeltaPhiJ	s:name[DeltaPhiJ4]	d:DeltaPhi[0.3]	i:jet[4]
 signal
 	common
 	NJet	i:njet[3]

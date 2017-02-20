@@ -436,11 +436,7 @@ class KDeltaPhiJSelector : public KSelector {
 		double DeltaPhi;
 		int jet;
 };
-//allow multiple instances
-REGISTER_SELECTOR2(DeltaPhiJ,DeltaPhiJ1);
-REGISTER_SELECTOR2(DeltaPhiJ,DeltaPhiJ2);
-REGISTER_SELECTOR2(DeltaPhiJ,DeltaPhiJ3);
-REGISTER_SELECTOR2(DeltaPhiJ,DeltaPhiJ4);
+REGISTER_SELECTOR(DeltaPhiJ);
 
 //-------------------------------------------------------------
 //vetos events with isolated electron tracks

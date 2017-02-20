@@ -54,6 +54,8 @@ class KSelector {
 			if(localOpt==0) localOpt = new OptionMap();
 			dummy = localOpt->Get("dummy",false);
 			forceadd = localOpt->Get("forceadd",false);
+			//possible to change name from default
+			localOpt->Get("name",name);
 		}
 		//destructor
 		virtual ~KSelector() {}
