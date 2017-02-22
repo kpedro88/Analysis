@@ -178,7 +178,7 @@ class KPlotManager : public KManager {
 			globalOpt->Get("denoms",s_denoms);
 			globalOpt->Get("yieldref",s_yieldref);
 			string s_numer, s_denom; //backward compatibility
-			s_numer = s_denom = s_yieldref = "";
+			s_numer = s_denom = "";
 			globalOpt->Get("numer",s_numer);
 			globalOpt->Get("denom",s_denom);
 			vector<string> s_roc_sig, s_roc_bkg; //vectors of names of roc sets
