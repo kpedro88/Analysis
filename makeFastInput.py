@@ -62,7 +62,7 @@ for file in files:
     # make short name
     short_name = model + "_" + str(mMother) + "_" + str(mLSP) + "_" + "fast"
     # make set list for skimming
-    wline = "base" + "\t" + "skim" + "\t" + short_name + "\t" + "s:filename[" + file + "]" + "\t" + "b:fastsim[1]" + "\t" + "vi:mother[" + str(','.join(str(m) for m in mother_ID)) + "]" + "\n"
+    wline = "base" + "\t" + "skim" + "\t" + short_name + "\t" + "s:filename[" + file + "]" + "\t" + "b:fastsim[1]" + "\t" + "vi:mother[" + str(','.join(str(m) for m in mother_ID)) + "]" + "\t" + "b:data[0]" + "\n"
     wfile.write(wline)
     # make set list for datacards with xsecs
     dline = makeLineDCHist(short_name)
