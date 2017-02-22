@@ -507,6 +507,7 @@ class KEventCleaningSelector : public KSelector {
 			doMETRatio = localOpt->Get("METRatio",false);
 			doMuonJet = localOpt->Get("MuonJet",false);
 			doFakeJet = localOpt->Get("FakeJet",false);
+			doHTRatio = localOpt->Get("HTRatio",false);
 		}
 		virtual void CheckBase(){
 			//check if fastsim
@@ -515,6 +516,13 @@ class KEventCleaningSelector : public KSelector {
 			if(fastsim) doJetID = false;
 			//disable FakeJet for non-fastsim
 			if(!fastsim) doFakeJet = false;
+		}
+		virtual void SetBranches(){
+			if(!tree) return;
+
+			//default values
+			HT5 = 0;
+			tree->Branch("HT5",&HT5,"HT5/D");
 		}
 		
 		//this selector doesn't add anything to tree
@@ -552,11 +560,20 @@ class KEventCleaningSelector : public KSelector {
 				}
 				goodEvent &= noFakeJet;
 			}
+			if(doHTRatio or forceadd){
+				HT5 = 0;
+				for(unsigned j = 0; j < looper->Jets->size(); ++j){
+					if(looper->Jets->at(j).Pt() <= 30 || fabs(looper->Jets->at(j).Eta())>=5.0) continue;
+					HT5 += looper->Jets->at(j).Pt();
+				}
+				if(doHTRatio and HT5/looper->HT > 2.0) goodEvent = false;
+			}
 			return goodEvent;
 		}
 		
 		//member variables
-		bool doJetID, doMETRatio, doMuonJet, doFakeJet;
+		bool doJetID, doMETRatio, doMuonJet, doFakeJet, doHTRatio;
+		double HT5;
 };
 REGISTER_SELECTOR(EventCleaning);
 

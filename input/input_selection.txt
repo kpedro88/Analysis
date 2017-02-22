@@ -25,11 +25,11 @@ veto
 ra2bin
 	RA2Bin	in:options[input/input_RA2bin_options.txt]	b:forceadd[1]
 evtclean
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
+	EventCleaning	b:forceadd[1]	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]	b:HTRatio[0]
 evtcleannomu
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[0]	b:FakeJet[1]
+	EventCleaning	b:forceadd[1]	b:JetID[1]	b:METRatio[1]	b:MuonJet[0]	b:FakeJet[1]	b:HTRatio[0]
 evtunclean
-	EventCleaning	b:JetID[1]	b:METRatio[0]	b:MuonJet[0]	b:FakeJet[1]
+	EventCleaning	b:forceadd[1]	b:JetID[1]	b:METRatio[0]	b:MuonJet[0]	b:FakeJet[1]	b:HTRatio[0]
 baseline
 	NJet	i:njet[2]
 	HT	d:HTmin[200]
