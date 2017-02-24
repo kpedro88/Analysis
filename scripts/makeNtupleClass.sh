@@ -1,14 +1,15 @@
 #!/bin/bash
 
-source batch/exportProd.sh
-DIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/$RUN2PRODV
-
 source sourceNtupleClass.sh
 
 INITIALIZED=""
 
-for SAMPLE in ${SAMPLES[@]}; do
-	root -b -l -q 'makeTempClass.C+("'$DIR/$SAMPLE'","TreeMaker2/PreSelection","TempClass")'
+for ((i=0; i < ${#SAMPLES[@]}; i++)); do
+	SAMPLE=${SAMPLES[$i]}
+	DIR=${DIRS[$i]}
+	TREE=${TREES[$i]}
+
+	root -b -l -q 'makeTempClass.C+("'$DIR/$SAMPLE'","'$TREE'","TempClass")'
 
 	if [[ -z "$INITIALIZED" ]]; then
 		mv TempClass.h NtupleClass.h

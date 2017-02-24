@@ -1,7 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Mon Feb 20 10:18:36 2017 by ROOT version 6.06/01
+// Fri Feb 24 11:44:42 2017 by ROOT version 6.06/01
 // from TTree PreSelection/PreSelection
+// from TTree tree/all observables, signal
 // found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV12/Summer16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
 //////////////////////////////////////////////////////////
 
@@ -392,6 +393,12 @@ public :
    Double_t        Weight;
    vector<TLorentzVector> *ZCandidates;
 
+   Double_t        HT5;
+
+   UInt_t          RA2bin;
+
+   vector<unsigned int> *RA2bins;
+
    // List of branches
    TBranch        *b_RunNum;   //!
    TBranch        *b_LumiBlockNum;   //!
@@ -762,6 +769,12 @@ public :
    TBranch        *b_Weight;   //!
    TBranch        *b_ZCandidates;   //!
 
+   TBranch        *b_HT5;   //!
+
+   TBranch        *b_RA2binBranch;   //!
+
+   TBranch        *b_RA2bins;   //!
+
    NtupleClass(TTree *tree=0);
    virtual ~NtupleClass();
    virtual Int_t    Cut(Long64_t entry);
@@ -786,6 +799,7 @@ NtupleClass::NtupleClass(TTree *tree) : fChain(0)
          f = new TFile("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV12/Summer16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
       }
       TDirectory * dir = (TDirectory*)f->Get("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV12/Summer16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root:/TreeMaker2");
+      f->GetObject("tree",tree);
       dir->GetObject("PreSelection",tree);
 
    }
@@ -1048,6 +1062,8 @@ void NtupleClass::Init(TTree *tree)
    TriggerPass = 0;
    TriggerPrescales = 0;
    ZCandidates = 0;
+
+   RA2bins = 0;
    // Set branch addresses and branch pointers
    if (!tree) return;
    fChain = tree;
@@ -1422,6 +1438,12 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("TrueNumInteractions", &TrueNumInteractions, &b_TrueNumInteractions);
    fChain->SetBranchAddress("Weight", &Weight, &b_Weight);
    fChain->SetBranchAddress("ZCandidates", &ZCandidates, &b_ZCandidates);
+
+   fChain->SetBranchAddress("HT5", &HT5, &b_HT5);
+
+   fChain->SetBranchAddress("RA2bin", &RA2bin, &b_RA2binBranch);
+
+   fChain->SetBranchAddress("RA2bins", &RA2bins, &b_RA2bins);
    Notify();
 }
 
