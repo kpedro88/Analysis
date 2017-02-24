@@ -594,7 +594,7 @@ class KMETFilterSelector : public KSelector {
 	public:
 		//constructor
 		KMETFilterSelector() : KSelector() { }
-		KMETFilterSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
+		KMETFilterSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), skipHTRatio(false) {
 			localOpt->Get("filterfiles",filterfiles);
 			for(unsigned f = 0; f < filterfiles.size(); ++f){
 				filters.push_back(new EventListFilter(filterfiles[f]));
@@ -603,6 +603,8 @@ class KMETFilterSelector : public KSelector {
 			filter2015 = localOpt->Get("filter2015",false);
 		}
 		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("HT",1);
+			looper->fChain->SetBranchStatus("HT5",1);
 			looper->fChain->SetBranchStatus("NVtx",1);
 			looper->fChain->SetBranchStatus("eeBadScFilter",1);
 			looper->fChain->SetBranchStatus("eeBadSc4Filter",1);
@@ -618,6 +620,7 @@ class KMETFilterSelector : public KSelector {
 				looper->fChain->SetBranchStatus("LumiBlockNum",1);
 				looper->fChain->SetBranchStatus("EvtNum",1);				
 			}
+			if(!looper->fChain->GetBranchStatus("HT5") or !looper->fChain->GetBranch("HT5")) skipHTRatio = true;
 		}
 		virtual void CheckBase(){
 			//check fastsim stuff
@@ -641,17 +644,18 @@ class KMETFilterSelector : public KSelector {
 			bool eeBadScFilter = looper->eeBadScFilter==1;
 			bool BadChargedCandidateFilter = looper->BadChargedCandidateFilter;
 			bool BadPFMuonFilter = looper->BadPFMuonFilter;
+			bool HTRatioFilter = skipHTRatio or (looper->HT5/looper->HT <= 2.0);
 			bool otherFilters = true;
 			for(unsigned f = 0; f < filters.size(); ++f){
 				otherFilters &= filters[f]->CheckEvent(looper->RunNum,looper->LumiBlockNum,looper->EvtNum);
 			}
 			if(filter2015) return looper->NVtx > 0 && eeBadScFilter && HBHENoiseFilter && HBHEIsoNoiseFilter && looper->CSCTightHaloFilter==1 && EcalDeadCellTriggerPrimitiveFilter && otherFilters;
 			return looper->NVtx > 0 && eeBadScFilter && HBHENoiseFilter && HBHEIsoNoiseFilter && TightHaloFilter 
-				&& EcalDeadCellTriggerPrimitiveFilter && BadChargedCandidateFilter && BadPFMuonFilter && otherFilters;
+				&& EcalDeadCellTriggerPrimitiveFilter && BadChargedCandidateFilter && BadPFMuonFilter && HTRatioFilter && otherFilters;
 		}
 		
 		//member variables
-		bool onlydata, filter2015;
+		bool onlydata, filter2015, skipHTRatio;
 		vector<string> filterfiles;
 		vector<EventListFilter*> filters;
 };

@@ -2,7 +2,7 @@
 
 source batch/exportProd.sh
 
-SETLIST="input/input_sets_DC_data.txt"
+SETLIST="input/input_sets_DC_data_reMiniAOD.txt"
 
 if [[ -n "$1" ]]; then
 	SETLIST=$1
