@@ -118,9 +118,9 @@ To save the individual histograms for a FullSim signal process to a ROOT file fo
 root -b -l -q 'MakeAllDCsyst.C+(0,"T1tttt_1500_100","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV12")'
 ```
 
-To check specific systematics or variations, there are extra arguments. E.g., to check only the PDF uncertainty and no variations:
+To check specific systematics or variations, there are extra arguments. E.g., to check only the ISR uncertainty and no variations:
 ```
-root -b -l -q 'MakeAllDCsyst.C+(0,"T1tttt_1500_100","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV12","pdfunc","")'
+root -b -l -q 'MakeAllDCsyst.C+(0,"T1tttt_1500_100","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV12","isruncUp,isruncDown","")'
 ```
 
 Because of the large number of model points in the FastSim signal samples, batch mode should be used to run over them:
@@ -155,5 +155,6 @@ Currently available uncertainties:
 * b-tagging correction factors (fastsim only)
 * c-tagging correction factors (fastsim only)
 * mistagging correction factors (fastsim only)
-* genMHT correction (fastsim only)
+* MHT modeling (fastsim only)
 * MC statistics
+* pileup acceptance

@@ -12,6 +12,7 @@
 #include "../corrections/Double76x.h"
 #include "../corrections/TriggerEfficiencySextet.cpp"
 #include "../corrections/ISRCorrector.h"
+#include "../corrections/PileupAcceptanceUncertainty.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -81,6 +82,32 @@ class KMCWeightSelector : public KSelector {
 						cout << "Input error: could not open pileup weight file " << puname << "." << endl;
 					}
 				}
+			}
+			
+			//alternative PU option - acceptance uncertainty
+			puacccorr = localOpt->Get("puacccorr",false);
+			puaccunc = 0; localOpt->Get("puaccunc",puaccunc);
+			if(puacccorr){
+				TH1* h_nvtx = NULL;
+				string nvtxname = ""; localOpt->Get("nvtxname",nvtxname);
+				TH1* htmp = nvtxhistMap().Get(nvtxname);
+				if(nvtxname.size()==0){
+					cout << "Input error: no nvtx distribution file specified!" << endl;
+				}
+				else if(htmp){
+					h_nvtx = htmp;
+				}
+				else{
+					TFile* nvtxfile = TFile::Open(nvtxname.c_str(),"READ");
+					if(nvtxfile){
+						h_nvtx = (TH1*)nvtxfile->Get("nvertex_SingleElectron"); h_nvtx->SetDirectory(0); nvtxhistMap().Add(nvtxname,h_nvtx);
+						nvtxfile->Close();
+					}
+					else{
+						cout << "Input error: could not open nvtx distribution file " << nvtxname << "." << endl;
+					}
+				}
+				puacc.SetInputs((TGraphErrors*)base->GetFile()->Get("pileupAccBand"),h_nvtx,localOpt->Get("debugpuacc",false));
 			}
 			
 			//trig corr options
@@ -250,6 +277,10 @@ class KMCWeightSelector : public KSelector {
 				}
 			}
 			
+			if(puacccorr){
+				w *= puacc.GetCorrection(puaccunc);
+			}
+			
 			if(trigcorr){
 				unsigned effindex = trigunc==-1 ? 2 : trigunc;
 				w *= Eff_MetMhtSextetReal_CenterUpDown(looper->HT, looper->MHT, looper->NJets)[effindex];
@@ -320,6 +351,10 @@ class KMCWeightSelector : public KSelector {
 			static HistoMapMap isrhistMap_;
 			return isrhistMap_;
 		}
+		static HistoMap& nvtxhistMap(){
+			static HistoMap nvtxhistMap_;
+			return nvtxhistMap_;
+		}
 		
 		//this selector doesn't add anything to tree
 		
@@ -338,9 +373,9 @@ class KMCWeightSelector : public KSelector {
 		
 		//member variables
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, debugWeight, didDebugWeight;
-		bool pucorr, trigcorr, isrcorr, realMET, signal, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr;
+		bool pucorr, trigcorr, isrcorr, realMET, signal, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr;
 		double jetidcorrval, isotrackcorrval, lumicorrval;
-		int puunc, pdfunc, isrunc, scaleunc, trigunc, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc;
+		int puunc, pdfunc, isrunc, scaleunc, trigunc, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc;
 		vector<int> mother;
 		TH1 *puhist, *puhistUp, *puhistDown;
 		vector<double> pdfnorms;
@@ -349,6 +384,7 @@ class KMCWeightSelector : public KSelector {
 		int nEventProc;
 		double xsection, norm;
 		ISRCorrector isrcorror;
+		PileupAcceptanceUncertainty puacc;
 };
 REGISTER_SELECTOR(MCWeight);
 

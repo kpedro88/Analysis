@@ -73,3 +73,9 @@ lumiuncUp
 lumiuncDown
 	MCWeight	in:options[input/input_MCWeight_options.txt]	int:lumiunc[-1]
 	common
+puaccuncUp
+	MCWeight	in:options[input/input_MCWeight_options.txt]	int:puaccunc[1]
+	common
+puaccuncDown
+	MCWeight	in:options[input/input_MCWeight_options.txt]	int:puaccunc[-1]
+	common

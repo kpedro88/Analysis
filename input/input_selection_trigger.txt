@@ -39,3 +39,4 @@ JetLeptonClean
 
 INPUT
 input/input_sets_skim_data.txt
+input/input_sets_skim_data_reMiniAOD.txt

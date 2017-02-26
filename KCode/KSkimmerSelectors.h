@@ -12,14 +12,22 @@
 #include <TROOT.h>
 #include <TFile.h>
 #include <TTree.h>
+#include <TF1.h>
 #include <TLorentzVector.h>
 #include <TMath.h>
+#include <TGraphAsymmErrors.h>
+#include <TGraphErrors.h>
+#include <TFitResult.h>
+#include <TMatrixD.h>
+#include <TVectorD.h>
 
 //STL headers
 #include <string>
 #include <vector>
 #include <algorithm>
 #include <cstdlib>
+#include <valarray>
+#include <utility>
 
 using namespace std;
 
@@ -859,6 +867,199 @@ class KPDFNormSelector : public KSelector {
 		TH1F *h_norm;
 };
 REGISTER_SELECTOR(PDFNorm);
+
+//-----------------------------------------------------------------
+//stores info for pileup acceptance uncertainty
+class KPileupAccSelector : public KSelector {
+	public:
+		//constructor
+		KPileupAccSelector() : KSelector() { }
+		KPileupAccSelector(string name_, OptionMap* localOpt_) : 
+			KSelector(name_,localOpt_), debug(false), h_nvtxLo(NULL), h_nvtxHi(NULL), cut(20), depname(""), PileupAccBefore(NULL), RA2Bin(NULL)
+		{
+			canfail = false;
+			//check options
+			debug = localOpt->Get("debug",false);
+			localOpt->Get("cut",cut);
+			localOpt->Get("depname",depname);
+			//initialize histograms using KPlot:CreateHist() method
+			TH1::AddDirectory(kFALSE);
+			KPlot* ptmpLo = new KPlot("NVtxLo",localOpt,NULL);
+			ptmpLo->CreateHist();
+			h_nvtxLo = ptmpLo->GetHisto();
+			delete ptmpLo;
+			KPlot* ptmpHi = new KPlot("NVtxHi",localOpt,NULL);
+			ptmpHi->CreateHist();
+			h_nvtxHi = ptmpHi->GetHisto();
+			delete ptmpHi;
+		}
+		virtual void CheckDeps(){
+			//set dependencies here - check for "before" (if this is "after")
+			if(depname.size()>0) {
+				PileupAccBefore = sel->Get<KPileupAccSelector*>(depname);
+				RA2Bin = sel->Get<KRA2BinSelector*>("RA2Bin");
+				if(!PileupAccBefore or !RA2Bin) {
+					depfailed = true;
+					canfail = true;
+				}
+			}
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			if(depfailed) return false;
+			
+			bool passed_RA2Bin = true;
+			if(RA2Bin and RA2Bin->RA2binBranch==0) passed_RA2Bin = false;
+			
+			//exclude outside-signal-region events from "after"
+			if(passed_RA2Bin){
+				if(looper->NVtx<cut) h_nvtxLo->Fill(looper->NVtx);
+				else h_nvtxHi->Fill(looper->NVtx);
+			}
+
+			return true;
+		}
+		
+		virtual void Finalize(TFile* file){
+			//"before" doesn't finalize
+			if(depname.size()==0) return;
+			//but "after" does
+			
+			//get pre-selection histos
+			TH1 *h_nvtxLoBefore = PileupAccBefore->h_nvtxLo;
+			TH1 *h_nvtxHiBefore = PileupAccBefore->h_nvtxHi;
+			
+			//get pass and fail
+			double pL = h_nvtxLo->GetEntries();
+			double fL = h_nvtxLoBefore->GetEntries() - pL;
+			double pH = h_nvtxHi->GetEntries();
+			double fH = h_nvtxHiBefore->GetEntries() - pH;
+			if(debug) cout << "pL = " << pL << ", fL = " << fL << ", pH = " << pH << ", fH = " << fH << endl;
+			
+			//fit a graph of centroid(NVtx) vs. relative acceptance
+			double x[] = {0,0}, xed[] = {0,0}, xeu[] = {0,0};
+			double y[] = {0,0}, yed[] = {0,0}, yeu[] = {0,0};
+			
+			//first point from low
+			x[0] = h_nvtxLoBefore->GetMean();
+			xed[0] = h_nvtxLoBefore->GetMeanError();
+			xeu[0] = h_nvtxLoBefore->GetMeanError();
+			y[0] = effAB(pL,fL,pH,fH);
+			pair<double,double> yeL = sigma_effAB(pL,fL,pH,fH);
+			yed[0] = yeL.first;
+			yeu[0] = yeL.second;
+			
+			//second point from high, exploiting symmetry of effAB functions
+			x[1] = h_nvtxHiBefore->GetMean();
+			xed[1] = h_nvtxHiBefore->GetMeanError();
+			xeu[1] = h_nvtxHiBefore->GetMeanError();
+			y[1] = effAB(pH,fH,pL,fL);
+			pair<double,double> yeH = sigma_effAB(pH,fH,pL,fL);
+			yed[1] = yeH.first;
+			yeu[1] = yeH.second;
+			
+			//make graph and fit function
+			TGraphAsymmErrors *g_acc = new TGraphAsymmErrors(2,x,y,xed,xeu,yed,yeu);
+			g_acc->SetName("pileupAccPts");
+			if(debug) g_acc->Print();
+			double xmin = 0; localOpt->Get("xmin",xmin);
+			double xmax = 0; localOpt->Get("xmax",xmax);
+			TF1 *g_fit = new TF1("pileupAccFit","pol1",xmin,xmax);
+			string fitopt = "NRQS";
+			if(debug) fitopt = "NRS";
+			TFitResultPtr fptr = g_acc->Fit(g_fit,fitopt.c_str());
+			
+			//make second graph to store confidence band
+			int nbinsx = 0;
+			localOpt->Get("xnum",nbinsx);
+			TGraphErrors *g_conf = new TGraphErrors(nbinsx);
+			for(int i = 0; i < nbinsx; ++i){
+				g_conf->SetPoint(i,i,g_fit->Eval(i));
+			}
+			g_conf->SetName("pileupAccBand");
+			g_conf->SetTitle("");
+			g_conf->GetXaxis()->SetTitle("number of vertices");
+			g_conf->GetYaxis()->SetTitle("relative acceptance");
+			
+			//get confidence band (1sigma = 0.68)
+			//stored in error bars of graph
+			fptr->GetConfidenceIntervals(g_conf->GetN(), 1, 1, g_conf->GetX(), g_conf->GetEY(), 0.68, false);
+			
+			//write to file (only g_conf strictly necessary, others kept for crosschecks)
+			file->cd();
+			g_acc->Write();
+			g_fit->Write();
+			g_conf->Write();
+		}
+		
+		//dumb error propagation functions
+		double effAB(double pA, double fA, double pB, double fB){
+			double numer = pA*(pA+fA+pB+fB);
+			double denom = (pA+fA)*(pA+pB);
+			return numer/denom;
+		}
+		double DeffDpA(double pA, double fA, double pB, double fB){
+			double numer = fA*pB*(fA+2*pA+pB)+fB*(fA*pB-pow(pA,2));
+			double denom = pow(fA+pA,2)*pow(pA+pB,2);
+			return numer/denom;
+		}
+		double DeffDfA(double pA, double fA, double pB, double fB){
+			double numer = -pA*(fB+pB);
+			double denom = pow(fA+pA,2)*(pA+pB);
+			return numer/denom;
+		}
+		double DeffDpB(double pA, double fA, double pB, double fB){
+			double numer = -pA*(fA+fB);
+			double denom = (fA+pA)*pow(pA+pB,2);
+			return numer/denom;
+		}
+		double DeffDfB(double pA, double fA, double pB, double fB){
+			double numer = pA;
+			double denom = (fA+pA)*(pA+pB);
+			return numer/denom;
+		}
+		pair<double,double> sigma_effAB(double pA, double fA, double pB, double fB){
+			valarray<double> derivs = {
+				pow(DeffDpA(pA,fA,pB,fB),2),
+				pow(DeffDfA(pA,fA,pB,fB),2),
+				pow(DeffDpB(pA,fA,pB,fB),2),
+				pow(DeffDfB(pA,fA,pB,fB),2)
+			};
+			valarray<double> errsDown = {
+				pow(KMath::PoissonErrorLow(pA),2),
+				pow(KMath::PoissonErrorLow(fA),2),
+				pow(KMath::PoissonErrorLow(pB),2),
+				pow(KMath::PoissonErrorLow(fB),2)			
+			};
+			valarray<double> errsUp = {
+				pow(KMath::PoissonErrorUp(pA),2),
+				pow(KMath::PoissonErrorUp(fA),2),
+				pow(KMath::PoissonErrorUp(pB),2),
+				pow(KMath::PoissonErrorUp(fB),2)			
+			};
+			auto result = make_pair(sqrt((derivs*errsDown).sum()),sqrt((derivs*errsUp).sum()));
+			if(debug){
+				cout << scientific;
+				cout << "derivs = "; copy(begin(derivs), end(derivs), ostream_iterator<double>(cout,", ")); cout << endl;
+				cout << "errsDown = "; copy(begin(errsDown), end(errsDown), ostream_iterator<double>(cout,", ")); cout << endl;
+				cout << "errsUp = "; copy(begin(errsUp), end(errsUp), ostream_iterator<double>(cout,", ")); cout << endl;
+				cout << fixed;
+			}
+			return result;
+		}
+		
+		//member variables
+		bool debug;
+		TH1 *h_nvtxLo, *h_nvtxHi;
+		int cut;
+		string depname;
+		KPileupAccSelector* PileupAccBefore;
+		KRA2BinSelector* RA2Bin;
+};
+REGISTER_SELECTOR(PileupAcc);
 
 //-------------------------------------------------------------
 //look at only a specific range of events

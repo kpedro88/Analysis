@@ -25,6 +25,7 @@ map<string,string> legnames = {
 	{"JER", "JER uncertainty [%]"},
 	{"MCStatErr", "MC statistical uncertainty [%]"},
 	{"MHTSyst", "H_{T}^{miss,gen} uncertainty [%]"},
+	{"puaccunc", "pileup acceptance uncertainty [%]"},
 	{"scaleunc", "#mu_{R}/#mu_{F} uncertainty [%]"},
 	{"trigunc", "trigger uncertainty [%]"},
 	{"mMother", "M_{mother} [GeV]"},
@@ -113,7 +114,7 @@ void plotSyst(TTree* tree, string xqty, string yqty, string model, string outdir
 //definitely only run in batch mode
 void plotSyst2D(string indir, 
 				vector<string> models={"T1bbbb","T1qqqq","T1tbtb","T1tbtbT1tbbbT1bbbb","T1tbtbT1tbttT1tttt","T1ttbb","T1tttt","T2bb","T2qq","T2tt","T5qqqqVV"}, 
-				vector<string> systs={"isrunc","JEC","JER","MCStatErr","MHTSyst","scaleunc","trigunc"},
+				vector<string> systs={"isrunc","JEC","JER","MCStatErr","MHTSyst","puaccunc","scaleunc","trigunc"},
 				vector<string> compares={"mMother","mLSP","deltaM","massPlane"},
 				bool correlate=true,
 				string outdir="plots-syst",

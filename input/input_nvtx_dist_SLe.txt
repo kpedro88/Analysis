@@ -1,0 +1,47 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+#root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV12/tree_SLeTrigger_JetLeptonClean",{"input/input_nvtx_dist_SLe.txt"},{},1)'
+
+INPUT
+input/input_global.txt
+
+OPTION
+vstring:printformat[png]
+double:luminorm[35862.824]
+string:luminormunit[fbinv]
+bool:printyield[1]
+int:yieldprecision[2]
+bool:plotoverflow[1]
+vstring:disable_branches[*]
+vstring:enable_branches[NVtx]
+string:rootfile[NVtx_SLe_03Feb2017_35p9ifb]
+bool:unitnorm[1]
+bool:appendsel[0]
+bool:debugcut[1]
+bool:debugloop[1]
+double:ymin[1e-8]
+
+SELECTION
+seldata
+	HLT	vs:HLTLines[HLT_Ele27_WPTight]
+	Histo
+
+HISTO
+nvertex	i:xnum[101]	d:xmin[-0.5]	d:xmax[100.5]	s:xtitle[number of vertices]	s:ytitle[arbitrary units]	b:ratio[0]
+
+SET
+hist	data	SingleElectron	c:color[kBlack]	vstring:selections[seldata]
+	base	data	SingleElectron_re2016B	s:filename[tree_SingleElectron_re2016B.root]	b:data[1]
+	base	data	SingleElectron_re2016C	s:filename[tree_SingleElectron_re2016C.root]	b:data[1]
+	base	data	SingleElectron_re2016D	s:filename[tree_SingleElectron_re2016D.root]	b:data[1]
+	base	data	SingleElectron_re2016E	s:filename[tree_SingleElectron_re2016E.root]	b:data[1]
+	base	data	SingleElectron_re2016F	s:filename[tree_SingleElectron_re2016F.root]	b:data[1]
+	base	data	SingleElectron_re2016G	s:filename[tree_SingleElectron_re2016G.root]	b:data[1]
+	base	data	SingleElectron_re2016H2	s:filename[tree_SingleElectron_re2016H2.root]	b:data[1]
+	base	data	SingleElectron_re2016H3	s:filename[tree_SingleElectron_re2016H3.root]	b:data[1]
