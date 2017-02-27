@@ -100,6 +100,10 @@ WJetsToLNu_HT-1200to2500_block1 \
 WJetsToLNu_HT-1200to2500_block2 \
 WJetsToLNu_HT-2500toInf_block0 \
 WJetsToLNu_HT-2500toInf_block1 \
+TTJets_block0 \
+TTJets_block1 \
+TTJets_block2 \
+TTJets_block3 \
 TTJets_SingleLeptFromT_block0 \
 TTJets_SingleLeptFromT_block1 \
 TTJets_SingleLeptFromT_block2 \
@@ -149,6 +153,13 @@ TTJets_SingleLeptFromT_genMET-150_block4 \
 TTJets_SingleLeptFromT_genMET-150_block5 \
 TTJets_SingleLeptFromT_genMET-150_block6 \
 TTJets_SingleLeptFromT_genMET-150_block7 \
+TTJets_SingleLeptFromTbar_genMET-150_block0 \
+TTJets_SingleLeptFromTbar_genMET-150_block1 \
+TTJets_SingleLeptFromTbar_genMET-150_block2 \
+TTJets_SingleLeptFromTbar_genMET-150_block3 \
+TTJets_SingleLeptFromTbar_genMET-150_block4 \
+TTJets_SingleLeptFromTbar_genMET-150_block5 \
+TTJets_SingleLeptFromTbar_genMET-150_block6 \
 TTJets_DiLept_genMET-150_block0 \
 TTJets_DiLept_genMET-150_block1 \
 TTJets_DiLept_genMET-150_block2 \
