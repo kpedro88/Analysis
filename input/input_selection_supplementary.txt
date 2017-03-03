@@ -27,65 +27,67 @@ dphi
 	DeltaPhiJ	s:name[DeltaPhiJ2]	d:DeltaPhi[0.5]	i:jet[2]
 	DeltaPhiJ	s:name[DeltaPhiJ3]	d:DeltaPhi[0.3]	i:jet[3]
 	DeltaPhiJ	s:name[DeltaPhiJ4]	d:DeltaPhi[0.3]	i:jet[4]
+evtclean
+	EventCleaning	b:forceadd[1]	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]	b:HTRatio[1]
 signal
 	common
-	NJet	i:njet[3]
+	NJet	i:njet[2]
 	HT	d:HTmin[300]
 	MHT	d:MHTmin[300]
 	veto
 	dphi
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
+	evtclean
 signalMinusNJet
 	common
-#	NJet	i:njet[3]
+#	NJet	i:njet[2]
 	HT	d:HTmin[300]
 	MHT	d:MHTmin[300]
 	veto
 	dphi
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
+	evtclean
 signalMinusHT
 	common
-	NJet	i:njet[3]
+	NJet	i:njet[2]
 #	HT	d:HTmin[300]
 	MHT	d:MHTmin[300]
 	veto
 	dphi
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
+	evtclean
 signalMinusMHT
 	common
-	NJet	i:njet[3]
+	NJet	i:njet[2]
 	HT	d:HTmin[300]
 #	MHT	d:MHTmin[300]
 	veto
 	dphi
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
+	evtclean
 signalHighPU
 	common
 	NVtx	i:num[20]
-	NJet	i:njet[3]
+	NJet	i:njet[2]
 	HT	d:HTmin[300]
 	MHT	d:MHTmin[300]
 	veto
 	dphi
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
+	evtclean
 signalLowPU
 	common
 	NVtx	i:num[20]	b:invert[1]
-	NJet	i:njet[3]
+	NJet	i:njet[2]
 	HT	d:HTmin[300]
 	MHT	d:MHTmin[300]
 	veto
 	dphi
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
+	evtclean
 signalAllPU
 	common
 	NVtx	i:num[0]
-	NJet	i:njet[3]
+	NJet	i:njet[2]
 	HT	d:HTmin[300]
 	MHT	d:MHTmin[300]
 	veto
 	dphi
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]
+	evtclean
 
 VARIATION
 CleanVars
