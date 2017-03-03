@@ -82,6 +82,7 @@ if __name__ == "__main__":
     parser.add_option("-d", "--dir", dest="dir", default="/store/user/pedrok/SUSY2015/Analysis/Datacards/Run2ProductionV12", help="directory (LFN) of systematics files (default = %default)")
     parser.add_option("-k", "--skip", dest="skip", default=[], type="string", action="callback", callback=list_callback, help="comma-separated list of models to skip (default = %default)")
     parser.add_option("-x", "--exclude", dest="exclude", default=[], type="string", action="callback", callback=list_callback, help="comma-separated list of systematics to exclude from calculations (default = %default)")
+    parser.add_option("-m", "--minimum", dest="minimum", default=0.01, help="minimum value to display, smaller values rounded to 0 (default = %default)")
     (options, args) = parser.parse_args()
 
     # get list of files (one per model)
@@ -117,7 +118,7 @@ if __name__ == "__main__":
 
     # make table header
     sigfig = 2
-    maxdec = 4
+    maxdec = int(abs(math.log10(options.minimum)))
     allModels = sorted(models)+["Overall"]
     col0 = "Systematic"
     systMaxLength = max([len(syst) for syst in output2.keys()])
@@ -136,7 +137,7 @@ if __name__ == "__main__":
             smin = printSigFigs(tmin,sigfig,maxdec)
             smax = printSigFigs(tmax,sigfig,maxdec)
             # don't bother to display a range if values are equal within precision
-            if abs(tmax-tmin)>0.0001 and smin != smax:
+            if abs(tmax-tmin)>options.minimum and smin != smax:
                 trange = smin+"--"+smax
             else:
                 trange = smax
