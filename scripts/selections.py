@@ -13,5 +13,5 @@ selections = OrderedDict([
     ("DeltaPhiJ2"           , "\\dphimht2  & >0.5"),
     ("DeltaPhiJ3"           , "\\dphimht3  & >0.3"),
     ("DeltaPhiJ4"           , "\\dphimht4  & >0.3"),
-    ("EventCleaning"        , "\\multicolumn{2}{c}{Event cleaning}")
+    ("EventCleaning"        , "\\multicolumn{2}{c}{Event quality filter}")
 ])

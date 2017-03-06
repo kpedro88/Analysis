@@ -57,16 +57,17 @@ for signal in options.signals:
     mMother = ssplit[1]
     mLSP = ssplit[2]
     mothername = "\\PSg"
+    mothername2 = "\\PSg\\PSg"
     decayname = ""
     if model=="T1tttt":     decayname = "\\ttbar"
     elif model=="T1bbbb":   decayname = "\\bbbar"
     elif model=="T1qqqq":   decayname = "\\qqbar"
     elif model=="T5qqqqVV": decayname = "\\qqbar \\text{V}"
     elif model=="T1tbtb":   decayname = "\\tbbar \\text{W}^{*-}"
-    elif model=="T2tt":     decayname = "\\text{t}"; mothername = "\\sTop"
-    elif model=="T2bb":     decayname = "\\text{b}"; mothername = "\\sBot"
-    elif model=="T2qq":     decayname = "\\text{q}"; mothername = "\\sQua"
-    outDict["header1"] += " & " + "\\multicolumn{2}{r}{$\\text{p}\\text{p} \\to "+mothername+mothername+", "+mothername+" \\to "+decayname+" \\PSGczDo$}"
+    elif model=="T2tt":     decayname = "\\text{t}"; mothername = "\\sTop"; mothername2 = "\\sTop\\PASQt"
+    elif model=="T2bb":     decayname = "\\text{b}"; mothername = "\\sBot"; mothername2 = "\\sBot\\PASQb"
+    elif model=="T2qq":     decayname = "\\text{q}"; mothername = "\\sQua"; mothername2 = "\sQua\\PASQ"
+    outDict["header1"] += " & " + "\\multicolumn{2}{r}{$\\text{p}\\text{p} \\to "+mothername2+", "+mothername+" \\to "+decayname+" \\PSGczDo$}"
     outDict["header2"] += " & " + "\\multicolumn{2}{r}{$m_{"+mothername+"}="+mMother+"\\GeV$}"
     outDict["header3"] += " & " + "\\multicolumn{2}{r}{$m_{\\PSGczDo}="+mLSP+"\\GeV$}"
     
