@@ -312,7 +312,9 @@ class KLegend{
 					else if (ymin_min > 0 && ymin < ymin_min) ymin = ymin_min;
 				}
 			}
-			else ymin = 0; //just set to 0 for liny
+			else {
+				if(!manual_ymin) ymin = 0; //just set to 0 for liny
+			}
 			
 			//step 3: find highest bin that could overlap with legend, and set ymax to prevent overlap
 			double gy = 1 - (pad->GetBottomMargin() + pad->GetTopMargin());
