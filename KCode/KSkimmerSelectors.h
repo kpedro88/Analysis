@@ -875,15 +875,28 @@ class KPileupAccSelector : public KSelector {
 		//constructor
 		KPileupAccSelector() : KSelector() { }
 		KPileupAccSelector(string name_, OptionMap* localOpt_) : 
-			KSelector(name_,localOpt_), debug(false), h_nvtxLo(NULL), h_nvtxHi(NULL), cut(20), depname(""), PileupAccBefore(NULL), RA2Bin(NULL)
+			KSelector(name_,localOpt_), debug(false), h_nvtxLo(NULL), h_nvtxHi(NULL), h_nvtxLo2D(NULL), h_nvtxHi2D(NULL), cut(20), depname(""), PileupAccBefore(NULL), RA2Bin(NULL)
 		{
 			canfail = false;
 			//check options
 			debug = localOpt->Get("debug",false);
 			localOpt->Get("cut",cut);
 			localOpt->Get("depname",depname);
+			int ynum = 0;
 			//initialize histograms using KPlot:CreateHist() method
 			TH1::AddDirectory(kFALSE);
+			//2D case
+			if(localOpt->Get("ynum",ynum)){
+				KPlot2D* ptmpLo2D = new KPlot2D("NVtxLo","",localOpt,NULL);
+				ptmpLo2D->CreateHist();
+				h_nvtxLo2D = (TH2*)ptmpLo2D->GetHisto();
+				delete ptmpLo2D;
+				KPlot2D* ptmpHi2D = new KPlot2D("NVtxHi","",localOpt,NULL);
+				ptmpHi2D->CreateHist();
+				h_nvtxHi2D = (TH2*)ptmpHi2D->GetHisto();
+				delete ptmpHi2D;
+			}
+			//1D case
 			KPlot* ptmpLo = new KPlot("NVtxLo",localOpt,NULL);
 			ptmpLo->CreateHist();
 			h_nvtxLo = ptmpLo->GetHisto();
@@ -916,6 +929,10 @@ class KPileupAccSelector : public KSelector {
 			
 			//exclude outside-signal-region events from "after"
 			if(passed_RA2Bin){
+				if(h_nvtxLo2D){
+					if(looper->NVtx<cut) h_nvtxLo2D->Fill(looper->NVtx,RA2Bin->RA2binBranch);
+					else h_nvtxHi2D->Fill(looper->NVtx,RA2Bin->RA2binBranch);
+				}
 				if(looper->NVtx<cut) h_nvtxLo->Fill(looper->NVtx);
 				else h_nvtxHi->Fill(looper->NVtx);
 			}
@@ -923,19 +940,11 @@ class KPileupAccSelector : public KSelector {
 			return true;
 		}
 		
-		virtual void Finalize(TFile* file){
-			//"before" doesn't finalize
-			if(depname.size()==0) return;
-			//but "after" does
-			
-			//get pre-selection histos
-			TH1 *h_nvtxLoBefore = PileupAccBefore->h_nvtxLo;
-			TH1 *h_nvtxHiBefore = PileupAccBefore->h_nvtxHi;
-			
+		TF1* FitAcc(TH1* h_nvtxLo_, TH1* h_nvtxHi_, TH1* h_nvtxLoBefore, TH1* h_nvtxHiBefore, TFile* file){
 			//get pass and fail
-			double pL = h_nvtxLo->GetEntries();
+			double pL = h_nvtxLo_->GetEntries();
 			double fL = h_nvtxLoBefore->GetEntries() - pL;
-			double pH = h_nvtxHi->GetEntries();
+			double pH = h_nvtxHi_->GetEntries();
 			double fH = h_nvtxHiBefore->GetEntries() - pH;
 			if(debug) cout << "pL = " << pL << ", fL = " << fL << ", pH = " << pH << ", fH = " << fH << endl;
 			
@@ -960,6 +969,8 @@ class KPileupAccSelector : public KSelector {
 			pair<double,double> yeH = sigma_effAB(pH,fH,pL,fL);
 			yed[1] = yeH.first;
 			yeu[1] = yeH.second;
+			
+			if(y[0]==0.0 or y[1]==0.0 or std::isnan(y[0]) or std::isnan(y[1]) or std::isinf(y[0]) or std::isinf(y[1])) return NULL;
 			
 			//make graph and fit function
 			TGraphAsymmErrors *g_acc = new TGraphAsymmErrors(2,x,y,xed,xeu,yed,yeu);
@@ -989,17 +1000,65 @@ class KPileupAccSelector : public KSelector {
 			fptr->GetConfidenceIntervals(g_conf->GetN(), 1, 1, g_conf->GetX(), g_conf->GetEY(), 0.68, false);
 			
 			//write to file (only g_conf strictly necessary, others kept for crosschecks)
-			file->cd();
-			g_acc->Write();
-			g_fit->Write();
-			g_conf->Write();
+			if(file){
+				file->cd();
+				g_acc->Write();
+				g_fit->Write();
+				g_conf->Write();
+			}
+			
+			return g_fit;
+		}
+		
+		virtual void Finalize(TFile* file){
+			//"before" doesn't finalize
+			if(depname.size()==0) return;
+			//but "after" does
+			
+			//get pre-selection histos
+			TH1 *h_nvtxLoBefore = PileupAccBefore->h_nvtxLo;
+			TH1 *h_nvtxHiBefore = PileupAccBefore->h_nvtxHi;
+			
+			//2D case - get slopes and intercepts per signal bin
+			TH1* h_slope = NULL;
+			TH1* h_intercept = NULL;
+			if(h_nvtxLo2D){
+				int nbins = 0;
+				double bmin = 0, bmax = 0;
+				localOpt->Get("ynum",nbins); localOpt->Get("ymin",bmin); localOpt->Get("ymax",bmax);
+				h_slope = new TH1F("pu_slope","",nbins,bmin,bmax);
+				h_intercept = (TH1F*)h_slope->Clone("pu_intercept");
+				for(int b = 1; b <= h_nvtxLo2D->GetNbinsY(); ++b){
+					TH1* h_nvtxLo_ = h_nvtxLo2D->ProjectionX("lo",b,b);
+					TH1* h_nvtxHi_ = h_nvtxHi2D->ProjectionX("hi",b,b);
+					TF1* ftmp = FitAcc(h_nvtxLo_,h_nvtxHi_,h_nvtxLoBefore,h_nvtxHiBefore,NULL);
+					if(!ftmp) continue;
+					h_intercept->SetBinContent(b,ftmp->GetParameter(0));
+					h_intercept->SetBinError(b,ftmp->GetParError(0));
+					h_slope->SetBinContent(b,ftmp->GetParameter(1));
+					h_slope->SetBinError(b,ftmp->GetParError(1));
+				}
+				//write to file
+				file->cd();
+				h_intercept->Write();
+				h_slope->Write();
+			}
+			
+			//1D case (always)
+			FitAcc(h_nvtxLo,h_nvtxHi,h_nvtxLoBefore,h_nvtxHiBefore,file);
 		}
 		
 		//dumb error propagation functions
 		double effAB(double pA, double fA, double pB, double fB){
 			double numer = pA*(pA+fA+pB+fB);
 			double denom = (pA+fA)*(pA+pB);
-			return numer/denom;
+			double result = numer/denom;
+			if(debug){
+				cout << scientific;
+				cout << "eff = " << result << endl;
+				cout << fixed;
+			}
+			return result;
 		}
 		double DeffDpA(double pA, double fA, double pB, double fB){
 			double numer = fA*pB*(fA+2*pA+pB)+fB*(fA*pB-pow(pA,2));
@@ -1054,6 +1113,7 @@ class KPileupAccSelector : public KSelector {
 		//member variables
 		bool debug;
 		TH1 *h_nvtxLo, *h_nvtxHi;
+		TH2 *h_nvtxLo2D, *h_nvtxHi2D;
 		int cut;
 		string depname;
 		KPileupAccSelector* PileupAccBefore;

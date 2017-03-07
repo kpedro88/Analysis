@@ -25,7 +25,7 @@ veto
 	IsoPionTrackVeto
 ra2bin
 	RA2Bin	in:options[input/input_RA2bin_options.txt]	b:forceadd[1]
-	PileupAcc	s:name[PileupAccAfter]	i:cut[20]	i:xnum[101]	d:xmin[-0.5]	d:xmax[100.5]	s:depname[PileupAccBefore]
+	PileupAcc	s:name[PileupAccAfter]	i:cut[20]	i:xnum[101]	d:xmin[-0.5]	d:xmax[100.5]	i:ynum[174]	d:ymin[0.5]	d:ymax[174.5]	s:depname[PileupAccBefore]
 evtclean
 	EventCleaning	b:forceadd[1]	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]	b:HTRatio[1]
 evtcleannomu

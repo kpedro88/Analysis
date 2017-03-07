@@ -3,12 +3,11 @@
 source exportProd.sh
 
 JOBDIR=jobs
-INPUT=input/input_selection_supplementary.txt
-#SELTYPE=signal,signalMinusNJet,signalMinusHT,signalMinusMHT,signalHighPU,signalLowPU,signalAllPU
-SELTYPE=signal,signalMinusNJet,signalMinusHT,signalMinusMHT
+INPUT=input/input_selection.txt
+SELTYPE=signal
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}/scan
 OUTDIR=tree
-STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/${RUN2PRODV}/scan/supplementary
+STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/${RUN2PRODV}/scan/putest/
 CHECKARGS=""
 
 #check arguments
