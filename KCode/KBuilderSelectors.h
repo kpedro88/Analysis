@@ -857,6 +857,30 @@ class KBTagSFSelector : public KSelector {
 };
 REGISTER_SELECTOR(BTagSF);
 
+//----------------------------------------------------
+//vetoes events with gen leptons
+class KGenLeptonVetoSelector : public KSelector {
+	public:
+		//constructor
+		KGenLeptonVetoSelector() : KSelector() { }
+		KGenLeptonVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("GenElectrons",1);
+			looper->fChain->SetBranchStatus("GenMuons",1);
+			looper->fChain->SetBranchStatus("GenTaus",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return looper->GenElectrons->size()==0 && looper->GenMuons->size()==0 && looper->GenTaus->size()==0;
+		}
+		
+		//member variables
+};
+REGISTER_SELECTOR(GenLeptonVeto);
+
 //---------------------------------------------------------------
 //little class to store value & weight pairs for filling histos
 class KValue {
