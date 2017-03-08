@@ -78,7 +78,7 @@ class KCutflow {
 			//initialize histos
 			vector<string> names = {"cutflow","cutflowAbs","cutflowRel"};
 			if(name.size()>0){
-				for(auto& name_ : names) name += "_"+name;
+				for(auto& name_ : names) name_ += "_"+name;
 			}
 			h_raw->SetName((names[0]).c_str());
 			h_abs = new TH1F((names[1]).c_str(),"",h_raw->GetNbinsX(),0,h_raw->GetNbinsX());
