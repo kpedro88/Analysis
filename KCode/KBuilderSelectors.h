@@ -1045,6 +1045,9 @@ class KHistoSelector : public KSelector {
 					else if(vname=="mht"){//missing hadronic energy
 						values[i].Fill(looper->MHT,w);
 					}
+					else if(vname=="genmht"){//missing hadronic energy
+						values[i].Fill(looper->GenMHT,w);
+					}
 					else if(vname=="met"){//missing energy
 						values[i].Fill(looper->MET,w);
 					}
