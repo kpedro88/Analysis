@@ -72,7 +72,7 @@ for signal in options.signals:
     outDict["header3"] += " & " + "\\multicolumn{2}{r}{$m_{\\PSGczDo}="+mLSP+"\\GeV$}"
     
     # process cutflow lines
-    cmd = "root -b -l -q 'KCutflowDriver.C+(\""+options.dir+"tree_"+signal+".root\",1)'"
+    cmd = "root -b -l -q 'KCutflowDriver.C+(\""+options.dir+"tree_"+signal+".root\",1,1)'"
     cutflow = filter(None,os.popen(cmd).read().split('\n'))
     started = False
     for line in cutflow:
