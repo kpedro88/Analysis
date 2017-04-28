@@ -14,8 +14,9 @@ input/input_global.txt
 OPTION
 double:luminorm[35862.351]
 string:luminormunit[fbinv]
-string:lumi_text[#scale[0.7]{arXiv:1704.07781}   35.9 fb^{-1} (13 TeV)]
-string:prelim_text[Supplementary]
+#string:lumi_text[(13 TeV)]
+string:prelim_text[Simulation Supplementary]
+vstring:extra_text[arXiv:1704.07781]
 int:npanel[1]
 vstring:disable_branches[*]
 vstring:enable_branches[NJets,BTags,HT,MHT]
