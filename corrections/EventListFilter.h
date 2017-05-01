@@ -1,20 +1,30 @@
 #ifndef EVENTLISTFILTER_H
 #define EVENTLISTFILTER_H
 
-#include <set>
+#include <unordered_set>
 #include <utility>
 #include <string>
 #include <vector>
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <tuple>
 
 using namespace std;
 
 class EventListFilter {
 	public:
 		//internal representation of an event
-		typedef pair<pair<unsigned,unsigned>,unsigned long long> Triple;
+		//from: http://stackoverflow.com/questions/20834838/using-tuple-in-unordered-map
+		typedef std::tuple<unsigned, unsigned, unsigned long long> Triple;
+		struct triple_hash : public std::unary_function<Triple, std::size_t>
+		{
+			std::size_t operator()(const Triple& k) const
+			{
+				return std::get<0>(k) ^ std::get<1>(k) ^ std::get<2>(k);
+			}
+		};
+		typedef std::unordered_set<Triple,triple_hash> TripleSet;
 		
 		//constructor
 		EventListFilter() : initialized(false) {}
@@ -42,7 +52,7 @@ class EventListFilter {
 							s2 >> evt_tmp;
 							
 							//insert into set
-							eventList.insert(make_triple(run_tmp,ls_tmp,evt_tmp));
+							eventList.emplace(run_tmp,ls_tmp,evt_tmp);
 						}
 					}
 					initialized = true;
@@ -57,7 +67,7 @@ class EventListFilter {
 		//filter
 		bool CheckEvent(unsigned run, unsigned ls, unsigned long long evt){
 			if(!initialized) return true;
-			set<Triple>::iterator itr = eventList.find(make_triple(run,ls,evt));
+			auto itr = eventList.find(std::make_tuple(run,ls,evt));
 			return (itr==eventList.end());
 		}
 		
@@ -65,10 +75,6 @@ class EventListFilter {
 		bool Initialized() const { return initialized; }
 		
 	private:
-		//helpers
-		Triple make_triple(unsigned a, unsigned b, unsigned long long c){
-			return make_pair(make_pair(a,b),c);
-		}
 		//generalization for processing a line
 		void process(string line, char delim, vector<string>& fields){
 			stringstream ss(line);
@@ -80,7 +86,7 @@ class EventListFilter {
 	
 		//member variables
 		bool initialized;
-		set<Triple> eventList;
+		TripleSet eventList;
 };
 
 /*USAGE:
