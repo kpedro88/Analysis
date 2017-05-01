@@ -9,10 +9,12 @@
 //ROOT headers
 #include <TLorentzVector.h>
 #include <TMath.h>
+#include <TTree.h>
 
 //STL headers
 #include <string>
 #include <vector>
+#include <map>
 
 using namespace std;
 
@@ -26,8 +28,7 @@ class KJetVariator : public KVariator {
 		enum vartypes { NoVar=0, JECup=1, JECdown=2, JERup=3, JERdown=4, clean=5 };
 		//constructor
 		KJetVariator() : KVariator() { }
-		KJetVariator(string name_, OptionMap* localOpt_) : KVariator(name_,localOpt_), vtype(NoVar),
-			b_Jets(true),b_Jets_HTMask(true),b_Jets_MHTMask(true),b_Jets_ISRMask(true),b_Jets_LeptonMask(true),b_Jets_ID(true),b_Jets_partonFlavor(true),b_Jets_hadronFlavor(true),b_Jets_bDiscriminatorCSV(true),b_Jets_bDiscriminatorMVA(true),b_Jets_muonEnergyFraction(true),b_Jets_chargedHadronEnergyFraction(true),b_JetsAK8(false),b_JetsAK8_doubleBDiscriminator(false),b_JetsAK8_ID(false),b_JetsAK8_NsubjettinessTau1(false),b_JetsAK8_NsubjettinessTau2(false),b_JetsAK8_NsubjettinessTau3(false),b_JetsAK8_NumBhadrons(false),b_JetsAK8_NumChadrons(false),b_JetsAK8_prunedMass(false),b_Jets_MHTOrigMask(false)
+		KJetVariator(string name_, OptionMap* localOpt_) : KVariator(name_,localOpt_), vtype(NoVar)
 		{
 			//check options
 			string vname = "";
@@ -38,358 +39,81 @@ class KJetVariator : public KVariator {
 			else if(vname=="JERdown") vtype = JERdown;
 			else if(vname=="clean") vtype = clean;
 		}
-		//helper functions
-		virtual void EnableBranches(vector<string>& branches){
-			for(unsigned i = 0; i < branches.size(); ++i){
-				looper->fChain->SetBranchStatus(branches[i].c_str(),1);
-			}
-		}
-		virtual void ExistBranches(vector<string>& branches,vector<bool*>& flaglist){
-			for(unsigned i = 0; i < branches.size(); ++i){
-				if(!looper->fChain->GetBranchStatus(branches[i].c_str()) || !looper->fChain->GetBranch(branches[i].c_str())) *(flaglist.at(i)) = false;
-			}
-		}
 		virtual void CheckBranches(){
-			vector<bool*> flaglist = {&b_Jets,&b_Jets_HTMask,&b_Jets_MHTMask,&b_Jets_ISRMask,&b_Jets_LeptonMask,&b_Jets_ID,&b_Jets_partonFlavor,&b_Jets_hadronFlavor,&b_Jets_bDiscriminatorCSV,&b_Jets_bDiscriminatorMVA,&b_Jets_muonEnergyFraction,&b_Jets_chargedHadronEnergyFraction,&b_JetsAK8,&b_JetsAK8_doubleBDiscriminator,&b_JetsAK8_ID,&b_JetsAK8_NsubjettinessTau1,&b_JetsAK8_NsubjettinessTau2,&b_JetsAK8_NsubjettinessTau3,&b_JetsAK8_NumBhadrons,&b_JetsAK8_NumChadrons,&b_JetsAK8_prunedMass,&b_Jets_MHTOrigMask};
+			//set up linked branches for all variations
+			branches = {
+				//AK4 jets
+				new KLinkedBranchVL(KBranchVL(looper->Jets,"Jets"),vtype==JECup?KBranchVL(looper->JetsJECup,"JetsJECup"):vtype==JECdown?KBranchVL(looper->JetsJECdown,"JetsJECdown"):vtype==JERup?KBranchVL(looper->JetsJERup,"JetsJERup"):vtype==JERdown?KBranchVL(looper->JetsJERdown,"JetsJERdown"):vtype==clean?KBranchVL(looper->Jetsclean,"Jetsclean"):KBranchVL(NULL,"")),
+				new KLinkedBranchVB(KBranchVB(looper->Jets_HTMask,"Jets_HTMask"),vtype==JECup?KBranchVB(looper->JetsJECup_HTMask,"JetsJECup_HTMask"):vtype==JECdown?KBranchVB(looper->JetsJECdown_HTMask,"JetsJECdown_HTMask"):vtype==JERup?KBranchVB(looper->JetsJERup_HTMask,"JetsJERup_HTMask"):vtype==JERdown?KBranchVB(looper->JetsJERdown_HTMask,"JetsJERdown_HTMask"):vtype==clean?KBranchVB(looper->Jetsclean_HTMask,"Jetsclean_HTMask"):KBranchVB(NULL,"")),
+				new KLinkedBranchVB(KBranchVB(looper->Jets_MHTMask,"Jets_MHTMask"),vtype==JECup?KBranchVB(looper->JetsJECup_MHTMask,"JetsJECup_MHTMask"):vtype==JECdown?KBranchVB(looper->JetsJECdown_MHTMask,"JetsJECdown_MHTMask"):vtype==JERup?KBranchVB(looper->JetsJERup_MHTMask,"JetsJERup_MHTMask"):vtype==JERdown?KBranchVB(looper->JetsJERdown_MHTMask,"JetsJERdown_MHTMask"):vtype==clean?KBranchVB(looper->Jetsclean_MHTMask,"Jetsclean_MHTMask"):KBranchVB(NULL,"")),
+				new KLinkedBranchVB(KBranchVB(looper->Jets_ISRMask,"Jets_ISRMask"),vtype==JECup?KBranchVB(looper->JetsJECup_ISRMask,"JetsJECup_ISRMask"):vtype==JECdown?KBranchVB(looper->JetsJECdown_ISRMask,"JetsJECdown_ISRMask"):vtype==JERup?KBranchVB(looper->JetsJERup_ISRMask,"JetsJERup_ISRMask"):vtype==JERdown?KBranchVB(looper->JetsJERdown_ISRMask,"JetsJERdown_ISRMask"):vtype==clean?KBranchVB(looper->Jetsclean_ISRMask,"Jetsclean_ISRMask"):KBranchVB(NULL,"")),
+				new KLinkedBranchVB(KBranchVB(looper->Jets_LeptonMask,"Jets_LeptonMask"),vtype==JECup?KBranchVB(looper->JetsJECup_LeptonMask,"JetsJECup_LeptonMask"):vtype==JECdown?KBranchVB(looper->JetsJECdown_LeptonMask,"JetsJECdown_LeptonMask"):vtype==JERup?KBranchVB(looper->JetsJERup_LeptonMask,"JetsJERup_LeptonMask"):vtype==JERdown?KBranchVB(looper->JetsJERdown_LeptonMask,"JetsJERdown_LeptonMask"):KBranchVB(NULL,"")),
+				new KLinkedBranchVB(KBranchVB(looper->Jets_ID,"Jets_ID"),vtype==JECup?KBranchVB(looper->JetsJECup_ID,"JetsJECup_ID"):vtype==JECdown?KBranchVB(looper->JetsJECdown_ID,"JetsJECdown_ID"):vtype==JERup?KBranchVB(looper->JetsJERup_ID,"JetsJERup_ID"):vtype==JERdown?KBranchVB(looper->JetsJERdown_ID,"JetsJERdown_ID"):vtype==clean?KBranchVB(looper->Jetsclean_ID,"Jetsclean_ID"):KBranchVB(NULL,"")),
+				new KLinkedBranchVI(KBranchVI(looper->Jets_partonFlavor,"Jets_partonFlavor"),vtype==JECup?KBranchVI(looper->JetsJECup_partonFlavor,"JetsJECup_partonFlavor"):vtype==JECdown?KBranchVI(looper->JetsJECdown_partonFlavor,"JetsJECdown_partonFlavor"):vtype==JERup?KBranchVI(looper->JetsJERup_partonFlavor,"JetsJERup_partonFlavor"):vtype==JERdown?KBranchVI(looper->JetsJERdown_partonFlavor,"JetsJERdown_partonFlavor"):vtype==clean?KBranchVI(looper->Jetsclean_partonFlavor,"Jetsclean_partonFlavor"):KBranchVI(NULL,"")),
+				new KLinkedBranchVI(KBranchVI(looper->Jets_hadronFlavor,"Jets_hadronFlavor"),vtype==JECup?KBranchVI(looper->JetsJECup_hadronFlavor,"JetsJECup_hadronFlavor"):vtype==JECdown?KBranchVI(looper->JetsJECdown_hadronFlavor,"JetsJECdown_hadronFlavor"):vtype==JERup?KBranchVI(looper->JetsJERup_hadronFlavor,"JetsJERup_hadronFlavor"):vtype==JERdown?KBranchVI(looper->JetsJERdown_hadronFlavor,"JetsJERdown_hadronFlavor"):vtype==clean?KBranchVI(looper->Jetsclean_hadronFlavor,"Jetsclean_hadronFlavor"):KBranchVI(NULL,"")),
+				new KLinkedBranchVD(KBranchVD(looper->Jets_bDiscriminatorCSV,"Jets_bDiscriminatorCSV"),vtype==JECup?KBranchVD(looper->JetsJECup_bDiscriminatorCSV,"JetsJECup_bDiscriminatorCSV"):vtype==JECdown?KBranchVD(looper->JetsJECdown_bDiscriminatorCSV,"JetsJECdown_bDiscriminatorCSV"):vtype==JERup?KBranchVD(looper->JetsJERup_bDiscriminatorCSV,"JetsJERup_bDiscriminatorCSV"):vtype==JERdown?KBranchVD(looper->JetsJERdown_bDiscriminatorCSV,"JetsJERdown_bDiscriminatorCSV"):vtype==clean?KBranchVD(looper->Jetsclean_bDiscriminatorCSV,"Jetsclean_bDiscriminatorCSV"):KBranchVD(NULL,"")),
+				new KLinkedBranchVD(KBranchVD(looper->Jets_bDiscriminatorMVA,"Jets_bDiscriminatorMVA"),vtype==JECup?KBranchVD(looper->JetsJECup_bDiscriminatorMVA,"JetsJECup_bDiscriminatorMVA"):vtype==JECdown?KBranchVD(looper->JetsJECdown_bDiscriminatorMVA,"JetsJECdown_bDiscriminatorMVA"):vtype==JERup?KBranchVD(looper->JetsJERup_bDiscriminatorMVA,"JetsJERup_bDiscriminatorMVA"):vtype==JERdown?KBranchVD(looper->JetsJERdown_bDiscriminatorMVA,"JetsJERdown_bDiscriminatorMVA"):vtype==clean?KBranchVD(looper->Jetsclean_bDiscriminatorMVA,"Jetsclean_bDiscriminatorMVA"):KBranchVD(NULL,"")),
+				new KLinkedBranchVD(KBranchVD(looper->Jets_muonEnergyFraction,"Jets_muonEnergyFraction"),vtype==JECup?KBranchVD(looper->JetsJECup_muonEnergyFraction,"JetsJECup_muonEnergyFraction"):vtype==JECdown?KBranchVD(looper->JetsJECdown_muonEnergyFraction,"JetsJECdown_muonEnergyFraction"):vtype==JERup?KBranchVD(looper->JetsJERup_muonEnergyFraction,"JetsJERup_muonEnergyFraction"):vtype==JERdown?KBranchVD(looper->JetsJERdown_muonEnergyFraction,"JetsJERdown_muonEnergyFraction"):vtype==clean?KBranchVD(looper->Jetsclean_muonEnergyFraction,"Jetsclean_muonEnergyFraction"):KBranchVD(NULL,"")),
+				new KLinkedBranchVD(KBranchVD(looper->Jets_chargedHadronEnergyFraction,"Jets_chargedHadronEnergyFraction"),vtype==JECup?KBranchVD(looper->JetsJECup_chargedHadronEnergyFraction,"JetsJECup_chargedHadronEnergyFraction"):vtype==JECdown?KBranchVD(looper->JetsJECdown_chargedHadronEnergyFraction,"JetsJECdown_chargedHadronEnergyFraction"):vtype==JERup?KBranchVD(looper->JetsJERup_chargedHadronEnergyFraction,"JetsJERup_chargedHadronEnergyFraction"):vtype==JERdown?KBranchVD(looper->JetsJERdown_chargedHadronEnergyFraction,"JetsJERdown_chargedHadronEnergyFraction"):vtype==clean?KBranchVD(looper->Jetsclean_chargedHadronEnergyFraction,"Jetsclean_chargedHadronEnergyFraction"):KBranchVD(NULL,"")),
+				new KLinkedBranchB(KBranchB(&looper->JetID,"JetID"),vtype==JECup?KBranchB(&looper->JetIDJECup,"JetIDJECup"):vtype==JECdown?KBranchB(&looper->JetIDJECdown,"JetIDJECdown"):vtype==JERup?KBranchB(&looper->JetIDJERup,"JetIDJERup"):vtype==JERdown?KBranchB(&looper->JetIDJERdown,"JetIDJERdown"):vtype==clean?KBranchB(&looper->JetIDclean,"JetIDclean"):KBranchB(NULL,"")),
+				new KLinkedBranchI(KBranchI(&looper->NJets,"NJets"),vtype==JECup?KBranchI(&looper->NJetsJECup,"NJetsJECup"):vtype==JECdown?KBranchI(&looper->NJetsJECdown,"NJetsJECdown"):vtype==JERup?KBranchI(&looper->NJetsJERup,"NJetsJERup"):vtype==JERdown?KBranchI(&looper->NJetsJERdown,"NJetsJERdown"):vtype==clean?KBranchI(&looper->NJetsclean,"NJetsclean"):KBranchI(NULL,"")),
+				new KLinkedBranchI(KBranchI(&looper->NJetsISR,"NJetsISR"),vtype==JECup?KBranchI(&looper->NJetsISRJECup,"NJetsISRJECup"):vtype==JECdown?KBranchI(&looper->NJetsISRJECdown,"NJetsISRJECdown"):vtype==JERup?KBranchI(&looper->NJetsISRJERup,"NJetsISRJERup"):vtype==JERdown?KBranchI(&looper->NJetsISRJERdown,"NJetsISRJERdown"):vtype==clean?KBranchI(&looper->NJetsISRclean,"NJetsISRclean"):KBranchI(NULL,"")),
+				new KLinkedBranchI(KBranchI(&looper->BTags,"BTags"),vtype==JECup?KBranchI(&looper->BTagsJECup,"BTagsJECup"):vtype==JECdown?KBranchI(&looper->BTagsJECdown,"BTagsJECdown"):vtype==JERup?KBranchI(&looper->BTagsJERup,"BTagsJERup"):vtype==JERdown?KBranchI(&looper->BTagsJERdown,"BTagsJERdown"):vtype==clean?KBranchI(&looper->BTagsclean,"BTagsclean"):KBranchI(NULL,"")),
+				new KLinkedBranchI(KBranchI(&looper->BTagsMVA,"BTagsMVA"),vtype==JECup?KBranchI(&looper->BTagsMVAJECup,"BTagsMVAJECup"):vtype==JECdown?KBranchI(&looper->BTagsMVAJECdown,"BTagsMVAJECdown"):vtype==JERup?KBranchI(&looper->BTagsMVAJERup,"BTagsMVAJERup"):vtype==JERdown?KBranchI(&looper->BTagsMVAJERdown,"BTagsMVAJERdown"):vtype==clean?KBranchI(&looper->BTagsMVAclean,"BTagsMVAclean"):KBranchI(NULL,"")),
+				new KLinkedBranchD(KBranchD(&looper->HT,"HT"),vtype==JECup?KBranchD(&looper->HTJECup,"HTJECup"):vtype==JECdown?KBranchD(&looper->HTJECdown,"HTJECdown"):vtype==JERup?KBranchD(&looper->HTJERup,"HTJERup"):vtype==JERdown?KBranchD(&looper->HTJERdown,"HTJERdown"):vtype==clean?KBranchD(&looper->HTclean,"HTclean"):KBranchD(NULL,"")),
+				new KLinkedBranchD(KBranchD(&looper->MHT,"MHT"),vtype==JECup?KBranchD(&looper->MHTJECup,"MHTJECup"):vtype==JECdown?KBranchD(&looper->MHTJECdown,"MHTJECdown"):vtype==JERup?KBranchD(&looper->MHTJERup,"MHTJERup"):vtype==JERdown?KBranchD(&looper->MHTJERdown,"MHTJERdown"):vtype==clean?KBranchD(&looper->MHTclean,"MHTclean"):KBranchD(NULL,"")),
+				new KLinkedBranchD(KBranchD(&looper->MHTPhi,"MHTPhi"),vtype==JECup?KBranchD(&looper->MHTPhiJECup,"MHTPhiJECup"):vtype==JECdown?KBranchD(&looper->MHTPhiJECdown,"MHTPhiJECdown"):vtype==JERup?KBranchD(&looper->MHTPhiJERup,"MHTPhiJERup"):vtype==JERdown?KBranchD(&looper->MHTPhiJERdown,"MHTPhiJERdown"):vtype==clean?KBranchD(&looper->MHTPhiclean,"MHTPhiclean"):KBranchD(NULL,"")),
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhi1,"DeltaPhi1"),vtype==JECup?KBranchD(&looper->DeltaPhi1JECup,"DeltaPhi1JECup"):vtype==JECdown?KBranchD(&looper->DeltaPhi1JECdown,"DeltaPhi1JECdown"):vtype==JERup?KBranchD(&looper->DeltaPhi1JERup,"DeltaPhi1JERup"):vtype==JERdown?KBranchD(&looper->DeltaPhi1JERdown,"DeltaPhi1JERdown"):vtype==clean?KBranchD(&looper->DeltaPhi1clean,"DeltaPhi1clean"):KBranchD(NULL,"")),
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhi2,"DeltaPhi2"),vtype==JECup?KBranchD(&looper->DeltaPhi2JECup,"DeltaPhi2JECup"):vtype==JECdown?KBranchD(&looper->DeltaPhi2JECdown,"DeltaPhi2JECdown"):vtype==JERup?KBranchD(&looper->DeltaPhi2JERup,"DeltaPhi2JERup"):vtype==JERdown?KBranchD(&looper->DeltaPhi2JERdown,"DeltaPhi2JERdown"):vtype==clean?KBranchD(&looper->DeltaPhi2clean,"DeltaPhi2clean"):KBranchD(NULL,"")),
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhi3,"DeltaPhi3"),vtype==JECup?KBranchD(&looper->DeltaPhi3JECup,"DeltaPhi3JECup"):vtype==JECdown?KBranchD(&looper->DeltaPhi3JECdown,"DeltaPhi3JECdown"):vtype==JERup?KBranchD(&looper->DeltaPhi3JERup,"DeltaPhi3JERup"):vtype==JERdown?KBranchD(&looper->DeltaPhi3JERdown,"DeltaPhi3JERdown"):vtype==clean?KBranchD(&looper->DeltaPhi3clean,"DeltaPhi3clean"):KBranchD(NULL,"")),
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhi4,"DeltaPhi4"),vtype==JECup?KBranchD(&looper->DeltaPhi4JECup,"DeltaPhi4JECup"):vtype==JECdown?KBranchD(&looper->DeltaPhi4JECdown,"DeltaPhi4JECdown"):vtype==JERup?KBranchD(&looper->DeltaPhi4JERup,"DeltaPhi4JERup"):vtype==JERdown?KBranchD(&looper->DeltaPhi4JERdown,"DeltaPhi4JERdown"):vtype==clean?KBranchD(&looper->DeltaPhi4clean,"DeltaPhi4clean"):KBranchD(NULL,"")),
+				//AK8 jets
+				new KLinkedBranchVL(KBranchVL(looper->JetsAK8,"JetsAK8"),vtype==clean?KBranchVL(looper->JetsAK8Clean,"JetsAK8Clean"):KBranchVL(NULL,"")),
+				new KLinkedBranchVB(KBranchVB(looper->JetsAK8_ID,"JetsAK8_ID"),vtype==clean?KBranchVB(looper->JetsAK8Clean_ID,"JetsAK8Clean_ID"):KBranchVB(NULL,"")),
+				new KLinkedBranchVI(KBranchVI(looper->JetsAK8_NumBhadrons,"JetsAK8_NumBhadrons"),vtype==clean?KBranchVI(looper->JetsAK8Clean_NumBhadrons,"JetsAK8Clean_NumBhadrons"):KBranchVI(NULL,"")),
+				new KLinkedBranchVI(KBranchVI(looper->JetsAK8_NumChadrons,"JetsAK8_NumChadrons"),vtype==clean?KBranchVI(looper->JetsAK8Clean_NumChadrons,"JetsAK8Clean_NumChadrons"):KBranchVI(NULL,"")),
+				new KLinkedBranchVD(KBranchVD(looper->JetsAK8_doubleBDiscriminator,"JetsAK8_doubleBDiscriminator"),vtype==clean?KBranchVD(looper->JetsAK8Clean_doubleBDiscriminator,"JetsAK8Clean_doubleBDiscriminator"):KBranchVD(NULL,"")),
+				new KLinkedBranchVD(KBranchVD(looper->JetsAK8_NsubjettinessTau1,"JetsAK8_NsubjettinessTau1"),vtype==clean?KBranchVD(looper->JetsAK8Clean_NsubjettinessTau1,"JetsAK8Clean_NsubjettinessTau1"):KBranchVD(NULL,"")),
+				new KLinkedBranchVD(KBranchVD(looper->JetsAK8_NsubjettinessTau2,"JetsAK8_NsubjettinessTau2"),vtype==clean?KBranchVD(looper->JetsAK8Clean_NsubjettinessTau2,"JetsAK8Clean_NsubjettinessTau2"):KBranchVD(NULL,"")),
+				new KLinkedBranchVD(KBranchVD(looper->JetsAK8_NsubjettinessTau3,"JetsAK8_NsubjettinessTau3"),vtype==clean?KBranchVD(looper->JetsAK8Clean_NsubjettinessTau3,"JetsAK8Clean_NsubjettinessTau3"):KBranchVD(NULL,"")),
+				new KLinkedBranchVD(KBranchVD(looper->JetsAK8_prunedMass,"JetsAK8_prunedMass"),vtype==clean?KBranchVD(looper->JetsAK8Clean_prunedMass,"JetsAK8Clean_prunedMass"):KBranchVD(NULL,"")),
+				//some only for clean var
+				new KLinkedBranchI(KBranchI(&looper->isoElectronTracks,"isoElectronTracks"),vtype==clean?KBranchI(&looper->isoElectronTracksclean,"isoElectronTracksclean"):KBranchI(NULL,"")),
+				new KLinkedBranchI(KBranchI(&looper->isoMuonTracks,"isoMuonTracks"),vtype==clean?KBranchI(&looper->isoMuonTracksclean,"isoMuonTracksclean"):KBranchI(NULL,"")),
+				new KLinkedBranchI(KBranchI(&looper->isoPionTracks,"isoPionTracks"),vtype==clean?KBranchI(&looper->isoPionTracksclean,"isoPionTracksclean"):KBranchI(NULL,"")),
+				new KLinkedBranchD(KBranchD(&looper->MET,"MET"),vtype==clean?KBranchD(&looper->METclean,"METclean"):KBranchD(NULL,"")),
+				new KLinkedBranchD(KBranchD(&looper->METPhi,"METPhi"),vtype==clean?KBranchD(&looper->METPhiclean,"METPhiclean"):KBranchD(NULL,"")),
+				new KLinkedBranchVB(KBranchVB(looper->Jets_MHTOrigMask,"Jets_MHTOrigMask"),vtype==clean?KBranchVB(looper->Jetsclean_MHTOrigMask,"Jetsclean_MHTOrigMask"):KBranchVB(NULL,"")),
+				new KLinkedBranchD(KBranchD(&looper->MHTOrig,"MHTOrig"),vtype==clean?KBranchD(&looper->MHTOrigclean,"MHTOrigclean"):KBranchD(NULL,"")),
+				new KLinkedBranchD(KBranchD(&looper->MHTPhiOrig,"MHTPhiOrig"),vtype==clean?KBranchD(&looper->MHTPhiOrigclean,"MHTPhiOrigclean"):KBranchD(NULL,"")),
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhi1Orig,"DeltaPhi1Orig"),vtype==clean?KBranchD(&looper->DeltaPhi1Origclean,"DeltaPhi1Origclean"):KBranchD(NULL,"")),
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhi2Orig,"DeltaPhi2Orig"),vtype==clean?KBranchD(&looper->DeltaPhi2Origclean,"DeltaPhi2Origclean"):KBranchD(NULL,"")),
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhi3Orig,"DeltaPhi3Orig"),vtype==clean?KBranchD(&looper->DeltaPhi3Origclean,"DeltaPhi3Origclean"):KBranchD(NULL,"")),
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhi4Orig,"DeltaPhi4Orig"),vtype==clean?KBranchD(&looper->DeltaPhi4Origclean,"DeltaPhi4Origclean"):KBranchD(NULL,"")),
+			};
 			
-			if(vtype==JECup){
-				vector<string> pbranchlist = {"JetsJECup","JetsJECup_HTMask","JetsJECup_MHTMask","JetsJECup_ISRMask","JetsJECup_LeptonMask","JetsJECup_ID","JetsJECup_partonFlavor","JetsJECup_hadronFlavor","JetsJECup_bDiscriminatorCSV","JetsJECup_bDiscriminatorMVA","JetsJECup_muonEnergyFraction","JetsJECup_chargedHadronEnergyFraction"};
-				EnableBranches(pbranchlist);
-				ExistBranches(pbranchlist,flaglist);
-				vector<string> branchlist = {"JetIDJECup","NJetsJECup","NJetsISRJECup","BTagsJECup","BTagsMVAJECup","HTJECup","MHTJECup","MHTPhiJECup","DeltaPhi1JECup","DeltaPhi2JECup","DeltaPhi3JECup","DeltaPhi4JECup"};
-				EnableBranches(branchlist);
+			for(auto& branch : branches){
+				branch->Check(looper->fChain);
 			}
-			else if(vtype==JECdown){
-				vector<string> pbranchlist = {"JetsJECdown","JetsJECdown_HTMask","JetsJECdown_MHTMask","JetsJECdown_ISRMask","JetsJECdown_LeptonMask","JetsJECdown_ID","JetsJECdown_partonFlavor","JetsJECdown_hadronFlavor","JetsJECdown_bDiscriminatorCSV","JetsJECdown_bDiscriminatorMVA","JetsJECdown_muonEnergyFraction","JetsJECdown_chargedHadronEnergyFraction"};
-				EnableBranches(pbranchlist);
-				ExistBranches(pbranchlist,flaglist);
-				vector<string> branchlist = {"JetIDJECdown","NJetsJECdown","NJetsISRJECdown","BTagsJECdown","BTagsMVAJECdown","HTJECdown","MHTJECdown","MHTPhiJECdown","DeltaPhi1JECdown","DeltaPhi2JECdown","DeltaPhi3JECdown","DeltaPhi4JECdown"};
-				EnableBranches(branchlist);
-			}
-			if(vtype==JERup){
-				vector<string> pbranchlist = {"JetsJERup","JetsJERup_HTMask","JetsJERup_MHTMask","JetsJERup_ISRMask","JetsJERup_LeptonMask","JetsJERup_ID","JetsJERup_partonFlavor","JetsJERup_hadronFlavor","JetsJERup_bDiscriminatorCSV","JetsJERup_bDiscriminatorMVA","JetsJERup_muonEnergyFraction","JetsJERup_chargedHadronEnergyFraction"};
-				EnableBranches(pbranchlist);
-				ExistBranches(pbranchlist,flaglist);
-				vector<string> branchlist = {"JetIDJERup","NJetsJERup","NJetsISRJERup","BTagsJERup","BTagsMVAJERup","HTJERup","MHTJERup","MHTPhiJERup","DeltaPhi1JERup","DeltaPhi2JERup","DeltaPhi3JERup","DeltaPhi4JERup"};
-				EnableBranches(branchlist);
-			}
-			else if(vtype==JERdown){
-				vector<string> pbranchlist = {"JetsJERdown","JetsJERdown_HTMask","JetsJERdown_MHTMask","JetsJERdown_ISRMask","JetsJERdown_LeptonMask","JetsJERdown_ID","JetsJERdown_partonFlavor","JetsJERdown_hadronFlavor","JetsJERdown_bDiscriminatorCSV","JetsJERdown_bDiscriminatorMVA","JetsJERdown_muonEnergyFraction","JetsJERdown_chargedHadronEnergyFraction"};
-				EnableBranches(pbranchlist);
-				ExistBranches(pbranchlist,flaglist);
-				vector<string> branchlist = {"JetIDJERdown","NJetsJERdown","NJetsISRJERdown","BTagsJERdown","BTagsMVAJERdown","HTJERdown","MHTJERdown","MHTPhiJERdown","DeltaPhi1JERdown","DeltaPhi2JERdown","DeltaPhi3JERdown","DeltaPhi4JERdown"};
-				EnableBranches(branchlist);
-			}
-			else if(vtype==clean){
-				vector<string> pbranchlist = {"Jetsclean","Jetsclean_HTMask","Jetsclean_MHTMask","Jetsclean_ISRMask","Jetsclean_LeptonMask","Jetsclean_ID","Jetsclean_partonFlavor","Jetsclean_hadronFlavor","Jetsclean_bDiscriminatorCSV","Jetsclean_bDiscriminatorMVA","Jetsclean_muonEnergyFraction","Jetsclean_chargedHadronEnergyFraction","JetsAK8Clean","JetsAK8Clean_doubleBDiscriminator","JetsAK8Clean_ID","JetsAK8Clean_NsubjettinessTau1","JetsAK8Clean_NsubjettinessTau2","JetsAK8Clean_NsubjettinessTau3","JetsAK8Clean_NumBhadrons","JetsAK8Clean_NumChadrons","JetsAK8Clean_prunedMass","Jetsclean_MHTOrigMask"};
-				EnableBranches(pbranchlist);
-				ExistBranches(pbranchlist,flaglist);
-				vector<string> branchlist = {"JetIDclean","NJetsclean","NJetsISRclean","BTagsclean","BTagsMVAclean","HTclean","MHTclean","MHTPhiclean","METclean","METPhiclean","DeltaPhi1clean","DeltaPhi2clean","DeltaPhi3clean","DeltaPhi4clean","isoElectronTracksclean","isoMuonTracksclean","isoPionTracksclean","DeltaPhi1Origclean","DeltaPhi2Origclean","DeltaPhi3Origclean","DeltaPhi4Origclean","MHTOrigclean","MHTPhiOrigclean"};
-				EnableBranches(branchlist);
-			}
-			
-			//check pointer branches			
-			vector<string> pbranchlist = {"Jets","Jets_HTMask","Jets_MHTMask","Jets_ISRMask","Jets_LeptonMask","Jets_ID","Jets_partonFlavor","Jets_hadronFlavor","Jets_bDiscriminatorCSV","Jets_bDiscriminatorMVA","Jets_muonEnergyFraction","Jets_chargedHadronEnergyFraction","JetsAK8","JetsAK8_doubleBDiscriminator","JetsAK8_ID","JetsAK8_NsubjettinessTau1","JetsAK8_NsubjettinessTau2","JetsAK8_NsubjettinessTau3","JetsAK8_NumBhadrons","JetsAK8_NumChadrons","JetsAK8_prunedMass","Jets_MHTOrigMask"};
-			ExistBranches(pbranchlist,flaglist);
 		}
 		//functions
 		virtual void DoVariation() {
-			//store original values
-			if(b_Jets) Jets = *(looper->Jets);
-			if(b_Jets_HTMask) Jets_HTMask = *(looper->Jets_HTMask);
-			if(b_Jets_MHTMask) Jets_MHTMask = *(looper->Jets_MHTMask);
-			if(b_Jets_ISRMask) Jets_ISRMask = *(looper->Jets_ISRMask);
-			if(b_Jets_LeptonMask) Jets_LeptonMask = *(looper->Jets_LeptonMask);
-			if(b_Jets_ID) Jets_ID = *(looper->Jets_ID);
-			if(b_Jets_partonFlavor) Jets_partonFlavor = *(looper->Jets_partonFlavor);
-			if(b_Jets_hadronFlavor) Jets_hadronFlavor = *(looper->Jets_hadronFlavor);
-			if(b_Jets_bDiscriminatorCSV) Jets_bDiscriminatorCSV = *(looper->Jets_bDiscriminatorCSV);
-			if(b_Jets_bDiscriminatorMVA) Jets_bDiscriminatorMVA = *(looper->Jets_bDiscriminatorMVA);
-			if(b_Jets_muonEnergyFraction) Jets_muonEnergyFraction = *(looper->Jets_muonEnergyFraction);
-			if(b_Jets_chargedHadronEnergyFraction) Jets_chargedHadronEnergyFraction = *(looper->Jets_chargedHadronEnergyFraction);
-			if(b_JetsAK8) JetsAK8 = *(looper->JetsAK8);
-			if(b_JetsAK8_doubleBDiscriminator) JetsAK8_doubleBDiscriminator = *(looper->JetsAK8_doubleBDiscriminator);
-			if(b_JetsAK8_ID) JetsAK8_ID = *(looper->JetsAK8_ID);
-			if(b_JetsAK8_NsubjettinessTau1) JetsAK8_NsubjettinessTau1 = *(looper->JetsAK8_NsubjettinessTau1);
-			if(b_JetsAK8_NsubjettinessTau2) JetsAK8_NsubjettinessTau2 = *(looper->JetsAK8_NsubjettinessTau2);
-			if(b_JetsAK8_NsubjettinessTau3) JetsAK8_NsubjettinessTau3 = *(looper->JetsAK8_NsubjettinessTau3);
-			if(b_JetsAK8_NumBhadrons) JetsAK8_NumBhadrons = *(looper->JetsAK8_NumBhadrons);
-			if(b_JetsAK8_NumChadrons) JetsAK8_NumChadrons = *(looper->JetsAK8_NumChadrons);
-			if(b_JetsAK8_prunedMass) JetsAK8_prunedMass = *(looper->JetsAK8_prunedMass);
-			if(b_Jets_MHTOrigMask) Jets_MHTOrigMask = *(looper->Jets_MHTOrigMask);
-			JetID = looper->JetID;
-			NJets = looper->NJets;
-			NJetsISR = looper->NJetsISR;
-			BTags = looper->BTags;
-			BTagsMVA = looper->BTagsMVA;
-			isoElectronTracks = looper->isoElectronTracks;
-			isoMuonTracks = looper->isoMuonTracks;
-			isoPionTracks = looper->isoPionTracks;
-			HT = looper->HT;
-			MET = looper->MET;
-			METPhi = looper->METPhi;
-			MHT = looper->MHT;
-			MHTPhi = looper->MHTPhi;
-			DeltaPhi1 = looper->DeltaPhi1;
-			DeltaPhi2 = looper->DeltaPhi2;
-			DeltaPhi3 = looper->DeltaPhi3;
-			DeltaPhi4 = looper->DeltaPhi4;
-			MHTOrig = looper->MHTOrig;
-			MHTPhiOrig = looper->MHTPhiOrig;
-			DeltaPhi1Orig = looper->DeltaPhi1Orig;
-			DeltaPhi2Orig = looper->DeltaPhi2Orig;
-			DeltaPhi3Orig = looper->DeltaPhi3Orig;
-			DeltaPhi4Orig = looper->DeltaPhi4Orig;
-			
-			//set to clean vars
-			if(vtype==JECup){
-				if(b_Jets) *(looper->Jets) = *(looper->JetsJECup);
-				if(b_Jets_HTMask) *(looper->Jets_HTMask) = *(looper->JetsJECup_HTMask);
-				if(b_Jets_MHTMask) *(looper->Jets_MHTMask) = *(looper->JetsJECup_MHTMask);
-				if(b_Jets_ISRMask) *(looper->Jets_ISRMask) = *(looper->JetsJECup_ISRMask);
-				if(b_Jets_LeptonMask) *(looper->Jets_LeptonMask) = *(looper->JetsJECup_LeptonMask);
-				if(b_Jets_ID) *(looper->Jets_ID) = *(looper->JetsJECup_ID);
-				if(b_Jets_partonFlavor) *(looper->Jets_partonFlavor) = *(looper->JetsJECup_partonFlavor);
-				if(b_Jets_hadronFlavor) *(looper->Jets_hadronFlavor) = *(looper->JetsJECup_hadronFlavor);
-				if(b_Jets_bDiscriminatorCSV) *(looper->Jets_bDiscriminatorCSV) = *(looper->JetsJECup_bDiscriminatorCSV);
-				if(b_Jets_bDiscriminatorMVA) *(looper->Jets_bDiscriminatorMVA) = *(looper->JetsJECup_bDiscriminatorMVA);
-				if(b_Jets_muonEnergyFraction) *(looper->Jets_muonEnergyFraction) = *(looper->JetsJECup_muonEnergyFraction);
-				if(b_Jets_chargedHadronEnergyFraction) *(looper->Jets_chargedHadronEnergyFraction) = *(looper->JetsJECup_chargedHadronEnergyFraction);
-				looper->JetID = looper->JetIDJECup;
-				looper->NJets = looper->NJetsJECup;
-				looper->NJetsISR = looper->NJetsISRJECup;
-				looper->BTags = looper->BTagsJECup;
-				looper->BTagsMVA = looper->BTagsMVAJECup;
-				looper->HT = looper->HTJECup;
-				looper->MHT = looper->MHTJECup;
-				looper->MHTPhi = looper->MHTPhiJECup;
-				looper->DeltaPhi1 = looper->DeltaPhi1JECup;
-				looper->DeltaPhi2 = looper->DeltaPhi2JECup;
-				looper->DeltaPhi3 = looper->DeltaPhi3JECup;
-				looper->DeltaPhi4 = looper->DeltaPhi4JECup;
-			}
-			else if(vtype==JECdown){
-				if(b_Jets) *(looper->Jets) = *(looper->JetsJECdown);
-				if(b_Jets_HTMask) *(looper->Jets_HTMask) = *(looper->JetsJECdown_HTMask);
-				if(b_Jets_MHTMask) *(looper->Jets_MHTMask) = *(looper->JetsJECdown_MHTMask);
-				if(b_Jets_ISRMask) *(looper->Jets_ISRMask) = *(looper->JetsJECdown_ISRMask);
-				if(b_Jets_LeptonMask) *(looper->Jets_LeptonMask) = *(looper->JetsJECdown_LeptonMask);
-				if(b_Jets_ID) *(looper->Jets_ID) = *(looper->JetsJECdown_ID);
-				if(b_Jets_partonFlavor) *(looper->Jets_partonFlavor) = *(looper->JetsJECdown_partonFlavor);
-				if(b_Jets_hadronFlavor) *(looper->Jets_hadronFlavor) = *(looper->JetsJECdown_hadronFlavor);
-				if(b_Jets_bDiscriminatorCSV) *(looper->Jets_bDiscriminatorCSV) = *(looper->JetsJECdown_bDiscriminatorCSV);
-				if(b_Jets_bDiscriminatorMVA) *(looper->Jets_bDiscriminatorMVA) = *(looper->JetsJECdown_bDiscriminatorMVA);
-				if(b_Jets_muonEnergyFraction) *(looper->Jets_muonEnergyFraction) = *(looper->JetsJECdown_muonEnergyFraction);
-				if(b_Jets_chargedHadronEnergyFraction) *(looper->Jets_chargedHadronEnergyFraction) = *(looper->JetsJECdown_chargedHadronEnergyFraction);
-				looper->JetID = looper->JetIDJECdown;
-				looper->NJets = looper->NJetsJECdown;
-				looper->NJetsISR = looper->NJetsISRJECdown;
-				looper->BTags = looper->BTagsJECdown;
-				looper->BTagsMVA = looper->BTagsMVAJECdown;
-				looper->HT = looper->HTJECdown;
-				looper->MHT = looper->MHTJECdown;
-				looper->MHTPhi = looper->MHTPhiJECdown;
-				looper->DeltaPhi1 = looper->DeltaPhi1JECdown;
-				looper->DeltaPhi2 = looper->DeltaPhi2JECdown;
-				looper->DeltaPhi3 = looper->DeltaPhi3JECdown;
-				looper->DeltaPhi4 = looper->DeltaPhi4JECdown;
-			}
-			else if(vtype==JERup){
-				if(b_Jets) *(looper->Jets) = *(looper->JetsJERup);
-				if(b_Jets_HTMask) *(looper->Jets_HTMask) = *(looper->JetsJERup_HTMask);
-				if(b_Jets_MHTMask) *(looper->Jets_MHTMask) = *(looper->JetsJERup_MHTMask);
-				if(b_Jets_ISRMask) *(looper->Jets_ISRMask) = *(looper->JetsJERup_ISRMask);
-				if(b_Jets_LeptonMask) *(looper->Jets_LeptonMask) = *(looper->JetsJERup_LeptonMask);
-				if(b_Jets_ID) *(looper->Jets_ID) = *(looper->JetsJERup_ID);
-				if(b_Jets_partonFlavor) *(looper->Jets_partonFlavor) = *(looper->JetsJERup_partonFlavor);
-				if(b_Jets_hadronFlavor) *(looper->Jets_hadronFlavor) = *(looper->JetsJERup_hadronFlavor);
-				if(b_Jets_bDiscriminatorCSV) *(looper->Jets_bDiscriminatorCSV) = *(looper->JetsJERup_bDiscriminatorCSV);
-				if(b_Jets_bDiscriminatorMVA) *(looper->Jets_bDiscriminatorMVA) = *(looper->JetsJERup_bDiscriminatorMVA);
-				if(b_Jets_muonEnergyFraction) *(looper->Jets_muonEnergyFraction) = *(looper->JetsJERup_muonEnergyFraction);
-				if(b_Jets_chargedHadronEnergyFraction) *(looper->Jets_chargedHadronEnergyFraction) = *(looper->JetsJERup_chargedHadronEnergyFraction);
-				looper->JetID = looper->JetIDJERup;
-				looper->NJets = looper->NJetsJERup;
-				looper->NJetsISR = looper->NJetsISRJERup;
-				looper->BTags = looper->BTagsJERup;
-				looper->BTagsMVA = looper->BTagsMVAJERup;
-				looper->HT = looper->HTJERup;
-				looper->MHT = looper->MHTJERup;
-				looper->MHTPhi = looper->MHTPhiJERup;
-				looper->DeltaPhi1 = looper->DeltaPhi1JERup;
-				looper->DeltaPhi2 = looper->DeltaPhi2JERup;
-				looper->DeltaPhi3 = looper->DeltaPhi3JERup;
-				looper->DeltaPhi4 = looper->DeltaPhi4JERup;
-			}
-			else if(vtype==JERdown){
-				if(b_Jets) *(looper->Jets) = *(looper->JetsJERdown);
-				if(b_Jets_HTMask) *(looper->Jets_HTMask) = *(looper->JetsJERdown_HTMask);
-				if(b_Jets_MHTMask) *(looper->Jets_MHTMask) = *(looper->JetsJERdown_MHTMask);
-				if(b_Jets_ISRMask) *(looper->Jets_ISRMask) = *(looper->JetsJERdown_ISRMask);
-				if(b_Jets_LeptonMask) *(looper->Jets_LeptonMask) = *(looper->JetsJERdown_LeptonMask);
-				if(b_Jets_ID) *(looper->Jets_ID) = *(looper->JetsJERdown_ID);
-				if(b_Jets_partonFlavor) *(looper->Jets_partonFlavor) = *(looper->JetsJERdown_partonFlavor);
-				if(b_Jets_hadronFlavor) *(looper->Jets_hadronFlavor) = *(looper->JetsJERdown_hadronFlavor);
-				if(b_Jets_bDiscriminatorCSV) *(looper->Jets_bDiscriminatorCSV) = *(looper->JetsJERdown_bDiscriminatorCSV);
-				if(b_Jets_bDiscriminatorMVA) *(looper->Jets_bDiscriminatorMVA) = *(looper->JetsJERdown_bDiscriminatorMVA);
-				if(b_Jets_muonEnergyFraction) *(looper->Jets_muonEnergyFraction) = *(looper->JetsJERdown_muonEnergyFraction);
-				if(b_Jets_chargedHadronEnergyFraction) *(looper->Jets_chargedHadronEnergyFraction) = *(looper->JetsJERdown_chargedHadronEnergyFraction);
-				looper->JetID = looper->JetIDJERdown;
-				looper->NJets = looper->NJetsJERdown;
-				looper->NJetsISR = looper->NJetsISRJERdown;
-				looper->BTags = looper->BTagsJERdown;
-				looper->BTagsMVA = looper->BTagsMVAJERdown;
-				looper->HT = looper->HTJERdown;
-				looper->MHT = looper->MHTJERdown;
-				looper->MHTPhi = looper->MHTPhiJERdown;
-				looper->DeltaPhi1 = looper->DeltaPhi1JERdown;
-				looper->DeltaPhi2 = looper->DeltaPhi2JERdown;
-				looper->DeltaPhi3 = looper->DeltaPhi3JERdown;
-				looper->DeltaPhi4 = looper->DeltaPhi4JERdown;
-			}
-			else if(vtype==clean){
-				if(b_Jets) *(looper->Jets) = *(looper->Jetsclean);
-				if(b_Jets_HTMask) *(looper->Jets_HTMask) = *(looper->Jetsclean_HTMask);
-				if(b_Jets_MHTMask) *(looper->Jets_MHTMask) = *(looper->Jetsclean_MHTMask);
-				if(b_Jets_ISRMask) *(looper->Jets_ISRMask) = *(looper->Jetsclean_ISRMask);
-				if(b_Jets_ID) *(looper->Jets_ID) = *(looper->Jetsclean_ID);
-				if(b_Jets_partonFlavor) *(looper->Jets_partonFlavor) = *(looper->Jetsclean_partonFlavor);
-				if(b_Jets_hadronFlavor) *(looper->Jets_hadronFlavor) = *(looper->Jetsclean_hadronFlavor);
-				if(b_Jets_bDiscriminatorCSV) *(looper->Jets_bDiscriminatorCSV) = *(looper->Jetsclean_bDiscriminatorCSV);
-				if(b_Jets_bDiscriminatorMVA) *(looper->Jets_bDiscriminatorMVA) = *(looper->Jetsclean_bDiscriminatorMVA);
-				if(b_Jets_muonEnergyFraction) *(looper->Jets_muonEnergyFraction) = *(looper->Jetsclean_muonEnergyFraction);
-				if(b_Jets_chargedHadronEnergyFraction) *(looper->Jets_chargedHadronEnergyFraction) = *(looper->Jetsclean_chargedHadronEnergyFraction);
-				if(b_JetsAK8) *(looper->JetsAK8) = *(looper->JetsAK8Clean);
-				if(b_JetsAK8_doubleBDiscriminator) *(looper->JetsAK8_doubleBDiscriminator) = *(looper->JetsAK8Clean_doubleBDiscriminator);
-				if(b_JetsAK8_ID) *(looper->JetsAK8_ID) = *(looper->JetsAK8Clean_ID);
-				if(b_JetsAK8_NsubjettinessTau1) *(looper->JetsAK8_NsubjettinessTau1) = *(looper->JetsAK8Clean_NsubjettinessTau1);
-				if(b_JetsAK8_NsubjettinessTau2) *(looper->JetsAK8_NsubjettinessTau2) = *(looper->JetsAK8Clean_NsubjettinessTau2);
-				if(b_JetsAK8_NsubjettinessTau3) *(looper->JetsAK8_NsubjettinessTau3) = *(looper->JetsAK8Clean_NsubjettinessTau3);
-				if(b_JetsAK8_NumBhadrons) *(looper->JetsAK8_NumBhadrons) = *(looper->JetsAK8Clean_NumBhadrons);
-				if(b_JetsAK8_NumChadrons) *(looper->JetsAK8_NumChadrons) = *(looper->JetsAK8Clean_NumChadrons);
-				if(b_JetsAK8_prunedMass) *(looper->JetsAK8_prunedMass) = *(looper->JetsAK8Clean_prunedMass);
-				if(b_Jets_MHTOrigMask) *(looper->Jets_MHTOrigMask) = *(looper->Jetsclean_MHTOrigMask);
-				looper->JetID = looper->JetIDclean;
-				looper->NJets = looper->NJetsclean;
-				looper->NJetsISR = looper->NJetsISRclean;
-				looper->BTags = looper->BTagsclean;
-				looper->BTagsMVA = looper->BTagsMVAclean;
-				looper->isoElectronTracks = looper->isoElectronTracksclean;
-				looper->isoMuonTracks = looper->isoMuonTracksclean;
-				looper->isoPionTracks = looper->isoPionTracksclean;
-				looper->HT = looper->HTclean;
-				looper->MHT = looper->MHTclean;
-				looper->MHTPhi = looper->MHTPhiclean;
-				looper->MET = looper->METclean;
-				looper->METPhi = looper->METPhiclean;
-				looper->DeltaPhi1 = looper->DeltaPhi1clean;
-				looper->DeltaPhi2 = looper->DeltaPhi2clean;
-				looper->DeltaPhi3 = looper->DeltaPhi3clean;
-				looper->DeltaPhi4 = looper->DeltaPhi4clean;
-				looper->MHTOrig = looper->MHTOrigclean;
-				looper->MHTPhiOrig = looper->MHTPhiOrigclean;
-				looper->DeltaPhi1Orig = looper->DeltaPhi1Origclean;
-				looper->DeltaPhi2Orig = looper->DeltaPhi2Origclean;
-				looper->DeltaPhi3Orig = looper->DeltaPhi3Origclean;
-				looper->DeltaPhi4Orig = looper->DeltaPhi4Origclean;
+			for(auto& branch : branches){
+				//store original values
+				branch->Store();
+				//set to variation
+				branch->Vary();
 			}
 		}
 		virtual void UndoVariation() {
 			//restore original values
-			if(b_Jets) *(looper->Jets) = Jets;
-			if(b_Jets_HTMask) *(looper->Jets_HTMask) = Jets_HTMask;
-			if(b_Jets_MHTMask) *(looper->Jets_MHTMask) = Jets_MHTMask;
-			if(b_Jets_ISRMask) *(looper->Jets_ISRMask) = Jets_ISRMask;
-			if(b_Jets_LeptonMask) *(looper->Jets_LeptonMask) = Jets_LeptonMask;
-			if(b_Jets_ID) *(looper->Jets_ID) = Jets_ID;
-			if(b_Jets_partonFlavor) *(looper->Jets_partonFlavor) = Jets_partonFlavor;
-			if(b_Jets_hadronFlavor) *(looper->Jets_hadronFlavor) = Jets_hadronFlavor;
-			if(b_Jets_bDiscriminatorCSV) *(looper->Jets_bDiscriminatorCSV) = Jets_bDiscriminatorCSV;
-			if(b_Jets_bDiscriminatorMVA) *(looper->Jets_bDiscriminatorMVA) = Jets_bDiscriminatorMVA;
-			if(b_Jets_muonEnergyFraction) *(looper->Jets_muonEnergyFraction) = Jets_muonEnergyFraction;
-			if(b_Jets_chargedHadronEnergyFraction) *(looper->Jets_chargedHadronEnergyFraction) = Jets_chargedHadronEnergyFraction;
-			if(b_JetsAK8) *(looper->JetsAK8) = JetsAK8;
-			if(b_JetsAK8_doubleBDiscriminator) *(looper->JetsAK8_doubleBDiscriminator) = JetsAK8_doubleBDiscriminator;
-			if(b_JetsAK8_ID) *(looper->JetsAK8_ID) = JetsAK8_ID;
-			if(b_JetsAK8_NsubjettinessTau1) *(looper->JetsAK8_NsubjettinessTau1) = JetsAK8_NsubjettinessTau1;
-			if(b_JetsAK8_NsubjettinessTau2) *(looper->JetsAK8_NsubjettinessTau2) = JetsAK8_NsubjettinessTau2;
-			if(b_JetsAK8_NsubjettinessTau3) *(looper->JetsAK8_NsubjettinessTau3) = JetsAK8_NsubjettinessTau3;
-			if(b_JetsAK8_NumBhadrons) *(looper->JetsAK8_NumBhadrons) = JetsAK8_NumBhadrons;
-			if(b_JetsAK8_NumChadrons) *(looper->JetsAK8_NumChadrons) = JetsAK8_NumChadrons;
-			if(b_JetsAK8_prunedMass) *(looper->JetsAK8_prunedMass) = JetsAK8_prunedMass;
-			if(b_Jets_MHTOrigMask) *(looper->Jets_MHTOrigMask) = Jets_MHTOrigMask;
-			looper->JetID = JetID;
-			looper->NJets = NJets;
-			looper->NJetsISR = NJetsISR;
-			looper->BTags = BTags;
-			looper->BTagsMVA = BTagsMVA;
-			looper->isoElectronTracks = isoElectronTracks;
-			looper->isoMuonTracks = isoMuonTracks;
-			looper->isoPionTracks = isoPionTracks;
-			looper->HT = HT;
-			looper->MET = MET;
-			looper->METPhi = METPhi;
-			looper->MHT = MHT;
-			looper->MHTPhi = MHTPhi;
-			looper->DeltaPhi1 = DeltaPhi1;
-			looper->DeltaPhi2 = DeltaPhi2;
-			looper->DeltaPhi3 = DeltaPhi3;
-			looper->DeltaPhi4 = DeltaPhi4;
-			looper->MHTOrig = MHTOrig;
-			looper->MHTPhiOrig = MHTPhiOrig;
-			looper->DeltaPhi1Orig = DeltaPhi1Orig;
-			looper->DeltaPhi2Orig = DeltaPhi2Orig;
-			looper->DeltaPhi3Orig = DeltaPhi3Orig;
-			looper->DeltaPhi4Orig = DeltaPhi4Orig;
+			for(auto& branch : branches){
+				branch->Restore();
+			}
 		}
 		
 		//member variables
-		bool b_Jets,b_Jets_HTMask,b_Jets_MHTMask,b_Jets_ISRMask,b_Jets_LeptonMask,b_Jets_ID,b_Jets_partonFlavor,b_Jets_hadronFlavor,b_Jets_bDiscriminatorCSV,b_Jets_bDiscriminatorMVA,b_Jets_muonEnergyFraction,b_Jets_chargedHadronEnergyFraction, b_JetsAK8, b_JetsAK8_doubleBDiscriminator, b_JetsAK8_ID, b_JetsAK8_NsubjettinessTau1, b_JetsAK8_NsubjettinessTau2, b_JetsAK8_NsubjettinessTau3, b_JetsAK8_NumBhadrons, b_JetsAK8_NumChadrons, b_JetsAK8_prunedMass, b_Jets_MHTOrigMask;
 		vartypes vtype;
-		vector<TLorentzVector> Jets;
-		vector<bool> Jets_HTMask;
-		vector<bool> Jets_MHTMask;
-		vector<bool> Jets_ISRMask;
-		vector<bool> Jets_LeptonMask;
-		vector<bool> Jets_ID;
-		vector<int> Jets_hadronFlavor;
-		vector<int> Jets_partonFlavor;
-		vector<double> Jets_bDiscriminatorCSV;
-		vector<double> Jets_bDiscriminatorMVA;
-		vector<double> Jets_muonEnergyFraction;
-		vector<double> Jets_chargedHadronEnergyFraction;
-		vector<TLorentzVector> JetsAK8;
-		vector<double>  JetsAK8_doubleBDiscriminator;
-		vector<bool>    JetsAK8_ID;
-		vector<double>  JetsAK8_NsubjettinessTau1;
-		vector<double>  JetsAK8_NsubjettinessTau2;
-		vector<double>  JetsAK8_NsubjettinessTau3;
-		vector<int>     JetsAK8_NumBhadrons;
-		vector<int>     JetsAK8_NumChadrons;
-		vector<double>  JetsAK8_prunedMass;
-		vector<bool> Jets_MHTOrigMask;
-		Bool_t          JetID;
-		Int_t           NJets;
-		Int_t           NJetsISR;
-		Int_t           BTags;
-		Int_t           BTagsMVA;
-		Int_t           isoElectronTracks;
-		Int_t           isoMuonTracks;
-		Int_t           isoPionTracks;
-		Double_t        HT;
-		Double_t        MET;
-		Double_t        METPhi;
-		Double_t        MHT;
-		Double_t        MHTPhi;
-		Double_t        DeltaPhi1;
-		Double_t        DeltaPhi2;
-		Double_t        DeltaPhi3;
-		Double_t        DeltaPhi4;
-		Double_t        MHTOrig;
-		Double_t        MHTPhiOrig;
-		Double_t        DeltaPhi1Orig;
-		Double_t        DeltaPhi2Orig;
-		Double_t        DeltaPhi3Orig;
-		Double_t        DeltaPhi4Orig;
 };
 REGISTER_VARIATOR(Jet);
 
@@ -398,70 +122,75 @@ class KGenMHTVariator : public KVariator {
 		//constructor
 		KGenMHTVariator() : KVariator() { }
 		KGenMHTVariator(string name_, OptionMap* localOpt_) : KVariator(name_,localOpt_) { }
-		
+		virtual void CheckBranches(){
+			branches = {
+				new KLinkedBranchD(KBranchD(&looper->MHT,"MHT"),KBranchD(&looper->GenMHT,"GenMHT")),
+				new KLinkedBranchD(KBranchD(&looper->HT,"HT"),KBranchD(&looper->GenHT,"GenHT"))
+			};
+			
+			for(auto& branch : branches){
+				branch->Check(looper->fChain);
+			}
+		}
 		virtual void DoVariation() {
-			//store original values
-			MHT = looper->MHT;
-			HT = looper->HT;
-			
-			//set to gen vars
-			looper->MHT = looper->GenMHT;
-			looper->HT = looper->GenHT;
-			
+			for(auto& branch : branches){
+				//store original values
+				branch->Store();
+				//set to gen vars
+				branch->Vary();
+			}
 		}
 		virtual void UndoVariation(){
 			//restore original values
-			looper->MHT = MHT;
-			looper->HT = HT;
-		}
-		
-		//member variables
-		double MHT;
-		double HT;
+			for(auto& branch : branches){
+				branch->Restore();
+			}
+		}		
 };
 REGISTER_VARIATOR(GenMHT);
 
 class KJetLeptonVariator : public KVariator {
 	public:
 		//constructor
-		KJetLeptonVariator() : KVariator() { }
-		KJetLeptonVariator(string name_, OptionMap* localOpt_) : KVariator(name_,localOpt_) { }
-		
+		KJetLeptonVariator() : KVariator() {
+			clear();
+		}
+		KJetLeptonVariator(string name_, OptionMap* localOpt_) : KVariator(name_,localOpt_) {
+			clear();
+		}
+		virtual void CheckBranches(){
+			branches = {
+				new KLinkedBranchVL(KBranchVL(looper->Jets,"Jets"),KBranchVL(&Jets,"Jets_")),
+				new KLinkedBranchVB(KBranchVB(looper->Jets_HTMask,"Jets_HTMask"),KBranchVB(&Jets_HTMask,"Jets_HTMask_")),
+				new KLinkedBranchVB(KBranchVB(looper->Jets_MHTMask,"Jets_MHTMask"),KBranchVB(&Jets_MHTMask,"Jets_MHTMask_")),
+				new KLinkedBranchVB(KBranchVB(looper->Jets_ID,"Jets_ID"),KBranchVB(&Jets_ID,"Jets_ID_")),
+				new KLinkedBranchVD(KBranchVD(looper->Jets_bDiscriminatorCSV,"Jets_bDiscriminatorCSV"),KBranchVD(&Jets_bDiscriminatorCSV,"Jets_bDiscriminatorCSV_")),
+				new KLinkedBranchVD(KBranchVD(looper->Jets_muonEnergyFraction,"Jets_muonEnergyFraction"),KBranchVD(&Jets_muonEnergyFraction,"Jets_muonEnergyFraction_")),
+				new KLinkedBranchB(KBranchB(&looper->JetID,"JetID"),KBranchB(&JetID,"JetID_")),
+				new KLinkedBranchI(KBranchI(&looper->NJets,"NJets"),KBranchI(&NJets,"NJets_")),
+				new KLinkedBranchI(KBranchI(&looper->BTags,"BTags"),KBranchI(&BTags,"BTags_")),
+				new KLinkedBranchD(KBranchD(&looper->MHT,"MHT"),KBranchD(&MHT,"MHT_")),
+				new KLinkedBranchD(KBranchD(&looper->MHTPhi,"MHTPhi"),KBranchD(&MHTPhi,"MHTPhi_")),
+				new KLinkedBranchD(KBranchD(&looper->HT,"HT"),KBranchD(&HT,"HT_")),
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhi1,"DeltaPhi1"),KBranchD(&DeltaPhi1,"DeltaPhi1_")),
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhi2,"DeltaPhi2"),KBranchD(&DeltaPhi2,"DeltaPhi2_")),
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhi3,"DeltaPhi3"),KBranchD(&DeltaPhi3,"DeltaPhi3_")),
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhi4,"DeltaPhi4"),KBranchD(&DeltaPhi4,"DeltaPhi4_"))
+			};
+			
+			//only check branch0 since branch1 does not come from tree
+			for(auto& branch : branches){
+				branch->Check(looper->fChain,0);
+			}
+		}
 		virtual void DoVariation() {
-			//store original values
-			Jets = *(looper->Jets);
-			Jets_HTMask = *(looper->Jets_HTMask);
-			Jets_MHTMask = *(looper->Jets_MHTMask);
-			Jets_ID = *(looper->Jets_ID);
-			Jets_muonEnergyFraction = *(looper->Jets_muonEnergyFraction);
-			Jets_bDiscriminatorCSV = *(looper->Jets_bDiscriminatorCSV);
-			JetID = looper->JetID;
-			NJets = looper->NJets;
-			BTags = looper->BTags;
-			MHT = looper->MHT;
-			MHTPhi = looper->MHTPhi;
-			HT = looper->HT;
-			DeltaPhi1 = looper->DeltaPhi1;
-			DeltaPhi2 = looper->DeltaPhi2;
-			DeltaPhi3 = looper->DeltaPhi3;
-			DeltaPhi4 = looper->DeltaPhi4;
-
-			vector<TLorentzVector> Jets_;
-			vector<bool> Jets_HTMask_;
-			vector<bool> Jets_MHTMask_;
-			vector<bool> Jets_ID_;
-			vector<double> Jets_muonEnergyFraction_;
-			vector<double> Jets_bDiscriminatorCSV_;
-			bool JetID_ = true;
-			int NJets_ = 0;
-			int BTags_ = 0;
-			double MHT_ = 0;
-			double MHTPhi_ = 0;
-			double HT_ = 0;
-			double DeltaPhi1_ = 0;
-			double DeltaPhi2_ = 0;
-			double DeltaPhi3_ = 0;
-			double DeltaPhi4_ = 0;
+			for(auto& branch : branches){
+				//store original values
+				branch->Store();
+			}
+			
+			//clear temp branches
+			clear();
 			TLorentzVector MHTvec; MHTvec.SetPtEtaPhiE(0,0,0,0);
 			
 			vector<TLorentzVector>* handles[] = {looper->Muons,looper->Electrons};
@@ -477,17 +206,17 @@ class KJetLeptonVariator : public KVariator {
 					if(skip) break;
 				}
 				if(!skip){
-					Jets_.push_back(looper->Jets->at(j));
-					Jets_HTMask_.push_back(looper->Jets_HTMask->at(j));
-					Jets_MHTMask_.push_back(looper->Jets_MHTMask->at(j));
-					Jets_ID_.push_back(looper->Jets_ID->at(j));
-					Jets_muonEnergyFraction_.push_back(looper->Jets_muonEnergyFraction->at(j));
-					Jets_bDiscriminatorCSV_.push_back(looper->Jets_bDiscriminatorCSV->at(j));
+					Jets.push_back(looper->Jets->at(j));
+					Jets_HTMask.push_back(looper->Jets_HTMask->at(j));
+					Jets_MHTMask.push_back(looper->Jets_MHTMask->at(j));
+					Jets_ID.push_back(looper->Jets_ID->at(j));
+					Jets_muonEnergyFraction.push_back(looper->Jets_muonEnergyFraction->at(j));
+					Jets_bDiscriminatorCSV.push_back(looper->Jets_bDiscriminatorCSV->at(j));
 					if(looper->Jets->at(j).Pt() > 30) JetID &= looper->Jets_ID->at(j);
 					if(looper->Jets_HTMask->at(j)){
-						HT_ += looper->Jets->at(j).Pt();
-						++NJets_;
-						if(looper->Jets_bDiscriminatorCSV->at(j)>0.8484) ++BTags_;
+						HT += looper->Jets->at(j).Pt();
+						++NJets;
+						if(looper->Jets_bDiscriminatorCSV->at(j)>0.8484) ++BTags;
 					}
 					if(looper->Jets_MHTMask->at(j)){
 						MHTvec -= looper->Jets->at(j);
@@ -495,54 +224,47 @@ class KJetLeptonVariator : public KVariator {
 				}
 			}
 			
-			MHT_ = MHTvec.Pt();
-			MHTPhi_ = MHTvec.Phi();
+			MHT = MHTvec.Pt();
+			MHTPhi = MHTvec.Phi();
 			
-			for(unsigned j = 0; j < min((unsigned)4,(unsigned)Jets_.size()); ++j){
+			for(unsigned j = 0; j < min((unsigned)4,(unsigned)Jets.size()); ++j){
 				//recalc delta phi
-				if(j==0) DeltaPhi1_ = abs(KMath::DeltaPhi(Jets_.at(j).Phi(),MHTPhi_));
-				else if(j==1) DeltaPhi2_ = abs(KMath::DeltaPhi(Jets_.at(j).Phi(),MHTPhi_));
-				else if(j==2) DeltaPhi3_ = abs(KMath::DeltaPhi(Jets_.at(j).Phi(),MHTPhi_));
-				else if(j==3) DeltaPhi4_ = abs(KMath::DeltaPhi(Jets_.at(j).Phi(),MHTPhi_));
+				if(j==0) DeltaPhi1 = abs(KMath::DeltaPhi(Jets.at(j).Phi(),MHTPhi));
+				else if(j==1) DeltaPhi2 = abs(KMath::DeltaPhi(Jets.at(j).Phi(),MHTPhi));
+				else if(j==2) DeltaPhi3 = abs(KMath::DeltaPhi(Jets.at(j).Phi(),MHTPhi));
+				else if(j==3) DeltaPhi4 = abs(KMath::DeltaPhi(Jets.at(j).Phi(),MHTPhi));
 			}
 			
-			//set to new vars
-			*(looper->Jets) = Jets_;
-			*(looper->Jets_HTMask) = Jets_HTMask_;
-			*(looper->Jets_MHTMask) = Jets_MHTMask_;
-			*(looper->Jets_ID) = Jets_ID_;
-			*(looper->Jets_bDiscriminatorCSV) = Jets_bDiscriminatorCSV_;
-			*(looper->Jets_muonEnergyFraction) = Jets_muonEnergyFraction_;
-			looper->JetID = JetID_;
-			looper->NJets = NJets_;
-			looper->BTags = BTags_;
-			looper->MHT = MHT_;
-			looper->MHTPhi = MHTPhi_;
-			looper->HT = HT_;
-			looper->DeltaPhi1 = DeltaPhi1_;
-			looper->DeltaPhi2 = DeltaPhi2_;
-			looper->DeltaPhi3 = DeltaPhi3_;
-			looper->DeltaPhi4 = DeltaPhi4_;
-			
+			for(auto& branch : branches){
+				//set to new vars
+				branch->Vary();
+			}
 		}
 		virtual void UndoVariation(){
 			//restore original values
-			*(looper->Jets) = Jets;
-			*(looper->Jets_HTMask) = Jets_HTMask;
-			*(looper->Jets_MHTMask) = Jets_MHTMask;
-			*(looper->Jets_ID) = Jets_ID;
-			*(looper->Jets_bDiscriminatorCSV) = Jets_bDiscriminatorCSV;
-			*(looper->Jets_muonEnergyFraction) = Jets_muonEnergyFraction;
-			looper->JetID = JetID;
-			looper->NJets = NJets;
-			looper->BTags = BTags;
-			looper->MHT = MHT;
-			looper->MHTPhi = MHTPhi;
-			looper->HT = HT;
-			looper->DeltaPhi1 = DeltaPhi1;
-			looper->DeltaPhi2 = DeltaPhi2;
-			looper->DeltaPhi3 = DeltaPhi3;
-			looper->DeltaPhi4 = DeltaPhi4;
+			for(auto& branch : branches){
+				branch->Restore();
+			}
+		}
+		
+		//helper
+		void clear(){
+			Jets.clear();
+			Jets_HTMask.clear();
+			Jets_MHTMask.clear();
+			Jets_ID.clear();
+			Jets_muonEnergyFraction.clear();
+			Jets_bDiscriminatorCSV.clear();
+			JetID = true;
+			NJets = 0;
+			BTags = 0;
+			MHT = 0;
+			MHTPhi = 0;
+			HT = 0;
+			DeltaPhi1 = 0;
+			DeltaPhi2 = 0;
+			DeltaPhi3 = 0;
+			DeltaPhi4 = 0;
 		}
 		
 		//member variables

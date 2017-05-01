@@ -15,6 +15,87 @@
 using namespace std;
 
 //----------------------------------------------------------------
+//helper classes to keep track of linked variables
+template <class T>
+class KBranchT {
+	public:
+		KBranchT(T* value_, string name_, bool status_=true) :
+			value(value_), name(name_), status(status_)
+		{}
+		virtual ~KBranchT() {}
+		
+		void Check(TTree* fChain) {
+			if(!fChain->GetBranchStatus(name.c_str()) || !fChain->GetBranch(name.c_str())) status = false;
+		}
+		
+		T* value;
+		string name;
+		bool status;
+};
+typedef KBranchT<bool> KBranchB;
+typedef KBranchT<int> KBranchI;
+typedef KBranchT<double> KBranchD;
+typedef KBranchT<TLorentzVector> KBranchL;
+typedef KBranchT<vector<bool>> KBranchVB;
+typedef KBranchT<vector<int>> KBranchVI;
+typedef KBranchT<vector<double>> KBranchVD;
+typedef KBranchT<vector<TLorentzVector>> KBranchVL;
+
+class KLinkedBranchBase {
+	public:
+		KLinkedBranchBase() {}
+		virtual ~KLinkedBranchBase() {}
+		
+		//virtual accessors
+		virtual void Check(TTree* fChain, int which=-1) {}
+		virtual void Store() {}
+		virtual void Vary() {}
+		virtual void Restore() {}
+};
+
+template <class T>
+class KLinkedBranchT : public KLinkedBranchBase {
+	public:
+		KLinkedBranchT(KBranchT<T> branch0_, KBranchT<T> branch1_) : branch0(branch0_), branch1(branch1_), good0(true), good1(true) {
+		}
+		~KLinkedBranchT() {}
+		
+		void Check(TTree* fChain, int which=-1){
+			if(fChain){
+				if(which==-1 or which==0) branch0.Check(fChain);
+				if(which==-1 or which==1) branch1.Check(fChain);
+			}
+			good0 = (branch0.value and branch0.status);
+			good1 = (branch1.value and branch1.status);
+		}
+		void Store() {
+			if(!good0) return;
+			original = *(branch0.value);
+		}
+		void Vary() {
+			if(!good0 or !good1) return;
+			*(branch0.value) = *(branch1.value);
+		}
+		void Restore() {
+			if(!good0) return;
+			*(branch0.value) = original;
+		}
+		
+	protected:
+		KBranchT<T> branch0, branch1;
+		T original;
+		bool good0, good1;
+};
+typedef KLinkedBranchT<bool> KLinkedBranchB;
+typedef KLinkedBranchT<int> KLinkedBranchI;
+typedef KLinkedBranchT<double> KLinkedBranchD;
+typedef KLinkedBranchT<TLorentzVector> KLinkedBranchL;
+typedef KLinkedBranchT<vector<bool>> KLinkedBranchVB;
+typedef KLinkedBranchT<vector<int>> KLinkedBranchVI;
+typedef KLinkedBranchT<vector<double>> KLinkedBranchVD;
+typedef KLinkedBranchT<vector<TLorentzVector>> KLinkedBranchVL;
+
+//----------------------------------------------------------------
 //base class for Variators, has standard functions defined
 class KVariator {
 	public:
@@ -26,6 +107,12 @@ class KVariator {
 		KVariator(string name_, OptionMap* localOpt_) : name(name_), localOpt(localOpt_), looper(0) {
 			//must always have local option map
 			if(localOpt==0) localOpt = new OptionMap();
+		}
+		//destructor
+		virtual ~KVariator(){
+			for(auto& branch : branches){
+				delete branch;
+			}
 		}
 		//accessors
 		string GetName() { return name; }
@@ -41,6 +128,7 @@ class KVariator {
 		OptionMap* localOpt;
 		KLooper* looper;
 		KBase* base;
+		vector<KLinkedBranchBase*> branches; //in case used
 };
 typedef KFactory<KVariator,string,OptionMap*> KVariatorFactory;
 #define REGISTER_VARIATOR(a) REGISTER_MACRO2(KVariatorFactory,K##a##Variator,a)
