@@ -93,6 +93,8 @@ class KJetVariator : public KVariator {
 			};
 			
 			for(auto& branch : branches){
+				//enable varied branches which might be disabled by default
+				branch->Enable(looper->fChain,1);
 				branch->Check(looper->fChain);
 			}
 		}

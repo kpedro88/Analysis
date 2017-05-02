@@ -27,6 +27,9 @@ class KBranchT {
 		void Check(TTree* fChain) {
 			if(!fChain->GetBranchStatus(name.c_str()) || !fChain->GetBranch(name.c_str())) status = false;
 		}
+		void Enable(TTree* fChain) {
+			fChain->SetBranchStatus(name.c_str(),1);
+		}
 		
 		T* value;
 		string name;
@@ -47,6 +50,7 @@ class KLinkedBranchBase {
 		virtual ~KLinkedBranchBase() {}
 		
 		//virtual accessors
+		virtual void Enable(TTree* fChain, int which=-1) {}
 		virtual void Check(TTree* fChain, int which=-1) {}
 		virtual void Store() {}
 		virtual void Vary() {}
@@ -59,7 +63,13 @@ class KLinkedBranchT : public KLinkedBranchBase {
 		KLinkedBranchT(KBranchT<T> branch0_, KBranchT<T> branch1_) : branch0(branch0_), branch1(branch1_), good0(true), good1(true) {
 		}
 		~KLinkedBranchT() {}
-		
+
+		void Enable(TTree* fChain, int which=-1){
+			if(fChain){
+				if(which==-1 or which==0) branch0.Enable(fChain);
+				if(which==-1 or which==1) branch1.Enable(fChain);
+			}
+		}
 		void Check(TTree* fChain, int which=-1){
 			if(fChain){
 				if(which==-1 or which==0) branch0.Check(fChain);
