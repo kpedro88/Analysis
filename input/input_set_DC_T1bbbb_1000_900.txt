@@ -1,0 +1,3 @@
+SET
+hist	mc	T1bbbb_1000_900
+	base	mc	T1bbbb_1000_900	s:filename[tree_T1bbbb_1000_900.root]	d:xsection[0.325388]	b:signal[1]	vi:mother[1000021]

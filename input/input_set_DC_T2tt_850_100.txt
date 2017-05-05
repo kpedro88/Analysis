@@ -1,0 +1,3 @@
+SET
+hist	mc	T2tt_850_100
+	base	mc	T2tt_850_100	s:filename[tree_T2tt_850_100.root]	d:xsection[0.0189612]	b:signal[1]	vi:mother[1000006]
