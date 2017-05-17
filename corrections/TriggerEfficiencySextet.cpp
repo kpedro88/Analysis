@@ -13,6 +13,7 @@
 #include <vector>
 #include <iostream>
 #include <stdlib.h>
+#include <algorithm>
 #include "vdt/vdtMath.h"
 //-----------------------------------------------------------------------------
 // Make following visible only to this programming unit
