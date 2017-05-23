@@ -236,10 +236,9 @@ class KRA2BinSelector : public KSelector {
 
 			//default values
 			RA2binBranch = 0;
-			RA2binsBranch = NULL;			
 			tree->Branch("RA2bin",&RA2binBranch,"RA2binBranch/i");
 			//only for mc
-			if(base->IsMC()) tree->Branch("RA2bins","std::vector<unsigned>",&RA2binsBranch);
+			if(base->IsMC()) tree->Branch("RA2bins","std::vector<unsigned>",&RA2binsBranch,32000,0);
 		}
 		
 		//used for non-dummy selectors
@@ -258,10 +257,8 @@ class KRA2BinSelector : public KSelector {
 				
 				//check all separate btag bins for SFs
 				if(base->IsMC()){
-					delete RA2binsBranch; RA2binsBranch = new vector<unsigned>();
 					DoBTagSF = true;
-					vector<unsigned> RA2binstmp = GetBinNumbers(RA2binVectmp);
-					*(RA2binsBranch) = RA2binstmp;
+					RA2binsBranch = GetBinNumbers(RA2binVectmp);
 				}
 				
 				//passthrough
@@ -361,7 +358,7 @@ class KRA2BinSelector : public KSelector {
 		vector<string> labels;
 		KMCWeightSelector* MCWeight;
 		unsigned RA2binBranch;
-		vector<unsigned>* RA2binsBranch;
+		vector<unsigned> RA2binsBranch;
 };
 REGISTER_SELECTOR(RA2Bin);
 
