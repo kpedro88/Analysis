@@ -1,0 +1,4 @@
+HTMET	s:filename[/uscms_data/d3/pedrok/SUSY2015/analysis/limit/CMSSW_7_1_5/src/dc/limit_T1bbbb_1200_trig1.root]	s:legname[HTMET]	c:color[kBlue]	i:linestyle[1]	s:drawopt[C]	s:legopt[l]	b:denom[1]
+HTMET4J	s:filename[/uscms_data/d3/pedrok/SUSY2015/analysis/limit/CMSSW_7_1_5/src/dc/limit_T1bbbb_1200_trig2.root]	s:legname[HTMET | 4J3CSV]	c:color[kMagenta]	i:linestyle[1]	s:drawopt[C]	s:legopt[l]	b:numer[1]
+HTMETCSV	s:filename[/uscms_data/d3/pedrok/SUSY2015/analysis/limit/CMSSW_7_1_5/src/dc/limit_T1bbbb_1200_trig3.root]	s:legname[HTMET | METCSV]	c:color[kRed]	i:linestyle[1]	s:drawopt[C]	s:legopt[l]	b:numer[1]
+HT4JMET	s:filename[/uscms_data/d3/pedrok/SUSY2015/analysis/limit/CMSSW_7_1_5/src/dc/limit_T1bbbb_1200_trig4.root]	s:legname[HTMET | 4JMETCSV]	c:color[kOrange + 1]	i:linestyle[1]	s:drawopt[C]	s:legopt[l]	b:numer[1]
