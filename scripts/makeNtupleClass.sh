@@ -50,7 +50,7 @@ for ((i=0; i < ${#SAMPLES[@]}; i++)); do
 done
 
 sed -i 's/TempClass/NtupleClass/g' NtupleClass.h
-rm TempClass.h TempClass.C
+rm TempClass.h TempClass.C > /dev/null 2>&1
 
 # fix header (optionally)
 if [[ -z "$HEADER" ]]; then
