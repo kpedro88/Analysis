@@ -1,2 +1,0 @@
-HISTO
-nbjets	i:xnum[4]	d:xmin[-0.5]	d:xmax[3.5]	s:xtitle[N_{b-jet} (p_{T} > 30 GeV)]	s:ytitle[number of events]	b:ratio[0]

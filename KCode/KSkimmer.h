@@ -25,7 +25,7 @@ class KSkimmer : public KLooper {
 		//constructor
 		KSkimmer(KBase* MyBase_) : 
 			KLooper(MyBase_->GetLocalOpt(),MyBase_->GetGlobalOpt()), MyBase(MyBase_), nEventHist(MyBase->GetNEventHist()), nEventNegHist(MyBase->GetNEventNegHist()), 
-			globalOpt(MyBase_->GetGlobalOpt()), nentries(0), NegativeWeight(NULL)
+			globalOpt(MyBase_->GetGlobalOpt()), nentries(0)
 		{
 			//check for branches to enable/disable
 			vector<string> disable_branches;
@@ -38,14 +38,11 @@ class KSkimmer : public KLooper {
 			for(unsigned b = 0; b < enable_branches.size(); ++b){
 				fChain->SetBranchStatus(enable_branches[b].c_str(),1);
 			}
-			//make negative weight selector
-			NegativeWeight = KSelectorFactory::GetFactory().construct("NegativeWeight","NegativeWeight",NULL);
 		}
 		//destructor
 		virtual ~KSkimmer() {}
 		//functions
 		virtual void Loop(){
-			NegativeWeight->SetBase(MyBase);
 			if (fChain == 0) {
 				cout << "Error: fChain is null!" << endl;
 				return;
@@ -82,8 +79,6 @@ class KSkimmer : public KLooper {
 				nb = fChain->GetEntry(jentry);   nbytes += nb;
 				if(jentry % 10000 == 0) cout << "Skimming " << jentry << "/" << nentries << endl;
 				
-				if(NegativeWeight->Cut()) ++negevents;
-				
 				for(unsigned s = 0; s < theSelections.size(); s++){
 					theSelections[s]->DoSelection();
 				}
@@ -108,7 +103,6 @@ class KSkimmer : public KLooper {
 		vector<KSelection*> theSelections;
 		OptionMap* globalOpt;
 		Long64_t nentries;
-		KSelector* NegativeWeight;
 };
 
 //-------------------------------------------

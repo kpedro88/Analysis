@@ -1,2 +1,0 @@
-HISTO
-mht	i:xnum[30]	d:xmin[0]	d:xmax[1500]	s:xtitle[H_{T}^{miss} [GeV]]	s:ytitle[number of events]	b:ratio[0]

@@ -13,10 +13,7 @@ done
 
 MACROS=(
 KSkimDriver \
-KScanDriver \
 KPlotDriver \
-MakeAllDCdata \
-MakeAllDCsyst \
 KCutflowDriver \
 )
 

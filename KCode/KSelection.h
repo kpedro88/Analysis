@@ -8,7 +8,6 @@
 #include "KMath.h"
 #include "KVariation.h"
 #include "KCutflow.h"
-#include "../corrections/EventListFilter.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -113,12 +112,10 @@ typedef KFactory<KSelector,string,OptionMap*> KSelectorFactory;
 class KSelection {
 	public:
 		//constructor
-		KSelection() : name(""), variation(0), looper(0), file(0), tree(0), cutflowHist(0), eventlist(""), base(0) {}
-		KSelection(string name_, OptionMap* globalOpt_) : name(name_), globalOpt(globalOpt_), variation(0), looper(0), file(0), tree(0), cutflowHist(0), filter(0), eventlist(""), base(0) {
+		KSelection() : name(""), variation(0), looper(0), file(0), tree(0), cutflowHist(0), base(0) {}
+		KSelection(string name_, OptionMap* globalOpt_) : name(name_), globalOpt(globalOpt_), variation(0), looper(0), file(0), tree(0), cutflowHist(0), base(0) {
 			//must always have option map
 			if(globalOpt==0) globalOpt = new OptionMap();
-			globalOpt->Get("selectevents",eventlist);
-			if(eventlist.size()>0) filter = new EventListFilter(eventlist);
 		}
 		//destructor
 		virtual ~KSelection() {
@@ -141,11 +138,6 @@ class KSelection {
 				selectorList[s]->SetBase(base_);
 			}
 			if(variation) variation->SetBase(base_);
-			if(filter){
-				looper->fChain->SetBranchStatus("RunNum",1);
-				looper->fChain->SetBranchStatus("LumiBlockNum",1);
-				looper->fChain->SetBranchStatus("EvtNum",1);
-			}
 		}
 		void DoVariation() { if(variation) variation->DoVariation(); }
 		void UndoVariation() { if(variation) variation->UndoVariation(); }
@@ -194,32 +186,18 @@ class KSelection {
 		bool DoSelection(){
 			if(variation) variation->DoVariation();
 			
-			//filter returns false if event is in list
-			bool selectedEvent = filter ? !filter->CheckEvent(looper->RunNum,looper->LumiBlockNum,looper->EvtNum) : true;
-			bool result = selectedEvent;
-			int lastSelector = -1;
+			bool result = true;
 			for(unsigned s = 0; s < selectorList.size(); s++){
-				if(!result) break;
 				result &= selectorList[s]->Select();
-				lastSelector = s;
-				if(!result) {
-					break; //end loop as soon as selection fails
-				}
+				if(!result) break; //end loop as soon as selection fails
 			}
-			if(filter and lastSelector>=0){
-				cout << looper->RunNum << ":" << looper->LumiBlockNum << ":" << looper->EvtNum;
-				if(!result) cout << " failed " << selectorList[lastSelector]->GetName();
-				else cout << " passed";
-				cout << " (" << looper->fChain->GetCurrentFile()->GetName() << ")" << endl;
-				result = true;
-			}
-			
+
 			//tree output
 			if(result && tree) tree->Fill();
 
 			//reset event
 			if(variation) variation->UndoVariation();
-			
+
 			return result;
 		}
 		void GetEfficiency(){
@@ -300,8 +278,6 @@ class KSelection {
 		TFile* file;
 		TTree* tree;
 		TH1F* cutflowHist;
-		EventListFilter* filter;
-		string eventlist;
 		KBase* base;
 };
 
