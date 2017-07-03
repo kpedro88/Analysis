@@ -2,14 +2,26 @@
 
 Important note: the current version of this code uses ROOT6 and C++11 features. It is not compatible with older versions of ROOT, i.e. ROOT5.
 
-## Recompiling
+## Setup
 
-To recompile all drivers, testing code changes or preparing for batch submission:
+To recompile all drivers, for testing code changes or preparing batch submission:
 ```
 ./recompile.sh
 ```
 Add the flag `-f` to force recompilation of all drivers.
 
+To link scripts from the [scripts](./scripts) directory into the main directory:
+```
+./setup.sh
+```
+
+To regenerate the `NtupleClass.h` header:
+```
+./makeNtupleClass.sh
+```
+The file [sourceNtupleClass.sh](./scripts/sourceNtupleClass.sh) can be modified to change which ROOT file(s) to use as a template.
+
+<!--
 ## Skimming
 
 [input\_selection.txt](input/input\_selection.txt) defines all the available selections, variations, and samples, as well as common global options.
@@ -37,11 +49,12 @@ After the skims finish, some may need to be hadded (split or extended samples):
 root -b -l -q 'KCutflowDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV12/tree_signal/tree_T1tttt_1500_100.root")'
 ```
 Additional arguments can be added to enable printing statistical errors and to change the number of significant figures printed.
+-->
 
 ## Plotting
 
-To plot yields vs. RA2 bin (where the binning can be defined in the input file(s)) in the signal region and save the plot as an image:
+To compare different mass distributions for a given signal and save the plot as an image:
 ```
-root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV12/tree_signal",{"input/input_RA2bin.txt"},{},1)'
+root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/GenProductionV1",{"input/input_masses.txt","input/input_masses_sets_mZprime-3000_mDark-20_rinv-0.3_alpha-0.2_n-10000.txt"},{},1)'
 ```
 Omitting the last argument will display the plot without saving it.
