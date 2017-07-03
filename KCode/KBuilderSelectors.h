@@ -29,7 +29,7 @@ class KMCWeightSelector : public KSelector {
 	public:
 		//constructor
 		KMCWeightSelector() : KSelector() {}
-		KMCWeightSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { 
+		KMCWeightSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
 		}
 		virtual void CheckBase(){
 			//standard weight options
@@ -54,8 +54,6 @@ class KMCWeightSelector : public KSelector {
 			//now do scaling: norm*xsection/nevents
 			if(got_nEventProc && nEventProc>0 && got_xsection){
 				w *= xsection/nEventProc;
-				//account for negative weight events
-//				if(looper->Weight<0) w *= -1;
 			}
 			
 			//use lumi norm (default)
@@ -111,10 +109,12 @@ class KValue {
 //(accounts for dependence on other selectors)
 class KHistoSelector : public KSelector {
 	public:
+		//for mass comparisons
+		enum masstypes { NoMass=0, MJJ=1, MT=2, Mmc=3, MAOS=4 };
 		//constructor
 		KHistoSelector() : KSelector() { }
 		KHistoSelector(string name_, OptionMap* localOpt_) : 
-			KSelector(name_,localOpt_), initialized(false), MCWeight(NULL) 
+			KSelector(name_,localOpt_), initialized(false), MCWeight(NULL), mtype(NoMass)
 		{ 
 			canfail = false;
 		}
@@ -126,12 +126,23 @@ class KHistoSelector : public KSelector {
 		virtual void CheckBranches(){
 		}
 		virtual void CheckBase(){
+			string mname;
+			base->GetLocalOpt()->Get("masstype",mname);
+			if(mname=="MJJ") mtype = MJJ;
+			else if(mname=="MT") mtype = MT;
+			else if(mname=="Mmc") mtype = Mmc;
+			else if(mname=="MAOS") mtype = MAOS;
+			else cout << "Input error: unknown mass type: " << mname << endl;
+
 			//do not use MCWeight with data
 			if(base->IsData()) MCWeight = NULL;
 			//but require it for MC
 			else if(base->IsMC() && !MCWeight) depfailed = true;
 			
-			if(depfailed) canfail = true;
+			if(depfailed){
+				canfail = true;
+				cout << "Input error: missing MCWeight selector for MC set: " << base->GetName() << endl;
+			}
 		}
 		void Initialize(){
 			if(initialized) return;
@@ -166,11 +177,14 @@ class KHistoSelector : public KSelector {
 				for(unsigned i = 0; i < vsize; i++){
 					string vname = vars[h][i];
 					//list of cases for histo calculation and filling
-//					if(vname=="njets"){//jet multiplicity
-//						values[i].Fill(looper->NJets,w);
-//					}
-//					else { //if it's a histogram with no known variable or calculation, do nothing
-//					}
+					if(vname=="mass"){//mass comparison
+						if(mtype==MJJ) values[i].Fill(looper->MJJ,w);
+						else if(mtype==MT) values[i].Fill(looper->MT,w);
+						else if(mtype==Mmc) values[i].Fill(looper->Mmc,w);
+						else if(mtype==MAOS) values[i].Fill(looper->MAOS,w);
+					}
+					else { //if it's a histogram with no known variable or calculation, do nothing
+					}
 				}
 				
 				//now fill the histogram
@@ -243,6 +257,7 @@ class KHistoSelector : public KSelector {
 		vector<vector<string> > vars;
 		vector<TH1*> htmp;
 		KMCWeightSelector* MCWeight;
+		masstypes mtype;
 };
 REGISTER_SELECTOR(Histo);
 
