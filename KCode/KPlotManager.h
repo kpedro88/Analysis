@@ -558,8 +558,8 @@ class KPlotManager : public KManager {
 					//make base histo: 0..1 on both axes
 					TH1F* h_base = new TH1F(roc_name.c_str(),"",10,0.,1.);
 					h_base->GetYaxis()->SetRangeUser(0.,1.);
-					h_base->GetXaxis()->SetTitle(("#varepsilon_{sig} (" + roc_sig[s]->GetName() + ")").c_str());
-					h_base->GetYaxis()->SetTitle(("#varepsilon_{bkg} (" + roc_bkg[b]->GetName() + ")").c_str());
+					h_base->GetXaxis()->SetTitle(("#varepsilon_{sig} (" + roc_sig[s]->GetLegName() + ")").c_str());
+					h_base->GetYaxis()->SetTitle(("#varepsilon_{bkg} (" + roc_bkg[b]->GetLegName() + ")").c_str());
 					
 					//make plot
 					KPlot* p_roc = new KPlot(roc_name,NULL,globalOpt);
