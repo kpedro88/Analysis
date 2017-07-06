@@ -154,15 +154,19 @@ class KBase {
 		}
 		//returns efficiency for cut on current histo qty
 		//does calculation and stores result if necessary
-		virtual double* GetEff(){
+		virtual double* GetEff(bool reverse){
 			if(efftmp) return efftmp;
 			
-			//calculate efficiencies: yield(i,nbins)/yield(0,nbins)
+			//calculate efficiencies
+			//normal: yield(i,nbins)/yield(0,nbins)
+			//reversed: yield(0,i)/yield(0,nbins)
 			efftmp = new double[htmp->GetNbinsX()+2];
 			double ydenom = htmp->Integral(0,htmp->GetNbinsX()+1);
 			if(debugroc) cout << name << " " << stmp << ":";
 			for(int b = 0; b <= htmp->GetNbinsX()+1; b++){
-				efftmp[b] = htmp->Integral(b,htmp->GetNbinsX()+1)/ydenom;
+				efftmp[b] = reverse ? 
+							htmp->Integral(0,b)/ydenom :
+							htmp->Integral(b,htmp->GetNbinsX()+1)/ydenom;
 				if(debugroc) cout << " " << efftmp[b];
 			}
 			if(debugroc) cout << endl;

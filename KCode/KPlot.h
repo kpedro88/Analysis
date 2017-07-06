@@ -38,7 +38,7 @@ class KPlot{
 		//constructor
 		KPlot() : name(""), localOpt(0), globalOpt(0), histo(0), ratio(0), exec(0), isInit(false), 
 				  can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0),
-				  pad1W(0), pad1H(0), pad2W(0), pad2H(0)
+				  pad1W(0), pad1H(0), pad2W(0), pad2H(0), reverseROC(false)
 		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
@@ -49,7 +49,7 @@ class KPlot{
 		//universal size values set in initialization list
 		KPlot(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : name(name_), localOpt(localOpt_), globalOpt(globalOpt_), histo(0), ratio(0), exec(0), isInit(false),
 																	   can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0),
-																	   pad1W(0), pad1H(0), pad2W(0), pad2H(0)
+																	   pad1W(0), pad1H(0), pad2W(0), pad2H(0), reverseROC(false)
 		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
@@ -59,6 +59,8 @@ class KPlot{
 			TH1::SetDefaultSumw2(kTRUE);
 			
 			SetStyle();
+
+			reverseROC = localOpt->Get("reverseROC",false);
 		}
 		//destructor
 		virtual ~KPlot() {}
@@ -493,6 +495,7 @@ class KPlot{
 		void SetLocalOpt(OptionMap* opt) { localOpt = opt; if(localOpt==0) localOpt = new OptionMap(); } //must always have an option map
 		OptionMap* GetGlobalOpt() { return globalOpt; }
 		void SetGlobalOpt(OptionMap* opt) { globalOpt = opt; if(globalOpt==0) globalOpt = new OptionMap(); } //must always have an option map
+		bool GetReverseROC() { return reverseROC; }
 
 	protected:
 		//member variables
@@ -521,6 +524,7 @@ class KPlot{
 		int ratiolinewidth, ratiolinestyle;
 		Color_t ratiolinecolor;
 		vector<string> vars;
+		bool reverseROC;
 };
 
 //-----------------------------------------------------------

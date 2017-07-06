@@ -586,8 +586,8 @@ class KPlotManager : public KManager {
 						
 						//get efficiencies
 						//(cached results will be returned if the calculation was already done)
-						double* eff_sig = roc_sig[s]->GetEff();
-						double* eff_bkg = roc_bkg[b]->GetEff();
+						double* eff_sig = roc_sig[s]->GetEff(p.second->GetReverseROC());
+						double* eff_bkg = roc_bkg[b]->GetEff(p.second->GetReverseROC());
 
 						//create graph
 						TGraph* gtmp = new TGraph(h_sig->GetNbinsX()+2,eff_sig,eff_bkg);
