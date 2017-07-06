@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Mon Jul  3 14:11:27 2017 by ROOT version 6.06/01
+// Thu Jul  6 16:24:11 2017 by ROOT version 6.06/01
 // from TTree tree/tree
 // found on file: root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/GenProductionV1/genmassanalysis_mZprime-3000_mDark-20_rinv-0.3_alpha-0.2_n-10000_part-1.root
 //////////////////////////////////////////////////////////
@@ -30,6 +30,9 @@ public :
    vector<double>  *GenJetsAK8_AxisAverage;
    vector<double>  *GenJetsAK8_AxisMajor;
    vector<double>  *GenJetsAK8_AxisMinor;
+   vector<double>  *GenJetsAK8_ECF1;
+   vector<double>  *GenJetsAK8_ECF2;
+   vector<double>  *GenJetsAK8_ECF3;
    vector<double>  *GenJetsAK8_MomentGirth;
    vector<double>  *GenJetsAK8_MomentHalf;
    vector<int>     *GenJetsAK8_Multiplicity;
@@ -56,6 +59,9 @@ public :
    TBranch        *b_GenJetsAK8_AxisAverage;   //!
    TBranch        *b_GenJetsAK8_AxisMajor;   //!
    TBranch        *b_GenJetsAK8_AxisMinor;   //!
+   TBranch        *b_GenJetsAK8_ECF1;   //!
+   TBranch        *b_GenJetsAK8_ECF2;   //!
+   TBranch        *b_GenJetsAK8_ECF3;   //!
    TBranch        *b_GenJetsAK8_MomentGirth;   //!
    TBranch        *b_GenJetsAK8_MomentHalf;   //!
    TBranch        *b_GenJetsAK8_Multiplicity;   //!
@@ -144,6 +150,9 @@ void NtupleClass::Init(TTree *tree)
    GenJetsAK8_AxisAverage = 0;
    GenJetsAK8_AxisMajor = 0;
    GenJetsAK8_AxisMinor = 0;
+   GenJetsAK8_ECF1 = 0;
+   GenJetsAK8_ECF2 = 0;
+   GenJetsAK8_ECF3 = 0;
    GenJetsAK8_MomentGirth = 0;
    GenJetsAK8_MomentHalf = 0;
    GenJetsAK8_Multiplicity = 0;
@@ -167,6 +176,9 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("GenJetsAK8_AxisAverage", &GenJetsAK8_AxisAverage, &b_GenJetsAK8_AxisAverage);
    fChain->SetBranchAddress("GenJetsAK8_AxisMajor", &GenJetsAK8_AxisMajor, &b_GenJetsAK8_AxisMajor);
    fChain->SetBranchAddress("GenJetsAK8_AxisMinor", &GenJetsAK8_AxisMinor, &b_GenJetsAK8_AxisMinor);
+   fChain->SetBranchAddress("GenJetsAK8_ECF1", &GenJetsAK8_ECF1, &b_GenJetsAK8_ECF1);
+   fChain->SetBranchAddress("GenJetsAK8_ECF2", &GenJetsAK8_ECF2, &b_GenJetsAK8_ECF2);
+   fChain->SetBranchAddress("GenJetsAK8_ECF3", &GenJetsAK8_ECF3, &b_GenJetsAK8_ECF3);
    fChain->SetBranchAddress("GenJetsAK8_MomentGirth", &GenJetsAK8_MomentGirth, &b_GenJetsAK8_MomentGirth);
    fChain->SetBranchAddress("GenJetsAK8_MomentHalf", &GenJetsAK8_MomentHalf, &b_GenJetsAK8_MomentHalf);
    fChain->SetBranchAddress("GenJetsAK8_Multiplicity", &GenJetsAK8_Multiplicity, &b_GenJetsAK8_Multiplicity);
