@@ -132,7 +132,7 @@ class KHistoSelector : public KSelector {
 			else if(mname=="MT") mtype = MT;
 			else if(mname=="Mmc") mtype = Mmc;
 			else if(mname=="MAOS") mtype = MAOS;
-			else cout << "Input error: unknown mass type: " << mname << endl;
+			//else cout << "Input error: unknown mass type: " << mname << endl;
 
 			//do not use MCWeight with data
 			if(base->IsData()) MCWeight = NULL;
@@ -161,6 +161,58 @@ class KHistoSelector : public KSelector {
 			}
 			initialized = true;
 		}
+		bool IsPerJet(const string& vname, KValue& value, double w){
+			bool leadjet = false, subleadjet = false;
+			string vname2;
+			
+			if(vname.compare(0,7,"leadjet")==0) {
+				leadjet = true;
+				vname2 = vname.substr(7,string::npos);
+			}
+			else if(vname.compare(0,10,"subleadjet")==0){
+				subleadjet = true;
+				vname2 = vname.substr(10,string::npos);
+			}
+			else if(vname.compare(0,7,"bothjet")==0) {
+				leadjet = true;
+				subleadjet = true;
+				vname2 = vname.substr(7,string::npos);
+			}
+
+			if(leadjet) FillPerJet(vname2,value,w,0);
+			if(subleadjet) FillPerJet(vname2,value,w,1);
+			
+			return (leadjet or subleadjet);
+		}
+		void FillPerJet(const string& vname, KValue& value, double w, unsigned index){
+			if(looper->GenJetsAK8->size()>index){
+				if(vname=="pt") value.Fill(looper->GenJetsAK8->at(index).Pt(),w);
+				else if(vname=="eta") value.Fill(looper->GenJetsAK8->at(index).Eta(),w);
+				else if(vname=="axisminor") value.Fill(looper->GenJetsAK8_AxisMinor->at(index),w);
+				else if(vname=="axismajor") value.Fill(looper->GenJetsAK8_AxisMajor->at(index),w);
+				else if(vname=="axisaverage") value.Fill(looper->GenJetsAK8_AxisAverage->at(index),w);
+				else if(vname=="girth") value.Fill(looper->GenJetsAK8_MomentGirth->at(index),w);
+				else if(vname=="mhalf") value.Fill(looper->GenJetsAK8_MomentHalf->at(index),w);
+				else if(vname=="mult") value.Fill(looper->GenJetsAK8_Multiplicity->at(index),w);
+				else if(vname=="overflow") value.Fill(looper->GenJetsAK8_Overflow->at(index),w);
+				else if(vname=="ptD") value.Fill(looper->GenJetsAK8_PtD->at(index),w);
+				//derived substructure variables
+				else if(vname=="tau21"){
+					if(looper->GenJetsAK8_Tau1->at(index)>0) value.Fill(looper->GenJetsAK8_Tau2->at(index)/looper->GenJetsAK8_Tau1->at(index),w);
+				}
+				else if(vname=="tau32"){
+					if(looper->GenJetsAK8_Tau2->at(index)>0) value.Fill(looper->GenJetsAK8_Tau3->at(index)/looper->GenJetsAK8_Tau2->at(index),w);
+				}
+				else if(vname=="ecfC2"){
+					if(looper->GenJetsAK8_ECF2->at(index)>0) value.Fill(looper->GenJetsAK8_ECF3->at(index)/pow(looper->GenJetsAK8_ECF2->at(index),2),w);
+				}
+				else if(vname=="ecfD2"){
+					if(looper->GenJetsAK8_ECF2->at(index)>0) value.Fill(looper->GenJetsAK8_ECF3->at(index)/pow(looper->GenJetsAK8_ECF2->at(index),3),w);
+				}
+				else { //do nothing
+				}
+			}
+		}
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
@@ -182,6 +234,40 @@ class KHistoSelector : public KSelector {
 						else if(mtype==MT) values[i].Fill(looper->MT,w);
 						else if(mtype==Mmc) values[i].Fill(looper->Mmc,w);
 						else if(mtype==MAOS) values[i].Fill(looper->MAOS,w);
+					}
+					else if(vname=="MT"){//transverse mass
+						values[i].Fill(looper->MT,w);
+					}
+					else if(vname=="MJJ"){//dijet mass
+						values[i].Fill(looper->MJJ,w);
+					}
+					else if(vname=="Mmc"){//dijet+truth mass
+						values[i].Fill(looper->Mmc,w);
+					}
+					else if(vname=="njet"){//# of jets
+						values[i].Fill(looper->GenJetsAK8->size(),w);
+					}
+					else if(IsPerJet(vname,values[i],w)){
+						//per-jet histos (leading, subleading, or both)
+						//nothing to do - histo is filled as a side effect
+					}
+					else if(vname=="deltaeta"){//deta(j1,j2)
+						if(looper->GenJetsAK8->size()>1) values[i].Fill(abs(looper->GenJetsAK8->at(0).Eta()-looper->GenJetsAK8->at(1).Eta()),w);
+					}
+					else if(vname=="deltaphi1"){//dphi(j1,MET)
+						values[i].Fill(looper->DeltaPhi1,w);
+					}
+					else if(vname=="deltaphi2"){//dphi(j2,MET)
+						values[i].Fill(looper->DeltaPhi2,w);
+					}
+					else if(vname=="deltaphimin"){//min dphi(j1/2,MET)
+						values[i].Fill(looper->DeltaPhiMin,w);
+					}
+					else if(vname=="met"){//missing ET
+						values[i].Fill(looper->MET,w);
+					}
+					else if(vname=="metMTratio"){//MET/MT
+						values[i].Fill(looper->MET/looper->MT,w);
 					}
 					else { //if it's a histogram with no known variable or calculation, do nothing
 					}

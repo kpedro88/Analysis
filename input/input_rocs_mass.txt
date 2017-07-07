@@ -1,0 +1,7 @@
+OPTION
+string:rocsuffix[_MJJ_MT_Mmc]
+
+HISTO
+MJJ	i:xnum[100]	d:xmin[0]	d:xmax[4000]	s:xtitle[M_{jj} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kRed]
+MT	i:xnum[100]	d:xmin[0]	d:xmax[4000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+Mmc	i:xnum[150]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{mc} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kGray + 2]

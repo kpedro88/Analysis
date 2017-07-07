@@ -1,0 +1,14 @@
+OPTION
+vstring:roc_sig[mZprime-3000_mDark-20_rinv-0.3_alpha-0.2,mZprime-3000_mDark-20_rinv-0.3_alpha-0.1,mZprime-3000_mDark-20_rinv-0.5_alpha-0.2]
+vstring:roc_bkg[QCD]
+string:printsuffix[sig_vs_QCD]
+
+SET
+hist	mc	mZprime-3000_mDark-20_rinv-0.3_alpha-0.2	s:legname[#alpha_{d} = 0.2, ^{}r_{inv} = 0.3]	c:color[kRed]	i:linestyle[7]
+	base	mc	mZprime-3000_mDark-20_rinv-0.3_alpha-0.2	s:filename[genmassanalysis_mZprime-3000_mDark-20_rinv-0.3_alpha-0.2_n-10000_part-1.root]	s:treename[GenMassAnalyzer/tree]	b:unweighted[1]
+hist	mc	mZprime-3000_mDark-20_rinv-0.3_alpha-0.1	s:legname[#alpha_{d} = 0.1, ^{}r_{inv} = 0.3]	c:color[kBlue]	i:linestyle[7]
+	base	mc	mZprime-3000_mDark-20_rinv-0.3_alpha-0.1	s:filename[genmassanalysis_mZprime-3000_mDark-20_rinv-0.3_alpha-0.1_n-10000_part-1.root]	s:treename[GenMassAnalyzer/tree]	b:unweighted[1]
+hist	mc	mZprime-3000_mDark-20_rinv-0.5_alpha-0.2	s:legname[#alpha_{d} = 0.2, ^{}r_{inv} = 0.5]	c:color[kMagenta]	i:linestyle[7]
+	base	mc	mZprime-3000_mDark-20_rinv-0.5_alpha-0.2	s:filename[genmassanalysis_mZprime-3000_mDark-20_rinv-0.5_alpha-0.2_n-10000_part-1.root]	s:treename[GenMassAnalyzer/tree]	b:unweighted[1]
+hist	mc	QCD	s:legname[QCD]	c:color[kBlack]
+	base	mc	QCD	s:filename[genmassanalysis_QCD_n-10000_part-1.root]	s:treename[GenMassAnalyzer/tree]	b:unweighted[1]

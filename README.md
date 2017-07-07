@@ -58,3 +58,13 @@ To compare different mass distributions for a given signal and save the plot as 
 root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/GenProductionV1",{"input/input_masses.txt","input/input_masses_sets_mZprime-3000_mDark-20_rinv-0.3_alpha-0.2_n-10000.txt"},{},1)'
 ```
 Omitting the last argument will display the plot without saving it.
+
+To compare distributions between signal and background, and make ROC curves for the corresponding variables:
+```
+root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/GenProductionV1",{"input/input_rocs.txt","input/input_rocs_mass.txt","input/input_sets_rocs.txt"},{},1)'
+root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/GenProductionV1",{"input/input_rocs.txt","input/input_rocs_kin1.txt","input/input_sets_rocs.txt"},{},1)'
+root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/GenProductionV1",{"input/input_rocs.txt","input/input_rocs_kin2.txt","input/input_sets_rocs.txt"},{},1)'
+root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/GenProductionV1",{"input/input_rocs.txt","input/input_rocs_sub1.txt","input/input_sets_rocs.txt"},{},1)'
+root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/GenProductionV1",{"input/input_rocs.txt","input/input_rocs_sub2.txt","input/input_sets_rocs.txt"},{},1)'
+root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/GenProductionV1",{"input/input_rocs.txt","input/input_rocs_sub3.txt","input/input_sets_rocs.txt"},{},1)'
+```
