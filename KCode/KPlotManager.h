@@ -635,7 +635,7 @@ class KPlotManager : public KManager {
 					p_roc->DrawText();
 					
 					//if printing not enabled, does nothing
-					PrintCanvas(roc_name,can);			
+					PrintCanvas(roc_name,can,true);
 				}
 			}
 			
@@ -646,7 +646,7 @@ class KPlotManager : public KManager {
 		//accessors
 		bool GetPrint() { return doPrint; }
 		void SetPrint(bool p) { doPrint = p; }
-		void PrintCanvas(string oname, TCanvas* can){
+		void PrintCanvas(string oname, TCanvas* can, bool roc=false){
 			//print formats given as a vector option
 			vector<string> printformat;
 			if(doPrint && globalOpt->Get<vector<string> >("printformat",printformat)){
@@ -654,7 +654,7 @@ class KPlotManager : public KManager {
 					string otmp = oname;
 					string pformat = printformat[j];
 					string suff = "";
-					if(globalOpt->Get("printsuffix",suff)) otmp += "_" + suff;
+					if((!roc and globalOpt->Get("printsuffix",suff)) or (roc and globalOpt->Get("rocsuffix",suff))) otmp += "_" + suff;
 					if(globalOpt->Get("treesuffix",false)){
 						//use only the tree directory name as additional suffix
 						string treedir = "";
