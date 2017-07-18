@@ -64,6 +64,7 @@ To compare distributions between signal and background, and make ROC curves for 
 root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/GenProductionV1",{"input/input_rocs.txt","input/input_rocs_mass.txt","input/input_sets_rocs.txt"},{},1)'
 root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/GenProductionV1",{"input/input_rocs.txt","input/input_rocs_kin1.txt","input/input_sets_rocs.txt"},{},1)'
 root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/GenProductionV1",{"input/input_rocs.txt","input/input_rocs_kin2.txt","input/input_sets_rocs.txt"},{},1)'
+root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/GenProductionV1",{"input/input_rocs.txt","input/input_rocs_kin3.txt","input/input_sets_rocs.txt"},{},1)'
 root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/GenProductionV1",{"input/input_rocs.txt","input/input_rocs_sub1.txt","input/input_sets_rocs.txt"},{},1)'
 root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/GenProductionV1",{"input/input_rocs.txt","input/input_rocs_sub2.txt","input/input_sets_rocs.txt"},{},1)'
 root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/GenProductionV1",{"input/input_rocs.txt","input/input_rocs_sub3.txt","input/input_sets_rocs.txt"},{},1)'

@@ -4,4 +4,4 @@ string:rocsuffix[_girth_mhalf_overflow]
 HISTO
 bothjetgirth	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[girth]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kRed]	b:reverseROC[1]
 bothjetmhalf	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[moment_{1/2}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta]	b:reverseROC[1]
-bothjetoverflow	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[overflow]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlue]
+bothjetoverflow	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[overflow]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlue]	b:reverseROC[1]

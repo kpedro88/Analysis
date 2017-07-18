@@ -5,4 +5,4 @@ HISTO
 deltaeta	i:xnum[100]	d:xmin[0]	d:xmax[10]	s:xtitle[|#Delta#eta(j_{1},j_{2})|]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kRed]	b:reverseROC[1]
 deltaphimin	i:xnum[100]	d:xmin[0]	d:xmax[3.15]	s:xtitle[#Delta#phi_{min}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta]	b:reverseROC[1]
 met	i:xnum[100]	d:xmin[0]	d:xmax[1500]	s:xtitle[#slash{E}_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlue]
-metMTratio	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#slash{E}_{T}/M_{T}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kGray + 2]
+metMTratio	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[#slash{E}_{T}/M_{T}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kGray + 2]

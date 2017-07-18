@@ -5,4 +5,4 @@ HISTO
 bothjettau21	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#tau_{21}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kRed]	b:reverseROC[1]
 bothjettau32	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#tau_{32}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta]	b:reverseROC[1]
 bothjetecfC2	i:xnum[100]	d:xmin[0]	d:xmax[0.05]	s:xtitle[C_{2} (ECF)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlue]	b:reverseROC[1]
-bothjetecfD2	i:xnum[100]	d:xmin[0]	d:xmax[0.005]	s:xtitle[D_{2} (ECF)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kGray + 2]	b:reverseROC[1]
+bothjetecfD2	i:xnum[100]	d:xmin[0]	d:xmax[0.002]	s:xtitle[D_{2} (ECF)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kGray + 2]	b:reverseROC[1]

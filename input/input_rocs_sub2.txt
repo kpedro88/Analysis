@@ -2,7 +2,7 @@ OPTION
 string:rocsuffix[_axismajor_axisminor_mult_ptD]
 
 HISTO
-bothjetaxismajor	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#sigma_{major}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kRed]	b:reverseROC[1]
-bothjetaxisminor	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#sigma_{minor}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta]	b:reverseROC[1]
+bothjetaxismajor	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[#sigma_{major}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kRed]	b:reverseROC[1]
+bothjetaxisminor	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[#sigma_{minor}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta]	b:reverseROC[1]
 bothjetmult	i:xnum[100]	d:xmin[0]	d:xmax[200]	s:xtitle[n_{constituents}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlue]
 bothjetptD	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[p_{T}D]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kGray + 2]

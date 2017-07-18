@@ -188,6 +188,7 @@ class KHistoSelector : public KSelector {
 			if(looper->GenJetsAK8->size()>index){
 				if(vname=="pt") value.Fill(looper->GenJetsAK8->at(index).Pt(),w);
 				else if(vname=="eta") value.Fill(looper->GenJetsAK8->at(index).Eta(),w);
+				else if(vname=="abseta") value.Fill(abs(looper->GenJetsAK8->at(index).Eta()),w);
 				else if(vname=="axisminor") value.Fill(looper->GenJetsAK8_AxisMinor->at(index),w);
 				else if(vname=="axismajor") value.Fill(looper->GenJetsAK8_AxisMajor->at(index),w);
 				else if(vname=="axisaverage") value.Fill(looper->GenJetsAK8_AxisAverage->at(index),w);

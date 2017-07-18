@@ -1,11 +1,8 @@
 OPTION
-bool:roc[0]
+string:rocsuffix[_leadjetpt_subleadjetpt_leadjetabseta_subleadjetabseta]
 
 HISTO
-njet	i:xnum[20]	d:xmin[0]	d:xmax[20]	s:xtitle[N_{jet}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlack]
-deltaphi1	i:xnum[100]	d:xmin[0]	d:xmax[3.15]	s:xtitle[#Delta#phi(j_{1},#slash{E}_{T})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlack]
-deltaphi2	i:xnum[100]	d:xmin[0]	d:xmax[3.15]	s:xtitle[#Delta#phi(j_{2},#slash{E}_{T})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlack]
-leadjetpt	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}(j_{1}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlack]
-subleadjetpt	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}(j_{2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlack]
-leadjeteta	i:xnum[100]	d:xmin[-5]	d:xmax[5]	s:xtitle[#eta(j_{1})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlack]
-subleadjeteta	i:xnum[100]	d:xmin[-5]	d:xmax[5]	s:xtitle[#eta(j_{2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlack]
+leadjetpt	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}(j_{1}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kRed]
+subleadjetpt	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}(j_{2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kMagenta]
+leadjetabseta	i:xnum[100]	d:xmin[0]	d:xmax[5]	s:xtitle[|#eta(j_{1})|]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlue]	b:reverseROC[1]
+subleadjetabseta	i:xnum[100]	d:xmin[0]	d:xmax[5]	s:xtitle[|#eta(j_{2})|]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kGray + 2]	b:reverseROC[1]
