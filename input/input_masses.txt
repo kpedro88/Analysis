@@ -28,11 +28,11 @@ bool:plotoverflow[1]
 #vstring:disable_branches[*]
 int:npanel[1]
 bool:treesuffix[0]
-#double:ymin[5e-4]
+double:ymin_min[1e-6]
 bool:appendsel[0]
 bool:unitnorm[1]
 vstring:selections[sim]
-bool:debugcut[1]
+#bool:debugcut[1]
 
 SELECTION
 sim
@@ -40,5 +40,5 @@ sim
 	Histo
 
 HISTO
-mass	i:xnum[100]	d:xmin[0]	d:xmax[6000]	s:xtitle[mass [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]
+mass	i:xnum[100]	d:xmin[0]	d:xmax[6000]	s:xtitle[mass [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
 
