@@ -1,0 +1,45 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+#root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV12/scan",{"input/input_comp_T1tbtb_uncompressed_histo.txt"},{})'
+
+INPUT
+input/input_global.txt
+
+OPTION
+string:lumi_text[(13 TeV)]
+string:prelim_text[Simulation]
+vstring:disable_branches[*]
+vstring:enable_branches[MHT,GenMHT,DeltaPhi1,DeltaPhi2,DeltaPhi3,DeltaPhi4]
+string:printsuffix[uncompressed_T1tbtb]
+double:sizeLeg[24]
+bool:unitnorm[1]
+double:ymin_min[1e-6]
+vstring:extra_text[pp #rightarrow #tilde{g}#tilde{g}{}_{'} #tilde{g} #rightarrow #bar{t} b ^{}#tilde{#chi}^{+}_{1},^{}m_{#tilde{g}} = 1400 GeV,m_{#tilde{#chi}^{+}_{1}} - m_{#tilde{#chi}^{0}_{1}} = 5 GeV]
+vint:extra_text_panels[0,0,0]
+int:npanel[2]
+bool:balance_panels[0]
+vstring:printformat[png]
+bool:appendsel[0]
+vstring:selections[common]
+string:rootfile[mht_histo_T1tbtb_uncompressed]
+
+SELECTION
+common
+	MCWeight
+	Histo
+
+HISTO
+genmht	i:xnum[30]	d:xmin[0]	d:xmax[1500]	s:xtitle[H_{T}^{miss}(gen) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	vd:xcuts[300,350,500,750]
+mht	i:xnum[30]	d:xmin[0]	d:xmax[1500]	s:xtitle[H_{T}^{miss} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	vd:xcuts[300,350,500,750]
+
+SET
+hist	mc	T1tbtb_1400_1_fast	s:legname[^{}m_{#tilde{#chi}^{0}_{1}} = 1 GeV]	c:color[kBlue]	i:panel[1]
+	base	mc	T1tbtb_1400_1_fast	s:filename[T1tbtb_mMother-1400_mLSP-1_fast.root]	d:xsection[0.0252977]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]	b:data[0]
+hist	mc	T1tbtb_1000_1_fast	s:legname[^{}m_{#tilde{#chi}^{0}_{1}} = 1 GeV]	c:color[kBlue]	i:panel[1]
+	base	mc	T1tbtb_1000_1_fast	s:filename[T1tbtb_mMother-1000_mLSP-1_fast.root]	d:xsection[0.325388]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]	b:data[0]

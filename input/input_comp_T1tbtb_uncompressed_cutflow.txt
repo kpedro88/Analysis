@@ -1,0 +1,43 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+#root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV12/scan/supplementary/tree_signal",{"input/input_comp_T1tbtb_uncompressed_cutflow.txt"},{},1)'
+
+INPUT
+input/input_global.txt
+
+OPTION
+string:lumi_text[(13 TeV)]
+string:prelim_text[Simulation Supplementary]
+vstring:disable_branches[*]
+string:printsuffix[uncompressed_T1tbtb]
+double:sizeLeg[24]
+double:ymin_min[1e-6]
+vstring:extra_text[pp #rightarrow #tilde{g}#tilde{g}{}_{'} #tilde{g} #rightarrow #bar{t} b ^{}#tilde{#chi}^{+}_{1},^{}m_{#tilde{g}} = 1400 GeV,m_{#tilde{#chi}^{+}_{1}} - m_{#tilde{#chi}^{0}_{1}} = 5 GeV]
+vint:extra_text_panels[0,0,0]
+int:npanel[2]
+bool:balance_panels[0]
+vstring:printformat[png]
+bool:appendsel[0]
+vstring:selections[common]
+bool:doCutflow[1]
+double:marginB[150]
+
+SELECTION
+common
+	MCWeight
+	Histo
+
+HISTO
+cutflowRel	b:ratio[0]	s:ytitle[Rel. Eff. [%]]	b:logy[0]	b:xbinlabel[1]	vs{|}:xlabels[N_{jet} #geq 2|H_{T} > 300 GeV|H_{T}^{miss} > 300 GeV|N_{muon} = 0|N_{isolated tracks}^{(muon)} = 0|N_{electron} = 0|N_{isolated tracks}^{(electron)} = 0|N_{isolated tracks}^{(pion)} = 0|#Delta#phi_{H_{T}^{miss},j_{1}} > 0.5|#Delta#phi_{H_{T}^{miss},j_{2}} > 0.5|#Delta#phi_{H_{T}^{miss},j_{3}} > 0.3|#Delta#phi_{H_{T}^{miss},j_{4}} > 0.3|Event quality filter]
+
+SET
+hist	mc	T1tbtb_1400_1_fast	s:legname[^{}m_{#tilde{#chi}^{0}_{1}} = 1 GeV]	c:color[kBlue]	i:panel[1]
+	base	mc	T1tbtb_1400_1_fast	s:filename[tree_T1tbtb_1400_1_fast.root]	d:xsection[0.0252977]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]	b:data[0]
+hist	mc	T1tbtb_1400_25_fast	s:legname[^{}m_{#tilde{#chi}^{0}_{1}} = 25 GeV]	c:color[kRed]	i:panel[1]
+	base	mc	T1tbtb_1400_25_fast	s:filename[tree_T1tbtb_1400_25_fast.root]	d:xsection[0.0252977]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]	b:data[0]
