@@ -50,6 +50,56 @@ class KNamedN {
 typedef KNamedN<1> KNamed;
 typedef KNamedN<3> KNamedBase;
 
+class KParserOption {
+	public:
+		//constructor
+		//formats:
+		//1. type:name[value]
+		//2. vtype:name[value]
+		//3. vtype{sep}:name[value]
+		KParserOption(string line) : sep(','), isvector(false), valid(true) {
+			//first component: type
+			string::size_type colon = line.find(':');
+			if(colon!=string::npos){
+				type = line.substr(0,colon);
+				line.erase(0,colon+1);
+			}
+			else valid |= false;
+			
+			//check for vector formats
+			isvector = type[0]=='v';
+			if(isvector) type.erase(0,1);
+			
+			string::size_type curly = type.find('{');
+			if(curly!=string::npos and curly<=type.size()+1){
+				sep = type[curly+1];
+				type.erase(curly,string::npos);
+			}
+			
+			//remove whitespace from front
+			while(type[0]==' '){
+				type.erase(0,1);
+			}
+			
+			//second component: name
+			string::size_type lbracket = line.find('[');
+			if(lbracket!=string::npos){
+				name = line.substr(0,lbracket);
+				line.erase(0,lbracket+1);
+			}
+			else valid |= false;
+			
+			//third component: value
+			if(line[line.size()-1]==']') line.erase(line.size()-1,1);
+			value = line;
+		}
+		
+		//members
+		string type, name, value;
+		char sep;
+		bool isvector, valid;
+};
+
 class KChain {
 	public:
 		//general constructors
@@ -153,29 +203,6 @@ namespace KParser {
 		}
 		
 		return color;
-	}	
-	//splits option format into three components: type:name[value]
-	bool splitOption(string line, vector<string>& fields){
-		//first component: type
-		string::size_type colon = line.find(':');
-		if(colon!=string::npos) {
-			fields.push_back(line.substr(0,colon));
-			line.erase(0,colon+1);
-		}
-		else return false;
-		
-		//second component: name
-		string::size_type lbracket = line.find('[');
-		if(lbracket!=string::npos){
-			fields.push_back(line.substr(0,lbracket));
-			line.erase(0,lbracket+1);
-		}
-		else return false;
-		
-		//third component: value
-		if(line[line.size()-1]==']') line.erase(line.size()-1,1);
-		fields.push_back(line);
-		return true;
 	}
 	//handles default type cases
 	//special cases declared below
@@ -195,37 +222,37 @@ namespace KParser {
 		return processColor(val);
 	}
 	//handles vector and non-vector options
-	template <class O> void addOption(OptionMap* option, string name, string val, bool isvector){
-		if(isvector){
+	template <class O> void addOption(OptionMap* option, const KParserOption& opt){
+		if(opt.isvector){
 			vector<O> vtmp;
 			//comma-separated values
 			vector<string> fields;
-			process(val,',',fields);
+			process(opt.value,opt.sep,fields);
 			for(unsigned i = 0; i < fields.size(); i++){
 				vtmp.push_back(getOptionValue<O>(fields[i]));
 			}
-			option->Set(name,vtmp);
+			option->Set(opt.name,vtmp);
 		}
 		else {
-			option->Set(name, getOptionValue<O>(val));
+			option->Set(opt.name, getOptionValue<O>(opt.value));
 		}
 	}
 	//special handling for chains
-	template <> void addOption<KChain>(OptionMap* option, string name, string val, bool isvector){
+	template <> void addOption<KChain>(OptionMap* option, const KParserOption& opt){
 		//comma-separated values
 		vector<string> fields;
-		process(val,',',fields);
+		process(opt.value,opt.sep,fields);
 		
-		if(isvector){
+		if(opt.isvector){
 			vector<KChain> vtmp;
 			for(unsigned i = 0; i < fields.size()-3; i+=4){
 				vtmp.emplace_back(vector<string>(fields.begin()+i,fields.begin()+min(i+4,unsigned(fields.size()))));
 			}
-			option->Set(name,vtmp);
+			option->Set(opt.name,vtmp);
 		}
 		else {
 			KChain ch(fields);
-			option->Set(name,ch);
+			option->Set(opt.name,ch);
 		}
 	}
 	//special handling for input files
@@ -261,26 +288,25 @@ namespace KParser {
 			}
 		}
 	}
-	void addOptionInput(OptionMap* option, string name, string val, bool isvector){
+	void addOptionInput(OptionMap* option, const KParserOption& opt){
 		//name is not used
-		if(isvector){
+		if(opt.isvector){
 			//comma-separated values
 			vector<string> fields;
-			process(val,',',fields);
+			process(opt.value,opt.sep,fields);
 			for(unsigned i = 0; i < fields.size(); i++){
 				getOptionValueInput(option,fields[i]);
 			}
 		}
 		else {
-			getOptionValueInput(option,val);
+			getOptionValueInput(option,opt.value);
 		}
 	}
 	//helper functions
 	void processOption(string line, OptionMap* option){
-		//type:name[value]
-		vector<string> fields;
-		bool goodOption = splitOption(line,fields);
-		if(!goodOption) {
+		//(v)type({sep}):name[value]
+		KParserOption opt(line);
+		if(!opt.valid) {
 			cout << "Improperly formatted option:" << endl;
 			cout << line << endl;
 			cout << "This option will not be added." << endl;
@@ -291,30 +317,19 @@ namespace KParser {
 		//bool/b, int/i, uint/u, float/f, double/d, string/s, color/c, chain/ch
 		//vbool/vb, vint/vi, vuint/vu, vfloat/vf, vdouble/vd, vstring/vs, vcolor/vc, vchain/vch(vectors)
 		//others could easily be added...
-		if(fields.size()>=3){
-			string type = fields[0]; string name = fields[1]; string val = fields[2];
-			
-			//remove whitespace from front
-			while(type[0]==' '){
-				type.erase(0,1);
-			}
-			
-			bool isvector = type[0]=='v';
-			if(isvector) type.erase(0,1);
-			
-			//match strings to types
-			if(type=="bool" || type=="b") addOption<bool>(option,name,val,isvector);
-			else if(type=="int" || type=="i") addOption<int>(option,name,val,isvector);
-			else if(type=="uint" || type=="u") addOption<unsigned>(option,name,val,isvector);
-			else if(type=="float" || type=="f") addOption<float>(option,name,val,isvector);
-			else if(type=="double" || type=="d") addOption<double>(option,name,val,isvector);
-			else if(type=="string" || type=="s") addOption<string>(option,name,val,isvector);
-			else if(type=="color" || type=="c") addOption<Color_t>(option,name,val,isvector);
-			else if(type=="chain" || type=="ch") addOption<KChain>(option,name,val,isvector);
-			else if(type=="input" || type=="in") addOptionInput(option,name,val,isvector);
-			else {
-				cout << "Unknown option type: " << line << endl;
-			}
+		
+		//match strings to types
+		if(opt.type=="bool" || opt.type=="b") addOption<bool>(option,opt);
+		else if(opt.type=="int" || opt.type=="i") addOption<int>(option,opt);
+		else if(opt.type=="uint" || opt.type=="u") addOption<unsigned>(option,opt);
+		else if(opt.type=="float" || opt.type=="f") addOption<float>(option,opt);
+		else if(opt.type=="double" || opt.type=="d") addOption<double>(option,opt);
+		else if(opt.type=="string" || opt.type=="s") addOption<string>(option,opt);
+		else if(opt.type=="color" || opt.type=="c") addOption<Color_t>(option,opt);
+		else if(opt.type=="chain" || opt.type=="ch") addOption<KChain>(option,opt);
+		else if(opt.type=="input" || opt.type=="in") addOptionInput(option,opt);
+		else {
+			cout << "Unknown option type: " << line << endl;
 		}
 	}
 	template <size_t N>
