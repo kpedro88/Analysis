@@ -314,6 +314,7 @@ class KPlotManager : public KManager {
 						}
 						else theSet = MySets[s];
 						
+						omap->Set<string>(theSet->GetName()+"_legname",theSet->GetLegName());
 						KPlot* ptmp = new KPlot2D(ntmp->fields[0],theSet->GetName(),omap,globalOpt);
 						if(ptmp->Initialize()) {
 							if(!rationame2D.empty()) ptmp->GetLocalOpt()->Set<string>(theSet->GetName()+"_name2D",rationame2D);

@@ -591,14 +591,16 @@ class KPlot2D: public KPlot {
 			localOpt->Get("ztitle",ztitle);
 			histo->GetXaxis()->SetTitle(xtitle.c_str());
 			histo->GetYaxis()->SetTitle(ytitle.c_str());
-			//include name of set in z title
+			//include name of ratio in z title
 			if(setname.find("ratio")!=string::npos){
 				string rationame2D = "";
 				localOpt->Get(setname + "_name2D",rationame2D); //set in KPlotManager
 				histo->GetZaxis()->SetTitle(rationame2D.c_str());
 			}
-			else { //include name of set in z title
-				histo->GetZaxis()->SetTitle((setname + ": " + ztitle).c_str());
+			else { //include legname of set in z title
+				string legname = "";
+				localOpt->Get(setname + "_legname",legname); //set in KPlotManager
+				histo->GetZaxis()->SetTitle(((legname.size()>0 ? legname : setname) + ": " + ztitle).c_str());
 			}
 		}
 		virtual bool Initialize(TH1* histo_=NULL){
