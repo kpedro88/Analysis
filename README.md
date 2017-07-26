@@ -69,3 +69,8 @@ root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/GenPr
 root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/GenProductionV1",{"input/input_rocs.txt","input/input_rocs_sub2.txt","input/input_sets_rocs.txt"},{},1)'
 root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/GenProductionV1",{"input/input_rocs.txt","input/input_rocs_sub3.txt","input/input_sets_rocs.txt"},{},1)'
 ```
+
+To make 2D distributions:
+```
+root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/GenProductionV1",{"input/input_rocs.txt","input/input_mass_vs_met.txt","input/input_sets_rocs.txt"},{},1)'
+```
