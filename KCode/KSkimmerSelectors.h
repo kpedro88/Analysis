@@ -40,6 +40,40 @@ void KRA2BinSelector::CheckBase(){
 }
 
 //----------------------------------------------------
+class KDijetSelector : public KSelector {
+	public:
+		//constructor
+		KDijetSelector() : KSelector() { }
+		KDijetSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), njet(2), id(true), pt(-1), eta(2.4) {
+			//check for options
+			localOpt->Get("njet",njet);
+			id = localOpt->Get("id",id);
+			localOpt->Get("pt",pt);
+			localOpt->Get("eta",eta);
+		}
+
+		//this selector doesn't add anything to tree
+
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			if(looper->JetsAK8->size()<njet) return false;
+			//per-jet cuts, if enabled
+			for(unsigned j = 0; j < njet; ++j){
+				if(id and !looper->JetsAK8_ID->at(j)) return false;
+				if(pt>0 and looper->JetsAK8->at(j).Pt()<=pt) return false;
+				if(eta>0 and abs(looper->JetsAK8->at(j).Eta())>=eta) return false;
+			}
+			return true;
+		}
+
+		//member variables
+		int njet;
+		bool id;
+		double pt, eta;
+};
+REGISTER_SELECTOR(Dijet);
+
+//----------------------------------------------------
 //selects negative-weight events (used for KSkimmer)
 class KNegativeWeightSelector : public KSelector {
 	public:
