@@ -1,0 +1,42 @@
+#!/bin/bash
+
+export SAMPLES=(
+QCD_Pt_80to120_block0 \
+QCD_Pt_80to120_block1 \
+QCD_Pt_80to120_block2 \
+QCD_Pt_120to170_block0 \
+QCD_Pt_120to170_block1 \
+QCD_Pt_120to170_block2 \
+QCD_Pt_170to300_block0 \
+QCD_Pt_170to300_block1 \
+QCD_Pt_170to300_block2 \
+QCD_Pt_170to300_block3 \
+QCD_Pt_300to470_block0 \
+QCD_Pt_300to470_block1 \
+QCD_Pt_300to470_block2 \
+QCD_Pt_300to470_block3 \
+QCD_Pt_300to470_block4 \
+QCD_Pt_300to470_block5 \
+QCD_Pt_300to470_block6 \
+QCD_Pt_470to600_block0 \
+QCD_Pt_470to600_block1 \
+QCD_Pt_600to800_block0 \
+QCD_Pt_600to800_block1 \
+QCD_Pt_600to800_block2 \
+QCD_Pt_600to800_block3 \
+QCD_Pt_600to800_block4 \
+QCD_Pt_800to1000_block0 \
+QCD_Pt_800to1000_block1 \
+QCD_Pt_800to1000_block2 \
+QCD_Pt_800to1000_block3 \
+QCD_Pt_800to1000_block4 \
+QCD_Pt_800to1000_block5 \
+QCD_Pt_1000to1400_block0 \
+QCD_Pt_1000to1400_block1 \
+QCD_Pt_1000to1400_block2 \
+QCD_Pt_1000to1400_block3 \
+QCD_Pt_1400to1800 \
+QCD_Pt_1800to2400 \
+QCD_Pt_2400to3200 \
+QCD_Pt_3200toInf \
+)

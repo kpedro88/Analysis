@@ -1,0 +1,4 @@
+SET
+base	skim	SVJ_mZprime-3000_mDark-20_rinv-0.3_alpha-0.1	b:chain[1]	ch:filenames[PrivateSamples.SVJ_mZprime-3000_mDark-20_rinv-0p3_alpha-0p1_n-500_,0,0,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
+base	skim	SVJ_mZprime-3000_mDark-20_rinv-0.3_alpha-0.2	b:chain[1]	ch:filenames[PrivateSamples.SVJ_mZprime-3000_mDark-20_rinv-0p3_alpha-0p2_n-500_,0,0,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
+base	skim	SVJ_mZprime-3000_mDark-20_rinv-0.5_alpha-0.2	b:chain[1]	ch:filenames[PrivateSamples.SVJ_mZprime-3000_mDark-20_rinv-0p5_alpha-0p2_n-500_,0,0,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
