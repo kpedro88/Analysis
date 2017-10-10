@@ -10,7 +10,7 @@ def makeSkimLine(short_name,full_names,file_mins,file_maxs,mothers,btype="skim",
     expline = the_name + " \\\n"
     return (line,expline)
 
-def makeSkimInput(read,write,export,btype="skim",nfiles=0,data=False,folder=""):
+def makeSkimInput(read,write,export,btype="skim",nfiles=0,data=False,folder="",nfilesTM=1):
     readname = read.replace(".py","").split("/")[-1]
     rfile = imp.load_source(readname,read)
     wfile = open(write,'w')
@@ -58,10 +58,16 @@ def makeSkimInput(read,write,export,btype="skim",nfiles=0,data=False,folder=""):
             else:
                 readFilesImport = getattr(__import__("TreeMaker.Production." + full_name + "_cff",fromlist=["readFiles"]),"readFiles")
                 fileListLen = len(readFilesImport)
-                file_lens.append(fileListLen)
+                if nfilesTM==-1:
+                    nJobs = 1
+                else:
+                    nJobs = fileListLen / int(nfilesTM)
+                    if fileListLen % int(nfilesTM) != 0:
+                        nJobs += 1
+                file_lens.append(nJobs)
                 file_mins.append(0)
-                file_maxs.append(fileListLen-1)
-                totfiles += fileListLen
+                file_maxs.append(nJobs-1)
+                totfiles += nJobs
         
         # check for splitting into blocks
         fileListLen = sum(file_lens)
@@ -114,8 +120,9 @@ if __name__ == "__main__":
     parser.add_option("-w", "--write", dest="write", default="input/input_sets_skim.txt", help="output file to write")
     parser.add_option("-e", "--export", dest="export", default="batch/exportSkim.sh", help="export file to write")
     parser.add_option("-n", "--nfiles", dest="nfiles", default=0, help="number of files per block for skim input")
+    parser.add_option("-N", "--nfilesTM", dest="nfilesTM", default=1, help="number of files per ntuple (from TreeMaker)")
     parser.add_option("-d", "--data", dest="data", default=False, action="store_true", help="denotes data file (instead of MC)")
     parser.add_option("-f", "--folder", dest="folder", default="", help="EOS directory to check for data ntuples")
     (options, args) = parser.parse_args()
 
-    makeSkimInput(options.read,options.write,options.export,"skim",int(options.nfiles),options.data,options.folder)
+    makeSkimInput(options.read,options.write,options.export,"skim",int(options.nfiles),options.data,options.folder,options.nfilesTM)
