@@ -39,7 +39,7 @@ for ((i=0; i < ${#SAMPLES[@]}; i++)); do
 				sub(/[ \t]+$/,"",rightside);
 				print leftside;
 				if ( (diffchar == "|" || diffchar == ">") && 
-					index(rightside,sample)==0 && index(rightside,"ROOT version")==0 && index(rightside,"fChain(0)")==0 )
+					index(rightside,sample)==0 && index(rightside,"ROOT version")==0 && index(rightside,"fChain(0)")==0 && index(rightside,".root")==0 )
 				{
 					 print rightside;
 				}
