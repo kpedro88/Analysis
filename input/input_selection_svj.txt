@@ -13,6 +13,7 @@ bool:doClone[1]
 SELECTION
 dijet
 	Dijet	i:njet[2]	b:id[1]	d:eta[5.0]
+	MET	d:METmin[100]
 
 INPUT
 input/input_sets_skim_qcd_pt.txt

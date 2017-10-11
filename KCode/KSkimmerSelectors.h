@@ -74,6 +74,32 @@ class KDijetSelector : public KSelector {
 REGISTER_SELECTOR(Dijet);
 
 //----------------------------------------------------
+//selects events based on MET value
+class KMETSelector : public KSelector {
+	public:
+		//constructor
+		KMETSelector() : KSelector() { }
+		KMETSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), METmin(100) { 
+			//check for option
+			localOpt->Get("METmin",METmin);
+			doGen = localOpt->Get("gen",false);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			if(doGen) return looper->GenMET > METmin;
+			else return looper->MET > METmin;
+		}
+		
+		//member variables
+		double METmin;
+		bool doGen;
+};
+REGISTER_SELECTOR(MET);
+
+//----------------------------------------------------
 //selects negative-weight events (used for KSkimmer)
 class KNegativeWeightSelector : public KSelector {
 	public:
