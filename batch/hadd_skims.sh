@@ -8,8 +8,10 @@ SKIMDIR=/store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/${RUN2PRODV}/
 CHECKARGS="-k -s"
 
 #check arguments
-while getopts "n:r" opt; do
+while getopts "d:n:r" opt; do
   case "$opt" in
+  d) SKIMDIR=$OPTARG
+    ;;
   n) CHECKARGS="${CHECKARGS} -n $OPTARG"
     ;;
   r) CHECKARGS="${CHECKARGS} -r"
