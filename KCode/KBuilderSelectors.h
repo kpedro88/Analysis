@@ -963,6 +963,52 @@ class KHistoSelector : public KSelector {
 			}
 			initialized = true;
 		}
+		bool IsPerJet(const string& vname, KValue& value, double w){
+			bool leadjet = false, subleadjet = false;
+			string vname2;
+			
+			if(vname.compare(0,10,"leadjetAK8")==0) {
+				leadjet = true;
+				vname2 = vname.substr(10,string::npos);
+			}
+			else if(vname.compare(0,13,"subleadjetAK8")==0){
+				subleadjet = true;
+				vname2 = vname.substr(13,string::npos);
+			}
+			else if(vname.compare(0,10,"bothjetAK8")==0) {
+				leadjet = true;
+				subleadjet = true;
+				vname2 = vname.substr(10,string::npos);
+			}
+
+			if(leadjet) FillPerJet(vname2,value,w,0);
+			if(subleadjet) FillPerJet(vname2,value,w,1);
+			
+			return (leadjet or subleadjet);
+		}
+		void FillPerJet(const string& vname, KValue& value, double w, unsigned index){
+			if(looper->JetsAK8->size()>index){
+				if(vname=="pt") value.Fill(looper->JetsAK8->at(index).Pt(),w);
+				else if(vname=="eta") value.Fill(looper->JetsAK8->at(index).Eta(),w);
+				else if(vname=="abseta") value.Fill(abs(looper->JetsAK8->at(index).Eta()),w);
+				else if(vname=="axisminor") value.Fill(looper->JetsAK8_axisminor->at(index),w);
+				else if(vname=="axismajor") value.Fill(looper->JetsAK8_axismajor->at(index),w);
+				else if(vname=="girth") value.Fill(looper->JetsAK8_girth->at(index),w);
+				else if(vname=="mhalf") value.Fill(looper->JetsAK8_momenthalf->at(index),w);
+				else if(vname=="mult") value.Fill(looper->JetsAK8_multiplicity->at(index),w);
+				else if(vname=="overflow") value.Fill(looper->JetsAK8_overflow->at(index),w);
+				else if(vname=="ptD") value.Fill(looper->JetsAK8_ptD->at(index),w);
+				//derived substructure variables
+				else if(vname=="tau21"){
+					if(looper->JetsAK8_NsubjettinessTau1->at(index)>0) value.Fill(looper->JetsAK8_NsubjettinessTau2->at(index)/looper->JetsAK8_NsubjettinessTau1->at(index),w);
+				}
+				else if(vname=="tau32"){
+					if(looper->JetsAK8_NsubjettinessTau2->at(index)>0) value.Fill(looper->JetsAK8_NsubjettinessTau3->at(index)/looper->JetsAK8_NsubjettinessTau2->at(index),w);
+				}
+				else { //do nothing
+				}
+			}
+		}
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
@@ -1206,6 +1252,40 @@ class KHistoSelector : public KSelector {
 						for(unsigned j = 0; j < looper->Jets->size(); ++j){
 							if(!JetEtaRegion || JetEtaRegion->mask[j]) values[i].Fill(looper->Jets_chargedMultiplicity->at(j)+looper->Jets_neutralMultiplicity->at(j),w);
 						}
+					}
+					else if(vname=="MTAK8"){//transverse mass
+						values[i].Fill(looper->MT_AK8,w);
+					}
+					else if(vname=="MJJAK8"){//dijet mass
+						values[i].Fill(looper->MJJ_AK8,w);
+					}
+					else if(vname=="MmcAK8"){//dijet+truth mass
+						values[i].Fill(looper->Mmc_AK8,w);
+					}
+					else if(vname=="njetAK8"){//# of jets
+						values[i].Fill(looper->JetsAK8->size(),w);
+					}
+					else if(IsPerJet(vname,values[i],w)){
+						//per-jet histos (leading, subleading, or both)
+						//nothing to do - histo is filled as a side effect
+					}
+					else if(vname=="deltaetaAK8"){//deta(j1,j2)
+						if(looper->JetsAK8->size()>1) values[i].Fill(abs(looper->JetsAK8->at(0).Eta()-looper->JetsAK8->at(1).Eta()),w);
+					}
+					else if(vname=="deltaphi1AK8"){//dphi(j1,MET)
+						values[i].Fill(looper->DeltaPhi1_AK8,w);
+					}
+					else if(vname=="deltaphi2AK8"){//dphi(j2,MET)
+						values[i].Fill(looper->DeltaPhi2_AK8,w);
+					}
+					else if(vname=="deltaphiminAK8"){//min dphi(j1/2,MET)
+						values[i].Fill(looper->DeltaPhiMin_AK8,w);
+					}
+					else if(vname=="metMTratio"){//MET/MT
+						values[i].Fill(looper->MET/looper->MT_AK8,w);
+					}
+					else if(vname=="metsig"){//MET significance
+						values[i].Fill(looper->METSignificance,w);
 					}
 					else { //if it's a histogram with no known variable or calculation, do nothing
 					}
