@@ -25,11 +25,6 @@ python makeSkimInput.py -r input/dict_skim.py -w input/input_sets_skim.txt -e ba
 python makeSkimInput.py -r input/dict_skim_signal.py -w input/input_sets_skim_signal.txt -e batch/exportSkimSignal.sh -n 50
 python makeSkimInput.py -r input/dict_skim_data.py -w input/input_sets_skim_data.txt -e batch/exportSkimData.sh --data -n 50 -f /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV12
 ```
-And for semi-visible jet samples:
-```
-python makeSkimInput.py -r input/dict_skim_qcd_pt.py -w input/input_sets_skim_qcd_pt.txt -e batch/exportSkimQCDPt.sh -n 50
-python makeSkimInput.py -r input/dict_skim_svj.py -w input/input_sets_skim_svj.txt -e batch/exportSkimSVJ.sh -n 50 -N 100
-```
 Note: this script uses the python file lists in [TreeMaker/Production/python](https://github.com/TreeMaker/TreeMaker/tree/Run2/Production/python) to determine the number of files to chain together for each sample. Make sure to follow the [TreeMaker](https://github.com/TreeMaker/TreeMaker) installation instructions so this information is accessible.
 
 To submit jobs to Condor (add the flag `-k` to reuse the existing CMSSW tarball):
@@ -163,3 +158,31 @@ Currently available uncertainties:
 * MHT modeling (fastsim only)
 * MC statistics
 * pileup acceptance
+
+### Semi-visible jet commands
+
+
+To remake the list of input files for semi-visible jet samples:
+```
+python makeSkimInput.py -r input/dict_skim_qcd_pt.py -w input/input_sets_skim_qcd_pt.txt -e batch/exportSkimQCDPt.sh -n 50
+python makeSkimInput.py -r input/dict_skim_svj.py -w input/input_sets_skim_svj.txt -e batch/exportSkimSVJ.sh -n 50 -N 100
+```
+
+To submit jobs to Condor:
+```
+cd batch
+./SKsub_svj.sh
+```
+
+To make plots and ROC curves:
+```
+root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/ProductionV1/Skims/tree_dijet",{"input/input_svj_rocs.txt","input/input_svj_rocs_event.txt","input/input_svj_rocs_sets.txt"},{},1)'
+root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/ProductionV1/Skims/tree_dijet",{"input/input_svj_rocs.txt","input/input_svj_rocs_leadjet.txt","input/input_svj_rocs_sets.txt"},{},1)'
+root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/ProductionV1/Skims/tree_dijet",{"input/input_svj_rocs.txt","input/input_svj_rocs_subleadjet.txt","input/input_svj_rocs_sets.txt"},{},1)'
+```
+
+To make cutflow plots:
+```
+root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/ProductionV1/Skims/tree_dijet",{"input/input_svj_cutflow.txt","input/input_svj_cutflow_sets_sig.txt"},{},1)'
+root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/ProductionV1/Skims/tree_dijet",{"input/input_svj_cutflow.txt","input/input_svj_cutflow_sets_qcd.txt"},{},1)'
+```
