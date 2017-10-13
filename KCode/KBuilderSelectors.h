@@ -1263,6 +1263,29 @@ class KHistoSelector : public KSelector {
 					else if(vname=="MJJAK8"){//dijet mass
 						values[i].Fill(looper->MJJ_AK8,w);
 					}
+					else if (vname=="MJJSDAK8"){//dijet mass from softdrop
+						TLorentzVector vjjjj;
+						if(looper->JetsAK8_subjets->size()>1){
+							for(unsigned j = 0; j < 2; ++j){
+								for(const auto& subjet: looper->JetsAK8_subjets->at(j)){
+									vjjjj += subjet;
+								}
+							}
+							values[i].Fill(vjjjj.M(),w);
+						}
+					}
+					else if(vname=="MTSDAK8"){//transverse mass from softdrop
+						TLorentzVector vjjjj;
+						if(looper->JetsAK8_subjets->size()>1){
+							for(unsigned j = 0; j < 2; ++j){
+								for(const auto& subjet: looper->JetsAK8_subjets->at(j)){
+									vjjjj += subjet;
+								}
+							}
+							double MT = KMath::TransverseMass(vjjjj.Px(),vjjjj.Py(),vjjjj.M(),looper->MET*cos(looper->METPhi),looper->MET*sin(looper->METPhi),0);
+							values[i].Fill(MT,w);
+						}						
+					}
 					else if(vname=="MmcAK8"){//dijet+truth mass
 						values[i].Fill(looper->Mmc_AK8,w);
 					}
