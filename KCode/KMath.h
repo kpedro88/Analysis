@@ -39,6 +39,13 @@ namespace KMath {
 	double TransverseMass(double pt1, double phi1, double pt2, double phi2){
 		return sqrt(2*pt1*pt2*(1-cos(DeltaPhi(phi1,phi2))));
 	}
+	//in massive case
+	double TransverseMass(double px1, double py1, double m1, double px2, double py2, double m2){
+		double E1 = sqrt(pow(px1,2)+pow(py1,2)+pow(m1,2));
+		double E2 = sqrt(pow(px2,2)+pow(py2,2)+pow(m2,2));
+		double MTsq = pow(E1+E2,2)-pow(px1+px2,2)-pow(py1+py2,2);
+		return sqrt(max(MTsq,0.0));
+	}
 	//ref: https://twiki.cern.ch/twiki/bin/viewauth/CMS/PoissonErrorBars
 	double PoissonErrorLow(int N){
 		const double alpha = 1 - 0.6827; //1 sigma interval

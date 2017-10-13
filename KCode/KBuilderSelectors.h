@@ -1254,7 +1254,11 @@ class KHistoSelector : public KSelector {
 						}
 					}
 					else if(vname=="MTAK8"){//transverse mass
-						values[i].Fill(looper->MT_AK8,w);
+						//recompute due to bug
+						TLorentzVector vjj;
+						if(looper->JetsAK8->size()>1) vjj = looper->JetsAK8->at(0) + looper->JetsAK8->at(1);
+						double MT = KMath::TransverseMass(vjj.Px(),vjj.Py(),vjj.M(),looper->MET*cos(looper->METPhi),looper->MET*sin(looper->METPhi),0);
+						values[i].Fill(MT,w);
 					}
 					else if(vname=="MJJAK8"){//dijet mass
 						values[i].Fill(looper->MJJ_AK8,w);
@@ -1282,7 +1286,11 @@ class KHistoSelector : public KSelector {
 						values[i].Fill(looper->DeltaPhiMin_AK8,w);
 					}
 					else if(vname=="metMTratio"){//MET/MT
-						values[i].Fill(looper->MET/looper->MT_AK8,w);
+						//recompute due to bug
+						TLorentzVector vjj;
+						if(looper->JetsAK8->size()>1) vjj = looper->JetsAK8->at(0) + looper->JetsAK8->at(1);
+						double MT = KMath::TransverseMass(vjj.Px(),vjj.Py(),vjj.M(),looper->MET*cos(looper->METPhi),looper->MET*sin(looper->METPhi),0);
+						values[i].Fill(MT>0?looper->MET/MT:0.0,w);
 					}
 					else if(vname=="metsig"){//MET significance
 						values[i].Fill(looper->METSignificance,w);
