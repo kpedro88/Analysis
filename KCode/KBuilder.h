@@ -46,6 +46,14 @@ class KBuilder : public KLooper {
 		virtual void Loop() {
 			if(fChain == 0) return;
 			if(MyBases.size() == 0) return;
+
+			//check if we have a reason to loop
+			bool all_special = true;
+			//assume all bases have same list of histos
+			for(auto& sit : MyBases[0]->GetTable()){
+				all_special &= MyBases[0]->CheckSpecialHistos(sit.first,false);
+			}
+			if(all_special) return;
 			
 			//check for branches to enable/disable
 			vector<string> disable_branches;
