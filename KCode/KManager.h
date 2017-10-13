@@ -141,7 +141,7 @@ class KManager {
 					auto tmp = allXtions.Get(line);
 					curr->second.insert(curr->second.end(),tmp.begin(),tmp.end());
 				}
-				else {
+				else if(!line.empty()){
 					KNamed* tmp = KParser::processNamed<1>(line);
 					curr->second.push_back(tmp);
 				}
