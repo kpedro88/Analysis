@@ -12,6 +12,6 @@ leadjetAK8overflow	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[overflow(j_{1})]	s:y
 leadjetAK8axismajor	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[#sigma_{major}(j_{1})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kCyan + 2]	b:reverseROC[1]
 leadjetAK8axisminor	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[#sigma_{minor}(j_{1})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta]	b:reverseROC[1]
 leadjetAK8mult	i:xnum[100]	d:xmin[0]	d:xmax[200]	s:xtitle[n_{constituents}(j_{1})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kOrange + 7]
-leadjetAK8ptD i:xnum[100] d:xmin[0] d:xmax[1] s:xtitle[p_{T}D(j_{1})] s:ytitle[arbitrary units] b:ratio[0] b:logy[1] c:color[kYellow + 3] b:reverseROC[1]
-leadjetAK8tau21	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#tau_{21}(j_{1})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kGreen + 2]	b:reverseROC[1]
+leadjetAK8ptD	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[p_{T}D(j_{1})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kYellow + 3]
+leadjetAK8tau21	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#tau_{21}(j_{1})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kGreen + 2]
 leadjetAK8tau32	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#tau_{32}(j_{1})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kPink - 9]	b:reverseROC[1]
