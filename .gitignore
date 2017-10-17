@@ -44,3 +44,16 @@ test*/
 datacards*/
 batch/jobs*/
 input/fast*/
+
+# linked by setup.sh
+getCRyields.sh
+makeCutflow.py
+makeNtupleClass.sh
+makeSeparateDCInputs.sh
+makeTempClass.C
+nMinus1plots.sh
+plotPileupAcc.C
+plotSyst2D.C
+selections.py
+sourceNtupleClass.sh
+
