@@ -42,4 +42,4 @@ sim
 	Histo
 
 HISTO
-cutflowAbs	b:ratio[0]	s:ytitle[Abs. Eff. [%]]	b:logy[0]	b:xbinlabel[1]	vs{|}:xlabels[N_{jet} > 2 & JetID|#slash{E}_{T} > 100 GeV]
+cutflowAbs	b:ratio[0]	s:ytitle[Abs. Eff. [%]]	b:logy[0]	b:xbinlabel[1]	vs{|}:xlabels[N_{jet} #geq 2 & JetID|#slash{E}_{T} > 100 GeV]
