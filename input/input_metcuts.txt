@@ -1,0 +1,12 @@
+OPTION
+vstring:selections[metcuts]
+#string:printsuffix[metcuts]
+bool:checkerr[0]
+
+SELECTION
+metcuts
+	MET	d:METmin[100]
+	METMTRatio	d:cut[0.15]
+	MCWeight
+	Histo
+

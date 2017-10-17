@@ -1,0 +1,10 @@
+OPTION
+vstring:selections[ptcuts]
+bool:checkerr[0]
+
+SELECTION
+ptcuts
+	PTRange	d:ptmin[1000]	d:ptmax[1200]
+	MCWeight
+	Histo
+
