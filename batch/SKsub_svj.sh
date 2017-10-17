@@ -2,7 +2,7 @@
 
 JOBDIR=jobs
 INPUT=input/input_selection_svj.txt
-SELTYPE=dijet
+SELTYPE=dijethad
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/ProductionV1/Ntuples
 OUTDIR=tree
 STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/ProductionV1/Skims
