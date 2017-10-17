@@ -39,4 +39,8 @@ QCD_Pt_1400to1800 \
 QCD_Pt_1800to2400 \
 QCD_Pt_2400to3200 \
 QCD_Pt_3200toInf \
+TTJets_block0 \
+TTJets_block1 \
+TTJets_block2 \
+TTJets_block3 \
 )

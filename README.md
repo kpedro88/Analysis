@@ -164,7 +164,7 @@ Currently available uncertainties:
 
 To remake the list of input files for semi-visible jet samples:
 ```
-python makeSkimInput.py -r input/dict_skim_qcd_pt.py -w input/input_sets_skim_qcd_pt.txt -e batch/exportSkimQCDPt.sh -n 50
+python makeSkimInput.py -r input/dict_skim_svj_bkg.py -w input/input_sets_skim_svj_bkg.txt -e batch/exportSkimSVJBkg.sh -n 50
 python makeSkimInput.py -r input/dict_skim_svj.py -w input/input_sets_skim_svj.txt -e batch/exportSkimSVJ.sh -n 50 -N 100
 ```
 

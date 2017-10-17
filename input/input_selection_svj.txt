@@ -25,5 +25,5 @@ dijethad
 	veto
 
 INPUT
-input/input_sets_skim_qcd_pt.txt
+input/input_sets_skim_svj_bkg.txt
 input/input_sets_skim_svj.txt

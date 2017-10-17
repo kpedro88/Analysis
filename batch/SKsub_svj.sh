@@ -25,7 +25,7 @@ for SAMPLE in ${SAMPLES[@]}
     ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} ${SELTYPE} ${INDIR} ${OUTDIR} ${STORE}
   done
 
-source exportSkimQCDPt.sh
+source exportSkimSVJBkg.sh
 
 for SAMPLE in ${SAMPLES[@]}
   do
