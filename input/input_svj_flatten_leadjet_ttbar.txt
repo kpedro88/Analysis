@@ -1,0 +1,10 @@
+OPTION
+vstring:selections[simf]
+string:rocsuffix[_leadjet_flatpt]
+string:printsuffix[sig_vs_ttbar_flatpt]
+
+SELECTION
+simf
+	MCWeight	b:flatten[1]	s:flatname[svj_dijethad_leadjetAK8.root]	s:flatqty[leadjetAK8pt]
+	Histo
+

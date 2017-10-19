@@ -1,0 +1,6 @@
+OPTION
+string:printsuffix[ttbar]
+
+SET
+hist	mc	ttbar	s:legname[t#bar{t}]	c:color[kBlack]
+	base	mc	TTJets	s:filename[tree_TTJets.root]
