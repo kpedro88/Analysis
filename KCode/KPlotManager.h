@@ -468,6 +468,7 @@ class KPlotManager : public KManager {
 					
 					if(yield>0 && theSet != yieldref) theSet->Normalize(yield);
 					if(globalOpt->Get("printyield",false)) theSet->PrintYield();
+					if(globalOpt->Get("unitnorm",false)) theSet->Normalize(1,true);
 					if(ptmp->GetLocalOpt()->Get("bindivide",false)) theSet->BinDivide();
 					
 					//check z-axis limits after all potential normalizations are done

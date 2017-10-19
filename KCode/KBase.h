@@ -15,6 +15,7 @@
 #include <TTree.h>
 #include <TChain.h>
 #include <TH1.h>
+#include <TH2.h>
 #include <TH1F.h>
 #include <TPad.h>
 #include <TLegend.h>
@@ -202,7 +203,7 @@ class KBase {
 		//in case of normalization to yield or other scaling
 		virtual void Normalize(double nn, bool toYield=true){
 			if(CheckSpecialHistos(stmp,false)) return;
-			double simyield = htmp->Integral(0,htmp->GetNbinsX()+1);
+			double simyield = htmp->GetDimension()==2 ? ((TH2*)htmp)->Integral(0,htmp->GetNbinsX()+1,0,htmp->GetNbinsY()+1) : htmp->Integral(0,htmp->GetNbinsX()+1);
 			if(toYield) htmp->Scale(nn/simyield);
 			else htmp->Scale(nn);
 		}
