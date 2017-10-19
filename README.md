@@ -172,6 +172,8 @@ To submit jobs to Condor:
 ```
 cd batch
 ./SKsub_svj.sh
+(wait for jobs to finish)
+./hadd_skims.sh -d /store/user/lpcsusyhad/SVJ2017/ProductionV1/Skims -n 1 -r
 ```
 
 To make plots and ROC curves:
