@@ -155,20 +155,17 @@ class KBase {
 		}
 		//returns efficiency for cut on current histo qty
 		//does calculation and stores result if necessary
-		virtual double* GetEff(bool reverse){
+		virtual vector<double>* GetEff(){
 			if(efftmp) return efftmp;
 			
 			//calculate efficiencies
 			//normal: yield(i,nbins)/yield(0,nbins)
-			//reversed: yield(0,i)/yield(0,nbins)
-			efftmp = new double[htmp->GetNbinsX()+2];
+			efftmp = new vector<double>(htmp->GetNbinsX()+1);
 			double ydenom = htmp->Integral(0,htmp->GetNbinsX()+1);
 			if(debugroc) cout << name << " " << stmp << ":";
-			for(int b = 0; b <= htmp->GetNbinsX()+1; b++){
-				efftmp[b] = reverse ? 
-							htmp->Integral(0,b)/ydenom :
-							htmp->Integral(b,htmp->GetNbinsX()+1)/ydenom;
-				if(debugroc) cout << " " << efftmp[b];
+			for(int b = 0; b < htmp->GetNbinsX()+1; b++){
+				efftmp->at(b) = htmp->Integral(b,htmp->GetNbinsX()+1)/ydenom;
+				if(debugroc) cout << " " << efftmp->at(b);
 			}
 			if(debugroc) cout << endl;
 			
@@ -254,11 +251,11 @@ class KBase {
 		KSelection* MySelection;
 		HistoMap MyHistos;
 		ErrorMap MyErrorBands;
-		KMap<double*> MyEffs;
+		KMap<vector<double>*> MyEffs;
 		string stmp;
 		TH1* htmp;
 		TGraphAsymmErrors* etmp;
-		double* efftmp;
+		vector<double>* efftmp;
 		bool isBuilt;
 		bool debugroc;
 		KStyle* MyStyle;

@@ -31,7 +31,7 @@ class KManager {
 	public:
 		//constructor
 		KManager() : globalOpt(0),parsed(false) {}
-		KManager(string treedir_) : globalOpt(0),parsed(false) {
+		KManager(string treedir_) : globalOpt(0),parsed(false),prcsn(0) {
 			//must always have an option map
 			globalOpt = new OptionMap();
 			//store treedir in global options
@@ -53,7 +53,6 @@ class KManager {
 			if(direct_.size()>0) parsed &= ParseDirect(direct_);
 			
 			//final checks and initializations
-			int prcsn;
 			if(globalOpt->Get("yieldprecision",prcsn)) cout << fixed << setprecision(prcsn);
 		}
 		//parse input file
@@ -225,6 +224,7 @@ class KManager {
 		//member variables
 		OptionMap* globalOpt;
 		bool parsed;
+		int prcsn;
 		set<string> inputs;
 		KMap<string> allStyles;
 		KMap<vector<KNamed*>> allSelections, allVariations;

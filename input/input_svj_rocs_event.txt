@@ -4,8 +4,8 @@ vstring:disable_branches[*]
 vstring:enable_branches[JetsAK8,JetsAK8_subjets,DeltaPhiMin_AK8,MET,METPhi,METSignificance,MJJ_AK8,Mmc_AK8]
 
 HISTO
-deltaetaAK8	i:xnum[100]	d:xmin[0]	d:xmax[10]	s:xtitle[|#Delta#eta(j_{1},j_{2})|]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kGray + 1]	b:reverseROC[1]
-deltaphiminAK8	i:xnum[100]	d:xmin[0]	d:xmax[3.15]	s:xtitle[#Delta#phi_{min}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlack]	b:reverseROC[1]
+deltaetaAK8	i:xnum[100]	d:xmin[0]	d:xmax[10]	s:xtitle[|#Delta#eta(j_{1},j_{2})|]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kGray + 1]
+deltaphiminAK8	i:xnum[100]	d:xmin[0]	d:xmax[3.15]	s:xtitle[#Delta#phi_{min}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlack]
 met	i:xnum[100]	d:xmin[0]	d:xmax[1500]	s:xtitle[#slash{E}_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlue]
 metMTratio	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[#slash{E}_{T}/M_{T}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta + 2]
 #metsig	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[#slash{E}_{T} Significance]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kRed]

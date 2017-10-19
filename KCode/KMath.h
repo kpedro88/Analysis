@@ -65,6 +65,14 @@ namespace KMath {
 		double err_f = up ? PoissonErrorUp(fail) : PoissonErrorLow(fail);
 		return sqrt(pow(1-eff,2)*pow(err_p,2) + pow(eff,2)*pow(err_f,2))/(double)total;
 	}
+	//use trapezoid rule
+	double Integral(const vector<double>& x, const vector<double>& y){
+		double result = 0.0;
+		for(unsigned i = 1; i < x.size(); ++i){
+			result += fabs(x[i]-x[i-1])*(y[i]+y[i-1])/2.;
+		}
+		return result;
+	}
 }
 
 #endif

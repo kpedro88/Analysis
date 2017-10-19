@@ -21,8 +21,28 @@
 #include <iostream>
 #include <iomanip>
 #include <cmath>
+#include <algorithm>
 
 using namespace std;
+
+//class to store ROC info per curve
+class KRocEntry {
+	public:
+		//constructor
+		KRocEntry() : graph(nullptr), style(nullptr), auc(0.0), panel(0), legname("") {}
+
+		//for sorting
+		bool operator<(const KRocEntry& r){
+			return auc < r.auc;
+		}
+		
+		//member variables
+		TGraph* graph;
+		KStyle* style;
+		double auc;
+		int panel;
+		string legname;
+};
 
 //------------------------------------------
 //class to manage all objects and draw plots
@@ -579,60 +599,80 @@ class KPlotManager : public KManager {
 					kleg->AddHist(p_roc->GetHisto());
 					
 					//loop over histos and make graphs
-					vector<TGraph*> graphs;
-					vector<KStyle*> graphstyles;
+					vector<KRocEntry> rocs;
+					rocs.reserve(MyPlots.GetTable().size());
 					for(auto& p : MyPlots.GetTable()){
+						//ROC tmp object
+						rocs.push_back(KRocEntry());
+						auto& roc_tmp = rocs.back();
+
 						//select current histogram in sets
 						TH1F* h_sig = (TH1F*)(roc_sig[s]->GetHisto(p.first));
 						TH1F* h_bkg = (TH1F*)(roc_bkg[b]->GetHisto(p.first)); //unused right now
 						
-						//get efficiencies
+						//get efficiencies as copies (in case of reversal)
 						//(cached results will be returned if the calculation was already done)
-						double* eff_sig = roc_sig[s]->GetEff(p.second->GetReverseROC());
-						double* eff_bkg = roc_bkg[b]->GetEff(p.second->GetReverseROC());
+						vector<double> eff_sig = *(roc_sig[s]->GetEff());
+						vector<double> eff_bkg = *(roc_bkg[b]->GetEff());
+						//check integral
+						roc_tmp.auc = KMath::Integral(eff_sig,eff_bkg);
+						if(roc_tmp.auc>0.5){
+							//reverse!
+							for(unsigned e = 0; e < eff_sig.size(); ++e){
+								eff_sig[e] = 1 - eff_sig[e];
+								eff_bkg[e] = 1 - eff_bkg[e];
+							}
+							roc_tmp.auc = KMath::Integral(eff_sig,eff_bkg);
+						}
 
 						//create graph
-						TGraph* gtmp = new TGraph(h_sig->GetNbinsX()+2,eff_sig,eff_bkg);
-						gtmp->SetName(p.first.c_str());
-						gtmp->SetTitle("");
+						roc_tmp.graph = new TGraph(eff_sig.size(),eff_sig.data(),eff_bkg.data());
+						roc_tmp.graph->SetName(p.first.c_str());
+						roc_tmp.graph->SetTitle("");
 						
 						//format graph using KPlot local options for this histo/qty
 						string styleName = "roc";
-						KStyle* stytmp = NULL;
+						roc_tmp.style = NULL;
 						if(allStyles.Has(styleName)){
 							KNamed* ntmp = KParser::processNamed<1>(styleName+"\t"+allStyles.Get(styleName));
-							stytmp = new KStyle(ntmp->fields[0],ntmp->localOpt(),p.second->GetLocalOpt());
+							roc_tmp.style = new KStyle(ntmp->fields[0],ntmp->localOpt(),p.second->GetLocalOpt());
 						}
-						stytmp->Format(gtmp);
+						roc_tmp.style->Format(roc_tmp.graph);
 						
-						//add to legend using histo x-name & panel
-						int panel_tmp = 0;
-						p.second->GetLocalOpt()->Get("panel",panel_tmp);
-						kleg->AddEntry(gtmp,h_sig->GetXaxis()->GetTitle(),stytmp->GetLegOpt(),panel_tmp);
-						
-						//store graph
-						graphs.push_back(gtmp);
-						graphstyles.push_back(stytmp);
+						//legend info: histo x-name (+ auc, optionally), panel
+						p.second->GetLocalOpt()->Get("panel",roc_tmp.panel);
+						stringstream sleg;
+						sleg << fixed << setprecision(prcsn);
+						sleg << h_sig->GetXaxis()->GetTitle();
+						if(globalOpt->Get("showAUC",false)) sleg << " (" << roc_tmp.auc << ")";
+						roc_tmp.legname = sleg.str();
 					}
-						
-					//build legend: specified quadrant, no smart resizing
-					kleg->Build(KLegend::left, KLegend::top);
+
+					//sort by auc
+					sort(rocs.begin(),rocs.end());
 
 					//draw blank histo for axes
 					p_roc->DrawHist();
-					//draw sets (reverse order, so first set is on top)
+					//draw sets
 					pad1->cd();
-					for(unsigned g = 0; g < graphs.size(); g++){
-						graphs[g]->Draw(graphstyles[g]->GetDrawOpt("same").c_str()); //should this be "c" instead for smooth curve?
+					for(const auto& roc_tmp : rocs){
+						//add to legend in order
+						kleg->AddEntry(roc_tmp.graph,roc_tmp.legname,roc_tmp.style->GetLegOpt(),roc_tmp.panel);
+
+						roc_tmp.graph->Draw(roc_tmp.style->GetDrawOpt("same").c_str()); //should this be "c" instead for smooth curve?
 						
 						//save graphs in root file if requested
 						if(out_file){
 							out_file->cd();
-							string oname = string(graphs[g]->GetName()) + "_" + roc_name;
-							graphs[g]->SetName(oname.c_str());
-							graphs[g]->Write(oname.c_str());
+							string oname = string(roc_tmp.graph->GetName()) + "_" + roc_name;
+							roc_tmp.graph->SetName(oname.c_str());
+							roc_tmp.graph->Write(oname.c_str());
 						}
 					}
+
+					//build legend: specified quadrant, no smart resizing
+					kleg->Build(KLegend::left, KLegend::top);
+
 					p_roc->GetHisto()->Draw("sameaxis"); //draw again so axes on top
 					p_roc->DrawText();
 					
