@@ -37,7 +37,7 @@ bool:useTreeWeight[1]
 bool:debugloop[1]
 vstring:disable_branches[*]
 vstring:enable_branches[JetsAK8]
-#string:rootfile[svj_leadjetAK8pt]
+#string:rootfile[svj_subleadjetAK8pt]
 
 SELECTION
 sim
@@ -45,5 +45,5 @@ sim
 	Histo
 
 HISTO
-leadjetAK8pt	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}(j_{1}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kGray + 1]
+subleadjetAK8pt	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}(j_{1}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kGray + 1]
 

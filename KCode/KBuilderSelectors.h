@@ -252,7 +252,7 @@ class KMCWeightSelector : public KSelector {
 				looper->fChain->SetBranchStatus("NJetsISR",1);
 			}
 			if(flatten){
-				if(flatqty=="leadjetAK8pt") looper->fChain->SetBranchStatus("JetsAK8");
+				if(flatqty=="leadjetAK8pt" || flatqty=="subleadjetAK8pt") looper->fChain->SetBranchStatus("JetsAK8");
 			}
 			if(NTenum==ttbarLowHT || NTenum==ttbarLowHThad || NTenum==ttbarHighHT) looper->fChain->SetBranchStatus("madHT",1);
 			if(NTenum==ttbarLowHThad){
@@ -312,6 +312,7 @@ class KMCWeightSelector : public KSelector {
 			
 			if(flatten){
 				if(flatqty=="leadjetAK8pt") w *= flattener.GetWeight(looper->JetsAK8->at(0).Pt());
+				else if(flatqty=="subleadjetAK8pt") w *= flattener.GetWeight(looper->JetsAK8->at(1).Pt());
 			}
 
 			if(pdfunc!=0){
