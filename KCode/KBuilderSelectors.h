@@ -13,6 +13,7 @@
 #include "../corrections/TriggerEfficiencySextet.cpp"
 #include "../corrections/ISRCorrector.h"
 #include "../corrections/PileupAcceptanceUncertainty.h"
+#include "../corrections/Flattener.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -158,6 +159,22 @@ class KMCWeightSelector : public KSelector {
 				isrcorror.SetWeights(isrtmp,(TH1*)base->GetFile()->Get("NJetsISR"));
 			}
 			
+			//flattening options
+			flatten = localOpt->Get("flatten",false);
+			if(flatten){
+				TH1* flathist = NULL;
+				string flatname; localOpt->Get("flatname",flatname);
+				TFile* flatfile = TFile::Open(flatname.c_str(),"READ");
+				if(flatfile){
+					flatqty=""; localOpt->Get("flatqty",flatqty);
+					string flatsuff;
+					if(!base->GetLocalOpt()->Get("flatsuff",flatsuff)) flatsuff = base->GetName();
+					string flatdist = flatqty + "_" + flatsuff;
+					flathist = (TH1*)flatfile->Get(flatdist.c_str());
+					flattener.SetDist(flathist);
+				}
+			}
+
 			//jet ID corr options - only for fastsim
 			jetidcorrval = 1;
 			jetidcorr = localOpt->Get("jetidcorr",false);
@@ -234,6 +251,9 @@ class KMCWeightSelector : public KSelector {
 			if(isrcorr){
 				looper->fChain->SetBranchStatus("NJetsISR",1);
 			}
+			if(flatten){
+				if(flatqty=="leadjetAK8pt") looper->fChain->SetBranchStatus("JetsAK8");
+			}
 			if(NTenum==ttbarLowHT || NTenum==ttbarLowHThad || NTenum==ttbarHighHT) looper->fChain->SetBranchStatus("madHT",1);
 			if(NTenum==ttbarLowHThad){
 				looper->fChain->SetBranchStatus("GenElectrons",1);
@@ -290,6 +310,10 @@ class KMCWeightSelector : public KSelector {
 				w *= isrcorror.GetCorrection(looper->NJetsISR);
 			}
 			
+			if(flatten){
+				if(flatqty=="leadjetAK8pt") w *= flattener.GetWeight(looper->JetsAK8->at(0).Pt());
+			}
+
 			if(pdfunc!=0){
 				if(pdfunc==1) w *= *(TMath::LocMax(looper->PDFweights->begin(),looper->PDFweights->end()))*pdfnorms[0];
 				else if(pdfunc==-1) w *= *(TMath::LocMin(looper->PDFweights->begin(),looper->PDFweights->end()))*pdfnorms[1];
@@ -373,7 +397,7 @@ class KMCWeightSelector : public KSelector {
 		
 		//member variables
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, debugWeight, didDebugWeight;
-		bool pucorr, trigcorr, isrcorr, realMET, signal, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr;
+		bool pucorr, trigcorr, isrcorr, realMET, signal, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten;
 		double jetidcorrval, isotrackcorrval, lumicorrval;
 		int puunc, pdfunc, isrunc, scaleunc, trigunc, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc;
 		vector<int> mother;
@@ -385,6 +409,8 @@ class KMCWeightSelector : public KSelector {
 		double xsection, norm;
 		ISRCorrector isrcorror;
 		PileupAcceptanceUncertainty puacc;
+		Flattener flattener;
+		string flatqty;
 };
 REGISTER_SELECTOR(MCWeight);
 
@@ -397,6 +423,38 @@ void KRA2BinSelector::CheckDeps(){
 void KRA2BinSelector::CheckBase(){
 	DoBTagSF = MCWeight ? MCWeight->btagcorr : false;
 }
+
+//----------------------------------------------------
+//selects events based on specified jet pT range
+class KPTRangeSelector : public KSelector {
+	public:
+		//constructor
+		KPTRangeSelector() : KSelector() { }
+		KPTRangeSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), njet(1), ptmin(1000), ptmax(1200) { 
+			//check for option
+			localOpt->Get("njet",njet);
+			localOpt->Get("ptmin",ptmin);
+			localOpt->Get("ptmax",ptmax);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("JetsAK8",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			if(looper->JetsAK8->size()<njet) return false;
+			double jetpt = looper->JetsAK8->at(njet-1).Pt();
+			return ptmin < jetpt and jetpt <= ptmax;
+		}
+		
+		//member variables
+		int njet;
+		double ptmin, ptmax;
+};
+REGISTER_SELECTOR(PTRange);
+
 
 //----------------------------------------------------
 //simulates some interesting triggers
