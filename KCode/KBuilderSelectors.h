@@ -942,6 +942,58 @@ class KGenLeptonVetoSelector : public KSelector {
 REGISTER_SELECTOR(GenLeptonVeto);
 
 //---------------------------------------------------------------
+//associate hidden sector gen-level info with reco jets
+class KDarkHadronSelector : public KSelector {
+	public:
+		//constructor
+		KDarkHadronSelector() : KSelector() { }
+		KDarkHadronSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), njet(2) {
+			canfail = false;
+			//check options
+			localOpt->Get("njet",njet);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("JetsAK8",1);
+			looper->fChain->SetBranchStatus("GenParticles",1);
+			looper->fChain->SetBranchStatus("GenParticles_PdgId",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			unsigned njet_ = min(njet,(unsigned)looper->JetsAK8->size());
+			//clear
+			n_stable.clear(); n_stable.reserve(njet_);
+			n_unstable.clear(); n_unstable.reserve(njet_);
+			rinv.clear(); rinv.reserve(njet_);
+			for(unsigned j = 0; j < njet_; ++j){
+				n_stable.push_back(0);
+				n_unstable.push_back(0);
+				for(unsigned g = 0; g < looper->GenParticles->size(); ++g){
+					int pdgid = abs(looper->GenParticles_PdgId->at(g));
+					if(abs(pdgid-4900000)>1000) continue;
+					double dR = KMath::DeltaR(looper->JetsAK8->at(j).Phi(),looper->JetsAK8->at(j).Eta(),
+											  looper->GenParticles->at(g).Phi(),looper->GenParticles->at(g).Eta());
+					if(dR<0.8){
+						if(pdgid==4900211) ++(n_stable[j]);
+						else if(pdgid==4900111) ++(n_unstable[j]);
+					}
+				}
+				//rinv=stable/(stable+2*unstable) because unstable decays to 2 stable
+				rinv.push_back(double(n_stable[j])/double(n_stable[j]+2*n_unstable[j]));
+			}
+			return true;
+		}
+		
+		//member variables
+		unsigned njet;
+		vector<int> n_stable, n_unstable;
+		vector<double> rinv;
+};
+REGISTER_SELECTOR(DarkHadron);
+
+//---------------------------------------------------------------
 //little class to store value & weight pairs for filling histos
 class KValue {
 	public:
@@ -971,7 +1023,7 @@ class KHistoSelector : public KSelector {
 		//constructor
 		KHistoSelector() : KSelector() { }
 		KHistoSelector(string name_, OptionMap* localOpt_) : 
-			KSelector(name_,localOpt_), initialized(false), MCWeight(NULL), RA2Bin(NULL), PhotonID(NULL), BTagSF(NULL), JetEtaRegion(NULL), Hemisphere(NULL), FakeHLT(NULL) 
+			KSelector(name_,localOpt_), initialized(false), MCWeight(NULL), RA2Bin(NULL), PhotonID(NULL), BTagSF(NULL), JetEtaRegion(NULL), Hemisphere(NULL), FakeHLT(NULL), DarkHadron(NULL)
 		{ 
 			canfail = false;
 		}
@@ -986,6 +1038,7 @@ class KHistoSelector : public KSelector {
 			JetEtaRegion = sel->Get<KJetEtaRegionSelector*>("JetEtaRegion");
 			Hemisphere = sel->Get<KHemisphereSelector*>("Hemisphere");
 			FakeHLT = sel->Get<KFakeHLTSelector*>("FakeHLT");
+			DarkHadron = sel->Get<KDarkHadronSelector*>("DarkHadron");
 		}
 		virtual void CheckBranches(){
 			if(RA2Bin && RA2Bin->debug){
@@ -1068,6 +1121,10 @@ class KHistoSelector : public KSelector {
 				else if(vname=="tau32"){
 					if(looper->JetsAK8_NsubjettinessTau2->at(index)>0) value.Fill(looper->JetsAK8_NsubjettinessTau3->at(index)/looper->JetsAK8_NsubjettinessTau2->at(index),w);
 				}
+				else if(vname=="msd") value.Fill(looper->JetsAK8_softDropMass->at(index),w);
+				else if(vname=="nstable" and DarkHadron) value.Fill(DarkHadron->n_stable.at(index),w);
+				else if(vname=="nunstable" and DarkHadron) value.Fill(DarkHadron->n_unstable.at(index),w);
+				else if(vname=="rinv" and DarkHadron) value.Fill(DarkHadron->rinv.at(index),w);
 				else { //do nothing
 				}
 			}
@@ -1464,6 +1521,7 @@ class KHistoSelector : public KSelector {
 		KJetEtaRegionSelector* JetEtaRegion;
 		KHemisphereSelector* Hemisphere;
 		KFakeHLTSelector* FakeHLT;
+		KDarkHadronSelector* DarkHadron;
 		vector<int> mother;
 		double deltaM;
 };

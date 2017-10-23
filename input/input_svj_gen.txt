@@ -1,0 +1,25 @@
+OPTION
+bool:roc[0]
+vstring:disable_branches[*]
+string:printsuffix[sig]
+vstring:selections[simg]
+
+SELECTION
+simg
+	simw
+	DarkHadron
+	Histo
+
+HISTO
+bothjetAK8nstable	i:xnum[20]	d:xmin[0]	d:xmax[20]	s:xtitle[n_{stable}^{(dark)}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+bothjetAK8nunstable	i:xnum[20]	d:xmin[0]	d:xmax[20]	s:xtitle[n_{unstable}^{(dark)}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+bothjetAK8rinv	i:xnum[20]	d:xmin[0]	d:xmax[1]	s:xtitle[r_{inv}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]
+
+SET
+hist	mc	mZprime-3000_mDark-20_rinv-0.3_alpha-0.2	s:legname[#alpha_{d} = 0.2, ^{}r_{inv} = 0.3]	c:color[kRed]	i:linestyle[7]
+	base	mc	mZprime-3000_mDark-20_rinv-0.3_alpha-0.2	s:filename[tree_SVJ_mZprime-3000_mDark-20_rinv-0.3_alpha-0.2.root]
+hist	mc	mZprime-3000_mDark-20_rinv-0.3_alpha-0.1	s:legname[#alpha_{d} = 0.1, ^{}r_{inv} = 0.3]	c:color[kBlue]	i:linestyle[7]
+	base	mc	mZprime-3000_mDark-20_rinv-0.3_alpha-0.1	s:filename[tree_SVJ_mZprime-3000_mDark-20_rinv-0.3_alpha-0.1.root]
+hist	mc	mZprime-3000_mDark-20_rinv-0.5_alpha-0.2	s:legname[#alpha_{d} = 0.2, ^{}r_{inv} = 0.5]	c:color[kMagenta]	i:linestyle[7]
+	base	mc	mZprime-3000_mDark-20_rinv-0.5_alpha-0.2	s:filename[tree_SVJ_mZprime-3000_mDark-20_rinv-0.5_alpha-0.2.root]
+
