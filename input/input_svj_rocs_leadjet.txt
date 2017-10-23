@@ -1,7 +1,7 @@
 OPTION
 string:rocsuffix[_leadjet]
 vstring:disable_branches[*]
-vstring:enable_branches[JetsAK8,JetsAK8_girth,JetsAK8_momenthalf,JetsAK8_overflow,JetsAK8_axismajor,JetsAK8_axisminor,JetsAK8_multiplicity,JetsAK8_ptD,JetsAK8_NsubjettinessTau1,JetsAK8_NsubjettinessTau2,JetsAK8_NsubjettinessTau3]
+vstring:enable_branches[JetsAK8,JetsAK8_girth,JetsAK8_momenthalf,JetsAK8_overflow,JetsAK8_axismajor,JetsAK8_axisminor,JetsAK8_multiplicity,JetsAK8_ptD,JetsAK8_NsubjettinessTau1,JetsAK8_NsubjettinessTau2,JetsAK8_NsubjettinessTau3,JetsAK8_softDropMass]
 
 HISTO
 leadjetAK8abseta	i:xnum[100]	d:xmin[0]	d:xmax[5]	s:xtitle[|#eta(j_{1})|]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlack]
@@ -14,3 +14,4 @@ leadjetAK8mult	i:xnum[100]	d:xmin[0]	d:xmax[400]	s:xtitle[n_{constituents}(j_{1}
 leadjetAK8ptD	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[p_{T}D(j_{1})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kYellow + 3]
 leadjetAK8tau21	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#tau_{21}(j_{1})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kGreen + 2]
 leadjetAK8tau32	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#tau_{32}(j_{1})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kPink - 9]
+leadjetAK8msd	i:xnum[100]	d:xmin[0]	d:xmax[500]	s:xtitle[m_{sd} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kGray + 1]
