@@ -1,7 +1,7 @@
 OPTION
 vstring:roc_sig[mZprime-3000_mDark-20_rinv-0.3_alpha-0.2,mZprime-3000_mDark-20_rinv-0.3_alpha-0.1,mZprime-3000_mDark-20_rinv-0.5_alpha-0.2]
-vstring:roc_bkg[QCD]
-string:printsuffix[sig_vs_QCD]
+vstring:roc_bkg[QCD,ttbar]
+string:printsuffix[sig_vs_bkg]
 
 SET
 hist	mc	mZprime-3000_mDark-20_rinv-0.3_alpha-0.2	s:legname[#alpha_{d} = 0.2, ^{}r_{inv} = 0.3]	c:color[kRed]	i:linestyle[7]
@@ -23,3 +23,5 @@ hist	mc	QCD	s:legname[QCD]	c:color[kBlack]
 	base	mc	QCD_Pt_1800to2400	s:filename[tree_QCD_Pt_1800to2400.root]	s:flatsuff[QCD]
 	base	mc	QCD_Pt_2400to3200	s:filename[tree_QCD_Pt_2400to3200.root]	s:flatsuff[QCD]
 	base	mc	QCD_Pt_3200toInf	s:filename[tree_QCD_Pt_3200toInf.root]	s:flatsuff[QCD]
+hist	mc	ttbar	s:legname[t#bar{t}]	c:color[kGray + 1]
+	base	mc	TTJets	s:filename[tree_TTJets.root]	s:flatsuff[ttbar]

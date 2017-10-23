@@ -1,0 +1,10 @@
+OPTION
+vstring:selections[simf]
+string:rocsuffix[_bothjet_flatpt]
+string:printsuffix[sig_vs_bkg_flatpt]
+
+SELECTION
+simf
+	MCWeight	b:flatten[1]	s:flatname[corrections/svj_dijet_jetAK8.root]	s:flatqty[bothjetAK8pt]
+	Histo
+

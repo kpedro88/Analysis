@@ -252,7 +252,7 @@ class KMCWeightSelector : public KSelector {
 				looper->fChain->SetBranchStatus("NJetsISR",1);
 			}
 			if(flatten){
-				if(flatqty=="leadjetAK8pt" || flatqty=="subleadjetAK8pt") looper->fChain->SetBranchStatus("JetsAK8");
+				if(flatqty=="leadjetAK8pt" || flatqty=="subleadjetAK8pt" || flatqty=="bothjetAK8pt") looper->fChain->SetBranchStatus("JetsAK8");
 			}
 			if(NTenum==ttbarLowHT || NTenum==ttbarLowHThad || NTenum==ttbarHighHT) looper->fChain->SetBranchStatus("madHT",1);
 			if(NTenum==ttbarLowHThad){
@@ -313,6 +313,7 @@ class KMCWeightSelector : public KSelector {
 			if(flatten){
 				if(flatqty=="leadjetAK8pt") w *= flattener.GetWeight(looper->JetsAK8->at(0).Pt());
 				else if(flatqty=="subleadjetAK8pt") w *= flattener.GetWeight(looper->JetsAK8->at(1).Pt());
+				//for bothjetAK8pt, need to weight per jet
 			}
 
 			if(pdfunc!=0){
@@ -1047,6 +1048,9 @@ class KHistoSelector : public KSelector {
 		}
 		void FillPerJet(const string& vname, KValue& value, double w, unsigned index){
 			if(looper->JetsAK8->size()>index){
+				//
+				if(MCWeight and MCWeight->flatten and MCWeight->flatqty=="bothjetAK8pt")  w *= MCWeight->flattener.GetWeight(looper->JetsAK8->at(index).Pt());
+
 				if(vname=="pt") value.Fill(looper->JetsAK8->at(index).Pt(),w);
 				else if(vname=="eta") value.Fill(looper->JetsAK8->at(index).Eta(),w);
 				else if(vname=="abseta") value.Fill(abs(looper->JetsAK8->at(index).Eta()),w);

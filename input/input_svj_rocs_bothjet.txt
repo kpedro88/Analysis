@@ -1,0 +1,16 @@
+OPTION
+string:rocsuffix[_bothjet]
+vstring:disable_branches[*]
+vstring:enable_branches[JetsAK8,JetsAK8_girth,JetsAK8_momenthalf,JetsAK8_overflow,JetsAK8_axismajor,JetsAK8_axisminor,JetsAK8_multiplicity,JetsAK8_ptD,JetsAK8_NsubjettinessTau1,JetsAK8_NsubjettinessTau2,JetsAK8_NsubjettinessTau3]
+
+HISTO
+bothjetAK8abseta	i:xnum[100]	d:xmin[0]	d:xmax[5]	s:xtitle[|#eta(j_{1,2})|]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlack]
+bothjetAK8girth	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[girth(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlue]
+bothjetAK8mhalf	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[moment_{1/2}(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta + 2]
+bothjetAK8overflow	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[overflow(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kRed]
+bothjetAK8axismajor	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[#sigma_{major}(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kCyan + 2]
+bothjetAK8axisminor	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[#sigma_{minor}(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta]
+bothjetAK8mult	i:xnum[100]	d:xmin[0]	d:xmax[400]	s:xtitle[n_{constituents}(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kOrange + 7]
+bothjetAK8ptD	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[p_{T}D(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kYellow + 3]
+bothjetAK8tau21	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#tau_{21}(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kGreen + 2]
+bothjetAK8tau32	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#tau_{32}(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kPink - 9]
