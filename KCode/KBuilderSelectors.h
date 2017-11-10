@@ -951,11 +951,14 @@ class KDarkHadronSelector : public KSelector {
 			canfail = false;
 			//check options
 			localOpt->Get("njet",njet);
+			useSubjets = localOpt->Get("useSubjets",false);
 		}
 		virtual void CheckBranches(){
 			looper->fChain->SetBranchStatus("JetsAK8",1);
+			looper->fChain->SetBranchStatus("JetsAK8_subjets",1);
 			looper->fChain->SetBranchStatus("GenParticles",1);
 			looper->fChain->SetBranchStatus("GenParticles_PdgId",1);
+			looper->fChain->SetBranchStatus("GenParticles_ParentId",1);
 		}
 		
 		//this selector doesn't add anything to tree
@@ -966,29 +969,51 @@ class KDarkHadronSelector : public KSelector {
 			//clear
 			n_stable.clear(); n_stable.reserve(njet_);
 			n_unstable.clear(); n_unstable.reserve(njet_);
+			n_visible.clear(); n_visible.reserve(njet_);
 			rinv.clear(); rinv.reserve(njet_);
 			for(unsigned j = 0; j < njet_; ++j){
 				n_stable.push_back(0);
 				n_unstable.push_back(0);
+				n_visible.push_back(0);
+				int n_invisible = 0;
 				for(unsigned g = 0; g < looper->GenParticles->size(); ++g){
 					int pdgid = abs(looper->GenParticles_PdgId->at(g));
+					int parentid = abs(looper->GenParticles_ParentId->at(g));
 					if(abs(pdgid-4900000)>1000) continue;
-					double dR = KMath::DeltaR(looper->JetsAK8->at(j).Phi(),looper->JetsAK8->at(j).Eta(),
-											  looper->GenParticles->at(g).Phi(),looper->GenParticles->at(g).Eta());
-					if(dR<0.8){
-						if(pdgid==4900211) ++(n_stable[j]);
+					double dR = 1000;
+					double mindR = 0.8;
+					if(useSubjets){
+						mindR = 0.4;
+						for(const auto& subjet: looper->JetsAK8_subjets->at(j)){
+							double dRtmp = KMath::DeltaR(subjet.Phi(),subjet.Eta(),
+											   looper->GenParticles->at(g).Phi(),looper->GenParticles->at(g).Eta());
+							if(dRtmp < dR) dR = dRtmp;
+						}
+					}
+					else {
+						dR = KMath::DeltaR(looper->JetsAK8->at(j).Phi(),looper->JetsAK8->at(j).Eta(),
+										   looper->GenParticles->at(g).Phi(),looper->GenParticles->at(g).Eta());
+					}
+					if(dR<mindR){
+						if(pdgid==4900211){
+							++(n_stable[j]);
+							if(parentid==4900111) ++n_invisible;
+						}
 						else if(pdgid==4900111) ++(n_unstable[j]);
 					}
 				}
-				//rinv=stable/(stable+2*unstable) because unstable decays to 2 stable
-				rinv.push_back(double(n_stable[j])/double(n_stable[j]+2*n_unstable[j]));
+				//visible = unstable - invisible/2 (computed by invisible decays, unstable decays to 2 stable)
+				n_visible[j] = n_unstable[j] - n_invisible/2;
+				//rinv = 1 - (visible/unstable)
+				rinv.push_back(1.0 - double(n_visible[j])/double(n_unstable[j]));
 			}
 			return true;
 		}
 		
 		//member variables
 		unsigned njet;
-		vector<int> n_stable, n_unstable;
+		bool useSubjets;
+		vector<int> n_stable, n_unstable, n_visible;
 		vector<double> rinv;
 };
 REGISTER_SELECTOR(DarkHadron);
@@ -1122,9 +1147,12 @@ class KHistoSelector : public KSelector {
 					if(looper->JetsAK8_NsubjettinessTau2->at(index)>0) value.Fill(looper->JetsAK8_NsubjettinessTau3->at(index)/looper->JetsAK8_NsubjettinessTau2->at(index),w);
 				}
 				else if(vname=="msd") value.Fill(looper->JetsAK8_softDropMass->at(index),w);
+				else if(vname=="mass") value.Fill(looper->JetsAK8->at(index).M(),w);
 				else if(vname=="nstable" and DarkHadron) value.Fill(DarkHadron->n_stable.at(index),w);
 				else if(vname=="nunstable" and DarkHadron) value.Fill(DarkHadron->n_unstable.at(index),w);
+				else if(vname=="nvisible" and DarkHadron) value.Fill(DarkHadron->n_visible.at(index),w);
 				else if(vname=="rinv" and DarkHadron) value.Fill(DarkHadron->rinv.at(index),w);
+				else if(vname=="nsubjet") value.Fill(looper->JetsAK8_subjets->at(index).size(),w);
 				else { //do nothing
 				}
 			}

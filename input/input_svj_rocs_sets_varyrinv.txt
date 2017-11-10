@@ -1,0 +1,13 @@
+OPTION
+string:printsuffix[varyrinv]
+
+SET
+hist	mc	SVJ_3000_20_0.1_0.2	s:legname[SVJ_3000_20_0.1_0.2]	c:color[kRed]	i:linestyle[7]	i:panel[0]
+	base	mc	SVJ_3000_20_0.1_0.2	s:filename[tree_SVJ_mZprime-3000_mDark-20_rinv-0.1_alpha-0.2.root]	d:xsection[0.0155]
+hist	mc	SVJ_3000_20_0.3_0.2	s:legname[SVJ_3000_20_0.3_0.2]	c:color[kCyan + 2]	i:linestyle[7]	i:panel[0]
+	base	mc	SVJ_3000_20_0.3_0.2	s:filename[tree_SVJ_mZprime-3000_mDark-20_rinv-0.3_alpha-0.2.root]	d:xsection[0.0155]
+hist	mc	SVJ_3000_20_0.5_0.2	s:legname[SVJ_3000_20_0.5_0.2]	c:color[kBlue]	i:linestyle[7]	i:panel[0]
+	base	mc	SVJ_3000_20_0.5_0.2	s:filename[tree_SVJ_mZprime-3000_mDark-20_rinv-0.5_alpha-0.2.root]	d:xsection[0.0155]
+hist	mc	SVJ_3000_20_0.7_0.2	s:legname[SVJ_3000_20_0.7_0.2]	c:color[kMagenta]	i:linestyle[7]	i:panel[0]
+	base	mc	SVJ_3000_20_0.7_0.2	s:filename[tree_SVJ_mZprime-3000_mDark-20_rinv-0.7_alpha-0.2.root]	d:xsection[0.0155]
+
