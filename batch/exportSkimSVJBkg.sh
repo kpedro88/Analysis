@@ -43,4 +43,18 @@ TTJets_block0 \
 TTJets_block1 \
 TTJets_block2 \
 TTJets_block3 \
+WJetsToLNu_block0 \
+WJetsToLNu_block1 \
+WJetsToLNu_block2 \
+WJetsToLNu_block3 \
+WJetsToLNu_block4 \
+WJetsToLNu_block5 \
+WJetsToLNu_block6 \
+WJetsToLNu_block7 \
+WJetsToLNu_block8 \
+ZJetsToNuNu_Zpt-100to200_block0 \
+ZJetsToNuNu_Zpt-100to200_block1 \
+ZJetsToNuNu_Zpt-100to200_block2 \
+ZJetsToNuNu_Zpt-200toInf_block0 \
+ZJetsToNuNu_Zpt-200toInf_block1 \
 )

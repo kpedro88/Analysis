@@ -28,4 +28,9 @@ flist = [
   'Summer16.QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8'],             ['QCD_Pt_2400to3200']],
 [['Summer16.QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8'],              ['QCD_Pt_3200toInf']],
 [['Summer16.TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'],            ['TTJets']],
+[['Summer16.WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'],        ['WJetsToLNu']],
+[['Summer16.ZJetsToNuNu_Zpt-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+  'Summer16.ZJetsToNuNu_Zpt-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1'], ['ZJetsToNuNu_Zpt-100to200']],
+[['Summer16.ZJetsToNuNu_Zpt-200toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+  'Summer16.ZJetsToNuNu_Zpt-200toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1'], ['ZJetsToNuNu_Zpt-200toInf']],
 ]

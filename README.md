@@ -190,4 +190,6 @@ To make cutflow plots:
 root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/ProductionV1/Skims/tree_dijethad",{"input/input_svj_cutflow_had.txt","input/input_svj_cutflow_sets_sig.txt"},{},1)'
 root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/ProductionV1/Skims/tree_dijethad",{"input/input_svj_cutflow_had.txt","input/input_svj_cutflow_sets_qcd.txt"},{},1)'
 root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/ProductionV1/Skims/tree_dijethad",{"input/input_svj_cutflow_had.txt","input/input_svj_cutflow_sets_ttbar.txt"},{},1)'
+root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/ProductionV1/Skims/tree_dijethad",{"input/input_svj_cutflow_had.txt","input/input_svj_cutflow_sets_wjets.txt"},{},1)'
+root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/ProductionV1/Skims/tree_dijethad",{"input/input_svj_cutflow_had.txt","input/input_svj_cutflow_sets_zinv.txt"},{},1)'
 ```
