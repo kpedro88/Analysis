@@ -57,7 +57,10 @@ class KParserOption {
 		//1. type:name[value]
 		//2. vtype:name[value]
 		//3. vtype{sep}:name[value]
-		KParserOption(string line) : sep(','), isvector(false), valid(true) {
+		//4. type+:name[value]
+		//5. vtype+:name[value]
+		//6. vtype{sep}+:[value]
+		KParserOption(string line) : sep(','), isvector(false), valid(true), append(false) {
 			//first component: type
 			string::size_type colon = line.find(':');
 			if(colon!=string::npos){
@@ -70,12 +73,21 @@ class KParserOption {
 			isvector = type[0]=='v';
 			if(isvector) type.erase(0,1);
 			
-			string::size_type curly = type.find('{');
-			if(curly!=string::npos and curly<=type.size()+1){
-				sep = type[curly+1];
-				type.erase(curly,string::npos);
+			//check for separator
+			string::size_type curly1 = type.find('{');
+			string::size_type curly2 = type.find('}');
+			if(curly2!=string::npos and curly2<=type.size()+1 and curly2-curly1==2){
+				sep = type[curly1+1];
+				type.erase(curly1,3);
 			}
 			
+			//check for appending
+			string::size_type plus = type.find('+');
+			if(plus!=string::npos){
+				append = true;
+				type.erase(plus,1);
+			}
+
 			//remove whitespace from front
 			while(type[0]==' '){
 				type.erase(0,1);
@@ -97,7 +109,7 @@ class KParserOption {
 		//members
 		string type, name, value;
 		char sep;
-		bool isvector, valid;
+		bool isvector, valid, append;
 };
 
 class KChain {
@@ -225,6 +237,7 @@ namespace KParser {
 	template <class O> void addOption(OptionMap* option, const KParserOption& opt){
 		if(opt.isvector){
 			vector<O> vtmp;
+			if(opt.append) option->Get(opt.name,vtmp);
 			//comma-separated values
 			vector<string> fields;
 			process(opt.value,opt.sep,fields);
@@ -234,7 +247,13 @@ namespace KParser {
 			option->Set(opt.name,vtmp);
 		}
 		else {
-			option->Set(opt.name, getOptionValue<O>(opt.value));
+			O tmp;
+			if(opt.append) {
+				option->Get(opt.name,tmp);
+				tmp += getOptionValue<O>(opt.value);
+			}
+			else tmp = getOptionValue<O>(opt.value);
+			option->Set(opt.name, tmp);
 		}
 	}
 	//special handling for chains
@@ -245,6 +264,7 @@ namespace KParser {
 		
 		if(opt.isvector){
 			vector<KChain> vtmp;
+			if(opt.append) option->Get(opt.name,vtmp);
 			for(unsigned i = 0; i < fields.size()-3; i+=4){
 				vtmp.emplace_back(vector<string>(fields.begin()+i,fields.begin()+min(i+4,unsigned(fields.size()))));
 			}
@@ -304,7 +324,7 @@ namespace KParser {
 	}
 	//helper functions
 	void processOption(string line, OptionMap* option){
-		//(v)type({sep}):name[value]
+		//(v)type({sep})(+):name[value]
 		KParserOption opt(line);
 		if(!opt.valid) {
 			cout << "Improperly formatted option:" << endl;
@@ -314,9 +334,15 @@ namespace KParser {
 		}
 		
 		//currently anticipated option types: full/abbrev.
-		//bool/b, int/i, uint/u, float/f, double/d, string/s, color/c, chain/ch
-		//vbool/vb, vint/vi, vuint/vu, vfloat/vf, vdouble/vd, vstring/vs, vcolor/vc, vchain/vch(vectors)
+		//bool/b, int/i, uint/u, float/f, double/d, string/s, color/c, chain/ch, input/in
+		//vbool/vb, vint/vi, vuint/vu, vfloat/vf, vdouble/vd, vstring/vs, vcolor/vc, vchain/vch, vinput/vin (vectors)
 		//others could easily be added...
+
+		//can only append to vectors or strings
+		if(opt.append and !opt.isvector and opt.type!="string" and opt.type!="s"){
+			cout << "Cannot append to option type " << opt.type << "; skipping " << opt.name << endl;
+			return;
+		}
 		
 		//match strings to types
 		if(opt.type=="bool" || opt.type=="b") addOption<bool>(option,opt);
