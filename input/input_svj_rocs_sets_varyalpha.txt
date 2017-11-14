@@ -1,5 +1,5 @@
 OPTION
-string:printsuffix[varyalpha]
+string+:printsuffix[_varyalpha]
 
 SET
 hist	mc	SVJ_3000_20_0.3_0.1	s:legname[SVJ_3000_20_0.3_0.1]	c:color[kRed]	i:linestyle[7]	i:panel[0]

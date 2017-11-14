@@ -1,0 +1,11 @@
+OPTION
+string:rocsuffix[_bothjet]
+vstring:disable_branches[*]
+vstring:enable_branches[JetsAK8,JetsAK8_softDropMass]
+bool:roc[0]
+int:npanel[2]
+
+HISTO
+#bothjetAK8msd	i:xnum[100]	d:xmin[0]	d:xmax[500]	s:xtitle[m_{sd} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+bothjetAK8msd	i:xnum[60]	d:xmin[0]	d:xmax[300]	s:xtitle[m_{sd} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+bothjetAK8mass	i:xnum[60]	d:xmin[0]	d:xmax[300]	s:xtitle[m_{j} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
