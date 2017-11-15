@@ -21,6 +21,8 @@
 #include <TLegend.h>
 #include <TMath.h>
 #include <TStyle.h>
+#include <TCollection.h>
+#include <TKey.h>
 
 //STL headers
 #include <vector>
@@ -271,31 +273,58 @@ class KBaseExt : public KBase {
 		KBaseExt() : KBase(), add_ext(false) {}
 		KBaseExt(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KBase(name_, localOpt_, globalOpt_), add_ext(false) {
 			string filename;
-			if(localOpt->Get("extfilename",filename)){
+			//first check for global file, then local file
+			globalOpt->Get("extfilename",filename);
+			localOpt->Get("extfilename",filename);
+			if(!filename.empty()){
 				//open file
 				file = TFile::Open(filename.c_str());
-				//check for specific histos to import
-				vector<string> exthisto_in;
-				vector<string> exthisto_out;
-				localOpt->Get("exthisto_in",exthisto_in);
-				localOpt->Get("exthisto_out",exthisto_out);
-				if(exthisto_in.size() != exthisto_out.size()){
-					cout << "Input error: vectors of external histo input and output names must have the same length. These external histos will not be used." << endl;
-					return;
-				}
-				else{
-					add_ext = true;
-					for(unsigned i = 0; i < exthisto_in.size(); i++){
-						TH1* extmp = (TH1*)file->Get(exthisto_in[i].c_str());
-						if(extmp) AddHisto(exthisto_out[i],extmp);
-						else {
-							cout << "Input error: could not open histo " << exthisto_in[i] << " in file " << filename << "!" << endl;
+
+				//check for importing histos automatically
+				bool ext_auto = localOpt->Get("ext_auto",false);
+				string hsuff;
+				if(localOpt->Get("exthisto_suff",hsuff)) ext_auto = true;
+				else hsuff = name;
+
+				add_ext = true;
+				if(ext_auto){
+					TKey* key;
+					TIter next(file->GetListOfKeys());
+					while((key = (TKey*)next())) {
+						string ntmp = key->GetName();
+						//look for names in the format histo_suff
+						if(ntmp.size() > hsuff.size() and ntmp.compare(ntmp.size()-hsuff.size(),hsuff.size(),hsuff)==0){
+							TH1* extmp = (TH1*)file->Get(ntmp.c_str());
+							if(extmp) AddHisto(ntmp.substr(0,ntmp.size()-hsuff.size()-1),extmp);
+							else {
+								cout << "Input error: could not open histo " << ntmp << " in file " << filename << "!" << endl;
+							}
+							
 						}
 					}
-					add_ext = false;
 				}
+				else {
+					//check for specific histos to import
+					vector<string> exthisto_in;
+					vector<string> exthisto_out;
+					localOpt->Get("exthisto_in",exthisto_in);
+					localOpt->Get("exthisto_out",exthisto_out);
+					if(exthisto_in.size() != exthisto_out.size()){
+						cout << "Input error: vectors of external histo input and output names must have the same length. These external histos will not be used." << endl;
+						return;
+					}
+					else{
+						for(unsigned i = 0; i < exthisto_in.size(); i++){
+							TH1* extmp = (TH1*)file->Get(exthisto_in[i].c_str());
+							if(extmp) AddHisto(exthisto_out[i],extmp);
+							else {
+								cout << "Input error: could not open histo " << exthisto_in[i] << " in file " << filename << "!" << endl;
+							}
+						}
+					}
+				}
+				add_ext = false;
 			}
-			
 		}
 		
 		//change histo add mode

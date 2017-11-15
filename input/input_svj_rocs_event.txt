@@ -1,7 +1,7 @@
 OPTION
-string:rocsuffix[_event]
+string+:rocsuffix[_event]
 vstring:disable_branches[*]
-vstring:enable_branches[JetsAK8,JetsAK8_subjets,DeltaPhiMin_AK8,MET,METPhi,METSignificance,MJJ_AK8,Mmc_AK8]
+vstring:enable_branches[JetsAK8,JetsAK8_subjets,DeltaPhiMin_AK8,MET,METPhi,METSignificance,MJJ_AK8,Mmc_AK8,HT]
 
 HISTO
 deltaetaAK8	i:xnum[100]	d:xmin[0]	d:xmax[10]	s:xtitle[|#Delta#eta(j_{1},j_{2})|]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kGray + 1]
@@ -10,8 +10,9 @@ met	i:xnum[100]	d:xmin[0]	d:xmax[1500]	s:xtitle[#slash{E}_{T} [GeV]]	s:ytitle[ar
 metMTratio	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[#slash{E}_{T}/M_{T}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta + 2]
 #metsig	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[#slash{E}_{T} Significance]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kRed]
 logmetsig	i:xnum[100]	d:xmin[-2]	d:xmax[10]	s:xtitle[log(#slash{E}_{T} Significance)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kRed]
-MJJAK8	i:xnum[100]	d:xmin[0]	d:xmax[4000]	s:xtitle[M_{jj} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kCyan + 2]
-MTAK8	i:xnum[100]	d:xmin[0]	d:xmax[4000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kMagenta]
+MJJAK8	i:xnum[150]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{jj} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kCyan + 2]
+MTAK8	i:xnum[150]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kMagenta]
 MmcAK8	i:xnum[150]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{mc} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kOrange + 7]
+ht	i:xnum[150]	d:xmin[0]	d:xmax[6000]	s:xtitle[H_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kYellow + 3]
 #MJJSDAK8	i:xnum[100]	d:xmin[0]	d:xmax[4000]	s:xtitle[M_{jj,sd} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kYellow + 3]
 #MTSDAK8	i:xnum[100]	d:xmin[0]	d:xmax[4000]	s:xtitle[M_{T,sd} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kGreen + 2]

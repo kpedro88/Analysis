@@ -1,0 +1,7 @@
+OPTION
+string:printsuffix[wjets]
+
+SET
+hist	mc	wjets	s:legname[W(l#nu)+jets]	c:color[kGreen + 3]
+	base	mc	WJets	s:filename[tree_WJetsToLNu.root]
+

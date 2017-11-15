@@ -1,7 +1,7 @@
 OPTION
 vstring:selections[simf]
-string:rocsuffix[_leadjet_flatpt]
-string:printsuffix[sig_vs_bkg_flatpt]
+string+:rocsuffix[_flatpt]
+string+:printsuffix[_flatpt]
 
 SELECTION
 simw

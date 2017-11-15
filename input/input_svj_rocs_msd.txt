@@ -1,5 +1,4 @@
 OPTION
-string:rocsuffix[_bothjet]
 vstring:disable_branches[*]
 vstring:enable_branches[JetsAK8,JetsAK8_softDropMass]
 bool:roc[0]

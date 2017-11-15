@@ -1,0 +1,8 @@
+OPTION
+string:printsuffix[zinv]
+
+SET
+hist	mc	zinv1	s:legname[Z(#nu#nu)+jets (Zpt-100to200)]	c:color[kOrange + 7]
+	base	mc	ZJets1	s:filename[tree_ZJetsToNuNu_Zpt-100to200.root]	s:flatsuff[zinv]
+hist	mc	zinv2	s:legname[Z(#nu#nu)+jets (Zpt-200toInf)]	c:color[kYellow + 3]
+	base	mc	ZJets2	s:filename[tree_ZJetsToNuNu_Zpt-200toInf.root]	s:flatsuff[zinv]

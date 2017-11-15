@@ -1,0 +1,13 @@
+OPTION
+string+:printsuffix[_varymZprime]
+vstring:roc_sig[SVJ_1000_20_0.3_0.2,SVJ_2000_20_0.3_0.2,SVJ_3000_20_0.3_0.2,SVJ_4000_20_0.3_0.2]
+
+SET
+hist	mc	SVJ_1000_20_0.3_0.2	s:legname[SVJ_1000_20_0.3_0.2]	c:color[kRed]	i:linestyle[7]	i:panel[0]
+	base	ext	SVJ_1000_20_0.3_0.2	b:ext_auto[1]
+hist	mc	SVJ_2000_20_0.3_0.2	s:legname[SVJ_2000_20_0.3_0.2]	c:color[kBlue]	i:linestyle[7]	i:panel[0]
+	base	ext	SVJ_2000_20_0.3_0.2	b:ext_auto[1]
+hist	mc	SVJ_3000_20_0.3_0.2	s:legname[SVJ_3000_20_0.3_0.2]	c:color[kCyan + 2]	i:linestyle[7]	i:panel[0]
+	base	ext	SVJ_3000_20_0.3_0.2	b:ext_auto[1]
+hist	mc	SVJ_4000_20_0.3_0.2	s:legname[SVJ_4000_20_0.3_0.2]	c:color[kMagenta]	i:linestyle[7]	i:panel[0]
+	base	ext	SVJ_4000_20_0.3_0.2	b:ext_auto[1]

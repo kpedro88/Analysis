@@ -1,5 +1,5 @@
 OPTION
-string:rocsuffix[_bothjet]
+string+:rocsuffix[_bothjet]
 vstring:disable_branches[*]
 vstring:enable_branches[JetsAK8,JetsAK8_girth,JetsAK8_momenthalf,JetsAK8_overflow,JetsAK8_axismajor,JetsAK8_axisminor,JetsAK8_multiplicity,JetsAK8_ptD,JetsAK8_NsubjettinessTau1,JetsAK8_NsubjettinessTau2,JetsAK8_NsubjettinessTau3,JetsAK8_softDropMass]
 

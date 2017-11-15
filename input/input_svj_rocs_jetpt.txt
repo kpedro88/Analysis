@@ -1,5 +1,5 @@
 OPTION
-string:rocsuffix[_jetpt]
+string+:rocsuffix[_jetpt]
 vstring:disable_branches[*]
 vstring:enable_branches[JetsAK8]
 

@@ -19,24 +19,13 @@ INPUT
 input/input_global.txt
 
 OPTION
-string:prelim_text[Simulation (work-in-progress)]
-string:lumi_text[(13 TeV)]
-vstring:printformat[png]
+double:luminorm[35900]
 bool:printyield[1]
 int:yieldprecision[2]
 bool:plotoverflow[1]
-double:sizeLeg[20]
-double:sizeSymb[0.15]
-int:npanel[1]
-bool:treesuffix[0]
-#double:ymin[5e-4]
 double:ymin_min[1e-6]
 bool:appendsel[0]
-bool:unitnorm[1]
 vstring:selections[sim]
-bool:roc[1]
-bool:showAUC[1]
-bool:skiphistos[0]
 bool:useTreeWeight[1]
 bool:debugloop[1]
 

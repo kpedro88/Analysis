@@ -176,13 +176,10 @@ cd batch
 ./hadd_skims.sh -d /store/user/lpcsusyhad/SVJ2017/ProductionV1/Skims -n 1 -r
 ```
 
-To make plots and ROC curves (including flattening pT spectra):
+To make histograms, and then plots and ROC curves (including flattening pT spectra):
 ```
-root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/ProductionV1/Skims/tree_dijethad",{"input/input_svj_rocs.txt","input/input_svj_rocs_event.txt","input/input_svj_rocs_sets.txt"},{},1)'
-root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/ProductionV1/Skims/tree_dijethad",{"input/input_svj_rocs.txt","input/input_svj_rocs_jetpt.txt","input/input_svj_rocs_sets.txt"},{"OPTION","string:rootfile[corrections/svj_dijethad_jetAK8]"},1)'
-root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/ProductionV1/Skims/tree_dijethad",{"input/input_svj_rocs.txt","input/input_svj_rocs_leadjet.txt","input/input_svj_rocs_sets.txt","input/input_svj_flatten_leadjet.txt"},{},1)'
-root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/ProductionV1/Skims/tree_dijethad",{"input/input_svj_rocs.txt","input/input_svj_rocs_subleadjet.txt","input/input_svj_rocs_sets.txt","input/input_svj_flatten_subleadjet.txt"},{},1)'
-root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/ProductionV1/Skims/tree_dijethad",{"input/input_svj_rocs.txt","input/input_svj_rocs_bothjet.txt","input/input_svj_rocs_sets.txt","input/input_svj_flatten_bothjet.txt"},{},1)'
+./makeHistosSVJ.sh
+./makePlotsSVJ.sh
 ```
 
 To make cutflow plots:
