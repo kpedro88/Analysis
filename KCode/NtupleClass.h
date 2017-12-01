@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Tue Oct 10 11:16:51 2017 by ROOT version 6.06/01
+// Fri Dec  1 15:38:53 2017 by ROOT version 6.06/01
 // from TTree PreSelection/PreSelection
 // from TTree tree/all observables, signal
 // found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV12/Summer16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
@@ -30,7 +30,6 @@ public :
    Bool_t          BadChargedCandidateFilter;
    Bool_t          BadGlobalMuon;
    Double_t        BadGlobalMuonLeadPt;
-
    Int_t           badMuonsFilter;
    Bool_t          BadPFMuonFilter;
    Bool_t          BadTrkGlobalMuon;
@@ -88,7 +87,6 @@ public :
    Double_t        DeltaPhi4JERup;
    Bool_t          DupGlobalMuon;
    Double_t        DupGlobalMuonLeadPt;
-
    Int_t           duplicateMuonsFilter;
    Int_t           EcalDeadCellTriggerPrimitiveFilter;
    Int_t           eeBadScFilter;
@@ -168,7 +166,6 @@ public :
    Bool_t          JetIDJERdown;
    Bool_t          JetIDJERup;
    vector<TLorentzVector> *Jets;
-
    vector<double>  *Jets_axisminor;
    vector<double>  *Jets_bDiscriminatorCSV;
    vector<double>  *Jets_bDiscriminatorMVA;
@@ -188,9 +185,8 @@ public :
    vector<double>  *Jets_jerFactorUp;
    vector<bool>    *Jets_LeptonMask;
    vector<bool>    *Jets_MHTMask;
-
-   vector<int>     *Jets_multiplicity;
    vector<bool>    *Jets_MHTOrigMask;
+   vector<int>     *Jets_multiplicity;
    vector<double>  *Jets_muonEnergyFraction;
    vector<int>     *Jets_muonMultiplicity;
    vector<double>  *Jets_neutralEmEnergyFraction;
@@ -210,22 +206,17 @@ public :
    vector<double>  *JetsAK8_axismajor;
    vector<double>  *JetsAK8_bDiscriminatorSubjet2CSV;
    vector<double>  *JetsAK8_axisminor;
-
    vector<vector<TLorentzVector> > *JetsAK8_constituents;
    vector<double>  *JetsAK8_doubleBDiscriminator;
-
    vector<double>  *JetsAK8_girth;
    vector<bool>    *JetsAK8_ID;
-
    vector<double>  *JetsAK8_momenthalf;
-
    vector<int>     *JetsAK8_multiplicity;
    vector<double>  *JetsAK8_NsubjettinessTau1;
    vector<double>  *JetsAK8_NsubjettinessTau2;
    vector<double>  *JetsAK8_NsubjettinessTau3;
    vector<int>     *JetsAK8_NumBhadrons;
    vector<int>     *JetsAK8_NumChadrons;
-
    vector<double>  *JetsAK8_overflow;
    vector<double>  *JetsAK8_prunedMass;
    vector<TLorentzVector> *JetsAK8Clean;
@@ -249,7 +240,6 @@ public :
    vector<bool>    *Jetsclean_ID;
    vector<bool>    *Jetsclean_ISRMask;
    vector<bool>    *Jetsclean_MHTMask;
-
    vector<bool>    *Jetsclean_MHTOrigMask;
    vector<double>  *Jetsclean_muonEnergyFraction;
    vector<int>     *Jetsclean_partonFlavor;
@@ -311,7 +301,6 @@ public :
    Double_t        METPhiclean;
    vector<double>  *METPhiDown;
    vector<double>  *METPhiUp;
-
    Double_t        METSignificance;
    vector<double>  *METUp;
    Double_t        MHT;
@@ -334,7 +323,6 @@ public :
    Double_t        MHTPhiJERdown;
    Double_t        MHTPhiJERup;
    Double_t        MT2;
-
    Double_t        MT_AK8;
    vector<TLorentzVector> *Muons;
    vector<int>     *Muons_charge;
@@ -420,11 +408,8 @@ public :
    Double_t        TrueNumInteractions;
    Double_t        Weight;
    vector<TLorentzVector> *ZCandidates;
-
    Double_t        HT5;
-
    UInt_t          RA2bin;
-
    vector<unsigned int> *RA2bins;
 
    // List of branches
@@ -434,7 +419,6 @@ public :
    TBranch        *b_BadChargedCandidateFilter;   //!
    TBranch        *b_BadGlobalMuon;   //!
    TBranch        *b_BadGlobalMuonLeadPt;   //!
-
    TBranch        *b_badMuonsFilter;   //!
    TBranch        *b_BadPFMuonFilter;   //!
    TBranch        *b_BadTrkGlobalMuon;   //!
@@ -492,7 +476,6 @@ public :
    TBranch        *b_DeltaPhi4JERup;   //!
    TBranch        *b_DupGlobalMuon;   //!
    TBranch        *b_DupGlobalMuonLeadPt;   //!
-
    TBranch        *b_duplicateMuonsFilter;   //!
    TBranch        *b_EcalDeadCellTriggerPrimitiveFilter;   //!
    TBranch        *b_eeBadScFilter;   //!
@@ -572,7 +555,6 @@ public :
    TBranch        *b_JetIDJERdown;   //!
    TBranch        *b_JetIDJERup;   //!
    TBranch        *b_Jets;   //!
-
    TBranch        *b_Jets_axisminor;   //!
    TBranch        *b_Jets_bDiscriminatorCSV;   //!
    TBranch        *b_Jets_bDiscriminatorMVA;   //!
@@ -592,9 +574,8 @@ public :
    TBranch        *b_Jets_jerFactorUp;   //!
    TBranch        *b_Jets_LeptonMask;   //!
    TBranch        *b_Jets_MHTMask;   //!
-
-   TBranch        *b_Jets_multiplicity;   //!
    TBranch        *b_Jets_MHTOrigMask;   //!
+   TBranch        *b_Jets_multiplicity;   //!
    TBranch        *b_Jets_muonEnergyFraction;   //!
    TBranch        *b_Jets_muonMultiplicity;   //!
    TBranch        *b_Jets_neutralEmEnergyFraction;   //!
@@ -614,22 +595,17 @@ public :
    TBranch        *b_JetsAK8_axismajor;   //!
    TBranch        *b_JetsAK8_bDiscriminatorSubjet2CSV;   //!
    TBranch        *b_JetsAK8_axisminor;   //!
-
    TBranch        *b_JetsAK8_constituents;   //!
    TBranch        *b_JetsAK8_doubleBDiscriminator;   //!
-
    TBranch        *b_JetsAK8_girth;   //!
    TBranch        *b_JetsAK8_ID;   //!
-
    TBranch        *b_JetsAK8_momenthalf;   //!
-
    TBranch        *b_JetsAK8_multiplicity;   //!
    TBranch        *b_JetsAK8_NsubjettinessTau1;   //!
    TBranch        *b_JetsAK8_NsubjettinessTau2;   //!
    TBranch        *b_JetsAK8_NsubjettinessTau3;   //!
    TBranch        *b_JetsAK8_NumBhadrons;   //!
    TBranch        *b_JetsAK8_NumChadrons;   //!
-
    TBranch        *b_JetsAK8_overflow;   //!
    TBranch        *b_JetsAK8_prunedMass;   //!
    TBranch        *b_JetsAK8Clean;   //!
@@ -653,7 +629,6 @@ public :
    TBranch        *b_Jetsclean_ID;   //!
    TBranch        *b_Jetsclean_ISRMask;   //!
    TBranch        *b_Jetsclean_MHTMask;   //!
-
    TBranch        *b_Jetsclean_MHTOrigMask;   //!
    TBranch        *b_Jetsclean_muonEnergyFraction;   //!
    TBranch        *b_Jetsclean_partonFlavor;   //!
@@ -715,7 +690,6 @@ public :
    TBranch        *b_METPhiclean;   //!
    TBranch        *b_METPhiDown;   //!
    TBranch        *b_METPhiUp;   //!
-
    TBranch        *b_METSignificance;   //!
    TBranch        *b_METUp;   //!
    TBranch        *b_MHT;   //!
@@ -738,7 +712,6 @@ public :
    TBranch        *b_MHTPhiJERdown;   //!
    TBranch        *b_MHTPhiJERup;   //!
    TBranch        *b_MT2;   //!
-
    TBranch        *b_MT_AK8;   //!
    TBranch        *b_Muons;   //!
    TBranch        *b_Muons_charge;   //!
@@ -824,11 +797,8 @@ public :
    TBranch        *b_TrueNumInteractions;   //!
    TBranch        *b_Weight;   //!
    TBranch        *b_ZCandidates;   //!
-
    TBranch        *b_HT5;   //!
-
    TBranch        *b_RA2binBranch;   //!
-
    TBranch        *b_RA2bins;   //!
 
    NtupleClass(TTree *tree=0);
@@ -943,7 +913,6 @@ void NtupleClass::Init(TTree *tree)
    GenTaus_Nu = 0;
    GenTops = 0;
    Jets = 0;
-
    Jets_axisminor = 0;
    Jets_bDiscriminatorCSV = 0;
    Jets_bDiscriminatorMVA = 0;
@@ -963,9 +932,8 @@ void NtupleClass::Init(TTree *tree)
    Jets_jerFactorUp = 0;
    Jets_LeptonMask = 0;
    Jets_MHTMask = 0;
-
-   Jets_multiplicity = 0;
    Jets_MHTOrigMask = 0;
+   Jets_multiplicity = 0;
    Jets_muonEnergyFraction = 0;
    Jets_muonMultiplicity = 0;
    Jets_neutralEmEnergyFraction = 0;
@@ -985,22 +953,17 @@ void NtupleClass::Init(TTree *tree)
    JetsAK8_axismajor = 0;
    JetsAK8_bDiscriminatorSubjet2CSV = 0;
    JetsAK8_axisminor = 0;
-
    JetsAK8_constituents = 0;
    JetsAK8_doubleBDiscriminator = 0;
-
    JetsAK8_girth = 0;
    JetsAK8_ID = 0;
-
    JetsAK8_momenthalf = 0;
-
    JetsAK8_multiplicity = 0;
    JetsAK8_NsubjettinessTau1 = 0;
    JetsAK8_NsubjettinessTau2 = 0;
    JetsAK8_NsubjettinessTau3 = 0;
    JetsAK8_NumBhadrons = 0;
    JetsAK8_NumChadrons = 0;
-
    JetsAK8_overflow = 0;
    JetsAK8_prunedMass = 0;
    JetsAK8Clean = 0;
@@ -1024,7 +987,6 @@ void NtupleClass::Init(TTree *tree)
    Jetsclean_ID = 0;
    Jetsclean_ISRMask = 0;
    Jetsclean_MHTMask = 0;
-
    Jetsclean_MHTOrigMask = 0;
    Jetsclean_muonEnergyFraction = 0;
    Jetsclean_partonFlavor = 0;
@@ -1137,7 +1099,6 @@ void NtupleClass::Init(TTree *tree)
    TriggerPass = 0;
    TriggerPrescales = 0;
    ZCandidates = 0;
-
    RA2bins = 0;
    // Set branch addresses and branch pointers
    if (!tree) return;
@@ -1151,7 +1112,6 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("BadChargedCandidateFilter", &BadChargedCandidateFilter, &b_BadChargedCandidateFilter);
    fChain->SetBranchAddress("BadGlobalMuon", &BadGlobalMuon, &b_BadGlobalMuon);
    fChain->SetBranchAddress("BadGlobalMuonLeadPt", &BadGlobalMuonLeadPt, &b_BadGlobalMuonLeadPt);
-
    fChain->SetBranchAddress("badMuonsFilter", &badMuonsFilter, &b_badMuonsFilter);
    fChain->SetBranchAddress("BadPFMuonFilter", &BadPFMuonFilter, &b_BadPFMuonFilter);
    fChain->SetBranchAddress("BadTrkGlobalMuon", &BadTrkGlobalMuon, &b_BadTrkGlobalMuon);
@@ -1209,7 +1169,6 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("DeltaPhi4JERup", &DeltaPhi4JERup, &b_DeltaPhi4JERup);
    fChain->SetBranchAddress("DupGlobalMuon", &DupGlobalMuon, &b_DupGlobalMuon);
    fChain->SetBranchAddress("DupGlobalMuonLeadPt", &DupGlobalMuonLeadPt, &b_DupGlobalMuonLeadPt);
-
    fChain->SetBranchAddress("duplicateMuonsFilter", &duplicateMuonsFilter, &b_duplicateMuonsFilter);
    fChain->SetBranchAddress("EcalDeadCellTriggerPrimitiveFilter", &EcalDeadCellTriggerPrimitiveFilter, &b_EcalDeadCellTriggerPrimitiveFilter);
    fChain->SetBranchAddress("eeBadScFilter", &eeBadScFilter, &b_eeBadScFilter);
@@ -1289,7 +1248,6 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("JetIDJERdown", &JetIDJERdown, &b_JetIDJERdown);
    fChain->SetBranchAddress("JetIDJERup", &JetIDJERup, &b_JetIDJERup);
    fChain->SetBranchAddress("Jets", &Jets, &b_Jets);
-
    fChain->SetBranchAddress("Jets_axisminor", &Jets_axisminor, &b_Jets_axisminor);
    fChain->SetBranchAddress("Jets_bDiscriminatorCSV", &Jets_bDiscriminatorCSV, &b_Jets_bDiscriminatorCSV);
    fChain->SetBranchAddress("Jets_bDiscriminatorMVA", &Jets_bDiscriminatorMVA, &b_Jets_bDiscriminatorMVA);
@@ -1309,9 +1267,8 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("Jets_jerFactorUp", &Jets_jerFactorUp, &b_Jets_jerFactorUp);
    fChain->SetBranchAddress("Jets_LeptonMask", &Jets_LeptonMask, &b_Jets_LeptonMask);
    fChain->SetBranchAddress("Jets_MHTMask", &Jets_MHTMask, &b_Jets_MHTMask);
-
-   fChain->SetBranchAddress("Jets_multiplicity", &Jets_multiplicity, &b_Jets_multiplicity);
    fChain->SetBranchAddress("Jets_MHTOrigMask", &Jets_MHTOrigMask, &b_Jets_MHTOrigMask);
+   fChain->SetBranchAddress("Jets_multiplicity", &Jets_multiplicity, &b_Jets_multiplicity);
    fChain->SetBranchAddress("Jets_muonEnergyFraction", &Jets_muonEnergyFraction, &b_Jets_muonEnergyFraction);
    fChain->SetBranchAddress("Jets_muonMultiplicity", &Jets_muonMultiplicity, &b_Jets_muonMultiplicity);
    fChain->SetBranchAddress("Jets_neutralEmEnergyFraction", &Jets_neutralEmEnergyFraction, &b_Jets_neutralEmEnergyFraction);
@@ -1331,22 +1288,17 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("JetsAK8_axismajor", &JetsAK8_axismajor, &b_JetsAK8_axismajor);
    fChain->SetBranchAddress("JetsAK8_bDiscriminatorSubjet2CSV", &JetsAK8_bDiscriminatorSubjet2CSV, &b_JetsAK8_bDiscriminatorSubjet2CSV);
    fChain->SetBranchAddress("JetsAK8_axisminor", &JetsAK8_axisminor, &b_JetsAK8_axisminor);
-
    fChain->SetBranchAddress("JetsAK8_constituents", &JetsAK8_constituents, &b_JetsAK8_constituents);
    fChain->SetBranchAddress("JetsAK8_doubleBDiscriminator", &JetsAK8_doubleBDiscriminator, &b_JetsAK8_doubleBDiscriminator);
-
    fChain->SetBranchAddress("JetsAK8_girth", &JetsAK8_girth, &b_JetsAK8_girth);
    fChain->SetBranchAddress("JetsAK8_ID", &JetsAK8_ID, &b_JetsAK8_ID);
-
    fChain->SetBranchAddress("JetsAK8_momenthalf", &JetsAK8_momenthalf, &b_JetsAK8_momenthalf);
-
    fChain->SetBranchAddress("JetsAK8_multiplicity", &JetsAK8_multiplicity, &b_JetsAK8_multiplicity);
    fChain->SetBranchAddress("JetsAK8_NsubjettinessTau1", &JetsAK8_NsubjettinessTau1, &b_JetsAK8_NsubjettinessTau1);
    fChain->SetBranchAddress("JetsAK8_NsubjettinessTau2", &JetsAK8_NsubjettinessTau2, &b_JetsAK8_NsubjettinessTau2);
    fChain->SetBranchAddress("JetsAK8_NsubjettinessTau3", &JetsAK8_NsubjettinessTau3, &b_JetsAK8_NsubjettinessTau3);
    fChain->SetBranchAddress("JetsAK8_NumBhadrons", &JetsAK8_NumBhadrons, &b_JetsAK8_NumBhadrons);
    fChain->SetBranchAddress("JetsAK8_NumChadrons", &JetsAK8_NumChadrons, &b_JetsAK8_NumChadrons);
-
    fChain->SetBranchAddress("JetsAK8_overflow", &JetsAK8_overflow, &b_JetsAK8_overflow);
    fChain->SetBranchAddress("JetsAK8_prunedMass", &JetsAK8_prunedMass, &b_JetsAK8_prunedMass);
    fChain->SetBranchAddress("JetsAK8Clean", &JetsAK8Clean, &b_JetsAK8Clean);
@@ -1370,7 +1322,6 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("Jetsclean_ID", &Jetsclean_ID, &b_Jetsclean_ID);
    fChain->SetBranchAddress("Jetsclean_ISRMask", &Jetsclean_ISRMask, &b_Jetsclean_ISRMask);
    fChain->SetBranchAddress("Jetsclean_MHTMask", &Jetsclean_MHTMask, &b_Jetsclean_MHTMask);
-
    fChain->SetBranchAddress("Jetsclean_MHTOrigMask", &Jetsclean_MHTOrigMask, &b_Jetsclean_MHTOrigMask);
    fChain->SetBranchAddress("Jetsclean_muonEnergyFraction", &Jetsclean_muonEnergyFraction, &b_Jetsclean_muonEnergyFraction);
    fChain->SetBranchAddress("Jetsclean_partonFlavor", &Jetsclean_partonFlavor, &b_Jetsclean_partonFlavor);
@@ -1432,7 +1383,6 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("METPhiclean", &METPhiclean, &b_METPhiclean);
    fChain->SetBranchAddress("METPhiDown", &METPhiDown, &b_METPhiDown);
    fChain->SetBranchAddress("METPhiUp", &METPhiUp, &b_METPhiUp);
-
    fChain->SetBranchAddress("METSignificance", &METSignificance, &b_METSignificance);
    fChain->SetBranchAddress("METUp", &METUp, &b_METUp);
    fChain->SetBranchAddress("MHT", &MHT, &b_MHT);
@@ -1455,7 +1405,6 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("MHTPhiJERdown", &MHTPhiJERdown, &b_MHTPhiJERdown);
    fChain->SetBranchAddress("MHTPhiJERup", &MHTPhiJERup, &b_MHTPhiJERup);
    fChain->SetBranchAddress("MT2", &MT2, &b_MT2);
-
    fChain->SetBranchAddress("MT_AK8", &MT_AK8, &b_MT_AK8);
    fChain->SetBranchAddress("Muons", &Muons, &b_Muons);
    fChain->SetBranchAddress("Muons_charge", &Muons_charge, &b_Muons_charge);
@@ -1541,11 +1490,8 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("TrueNumInteractions", &TrueNumInteractions, &b_TrueNumInteractions);
    fChain->SetBranchAddress("Weight", &Weight, &b_Weight);
    fChain->SetBranchAddress("ZCandidates", &ZCandidates, &b_ZCandidates);
-
    fChain->SetBranchAddress("HT5", &HT5, &b_HT5);
-
    fChain->SetBranchAddress("RA2bin", &RA2bin, &b_RA2binBranch);
-
    fChain->SetBranchAddress("RA2bins", &RA2bins, &b_RA2bins);
    Notify();
 }
