@@ -37,9 +37,14 @@ for ((i=0; i < ${#SAMPLES[@]}; i++)); do
 				diffchar = substr($0,len+1,1);
 				rightside = substr($0,len+3,length($0));
 				sub(/[ \t]+$/,"",rightside);
-				print leftside;
-				if ( (diffchar == "|" || diffchar == ">") && 
-					index(rightside,sample)==0 && index(rightside,"ROOT version")==0 && index(rightside,"fChain(0)")==0 && index(rightside,".root")==0 )
+				if  ( length(leftside)>0 || length(rightside)==0 )
+				{
+					print leftside;
+				}
+				if  ( (diffchar == "|" || diffchar == ">") && 
+						index(rightside,sample)==0 && index(rightside,"ROOT version")==0 && 
+						index(rightside,"fChain(0)")==0 && index(rightside,".root")==0 &&
+						length(rightside)>0 )
 				{
 					 print rightside;
 				}
