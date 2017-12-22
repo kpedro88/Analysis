@@ -140,6 +140,208 @@ class KMHTSelector : public KSelector {
 };
 REGISTER_SELECTOR(MHT);
 
+//----------------------------------------------------
+class KDijetAK4Selector : public KSelector {
+	public:
+		//constructor
+		KDijetAK4Selector() : KSelector() { }
+		KDijetAK4Selector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), njet(2), id(true), pt(-1), eta(2.4) {
+			//check for options
+			localOpt->Get("njet",njet);
+			id = localOpt->Get("id",id);
+			localOpt->Get("pt",pt);
+			localOpt->Get("eta",eta);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("Jets",1);
+			looper->fChain->SetBranchStatus("Jets_ID",1);
+		}
+
+		//this selector doesn't add anything to tree
+
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			if(looper->Jets->size()<njet) return false;
+			//per-jet cuts, if enabled
+			for(unsigned j = 0; j < njet; ++j){
+				if(id and !looper->Jets_ID->at(j)) return false;
+				if(pt>0 and looper->Jets->at(j).Pt()<=pt) return false;
+				if(eta>0 and abs(looper->Jets->at(j).Eta())>=eta) return false;
+			}
+			return true;
+		}
+
+		//member variables
+		int njet;
+		bool id;
+		double pt, eta;
+};
+REGISTER_SELECTOR(DijetAK4);
+
+//----------------------------------------------------
+//selects events based on MET value
+class KMETSelector : public KSelector {
+	public:
+		//constructor
+		KMETSelector() : KSelector() { }
+		KMETSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), METmin(100) { 
+			//check for option
+			localOpt->Get("METmin",METmin);
+			doGen = localOpt->Get("gen",false);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("MET",1);
+			if(doGen) looper->fChain->SetBranchStatus("GenMET",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			if(doGen) return looper->GenMET > METmin;
+			else return looper->MET > METmin;
+		}
+		
+		//member variables
+		double METmin;
+		bool doGen;
+};
+REGISTER_SELECTOR(MET);
+
+//-------------------------------------------------------------
+//vetos events with leptons
+class KLeptonVetoSelector : public KSelector {
+	public:
+		//constructor
+		KLeptonVetoSelector() : KSelector() { }
+		KLeptonVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("Muons",1);
+			looper->fChain->SetBranchStatus("Electrons",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return looper->Muons->size()==0 and looper->Electrons->size()==0;
+		}
+		
+		//member variables
+};
+REGISTER_SELECTOR(LeptonVeto);
+
+
+//----------------------------------------------------
+//selects events based on MET/MT value
+class KMETMTRatioSelector : public KSelector {
+	public:
+		//constructor
+		KMETMTRatioSelector() : KSelector() { }
+		KMETMTRatioSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), min(0.15) { 
+			//check for option
+			localOpt->Get("min",min);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("MET",1);
+			looper->fChain->SetBranchStatus("METPhi",1);
+			looper->fChain->SetBranchStatus("JetsAK8",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			//recompute due to bug
+			TLorentzVector vjj;
+			if(looper->JetsAK8->size()>1) vjj = looper->JetsAK8->at(0) + looper->JetsAK8->at(1);
+			double MT = KMath::TransverseMass(vjj.Px(),vjj.Py(),vjj.M(),looper->MET*cos(looper->METPhi),looper->MET*sin(looper->METPhi),0);
+			return MT > min;
+		}
+		
+		//member variables
+		double min;
+};
+REGISTER_SELECTOR(METMTRatio);
+
+//----------------------------------------------------
+//selects events based on delta eta(j1,j2)
+class KDeltaEtaSelector : public KSelector {
+	public:
+		//constructor
+		KDeltaEtaSelector() : KSelector() { }
+		KDeltaEtaSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), detamax(1.1) { 
+			//check for option
+			localOpt->Get("detamax",detamax);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return abs(looper->JetsAK8->at(0).Eta()-looper->JetsAK8->at(1).Eta()) < detamax;
+		}
+		
+		//member variables
+		double detamax;
+};
+REGISTER_SELECTOR(DeltaEta);
+
+//----------------------------------------------------
+//selects events based on METsig value
+class KMETSignificanceSelector : public KSelector {
+	public:
+		//constructor
+		KMETSignificanceSelector() : KSelector() { }
+		KMETSignificanceSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), METsigmin(20) { 
+			//check for option
+			localOpt->Get("METsigmin",METsigmin);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("METSignificance",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return looper->METSignificance > METsigmin;
+		}
+		
+		//member variables
+		double METsigmin;
+};
+REGISTER_SELECTOR(METSignificance);
+
+//----------------------------------------------------
+//selects events based on dphi_min_AK8 value
+class KDeltaPhiMinAK8Selector : public KSelector {
+	public:
+		//constructor
+		KDeltaPhiMinAK8Selector() : KSelector() { }
+		KDeltaPhiMinAK8Selector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), dphimax(1.0) { 
+			//check for option
+			localOpt->Get("dphimax",dphimax);
+			invert = localOpt->Get("invert",false);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("DeltaPhiMin_AK8",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			if(invert) return looper->DeltaPhiMin_AK8 > dphimax;
+			else return looper->DeltaPhiMin_AK8 < dphimax;
+		}
+		
+		//member variables
+		double dphimax;
+		bool invert;
+};
+REGISTER_SELECTOR(DeltaPhiMinAK8);
+
 //forward declaration
 class KMCWeightSelector;
 //---------------------------------------------------------------
