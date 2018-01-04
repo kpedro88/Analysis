@@ -52,14 +52,12 @@ class KJetVariator : public KVariator {
 				new KLinkedBranchVI(KBranchVI(looper->Jets_partonFlavor,"Jets_partonFlavor"),vtype==JECup?KBranchVI(looper->JetsJECup_partonFlavor,"JetsJECup_partonFlavor"):vtype==JECdown?KBranchVI(looper->JetsJECdown_partonFlavor,"JetsJECdown_partonFlavor"):vtype==JERup?KBranchVI(looper->JetsJERup_partonFlavor,"JetsJERup_partonFlavor"):vtype==JERdown?KBranchVI(looper->JetsJERdown_partonFlavor,"JetsJERdown_partonFlavor"):vtype==clean?KBranchVI(looper->Jetsclean_partonFlavor,"Jetsclean_partonFlavor"):KBranchVI(NULL,"")),
 				new KLinkedBranchVI(KBranchVI(looper->Jets_hadronFlavor,"Jets_hadronFlavor"),vtype==JECup?KBranchVI(looper->JetsJECup_hadronFlavor,"JetsJECup_hadronFlavor"):vtype==JECdown?KBranchVI(looper->JetsJECdown_hadronFlavor,"JetsJECdown_hadronFlavor"):vtype==JERup?KBranchVI(looper->JetsJERup_hadronFlavor,"JetsJERup_hadronFlavor"):vtype==JERdown?KBranchVI(looper->JetsJERdown_hadronFlavor,"JetsJERdown_hadronFlavor"):vtype==clean?KBranchVI(looper->Jetsclean_hadronFlavor,"Jetsclean_hadronFlavor"):KBranchVI(NULL,"")),
 				new KLinkedBranchVD(KBranchVD(looper->Jets_bDiscriminatorCSV,"Jets_bDiscriminatorCSV"),vtype==JECup?KBranchVD(looper->JetsJECup_bDiscriminatorCSV,"JetsJECup_bDiscriminatorCSV"):vtype==JECdown?KBranchVD(looper->JetsJECdown_bDiscriminatorCSV,"JetsJECdown_bDiscriminatorCSV"):vtype==JERup?KBranchVD(looper->JetsJERup_bDiscriminatorCSV,"JetsJERup_bDiscriminatorCSV"):vtype==JERdown?KBranchVD(looper->JetsJERdown_bDiscriminatorCSV,"JetsJERdown_bDiscriminatorCSV"):vtype==clean?KBranchVD(looper->Jetsclean_bDiscriminatorCSV,"Jetsclean_bDiscriminatorCSV"):KBranchVD(NULL,"")),
-				new KLinkedBranchVD(KBranchVD(looper->Jets_bDiscriminatorMVA,"Jets_bDiscriminatorMVA"),vtype==JECup?KBranchVD(looper->JetsJECup_bDiscriminatorMVA,"JetsJECup_bDiscriminatorMVA"):vtype==JECdown?KBranchVD(looper->JetsJECdown_bDiscriminatorMVA,"JetsJECdown_bDiscriminatorMVA"):vtype==JERup?KBranchVD(looper->JetsJERup_bDiscriminatorMVA,"JetsJERup_bDiscriminatorMVA"):vtype==JERdown?KBranchVD(looper->JetsJERdown_bDiscriminatorMVA,"JetsJERdown_bDiscriminatorMVA"):vtype==clean?KBranchVD(looper->Jetsclean_bDiscriminatorMVA,"Jetsclean_bDiscriminatorMVA"):KBranchVD(NULL,"")),
 				new KLinkedBranchVD(KBranchVD(looper->Jets_muonEnergyFraction,"Jets_muonEnergyFraction"),vtype==JECup?KBranchVD(looper->JetsJECup_muonEnergyFraction,"JetsJECup_muonEnergyFraction"):vtype==JECdown?KBranchVD(looper->JetsJECdown_muonEnergyFraction,"JetsJECdown_muonEnergyFraction"):vtype==JERup?KBranchVD(looper->JetsJERup_muonEnergyFraction,"JetsJERup_muonEnergyFraction"):vtype==JERdown?KBranchVD(looper->JetsJERdown_muonEnergyFraction,"JetsJERdown_muonEnergyFraction"):vtype==clean?KBranchVD(looper->Jetsclean_muonEnergyFraction,"Jetsclean_muonEnergyFraction"):KBranchVD(NULL,"")),
 				new KLinkedBranchVD(KBranchVD(looper->Jets_chargedHadronEnergyFraction,"Jets_chargedHadronEnergyFraction"),vtype==JECup?KBranchVD(looper->JetsJECup_chargedHadronEnergyFraction,"JetsJECup_chargedHadronEnergyFraction"):vtype==JECdown?KBranchVD(looper->JetsJECdown_chargedHadronEnergyFraction,"JetsJECdown_chargedHadronEnergyFraction"):vtype==JERup?KBranchVD(looper->JetsJERup_chargedHadronEnergyFraction,"JetsJERup_chargedHadronEnergyFraction"):vtype==JERdown?KBranchVD(looper->JetsJERdown_chargedHadronEnergyFraction,"JetsJERdown_chargedHadronEnergyFraction"):vtype==clean?KBranchVD(looper->Jetsclean_chargedHadronEnergyFraction,"Jetsclean_chargedHadronEnergyFraction"):KBranchVD(NULL,"")),
 				new KLinkedBranchB(KBranchB(&looper->JetID,"JetID"),vtype==JECup?KBranchB(&looper->JetIDJECup,"JetIDJECup"):vtype==JECdown?KBranchB(&looper->JetIDJECdown,"JetIDJECdown"):vtype==JERup?KBranchB(&looper->JetIDJERup,"JetIDJERup"):vtype==JERdown?KBranchB(&looper->JetIDJERdown,"JetIDJERdown"):vtype==clean?KBranchB(&looper->JetIDclean,"JetIDclean"):KBranchB(NULL,"")),
 				new KLinkedBranchI(KBranchI(&looper->NJets,"NJets"),vtype==JECup?KBranchI(&looper->NJetsJECup,"NJetsJECup"):vtype==JECdown?KBranchI(&looper->NJetsJECdown,"NJetsJECdown"):vtype==JERup?KBranchI(&looper->NJetsJERup,"NJetsJERup"):vtype==JERdown?KBranchI(&looper->NJetsJERdown,"NJetsJERdown"):vtype==clean?KBranchI(&looper->NJetsclean,"NJetsclean"):KBranchI(NULL,"")),
 				new KLinkedBranchI(KBranchI(&looper->NJetsISR,"NJetsISR"),vtype==JECup?KBranchI(&looper->NJetsISRJECup,"NJetsISRJECup"):vtype==JECdown?KBranchI(&looper->NJetsISRJECdown,"NJetsISRJECdown"):vtype==JERup?KBranchI(&looper->NJetsISRJERup,"NJetsISRJERup"):vtype==JERdown?KBranchI(&looper->NJetsISRJERdown,"NJetsISRJERdown"):vtype==clean?KBranchI(&looper->NJetsISRclean,"NJetsISRclean"):KBranchI(NULL,"")),
 				new KLinkedBranchI(KBranchI(&looper->BTags,"BTags"),vtype==JECup?KBranchI(&looper->BTagsJECup,"BTagsJECup"):vtype==JECdown?KBranchI(&looper->BTagsJECdown,"BTagsJECdown"):vtype==JERup?KBranchI(&looper->BTagsJERup,"BTagsJERup"):vtype==JERdown?KBranchI(&looper->BTagsJERdown,"BTagsJERdown"):vtype==clean?KBranchI(&looper->BTagsclean,"BTagsclean"):KBranchI(NULL,"")),
-				new KLinkedBranchI(KBranchI(&looper->BTagsMVA,"BTagsMVA"),vtype==JECup?KBranchI(&looper->BTagsMVAJECup,"BTagsMVAJECup"):vtype==JECdown?KBranchI(&looper->BTagsMVAJECdown,"BTagsMVAJECdown"):vtype==JERup?KBranchI(&looper->BTagsMVAJERup,"BTagsMVAJERup"):vtype==JERdown?KBranchI(&looper->BTagsMVAJERdown,"BTagsMVAJERdown"):vtype==clean?KBranchI(&looper->BTagsMVAclean,"BTagsMVAclean"):KBranchI(NULL,"")),
 				new KLinkedBranchD(KBranchD(&looper->HT,"HT"),vtype==JECup?KBranchD(&looper->HTJECup,"HTJECup"):vtype==JECdown?KBranchD(&looper->HTJECdown,"HTJECdown"):vtype==JERup?KBranchD(&looper->HTJERup,"HTJERup"):vtype==JERdown?KBranchD(&looper->HTJERdown,"HTJERdown"):vtype==clean?KBranchD(&looper->HTclean,"HTclean"):KBranchD(NULL,"")),
 				new KLinkedBranchD(KBranchD(&looper->MHT,"MHT"),vtype==JECup?KBranchD(&looper->MHTJECup,"MHTJECup"):vtype==JECdown?KBranchD(&looper->MHTJECdown,"MHTJECdown"):vtype==JERup?KBranchD(&looper->MHTJERup,"MHTJERup"):vtype==JERdown?KBranchD(&looper->MHTJERdown,"MHTJERdown"):vtype==clean?KBranchD(&looper->MHTclean,"MHTclean"):KBranchD(NULL,"")),
 				new KLinkedBranchD(KBranchD(&looper->MHTPhi,"MHTPhi"),vtype==JECup?KBranchD(&looper->MHTPhiJECup,"MHTPhiJECup"):vtype==JECdown?KBranchD(&looper->MHTPhiJECdown,"MHTPhiJECdown"):vtype==JERup?KBranchD(&looper->MHTPhiJERup,"MHTPhiJERup"):vtype==JERdown?KBranchD(&looper->MHTPhiJERdown,"MHTPhiJERdown"):vtype==clean?KBranchD(&looper->MHTPhiclean,"MHTPhiclean"):KBranchD(NULL,"")),
@@ -77,19 +75,22 @@ class KJetVariator : public KVariator {
 				new KLinkedBranchVD(KBranchVD(looper->JetsAK8_NsubjettinessTau2,"JetsAK8_NsubjettinessTau2"),vtype==clean?KBranchVD(looper->JetsAK8Clean_NsubjettinessTau2,"JetsAK8Clean_NsubjettinessTau2"):KBranchVD(NULL,"")),
 				new KLinkedBranchVD(KBranchVD(looper->JetsAK8_NsubjettinessTau3,"JetsAK8_NsubjettinessTau3"),vtype==clean?KBranchVD(looper->JetsAK8Clean_NsubjettinessTau3,"JetsAK8Clean_NsubjettinessTau3"):KBranchVD(NULL,"")),
 				new KLinkedBranchVD(KBranchVD(looper->JetsAK8_prunedMass,"JetsAK8_prunedMass"),vtype==clean?KBranchVD(looper->JetsAK8Clean_prunedMass,"JetsAK8Clean_prunedMass"):KBranchVD(NULL,"")),
+				new KLinkedBranchVD(KBranchVD(looper->JetsAK8_axismajor,"JetsAK8_axismajor"),vtype==clean?KBranchVD(looper->JetsAK8Clean_axismajor,"JetsAK8Clean_axismajor"):KBranchVD(NULL,"")),
+				new KLinkedBranchVD(KBranchVD(looper->JetsAK8_axisminor,"JetsAK8_axisminor"),vtype==clean?KBranchVD(looper->JetsAK8Clean_axisminor,"JetsAK8Clean_axisminor"):KBranchVD(NULL,"")),
+				new KLinkedBranchVD(KBranchVD(looper->JetsAK8_girth,"JetsAK8_girth"),vtype==clean?KBranchVD(looper->JetsAK8Clean_girth,"JetsAK8Clean_girth"):KBranchVD(NULL,"")),
+				new KLinkedBranchVD(KBranchVD(looper->JetsAK8_momenthalf,"JetsAK8_momenthalf"),vtype==clean?KBranchVD(looper->JetsAK8Clean_momenthalf,"JetsAK8Clean_momenthalf"):KBranchVD(NULL,"")),
+				new KLinkedBranchVI(KBranchVI(looper->JetsAK8_multiplicity,"JetsAK8_multiplicity"),vtype==clean?KBranchVI(looper->JetsAK8Clean_multiplicity,"JetsAK8Clean_multiplicity"):KBranchVI(NULL,"")),
+				new KLinkedBranchVD(KBranchVD(looper->JetsAK8_overflow,"JetsAK8_overflow"),vtype==clean?KBranchVD(looper->JetsAK8Clean_overflow,"JetsAK8Clean_overflow"):KBranchVD(NULL,"")),
+				new KLinkedBranchVD(KBranchVD(looper->JetsAK8_ptD,"JetsAK8_ptD"),vtype==clean?KBranchVD(looper->JetsAK8Clean_ptD,"JetsAK8Clean_ptD"):KBranchVD(NULL,"")),
+				new KLinkedBranchVD(KBranchVD(looper->JetsAK8_softDropMass,"JetsAK8_softDropMass"),vtype==clean?KBranchVD(looper->JetsAK8Clean_softDropMass,"JetsAK8Clean_softDropMass"):KBranchVD(NULL,"")),
+				new KLinkedBranchVVL(KBranchVVL(looper->JetsAK8_subjets,"JetsAK8_subjets"),vtype==clean?KBranchVVL(looper->JetsAK8Clean_subjets,"JetsAK8Clean_subjets"):KBranchVVL(NULL,"")),
 				//some only for clean var
 				new KLinkedBranchI(KBranchI(&looper->isoElectronTracks,"isoElectronTracks"),vtype==clean?KBranchI(&looper->isoElectronTracksclean,"isoElectronTracksclean"):KBranchI(NULL,"")),
 				new KLinkedBranchI(KBranchI(&looper->isoMuonTracks,"isoMuonTracks"),vtype==clean?KBranchI(&looper->isoMuonTracksclean,"isoMuonTracksclean"):KBranchI(NULL,"")),
 				new KLinkedBranchI(KBranchI(&looper->isoPionTracks,"isoPionTracks"),vtype==clean?KBranchI(&looper->isoPionTracksclean,"isoPionTracksclean"):KBranchI(NULL,"")),
 				new KLinkedBranchD(KBranchD(&looper->MET,"MET"),vtype==clean?KBranchD(&looper->METclean,"METclean"):KBranchD(NULL,"")),
 				new KLinkedBranchD(KBranchD(&looper->METPhi,"METPhi"),vtype==clean?KBranchD(&looper->METPhiclean,"METPhiclean"):KBranchD(NULL,"")),
-				new KLinkedBranchVB(KBranchVB(looper->Jets_MHTOrigMask,"Jets_MHTOrigMask"),vtype==clean?KBranchVB(looper->Jetsclean_MHTOrigMask,"Jetsclean_MHTOrigMask"):KBranchVB(NULL,"")),
-				new KLinkedBranchD(KBranchD(&looper->MHTOrig,"MHTOrig"),vtype==clean?KBranchD(&looper->MHTOrigclean,"MHTOrigclean"):KBranchD(NULL,"")),
-				new KLinkedBranchD(KBranchD(&looper->MHTPhiOrig,"MHTPhiOrig"),vtype==clean?KBranchD(&looper->MHTPhiOrigclean,"MHTPhiOrigclean"):KBranchD(NULL,"")),
-				new KLinkedBranchD(KBranchD(&looper->DeltaPhi1Orig,"DeltaPhi1Orig"),vtype==clean?KBranchD(&looper->DeltaPhi1Origclean,"DeltaPhi1Origclean"):KBranchD(NULL,"")),
-				new KLinkedBranchD(KBranchD(&looper->DeltaPhi2Orig,"DeltaPhi2Orig"),vtype==clean?KBranchD(&looper->DeltaPhi2Origclean,"DeltaPhi2Origclean"):KBranchD(NULL,"")),
-				new KLinkedBranchD(KBranchD(&looper->DeltaPhi3Orig,"DeltaPhi3Orig"),vtype==clean?KBranchD(&looper->DeltaPhi3Origclean,"DeltaPhi3Origclean"):KBranchD(NULL,"")),
-				new KLinkedBranchD(KBranchD(&looper->DeltaPhi4Orig,"DeltaPhi4Orig"),vtype==clean?KBranchD(&looper->DeltaPhi4Origclean,"DeltaPhi4Origclean"):KBranchD(NULL,"")),
+				new KLinkedBranchD(KBranchD(&looper->METSignificance,"METSignificance"),vtype==clean?KBranchD(&looper->METSignificanceclean,"METSignificanceclean"):KBranchD(NULL,"")),
 			};
 			
 			for(auto& branch : branches){
@@ -100,6 +101,8 @@ class KJetVariator : public KVariator {
 		}
 		//functions
 		virtual void DoVariation() {
+			//special case: if Jetsclean is empty, no reclustering was done (nothing removed from event), don't bother varying
+			if(looper->Jetsclean->size()==0) return;
 			for(auto& branch : branches){
 				//store original values
 				branch->Store();
@@ -108,6 +111,8 @@ class KJetVariator : public KVariator {
 			}
 		}
 		virtual void UndoVariation() {
+			//special case: if Jetsclean is empty, no reclustering was done (nothing removed from event), don't bother restoring
+			if(looper->Jetsclean->size()==0) return;
 			//restore original values
 			for(auto& branch : branches){
 				branch->Restore();

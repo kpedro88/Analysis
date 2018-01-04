@@ -740,7 +740,7 @@ class KMETFilterSelector : public KSelector {
 			bool eeBadScFilter = looper->eeBadScFilter==1;
 			bool BadChargedCandidateFilter = looper->BadChargedCandidateFilter;
 			bool BadPFMuonFilter = looper->BadPFMuonFilter;
-			bool HTRatioFilter = skipHTRatio or (looper->HT5/looper->HT <= 2.0);
+			bool HTRatioFilter = skipHTRatio;// or (looper->HT5/looper->HT <= 2.0);
 			bool otherFilters = true;
 			for(unsigned f = 0; f < filters.size(); ++f){
 				otherFilters &= filters[f]->CheckEvent(looper->RunNum,looper->LumiBlockNum,looper->EvtNum);
@@ -1246,13 +1246,13 @@ class KHistoSelector : public KSelector {
 						values[i].Fill(looper->MET,w);
 					}
 					else if(vname=="nleptons"){//# leptons (mu or ele)
-						values[i].Fill(looper->Muons->size()+looper->Electrons->size(),w);
+						values[i].Fill(looper->NMuons+looper->NElectrons,w);
 					}
 					else if(vname=="nelectrons"){//# electrons
-						values[i].Fill(looper->Electrons->size(),w);
+						values[i].Fill(looper->NElectrons,w);
 					}
 					else if(vname=="nmuons"){//# muons
-						values[i].Fill(looper->Muons->size(),w);
+						values[i].Fill(looper->NMuons,w);
 					}
 					else if(vname=="nisotrack"){//# iso tracks
 						values[i].Fill(looper->isoElectronTracks+looper->isoMuonTracks+looper->isoPionTracks,w);
@@ -1402,11 +1402,7 @@ class KHistoSelector : public KSelector {
 						}
 					}
 					else if(vname=="MTAK8"){//transverse mass
-						//recompute due to bug
-						TLorentzVector vjj;
-						if(looper->JetsAK8->size()>1) vjj = looper->JetsAK8->at(0) + looper->JetsAK8->at(1);
-						double MT = KMath::TransverseMass(vjj.Px(),vjj.Py(),vjj.M(),looper->MET*cos(looper->METPhi),looper->MET*sin(looper->METPhi),0);
-						values[i].Fill(MT,w);
+						values[i].Fill(looper->MT_AK8,w);
 					}
 					else if(vname=="MJJAK8"){//dijet mass
 						values[i].Fill(looper->MJJ_AK8,w);
@@ -1457,11 +1453,7 @@ class KHistoSelector : public KSelector {
 						values[i].Fill(looper->DeltaPhiMin_AK8,w);
 					}
 					else if(vname=="metMTratio"){//MET/MT
-						//recompute due to bug
-						TLorentzVector vjj;
-						if(looper->JetsAK8->size()>1) vjj = looper->JetsAK8->at(0) + looper->JetsAK8->at(1);
-						double MT = KMath::TransverseMass(vjj.Px(),vjj.Py(),vjj.M(),looper->MET*cos(looper->METPhi),looper->MET*sin(looper->METPhi),0);
-						values[i].Fill(MT>0?looper->MET/MT:0.0,w);
+						values[i].Fill(looper->MT_AK8>0?looper->MET/looper->MT_AK8:0.0,w);
 					}
 					else if(vname=="metsig"){//MET significance
 						values[i].Fill(looper->METSignificance,w);

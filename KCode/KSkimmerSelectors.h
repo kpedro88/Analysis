@@ -178,7 +178,7 @@ class KMuonVetoSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return looper->Muons->size()==0;
+			return looper->NMuons==0;
 		}
 		
 		//member variables
@@ -197,7 +197,7 @@ class KElectronVetoSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return looper->Electrons->size()==0;
+			return looper->NElectrons==0;
 		}
 		
 		//member variables
@@ -219,10 +219,19 @@ class KMuonSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			if(looper->Muons->size()!=1) return false;
-			
+			if(looper->NMuons!=1) return false;
+
 			if(doMTcut){
-				double mT = KMath::TransverseMass(looper->MET,looper->METPhi,looper->Muons->at(0).Pt(),looper->Muons->at(0).Phi());
+				//find the good muon
+				int m_index = -1;
+				for(unsigned m = 0; m < looper->Muons_passIso->size(); ++m){
+					if(looper->Muons_passIso->at(m)){
+						m_index = m;
+						break;
+					}
+				}
+			
+				double mT = KMath::TransverseMass(looper->MET,looper->METPhi,looper->Muons->at(m_index).Pt(),looper->Muons->at(m_index).Phi());
 				return mT<100;
 			}
 			else return true;
@@ -248,10 +257,19 @@ class KElectronSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			if(looper->Electrons->size()!=1) return false;
+			if(looper->NElectrons!=1) return false;
 			
 			if(doMTcut){
-				double mT = KMath::TransverseMass(looper->MET,looper->METPhi,looper->Electrons->at(0).Pt(),looper->Electrons->at(0).Phi());
+				//find the good electron
+				int e_index = -1;
+				for(unsigned e = 0; e < looper->Electrons_passIso->size(); ++e){
+					if(looper->Electrons_passIso->at(e)){
+						e_index = e;
+						break;
+					}
+				}
+			
+				double mT = KMath::TransverseMass(looper->MET,looper->METPhi,looper->Electrons->at(e_index).Pt(),looper->Electrons->at(e_index).Phi());
 				return mT<100;
 			}
 			else return true;
@@ -313,7 +331,16 @@ class KDiMuonSelector : public KSelector {
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			//todo: add mass cut?
-			return looper->Muons->size() == 2 && looper->Muons_charge->at(0) != looper->Muons_charge->at(1);
+			if(looper->NMuons!=2) return false;
+			//find the good muons
+			int m_index = -1;
+			for(unsigned m = 0; m < looper->Muons_passIso->size(); ++m){
+				if(looper->Muons_passIso->at(m)){
+					if(m_index==-1) m_index = m;
+					else return looper->Muons_charge->at(m_index) != looper->Muons_charge->at(m);
+				}
+			}
+			return false;
 		}
 		
 		//member variables
@@ -333,7 +360,16 @@ class KDiElectronSelector : public KSelector {
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			//todo: add mass cut?
-			return looper->Electrons->size() == 2 && looper->Electrons_charge->at(0) != looper->Electrons_charge->at(1);
+			if(looper->NElectrons!=2) return false;
+			//find the good electrons
+			int e_index = -1;
+			for(unsigned e = 0; e < looper->Electrons_passIso->size(); ++e){
+				if(looper->Electrons_passIso->at(e)){
+					if(e_index==-1) e_index = e;
+					else return looper->Electrons_charge->at(e_index) != looper->Electrons_charge->at(e);
+				}
+			}
+			return false;
 		}
 		
 		//member variables
@@ -357,7 +393,7 @@ class KMuonTriggerSelector : public KSelector {
 		virtual bool Cut() {
 			int num = 0;
 			for(unsigned m = 0; m < looper->Muons->size(); ++m){
-				if(looper->Muons->at(m).Pt()>pTmin) ++num;
+				if(looper->Muons_passIso->at(m) and looper->Muons->at(m).Pt()>pTmin) ++num;
 			}
 
 			return num>0;
@@ -385,7 +421,7 @@ class KElectronTriggerSelector : public KSelector {
 		virtual bool Cut() {
 			int num = 0;
 			for(unsigned e = 0; e < looper->Electrons->size(); ++e){
-				if(looper->Electrons->at(e).Pt()>pTmin) ++num;
+				if(looper->Electrons_passIso->at(e) and looper->Electrons->at(e).Pt()>pTmin) ++num;
 			}
 
 			return num>0;

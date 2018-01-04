@@ -43,6 +43,7 @@ typedef KBranchT<vector<bool>> KBranchVB;
 typedef KBranchT<vector<int>> KBranchVI;
 typedef KBranchT<vector<double>> KBranchVD;
 typedef KBranchT<vector<TLorentzVector>> KBranchVL;
+typedef KBranchT<vector<vector<TLorentzVector>>> KBranchVVL;
 
 class KLinkedBranchBase {
 	public:
@@ -104,6 +105,7 @@ typedef KLinkedBranchT<vector<bool>> KLinkedBranchVB;
 typedef KLinkedBranchT<vector<int>> KLinkedBranchVI;
 typedef KLinkedBranchT<vector<double>> KLinkedBranchVD;
 typedef KLinkedBranchT<vector<TLorentzVector>> KLinkedBranchVL;
+typedef KLinkedBranchT<vector<vector<TLorentzVector>>> KLinkedBranchVVL;
 
 //----------------------------------------------------------------
 //base class for Variators, has standard functions defined

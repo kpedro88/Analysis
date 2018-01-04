@@ -244,7 +244,7 @@ class KMETMTRatioSelector : public KSelector {
 		}
 		virtual void CheckBranches(){
 			looper->fChain->SetBranchStatus("MET",1);
-			looper->fChain->SetBranchStatus("METPhi",1);
+			looper->fChain->SetBranchStatus("MT_AK8",1);
 			looper->fChain->SetBranchStatus("JetsAK8",1);
 		}
 		
@@ -252,11 +252,9 @@ class KMETMTRatioSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			//recompute due to bug
-			TLorentzVector vjj;
-			if(looper->JetsAK8->size()>1) vjj = looper->JetsAK8->at(0) + looper->JetsAK8->at(1);
-			double MT = KMath::TransverseMass(vjj.Px(),vjj.Py(),vjj.M(),looper->MET*cos(looper->METPhi),looper->MET*sin(looper->METPhi),0);
-			return MT > min;
+			if(looper->JetsAK8->size()<2) return false;
+			double metMTratio = looper->MT_AK8 > 0 ? looper->MET/looper->MT_AK8 : 0.0;
+			return metMTratio > min;
 		}
 		
 		//member variables
