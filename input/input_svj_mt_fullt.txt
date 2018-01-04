@@ -1,0 +1,17 @@
+OPTION
+vstring:disable_branches[*]
+vstring:enable_branches[JetsAK8,DeltaPhiMin_AK8,MET,METPhi,METSignificance]
+vstring:selections[fullt]
+string+:printsuffix[_fullt]
+
+SELECTION
+fullt
+	LeptonVeto
+	METMTRatio	d:min[0.15]
+	DeltaEta	d:detamax[1.1]
+	DeltaPhiMinAK8	d:dphimin[0.4]
+	MCWeight
+	Histo	
+
+HISTO
+MTAK8	i:xnum[150]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta]

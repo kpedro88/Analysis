@@ -1,0 +1,37 @@
+#sections:
+# other input files to include in INPUT
+# global options in OPTION
+# 1D histograms in HISTO
+# 2D histograms in HISTO2D
+# datasets in SET
+# selections in SELECTION
+# variations in VARIATION
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c, chain/ch, input/in
+#items on each line in the HISTO, HISTO2D, SET, SELECTION, VARIATION sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#SELECTION/VARIATION: only required item is name
+#for datasets, child-parent relationships are indicated by tab-indentation
+#selectors/variators are associated with a selection/variation by tab-indentation
+
+OPTION
+string:sigstack[SVJ_2000_20_0.3_0.2]
+string+:printsuffix[_sigstack]
+int:npanel[1]
+
+SET
+stack	mc	bkg	i:panel[1]
+	hist	mc	QCD	s:legname[QCD]	c:color[kMagenta + 2]	i:panel[1]
+		base	ext	QCD	b:ext_auto[1]
+	hist	mc	ttbar	s:legname[t#bar{t}]	c:color[kGray + 1]	i:panel[1]
+		base	ext	ttbar	b:ext_auto[1]
+	hist	mc	wjets	s:legname[W(l#nu)+jets]	c:color[kGreen + 3]	i:panel[1]
+		base	ext	wjets	b:ext_auto[1]
+	hist	mc	zinv	s:legname[Z(#nu#nu)+jets]	c:color[kYellow + 3]	i:panel[1]
+		base	ext	zinv	b:ext_auto[1]
+	hist	mc	SVJ_2000_20_0.3_0.2	s:legname[SVJ_2000_20_0.3_0.2]	c:color[kBlue]	i:panel[1]
+		base	ext	SVJ_2000_20_0.3_0.2	b:ext_auto[1]
+#	hist	mc	SVJ_3000_20_0.3_0.2	s:legname[SVJ_3000_20_0.3_0.2]	c:color[kCyan + 2]	i:panel[1]
+#		base	ext	SVJ_3000_20_0.3_0.2	b:ext_auto[1]
+
