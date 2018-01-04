@@ -255,8 +255,10 @@ class KMETMTRatioSelector : public KSelector {
 			//recompute due to bug
 			TLorentzVector vjj;
 			if(looper->JetsAK8->size()>1) vjj = looper->JetsAK8->at(0) + looper->JetsAK8->at(1);
+			else return false;
 			double MT = KMath::TransverseMass(vjj.Px(),vjj.Py(),vjj.M(),looper->MET*cos(looper->METPhi),looper->MET*sin(looper->METPhi),0);
-			return MT > min;
+			double metMTratio = MT > 0 ? looper->MET/MT : 0.0;
+			return metMTratio > min;
 		}
 		
 		//member variables
