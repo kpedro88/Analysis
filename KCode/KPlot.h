@@ -114,15 +114,28 @@ class KPlot{
 		}
 		virtual void CreateHist(){
 			//construct histogram		
-			vector<double> xbins;
-			int xnum;
-			double xmin, xmax;
-			if(localOpt->Get("xbins",xbins)){ //variable binning case
+			vector<double> xbins; localOpt->Get("xbins",xbins);
+			int xnum = 0; localOpt->Get("xnum",xnum);
+			double xmin = 0; localOpt->Get("xmin",xmin);
+			double xmax = 0; localOpt->Get("xmax",xmax);
+			
+			//make evenly-spaced bins for log scale
+			if(localOpt->Get("logxbin",false) and xnum>0 and xmax>xmin){
+				xmin = log10(xmin);
+				xmax = log10(xmax);
+				double width = (xmax-xmin)/xnum;
+				xbins.reserve(xnum+1);
+				for(int i = 0; i <= xnum; ++i){
+					xbins.push_back(pow(10.,xmin+i*width));
+				}
+			}
+
+			if(!xbins.empty()){ //variable binning case
 				if(vars.size()==2) histo = new TProfile(name.c_str(),"",xbins.size()-1,&xbins[0]);
 				else histo = new TH1F(name.c_str(),"",xbins.size()-1,&xbins[0]);
 				isInit = true;
 			}
-			else if(localOpt->Get("xnum",xnum) && localOpt->Get("xmin",xmin) && localOpt->Get("xmax",xmax)){ //standard binning case
+			else if(xnum>0 and xmax>xmin){ //standard binning case
 				if(vars.size()==2) histo = new TProfile(name.c_str(),"",xnum,xmin,xmax);
 				else histo = new TH1F(name.c_str(),"",xnum,xmin,xmax);
 				isInit = true;
@@ -545,16 +558,43 @@ class KPlot2D: public KPlot {
 			marginR = marginL + marginPal;
 		}
 		virtual void CreateHist(){
-			//construct histogram		
-			vector<double> xbins, ybins;
-			int xnum = 1, ynum;
-			double xmin, xmax, ymin, ymax;
-			if(localOpt->Get("xbins",xbins)){ //variable x-binning case
-				if(localOpt->Get("ybins",ybins)) { //variable y-binning case
+			//construct histogram
+			vector<double> xbins; localOpt->Get("xbins",xbins);
+			vector<double> ybins; localOpt->Get("ybins",ybins);
+			int xnum = 0; localOpt->Get("xnum",xnum);
+			int ynum = 0; localOpt->Get("ynum",ynum);
+			double xmin = 0; localOpt->Get("xmin",xmin);
+			double xmax = 0; localOpt->Get("xmax",xmax);
+			double ymin = 0; localOpt->Get("ymin",ymin);
+			double ymax = 0; localOpt->Get("ymax",ymax);
+
+			//make evenly-spaced bins for log scale
+			if(localOpt->Get("logxbin",false) and xnum>0 and xmax>xmin){
+				xmin = log10(xmin);
+				xmax = log10(xmax);
+				double width = (xmax-xmin)/xnum;
+				xbins.reserve(xnum+1);
+				for(int i = 0; i <= xnum; ++i){
+					xbins.push_back(pow(10.,xmin+i*width));
+				}
+			}
+			//make evenly-spaced bins for log scale
+			if(localOpt->Get("logybin",false) and ynum>0 and ymax>ymin){
+				ymin = log10(ymin);
+				ymax = log10(ymax);
+				double width = (ymax-ymin)/ynum;
+				ybins.reserve(ynum+1);
+				for(int i = 0; i <= ynum; ++i){
+					ybins.push_back(pow(10.,ymin+i*width));
+				}
+			}
+
+			if(!xbins.empty()){ //variable x-binning case
+				if(!ybins.empty()) { //variable y-binning case
 					histo = new TH2F(name.c_str(),"",xbins.size()-1,&xbins[0],ybins.size()-1,&ybins[0]);	
 					isInit = true;
 				}
-				else if(localOpt->Get("ynum",ynum) && localOpt->Get("ymin",ymin) && localOpt->Get("ymax",ymax)){ //standard y-binning case
+				else if(ynum>0 and ymax>ymin){ //standard y-binning case
 					histo = new TH2F(name.c_str(),"",xbins.size()-1,&xbins[0],ynum,ymin,ymax);
 					isInit = true;
 				}
@@ -563,12 +603,12 @@ class KPlot2D: public KPlot {
 					return;
 				}
 			}
-			else if(localOpt->Get("xnum",xnum) && localOpt->Get("xmin",xmin) && localOpt->Get("xmax",xmax)){ //standard x-binning case
-				if(localOpt->Get("ybins",ybins)) { //variable y-binning case
+			else if(xnum>0 and xmax>xmin){ //standard x-binning case
+				if(!ybins.empty()) { //variable y-binning case
 					histo = new TH2F(name.c_str(),"",xnum,xmin,xmax,ybins.size()-1,&ybins[0]);	
 					isInit = true;
 				}
-				else if(localOpt->Get("ynum",ynum) && localOpt->Get("ymin",ymin) && localOpt->Get("ymax",ymax)){ //standard y-binning case
+				else if(ynum>0 and ymax>ymin){ //standard y-binning case
 					histo = new TH2F(name.c_str(),"",xnum,xmin,xmax,ynum,ymin,ymax);
 					isInit = true;
 				}
