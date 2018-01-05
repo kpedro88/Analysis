@@ -1,11 +1,13 @@
 #!/bin/bash
 
+source exportProd.sh
+
 JOBDIR=jobs
 INPUT=input/input_selection_svj.txt
-SELTYPE=dijethad
-INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/ProductionV1/Ntuples
+SELTYPE=dijethad,dijethadtk,theory
+INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}
 OUTDIR=tree
-STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/ProductionV1/Skims
+STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims
 CHECKARGS=""
 
 #check arguments
