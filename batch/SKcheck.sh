@@ -19,7 +19,7 @@ fi
 # tarball of CMSSW area
 if [ -z "$KEEPTAR" ]; then
   mkdir -p ${JOBDIR}
-  tar --exclude-caches-all -zcf ${JOBDIR}/${CMSSW_VERSION}.tar.gz -C ${CMSSW_BASE}/.. ${CMSSW_VERSION}
+  tar --exclude-caches-all --exclude-vcs -zcf ${JOBDIR}/${CMSSW_VERSION}.tar.gz -C ${CMSSW_BASE}/.. ${CMSSW_VERSION}
 fi
 
 ls -lth ${JOBDIR}/${CMSSW_VERSION}.tar.gz
