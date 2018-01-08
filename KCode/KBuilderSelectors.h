@@ -1461,6 +1461,12 @@ class KHistoSelector : public KSelector {
 					else if(vname=="logmetsig"){//log(MET significance)
 						values[i].Fill(log(looper->METSignificance),w);
 					}
+					else if(vname=="genmet"){//gen MET
+						values[i].Fill(looper->GenMET,w);
+					}
+					else if(vname=="madht"){//madgraph HT
+						values[i].Fill(looper->madHT,w);
+					}
 					else { //if it's a histogram with no known variable or calculation, do nothing
 					}
 				}
