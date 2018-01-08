@@ -216,15 +216,15 @@ class KLeptonVetoSelector : public KSelector {
 		KLeptonVetoSelector() : KSelector() { }
 		KLeptonVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
 		virtual void CheckBranches(){
-			looper->fChain->SetBranchStatus("Muons",1);
-			looper->fChain->SetBranchStatus("Electrons",1);
+			looper->fChain->SetBranchStatus("NMuons",1);
+			looper->fChain->SetBranchStatus("NElectrons",1);
 		}
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return looper->Muons->size()==0 and looper->Electrons->size()==0;
+			return looper->NMuons==0 and looper->NElectrons==0;
 		}
 		
 		//member variables
