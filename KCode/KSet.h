@@ -495,7 +495,10 @@ class KSetRatio: public KSet {
 		//first child is numerator, second child is denominator
 		void AddNumerator(KBase* numer){ children[0] = numer; }
 		void AddDenominator(KBase* denom){ children[1] = denom; }
-		string GetRatioName2D() { return "[" + children[0]->GetLegName() + " - " + children[1]->GetLegName() + "]/#sigma"; }
+		string GetRatioName2D() {
+			if(calc==DataMC) return "[" + children[0]->GetLegName() + " / " + children[1]->GetLegName() + "]";
+			else return "[" + children[0]->GetLegName() + " - " + children[1]->GetLegName() + "]/#sigma";
+		}
 		
 		//ratio class acts a little differently:
 		//only builds from the current histo of numer and denom
@@ -509,10 +512,10 @@ class KSetRatio: public KSet {
 			TH1* hsim0 = (TH1*)hsim->Clone();
 			
 			int nbins = hrat->GetNbinsX()+1;
-			//only pull supported for 2D
+			//only pull,data/MC supported for 2D
 			//todo: add others
 			if(hrat->GetDimension()==2) {
-				calc = Pull;
+				if(calc!=DataMC and calc!=Pull) calc = Pull;
 				nbins = ((TH2F*)hrat)->GetSize();
 			}
 			//only data/MC supported for TProfile
@@ -531,7 +534,12 @@ class KSetRatio: public KSet {
 					hsim0->SetBinError(b,0);
 				}
 				
-				hrat->Divide(hdata,hsim0);				
+				hrat->Divide(hdata,hsim0);
+				if(hrat->GetDimension()==2){
+					for(int b = 0; b < nbins; b++){
+						if(std::isnan(hrat->GetBinContent(b)) or hrat->GetBinError(b)<=0) hrat->SetBinContent(b,-1000); //hack so empty cells are not painted
+					}
+				}
 			}
 			else if(calc==Binom){ //binomial error case
 				btmp = new TGraphAsymmErrors(hdata,hsim);

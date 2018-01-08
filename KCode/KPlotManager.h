@@ -520,11 +520,13 @@ class KPlotManager : public KManager {
 					
 					//reset histo z-axes
 					if(s>=MySets.size()) {
-						//symmetric axis for ratio
+						//symmetric axis for ratio (by default)
 						//take min above -999 because empty bins set to -1000 (drawing hack)
 						double zmax_ratio = fmax(fabs(theSet->GetHisto()->GetMinimum(-999)),fabs(theSet->GetHisto()->GetMaximum()));
-						ptmp->GetHisto()->GetZaxis()->SetRangeUser(-zmax_ratio,zmax_ratio);
-						theSet->GetHisto()->GetZaxis()->SetRangeUser(-zmax_ratio,zmax_ratio);
+						double ratiomin = -zmax_ratio; globalOpt->Get("ratiomin",ratiomin);
+						double ratiomax = zmax_ratio; globalOpt->Get("ratiomax",ratiomax);
+						ptmp->GetHisto()->GetZaxis()->SetRangeUser(ratiomin,ratiomax);
+						theSet->GetHisto()->GetZaxis()->SetRangeUser(ratiomin,ratiomax);
 					}
 					else {
 						ptmp->GetHisto()->GetZaxis()->SetRangeUser(zmin,zmax);
