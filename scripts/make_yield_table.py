@@ -3,7 +3,7 @@ from collections import defaultdict
 samples = defaultdict(list)
 
 steps = ["Preselection","Lepton veto","MET/MT > 0.15","deta < 1.1","dphi < 0.4"]
-headers = ["cuts","SVJ_2000_20_0.3_0.2","zinv","wjets","ttbar","QCD"]
+headers = ["cuts","SVJ_2000_20_0.3_0.2","zinv","wjets","ttbar","QCD","QCDHT"]
 
 with open("yield_theory.log",'r') as file:
     for line in file:
