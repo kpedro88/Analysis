@@ -272,6 +272,9 @@ class KDeltaEtaSelector : public KSelector {
 			//check for option
 			localOpt->Get("detamax",detamax);
 		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("JetsAK8",1);
+		}
 		
 		//this selector doesn't add anything to tree
 		
