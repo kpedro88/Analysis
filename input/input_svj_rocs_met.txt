@@ -1,0 +1,11 @@
+OPTION
+string+:rocsuffix[_met]
+vstring:disable_branches[*]
+vstring:enable_branches[JetsAK8,JetsAK8_subjets,DeltaPhiMin_AK8,MET,METPhi,METSignificance,MJJ_AK8,Mmc_AK8,HT]
+
+HISTO
+met	i:xnum[100]	d:xmin[0]	d:xmax[1500]	s:xtitle[#slash{E}_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlue]
+metMTratio	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[#slash{E}_{T}/M_{T}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta + 2]
+metsig	i:xnum[100]	d:xmin[0.1]	d:xmax[8000]	s:xtitle[#slash{E}_{T} Significance]	s:ytitle[arbitrary units]	b:ratio[0]	b:logx[1]	b:logxbin[1]	b:logy[1]	c:color[kRed]
+#metsig	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[#slash{E}_{T} Significance]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kRed]
+#logmetsig	i:xnum[100]	d:xmin[-2]	d:xmax[10]	s:xtitle[log(#slash{E}_{T} Significance)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kRed]
