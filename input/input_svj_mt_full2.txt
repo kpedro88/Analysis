@@ -6,10 +6,10 @@ string+:printsuffix[_full2]
 
 SELECTION
 full2
-	MET	d:METmin[200]
+	MET	d:min[200]
 	DeltaEta	d:detamax[1.1]
-	DeltaPhiMinAK8	d:dphimax[0.4]
-	METSignificance	d:METsigmin[50]
+	DeltaPhiMinAK8	d:max[0.4]
+	METSignificance	d:min[50]
 	MCWeight
 	Histo	
 

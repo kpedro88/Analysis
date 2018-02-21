@@ -1,15 +1,18 @@
 OPTION
 vstring:disable_branches[*]
-vstring:enable_branches[JetsAK8,DeltaPhiMin_AK8,MET,METPhi,METSignificance]
+vstring:enable_branches[DeltaPhiMin_AK8,MT_AK8,METSignificance,MET]
 vstring:selections[full]
 string+:printsuffix[_full]
+bool:debugcut[1]
 
 SELECTION
 full
-	DeltaPhiMinAK8	d:dphimax[1.0]
-	METSignificance	d:METsigmin[20]
+	MET	d:min[200]
+	DeltaPhiMinAK8	d:max[1.0]
+	METSignificance	d:min[50]
+#	METMTRatio	d:min[0.15]
 	MCWeight
 	Histo	
 
 HISTO
-MTAK8	i:xnum[150]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta]
+MTAK8	i:xnum[50]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta]

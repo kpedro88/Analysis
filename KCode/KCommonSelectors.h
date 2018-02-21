@@ -184,9 +184,10 @@ class KMETSelector : public KSelector {
 	public:
 		//constructor
 		KMETSelector() : KSelector() { }
-		KMETSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), METmin(100) { 
+		KMETSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), min(100) { 
 			//check for option
-			localOpt->Get("METmin",METmin);
+			localOpt->Get("min",min);
+			invert = localOpt->Get("invert",false);
 			doGen = localOpt->Get("gen",false);
 		}
 		virtual void CheckBranches(){
@@ -198,13 +199,13 @@ class KMETSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			if(doGen) return looper->GenMET > METmin;
-			else return looper->MET > METmin;
+			if(doGen) return ( invert ? looper->GenMET <= min : looper->GenMET > min );
+			else return ( invert ? looper->MET <= min : looper->MET > min );
 		}
 		
 		//member variables
-		double METmin;
-		bool doGen;
+		double min;
+		bool invert, doGen;
 };
 REGISTER_SELECTOR(MET);
 
@@ -294,9 +295,10 @@ class KMETSignificanceSelector : public KSelector {
 	public:
 		//constructor
 		KMETSignificanceSelector() : KSelector() { }
-		KMETSignificanceSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), METsigmin(20) { 
+		KMETSignificanceSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), min(20) { 
 			//check for option
-			localOpt->Get("METsigmin",METsigmin);
+			localOpt->Get("min",min);
+			invert = localOpt->Get("invert",false);
 		}
 		virtual void CheckBranches(){
 			looper->fChain->SetBranchStatus("METSignificance",1);
@@ -306,11 +308,12 @@ class KMETSignificanceSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return looper->METSignificance > METsigmin;
+			return ( invert ? looper->METSignificance <= min : looper->METSignificance > min );
 		}
 		
 		//member variables
-		double METsigmin;
+		double min;
+		bool invert;
 };
 REGISTER_SELECTOR(METSignificance);
 
@@ -320,9 +323,9 @@ class KDeltaPhiMinAK8Selector : public KSelector {
 	public:
 		//constructor
 		KDeltaPhiMinAK8Selector() : KSelector() { }
-		KDeltaPhiMinAK8Selector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), dphimax(1.0) { 
+		KDeltaPhiMinAK8Selector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), max(1.0) { 
 			//check for option
-			localOpt->Get("dphimax",dphimax);
+			localOpt->Get("max",max);
 			invert = localOpt->Get("invert",false);
 		}
 		virtual void CheckBranches(){
@@ -333,12 +336,11 @@ class KDeltaPhiMinAK8Selector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			if(invert) return looper->DeltaPhiMin_AK8 > dphimax;
-			else return looper->DeltaPhiMin_AK8 < dphimax;
+			return ( invert ? looper->DeltaPhiMin_AK8 >= max : looper->DeltaPhiMin_AK8 < max );
 		}
 		
 		//member variables
-		double dphimax;
+		double max;
 		bool invert;
 };
 REGISTER_SELECTOR(DeltaPhiMinAK8);

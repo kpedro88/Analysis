@@ -23,7 +23,7 @@ vetotk
 	IsoPionTrackVeto
 dijet
 	Dijet	i:njet[2]	b:id[1]	d:eta[5.0]
-	MET	d:METmin[100]
+	MET	d:min[100]
 dijethad
 	dijet
 	veto
@@ -32,7 +32,7 @@ dijethadtk
 	vetotk
 theory
 	DijetAK4	i:njet[2]	b:id[0]	d:pt[100]	d:eta[2.4]
-	MET	d:METmin[200]
+	MET	d:min[200]
 
 INPUT
 input/input_sets_skim_svj_bkg.txt
