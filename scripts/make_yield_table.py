@@ -1,3 +1,4 @@
+import sys
 from collections import defaultdict
 
 samples = defaultdict(list)
@@ -5,7 +6,12 @@ samples = defaultdict(list)
 steps = ["Preselection","Lepton veto","MET/MT > 0.15","deta < 1.1","dphi < 0.4"]
 headers = ["cuts","SVJ_2000_20_0.3_0.2","zinv","wjets","ttbar","QCD","QCDHT"]
 
-with open("yield_theory.log",'r') as file:
+if len(sys.argv)<2:
+	sys.exit(1)
+
+name = sys.argv[1]
+
+with open(name,'r') as file:
     for line in file:
         linesplit = line.split(' ')
         sname = linesplit[0][:-7]
@@ -13,6 +19,7 @@ with open("yield_theory.log",'r') as file:
 
 cols = []
 for header in headers:
+    if header not in samples and header!="cuts": continue
     coltmp = [header]
     coltmp.extend(steps if header=="cuts" else samples[header])
     cols.append(coltmp)
