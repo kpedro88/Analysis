@@ -1,0 +1,9 @@
+OPTION
+vstring:disable_branches[*]
+vstring:enable_branches[DeltaPhiMin_AK8,MT_AK8,METSignificance,MET]
+
+HISTO
+deltaphiminAK8	i:xnum[100]	d:xmin[0]	d:xmax[3.15]	s:xtitle[#Delta#phi_{min}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlack]
+met	i:xnum[100]	d:xmin[0]	d:xmax[1500]	s:xtitle[#slash{E}_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlue]
+metsig	i:xnum[100]	d:xmin[0.1]	d:xmax[8000]	s:xtitle[S(#slash{E}_{T})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logx[1]	b:logxbin[1]	b:logy[1]	c:color[kRed]
+MTAK8	i:xnum[100]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kMagenta]

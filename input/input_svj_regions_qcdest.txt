@@ -1,0 +1,47 @@
+OPTION
+vstring:selections[regionA,regionB,regionC,regionD,regionE,regionF,regionG,regionH]
+
+SELECTION
+base
+	MCWeight
+	Histo
+regionA
+	MET	d:min[200]
+	DeltaPhiMinAK8	d:max[0.4]
+	METSignificance	d:min[50]	b:invert[1]
+	base
+regionB
+	MET	d:min[200]	b:invert[1]
+	DeltaPhiMinAK8	d:max[0.4]
+	METSignificance	d:min[50]	b:invert[1]
+	base
+regionC
+	MET	d:min[200]	b:invert[1]
+	DeltaPhiMinAK8	d:max[0.4]
+	METSignificance	d:min[50]
+	base
+regionD
+	MET	d:min[200]
+	DeltaPhiMinAK8	d:max[0.4]
+	METSignificance	d:min[50]
+	base
+regionE
+	MET	d:min[200]
+	DeltaPhiMinAK8	d:max[0.4]	b:invert[1]
+	METSignificance	d:min[50]	b:invert[1]
+	base
+regionF
+	MET	d:min[200]	b:invert[1]
+	DeltaPhiMinAK8	d:max[0.4]	b:invert[1]
+	METSignificance	d:min[50]	b:invert[1]
+	base
+regionG
+	MET	d:min[200]	b:invert[1]
+	DeltaPhiMinAK8	d:max[0.4]	b:invert[1]
+	METSignificance	d:min[50]
+	base
+regionH
+	MET	d:min[200]
+	DeltaPhiMinAK8	d:max[0.4]	b:invert[1]
+	METSignificance	d:min[50]
+	base
