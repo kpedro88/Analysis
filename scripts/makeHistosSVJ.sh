@@ -6,27 +6,37 @@ HISTOS_ALL=(
 0 \
 1 \
 2 \
+3 \
+4 \
 )
 
-while getopts "h:s:" opt; do
+DOHADD=""
+
+while getopts "h:s:a" opt; do
 	case "$opt" in
 		h) if [ "$OPTARG" = all ]; then HISTOS=(${HISTOS_ALL[@]}); else IFS="," read -a HISTOS <<< "$OPTARG"; fi
 		;;
 		s) SEL=$OPTARG
 		;;
+		a) DOHADD=true
+		;;
 	esac
 done
 
 FILES=(
-test/svj_${SEL}_event \
 corrections/svj_${SEL}_jetAK8 \
+test/svj_${SEL}_event \
+test/svj_${SEL}_event2 \
+test/svj_${SEL}_thirdjet \
 test/svj_${SEL}_bothjet \
 )
 
 COMMANDS=(
-'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV14/Skims/tree_'${SEL}'",{"input/input_svj_hist.txt","input/input_svj_rocs_event.txt","input/input_svj_rocs_sets.txt"},{"OPTION","string:rootfile['${FILES[0]}']"},0)' \
-'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV14/Skims/tree_'${SEL}'",{"input/input_svj_hist.txt","input/input_svj_rocs_jetpt.txt","input/input_svj_rocs_sets.txt"},{"OPTION","string:rootfile['${FILES[1]}']"},0)' \
-'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV14/Skims/tree_'${SEL}'",{"input/input_svj_hist.txt","input/input_svj_rocs_bothjet.txt","input/input_svj_rocs_sets.txt","input/input_svj_flatten_bothjet.txt"},{"OPTION","string:rootfile['${FILES[2]}']"},0)' \
+'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV14/Skims/tree_'${SEL}'",{"input/input_svj_hist.txt","input/input_svj_rocs_jetpt.txt","input/input_svj_rocs_sets.txt"},{"OPTION","string:rootfile['${FILES[0]}']"},0)' \
+'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV14/Skims/tree_'${SEL}'",{"input/input_svj_hist.txt","input/input_svj_rocs_event.txt","input/input_svj_rocs_sets.txt"},{"OPTION","string:rootfile['${FILES[1]}']"},0)' \
+'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV14/Skims/tree_'${SEL}'",{"input/input_svj_hist.txt","input/input_svj_rocs_event2.txt","input/input_svj_rocs_sets.txt"},{"OPTION","string:rootfile['${FILES[2]}']"},0)' \
+'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV14/Skims/tree_'${SEL}'",{"input/input_svj_hist.txt","input/input_svj_rocs_thirdjet.txt","input/input_svj_rocs_sets.txt"},{"OPTION","string:rootfile['${FILES[3]}']"},0)' \
+'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV14/Skims/tree_'${SEL}'",{"input/input_svj_hist.txt","input/input_svj_rocs_bothjet.txt","input/input_svj_rocs_sets.txt","input/input_svj_flatten_bothjet.txt"},{"OPTION","string:rootfile['${FILES[4]}']"},0)' \
 )
 
 PIDS=()
@@ -37,10 +47,14 @@ for HISTO in ${HISTOS[@]}; do
 		continue
 	fi
 
-	# run in parallel
+	# run in parallel (except jetpt, needed for bothjet)
 	echo "root -b -l -q '${COMMANDS[$HISTO]}'"
-	root -b -l -q ${COMMANDS[$HISTO]} >& log_h${HISTO}.log 2>&1 &
-	PIDS[$HISTO]=$!
+	if [ "$HISTO" -eq "0" ]; then
+		root -b -l -q ${COMMANDS[$HISTO]} >& log_h${HISTO}.log 2>&1
+	else
+		root -b -l -q ${COMMANDS[$HISTO]} >& log_h${HISTO}.log 2>&1 &
+		PIDS[$HISTO]=$!
+	fi
 done
 
 for PID in ${PIDS[@]}; do
@@ -52,4 +66,6 @@ for FILE in ${FILES[@]}; do
 	ALLFILES="${ALLFILES} ${FILE}.root"
 done
 
-hadd -f test/allHistos_${SEL}.root ${ALLFILES}
+if [ -n "$DOHADD" ]; then
+	hadd -f test/allHistos_${SEL}.root ${ALLFILES}
+fi

@@ -254,7 +254,12 @@ class KMCWeightSelector : public KSelector {
 			if(flatten){
 				if(flatqty=="leadjetAK8pt" || flatqty=="subleadjetAK8pt" || flatqty=="bothjetAK8pt") looper->fChain->SetBranchStatus("JetsAK8");
 			}
-			if(NTenum==ttbarLowHT || NTenum==ttbarLowHThad || NTenum==ttbarHighHT) looper->fChain->SetBranchStatus("madHT",1);
+			if(NTenum==ttbarLowHTLowMET || NTenum==ttbarLowHTHighMET || NTenum==ttbarLowHThad || NTenum==ttbarHighHT || NTenum==wjetsLowHT || NTenum==wjetsHighHT){
+				looper->fChain->SetBranchStatus("madHT",1);
+			}
+			if(NTenum==ttbarLowHTLowMET || NTenum==ttbarLowHTHighMET){
+				looper->fChain->SetBranchStatus("GenMET",1);
+			}
 			if(NTenum==ttbarLowHThad){
 				looper->fChain->SetBranchStatus("GenElectrons",1);
 				looper->fChain->SetBranchStatus("GenMuons",1);
@@ -268,12 +273,15 @@ class KMCWeightSelector : public KSelector {
 			}
 		}
 		//enum for normtypes
-		enum normtypes { NoNT=0, ttbarLowHT=1, ttbarLowHThad=2, ttbarHighHT=3 };
+		enum normtypes { NoNT=0, ttbarLowHTLowMET=1, ttbarLowHTHighMET=2, ttbarLowHThad=3, ttbarHighHT=4, wjetsLowHT=5, wjetsHighHT=6 };
 		//convert normtype from string to enum for quicker compares
 		void GetNormTypeEnum(){
-			if(normtype=="ttbarLowHT") NTenum = ttbarLowHT;
+			if(normtype=="ttbarLowHTLowMET") NTenum = ttbarLowHTLowMET;
+			else if(normtype=="ttbarLowHTHighMET") NTenum = ttbarLowHTHighMET;
 			else if(normtype=="ttbarLowHThad") NTenum = ttbarLowHThad;
 			else if(normtype=="ttbarHighHT") NTenum = ttbarHighHT;
+			else if(normtype=="wjetsLowHT") NTenum = wjetsLowHT;
+			else if(normtype=="wjetsHighHT") NTenum = wjetsHighHT;
 			else NTenum = NoNT;
 		}
 		double GetWeight(){
@@ -389,11 +397,13 @@ class KMCWeightSelector : public KSelector {
 			bool goodEvent = true;
 			
 			//check normalization type here
-			if(NTenum==ttbarLowHT) { goodEvent &= looper->madHT < 600; }
+			if(NTenum==ttbarLowHTLowMET) { goodEvent &= looper->madHT < 600 and looper->GenMET < 150; }
+			else if(NTenum==ttbarLowHTLowMET) { goodEvent &= looper->madHT < 600 and looper->GenMET >= 150; }
 			else if(NTenum==ttbarLowHThad) { goodEvent &= looper->madHT < 600 && looper->GenElectrons->size()==0 && looper->GenMuons->size()==0 && looper->GenTaus->size()==0; }
 			else if(NTenum==ttbarHighHT) { goodEvent &= looper->madHT >= 600; }
+			else if(NTenum==wjetsLowHT) { goodEvent &= looper->madHT < 100; }
+			else if(NTenum==wjetsHighHT) { goodEvent &= looper->madHT >= 100; }
 		
-			//KBuilder::Cut() comes *last* because it includes histo filling selector
 			return goodEvent;
 		}
 		
@@ -1102,7 +1112,7 @@ class KHistoSelector : public KSelector {
 			initialized = true;
 		}
 		bool IsPerJet(const string& vname, KValue& value, double w){
-			bool leadjet = false, subleadjet = false;
+			bool leadjet = false, subleadjet = false, thirdjet = false, fourthjet = false;
 			string vname2;
 			
 			if(vname.compare(0,10,"leadjetAK8")==0) {
@@ -1118,11 +1128,21 @@ class KHistoSelector : public KSelector {
 				subleadjet = true;
 				vname2 = vname.substr(10,string::npos);
 			}
+			else if(vname.compare(0,11,"thirdjetAK8")==0) {
+				thirdjet = true;
+				vname2 = vname.substr(11,string::npos);
+			}
+			else if(vname.compare(0,12,"fourthjetAK8")==0) {
+				fourthjet = true;
+				vname2 = vname.substr(12,string::npos);
+			}
 
 			if(leadjet) FillPerJet(vname2,value,w,0);
 			if(subleadjet) FillPerJet(vname2,value,w,1);
+			if(thirdjet) FillPerJet(vname2,value,w,2);
+			if(fourthjet) FillPerJet(vname2,value,w,3);
 			
-			return (leadjet or subleadjet);
+			return (leadjet or subleadjet or thirdjet or fourthjet);
 		}
 		void FillPerJet(const string& vname, KValue& value, double w, unsigned index){
 			if(looper->JetsAK8->size()>index){
@@ -1433,9 +1453,6 @@ class KHistoSelector : public KSelector {
 					else if(vname=="MmcAK8"){//dijet+truth mass
 						values[i].Fill(looper->Mmc_AK8,w);
 					}
-					else if(vname=="njetAK8"){//# of jets
-						values[i].Fill(looper->JetsAK8->size(),w);
-					}
 					else if(IsPerJet(vname,values[i],w)){
 						//per-jet histos (leading, subleading, or both)
 						//nothing to do - histo is filled as a side effect
@@ -1451,6 +1468,26 @@ class KHistoSelector : public KSelector {
 					}
 					else if(vname=="deltaphiminAK8"){//min dphi(j1/2,MET)
 						values[i].Fill(looper->DeltaPhiMin_AK8,w);
+					}
+					else if(vname=="ptAsymAK8"){//AK8 dijet pT asymmetry
+						if(looper->JetsAK8->size()>1) values[i].Fill((looper->JetsAK8->at(0).Pt()-looper->JetsAK8->at(1).Pt())/(looper->JetsAK8->at(0).Pt()+looper->JetsAK8->at(1).Pt()),w);
+					}
+					else if(vname=="msdAsymAK8"){//AK8 dijet m_sd asymmetry
+						if(looper->JetsAK8->size()>1) values[i].Fill(abs(looper->JetsAK8_softDropMass->at(0)-looper->JetsAK8_softDropMass->at(1))/(looper->JetsAK8_softDropMass->at(0)+looper->JetsAK8_softDropMass->at(1)),w);
+					}
+					else if(vname=="htAK8"){//HT from AK8 jets
+						double htak8 = 0.0;
+						for(const auto& jet : *(looper->JetsAK8)){
+							if(abs(jet.Eta())<2.4) htak8 += jet.Pt();
+						}
+						values[i].Fill(htak8,w);
+					}
+					else if(vname=="njetAK8"){//number of AK8 jets
+						int num = 0;
+						for(const auto& jet : *(looper->JetsAK8)){
+							if(abs(jet.Eta())<2.4) ++num;
+						}
+						values[i].Fill(num,w);
 					}
 					else if(vname=="metMTratio"){//MET/MT
 						values[i].Fill(looper->MT_AK8>0?looper->MET/looper->MT_AK8:0.0,w);

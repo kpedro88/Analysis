@@ -178,7 +178,8 @@ cd batch
 
 To make histograms, and then plots and ROC curves (including flattening pT spectra):
 ```
-./makeHistosSVJ.sh
+./makeHistosSVJ.sh -h 0
+./makeHistosSVJ.sh -h 1,2,3,4 -a
 ./makePlotsSVJ.sh
 ```
 
