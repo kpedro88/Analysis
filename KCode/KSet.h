@@ -510,6 +510,8 @@ class KSetRatio: public KSet {
 			TH1* hdata = children[0]->GetHisto();
 			TH1* hsim = children[1]->GetHisto();
 			TH1* hsim0 = (TH1*)hsim->Clone();
+			//in case displaying with different number of bins than original histo
+			hrat = (TH1*)children[0]->GetHisto()->Clone();
 			
 			int nbins = hrat->GetNbinsX()+1;
 			//only pull,data/MC supported for 2D
