@@ -8,7 +8,7 @@ bool:debugcut[1]
 SELECTION
 full
 	MET	d:min[200]
-	DeltaPhiMinAK8	d:max[1.0]
+	DeltaPhiMinAK8	d:max[0.4]
 	METSignificance	d:min[50]
 #	METMTRatio	d:min[0.15]
 	MCWeight
