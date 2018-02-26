@@ -492,8 +492,11 @@ class KPlotManager : public KManager {
 					if(ptmp->GetLocalOpt()->Get("bindivide",false)) theSet->BinDivide();
 					
 					//check z-axis limits after all potential normalizations are done
-					if(theSet->GetHisto()->GetMinimum() < zmin) zmin = theSet->GetHisto()->GetMinimum();
-					if(theSet->GetHisto()->GetMaximum() > zmax) zmax = theSet->GetHisto()->GetMaximum();
+					double ztmp = theSet->GetHisto()->GetMinimum();
+					if(ptmp->GetLocalOpt()->Get("logz",false)) ztmp = theSet->GetHisto()->GetMinimum(0.0);
+					if(ztmp < zmin) zmin = ztmp;
+					ztmp = theSet->GetHisto()->GetMaximum();
+					if(ztmp > zmax) zmax = ztmp;
 				}
 				if(globalOpt->Get("printyield",false)) cout << endl;
 				
