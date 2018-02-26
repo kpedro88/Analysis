@@ -476,7 +476,7 @@ class KSetRatio: public KSet {
 		enum ratiocalc { DataMC=0, PctDiff=1, Pull=2, Q1=3, Q2=4, Q3=5, Binom=6 };
 		//constructor
 		KSetRatio() : KSet() {}
-		KSetRatio(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KSet(name_, localOpt_, globalOpt_), btmp(0), calc(DataMC) { 
+		KSetRatio(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KSet(name_, localOpt_, globalOpt_), btmp(0), calc(DataMC), noErrBand(false) { 
 			children.resize(2);
 			string calcName = "";
 			setCalc = globalOpt->Get("ratiocalc",calcName);
@@ -588,6 +588,7 @@ class KSetRatio: public KSet {
 					//no errors
 					hrat->SetBinError(b,0.);
 				}
+				noErrBand = true;
 			}
 			else if(calc==Q2){ //S/sqrt(S+B)
 				for(int b = 0; b < nbins; b++){
@@ -597,6 +598,7 @@ class KSetRatio: public KSet {
 					//no errors
 					hrat->SetBinError(b,0.);
 				}
+				noErrBand = true;
 			}
 			else if(calc==Q3){ //2[sqrt(S+B) - sqrt(B)]
 				for(int b = 0; b < nbins; b++){
@@ -605,6 +607,7 @@ class KSetRatio: public KSet {
 					//no errors
 					hrat->SetBinError(b,0.);
 				}
+				noErrBand = true;
 			}
 			
 			//formatting
@@ -662,7 +665,7 @@ class KSetRatio: public KSet {
 					return;
 				}
 				
-				if(globalOpt->Get("errband",true)) etmp->Draw(MyStyle->GetDrawOptErr("same").c_str());
+				if(globalOpt->Get("errband",true) and !noErrBand) etmp->Draw(MyStyle->GetDrawOptErr("same").c_str());
 				htmp->Draw(MyStyle->GetDrawOpt("same").c_str());
 			}
 			else if(htmp->GetDimension()==2){
@@ -680,6 +683,7 @@ class KSetRatio: public KSet {
 		ErrorMap MyBinoms;
 		ratiocalc calc;
 		bool setCalc;
+		bool noErrBand;
 };
 //not registered
 
