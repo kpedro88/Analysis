@@ -1058,7 +1058,7 @@ class KHistoSelector : public KSelector {
 		//constructor
 		KHistoSelector() : KSelector() { }
 		KHistoSelector(string name_, OptionMap* localOpt_) : 
-			KSelector(name_,localOpt_), initialized(false), MCWeight(NULL), RA2Bin(NULL), PhotonID(NULL), BTagSF(NULL), JetEtaRegion(NULL), Hemisphere(NULL), FakeHLT(NULL), DarkHadron(NULL)
+			KSelector(name_,localOpt_), initialized(false), MCWeight(NULL), RA2Bin(NULL), PhotonID(NULL), BTagSF(NULL), JetEtaRegion(NULL), Hemisphere(NULL), FakeHLT(NULL), DarkHadron(NULL), EventShapeAK4(NULL), EventShapeAK8(NULL)
 		{ 
 			canfail = false;
 		}
@@ -1074,6 +1074,8 @@ class KHistoSelector : public KSelector {
 			Hemisphere = sel->Get<KHemisphereSelector*>("Hemisphere");
 			FakeHLT = sel->Get<KFakeHLTSelector*>("FakeHLT");
 			DarkHadron = sel->Get<KDarkHadronSelector*>("DarkHadron");
+			EventShapeAK4 = sel->Get<KEventShapeSelector*>("EventShapeAK4");
+			EventShapeAK8 = sel->Get<KEventShapeSelector*>("EventShapeAK8");
 		}
 		virtual void CheckBranches(){
 			if(RA2Bin && RA2Bin->debug){
@@ -1504,6 +1506,110 @@ class KHistoSelector : public KSelector {
 					else if(vname=="madht"){//madgraph HT
 						values[i].Fill(looper->madHT,w);
 					}
+					else if(vname=="boost"){
+						if(!EventShapeAK4) continue;
+						values[i].Fill(EventShapeAK4->boost,w);
+					}
+					else if(vname=="sphericity"){
+						if(!EventShapeAK4) continue;
+						values[i].Fill(EventShapeAK4->sphericity,w);
+					}
+					else if(vname=="aplanarity"){
+						if(!EventShapeAK4) continue;
+						values[i].Fill(EventShapeAK4->aplanarity,w);
+					}
+					else if(vname=="esvC"){
+						if(!EventShapeAK4) continue;
+						values[i].Fill(EventShapeAK4->esvC,w);
+					}
+					else if(vname=="esvD"){
+						if(!EventShapeAK4) continue;
+						values[i].Fill(EventShapeAK4->esvD,w);
+					}
+					else if(vname=="lambda1"){
+						if(!EventShapeAK4) continue;
+						values[i].Fill(EventShapeAK4->lambda1,w);
+					}
+					else if(vname=="lambda2"){
+						if(!EventShapeAK4) continue;
+						values[i].Fill(EventShapeAK4->lambda2,w);
+					}
+					else if(vname=="lambda3"){
+						if(!EventShapeAK4) continue;
+						values[i].Fill(EventShapeAK4->lambda3,w);
+					}
+					else if(vname=="fwm1"){
+						if(!EventShapeAK4) continue;
+						values[i].Fill(EventShapeAK4->fwm1,w);
+					}
+					else if(vname=="fwm2"){
+						if(!EventShapeAK4) continue;
+						values[i].Fill(EventShapeAK4->fwm2,w);
+					}
+					else if(vname=="fwm3"){
+						if(!EventShapeAK4) continue;
+						values[i].Fill(EventShapeAK4->fwm3,w);
+					}
+					else if(vname=="fwm4"){
+						if(!EventShapeAK4) continue;
+						values[i].Fill(EventShapeAK4->fwm4,w);
+					}
+					else if(vname=="fwm5"){
+						if(!EventShapeAK4) continue;
+						values[i].Fill(EventShapeAK4->fwm5,w);
+					}
+					else if(vname=="boostAK8"){
+						if(!EventShapeAK8) continue;
+						values[i].Fill(EventShapeAK8->boost,w);
+					}
+					else if(vname=="sphericityAK8"){
+						if(!EventShapeAK8) continue;
+						values[i].Fill(EventShapeAK8->sphericity,w);
+					}
+					else if(vname=="aplanarityAK8"){
+						if(!EventShapeAK8) continue;
+						values[i].Fill(EventShapeAK8->aplanarity,w);
+					}
+					else if(vname=="esvCAK8"){
+						if(!EventShapeAK8) continue;
+						values[i].Fill(EventShapeAK8->esvC,w);
+					}
+					else if(vname=="esvDAK8"){
+						if(!EventShapeAK8) continue;
+						values[i].Fill(EventShapeAK8->esvD,w);
+					}
+					else if(vname=="lambda1AK8"){
+						if(!EventShapeAK8) continue;
+						values[i].Fill(EventShapeAK8->lambda1,w);
+					}
+					else if(vname=="lambda2AK8"){
+						if(!EventShapeAK8) continue;
+						values[i].Fill(EventShapeAK8->lambda2,w);
+					}
+					else if(vname=="lambda3AK8"){
+						if(!EventShapeAK8) continue;
+						values[i].Fill(EventShapeAK8->lambda3,w);
+					}
+					else if(vname=="fwm1AK8"){
+						if(!EventShapeAK8) continue;
+						values[i].Fill(EventShapeAK8->fwm1,w);
+					}
+					else if(vname=="fwm2AK8"){
+						if(!EventShapeAK8) continue;
+						values[i].Fill(EventShapeAK8->fwm2,w);
+					}
+					else if(vname=="fwm3AK8"){
+						if(!EventShapeAK8) continue;
+						values[i].Fill(EventShapeAK8->fwm3,w);
+					}
+					else if(vname=="fwm4AK8"){
+						if(!EventShapeAK8) continue;
+						values[i].Fill(EventShapeAK8->fwm4,w);
+					}
+					else if(vname=="fwm5AK8"){
+						if(!EventShapeAK8) continue;
+						values[i].Fill(EventShapeAK8->fwm5,w);
+					}
 					else { //if it's a histogram with no known variable or calculation, do nothing
 					}
 				}
@@ -1585,6 +1691,7 @@ class KHistoSelector : public KSelector {
 		KHemisphereSelector* Hemisphere;
 		KFakeHLTSelector* FakeHLT;
 		KDarkHadronSelector* DarkHadron;
+		KEventShapeSelector *EventShapeAK4, *EventShapeAK8;
 		vector<int> mother;
 		double deltaM;
 };

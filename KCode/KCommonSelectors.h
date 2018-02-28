@@ -3,6 +3,7 @@
 
 //custom headers
 #include "KSelection.h"
+#include "../corrections/EventShapeVariables.c"
 
 //ROOT headers
 #include <TROOT.h>
@@ -344,6 +345,84 @@ class KDeltaPhiMinAK8Selector : public KSelector {
 		bool invert;
 };
 REGISTER_SELECTOR(DeltaPhiMinAK8);
+
+//----------------------------------------------------
+//computes event shape variables (from jets)
+class KEventShapeSelector : public KSelector {
+	public:
+		enum JetSource { NoSource = 0, AK4 = 1, AK8 = 2 };
+		//constructor
+		KEventShapeSelector() : KSelector() { }
+		KEventShapeSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { 
+			canfail = false;
+			//check for option
+			string s_source;
+			localOpt->Get("source",s_source);
+			if(s_source=="AK4") source = AK4;
+			else if(s_source=="AK8") source = AK8;
+			else source = NoSource;
+		}
+		virtual void CheckBranches(){
+			if(source==AK4) looper->fChain->SetBranchStatus("Jets",1);
+			else if(source==AK8) looper->fChain->SetBranchStatus("JetsAK8",1);
+		}
+		
+		//this selector doesn't add anything to tree (yet)
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			//clear output vars
+			sphericity = aplanarity = esvC = esvD = -1;
+			lambda1 = lambda2 = lambda3 = -1;
+			fwm1 = fwm2 = fwm3 = fwm4 = fwm5 = -1;
+
+			if(source==NoSource) return true;
+
+			vector<TLorentzVector>* Jets;
+			if(source==AK4) Jets = looper->Jets;
+			else if(source==AK8) Jets = looper->JetsAK8;
+
+			//find z boost of system, get CM frame
+			TLorentzVector v_all;
+			for(const auto& Jet: *Jets){
+				v_all += Jet;
+			}
+			TVector3 v_boost(0.0, 0.0, -1.0*v_all.Pz()/v_all.E());
+
+			//make boosted collection in proper format
+			vector<math::RThetaPhiVector> v_cm;
+			for(auto Jet: *Jets){//copy loop object in order to boost
+				Jet.Boost(v_boost);
+				v_cm.emplace_back(Jet.P(),Jet.Theta(),Jet.Phi());
+			}
+
+			//compute and store values
+			boost = v_boost.Z();
+			EventShapeVariables esv(v_cm);
+			sphericity = esv.sphericity();
+			aplanarity = esv.aplanarity();
+			esvC = esv.C();
+			esvD = esv.D();
+			TVectorD eigenvals  = esv.getEigenValues();
+			lambda1 = eigenvals[0];
+			lambda2 = eigenvals[1];
+			lambda3 = eigenvals[2];
+			double fwm0 = esv.getFWmoment(0);
+			if(fwm0==0.) fwm0 = 1; //avoid nan
+			fwm1 = esv.getFWmoment(1)/fwm0;
+			fwm2 = esv.getFWmoment(2)/fwm0;
+			fwm3 = esv.getFWmoment(3)/fwm0;
+			fwm4 = esv.getFWmoment(4)/fwm0;
+			fwm5 = esv.getFWmoment(5)/fwm0;
+
+			return true;
+		}
+		
+		//member variables
+		JetSource source;
+		double boost, sphericity, aplanarity, esvC, esvD, lambda1, lambda2, lambda3, fwm1, fwm2, fwm3, fwm4, fwm5;
+};
+REGISTER_SELECTOR(EventShape);
 
 //forward declaration
 class KMCWeightSelector;
