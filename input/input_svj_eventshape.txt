@@ -1,0 +1,10 @@
+OPTION
+vstring:selections[evs]
+
+SELECTION
+evs
+	EventShape	s:name[EventShapeAK4]	s:source[AK4]
+	EventShape	s:name[EventShapeAK8]	s:source[AK8]
+	MCWeight
+	Histo
+

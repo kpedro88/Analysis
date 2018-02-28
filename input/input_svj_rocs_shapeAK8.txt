@@ -1,0 +1,19 @@
+OPTION
+string+:rocsuffix[_shapeAK8]
+vstring:disable_branches[*]
+vstring:enable_branches[Jets]
+
+HISTO
+boostAK8	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[z boost (AK8)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kGray + 1]
+sphericityAK8	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[sphericity (AK8)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlack]
+aplanarityAK8	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[aplanarity (AK8)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlue]
+esvCAK8	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[C^{ESV} (AK8)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta + 2]
+esvDAK8	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[D^{ESV} (AK8)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kRed]
+lambda1AK8	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#lambda_{1}^{ESV} (AK8)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kCyan + 2]
+lambda2AK8	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#lambda_{2}^{ESV} (AK8)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta]
+lambda3AK8	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#lambda_{3}^{ESV} (AK8)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kOrange + 7]
+fwm1AK8	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[Fox-Wolfram Moment 1 (AK8)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kGray + 1]
+fwm2AK8	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[Fox-Wolfram Moment 2 (AK8)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlack]
+fwm3AK8	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[Fox-Wolfram Moment 3 (AK8)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+fwm4AK8	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[Fox-Wolfram Moment 4 (AK8)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kMagenta + 2]
+fwm5AK8	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[Fox-Wolfram Moment 5 (AK8)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kRed]
