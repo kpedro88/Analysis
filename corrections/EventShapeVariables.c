@@ -175,7 +175,7 @@ EventShapeVariables::compEigenValuesNoNorm(double r) const
 }
 
 
-/// 1.5*(q1+q2) where 0<=q1<=q2<=q3 are the eigenvalues of the momentum tensor sum{p_j[a]*p_j[b]}/sum{p_j**2} 
+/// 1.5*(q1+q2) where q0>=q1>=q2>=0 are the eigenvalues of the momentum tensor sum{p_j[a]*p_j[b]}/sum{p_j**2} 
 /// normalized to 1. Return values are 1 for spherical, 3/4 for plane and 0 for linear events
 double 
 EventShapeVariables::sphericity(double r) const
@@ -184,7 +184,7 @@ EventShapeVariables::sphericity(double r) const
   return 1.5*(eigenValues(1) + eigenValues(2));
 }
 
-/// 1.5*q1 where 0<=q1<=q2<=q3 are the eigenvalues of the momentum tensor sum{p_j[a]*p_j[b]}/sum{p_j**2} 
+/// 1.5*q2 where q0>=q1>=q2>=0 are the eigenvalues of the momentum tensor sum{p_j[a]*p_j[b]}/sum{p_j**2} 
 /// normalized to 1. Return values are 0.5 for spherical and 0 for plane and linear events
 double 
 EventShapeVariables::aplanarity(double r) const
@@ -193,7 +193,7 @@ EventShapeVariables::aplanarity(double r) const
   return 1.5*eigenValues(2);
 }
 
-/// 3.*(q1*q2+q1*q3+q2*q3) where 0<=q1<=q2<=q3 are the eigenvalues of the momentum tensor sum{p_j[a]*p_j[b]}/sum{p_j**2} 
+/// 3.*(q0*q1+q0*q2+q1*q2) where q0>=q1>=q2>=0 are the eigenvalues of the momentum tensor sum{p_j[a]*p_j[b]}/sum{p_j**2} 
 /// normalized to 1. Return value is between 0 and 1 
 /// and measures the 3-jet structure of the event (C vanishes for a "perfect" 2-jet event)
 double 
@@ -203,7 +203,7 @@ EventShapeVariables::C(double r) const
   return 3.*(eigenValues(0)*eigenValues(1) + eigenValues(0)*eigenValues(2) + eigenValues(1)*eigenValues(2));
 }
 
-/// 27.*(q1*q2*q3) where 0<=q1<=q2<=q3 are the eigenvalues of the momemtum tensor sum{p_j[a]*p_j[b]}/sum{p_j**2} 
+/// 27.*(q0*q1*q2) where q0>=q1>=q2>=0 are the eigenvalues of the momemtum tensor sum{p_j[a]*p_j[b]}/sum{p_j**2} 
 /// normalized to 1. Return value is between 0 and 1 
 /// and measures the 4-jet structure of the event (D vanishes for a planar event)
 double 
