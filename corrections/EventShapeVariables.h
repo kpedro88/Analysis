@@ -50,7 +50,10 @@ class EventShapeVariables {
   double circularity(const unsigned int& numberOfSteps = 1000) const;
 
   /// set exponent for computation of momentum tensor and related products
-  void set_r(double r_);
+  void set_r(double r);
+
+  /// set number of Fox-Wolfram moments to compute
+  void setFWmax(int m);
 
   /// 1.5*(q1+q2) where q0>=q1>=q2>=0 are the eigenvalues of the momentum tensor 
   /// sum{p_j[a]*p_j[b]}/sum{p_j**2} normalized to 1. Return values are 1 for spherical, 3/4 for 
@@ -96,9 +99,8 @@ class EventShapeVariables {
   std::vector<double> eigenValuesList_;
 
   /// Owen ; save computed Fox-Wolfram moments
-  /////////////const static int fwmom_maxl_ = 30 ;
-  const static int fwmom_maxl_ = 6 ;
-  double fwmom_[fwmom_maxl_+1] ;
+  int fwmom_maxl_;
+  std::vector<double> fwmom_;
   bool   fwmom_computed_ ;
 
 };

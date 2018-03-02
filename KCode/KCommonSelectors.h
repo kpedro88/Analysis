@@ -407,6 +407,7 @@ class KEventShapeSelector : public KSelector {
 			lambda1 = eigenvals[0];
 			lambda2 = eigenvals[1];
 			lambda3 = eigenvals[2];
+			esv.setFWmax(6);
 			double fwm0 = esv.getFWmoment(0);
 			if(fwm0==0.) fwm0 = 1; //avoid nan
 			fwm1 = esv.getFWmoment(1)/fwm0;
