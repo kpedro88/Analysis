@@ -227,11 +227,15 @@ void EventShapeVariables::computeFWmoments() {
      double p_i = inputVectors_[i].R() ;
      if ( p_i <= 0 ) continue ;
 
-     for ( unsigned int j = 0 ; j < inputVectors_.size() ; j ++ ) {
+     for ( unsigned int j = 0 ; j <= i ; j ++ ) {
 
         double p_j = inputVectors_[j].R() ;
         if ( p_j <= 0 ) continue ;
 
+        /// reduce computation by exploiting symmetry:
+        /// all off-diagonal elements appear twice in the sum
+        int symmetry_factor = 2;
+        if( j == i ) symmetry_factor = 1;
         double p_ij = p_i * p_j;
         double cosTheta = inputVectors_[i].Dot( inputVectors_[j] ) / (p_ij) ;
         double pi_pj_over_etot2 = p_ij / esum_total_sq ;
@@ -244,15 +248,15 @@ void EventShapeVariables::computeFWmoments() {
             /// initial cases
             if ( n == 0 ) {
                 Pn2 = pi_pj_over_etot2;
-                fwmom_[0] += Pn2;
+                fwmom_[0] += Pn2*symmetry_factor;
             }
             else if ( n == 1 ) {
                 Pn1 = pi_pj_over_etot2 * cosTheta;
-                fwmom_[1] += Pn1;
+                fwmom_[1] += Pn1*symmetry_factor;
             }
             else {
                 double Pn = ((2*n-1)*cosTheta*Pn1 - (n-1)*Pn2)/n;
-                fwmom_[n] += Pn;
+                fwmom_[n] += Pn*symmetry_factor;
                 /// store new value
                 Pn2 = Pn1;
                 Pn1 = Pn;
