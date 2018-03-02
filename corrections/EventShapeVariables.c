@@ -43,9 +43,11 @@ EventShapeVariables::isotropy(const unsigned int& numberOfSteps) const
   for(unsigned int i=0; i<numberOfSteps; ++i){
     phi+=deltaPhi;
     double sum=0;
+    double cosphi = TMath::Cos(phi);
+    double sinphi = TMath::Sin(phi);
     for(unsigned int j=0; j<inputVectors_.size(); ++j){
       // sum over inner product of unit vectors and momenta
-      sum+=TMath::Abs(TMath::Cos(phi)*inputVectors_[j].x()+TMath::Sin(phi)*inputVectors_[j].y());
+      sum+=TMath::Abs(cosphi*inputVectors_[j].x()+sinphi*inputVectors_[j].y());
     }
     if( eOut<0. || sum<eOut ) eOut=sum;
     if( eIn <0. || sum>eIn  ) eIn =sum;
@@ -66,8 +68,10 @@ EventShapeVariables::circularity(const unsigned int& numberOfSteps) const
   for(unsigned int i=0; i<numberOfSteps; ++i){
     phi+=deltaPhi;
     double sum=0, tmp=0.;
+    double cosphi = TMath::Cos(phi);
+    double sinphi = TMath::Sin(phi);
     for(unsigned int j=0; j<inputVectors_.size(); ++j){
-      sum+=TMath::Abs(TMath::Cos(phi)*inputVectors_[j].x()+TMath::Sin(phi)*inputVectors_[j].y());
+      sum+=TMath::Abs(cosphi*inputVectors_[j].x()+sinphi*inputVectors_[j].y());
     }
     tmp=TMath::Pi()/2*sum/area;
     if( circularity<0 || tmp<circularity ){
