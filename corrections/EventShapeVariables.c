@@ -5,7 +5,10 @@
 /// constructor from XYZ coordinates
 EventShapeVariables::EventShapeVariables(const std::vector<math::XYZVector>& inputVectors) 
   : inputVectors_(inputVectors), fwmom_computed_(false)
-{}
+{
+  //default value
+  set_r(2.);
+}
 
 /// constructor from rho eta phi coordinates
 EventShapeVariables::EventShapeVariables(const std::vector<math::RhoEtaPhiVector>& inputVectors) : fwmom_computed_(false)
@@ -14,6 +17,8 @@ EventShapeVariables::EventShapeVariables(const std::vector<math::RhoEtaPhiVector
   for ( std::vector<math::RhoEtaPhiVector>::const_iterator vec = inputVectors.begin(); vec != inputVectors.end(); ++vec ){
     inputVectors_.push_back(math::XYZVector(vec->x(), vec->y(), vec->z()));
   }
+  //default value
+  set_r(2.);
 }
 
 /// constructor from r theta phi coordinates
@@ -23,6 +28,8 @@ EventShapeVariables::EventShapeVariables(const std::vector<math::RThetaPhiVector
   for(std::vector<math::RThetaPhiVector>::const_iterator vec = inputVectors.begin(); vec != inputVectors.end(); ++vec ){
     inputVectors_.push_back(math::XYZVector(vec->x(), vec->y(), vec->z()));
   }
+  //default value
+  set_r(2.);
 }
   
 /// the return value is 1 for spherical events and 0 for events linear in r-phi. This function 
@@ -70,24 +77,43 @@ EventShapeVariables::circularity(const unsigned int& numberOfSteps) const
   return circularity;
 }
 
-/// helper function to fill the 3 dimensional momentum tensor from the inputVecotrs where needed
-TMatrixDSym 
-EventShapeVariables::compMomentumTensor(double r) const
+/// set exponent for computation of momentum tensor and related products
+void 
+EventShapeVariables::set_r(double r)
 {
-  TMatrixDSym momentumTensor(3);
-  momentumTensor.Zero();
+  r_ = r;
+  /// invalidate previous cached computations
+  tensors_computed_ = false;
+  momentumTensor_ = TMatrixDSym(3); momentumTensor_.Zero();
+  momentumTensorNoNorm_ = TMatrixDSym(3); momentumTensorNoNorm_.Zero();
+  eigenValues_ = TVectorD(3); eigenValues_.Zero();
+  eigenValuesList_ = std::vector<double>(3,0);
+  eigenVectors_ = TMatrixD(3,3); eigenVectors_.Zero();
+}
+
+/// helper function to fill the 3 dimensional momentum tensor from the inputVectors where needed
+/// also fill the 3 dimensional vectors of eigen-values and eigen-vectors;
+/// the largest (smallest) eigen-value is stored at index position 0 (2)
+void 
+EventShapeVariables::compTensorsAndVectors()
+{
+  if(tensors_computed_) return;
 
   if ( inputVectors_.size() < 2 ){
-    return momentumTensor;
+    tensors_computed_ = true;
+    return;
   }
+
+  TMatrixDSym momentumTensor(3);
+  momentumTensor.Zero();
 
   // fill momentumTensor from inputVectors
   double norm = 0.;
   for ( int i = 0; i < (int)inputVectors_.size(); ++i ){
     double p2 = inputVectors_[i].Dot(inputVectors_[i]);
-    double pR = ( r == 2. ) ? p2 : TMath::Power(p2, 0.5*r);
+    double pR = ( r_ == 2. ) ? p2 : TMath::Power(p2, 0.5*r_);
     norm += pR;
-    double pRminus2 = ( r == 2. ) ? 1. : TMath::Power(p2, 0.5*r - 1.);
+    double pRminus2 = ( r_ == 2. ) ? 1. : TMath::Power(p2, 0.5*r_ - 1.);
     momentumTensor(0,0) += pRminus2*inputVectors_[i].x()*inputVectors_[i].x();
     momentumTensor(0,1) += pRminus2*inputVectors_[i].x()*inputVectors_[i].y();
     momentumTensor(0,2) += pRminus2*inputVectors_[i].x()*inputVectors_[i].z();
@@ -99,118 +125,62 @@ EventShapeVariables::compMomentumTensor(double r) const
     momentumTensor(2,2) += pRminus2*inputVectors_[i].z()*inputVectors_[i].z();
   }
 
-  // return momentumTensor normalized to determinant 1
-  return (1./norm)*momentumTensor;
-}
+  // momentumTensor normalized to determinant 1
+  momentumTensor_ = (1./norm)*momentumTensor;
+  momentumTensorNoNorm_ = momentumTensor;
 
-/// helper function to fill the 3 dimensional momentum tensor from the inputVecotrs where needed
-TMatrixDSym 
-EventShapeVariables::compMomentumTensorNoNorm(double r) const
-{
-  TMatrixDSym momentumTensor(3);
-  momentumTensor.Zero();
-
-  if ( inputVectors_.size() < 2 ){
-    return momentumTensor;
+  // now get eigens
+  eigenValues_ = TVectorD(3);
+  if( momentumTensor_.IsSymmetric() && ( momentumTensor_.NonZeros() != 0 ) ){
+    eigenVectors_ = momentumTensor_.EigenVectors(eigenValues_);
+  }
+  eigenValuesList_[0] = eigenValues_(0);
+  eigenValuesList_[1] = eigenValues_(1);
+  eigenValuesList_[2] = eigenValues_(2);
+  eigenValuesNoNorm_ = TVectorD(3);
+  if( momentumTensorNoNorm_.IsSymmetric() && ( momentumTensorNoNorm_.NonZeros() != 0 ) ){
+    momentumTensorNoNorm_.EigenVectors(eigenValuesNoNorm_);
   }
 
-  // fill momentumTensor from inputVectors
-  double norm = 0.;
-  for ( int i = 0; i < (int)inputVectors_.size(); ++i ){
-    double p2 = inputVectors_[i].Dot(inputVectors_[i]);
-    double pR = ( r == 2. ) ? p2 : TMath::Power(p2, 0.5*r);
-    norm += pR;
-    double pRminus2 = ( r == 2. ) ? 1. : TMath::Power(p2, 0.5*r - 1.);
-    momentumTensor(0,0) += pRminus2*inputVectors_[i].x()*inputVectors_[i].x();
-    momentumTensor(0,1) += pRminus2*inputVectors_[i].x()*inputVectors_[i].y();
-    momentumTensor(0,2) += pRminus2*inputVectors_[i].x()*inputVectors_[i].z();
-    momentumTensor(1,0) += pRminus2*inputVectors_[i].y()*inputVectors_[i].x();
-    momentumTensor(1,1) += pRminus2*inputVectors_[i].y()*inputVectors_[i].y();
-    momentumTensor(1,2) += pRminus2*inputVectors_[i].y()*inputVectors_[i].z();
-    momentumTensor(2,0) += pRminus2*inputVectors_[i].z()*inputVectors_[i].x();
-    momentumTensor(2,1) += pRminus2*inputVectors_[i].z()*inputVectors_[i].y();
-    momentumTensor(2,2) += pRminus2*inputVectors_[i].z()*inputVectors_[i].z();
-  }
-
-  return momentumTensor;
+  tensors_computed_ = true;  
 }
-
-/// helper function to fill the 3 dimensional vector of eigen-values;
-/// the largest (smallest) eigen-value is stored at index position 0 (2)
-TVectorD
-EventShapeVariables::compEigenValues(double r) const
-{
-  TVectorD eigenValues(3);
-  TMatrixDSym myTensor = compMomentumTensor(r);
-  if( myTensor.IsSymmetric() ){
-    if( myTensor.NonZeros() != 0 ) myTensor.EigenVectors(eigenValues);
-  }
-
-  return eigenValues;
-}
-
-/// helper function to fill the 3 dimensional vector of eigen-vectors;
-TMatrixD
-EventShapeVariables::compEigenVectors(double r) const
-{
-  TVectorD eigenValues(3);
-  TMatrixDSym myTensor = compMomentumTensor(r);
-
-  return myTensor.EigenVectors(eigenValues);
-
-}
-
-/// helper function to fill the 3 dimensional vector of eigen-values;
-/// the largest (smallest) eigen-value is stored at index position 0 (2)
-TVectorD
-EventShapeVariables::compEigenValuesNoNorm(double r) const
-{
-  TVectorD eigenValues(3);
-  TMatrixDSym myTensor = compMomentumTensorNoNorm(r);
-  if( myTensor.IsSymmetric() ){
-    if( myTensor.NonZeros() != 0 ) myTensor.EigenVectors(eigenValues);
-  }
-
-  return eigenValues;
-}
-
 
 /// 1.5*(q1+q2) where q0>=q1>=q2>=0 are the eigenvalues of the momentum tensor sum{p_j[a]*p_j[b]}/sum{p_j**2} 
 /// normalized to 1. Return values are 1 for spherical, 3/4 for plane and 0 for linear events
 double 
-EventShapeVariables::sphericity(double r) const
+EventShapeVariables::sphericity()
 {
-  TVectorD eigenValues = compEigenValues(r);
-  return 1.5*(eigenValues(1) + eigenValues(2));
+  if(!tensors_computed_) compTensorsAndVectors();
+  return 1.5*(eigenValuesList_[1] + eigenValuesList_[2]);
 }
 
 /// 1.5*q2 where q0>=q1>=q2>=0 are the eigenvalues of the momentum tensor sum{p_j[a]*p_j[b]}/sum{p_j**2} 
 /// normalized to 1. Return values are 0.5 for spherical and 0 for plane and linear events
 double 
-EventShapeVariables::aplanarity(double r) const
+EventShapeVariables::aplanarity()
 {
-  TVectorD eigenValues = compEigenValues(r);
-  return 1.5*eigenValues(2);
+  if(!tensors_computed_) compTensorsAndVectors();
+  return 1.5*eigenValuesList_[2];
 }
 
 /// 3.*(q0*q1+q0*q2+q1*q2) where q0>=q1>=q2>=0 are the eigenvalues of the momentum tensor sum{p_j[a]*p_j[b]}/sum{p_j**2} 
 /// normalized to 1. Return value is between 0 and 1 
 /// and measures the 3-jet structure of the event (C vanishes for a "perfect" 2-jet event)
 double 
-EventShapeVariables::C(double r) const
+EventShapeVariables::C()
 {
-  TVectorD eigenValues = compEigenValues(r);
-  return 3.*(eigenValues(0)*eigenValues(1) + eigenValues(0)*eigenValues(2) + eigenValues(1)*eigenValues(2));
+  if(!tensors_computed_) compTensorsAndVectors();
+  return 3.*(eigenValuesList_[0]*eigenValuesList_[1] + eigenValuesList_[0]*eigenValuesList_[2] + eigenValuesList_[1]*eigenValuesList_[2]);
 }
 
 /// 27.*(q0*q1*q2) where q0>=q1>=q2>=0 are the eigenvalues of the momemtum tensor sum{p_j[a]*p_j[b]}/sum{p_j**2} 
 /// normalized to 1. Return value is between 0 and 1 
 /// and measures the 4-jet structure of the event (D vanishes for a planar event)
 double 
-EventShapeVariables::D(double r) const
+EventShapeVariables::D()
 {
-  TVectorD eigenValues = compEigenValues(r);
-  return 27.*eigenValues(0)*eigenValues(1)*eigenValues(2);
+  if(!tensors_computed_) compTensorsAndVectors();
+  return 27.*eigenValuesList_[0]*eigenValuesList_[1]*eigenValuesList_[2];
 }
 
 //========================================================================================================

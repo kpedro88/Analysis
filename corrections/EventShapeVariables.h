@@ -49,43 +49,51 @@ class EventShapeVariables {
   /// number of steps to determine how fine the granularity of the algorithm in phi should be
   double circularity(const unsigned int& numberOfSteps = 1000) const;
 
-  /// 1.5*(q1+q2) where q0>=q1>=q2>=0 are the eigenvalues of the momemtum tensor 
+  /// set exponent for computation of momentum tensor and related products
+  void set_r(double r_);
+
+  /// 1.5*(q1+q2) where q0>=q1>=q2>=0 are the eigenvalues of the momentum tensor 
   /// sum{p_j[a]*p_j[b]}/sum{p_j**2} normalized to 1. Return values are 1 for spherical, 3/4 for 
   /// plane and 0 for linear events
-  double sphericity(double = 2.)  const;
-  /// 1.5*q2 where q0>=q1>=q2>=0 are the eigenvalues of the momemtum tensor 
+  double sphericity();
+  /// 1.5*q2 where q0>=q1>=q2>=0 are the eigenvalues of the momentum tensor 
   /// sum{p_j[a]*p_j[b]}/sum{p_j**2} normalized to 1. Return values are 0.5 for spherical and 0 
   /// for plane and linear events
-  double aplanarity(double = 2.)  const;
-  /// 3.*(q0*q1+q0*q2+q1*q2) where q0>=q1>=q2>=0 are the eigenvalues of the momemtum tensor 
+  double aplanarity();
+  /// 3.*(q0*q1+q0*q2+q1*q2) where q0>=q1>=q2>=0 are the eigenvalues of the momentum tensor 
   /// sum{p_j[a]*p_j[b]}/sum{p_j**2} normalized to 1. Return value is between 0 and 1 
   /// and measures the 3-jet structure of the event (C vanishes for a "perfect" 2-jet event)
-  double C(double = 2.) const;
-  /// 27.*(q0*q1*q2) where q0>=q1>=q2>=0 are the eigenvalues of the momemtum tensor 
+  double C();
+  /// 27.*(q0*q1*q2) where q0>=q1>=q2>=0 are the eigenvalues of the momentum tensor 
   /// sum{p_j[a]*p_j[b]}/sum{p_j**2} normalized to 1. Return value is between 0 and 1 
   /// and measures the 4-jet structure of the event (D vanishes for a planar event)
-  double D(double = 2.) const;
+  double D();
 
-  TVectorD getEigenValues() { return compEigenValues() ; }
-  TVectorD getEigenValuesNoNorm() { return compEigenValuesNoNorm() ; }
-  TMatrixD getEigenVectors() { return compEigenVectors() ; }
+  const TVectorD& getEigenValues() { if(!tensors_computed_) compTensorsAndVectors(); return eigenValues_; }
+  const std::vector<double>& getEigenValuesList() { if(!tensors_computed_) compTensorsAndVectors(); return eigenValuesList_; }
+  const TVectorD& getEigenValuesNoNorm() { if(!tensors_computed_) compTensorsAndVectors(); return eigenValuesNoNorm_; }
+  const TMatrixD& getEigenVectors() { if(!tensors_computed_) compTensorsAndVectors(); return eigenVectors_; }
 
   double getFWmoment( int l ) ;
 
  private:
-  /// helper function to fill the 3 dimensional momentum tensor from the inputVectors where 
-  /// needed
-  TMatrixDSym compMomentumTensor(double = 2.) const;
-  TVectorD compEigenValues(double = 2.) const;
-  TMatrixD compEigenVectors(double = 2.) const;
-
-  TMatrixDSym compMomentumTensorNoNorm(double = 2.) const;
-  TVectorD compEigenValuesNoNorm(double = 2.) const;
+  /// helper function to fill the 3 dimensional momentum tensor from the inputVectors where needed
+  /// also fill the 3 dimensional vectors of eigen-values and eigen-vectors;
+  /// the largest (smallest) eigen-value is stored at index position 0 (2)
+  void compTensorsAndVectors() ;
 
   void computeFWmoments() ;
 
-  /// cashing of input vectors
+  /// caching of input vectors
   std::vector<math::XYZVector> inputVectors_;
+
+  /// caching of output
+  double r_;
+  bool tensors_computed_;
+  TMatrixDSym momentumTensor_, momentumTensorNoNorm_;
+  TMatrixD eigenVectors_;
+  TVectorD eigenValues_, eigenValuesNoNorm_;
+  std::vector<double> eigenValuesList_;
 
   /// Owen ; save computed Fox-Wolfram moments
   /////////////const static int fwmom_maxl_ = 30 ;
