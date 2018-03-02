@@ -14,8 +14,8 @@ EventShapeVariables::EventShapeVariables(const std::vector<math::XYZVector>& inp
 EventShapeVariables::EventShapeVariables(const std::vector<math::RhoEtaPhiVector>& inputVectors) : fwmom_computed_(false)
 {
   inputVectors_.reserve( inputVectors.size() );
-  for ( std::vector<math::RhoEtaPhiVector>::const_iterator vec = inputVectors.begin(); vec != inputVectors.end(); ++vec ){
-    inputVectors_.push_back(math::XYZVector(vec->x(), vec->y(), vec->z()));
+  for (const auto& vec : inputVectors){
+    inputVectors_.push_back(math::XYZVector(vec.x(), vec.y(), vec.z()));
   }
   //default value
   set_r(2.);
@@ -25,8 +25,8 @@ EventShapeVariables::EventShapeVariables(const std::vector<math::RhoEtaPhiVector
 EventShapeVariables::EventShapeVariables(const std::vector<math::RThetaPhiVector>& inputVectors) : fwmom_computed_(false)
 {
   inputVectors_.reserve( inputVectors.size() );
-  for(std::vector<math::RThetaPhiVector>::const_iterator vec = inputVectors.begin(); vec != inputVectors.end(); ++vec ){
-    inputVectors_.push_back(math::XYZVector(vec->x(), vec->y(), vec->z()));
+  for (const auto& vec : inputVectors){
+    inputVectors_.push_back(math::XYZVector(vec.x(), vec.y(), vec.z()));
   }
   //default value
   set_r(2.);
