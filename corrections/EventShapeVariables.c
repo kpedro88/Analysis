@@ -27,7 +27,7 @@ EventShapeVariables::EventShapeVariables(const std::vector<math::RhoEtaPhiVector
 EventShapeVariables::EventShapeVariables(const std::vector<math::RThetaPhiVector>& inputVectors)
 {
   inputVectors_.reserve( inputVectors.size() );
-  for (const auto& vec : inputVectors){
+  for (const auto& vec : inputVectors_){
     inputVectors_.push_back(math::XYZVector(vec.x(), vec.y(), vec.z()));
   }
   //default values
@@ -48,9 +48,9 @@ EventShapeVariables::isotropy(const unsigned int& numberOfSteps) const
     double sum=0;
     double cosphi = TMath::Cos(phi);
     double sinphi = TMath::Sin(phi);
-    for(unsigned int j=0; j<inputVectors_.size(); ++j){
+    for(const auto& vec : inputVectors_){
       // sum over inner product of unit vectors and momenta
-      sum+=TMath::Abs(cosphi*inputVectors_[j].x()+sinphi*inputVectors_[j].y());
+      sum+=TMath::Abs(cosphi*vec.x()+sinphi*vec.y());
     }
     if( eOut<0. || sum<eOut ) eOut=sum;
     if( eIn <0. || sum>eIn  ) eIn =sum;
@@ -65,16 +65,16 @@ EventShapeVariables::circularity(const unsigned int& numberOfSteps) const
 {
   const double deltaPhi=2*TMath::Pi()/numberOfSteps;
   double circularity=-1, phi=0, area = 0;
-  for(unsigned int i=0;i<inputVectors_.size();i++) {
-    area+=TMath::Sqrt(inputVectors_[i].x()*inputVectors_[i].x()+inputVectors_[i].y()*inputVectors_[i].y());
+  for(const auto& vec: inputVectors_) {
+    area+=TMath::Sqrt(vec.x()*vec.x()+vec.y()*vec.y());
   }
   for(unsigned int i=0; i<numberOfSteps; ++i){
     phi+=deltaPhi;
     double sum=0, tmp=0.;
     double cosphi = TMath::Cos(phi);
     double sinphi = TMath::Sin(phi);
-    for(unsigned int j=0; j<inputVectors_.size(); ++j){
-      sum+=TMath::Abs(cosphi*inputVectors_[j].x()+sinphi*inputVectors_[j].y());
+    for(const auto& vec: inputVectors_){
+      sum+=TMath::Abs(cosphi*vec.x()+sinphi*vec.y());
     }
     tmp=TMath::Pi()/2*sum/area;
     if( circularity<0 || tmp<circularity ){
@@ -116,20 +116,20 @@ EventShapeVariables::compTensorsAndVectors()
 
   // fill momentumTensor from inputVectors
   double norm = 0.;
-  for ( int i = 0; i < (int)inputVectors_.size(); ++i ){
-    double p2 = inputVectors_[i].Dot(inputVectors_[i]);
+  for (const auto& vec: inputVectors_){
+    double p2 = vec.Dot(vec);
     double pR = ( r_ == 2. ) ? p2 : TMath::Power(p2, 0.5*r_);
     norm += pR;
     double pRminus2 = ( r_ == 2. ) ? 1. : TMath::Power(p2, 0.5*r_ - 1.);
-    momentumTensor(0,0) += pRminus2*inputVectors_[i].x()*inputVectors_[i].x();
-    momentumTensor(0,1) += pRminus2*inputVectors_[i].x()*inputVectors_[i].y();
-    momentumTensor(0,2) += pRminus2*inputVectors_[i].x()*inputVectors_[i].z();
-    momentumTensor(1,0) += pRminus2*inputVectors_[i].y()*inputVectors_[i].x();
-    momentumTensor(1,1) += pRminus2*inputVectors_[i].y()*inputVectors_[i].y();
-    momentumTensor(1,2) += pRminus2*inputVectors_[i].y()*inputVectors_[i].z();
-    momentumTensor(2,0) += pRminus2*inputVectors_[i].z()*inputVectors_[i].x();
-    momentumTensor(2,1) += pRminus2*inputVectors_[i].z()*inputVectors_[i].y();
-    momentumTensor(2,2) += pRminus2*inputVectors_[i].z()*inputVectors_[i].z();
+    momentumTensor(0,0) += pRminus2*vec.x()*vec.x();
+    momentumTensor(0,1) += pRminus2*vec.x()*vec.y();
+    momentumTensor(0,2) += pRminus2*vec.x()*vec.z();
+    momentumTensor(1,0) += pRminus2*vec.y()*vec.x();
+    momentumTensor(1,1) += pRminus2*vec.y()*vec.y();
+    momentumTensor(1,2) += pRminus2*vec.y()*vec.z();
+    momentumTensor(2,0) += pRminus2*vec.z()*vec.x();
+    momentumTensor(2,1) += pRminus2*vec.z()*vec.y();
+    momentumTensor(2,2) += pRminus2*vec.z()*vec.z();
   }
 
   eigenValuesNoNorm_ = TVectorD(3);
