@@ -91,10 +91,10 @@ EventShapeVariables::set_r(double r)
   r_ = r;
   /// invalidate previous cached computations
   tensors_computed_ = false;
-  momentumTensor_ = TMatrixDSym(3); momentumTensor_.Zero();
-  momentumTensorNoNorm_ = TMatrixDSym(3); momentumTensorNoNorm_.Zero();
   eigenValues_ = TVectorD(3); eigenValues_.Zero();
+  eigenValuesNoNorm_ = TVectorD(3); eigenValuesNoNorm_.Zero();
   eigenValuesList_ = std::vector<double>(3,0);
+  eigenValuesNoNormList_ = std::vector<double>(3,0);
   eigenVectors_ = TMatrixD(3,3); eigenVectors_.Zero();
 }
 
@@ -132,22 +132,25 @@ EventShapeVariables::compTensorsAndVectors()
     momentumTensor(2,2) += pRminus2*inputVectors_[i].z()*inputVectors_[i].z();
   }
 
+  eigenValuesNoNorm_ = TVectorD(3);
+  if( momentumTensor.IsSymmetric() && ( momentumTensor.NonZeros() != 0 ) ){
+    momentumTensor.EigenVectors(eigenValuesNoNorm_);
+  }
+  eigenValuesNoNormList_[0] = eigenValuesNoNorm_(0);
+  eigenValuesNoNormList_[1] = eigenValuesNoNorm_(1);
+  eigenValuesNoNormList_[2] = eigenValuesNoNorm_(2);
+
   // momentumTensor normalized to determinant 1
-  momentumTensor_ = (1./norm)*momentumTensor;
-  momentumTensorNoNorm_ = momentumTensor;
+  momentumTensor *= (1./norm);
 
   // now get eigens
   eigenValues_ = TVectorD(3);
-  if( momentumTensor_.IsSymmetric() && ( momentumTensor_.NonZeros() != 0 ) ){
-    eigenVectors_ = momentumTensor_.EigenVectors(eigenValues_);
+  if( momentumTensor.IsSymmetric() && ( momentumTensor.NonZeros() != 0 ) ){
+    eigenVectors_ = momentumTensor.EigenVectors(eigenValues_);
   }
   eigenValuesList_[0] = eigenValues_(0);
   eigenValuesList_[1] = eigenValues_(1);
   eigenValuesList_[2] = eigenValues_(2);
-  eigenValuesNoNorm_ = TVectorD(3);
-  if( momentumTensorNoNorm_.IsSymmetric() && ( momentumTensorNoNorm_.NonZeros() != 0 ) ){
-    momentumTensorNoNorm_.EigenVectors(eigenValuesNoNorm_);
-  }
 
   tensors_computed_ = true;  
 }
