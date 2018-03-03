@@ -91,11 +91,8 @@ EventShapeVariables::set_r(double r)
   r_ = r;
   /// invalidate previous cached computations
   tensors_computed_ = false;
-  eigenValues_ = TVectorD(3); eigenValues_.Zero();
-  eigenValuesNoNorm_ = TVectorD(3); eigenValuesNoNorm_.Zero();
   eigenValuesList_ = std::vector<double>(3,0);
   eigenValuesNoNormList_ = std::vector<double>(3,0);
-  eigenVectors_ = TMatrixD(3,3); eigenVectors_.Zero();
 }
 
 /// helper function to fill the 3 dimensional momentum tensor from the inputVectors where needed
