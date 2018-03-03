@@ -27,7 +27,7 @@ EventShapeVariables::EventShapeVariables(const std::vector<math::RhoEtaPhiVector
 EventShapeVariables::EventShapeVariables(const std::vector<math::RThetaPhiVector>& inputVectors)
 {
   inputVectors_.reserve( inputVectors.size() );
-  for (const auto& vec : inputVectors_){
+  for (const auto& vec : inputVectors){
     inputVectors_.push_back(math::XYZVector(vec.x(), vec.y(), vec.z()));
   }
   //default values
@@ -129,7 +129,6 @@ EventShapeVariables::compTensorsAndVectors()
     momentumTensor(2,2) += pRminus2*vec.z()*vec.z();
   }
 
-  eigenValuesNoNorm_ = TVectorD(3);
   if( momentumTensor.IsSymmetric() && ( momentumTensor.NonZeros() != 0 ) ){
     momentumTensor.EigenVectors(eigenValuesNoNorm_);
   }
@@ -141,7 +140,6 @@ EventShapeVariables::compTensorsAndVectors()
   momentumTensor *= (1./norm);
 
   // now get eigens
-  eigenValues_ = TVectorD(3);
   if( momentumTensor.IsSymmetric() && ( momentumTensor.NonZeros() != 0 ) ){
     eigenVectors_ = momentumTensor.EigenVectors(eigenValues_);
   }

@@ -403,7 +403,7 @@ class KEventShapeSelector : public KSelector {
 			aplanarity = esv.aplanarity();
 			esvC = esv.C();
 			esvD = esv.D();
-			auto eigenvals  = esv.getEigenValuesList();
+			const auto& eigenvals  = esv.getEigenValuesList();
 			lambda1 = eigenvals[0];
 			lambda2 = eigenvals[1];
 			lambda3 = eigenvals[2];
