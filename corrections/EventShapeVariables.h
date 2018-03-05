@@ -72,10 +72,8 @@ class EventShapeVariables {
   /// and measures the 4-jet structure of the event (D vanishes for a planar event)
   double D();
 
-  const TVectorD& getEigenValues() { if(!tensors_computed_) compTensorsAndVectors(); return eigenValues_; }
-  const std::vector<double>& getEigenValuesList() { if(!tensors_computed_) compTensorsAndVectors(); return eigenValuesList_; }
-  const TVectorD& getEigenValuesNoNorm() { if(!tensors_computed_) compTensorsAndVectors(); return eigenValuesNoNorm_; }
-  const std::vector<double>& getEigenValuesNoNormList() { if(!tensors_computed_) compTensorsAndVectors(); return eigenValuesNoNormList_; }
+  const std::vector<double>& getEigenValues() { if(!tensors_computed_) compTensorsAndVectors(); return eigenValues_; }
+  const std::vector<double>& getEigenValuesNoNorm() { if(!tensors_computed_) compTensorsAndVectors(); return eigenValuesNoNorm_; }
   const TMatrixD& getEigenVectors() { if(!tensors_computed_) compTensorsAndVectors(); return eigenVectors_; }
 
   double getFWmoment( int l ) ;
@@ -95,8 +93,8 @@ class EventShapeVariables {
   double r_;
   bool tensors_computed_;
   TMatrixD eigenVectors_;
-  TVectorD eigenValues_, eigenValuesNoNorm_;
-  std::vector<double> eigenValuesList_, eigenValuesNoNormList_;
+  TVectorD eigenValuesTmp_, eigenValuesNoNormTmp_;
+  std::vector<double> eigenValues_, eigenValuesNoNorm_;
 
   /// Owen ; save computed Fox-Wolfram moments
   int fwmom_maxl_;

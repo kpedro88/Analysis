@@ -91,8 +91,8 @@ EventShapeVariables::set_r(double r)
   r_ = r;
   /// invalidate previous cached computations
   tensors_computed_ = false;
-  eigenValuesList_ = std::vector<double>(3,0);
-  eigenValuesNoNormList_ = std::vector<double>(3,0);
+  eigenValues_ = std::vector<double>(3,0);
+  eigenValuesNoNorm_ = std::vector<double>(3,0);
 }
 
 /// helper function to fill the 3 dimensional momentum tensor from the inputVectors where needed
@@ -130,22 +130,22 @@ EventShapeVariables::compTensorsAndVectors()
   }
 
   if( momentumTensor.IsSymmetric() && ( momentumTensor.NonZeros() != 0 ) ){
-    momentumTensor.EigenVectors(eigenValuesNoNorm_);
+    momentumTensor.EigenVectors(eigenValuesNoNormTmp_);
   }
-  eigenValuesNoNormList_[0] = eigenValuesNoNorm_(0);
-  eigenValuesNoNormList_[1] = eigenValuesNoNorm_(1);
-  eigenValuesNoNormList_[2] = eigenValuesNoNorm_(2);
+  eigenValuesNoNorm_[0] = eigenValuesNoNormTmp_(0);
+  eigenValuesNoNorm_[1] = eigenValuesNoNormTmp_(1);
+  eigenValuesNoNorm_[2] = eigenValuesNoNormTmp_(2);
 
   // momentumTensor normalized to determinant 1
   momentumTensor *= (1./norm);
 
   // now get eigens
   if( momentumTensor.IsSymmetric() && ( momentumTensor.NonZeros() != 0 ) ){
-    eigenVectors_ = momentumTensor.EigenVectors(eigenValues_);
+    eigenVectors_ = momentumTensor.EigenVectors(eigenValuesTmp_);
   }
-  eigenValuesList_[0] = eigenValues_(0);
-  eigenValuesList_[1] = eigenValues_(1);
-  eigenValuesList_[2] = eigenValues_(2);
+  eigenValues_[0] = eigenValuesTmp_(0);
+  eigenValues_[1] = eigenValuesTmp_(1);
+  eigenValues_[2] = eigenValuesTmp_(2);
 
   tensors_computed_ = true;  
 }
@@ -156,7 +156,7 @@ double
 EventShapeVariables::sphericity()
 {
   if(!tensors_computed_) compTensorsAndVectors();
-  return 1.5*(eigenValuesList_[1] + eigenValuesList_[2]);
+  return 1.5*(eigenValues_[1] + eigenValues_[2]);
 }
 
 /// 1.5*q2 where q0>=q1>=q2>=0 are the eigenvalues of the momentum tensor sum{p_j[a]*p_j[b]}/sum{p_j**2} 
@@ -165,7 +165,7 @@ double
 EventShapeVariables::aplanarity()
 {
   if(!tensors_computed_) compTensorsAndVectors();
-  return 1.5*eigenValuesList_[2];
+  return 1.5*eigenValues_[2];
 }
 
 /// 3.*(q0*q1+q0*q2+q1*q2) where q0>=q1>=q2>=0 are the eigenvalues of the momentum tensor sum{p_j[a]*p_j[b]}/sum{p_j**2} 
@@ -175,7 +175,7 @@ double
 EventShapeVariables::C()
 {
   if(!tensors_computed_) compTensorsAndVectors();
-  return 3.*(eigenValuesList_[0]*eigenValuesList_[1] + eigenValuesList_[0]*eigenValuesList_[2] + eigenValuesList_[1]*eigenValuesList_[2]);
+  return 3.*(eigenValues_[0]*eigenValues_[1] + eigenValues_[0]*eigenValues_[2] + eigenValues_[1]*eigenValues_[2]);
 }
 
 /// 27.*(q0*q1*q2) where q0>=q1>=q2>=0 are the eigenvalues of the momemtum tensor sum{p_j[a]*p_j[b]}/sum{p_j**2} 
@@ -185,7 +185,7 @@ double
 EventShapeVariables::D()
 {
   if(!tensors_computed_) compTensorsAndVectors();
-  return 27.*eigenValuesList_[0]*eigenValuesList_[1]*eigenValuesList_[2];
+  return 27.*eigenValues_[0]*eigenValues_[1]*eigenValues_[2];
 }
 
 //========================================================================================================
