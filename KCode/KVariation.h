@@ -185,7 +185,7 @@ namespace KParser {
 		string vname = tmp->fields[0];
 		OptionMap* omap = tmp->localOpt();
 		
-		KVariator* vtmp = KVariatorFactory::GetFactory().construct(vname,vname,omap);;
+		KVariator* vtmp = KVariatorFactory::GetFactory().construct(vname,vname,omap);
 		
 		if(!vtmp) cout << "Input error: unknown variator " << vname << ". This variator will be skipped." << endl;
 

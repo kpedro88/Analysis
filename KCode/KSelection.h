@@ -50,6 +50,8 @@ class KSelector : public KChecker {
 		KSelector(string name_, OptionMap* localOpt_) : KChecker(name_, localOpt_), tree(0), counter(0), dummy(0), canfail(1), depfailed(0), forceadd(0) {
 			dummy = localOpt->Get("dummy",false);
 			forceadd = localOpt->Get("forceadd",false);
+			//possible to change name from default
+			localOpt->Get("name",name);
 		}
 		//destructor
 		virtual ~KSelector() {}

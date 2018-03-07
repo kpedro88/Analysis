@@ -43,13 +43,17 @@ class KSet : public KBase {
 		KBase* GetParent() { return parent; }
 		void SetParent(KBase* p) { parent = p; }
 		//add function - does formatting
-		TH1* AddHisto(string s, TH1* h){
-			KBase::AddHisto(s,h);
+		TH1* AddHisto(string s, TH1* h, OptionMap* omap=NULL){
+			//does *not* make KHisto (not needed)
+			if(h) KBase::AddHisto(s,h);
 			
 			//add to children
 			for(unsigned c = 0; c < children.size(); c++){
-				children[c]->AddHisto(s,h);
+				children[c]->AddHisto(s,h,omap);
 			}
+			
+			//*does* make KHisto (for special histo filling)
+			if(!h) KBase::AddHisto(s,h,omap)
 			
 			//formatting			
 			MyStyle->Format(htmp);
@@ -76,8 +80,8 @@ class KSet : public KBase {
 			//all children get their cutflows
 			//then add up raw cutflows & nevents from children
 			TH1F* cutflowRaw = NULL;
+			//todo: allow weighting
 			for(unsigned c = 0; c < children.size(); c++){
-				children[c]->MakeCutflows();
 				if(c==0){
 					nEventHist = (TH1F*)(children[c]->GetNEventHist())->Clone();
 					cutflowRaw = (TH1F*)(children[c]->GetCutflow(KCutflow::CutRaw))->Clone();
@@ -281,14 +285,14 @@ class KSetMCStack : public KSet {
 		}
 
 		//polymorphic add function for stacks (does formatting)
-		TH1* AddHisto(string s, TH1* h){
+		TH1* AddHisto(string s, TH1* h, OptionMap* omap=NULL){
 			stmp = s;
 			shtmp = new THStack(stmp.c_str(),stmp.c_str());
 			MyStacks.Add(stmp,shtmp);
 			
 			//add to children
 			for(unsigned c = 0; c < children.size(); c++){
-				children[c]->AddHisto(s,h);
+				children[c]->AddHisto(s,h,omap);
 				//formatting of children for stack already fixed
 			}
 			

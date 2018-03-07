@@ -5,6 +5,7 @@
 #include "KSelection.h"
 #include "KCommonSelectors.h"
 #include "KMath.h"
+#include "KHisto.h"
 #include "../btag/BTagCorrector.h"
 #include "../corrections/EventListFilter.h"
 #include "../corrections/GetTriggerEffCorr.C"
@@ -40,6 +41,8 @@ class KMCWeightSelector : public KSelector {
 		KMCWeightSelector() : KSelector() {}
 		KMCWeightSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { 
 		}
+		//enum for flattening qtys
+		enum flatqtys { noqty = 0, leadjetAK8pt = 1, subleadjetAK8pt = 2, bothjetAK8pt = 3, thirdjetAK8pt = 4, fourthjetAK8pt = 5 };
 		virtual void CheckBase(){
 			//standard weight options
 			normtype = ""; base->GetLocalOpt()->Get("normtype",normtype); GetNormTypeEnum();
@@ -162,16 +165,24 @@ class KMCWeightSelector : public KSelector {
 			//flattening options
 			flatten = localOpt->Get("flatten",false);
 			if(flatten){
+				flatqty = noqty;
 				TH1* flathist = NULL;
 				string flatname; localOpt->Get("flatname",flatname);
 				TFile* flatfile = TFile::Open(flatname.c_str(),"READ");
 				if(flatfile){
-					flatqty=""; localOpt->Get("flatqty",flatqty);
+					localOpt->Get("flatqty",sflatqty);
 					string flatsuff;
 					if(!base->GetLocalOpt()->Get("flatsuff",flatsuff)) flatsuff = base->GetName();
-					string flatdist = flatqty + "_" + flatsuff;
+					string flatdist = sflatqty + "_" + flatsuff;
 					flathist = (TH1*)flatfile->Get(flatdist.c_str());
 					flattener.SetDist(flathist);
+					
+					//get enum for flatqty
+					if(sflatqty=="leadjetAK8pt") flatqty = leadjetAK8pt;
+					else if(sflatqty=="subleadjetAK8pt") flatqty = subleadjetAK8pt;
+					else if(sflatqty=="bothjetAK8pt") flatqty = bothjetAK8pt;
+					else if(sflatqty=="thirdjetAK8pt") flatqty = thirdjetAK8pt;
+					else if(sflatqty=="fourthjetAK8pt") flatqty = fourthjetAK8pt;
 				}
 			}
 
@@ -252,7 +263,7 @@ class KMCWeightSelector : public KSelector {
 				looper->fChain->SetBranchStatus("NJetsISR",1);
 			}
 			if(flatten){
-				if(flatqty=="leadjetAK8pt" || flatqty=="subleadjetAK8pt" || flatqty=="bothjetAK8pt") looper->fChain->SetBranchStatus("JetsAK8");
+				if(flatqty>noqty and flatqty<=fourthjetAK8pt) looper->fChain->SetBranchStatus("JetsAK8",1);
 			}
 			if(NTenum==ttbarLowHTLowMET || NTenum==ttbarLowHTHighMET || NTenum==ttbarLowHThad || NTenum==ttbarHighHT || NTenum==wjetsLowHT || NTenum==wjetsHighHT){
 				looper->fChain->SetBranchStatus("madHT",1);
@@ -316,12 +327,6 @@ class KMCWeightSelector : public KSelector {
 			
 			if(isrcorr){
 				w *= isrcorror.GetCorrection(looper->NJetsISR);
-			}
-			
-			if(flatten){
-				if(flatqty=="leadjetAK8pt") w *= flattener.GetWeight(looper->JetsAK8->at(0).Pt());
-				else if(flatqty=="subleadjetAK8pt") w *= flattener.GetWeight(looper->JetsAK8->at(1).Pt());
-				//for bothjetAK8pt, need to weight per jet
 			}
 
 			if(pdfunc!=0){
@@ -422,7 +427,8 @@ class KMCWeightSelector : public KSelector {
 		ISRCorrector isrcorror;
 		PileupAcceptanceUncertainty puacc;
 		Flattener flattener;
-		string flatqty;
+		string sflatqty;
+		flatqtys flatqty;
 };
 REGISTER_SELECTOR(MCWeight);
 
@@ -597,6 +603,30 @@ class KFakeHLTSelector : public KSelector {
 		double weight;
 };
 REGISTER_SELECTOR(FakeHLT);
+
+//avoid unwanted dependency
+double KHisto::GetWeight(){
+	double w = 1.0;
+	if(MCWeight) w = MCWeight->GetWeight();
+	if(FakeHLT) w *= FakeHLT->weight;
+	return w;
+}
+double KHisto::GetWeightPerJet(unsigned index){
+	double w = 1.0;
+	//range of flatqty for AK8 jet pt
+	if(MCWeight and MCWeight->flatten and MCWeight->flatqty>KMCWeightSelector::noqty and MCWeight->flatqty<=KMCWeightSelector::fourthjetAK8pt) {
+		w *= MCWeight->flattener.GetWeight(looper->JetsAK8->at(index).Pt());
+		if( (MCWeight->flatqty==KMCWeightSelector::leadjetAK8pt and index!=0) or
+			(MCWeight->flatqty==KMCWeightSelector::subleadjetAK8pt and index!=1) or
+			(MCWeight->flatqty==KMCWeightSelector::bothjetAK8pt and (index!=0 and index!=1)) or
+			(MCWeight->flatqty==KMCWeightSelector::thirdjetAK8pt and index!=2) or
+			(MCWeight->flatqty==KMCWeightSelector::fourthjetAK8pt and index!=3) )
+		{
+			cout << "Input error: flattening qty is " << MCWeight->sflatqty << " but jet index is " << index << endl;
+		}
+	}
+	return w;
+}
 
 //----------------------------------------------------
 //selects events based on leading jet pt
@@ -1052,648 +1082,28 @@ class KValue {
 
 //----------------------------------------------------
 //final selector to fill histograms
-//(accounts for dependence on other selectors)
+//(just calls KHisto methods)
 class KHistoSelector : public KSelector {
 	public:
 		//constructor
 		KHistoSelector() : KSelector() { }
-		KHistoSelector(string name_, OptionMap* localOpt_) : 
-			KSelector(name_,localOpt_), initialized(false), MCWeight(NULL), RA2Bin(NULL), PhotonID(NULL), BTagSF(NULL), JetEtaRegion(NULL), Hemisphere(NULL), FakeHLT(NULL), DarkHadron(NULL), EventShapeAK4(NULL), EventShapeAK8(NULL)
-		{ 
+		KHistoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { 
 			canfail = false;
-		}
-		
-		virtual void CheckDeps(){
-			//set dependencies here
-			MCWeight = sel->Get<KMCWeightSelector*>("MCWeight");
-			RA2Bin = sel->Get<KRA2BinSelector*>("RA2Bin");
-			PhotonID = sel->Get<KPhotonIDSelector*>("PhotonID");
-			
-			BTagSF = sel->Get<KBTagSFSelector*>("BTagSF");
-			JetEtaRegion = sel->Get<KJetEtaRegionSelector*>("JetEtaRegion");
-			Hemisphere = sel->Get<KHemisphereSelector*>("Hemisphere");
-			FakeHLT = sel->Get<KFakeHLTSelector*>("FakeHLT");
-			DarkHadron = sel->Get<KDarkHadronSelector*>("DarkHadron");
-			EventShapeAK4 = sel->Get<KEventShapeSelector*>("EventShapeAK4");
-			EventShapeAK8 = sel->Get<KEventShapeSelector*>("EventShapeAK8");
-		}
-		virtual void CheckBranches(){
-			if(RA2Bin && RA2Bin->debug){
-				looper->fChain->SetBranchStatus("RunNum",1);
-				looper->fChain->SetBranchStatus("LumiBlockNum",1);
-				looper->fChain->SetBranchStatus("EvtNum",1);
-			}
-		}
-		virtual void CheckBase(){
-			base->GetLocalOpt()->Get("mother",mother);
-			deltaM = 0; base->GetLocalOpt()->Get("deltaM",deltaM);
-			//do not use MCWeight with data
-			if(base->IsData()) MCWeight = NULL;
-			//but require it for MC
-			else if(base->IsMC() && !MCWeight) depfailed = true;
-			bool DoBTagSF = MCWeight ? MCWeight->btagcorr : false;
-			if(!DoBTagSF) BTagSF = NULL;
-			
-			if(depfailed) canfail = true;
-		}
-		void Initialize(){
-			if(initialized) return;
-			//initial loop to get histo variables
-			int table_size = base->GetTable().size();
-			vars.clear(); vars.reserve(table_size);
-			htmp.clear(); htmp.reserve(table_size);
-			for(auto& sit : base->GetTable()){
-				//get histo name
-				string stmp = sit.first;
-				htmp.push_back(sit.second);
-				//split up histo variable names
-				vector<string> vars_tmp;
-				KParser::process(stmp,'_',vars_tmp);
-				vars.push_back(vars_tmp);
-			}
-			initialized = true;
-		}
-		bool IsPerJet(const string& vname, KValue& value, double w){
-			bool leadjet = false, subleadjet = false, thirdjet = false, fourthjet = false;
-			string vname2;
-			
-			if(vname.compare(0,10,"leadjetAK8")==0) {
-				leadjet = true;
-				vname2 = vname.substr(10,string::npos);
-			}
-			else if(vname.compare(0,13,"subleadjetAK8")==0){
-				subleadjet = true;
-				vname2 = vname.substr(13,string::npos);
-			}
-			else if(vname.compare(0,10,"bothjetAK8")==0) {
-				leadjet = true;
-				subleadjet = true;
-				vname2 = vname.substr(10,string::npos);
-			}
-			else if(vname.compare(0,11,"thirdjetAK8")==0) {
-				thirdjet = true;
-				vname2 = vname.substr(11,string::npos);
-			}
-			else if(vname.compare(0,12,"fourthjetAK8")==0) {
-				fourthjet = true;
-				vname2 = vname.substr(12,string::npos);
-			}
-
-			if(leadjet) FillPerJet(vname2,value,w,0);
-			if(subleadjet) FillPerJet(vname2,value,w,1);
-			if(thirdjet) FillPerJet(vname2,value,w,2);
-			if(fourthjet) FillPerJet(vname2,value,w,3);
-			
-			return (leadjet or subleadjet or thirdjet or fourthjet);
-		}
-		void FillPerJet(const string& vname, KValue& value, double w, unsigned index){
-			if(looper->JetsAK8->size()>index){
-				//
-				if(MCWeight and MCWeight->flatten and MCWeight->flatqty=="bothjetAK8pt")  w *= MCWeight->flattener.GetWeight(looper->JetsAK8->at(index).Pt());
-
-				if(vname=="pt") value.Fill(looper->JetsAK8->at(index).Pt(),w);
-				else if(vname=="eta") value.Fill(looper->JetsAK8->at(index).Eta(),w);
-				else if(vname=="abseta") value.Fill(abs(looper->JetsAK8->at(index).Eta()),w);
-				else if(vname=="axisminor") value.Fill(looper->JetsAK8_axisminor->at(index),w);
-				else if(vname=="axismajor") value.Fill(looper->JetsAK8_axismajor->at(index),w);
-				else if(vname=="girth") value.Fill(looper->JetsAK8_girth->at(index),w);
-				else if(vname=="mhalf") value.Fill(looper->JetsAK8_momenthalf->at(index),w);
-				else if(vname=="mult") value.Fill(looper->JetsAK8_multiplicity->at(index),w);
-				else if(vname=="overflow") value.Fill(looper->JetsAK8_overflow->at(index),w);
-				else if(vname=="ptD") value.Fill(looper->JetsAK8_ptD->at(index),w);
-				//derived substructure variables
-				else if(vname=="tau21"){
-					if(looper->JetsAK8_NsubjettinessTau1->at(index)>0) value.Fill(looper->JetsAK8_NsubjettinessTau2->at(index)/looper->JetsAK8_NsubjettinessTau1->at(index),w);
-				}
-				else if(vname=="tau32"){
-					if(looper->JetsAK8_NsubjettinessTau2->at(index)>0) value.Fill(looper->JetsAK8_NsubjettinessTau3->at(index)/looper->JetsAK8_NsubjettinessTau2->at(index),w);
-				}
-				else if(vname=="msd") value.Fill(looper->JetsAK8_softDropMass->at(index),w);
-				else if(vname=="mass") value.Fill(looper->JetsAK8->at(index).M(),w);
-				else if(vname=="nstable" and DarkHadron) value.Fill(DarkHadron->n_stable.at(index),w);
-				else if(vname=="nunstable" and DarkHadron) value.Fill(DarkHadron->n_unstable.at(index),w);
-				else if(vname=="nvisible" and DarkHadron) value.Fill(DarkHadron->n_visible.at(index),w);
-				else if(vname=="rinv" and DarkHadron) value.Fill(DarkHadron->rinv.at(index),w);
-				else if(vname=="nsubjet") value.Fill(looper->JetsAK8_subjets->at(index).size(),w);
-				else { //do nothing
-				}
-			}
 		}
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			if(!initialized) Initialize();
-			if(depfailed) return false;
-			
-			double w = 1.0;
-			if(MCWeight) w = MCWeight->GetWeight();
-			if(FakeHLT) w *= FakeHLT->weight;
-			
-			for(unsigned h = 0; h < htmp.size(); h++){
-				unsigned vsize = vars[h].size();
-				vector<KValue> values(vsize);				
-			
-				for(unsigned i = 0; i < vsize; i++){
-					string vname = vars[h][i];
-					//list of cases for histo calculation and filling
-					if(vname=="RA2bin" && RA2Bin){ //plot yield vs. bin of RA2 search -> depends on RA2Bin selector
-						if(RA2Bin->RA2Exclusive) {
-							if(RA2Bin->debug==1){
-								cout << "Run = " << looper->RunNum << ", LS = " << looper->LumiBlockNum << ", Evt = " << looper->EvtNum;
-								for(unsigned q = 0; q < RA2Bin->RA2VarNames.size(); ++q){
-									if(RA2Bin->RA2VarNames[q]=="NJets") cout << ", NJets = " << looper->NJets;
-									else if(RA2Bin->RA2VarNames[q]=="BTags") cout << ", BTags = " << looper->BTags;
-									else if(RA2Bin->RA2VarNames[q]=="MHT") cout << ", MHT = " << looper->MHT;
-									else if(RA2Bin->RA2VarNames[q]=="HT") cout << ", HT = " << looper->HT;
-								}
-								cout << endl;
-							}
-							else if(RA2Bin->debug==2){
-								//RA2bin number starts at 1
-								cout << looper->RunNum << "\t" << looper->LumiBlockNum << "\t" << looper->EvtNum << "\t" << RA2Bin->RA2bins[0] << "\t" << RA2Bin->labels[RA2Bin->RA2bins[0]-1] << endl;
-							}
-							values[i].Fill(RA2Bin->RA2bins[0],w);
-						}
-						else {
-							for(unsigned b = 0; b < RA2Bin->RA2bins.size(); b++){
-								double wb = w;
-								//weight by btag scale factor probability if available
-								if(BTagSF) {
-									int nb = RA2Bin->GetBin("BTags",RA2Bin->RA2binVec[b]);
-									if(nb>=0 && ((unsigned)nb)<BTagSF->prob.size()) wb *= BTagSF->prob[nb];
-									else wb = 0; //btag sf failed
-								}
-								values[i].Fill(RA2Bin->RA2bins[b],wb);
-							}
-						}
-					}
-					else if(vname=="njets"){//jet multiplicity
-						values[i].Fill(looper->NJets,w);
-					}
-					else if(vname=="njetsisr"){//ISR jet multiplicity
-						values[i].Fill(looper->NJetsISR,w);
-					}
-					else if(vname=="nbjets"){//b-jet multiplicity
-						if(BTagSF){
-							for(unsigned b = 0; b < BTagSF->prob.size(); b++){
-								//weight by btag scale factor probability if available
-								double wb = w*BTagSF->prob[b];
-								values[i].Fill(b,wb);
-							}
-						}
-						else values[i].Fill(looper->BTags,w);
-					}
-					else if(vname=="njetshemi"){//jet multiplicity
-						if(Hemisphere) values[i].Fill(Hemisphere->NJets,w);
-					}
-					else if(vname=="nbjetshemi"){//b-jet multiplicity
-						if(Hemisphere) values[i].Fill(Hemisphere->BTags,w);
-					}
-					else if(vname=="njetsopphemi"){//jet multiplicity
-						if(Hemisphere) values[i].Fill(Hemisphere->NJetsOpp,w);
-					}
-					else if(vname=="nbjetsopphemi"){//b-jet multiplicity
-						if(Hemisphere) values[i].Fill(Hemisphere->BTagsOpp,w);
-					}
-					else if(vname=="ht"){//sum of jet pt
-						values[i].Fill(looper->HT,w);
-					}
-					else if(vname=="mht"){//missing hadronic energy
-						values[i].Fill(looper->MHT,w);
-					}
-					else if(vname=="genmht"){//missing hadronic energy
-						values[i].Fill(looper->GenMHT,w);
-					}
-					else if(vname=="met"){//missing energy
-						values[i].Fill(looper->MET,w);
-					}
-					else if(vname=="nleptons"){//# leptons (mu or ele)
-						values[i].Fill(looper->NMuons+looper->NElectrons,w);
-					}
-					else if(vname=="nelectrons"){//# electrons
-						values[i].Fill(looper->NElectrons,w);
-					}
-					else if(vname=="nmuons"){//# muons
-						values[i].Fill(looper->NMuons,w);
-					}
-					else if(vname=="nisotrack"){//# iso tracks
-						values[i].Fill(looper->isoElectronTracks+looper->isoMuonTracks+looper->isoPionTracks,w);
-					}
-					else if(vname=="nvertex"){//# good vertices
-						values[i].Fill(looper->NVtx,w);
-					}
-					else if(vname=="numint"){//# interactions
-						values[i].Fill(looper->NumInteractions,w);
-					}
-					else if(vname=="madht"){//madgraph HT
-						values[i].Fill(looper->madHT,w);
-					}
-					else if(vname=="leadjetpt"){//pT of leading jet
-						if(looper->Jets->size()>0){
-							values[i].Fill(looper->Jets->at(0).Pt(),w);
-						}
-					}
-					else if(vname=="mht-leadjetpt-ratio"){//ratio of MHT & pT of leading jet
-						if(looper->Jets->size()>0){
-							values[i].Fill(looper->MHT/looper->Jets->at(0).Pt(),w);
-						}
-					}
-					else if(vname=="met-leadjetpt-ratio"){//ratio of MET & pT of leading jet
-						if(looper->Jets->size()>0){
-							values[i].Fill(looper->MET/looper->Jets->at(0).Pt(),w);
-						}
-					}
-					else if(vname=="leadbhadronjetpt"){//pT of leading jet w/ hadronFlavor==5, |eta|<2.4
-						for(unsigned j = 0; j < looper->Jets->size(); ++j){
-							if(abs(looper->Jets_hadronFlavor->at(j))==5 && fabs(looper->Jets->at(j).Eta())<2.4){
-								values[i].Fill(looper->Jets->at(j).Pt(),w);
-								break;
-							}
-						}
-					}
-					else if(vname=="deltaphi1"){//deltaphi of leading jet
-						values[i].Fill(looper->DeltaPhi1,w);
-					}
-					else if(vname=="deltaphi2"){//deltaphi of 2nd jet
-						values[i].Fill(looper->DeltaPhi2,w);
-					}
-					else if(vname=="deltaphi3"){//deltaphi of 3rd jet
-						values[i].Fill(looper->DeltaPhi3,w);
-					}
-					else if(vname=="deltaphi4"){//deltaphi of 4th jet
-						values[i].Fill(looper->DeltaPhi4,w);
-					}
-					else if(vname=="deltaM"){//difference between mMother and mLSP
-						values[i].Fill(deltaM,w);
-					}
-					else if(vname=="motherpt"){//pT of each mother particle
-						//loop over genparticles
-						for(unsigned g = 0; g < looper->GenParticles_PdgId->size(); ++g){
-							if(binary_search(mother.begin(),mother.end(),abs(looper->GenParticles_PdgId->at(g)))){
-								values[i].Fill(looper->GenParticles->at(g).Pt(),w);
-							}
-						}
-					}
-					else if(vname=="recoil"){//pT of mother particle system recoiling against ISR jets
-						//loop over genparticles
-						TLorentzVector vgen;
-						vgen.SetPtEtaPhiE(0,0,0,0);
-						for(unsigned g = 0; g < looper->GenParticles_PdgId->size(); ++g){
-							if(binary_search(mother.begin(),mother.end(),abs(looper->GenParticles_PdgId->at(g)))){
-								vgen += looper->GenParticles->at(g);
-							}
-						}
-						values[i].Fill(vgen.Pt(),w);
-					}
-					else if(vname=="deltaphirecoil"){//delta phi of mother particle system with MHT
-						//loop over genparticles
-						TLorentzVector vgen;
-						vgen.SetPtEtaPhiE(0,0,0,0);
-						for(unsigned g = 0; g < looper->GenParticles_PdgId->size(); ++g){
-							if(binary_search(mother.begin(),mother.end(),abs(looper->GenParticles_PdgId->at(g)))){
-								vgen += looper->GenParticles->at(g);
-							}
-						}
-						values[i].Fill(KMath::DeltaPhi(vgen.Phi(),looper->MHTPhi),w);
-					}
-					else if(vname=="sigmaietaieta"){//sigma ieta ieta variable for all photon candidates
-						if(PhotonID){
-							for(unsigned p = 0; p < PhotonID->goodPhotons.size(); ++p){
-								values[i].Fill(looper->Photons_sigmaIetaIeta->at(PhotonID->goodPhotons[p]),w);
-							}
-						}
-						else { //if no ID applied, just plot everything
-							for(unsigned p = 0; p < looper->Photons_sigmaIetaIeta->size(); ++p){
-								values[i].Fill(looper->Photons_sigmaIetaIeta->at(p),w);
-							}
-						}
-					}
-					else if(vname=="bestsigmaietaieta"){//sigma ieta ieta variable for best photon
-						double best_sieie=0;
-						double best_pt=0;
-						for(unsigned p = 0; p < looper->Photons->size(); ++p){
-							if(looper->Photons->at(p).Pt()>best_pt){
-								best_pt = looper->Photons->at(p).Pt();
-								best_sieie = looper->Photons_sigmaIetaIeta->at(p);
-							}
-						}
-						values[i].Fill(best_sieie,w);
-					}
-					else if(vname=="pdfrms"){
-						values[i].Fill(TMath::RMS(looper->PDFweights->begin(),looper->PDFweights->end()),w);
-					}
-					else if(vname=="pdfweight"){
-						for(unsigned w = 0; w < looper->PDFweights->size(); ++w){
-							values[i].Fill(looper->PDFweights->at(w),w);
-						}
-					}
-					//jet ID quantities... (w/ optional eta region specification)
-					else if(vname=="neufrac"){
-						for(unsigned j = 0; j < looper->Jets->size(); ++j){
-							if(!JetEtaRegion || JetEtaRegion->mask[j]) values[i].Fill(looper->Jets_neutralHadronEnergyFraction->at(j),w);
-						}
-					}
-					else if(vname=="phofrac"){
-						for(unsigned j = 0; j < looper->Jets->size(); ++j){
-							if(!JetEtaRegion || JetEtaRegion->mask[j]) values[i].Fill(looper->Jets_photonEnergyFraction->at(j),w);
-						}
-					}
-					else if(vname=="chgfrac"){
-						for(unsigned j = 0; j < looper->Jets->size(); ++j){
-							if(!JetEtaRegion || JetEtaRegion->mask[j]) values[i].Fill(looper->Jets_chargedHadronEnergyFraction->at(j),w);
-						}
-					}
-					else if(vname=="chgemfrac"){
-						for(unsigned j = 0; j < looper->Jets->size(); ++j){
-							if(!JetEtaRegion || JetEtaRegion->mask[j]) values[i].Fill(looper->Jets_chargedEmEnergyFraction->at(j),w);
-						}
-					}
-					else if(vname=="chgmulti"){
-						for(unsigned j = 0; j < looper->Jets->size(); ++j){
-							if(!JetEtaRegion || JetEtaRegion->mask[j]) values[i].Fill(looper->Jets_chargedMultiplicity->at(j),w);
-						}
-					}
-					else if(vname=="neumulti"){
-						for(unsigned j = 0; j < looper->Jets->size(); ++j){
-							if(!JetEtaRegion || JetEtaRegion->mask[j]) values[i].Fill(looper->Jets_neutralMultiplicity->at(j),w);
-						}
-					}
-					else if(vname=="nconstit"){
-						for(unsigned j = 0; j < looper->Jets->size(); ++j){
-							if(!JetEtaRegion || JetEtaRegion->mask[j]) values[i].Fill(looper->Jets_chargedMultiplicity->at(j)+looper->Jets_neutralMultiplicity->at(j),w);
-						}
-					}
-					else if(vname=="MTAK8"){//transverse mass
-						values[i].Fill(looper->MT_AK8,w);
-					}
-					else if(vname=="MJJAK8"){//dijet mass
-						values[i].Fill(looper->MJJ_AK8,w);
-					}
-					else if (vname=="MJJSDAK8"){//dijet mass from softdrop
-						TLorentzVector vjjjj;
-						if(looper->JetsAK8_subjets->size()>1){
-							for(unsigned j = 0; j < 2; ++j){
-								for(const auto& subjet: looper->JetsAK8_subjets->at(j)){
-									vjjjj += subjet;
-								}
-							}
-							values[i].Fill(vjjjj.M(),w);
-						}
-					}
-					else if(vname=="MTSDAK8"){//transverse mass from softdrop
-						TLorentzVector vjjjj;
-						if(looper->JetsAK8_subjets->size()>1){
-							for(unsigned j = 0; j < 2; ++j){
-								for(const auto& subjet: looper->JetsAK8_subjets->at(j)){
-									vjjjj += subjet;
-								}
-							}
-							double MT = KMath::TransverseMass(vjjjj.Px(),vjjjj.Py(),vjjjj.M(),looper->MET*cos(looper->METPhi),looper->MET*sin(looper->METPhi),0);
-							values[i].Fill(MT,w);
-						}						
-					}
-					else if(vname=="MmcAK8"){//dijet+truth mass
-						values[i].Fill(looper->Mmc_AK8,w);
-					}
-					else if(IsPerJet(vname,values[i],w)){
-						//per-jet histos (leading, subleading, or both)
-						//nothing to do - histo is filled as a side effect
-					}
-					else if(vname=="deltaetaAK8"){//deta(j1,j2)
-						if(looper->JetsAK8->size()>1) values[i].Fill(abs(looper->JetsAK8->at(0).Eta()-looper->JetsAK8->at(1).Eta()),w);
-					}
-					else if(vname=="deltaphi1AK8"){//dphi(j1,MET)
-						values[i].Fill(looper->DeltaPhi1_AK8,w);
-					}
-					else if(vname=="deltaphi2AK8"){//dphi(j2,MET)
-						values[i].Fill(looper->DeltaPhi2_AK8,w);
-					}
-					else if(vname=="deltaphiminAK8"){//min dphi(j1/2,MET)
-						values[i].Fill(looper->DeltaPhiMin_AK8,w);
-					}
-					else if(vname=="ptAsymAK8"){//AK8 dijet pT asymmetry
-						if(looper->JetsAK8->size()>1) values[i].Fill((looper->JetsAK8->at(0).Pt()-looper->JetsAK8->at(1).Pt())/(looper->JetsAK8->at(0).Pt()+looper->JetsAK8->at(1).Pt()),w);
-					}
-					else if(vname=="msdAsymAK8"){//AK8 dijet m_sd asymmetry
-						if(looper->JetsAK8->size()>1) values[i].Fill(abs(looper->JetsAK8_softDropMass->at(0)-looper->JetsAK8_softDropMass->at(1))/(looper->JetsAK8_softDropMass->at(0)+looper->JetsAK8_softDropMass->at(1)),w);
-					}
-					else if(vname=="htAK8"){//HT from AK8 jets
-						double htak8 = 0.0;
-						for(const auto& jet : *(looper->JetsAK8)){
-							if(abs(jet.Eta())<2.4) htak8 += jet.Pt();
-						}
-						values[i].Fill(htak8,w);
-					}
-					else if(vname=="njetAK8"){//number of AK8 jets
-						int num = 0;
-						for(const auto& jet : *(looper->JetsAK8)){
-							if(abs(jet.Eta())<2.4) ++num;
-						}
-						values[i].Fill(num,w);
-					}
-					else if(vname=="metMTratio"){//MET/MT
-						values[i].Fill(looper->MT_AK8>0?looper->MET/looper->MT_AK8:0.0,w);
-					}
-					else if(vname=="metsig"){//MET significance
-						values[i].Fill(looper->METSignificance,w);
-					}
-					else if(vname=="logmetsig"){//log(MET significance)
-						values[i].Fill(log(looper->METSignificance),w);
-					}
-					else if(vname=="genmet"){//gen MET
-						values[i].Fill(looper->GenMET,w);
-					}
-					else if(vname=="madht"){//madgraph HT
-						values[i].Fill(looper->madHT,w);
-					}
-					else if(vname=="boost"){
-						if(!EventShapeAK4) continue;
-						values[i].Fill(EventShapeAK4->boost,w);
-					}
-					else if(vname=="sphericity"){
-						if(!EventShapeAK4) continue;
-						values[i].Fill(EventShapeAK4->sphericity,w);
-					}
-					else if(vname=="aplanarity"){
-						if(!EventShapeAK4) continue;
-						values[i].Fill(EventShapeAK4->aplanarity,w);
-					}
-					else if(vname=="esvC"){
-						if(!EventShapeAK4) continue;
-						values[i].Fill(EventShapeAK4->esvC,w);
-					}
-					else if(vname=="esvD"){
-						if(!EventShapeAK4) continue;
-						values[i].Fill(EventShapeAK4->esvD,w);
-					}
-					else if(vname=="lambda1"){
-						if(!EventShapeAK4) continue;
-						values[i].Fill(EventShapeAK4->lambda1,w);
-					}
-					else if(vname=="lambda2"){
-						if(!EventShapeAK4) continue;
-						values[i].Fill(EventShapeAK4->lambda2,w);
-					}
-					else if(vname=="lambda3"){
-						if(!EventShapeAK4) continue;
-						values[i].Fill(EventShapeAK4->lambda3,w);
-					}
-					else if(vname=="fwm1"){
-						if(!EventShapeAK4) continue;
-						values[i].Fill(EventShapeAK4->fwm1,w);
-					}
-					else if(vname=="fwm2"){
-						if(!EventShapeAK4) continue;
-						values[i].Fill(EventShapeAK4->fwm2,w);
-					}
-					else if(vname=="fwm3"){
-						if(!EventShapeAK4) continue;
-						values[i].Fill(EventShapeAK4->fwm3,w);
-					}
-					else if(vname=="fwm4"){
-						if(!EventShapeAK4) continue;
-						values[i].Fill(EventShapeAK4->fwm4,w);
-					}
-					else if(vname=="fwm5"){
-						if(!EventShapeAK4) continue;
-						values[i].Fill(EventShapeAK4->fwm5,w);
-					}
-					else if(vname=="boostAK8"){
-						if(!EventShapeAK8) continue;
-						values[i].Fill(EventShapeAK8->boost,w);
-					}
-					else if(vname=="sphericityAK8"){
-						if(!EventShapeAK8) continue;
-						values[i].Fill(EventShapeAK8->sphericity,w);
-					}
-					else if(vname=="aplanarityAK8"){
-						if(!EventShapeAK8) continue;
-						values[i].Fill(EventShapeAK8->aplanarity,w);
-					}
-					else if(vname=="esvCAK8"){
-						if(!EventShapeAK8) continue;
-						values[i].Fill(EventShapeAK8->esvC,w);
-					}
-					else if(vname=="esvDAK8"){
-						if(!EventShapeAK8) continue;
-						values[i].Fill(EventShapeAK8->esvD,w);
-					}
-					else if(vname=="lambda1AK8"){
-						if(!EventShapeAK8) continue;
-						values[i].Fill(EventShapeAK8->lambda1,w);
-					}
-					else if(vname=="lambda2AK8"){
-						if(!EventShapeAK8) continue;
-						values[i].Fill(EventShapeAK8->lambda2,w);
-					}
-					else if(vname=="lambda3AK8"){
-						if(!EventShapeAK8) continue;
-						values[i].Fill(EventShapeAK8->lambda3,w);
-					}
-					else if(vname=="fwm1AK8"){
-						if(!EventShapeAK8) continue;
-						values[i].Fill(EventShapeAK8->fwm1,w);
-					}
-					else if(vname=="fwm2AK8"){
-						if(!EventShapeAK8) continue;
-						values[i].Fill(EventShapeAK8->fwm2,w);
-					}
-					else if(vname=="fwm3AK8"){
-						if(!EventShapeAK8) continue;
-						values[i].Fill(EventShapeAK8->fwm3,w);
-					}
-					else if(vname=="fwm4AK8"){
-						if(!EventShapeAK8) continue;
-						values[i].Fill(EventShapeAK8->fwm4,w);
-					}
-					else if(vname=="fwm5AK8"){
-						if(!EventShapeAK8) continue;
-						values[i].Fill(EventShapeAK8->fwm5,w);
-					}
-					else { //if it's a histogram with no known variable or calculation, do nothing
-					}
-				}
-				
-				//now fill the histogram
-				if(vsize==1){
-					for(int ix = 0; ix < values[0].GetSize(); ix++){
-						htmp[h]->Fill(values[0].GetValue(ix), values[0].GetWeight(ix));
-					}
-				}
-				else if(vsize==2){
-					//need to cast in order to use Fill(x,y,w)
-					//these three cases allow for various x vs. y comparisons: same # entries per event, or 1 vs. N per event
-					if(values[0].GetSize()==values[1].GetSize()) {
-						for(int i = 0; i < values[0].GetSize(); i++){
-							if(htmp[h]->GetDimension()==1)
-								static_cast<TProfile*>(htmp[h])->Fill(values[0].GetValue(i), values[1].GetValue(i), values[0].GetWeight(i)); //pick the x weight by default
-							else if(htmp[h]->GetDimension()==2)
-								static_cast<TH2*>(htmp[h])->Fill(values[0].GetValue(i), values[1].GetValue(i), values[0].GetWeight(i)); //pick the x weight by default
-						}
-					}
-					else if(values[0].GetSize()==1){
-						for(int iy = 0; iy < values[1].GetSize(); iy++){
-							if(htmp[h]->GetDimension()==1)
-								static_cast<TProfile*>(htmp[h])->Fill(values[0].GetValue(0), values[1].GetValue(iy), values[1].GetWeight(iy));
-							else if(htmp[h]->GetDimension()==2)
-								static_cast<TH2*>(htmp[h])->Fill(values[0].GetValue(0), values[1].GetValue(iy), values[1].GetWeight(iy));
-						}
-					}
-					else if(values[1].GetSize()==1){
-						for(int ix = 0; ix < values[0].GetSize(); ix++){
-							if(htmp[h]->GetDimension()==1)
-								static_cast<TProfile*>(htmp[h])->Fill(values[0].GetValue(ix), values[1].GetValue(0), values[0].GetWeight(ix));
-							else if(htmp[h]->GetDimension()==2)
-								static_cast<TH2*>(htmp[h])->Fill(values[0].GetValue(ix), values[1].GetValue(0), values[0].GetWeight(ix));
-						}
-					}
-				}
-				else { //no support for other # of vars
-				}
+			for(auto& hit : base->GetKTable()){
+				hit.second->Fill();
 			}
-			
+
 			return true;
 		}
 		virtual void Finalize(TFile* file){
-			if(sel->GetGlobalOpt()->Get("plotoverflow",false)){
-				for(unsigned h = 0; h < htmp.size(); h++){
-					if(vars[h].size()==2) continue; //not implemented for 2D histos or profiles yet
-					
-					//temporary histo to calculate error correctly when adding overflow bin to last bin
-					TH1* otmp = (TH1*)htmp[h]->Clone();
-					otmp->Reset("ICEM");
-					int ovbin = htmp[h]->GetNbinsX()+1;
-					double err = 0.;
-					otmp->SetBinContent(ovbin-1,htmp[h]->IntegralAndError(ovbin,ovbin,err));
-					otmp->SetBinError(ovbin-1,err);
-					
-					//add overflow bin to last bin
-					htmp[h]->Add(otmp);
-					
-					//remove overflow bin from htmp[h] (for consistent integral/yield)
-					htmp[h]->SetBinContent(ovbin,0);
-					htmp[h]->SetBinError(ovbin,0);
-					
-					delete otmp;
-				}
+			for(auto& hit : base->GetKTable()){
+				hit.second->Finalize();
 			}
 		}
-		
-		//member variables
-		bool initialized;
-		vector<vector<string> > vars;
-		vector<TH1*> htmp;
-		KMCWeightSelector* MCWeight;
-		KRA2BinSelector* RA2Bin;
-		KPhotonIDSelector* PhotonID;
-		KBTagSFSelector* BTagSF;
-		KJetEtaRegionSelector* JetEtaRegion;
-		KHemisphereSelector* Hemisphere;
-		KFakeHLTSelector* FakeHLT;
-		KDarkHadronSelector* DarkHadron;
-		KEventShapeSelector *EventShapeAK4, *EventShapeAK8;
-		vector<int> mother;
-		double deltaM;
 };
 REGISTER_SELECTOR(Histo);
 

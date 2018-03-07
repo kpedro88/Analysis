@@ -11,6 +11,7 @@
 using namespace std;
 
 //forward declarations
+class KBase;
 class KLooper;
 class KSelection;
 
@@ -21,10 +22,7 @@ class KChecker {
 	public:
 		//constructors
 		KChecker() : name(""), localOpt(new OptionMap()), base(0), looper(0), sel(0) {}
-		KChecker(string name_, OptionMap* localOpt_) : name(name_), localOpt(localOpt_ ? localOpt_ : new OptionMap()), base(0), looper(0), sel(0) {
-			//possible to change name from default
-			localOpt->Get("name",name);
-		}
+		KChecker(string name_, OptionMap* localOpt_) : name(name_), localOpt(localOpt_ ? localOpt_ : new OptionMap()), base(0), looper(0), sel(0) {}
 		
 		//destructor
 		virtual ~KChecker() {}
@@ -32,7 +30,7 @@ class KChecker {
 		//accessors
 		string GetName() { return name; }
 		virtual void SetSelection(KSelection* sel_) { sel = sel_; CheckDeps(); } //set dependencies here if desired
-		virtual void SetBase(KBase* base_) { base = base_; looper = base->GetLooper(); CheckBase(); } //get looper from base
+		virtual void SetBase(KBase* base_); //implemented in KBase.h to avoid circular dependency
 		
 		//to check dependencies on other selectors
 		virtual void CheckDeps() {}

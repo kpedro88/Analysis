@@ -6,6 +6,7 @@
 #include "KCommonSelectors.h"
 #include "KMath.h"
 #include "KPlot.h"
+#include "KHisto.h"
 #include "../corrections/EventListFilter.h"
 
 //ROOT headers
@@ -37,6 +38,12 @@ using namespace std;
 void KRA2BinSelector::CheckDeps(){
 }
 void KRA2BinSelector::CheckBase(){
+}
+double KHisto::GetWeight(){
+	return 1.;
+}
+double KHisto::GetWeightPerJet(unsigned index){
+	return 1.;
 }
 
 //----------------------------------------------------
