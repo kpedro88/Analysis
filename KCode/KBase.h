@@ -8,7 +8,6 @@
 #include "KLegend.h"
 #include "KStyle.h"
 #include "KCutflow.h"
-#include "KHisto.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -116,24 +115,7 @@ class KBase {
 		void SetSelection(KSelection* sel_); //defined in KSelection.h
 		KSelection* GetSelection() { return MySelection; }
 		//add a blank histo for future building
-		virtual TH1* AddHisto(string s, TH1* h, OptionMap* omap=NULL){
-			//avoid re-adding
-			if(!GetHisto(s)){
-				stmp = s;
-				khtmp = NULL;
-				if(h){
-					htmp = (TH1*)h->Clone();
-					htmp->Sumw2();					
-				}
-				//KHisto will generate special histo automatically (if h==NULL)
-				//but don't make KHisto if no omap provided
-				if(omap) khtmp = new KHisto(s,omap,h,this);
-				if(!htmp and khtmp) htmp = khtmp->GetHisto();
-				MyHistos.Add(stmp,htmp);
-				if(khtmp) MyKHistos.Add(stmp,khtmp);
-			}
-			return htmp;
-		}
+		virtual TH1* AddHisto(string s, TH1* h, OptionMap* omap=NULL);
 		//gets current histo
 		virtual TH1* GetHisto(){ return htmp; }
 		//gets current histo name

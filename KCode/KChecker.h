@@ -3,7 +3,6 @@
 
 //custom headers
 #include "KMap.h"
-#include "KBase.h"
 
 //STL headers
 #include <string>

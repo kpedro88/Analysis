@@ -6,6 +6,7 @@
 #include "KChecker.h"
 #include "KFactory.h"
 #include "KParser.h"
+#include "KBase.h"
 
 //ROOT headers
 #include <TH1.h>
@@ -301,6 +302,26 @@ class KHisto : public KChecker {
 
 double KJetFiller::GetWeight(unsigned index){
 	return khtmp->GetWeightPerJet(index);
+}
+
+//avoid circular dependency
+TH1* KBase::AddHisto(string s, TH1* h, OptionMap* omap){
+	//avoid re-adding
+	if(!GetHisto(s)){
+		stmp = s;
+		khtmp = NULL;
+		if(h){
+			htmp = (TH1*)h->Clone();
+			htmp->Sumw2();					
+		}
+		//KHisto will generate special histo automatically (if h==NULL)
+		//but don't make KHisto if no omap provided
+		if(omap) khtmp = new KHisto(s,omap,h,this);
+		if(!htmp and khtmp) htmp = khtmp->GetHisto();
+		MyHistos.Add(stmp,htmp);
+		if(khtmp) MyKHistos.Add(stmp,khtmp);
+	}
+	return htmp;
 }
 
 #endif

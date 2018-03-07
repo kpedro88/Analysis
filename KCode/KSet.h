@@ -4,6 +4,7 @@
 //custom headers
 #include "KMap.h"
 #include "KBase.h"
+#include "KHisto.h"
 #include "KLegend.h"
 
 //ROOT headers
