@@ -995,7 +995,7 @@ class KDarkHadronSelector : public KSelector {
 		}
 		virtual void CheckBranches(){
 			looper->fChain->SetBranchStatus("JetsAK8",1);
-			looper->fChain->SetBranchStatus("JetsAK8_subjets",1);
+			if(useSubjets) looper->fChain->SetBranchStatus("JetsAK8_subjets",1);
 			looper->fChain->SetBranchStatus("GenParticles",1);
 			looper->fChain->SetBranchStatus("GenParticles_PdgId",1);
 			looper->fChain->SetBranchStatus("GenParticles_ParentId",1);
