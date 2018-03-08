@@ -1,0 +1,11 @@
+OPTION
+string+:rocsuffix[_fwmAK8]
+vstring:disable_branches[*]
+vstring:enable_branches[Jets]
+
+HISTO
+fwm1AK8	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[Fox-Wolfram Moment 1 (AK8)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kGray + 1]
+fwm2AK8	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[Fox-Wolfram Moment 2 (AK8)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlack]
+fwm3AK8	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[Fox-Wolfram Moment 3 (AK8)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+fwm4AK8	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[Fox-Wolfram Moment 4 (AK8)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kMagenta + 2]
+fwm5AK8	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[Fox-Wolfram Moment 5 (AK8)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kRed]

@@ -39,7 +39,7 @@ COMMANDS=(
 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV14/Skims/tree_'${SEL}'",{"input/input_svj_hist.txt","input/input_svj_rocs_event2.txt","input/input_svj_rocs_sets.txt"},{"OPTION","string:rootfile['${FILES[2]}']"},0)' \
 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV14/Skims/tree_'${SEL}'",{"input/input_svj_hist.txt","input/input_svj_rocs_thirdjet.txt","input/input_svj_rocs_sets.txt"},{"OPTION","string:rootfile['${FILES[3]}']"},0)' \
 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV14/Skims/tree_'${SEL}'",{"input/input_svj_hist.txt","input/input_svj_rocs_bothjet.txt","input/input_svj_rocs_sets.txt","input/input_svj_flatten_bothjet.txt"},{"OPTION","string:rootfile['${FILES[4]}']"},0)' \
-'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV14/Skims/tree_'${SEL}'",{"input/input_svj_hist.txt","input/input_svj_eventshape.txt","input/input_svj_rocs_shapeAK4.txt","input/input_svj_rocs_shapeAK8.txt","input/input_svj_rocs_sets.txt"},{"OPTION","string:rootfile['${FILES[5]}']"},0)' \
+'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV14/Skims/tree_'${SEL}'",{"input/input_svj_hist.txt","input/input_svj_eventshape.txt","input/input_svj_rocs_shapeAK4.txt","input/input_svj_rocs_fwmAK4.txt","input/input_svj_rocs_shapeAK8.txt","input/input_svj_rocs_fwmAK8.txt","input/input_svj_rocs_sets.txt"},{"OPTION","string:rootfile['${FILES[5]}']"},0)' \
 )
 
 PIDS=()

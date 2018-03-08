@@ -1,0 +1,11 @@
+OPTION
+string+:rocsuffix[_fwmAK4]
+vstring:disable_branches[*]
+vstring:enable_branches[Jets]
+
+HISTO
+fwm1	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[Fox-Wolfram Moment 1 (AK4)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kGray + 1]
+fwm2	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[Fox-Wolfram Moment 2 (AK4)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlack]
+fwm3	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[Fox-Wolfram Moment 3 (AK4)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+fwm4	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[Fox-Wolfram Moment 4 (AK4)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kMagenta + 2]
+fwm5	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[Fox-Wolfram Moment 5 (AK4)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kRed]
