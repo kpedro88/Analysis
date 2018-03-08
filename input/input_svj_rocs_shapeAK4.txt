@@ -1,7 +1,6 @@
 OPTION
 string+:rocsuffix[_shapeAK4]
 vstring:disable_branches[*]
-vstring:enable_branches[Jets]
 
 HISTO
 boost	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[z boost (AK4)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kGray + 1]

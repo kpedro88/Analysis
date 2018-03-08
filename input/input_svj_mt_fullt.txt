@@ -1,6 +1,5 @@
 OPTION
 vstring:disable_branches[*]
-vstring:enable_branches[JetsAK8,DeltaPhiMin_AK8,MET,METPhi,METSignificance]
 vstring:selections[fullt]
 string+:printsuffix[_fullt]
 

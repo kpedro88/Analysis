@@ -1,7 +1,6 @@
 OPTION
 string+:rocsuffix[_thirdjet]
 vstring:disable_branches[*]
-vstring:enable_branches[JetsAK8,JetsAK8_softDropMass]
 
 HISTO
 thirdjetAK8pt	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}(j_{3}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlack]

@@ -1,6 +1,5 @@
 OPTION
 vstring:disable_branches[*]
-vstring:enable_branches[DeltaPhiMin_AK8,MT_AK8,METSignificance,MET]
 
 HISTO
 deltaphiminAK8	i:xnum[100]	d:xmin[0]	d:xmax[3.15]	s:xtitle[#Delta#phi_{min}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlack]

@@ -1,6 +1,5 @@
 OPTION
 vstring:disable_branches[*]
-vstring:enable_branches[DeltaPhiMin_AK8,MT_AK8,METSignificance,MET]
 vstring:selections[full]
 string+:printsuffix[_full]
 bool:debugcut[1]
