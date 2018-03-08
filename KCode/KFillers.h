@@ -235,13 +235,13 @@ class KFiller_nisotrack : public KFiller {
 REGISTER_FILLER(nisotrack);
 
 //# good vertices
-class KFiller_nvtx : public KFiller {
+class KFiller_nvertex : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"NVtx"}; }
 		virtual void Fill(KValue& value, double w) { value.Fill(looper->NVtx,w); }
 };
-REGISTER_FILLER(nvtx);
+REGISTER_FILLER(nvertex);
 
 //# interactions
 class KFiller_numint : public KFiller {
