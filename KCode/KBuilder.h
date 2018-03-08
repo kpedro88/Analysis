@@ -50,8 +50,8 @@ class KBuilder : public KLooper {
 			//check if we have a reason to loop
 			bool all_special = true;
 			//assume all bases have same list of histos
-			for(auto& sit : MyBases[0]->GetTable()){
-				all_special &= MyBases[0]->CheckSpecialHistos(sit.first,false);
+			for(auto& hit : MyBases[0]->GetKTable()){
+				all_special &= hit.second->IsSpecial();
 			}
 			if(all_special) return;
 			

@@ -17,6 +17,7 @@
 //STL headers
 #include <vector>
 #include <string>
+#include <array>
 
 using namespace std;
 
@@ -64,7 +65,7 @@ class KFiller : public KChecker {
 		virtual void CheckBranches(){
 			ListBranches();
 			for(const auto& branch : branches){
-				looper->fChain->SetBranchStatus(branch,1);
+				looper->fChain->SetBranchStatus(branch.c_str(),1);
 			}
 		}
 		virtual void ListBranches() {} //derived classes use this to fill branch list
@@ -116,8 +117,8 @@ typedef KFactory<KFiller,string,OptionMap*,KHisto*,vector<unsigned>> KJetFillerF
 class KHisto : public KChecker {
 	public:
 		//constructors
-		KHisto() : KChecker(), special(false), MCWeight(0), FakeHLT(0) {}
-		KHisto(string name_, OptionMap* localOpt_, TH1* htmp_, KBase* base_) : KChecker(name_, localOpt_), htmp(htmp_), special(false), MCWeight(0), FakeHLT(0) {
+		KHisto() : KChecker(), isSpecial(false), MCWeight(0), FakeHLT(0) {}
+		KHisto(string name_, OptionMap* localOpt_, TH1* htmp_, KBase* base_) : KChecker(name_, localOpt_), htmp(htmp_), isSpecial(false), MCWeight(0), FakeHLT(0) {
 			vector<string> vars;
 			if(!localOpt->Get("vars",vars)){
 				//split up histo variables from name (if not otherwise specified)
@@ -273,8 +274,8 @@ class KHisto : public KChecker {
 		}
 		
 		//deal with special histos
-		static constexpr array<string,3> specials{"cutflowRaw","cutflowAbs","cutflowRel"};
 		static bool IsSpecial(const string& s){
+			static const array<string,3> specials{"cutflowRaw","cutflowAbs","cutflowRel"};
 			for(const auto& special: specials){
 				if(s==special) return true;
 			}
@@ -305,6 +306,7 @@ double KJetFiller::GetWeight(unsigned index){
 }
 
 //avoid circular dependency
+//add a blank histo for future building
 TH1* KBase::AddHisto(string s, TH1* h, OptionMap* omap){
 	//avoid re-adding
 	if(!GetHisto(s)){
@@ -323,5 +325,11 @@ TH1* KBase::AddHisto(string s, TH1* h, OptionMap* omap){
 	}
 	return htmp;
 }
-
+//in case of normalization to yield or other scaling
+void KBase::Normalize(double nn, bool toYield){
+	if(khtmp->IsSpecial()) return;
+	double simyield = htmp->GetDimension()==2 ? ((TH2*)htmp)->Integral(0,htmp->GetNbinsX()+1,0,htmp->GetNbinsY()+1) : htmp->Integral(0,htmp->GetNbinsX()+1);
+	if(toYield) htmp->Scale(nn/simyield);
+	else htmp->Scale(nn);
+}
 #endif

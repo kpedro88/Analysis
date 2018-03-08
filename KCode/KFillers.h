@@ -73,7 +73,7 @@ class KFiller_RA2bin : public KFiller {
 REGISTER_FILLER(RA2bin);
 
 //jet multiplicity
-KFiller_njets : public KFiller {
+class KFiller_njets : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"NJets"}; }
@@ -82,7 +82,7 @@ KFiller_njets : public KFiller {
 REGISTER_FILLER(njets);
 
 //ISR jet multiplicity
-KFiller_njetsisr : public KFiller {
+class KFiller_njetsisr : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"NJetsISR"}; }
@@ -91,7 +91,7 @@ KFiller_njetsisr : public KFiller {
 REGISTER_FILLER(njetsisr);
 
 //b-jet multiplicity
-KFiller_nbjets : public KFiller {
+class KFiller_nbjets : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void CheckDeps(){
@@ -119,7 +119,7 @@ REGISTER_FILLER(nbjets);
 
 //-----------------------------------------------------------------------------
 //for hemispheres
-KFillerHemi : public KFiller {
+class KFillerHemi : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void CheckDeps(){ Hemisphere = sel->Get<KHemisphereSelector*>("Hemisphere"); }
@@ -127,10 +127,10 @@ KFillerHemi : public KFiller {
 		virtual void Fill_(KValue& value, double w) {}
 		//member variables
 		KHemisphereSelector* Hemisphere = NULL;
-}
+};
 
 //jet multiplicity
-KFiller_njetshemi : public KFillerHemi {
+class KFiller_njetshemi : public KFillerHemi {
 	public:
 		using KFillerHemi::KFillerHemi;
 		virtual void Fill_(KValue& value, double w) { value.Fill(Hemisphere->NJets,w); }
@@ -138,7 +138,7 @@ KFiller_njetshemi : public KFillerHemi {
 REGISTER_FILLER(njetshemi);
 
 //b-jet multiplicity
-KFiller_nbjetshemi : public KFillerHemi {
+class KFiller_nbjetshemi : public KFillerHemi {
 	public:
 		using KFillerHemi::KFillerHemi;
 		virtual void Fill_(KValue& value, double w) { value.Fill(Hemisphere->BTags,w); }
@@ -146,7 +146,7 @@ KFiller_nbjetshemi : public KFillerHemi {
 REGISTER_FILLER(nbjetshemi);
 
 //jet multiplicity
-KFiller_njetsopphemi : public KFillerHemi {
+class KFiller_njetsopphemi : public KFillerHemi {
 	public:
 		using KFillerHemi::KFillerHemi;
 		virtual void Fill_(KValue& value, double w) { value.Fill(Hemisphere->NJetsOpp,w); }
@@ -154,7 +154,7 @@ KFiller_njetsopphemi : public KFillerHemi {
 REGISTER_FILLER(njetsopphemi);
 
 //b-jet multiplicity
-KFiller_nbjetsopphemi : public KFillerHemi {
+class KFiller_nbjetsopphemi : public KFillerHemi {
 	public:
 		using KFillerHemi::KFillerHemi;
 		virtual void Fill_(KValue& value, double w) { value.Fill(Hemisphere->BTagsOpp,w); }
@@ -163,7 +163,7 @@ REGISTER_FILLER(nbjetsopphemi);
 
 //-----------------------------------------------------------------------------
 //sum of jet pt
-KFiller_ht : public KFiller {
+class KFiller_ht : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"HT"}; }		
@@ -172,7 +172,7 @@ KFiller_ht : public KFiller {
 REGISTER_FILLER(ht);
 
 //missing hadronic energy
-KFiller_mht : public KFiller {
+class KFiller_mht : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"MHT"}; }
@@ -181,7 +181,7 @@ KFiller_mht : public KFiller {
 REGISTER_FILLER(mht);
 
 //missing hadronic energy
-KFiller_genmht : public KFiller {
+class KFiller_genmht : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"GenMHT"}; }
@@ -190,7 +190,7 @@ KFiller_genmht : public KFiller {
 REGISTER_FILLER(genmht);
 
 //missing energy
-KFiller_met : public KFiller {
+class KFiller_met : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"MET"}; }
@@ -199,7 +199,7 @@ KFiller_met : public KFiller {
 REGISTER_FILLER(met);
 
 //# leptons (mu or ele)
-KFiller_nleptons : public KFiller {
+class KFiller_nleptons : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"NMuons","NElectrons"}; }
@@ -208,7 +208,7 @@ KFiller_nleptons : public KFiller {
 REGISTER_FILLER(nleptons);
 
 //# electrons
-KFiller_nelectrons : public KFiller {
+class KFiller_nelectrons : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"NElectrons"}; }
@@ -217,7 +217,7 @@ KFiller_nelectrons : public KFiller {
 REGISTER_FILLER(nelectrons);
 
 //# muons
-KFiller_nmuons : public KFiller {
+class KFiller_nmuons : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"NMuons"}; }
@@ -226,7 +226,7 @@ KFiller_nmuons : public KFiller {
 REGISTER_FILLER(nmuons);
 
 //# iso tracks
-KFiller_nisotrack : public KFiller {
+class KFiller_nisotrack : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"isoElectronTracks","isoMuonTracks","isoPionTracks"}; }
@@ -235,7 +235,7 @@ KFiller_nisotrack : public KFiller {
 REGISTER_FILLER(nisotrack);
 
 //# good vertices
-KFiller_nvtx : public KFiller {
+class KFiller_nvtx : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"NVtx"}; }
@@ -244,7 +244,7 @@ KFiller_nvtx : public KFiller {
 REGISTER_FILLER(nvtx);
 
 //# interactions
-KFiller_numint : public KFiller {
+class KFiller_numint : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"NumInteractions"}; }
@@ -253,7 +253,7 @@ KFiller_numint : public KFiller {
 REGISTER_FILLER(numint);
 
 //madgraph HT
-KFiller_madht : public KFiller {
+class KFiller_madht : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"madHT"}; }
@@ -262,7 +262,7 @@ KFiller_madht : public KFiller {
 REGISTER_FILLER(madht);
 
 //pT of leading jet
-KFiller_leadjetpt : public KFiller {
+class KFiller_leadjetpt : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"Jets"}; }
@@ -271,7 +271,7 @@ KFiller_leadjetpt : public KFiller {
 REGISTER_FILLER(leadjetpt);
 
 //ratio of MHT & pT of leading jet
-KFiller_mhtleadjetptratio : public KFiller {
+class KFiller_mhtleadjetptratio : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"Jets","MHT"}; }
@@ -280,7 +280,7 @@ KFiller_mhtleadjetptratio : public KFiller {
 REGISTER_FILLER(mhtleadjetptratio);
 
 //ratio of MET & pT of leading jet
-KFiller_metleadjetptratio : public KFiller {
+class KFiller_metleadjetptratio : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"Jets","MET"}; }
@@ -289,7 +289,7 @@ KFiller_metleadjetptratio : public KFiller {
 REGISTER_FILLER(metleadjetptratio);
 
 //pT of leading jet w/ hadronFlavor==5, |eta|<2.4
-KFiller_leadbhadronjetpt : public KFiller {
+class KFiller_leadbhadronjetpt : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"Jets","Jets_hadronFlavor"}; }
@@ -305,7 +305,7 @@ KFiller_leadbhadronjetpt : public KFiller {
 REGISTER_FILLER(leadbhadronjetpt);
 
 //deltaphi of leading jet
-KFiller_deltaphi1 : public KFiller {
+class KFiller_deltaphi1 : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"DeltaPhi1"}; }
@@ -314,7 +314,7 @@ KFiller_deltaphi1 : public KFiller {
 REGISTER_FILLER(deltaphi1);
 
 //deltaphi of 2nd jet
-KFiller_deltaphi2 : public KFiller {
+class KFiller_deltaphi2 : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"DeltaPhi2"}; }
@@ -323,7 +323,7 @@ KFiller_deltaphi2 : public KFiller {
 REGISTER_FILLER(deltaphi2);
 
 //deltaphi of 3rd jet
-KFiller_deltaphi3 : public KFiller {
+class KFiller_deltaphi3 : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"DeltaPhi3"}; }
@@ -332,7 +332,7 @@ KFiller_deltaphi3 : public KFiller {
 REGISTER_FILLER(deltaphi3);
 
 //deltaphi of 4th jet
-KFiller_deltaphi4 : public KFiller {
+class KFiller_deltaphi4 : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"DeltaPhi4"}; }
@@ -341,7 +341,7 @@ KFiller_deltaphi4 : public KFiller {
 REGISTER_FILLER(deltaphi4);
 
 //difference between mMother and mLSP
-KFiller_deltam : public KFiller {
+class KFiller_deltam : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void CheckBase(){ deltaM = 0; base->GetLocalOpt()->Get("deltaM",deltaM); }
@@ -352,7 +352,7 @@ KFiller_deltam : public KFiller {
 REGISTER_FILLER(deltam);
 
 //pT of each mother particle
-KFiller_motherpt : public KFiller {
+class KFiller_motherpt : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"GenParticles","GenParticles_PdgId"}; }
@@ -371,7 +371,7 @@ KFiller_motherpt : public KFiller {
 REGISTER_FILLER(motherpt);
 
 //pT of mother particle system recoiling against ISR jets
-KFiller_recoil : public KFiller {
+class KFiller_recoil : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"GenParticles","GenParticles_PdgId"}; }
@@ -393,7 +393,7 @@ KFiller_recoil : public KFiller {
 REGISTER_FILLER(recoil);
 
 //delta phi of mother particle system with MHT
-KFiller_deltaphirecoil : public KFiller {
+class KFiller_deltaphirecoil : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"GenParticles","GenParticles_PdgId","MHTPhi"}; }
@@ -415,10 +415,10 @@ KFiller_deltaphirecoil : public KFiller {
 REGISTER_FILLER(deltaphirecoil);
 
 //sigma ieta ieta variable for all photon candidates
-KFiller_sigmaietaieta : public KFiller {
+class KFiller_sigmaietaieta : public KFiller {
 	public:
 		using KFiller::KFiller;
-		virtual void CheckDeps(){ PhotonID = sel->Get<KBTagSFSelector*>("PhotonID"); }
+		virtual void CheckDeps(){ PhotonID = sel->Get<KPhotonIDSelector*>("PhotonID"); }
 		virtual void ListBranches() { branches = {"Photons_sigmaIetaIeta"}; }
 		virtual void Fill(KValue& value, double w) {
 			if(PhotonID){
@@ -438,7 +438,7 @@ KFiller_sigmaietaieta : public KFiller {
 REGISTER_FILLER(sigmaietaieta);
 
 //sigma ieta ieta variable for best photon
-KFiller_bestsigmaietaieta : public KFiller {
+class KFiller_bestsigmaietaieta : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"Photons","Photons_sigmaIetaIeta"}; }
@@ -457,7 +457,7 @@ KFiller_bestsigmaietaieta : public KFiller {
 REGISTER_FILLER(bestsigmaietaieta);
 
 //RMS of PDF weights
-KFiller_pdfrms : public KFiller {
+class KFiller_pdfrms : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"PDFweights"}; }
@@ -466,7 +466,7 @@ KFiller_pdfrms : public KFiller {
 REGISTER_FILLER(pdfrms);
 
 //all PDF weights
-KFiller_pdfweight : public KFiller {
+class KFiller_pdfweight : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"PDFweights"}; }
@@ -480,7 +480,7 @@ REGISTER_FILLER(pdfweight);
 
 //-----------------------------------------------------------------------------
 //jet ID quantities... (w/ optional eta region specification)
-KFillerJetID : public KFiller {
+class KFillerJetID : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void CheckDeps(){ JetEtaRegion = sel->Get<KJetEtaRegionSelector*>("JetEtaRegion"); }
@@ -494,9 +494,9 @@ KFillerJetID : public KFiller {
 		virtual void Fill_(KValue& value, double w, unsigned j) {}
 		//member variables
 		KJetEtaRegionSelector* JetEtaRegion = NULL;
-}
+};
 
-KFiller_neufrac : public KFillerJetID {
+class KFiller_neufrac : public KFillerJetID {
 	public:
 		using KFillerJetID::KFillerJetID;
 		virtual void ListBranches_() { branches.push_back("Jets_neutralHadronEnergyFraction"); }
@@ -504,7 +504,7 @@ KFiller_neufrac : public KFillerJetID {
 };
 REGISTER_FILLER(neufrac);
 
-KFiller_phofrac : public KFillerJetID {
+class KFiller_phofrac : public KFillerJetID {
 	public:
 		using KFillerJetID::KFillerJetID;
 		virtual void ListBranches_() { branches.push_back("Jets_photonEnergyFraction"); }
@@ -512,7 +512,7 @@ KFiller_phofrac : public KFillerJetID {
 };
 REGISTER_FILLER(phofrac);
 
-KFiller_chgfrac : public KFillerJetID {
+class KFiller_chgfrac : public KFillerJetID {
 	public:
 		using KFillerJetID::KFillerJetID;
 		virtual void ListBranches_() { branches.push_back("Jets_chargedHadronEnergyFraction"); }
@@ -520,7 +520,7 @@ KFiller_chgfrac : public KFillerJetID {
 };
 REGISTER_FILLER(chgfrac);
 
-KFiller_chgemfrac : public KFillerJetID {
+class KFiller_chgemfrac : public KFillerJetID {
 	public:
 		using KFillerJetID::KFillerJetID;
 		virtual void ListBranches_() { branches.push_back("Jets_chargedEmEnergyFraction"); }
@@ -528,7 +528,7 @@ KFiller_chgemfrac : public KFillerJetID {
 };
 REGISTER_FILLER(chgemfrac);
 
-KFiller_chgmulti : public KFillerJetID {
+class KFiller_chgmulti : public KFillerJetID {
 	public:
 		using KFillerJetID::KFillerJetID;
 		virtual void ListBranches_() { branches.push_back("Jets_chargedMultiplicity"); }
@@ -536,7 +536,7 @@ KFiller_chgmulti : public KFillerJetID {
 };
 REGISTER_FILLER(chgmulti);
 
-KFiller_neumulti : public KFillerJetID {
+class KFiller_neumulti : public KFillerJetID {
 	public:
 		using KFillerJetID::KFillerJetID;
 		virtual void ListBranches_() { branches.push_back("Jets_neutralMultiplicity"); }
@@ -544,7 +544,7 @@ KFiller_neumulti : public KFillerJetID {
 };
 REGISTER_FILLER(neumulti);
 
-KFiller_nconstit : public KFillerJetID {
+class KFiller_nconstit : public KFillerJetID {
 	public:
 		using KFillerJetID::KFillerJetID;
 		virtual void ListBranches_() { branches.push_back("Jets_chargedMultiplicity"); branches.push_back("Jets_neutralMultiplicity"); }
@@ -554,7 +554,7 @@ REGISTER_FILLER(nconstit);
 
 //-----------------------------------------------------------------------------
 //transverse mass
-KFiller_MTAK8 : public KFiller {
+class KFiller_MTAK8 : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"MT_AK8"}; }
@@ -563,7 +563,7 @@ KFiller_MTAK8 : public KFiller {
 REGISTER_FILLER(MTAK8);
 
 //dijet mass
-KFiller_MJJAK8 : public KFiller {
+class KFiller_MJJAK8 : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"MJJ_AK8"}; }
@@ -572,7 +572,7 @@ KFiller_MJJAK8 : public KFiller {
 REGISTER_FILLER(MJJAK8);
 
 //transverse mass from softdrop
-KFiller_MTSDAK8 : public KFiller {
+class KFiller_MTSDAK8 : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"JetsAK8_subjets","MET","METPhi"}; }	
@@ -592,7 +592,7 @@ KFiller_MTSDAK8 : public KFiller {
 REGISTER_FILLER(MTSDAK8);
 
 //dijet+truth mass
-KFiller_MmcAK8 : public KFiller {
+class KFiller_MmcAK8 : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"Mmc_AK8"}; }
@@ -601,7 +601,7 @@ KFiller_MmcAK8 : public KFiller {
 REGISTER_FILLER(MmcAK8);
 
 //deta(j1,j2)
-KFiller_deltaetaAK8 : public KFiller {
+class KFiller_deltaetaAK8 : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"JetsAK8"}; }
@@ -610,7 +610,7 @@ KFiller_deltaetaAK8 : public KFiller {
 REGISTER_FILLER(deltaetaAK8);
 
 //dphi(j1,MET)
-KFiller_deltaphi1AK8 : public KFiller {
+class KFiller_deltaphi1AK8 : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"DeltaPhi1_AK8"}; }
@@ -619,7 +619,7 @@ KFiller_deltaphi1AK8 : public KFiller {
 REGISTER_FILLER(deltaphi1AK8);
 
 //dphi(j2,MET)
-KFiller_deltaphi2AK8 : public KFiller {
+class KFiller_deltaphi2AK8 : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"DeltaPhi2_AK8"}; }
@@ -628,7 +628,7 @@ KFiller_deltaphi2AK8 : public KFiller {
 REGISTER_FILLER(deltaphi2AK8);
 
 //min dphi(j1/2,MET)
-KFiller_deltaphiminAK8 : public KFiller {
+class KFiller_deltaphiminAK8 : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"DeltaPhiMin_AK8"}; }
@@ -637,7 +637,7 @@ KFiller_deltaphiminAK8 : public KFiller {
 REGISTER_FILLER(deltaphiminAK8);
 
 //AK8 dijet pT asymmetry
-KFiller_ptAsymAK8 : public KFiller {
+class KFiller_ptAsymAK8 : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"JetsAK8"}; }
@@ -646,7 +646,7 @@ KFiller_ptAsymAK8 : public KFiller {
 REGISTER_FILLER(ptAsymAK8);
 
 //AK8 dijet m_sd asymmetry
-KFiller_msdAsymAK8 : public KFiller {
+class KFiller_msdAsymAK8 : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"JetsAK8_softDropMass"}; }
@@ -657,7 +657,7 @@ KFiller_msdAsymAK8 : public KFiller {
 REGISTER_FILLER(msdAsymAK8);
 
 //HT from AK8 jets
-KFiller_htAK8 : public KFiller {
+class KFiller_htAK8 : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"JetsAK8"}; }
@@ -672,7 +672,7 @@ KFiller_htAK8 : public KFiller {
 REGISTER_FILLER(htAK8);
 
 //number of AK8 jets
-KFiller_njetsAK8 : public KFiller {
+class KFiller_njetsAK8 : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"JetsAK8"}; }
@@ -687,7 +687,7 @@ KFiller_njetsAK8 : public KFiller {
 REGISTER_FILLER(njetsAK8);
 
 //MET/MT
-KFiller_metMTratio : public KFiller {
+class KFiller_metMTratio : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"MET","MT_AK8"}; }
@@ -696,7 +696,7 @@ KFiller_metMTratio : public KFiller {
 REGISTER_FILLER(metMTratio);
 
 //MET significance
-KFiller_metsig : public KFiller {
+class KFiller_metsig : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"METSignificance"}; }
@@ -705,7 +705,7 @@ KFiller_metsig : public KFiller {
 REGISTER_FILLER(metsig);
 
 //log(MET significance)
-KFiller_logmetsig : public KFiller {
+class KFiller_logmetsig : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"METSignificance"}; }
@@ -714,7 +714,7 @@ KFiller_logmetsig : public KFiller {
 REGISTER_FILLER(logmetsig);
 
 //gen MET
-KFiller_genmet : public KFiller {
+class KFiller_genmet : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void ListBranches() { branches = {"GenMET"}; }
@@ -724,7 +724,7 @@ REGISTER_FILLER(genmet);
 
 //-----------------------------------------------------------------------------
 //event shape quantities (from AK4 jets)
-KFillerEventShapeAK4 : public KFiller {
+class KFillerEventShapeAK4 : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void CheckDeps(){ EventShapeAK4 = sel->Get<KEventShapeSelector*>("EventShapeAK4"); }		
@@ -732,205 +732,205 @@ KFillerEventShapeAK4 : public KFiller {
 		virtual void Fill_(KValue& value, double w) {}
 		//member variables
 		KEventShapeSelector* EventShapeAK4 = NULL;
-}
+};
 
-KFiller_boost : public KFillerEventShapeAK4 {
+class KFiller_boost : public KFillerEventShapeAK4 {
 	public:
 		using KFillerEventShapeAK4::KFillerEventShapeAK4;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK4->boost,w); }
-}
+};
 REGISTER_FILLER(boost);
 
-KFiller_sphericity : public KFillerEventShapeAK4 {
+class KFiller_sphericity : public KFillerEventShapeAK4 {
 	public:
 		using KFillerEventShapeAK4::KFillerEventShapeAK4;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK4->sphericity,w); }
-}
+};
 REGISTER_FILLER(sphericity);
 
-KFiller_aplanarity : public KFillerEventShapeAK4 {
+class KFiller_aplanarity : public KFillerEventShapeAK4 {
 	public:
 		using KFillerEventShapeAK4::KFillerEventShapeAK4;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK4->aplanarity,w); }
-}
+};
 REGISTER_FILLER(aplanarity);
 
-KFiller_esvC : public KFillerEventShapeAK4 {
+class KFiller_esvC : public KFillerEventShapeAK4 {
 	public:
 		using KFillerEventShapeAK4::KFillerEventShapeAK4;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK4->esvC,w); }
-}
+};
 REGISTER_FILLER(esvC);
 
-KFiller_esvD : public KFillerEventShapeAK4 {
+class KFiller_esvD : public KFillerEventShapeAK4 {
 	public:
 		using KFillerEventShapeAK4::KFillerEventShapeAK4;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK4->esvD,w); }
-}
+};
 REGISTER_FILLER(esvD);
 
-KFiller_lambda1 : public KFillerEventShapeAK4 {
+class KFiller_lambda1 : public KFillerEventShapeAK4 {
 	public:
 		using KFillerEventShapeAK4::KFillerEventShapeAK4;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK4->lambda1,w); }
-}
+};
 REGISTER_FILLER(lambda1);
 
-KFiller_lambda2 : public KFillerEventShapeAK4 {
+class KFiller_lambda2 : public KFillerEventShapeAK4 {
 	public:
 		using KFillerEventShapeAK4::KFillerEventShapeAK4;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK4->lambda2,w); }
-}
+};
 REGISTER_FILLER(lambda2);
 
-KFiller_lambda3 : public KFillerEventShapeAK4 {
+class KFiller_lambda3 : public KFillerEventShapeAK4 {
 	public:
 		using KFillerEventShapeAK4::KFillerEventShapeAK4;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK4->lambda3,w); }
-}
+};
 REGISTER_FILLER(lambda3);
 
-KFiller_fwm1 : public KFillerEventShapeAK4 {
+class KFiller_fwm1 : public KFillerEventShapeAK4 {
 	public:
 		using KFillerEventShapeAK4::KFillerEventShapeAK4;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK4->fwm1,w); }
-}
+};
 REGISTER_FILLER(fwm1);
 
-KFiller_fwm2 : public KFillerEventShapeAK4 {
+class KFiller_fwm2 : public KFillerEventShapeAK4 {
 	public:
 		using KFillerEventShapeAK4::KFillerEventShapeAK4;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK4->fwm2,w); }
-}
+};
 REGISTER_FILLER(fwm2);
 
-KFiller_fwm3 : public KFillerEventShapeAK4 {
+class KFiller_fwm3 : public KFillerEventShapeAK4 {
 	public:
 		using KFillerEventShapeAK4::KFillerEventShapeAK4;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK4->fwm3,w); }
-}
+};
 REGISTER_FILLER(fwm3);
 
-KFiller_fwm4 : public KFillerEventShapeAK4 {
+class KFiller_fwm4 : public KFillerEventShapeAK4 {
 	public:
 		using KFillerEventShapeAK4::KFillerEventShapeAK4;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK4->fwm4,w); }
-}
+};
 REGISTER_FILLER(fwm4);
 
-KFiller_fwm5 : public KFillerEventShapeAK4 {
+class KFiller_fwm5 : public KFillerEventShapeAK4 {
 	public:
 		using KFillerEventShapeAK4::KFillerEventShapeAK4;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK4->fwm5,w); }
-}
+};
 REGISTER_FILLER(fwm5);
 
 //-----------------------------------------------------------------------------
 //event shape quantities (from AK8 jets)
-KFillerEventShapeAK8 : public KFiller {
+class KFillerEventShapeAK8 : public KFiller {
 	public:
 		using KFiller::KFiller;
 		virtual void CheckDeps(){ EventShapeAK8 = sel->Get<KEventShapeSelector*>("EventShapeAK8"); }
-		virtual void Fill(KValue& value, double w) { if(EventShapeAK4) Fill_(value,w); }
+		virtual void Fill(KValue& value, double w) { if(EventShapeAK8) Fill_(value,w); }
 		virtual void Fill_(KValue& value, double w) {}
 		//member variables
 		KEventShapeSelector* EventShapeAK8 = NULL;
-}
+};
 
-KFiller_boostAK8 : public KFillerEventShapeAK8 {
+class KFiller_boostAK8 : public KFillerEventShapeAK8 {
 	public:
 		using KFillerEventShapeAK8::KFillerEventShapeAK8;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK8->boost,w); }
-}
+};
 REGISTER_FILLER(boostAK8);
 
-KFiller_sphericityAK8 : public KFillerEventShapeAK8 {
+class KFiller_sphericityAK8 : public KFillerEventShapeAK8 {
 	public:
 		using KFillerEventShapeAK8::KFillerEventShapeAK8;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK8->sphericity,w); }
-}
+};
 REGISTER_FILLER(sphericityAK8);
 
-KFiller_aplanarityAK8 : public KFillerEventShapeAK8 {
+class KFiller_aplanarityAK8 : public KFillerEventShapeAK8 {
 	public:
 		using KFillerEventShapeAK8::KFillerEventShapeAK8;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK8->aplanarity,w); }
-}
+};
 REGISTER_FILLER(aplanarityAK8);
 
-KFiller_esvCAK8 : public KFillerEventShapeAK8 {
+class KFiller_esvCAK8 : public KFillerEventShapeAK8 {
 	public:
 		using KFillerEventShapeAK8::KFillerEventShapeAK8;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK8->esvC,w); }
-}
+};
 REGISTER_FILLER(esvCAK8);
 
-KFiller_esvDAK8 : public KFillerEventShapeAK8 {
+class KFiller_esvDAK8 : public KFillerEventShapeAK8 {
 	public:
 		using KFillerEventShapeAK8::KFillerEventShapeAK8;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK8->esvD,w); }
-}
+};
 REGISTER_FILLER(esvDAK8);
 
-KFiller_lambda1AK8 : public KFillerEventShapeAK8 {
+class KFiller_lambda1AK8 : public KFillerEventShapeAK8 {
 	public:
 		using KFillerEventShapeAK8::KFillerEventShapeAK8;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK8->lambda1,w); }
-}
+};
 REGISTER_FILLER(lambda1AK8);
 
-KFiller_lambda2AK8 : public KFillerEventShapeAK8 {
+class KFiller_lambda2AK8 : public KFillerEventShapeAK8 {
 	public:
 		using KFillerEventShapeAK8::KFillerEventShapeAK8;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK8->lambda2,w); }
-}
+};
 REGISTER_FILLER(lambda2AK8);
 
-KFiller_lambda3AK8 : public KFillerEventShapeAK8 {
+class KFiller_lambda3AK8 : public KFillerEventShapeAK8 {
 	public:
 		using KFillerEventShapeAK8::KFillerEventShapeAK8;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK8->lambda3,w); }
-}
+};
 REGISTER_FILLER(lambda3AK8);
 
-KFiller_fwm1AK8 : public KFillerEventShapeAK8 {
+class KFiller_fwm1AK8 : public KFillerEventShapeAK8 {
 	public:
 		using KFillerEventShapeAK8::KFillerEventShapeAK8;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK8->fwm1,w); }
-}
+};
 REGISTER_FILLER(fwm1AK8);
 
-KFiller_fwm2AK8 : public KFillerEventShapeAK8 {
+class KFiller_fwm2AK8 : public KFillerEventShapeAK8 {
 	public:
 		using KFillerEventShapeAK8::KFillerEventShapeAK8;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK8->fwm2,w); }
-}
+};
 REGISTER_FILLER(fwm2AK8);
 
-KFiller_fwm3AK8 : public KFillerEventShapeAK8 {
+class KFiller_fwm3AK8 : public KFillerEventShapeAK8 {
 	public:
 		using KFillerEventShapeAK8::KFillerEventShapeAK8;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK8->fwm3,w); }
-}
+};
 REGISTER_FILLER(fwm3AK8);
 
-KFiller_fwm4AK8 : public KFillerEventShapeAK8 {
+class KFiller_fwm4AK8 : public KFillerEventShapeAK8 {
 	public:
 		using KFillerEventShapeAK8::KFillerEventShapeAK8;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK8->fwm4,w); }
-}
+};
 REGISTER_FILLER(fwm4AK8);
 
-KFiller_fwm5AK8 : public KFillerEventShapeAK8 {
+class KFiller_fwm5AK8 : public KFillerEventShapeAK8 {
 	public:
 		using KFillerEventShapeAK8::KFillerEventShapeAK8;
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK8->fwm5,w); }
-}
+};
 REGISTER_FILLER(fwm5AK8);
 
 //-----------------------------------------------------------------------------
 //per-jet quantities
-KJetFiller_pt : public KJetFiller {
+class KJetFiller_pt : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
 		virtual void ListBranches() { branches = {"JetsAK8"}; }
@@ -938,7 +938,7 @@ KJetFiller_pt : public KJetFiller {
 };
 REGISTER_JETFILLER(pt);
 
-KJetFiller_eta : public KJetFiller {
+class KJetFiller_eta : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
 		virtual void ListBranches() { branches = {"JetsAK8"}; }
@@ -946,7 +946,7 @@ KJetFiller_eta : public KJetFiller {
 };
 REGISTER_JETFILLER(eta);
 
-KJetFiller_abseta : public KJetFiller {
+class KJetFiller_abseta : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
 		virtual void ListBranches() { branches = {"JetsAK8"}; }
@@ -954,7 +954,7 @@ KJetFiller_abseta : public KJetFiller {
 };
 REGISTER_JETFILLER(abseta);
 
-KJetFiller_mass : public KJetFiller {
+class KJetFiller_mass : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
 		virtual void ListBranches() { branches = {"JetsAK8"}; }
@@ -962,7 +962,7 @@ KJetFiller_mass : public KJetFiller {
 };
 REGISTER_JETFILLER(mass);
 
-KJetFiller_axisminor : public KJetFiller {
+class KJetFiller_axisminor : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
 		virtual void ListBranches() { branches = {"JetsAK8_axisminor"}; }
@@ -970,7 +970,7 @@ KJetFiller_axisminor : public KJetFiller {
 };
 REGISTER_JETFILLER(axisminor);
 
-KJetFiller_axismajor : public KJetFiller {
+class KJetFiller_axismajor : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
 		virtual void ListBranches() { branches = {"JetsAK8_axismajor"}; }
@@ -978,7 +978,7 @@ KJetFiller_axismajor : public KJetFiller {
 };
 REGISTER_JETFILLER(axismajor);
 
-KJetFiller_girth : public KJetFiller {
+class KJetFiller_girth : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
 		virtual void ListBranches() { branches = {"JetsAK8_girth"}; }
@@ -986,7 +986,7 @@ KJetFiller_girth : public KJetFiller {
 };
 REGISTER_JETFILLER(girth);
 
-KJetFiller_mhalf : public KJetFiller {
+class KJetFiller_mhalf : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
 		virtual void ListBranches() { branches = {"JetsAK8_momenthalf"}; }
@@ -994,7 +994,7 @@ KJetFiller_mhalf : public KJetFiller {
 };
 REGISTER_JETFILLER(mhalf);
 
-KJetFiller_mult : public KJetFiller {
+class KJetFiller_mult : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
 		virtual void ListBranches() { branches = {"JetsAK8_multiplicity"}; }
@@ -1002,7 +1002,7 @@ KJetFiller_mult : public KJetFiller {
 };
 REGISTER_JETFILLER(mult);
 
-KJetFiller_overflow : public KJetFiller {
+class KJetFiller_overflow : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
 		virtual void ListBranches() { branches = {"JetsAK8_overflow"}; }
@@ -1010,7 +1010,7 @@ KJetFiller_overflow : public KJetFiller {
 };
 REGISTER_JETFILLER(overflow);
 
-KJetFiller_ptD : public KJetFiller {
+class KJetFiller_ptD : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
 		virtual void ListBranches() { branches = {"JetsAK8_ptD"}; }
@@ -1019,7 +1019,7 @@ KJetFiller_ptD : public KJetFiller {
 REGISTER_JETFILLER(ptD);
 
 //derived substructure variables
-KJetFiller_tau21 : public KJetFiller {
+class KJetFiller_tau21 : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
 		virtual void ListBranches() { branches = {"JetsAK8_NsubjettinessTau1","JetsAK8_NsubjettinessTau2"}; }
@@ -1029,7 +1029,7 @@ KJetFiller_tau21 : public KJetFiller {
 };
 REGISTER_JETFILLER(tau21);
 
-KJetFiller_tau32 : public KJetFiller {
+class KJetFiller_tau32 : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
 		virtual void ListBranches() { branches = {"JetsAK8_NsubjettinessTau3","JetsAK8_NsubjettinessTau2"}; }
@@ -1039,7 +1039,7 @@ KJetFiller_tau32 : public KJetFiller {
 };
 REGISTER_JETFILLER(tau32);
 
-KJetFiller_msd : public KJetFiller {
+class KJetFiller_msd : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
 		virtual void ListBranches() { branches = {"JetsAK8_softDropMass"}; }
@@ -1047,7 +1047,7 @@ KJetFiller_msd : public KJetFiller {
 };
 REGISTER_JETFILLER(msd);
 
-KJetFiller_nsubjet : public KJetFiller {
+class KJetFiller_nsubjet : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
 		virtual void ListBranches() { branches = {"JetsAK8_subjets"}; }
@@ -1057,40 +1057,40 @@ REGISTER_JETFILLER(nsubjet);
 
 //-----------------------------------------------------------------------------
 //per-jet quantities based on dark hadron gen info
-KFillerDarkHadron : public KFiller {
+class KJetFillerDarkHadron : public KJetFiller {
 	public:
-		using KFiller::KFiller;
+		using KJetFiller::KJetFiller;
 		virtual void CheckDeps(){ DarkHadron = sel->Get<KDarkHadronSelector*>("DarkHadron"); }
 		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(DarkHadron) FillPerJet_(value,w,index); }
 		virtual void FillPerJet_(KValue& value, double w, unsigned index) {}
 		//member variables
 		KDarkHadronSelector* DarkHadron = NULL;
-}
+};
 
-KJetFiller_nstable : public KJetFillerDarkHadron {
+class KJetFiller_nstable : public KJetFillerDarkHadron {
 	public:
-		using KJetFiller::KJetFiller;
+		using KJetFillerDarkHadron::KJetFillerDarkHadron;
 		virtual void FillPerJet_(KValue& value, double w, unsigned index) { value.Fill(DarkHadron->n_stable[index],w); }
 };
 REGISTER_JETFILLER(nstable);
 
-KJetFiller_nunstable : public KJetFillerDarkHadron {
+class KJetFiller_nunstable : public KJetFillerDarkHadron {
 	public:
-		using KJetFiller::KJetFiller;
+		using KJetFillerDarkHadron::KJetFillerDarkHadron;
 		virtual void FillPerJet_(KValue& value, double w, unsigned index) { value.Fill(DarkHadron->n_unstable[index],w); }
 };
 REGISTER_JETFILLER(nunstable);
 
-KJetFiller_nvisible : public KJetFillerDarkHadron {
+class KJetFiller_nvisible : public KJetFillerDarkHadron {
 	public:
-		using KJetFiller::KJetFiller;
+		using KJetFillerDarkHadron::KJetFillerDarkHadron;
 		virtual void FillPerJet_(KValue& value, double w, unsigned index) { value.Fill(DarkHadron->n_visible[index],w); }
 };
 REGISTER_JETFILLER(nvisible);
 
-KJetFiller_rinv : public KJetFillerDarkHadron {
+class KJetFiller_rinv : public KJetFillerDarkHadron {
 	public:
-		using KJetFiller::KJetFiller;
+		using KJetFillerDarkHadron::KJetFillerDarkHadron;
 		virtual void FillPerJet_(KValue& value, double w, unsigned index) { value.Fill(DarkHadron->rinv[index],w); }
 };
 REGISTER_JETFILLER(rinv);

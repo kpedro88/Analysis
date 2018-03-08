@@ -114,7 +114,7 @@ class KBase {
 		KLooper* GetLooper() { return MyLooper; }
 		void SetSelection(KSelection* sel_); //defined in KSelection.h
 		KSelection* GetSelection() { return MySelection; }
-		//add a blank histo for future building
+		//implemented in KHisto.h
 		virtual TH1* AddHisto(string s, TH1* h, OptionMap* omap=NULL);
 		//gets current histo
 		virtual TH1* GetHisto(){ return htmp; }
@@ -183,13 +183,8 @@ class KBase {
 				htmp->SetBinError(b,htmp->GetBinError(b)/htmp->GetBinWidth(b));
 			}
 		}
-		//in case of normalization to yield or other scaling
-		virtual void Normalize(double nn, bool toYield=true){
-			if(CheckSpecialHistos(stmp,false)) return;
-			double simyield = htmp->GetDimension()==2 ? ((TH2*)htmp)->Integral(0,htmp->GetNbinsX()+1,0,htmp->GetNbinsY()+1) : htmp->Integral(0,htmp->GetNbinsX()+1);
-			if(toYield) htmp->Scale(nn/simyield);
-			else htmp->Scale(nn);
-		}
+		//implemented in KHisto.h
+		virtual void Normalize(double nn, bool toYield=true);
 		virtual void MakeCutflows(){
 			MyCutflow = new KCutflow(name,file);
 		}

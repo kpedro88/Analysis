@@ -45,6 +45,9 @@ double KHisto::GetWeight(){
 double KHisto::GetWeightPerJet(unsigned index){
 	return 1.;
 }
+//dummy classes
+class KMCWeightSelector : public KSelector {};
+class KFakeHLTSelector : public KSelector {};
 
 //----------------------------------------------------
 class KDijetSelector : public KSelector {

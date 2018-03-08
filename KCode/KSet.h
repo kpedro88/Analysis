@@ -54,7 +54,7 @@ class KSet : public KBase {
 			}
 			
 			//*does* make KHisto (for special histo filling)
-			if(!h) KBase::AddHisto(s,h,omap)
+			if(!h) KBase::AddHisto(s,h,omap);
 			
 			//formatting			
 			MyStyle->Format(htmp);
@@ -71,7 +71,7 @@ class KSet : public KBase {
 			//then loop to add up histos (only resetting current histo for children once)
 			for(auto& sit : MyHistos.GetTable()){
 				GetHisto(sit.first); //this will propagate to children
-				if(CheckSpecialHistos(sit.first,false)) continue; //don't hadd special histos
+				if(khtmp->IsSpecial()) continue; //don't hadd special histos
 				for(unsigned c = 0; c < children.size(); c++){ //include option to subtract histos, off by default
 					htmp->Add(children[c]->GetHisto(), children[c]->GetLocalOpt()->Get("subtract",false) ? -1 : 1);				
 				}
@@ -127,7 +127,7 @@ class KSet : public KBase {
 		}
 		//in case of normalization to yield or other scaling
 		virtual void Normalize(double nn, bool toYield=true){
-			if(CheckSpecialHistos(stmp,false)) return;
+			if(khtmp->IsSpecial()) return;
 			//first, normalize all children
 			for(unsigned c = 0; c < children.size(); c++){
 				children[c]->Normalize(nn,toYield);
@@ -448,14 +448,7 @@ class KSetMCStack : public KSet {
 				children[c]->PrintYield();
 			}
 		}
-		//check special status for children also
-		KBase* CheckSpecial(string special){
-			if(name==special) return (KBase*)this;
-			for(unsigned c = 0; c < children.size(); c++){
-				if(children[c]->GetName()==special) return children[c];
-			}
-			return NULL;
-		}
+
 		using KBase::SetStyle;
 		virtual void SetStyle(KMap<string>& allStyles, string styleName="") {
 			KBase::SetStyle(allStyles,"stack");

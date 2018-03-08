@@ -1058,28 +1058,6 @@ class KDarkHadronSelector : public KSelector {
 };
 REGISTER_SELECTOR(DarkHadron);
 
-//---------------------------------------------------------------
-//little class to store value & weight pairs for filling histos
-class KValue {
-	public:
-		//constructor
-		KValue() : values(0), weights(0) {}
-		//accessors
-		void Fill(double v, double w=1){
-			values.push_back(v);
-			weights.push_back(w);
-		}
-		double & GetValue(int iv) { return values[iv]; }
-		double & GetWeight(int iw) { return weights[iw]; }
-		int GetSize() { return values.size(); }
-		
-	protected:
-		//member variables
-		vector<double> values;
-		vector<double> weights;
-	
-};
-
 //----------------------------------------------------
 //final selector to fill histograms
 //(just calls KHisto methods)

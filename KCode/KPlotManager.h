@@ -9,6 +9,7 @@
 #include "KBuilder.h"
 #include "KBuilderSelectors.h"
 #include "KBuilderVariators.h"
+#include "KFillers.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -299,7 +300,7 @@ class KPlotManager : public KManager {
 					}
 				}
 				//special histos are prebuilt
-				if(KHisto::IsSpecialHisto(ntmp->fields[0])){
+				if(KHisto::IsSpecial(ntmp->fields[0])){
 					for(unsigned s = 0; s < MySets.size(); s++){
 						MySets[s]->AddHisto(ntmp->fields[0],NULL,omap);
 					}
@@ -359,14 +360,14 @@ class KPlotManager : public KManager {
 			//load histos into sets
 			for(auto& p : MyPlots.GetTable()){
 				for(unsigned s = 0; s < MySets.size(); s++){
-					MySets[s]->AddHisto(p.first,p.second->GetLocalOpt(),p.second->GetHisto());
+					MySets[s]->AddHisto(p.first,p.second->GetHisto(),p.second->GetLocalOpt());
 				}
 			}
 			for(auto& pm : MyPlots2D.GetTable()){
 				PlotMap* p2map = pm.second;
 				for(unsigned s = 0; s < MySets.size(); s++){
 					KPlot* ptmp = p2map->Get(MySets[s]->GetName());
-					if(ptmp) MySets[s]->AddHisto(pm.first,ptmp->GetLocalOpt(),ptmp->GetHisto());
+					if(ptmp) MySets[s]->AddHisto(pm.first,ptmp->GetHisto(),ptmp->GetLocalOpt());
 				}
 			}
 			
