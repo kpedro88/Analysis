@@ -71,7 +71,7 @@ class KSet : public KBase {
 			//then loop to add up histos (only resetting current histo for children once)
 			for(auto& sit : MyHistos.GetTable()){
 				GetHisto(sit.first); //this will propagate to children
-				if(khtmp->IsSpecial()) continue; //don't hadd special histos
+				if(khtmp and khtmp->IsSpecial()) continue; //don't hadd special histos
 				for(unsigned c = 0; c < children.size(); c++){ //include option to subtract histos, off by default
 					htmp->Add(children[c]->GetHisto(), children[c]->GetLocalOpt()->Get("subtract",false) ? -1 : 1);				
 				}

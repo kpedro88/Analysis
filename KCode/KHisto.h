@@ -318,7 +318,7 @@ TH1* KBase::AddHisto(string s, TH1* h, OptionMap* omap){
 		}
 		//KHisto will generate special histo automatically (if h==NULL)
 		//but don't make KHisto if no omap provided
-		if(omap) khtmp = new KHisto(s,omap,h,this);
+		if(omap) khtmp = new KHisto(s,omap,htmp,this);
 		if(!htmp and khtmp) htmp = khtmp->GetHisto();
 		MyHistos.Add(stmp,htmp);
 		if(khtmp) MyKHistos.Add(stmp,khtmp);
