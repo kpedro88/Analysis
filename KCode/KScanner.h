@@ -204,4 +204,15 @@ class KBaseScan : public KBase {
 };
 REGISTER_SET(KBaseScan,base,scan);
 
+//avoid circular dependency
+double KHisto::GetWeight(){
+	return 1.;
+}
+double KHisto::GetWeightPerJet(unsigned index){
+	return 1.;
+}
+//dummy classes
+class KMCWeightSelector : public KSelector {};
+class KFakeHLTSelector : public KSelector {};
+
 #endif
