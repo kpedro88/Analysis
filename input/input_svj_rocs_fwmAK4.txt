@@ -1,7 +1,6 @@
 OPTION
 string+:rocsuffix[_fwmAK4]
 vstring:disable_branches[*]
-vstring:enable_branches[Jets]
 
 HISTO
 fwm1	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[Fox-Wolfram Moment 1 (AK4)]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kGray + 1]

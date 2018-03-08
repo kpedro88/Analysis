@@ -1,7 +1,6 @@
 OPTION
 string+:rocsuffix[_event2]
 vstring:disable_branches[*]
-vstring:enable_branches[JetsAK8,JetsAK8_softDropMass]
 
 HISTO
 htAK8	i:xnum[150]	d:xmin[0]	d:xmax[6000]	s:xtitle[H_{T}^{AK8} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlack]

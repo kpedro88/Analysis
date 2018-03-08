@@ -149,7 +149,10 @@ class KPlot{
 			if(isInit) return isInit;
 			
 			//check for TProfile case
-			KParser::process(name,'_',vars);
+			if(!localOpt->Get("vars",vars)){
+				//split up histo variables from name (if not otherwise specified)
+				KParser::process(name,'_',vars);
+			}
 			histo = histo_;
 			if(!histo) CreateHist();
 			if(!histo) return isInit; //histo creation failed

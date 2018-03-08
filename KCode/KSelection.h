@@ -3,6 +3,7 @@
 
 //custom headers
 #include "KMap.h"
+#include "KChecker.h"
 #include "KBase.h"
 #include "KLooper.h"
 #include "KMath.h"
@@ -42,16 +43,11 @@ class KCutflowEntry {
 
 //----------------------------------------------------------------
 //base class for Selectors, has standard functions defined
-class KSelector {
+class KSelector : public KChecker {
 	public:
 		//constructor
-		KSelector() : name(""), localOpt(0), sel(0), looper(0), tree(0), counter(0), dummy(0), canfail(1), depfailed(0), forceadd(0), base(0) {
-			//must always have local option map
-			if(localOpt==0) localOpt = new OptionMap();
-		}
-		KSelector(string name_, OptionMap* localOpt_) : name(name_), localOpt(localOpt_), sel(0), looper(0), tree(0), counter(0), dummy(0), canfail(1), depfailed(0), forceadd(0), base(0) {
-			//must always have local option map
-			if(localOpt==0) localOpt = new OptionMap();
+		KSelector() : KChecker(), tree(0), counter(0), dummy(0), canfail(1), depfailed(0), forceadd(0) {}
+		KSelector(string name_, OptionMap* localOpt_) : KChecker(name_, localOpt_), tree(0), counter(0), dummy(0), canfail(1), depfailed(0), forceadd(0) {
 			dummy = localOpt->Get("dummy",false);
 			forceadd = localOpt->Get("forceadd",false);
 			//possible to change name from default
@@ -60,10 +56,7 @@ class KSelector {
 		//destructor
 		virtual ~KSelector() {}
 		//accessors
-		string GetName() { return name; }
-		virtual void SetSelection(KSelection* sel_) { sel = sel_; CheckDeps(); } //set dependencies here if desired
 		virtual void SetTree(TTree* tree_) { tree = tree_; SetBranches(); } //set tree branches here if desired
-		virtual void SetBase(KBase* base_) { base = base_; looper = base->GetLooper(); CheckBase(); }
 		int GetCounter() { return counter; }
 		bool Dummy() { return dummy; }
 		bool CanFail() { return canfail; }
@@ -85,23 +78,12 @@ class KSelector {
 		}
 		//to set tree branches
 		virtual void SetBranches() {}
-		//to check dependencies on other selectors
-		virtual void CheckDeps() {}
-		//to allow selectors to turn on branches they need
-		virtual void CheckBranches() {}
-		//to check dependencies on the base (and the looper)
-		virtual void CheckBase() {}
 		
 	protected:
 		//member variables
-		string name;
-		OptionMap* localOpt;
-		KSelection* sel;
-		KLooper* looper;
 		TTree* tree;
 		int counter;
 		bool dummy, canfail, depfailed, forceadd;
-		KBase* base;
 };
 typedef KFactory<KSelector,string,OptionMap*> KSelectorFactory;
 #define REGISTER_SELECTOR(a) REGISTER_MACRO2(KSelectorFactory,K##a##Selector,a)

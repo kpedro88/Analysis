@@ -4,6 +4,7 @@
 //custom headers
 #include "KMap.h"
 #include "KBase.h"
+#include "KHisto.h"
 #include "KLegend.h"
 
 //ROOT headers
@@ -43,13 +44,17 @@ class KSet : public KBase {
 		KBase* GetParent() { return parent; }
 		void SetParent(KBase* p) { parent = p; }
 		//add function - does formatting
-		TH1* AddHisto(string s, TH1* h){
-			KBase::AddHisto(s,h);
+		TH1* AddHisto(string s, TH1* h, OptionMap* omap=NULL){
+			//does *not* make KHisto (not needed)
+			if(h) KBase::AddHisto(s,h);
 			
 			//add to children
 			for(unsigned c = 0; c < children.size(); c++){
-				children[c]->AddHisto(s,h);
+				children[c]->AddHisto(s,h,omap);
 			}
+			
+			//*does* make KHisto (for special histo filling)
+			if(!h) KBase::AddHisto(s,h,omap);
 			
 			//formatting			
 			MyStyle->Format(htmp);
@@ -66,7 +71,7 @@ class KSet : public KBase {
 			//then loop to add up histos (only resetting current histo for children once)
 			for(auto& sit : MyHistos.GetTable()){
 				GetHisto(sit.first); //this will propagate to children
-				if(CheckSpecialHistos(sit.first,false)) continue; //don't hadd special histos
+				if(khtmp and khtmp->IsSpecial()) continue; //don't hadd special histos
 				for(unsigned c = 0; c < children.size(); c++){ //include option to subtract histos, off by default
 					htmp->Add(children[c]->GetHisto(), children[c]->GetLocalOpt()->Get("subtract",false) ? -1 : 1);				
 				}
@@ -76,8 +81,8 @@ class KSet : public KBase {
 			//all children get their cutflows
 			//then add up raw cutflows & nevents from children
 			TH1F* cutflowRaw = NULL;
+			//todo: allow weighting
 			for(unsigned c = 0; c < children.size(); c++){
-				children[c]->MakeCutflows();
 				if(c==0){
 					nEventHist = (TH1F*)(children[c]->GetNEventHist())->Clone();
 					cutflowRaw = (TH1F*)(children[c]->GetCutflow(KCutflow::CutRaw))->Clone();
@@ -122,7 +127,7 @@ class KSet : public KBase {
 		}
 		//in case of normalization to yield or other scaling
 		virtual void Normalize(double nn, bool toYield=true){
-			if(CheckSpecialHistos(stmp,false)) return;
+			if(khtmp->IsSpecial()) return;
 			//first, normalize all children
 			for(unsigned c = 0; c < children.size(); c++){
 				children[c]->Normalize(nn,toYield);
@@ -281,14 +286,14 @@ class KSetMCStack : public KSet {
 		}
 
 		//polymorphic add function for stacks (does formatting)
-		TH1* AddHisto(string s, TH1* h){
+		TH1* AddHisto(string s, TH1* h, OptionMap* omap=NULL){
 			stmp = s;
 			shtmp = new THStack(stmp.c_str(),stmp.c_str());
 			MyStacks.Add(stmp,shtmp);
 			
 			//add to children
 			for(unsigned c = 0; c < children.size(); c++){
-				children[c]->AddHisto(s,h);
+				children[c]->AddHisto(s,h,omap);
 				//formatting of children for stack already fixed
 			}
 			
@@ -443,14 +448,7 @@ class KSetMCStack : public KSet {
 				children[c]->PrintYield();
 			}
 		}
-		//check special status for children also
-		KBase* CheckSpecial(string special){
-			if(name==special) return (KBase*)this;
-			for(unsigned c = 0; c < children.size(); c++){
-				if(children[c]->GetName()==special) return children[c];
-			}
-			return NULL;
-		}
+
 		using KBase::SetStyle;
 		virtual void SetStyle(KMap<string>& allStyles, string styleName="") {
 			KBase::SetStyle(allStyles,"stack");

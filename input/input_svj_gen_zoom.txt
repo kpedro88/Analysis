@@ -1,7 +1,6 @@
 OPTION
 bool:roc[0]
 vstring:disable_branches[*]
-vstring:enable_branches[JetsAK8_softDropMass,JetsAK8_subjets]
 string+:printsuffix[_useSubjets_zoom]
 vstring:selections[simg]
 bool:plotoverflow[0]

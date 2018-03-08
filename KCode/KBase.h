@@ -42,7 +42,7 @@ class KBase {
 		KBase() :
 			name(""), parent(0), localOpt(new OptionMap()), globalOpt(new OptionMap()), 
 			file(0), tree(0), nEventHist(0), nEventNegHist(0), MyCutflow(0),
-			MyLooper(0), MySelection(0), stmp(""), htmp(0), etmp(0), isBuilt(false), MyStyle(0)
+			MyLooper(0), MySelection(0), stmp(""), htmp(0), khtmp(0), etmp(0), isBuilt(false), MyStyle(0)
 		{
 			//enable histo errors
 			TH1::SetDefaultSumw2(kTRUE);
@@ -50,7 +50,7 @@ class KBase {
 		KBase(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : 
 			name(name_), parent(0), localOpt(localOpt_ ? localOpt_ : new OptionMap()), globalOpt(globalOpt_ ? globalOpt_ : new OptionMap()), 
 			file(0), tree(0), nEventHist(0), nEventNegHist(0), MyCutflow(0), 
-			MyLooper(0), MySelection(0), stmp(""), htmp(0), etmp(0), isBuilt(false), MyStyle(0)
+			MyLooper(0), MySelection(0), stmp(""), htmp(0), khtmp(0), etmp(0), isBuilt(false), MyStyle(0)
 		{
 			debugroc = globalOpt->Get("debugroc",false);
 		}
@@ -114,31 +114,8 @@ class KBase {
 		KLooper* GetLooper() { return MyLooper; }
 		void SetSelection(KSelection* sel_); //defined in KSelection.h
 		KSelection* GetSelection() { return MySelection; }
-		//add a blank histo for future building
-		virtual TH1* AddHisto(string s, TH1* h){
-			//sets current name and histo
-			stmp = s;
-			if(!CheckSpecialHistos(s)){
-				htmp = (TH1*)h->Clone();
-				htmp->Sumw2();
-			}
-			MyHistos.Add(stmp,htmp);
-			return htmp;
-		}
-		virtual bool CheckSpecialHistos(string s, bool assign=true){
-			if(s=="cutflowRaw") {
-				if(assign) htmp = GetCutflow(KCutflow::CutRaw);
-			}
-			else if(s=="cutflowAbs") {
-				if(assign) htmp = GetCutflow(KCutflow::CutAbs);
-			}
-			else if(s=="cutflowRel") {
-				if(assign) htmp = GetCutflow(KCutflow::CutRel);
-			}
-			else return false;
-			
-			return true;
-		}
+		//implemented in KHisto.h
+		virtual TH1* AddHisto(string s, TH1* h, OptionMap* omap=NULL);
 		//gets current histo
 		virtual TH1* GetHisto(){ return htmp; }
 		//gets current histo name
@@ -151,10 +128,16 @@ class KBase {
 			if(hist) {
 				stmp = hname;
 				htmp = hist;
+				khtmp = MyKHistos.Get(hname);
 				return htmp;
 			}
 			else return NULL; //do not reset if the histo does not exist
 		}
+		virtual KHisto* GetKHisto(string hname){
+			if(GetHisto(hname)) return khtmp;
+			else return NULL;
+		}
+		virtual KHisto* GetKHisto(){ return khtmp; }
 		//returns efficiency for cut on current histo qty
 		//does calculation and stores result if necessary
 		virtual vector<double>* GetEff(){
@@ -175,6 +158,7 @@ class KBase {
 			return efftmp;
 		}
 		virtual map<string,TH1*>& GetTable() { return MyHistos.GetTable(); }
+		virtual map<string,KHisto*>& GetKTable() { return MyKHistos.GetTable(); }
 		KBase* GetParent() { return parent; }
 		void SetParent(KBase* p) {
 			parent = p;
@@ -199,20 +183,18 @@ class KBase {
 				htmp->SetBinError(b,htmp->GetBinError(b)/htmp->GetBinWidth(b));
 			}
 		}
-		//in case of normalization to yield or other scaling
-		virtual void Normalize(double nn, bool toYield=true){
-			if(CheckSpecialHistos(stmp,false)) return;
-			double simyield = htmp->GetDimension()==2 ? ((TH2*)htmp)->Integral(0,htmp->GetNbinsX()+1,0,htmp->GetNbinsY()+1) : htmp->Integral(0,htmp->GetNbinsX()+1);
-			if(toYield) htmp->Scale(nn/simyield);
-			else htmp->Scale(nn);
-		}
+		//implemented in KHisto.h
+		virtual void Normalize(double nn, bool toYield=true);
 		virtual void MakeCutflows(){
 			MyCutflow = new KCutflow(name,file);
 		}
 		virtual TTree* GetTree() { return tree; }
 		virtual TH1F* GetNEventHist() { return nEventHist; }
 		virtual TH1F* GetNEventNegHist() { return nEventNegHist; }
-		virtual TH1F* GetCutflow(KCutflow::CutflowType ct=KCutflow::CutRaw) { return (MyCutflow ? MyCutflow->GetEfficiency(ct,globalOpt->Get("cutflownorm",false)) : NULL); }
+		virtual TH1F* GetCutflow(KCutflow::CutflowType ct=KCutflow::CutRaw) {
+			if(!MyCutflow) MakeCutflows();
+			return (MyCutflow ? MyCutflow->GetEfficiency(ct,globalOpt->Get("cutflownorm",false)) : NULL);
+		}
 		virtual void SetStyle(KMap<string>& allStyles, string styleName="") {
 			if(styleName.size()==0) return;
 			
@@ -252,10 +234,12 @@ class KBase {
 		KLooper* MyLooper;
 		KSelection* MySelection;
 		HistoMap MyHistos;
+		KHistoMap MyKHistos;
 		ErrorMap MyErrorBands;
 		KMap<vector<double>*> MyEffs;
 		string stmp;
 		TH1* htmp;
+		KHisto* khtmp;
 		TGraphAsymmErrors* etmp;
 		vector<double>* efftmp;
 		bool isBuilt;
@@ -264,6 +248,9 @@ class KBase {
 };
 typedef KFactory<KBase,string,OptionMap*,OptionMap*> KBaseFactory;
 #define REGISTER_SET(a,b,c) REGISTER_MACRO2(KBaseFactory,a,b##c)
+
+//avoid circular dependency
+void KChecker::SetBase(KBase* base_) { base = base_; looper = base->GetLooper(); CheckBase(); } //get looper from base
 
 //-------------------------------------------
 //extension of base class for external histos

@@ -9,6 +9,7 @@
 #include "KBuilder.h"
 #include "KBuilderSelectors.h"
 #include "KBuilderVariators.h"
+#include "KFillers.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -163,9 +164,6 @@ class KPlotManager : public KManager {
 			os << "i:dimension[" << dim << "]";
 			tmp->optfields.push_back(os.str());
 			
-			//check for cutflows
-			if(tmp->fields[0].find("cutflow")!=string::npos) globalOpt->Set<bool>("doCutflow",true);
-			
 			//store local plot options for later use
 			MyPlotOptions.push_back(tmp);
 		}		
@@ -244,9 +242,6 @@ class KPlotManager : public KManager {
 						break;
 					}
 				}
-				
-				//compute cutflows if necessary
-				if(globalOpt->Get("doCutflow",false)) MySets[s]->MakeCutflows();
 			}
 			
 			//numer:denom ratio cases: 1:1, 1:x, x:1
@@ -284,7 +279,7 @@ class KPlotManager : public KManager {
 					}
 				}
 			}
-			
+
 			//create plots from local options
 			//in 2D case, one plot for each top-level set
 			for(unsigned p = 0; p < MyPlotOptions.size(); p++){
@@ -304,13 +299,20 @@ class KPlotManager : public KManager {
 						cout << " Ratio will not be drawn." << endl;
 					}
 				}
+				//special histos are prebuilt
+				if(KHisto::IsSpecial(ntmp->fields[0])){
+					for(unsigned s = 0; s < MySets.size(); s++){
+						MySets[s]->AddHisto(ntmp->fields[0],NULL,omap);
+					}
+				}
 				int dim = 0;
 				omap->Get("dimension",dim);
 				if(dim==1){
 					KPlot* ptmp = new KPlot(ntmp->fields[0],omap,globalOpt);
 					TH1* hptmp = NULL;
-					if(MySets[0]->CheckSpecialHistos(ntmp->fields[0])) {
-						hptmp = (TH1*)(MySets[0]->GetHisto())->Clone();
+					TH1* hspecial = MySets[0]->GetHisto(ntmp->fields[0]);
+					if(hspecial) {
+						hptmp = (TH1*)(hspecial)->Clone();
 						hptmp->Reset();
 					}
 					if(ptmp->Initialize(hptmp)) MyPlots.Add(ntmp->fields[0],ptmp);
@@ -334,6 +336,7 @@ class KPlotManager : public KManager {
 						}
 						else theSet = MySets[s];
 						
+						//todo: consider special 2D histos here
 						omap->Set<string>(theSet->GetName()+"_legname",theSet->GetLegName());
 						KPlot* ptmp = new KPlot2D(ntmp->fields[0],theSet->GetName(),omap,globalOpt);
 						if(ptmp->Initialize()) {
@@ -357,14 +360,14 @@ class KPlotManager : public KManager {
 			//load histos into sets
 			for(auto& p : MyPlots.GetTable()){
 				for(unsigned s = 0; s < MySets.size(); s++){
-					MySets[s]->AddHisto(p.first,p.second->GetHisto());
+					MySets[s]->AddHisto(p.first,p.second->GetHisto(),p.second->GetLocalOpt());
 				}
 			}
 			for(auto& pm : MyPlots2D.GetTable()){
 				PlotMap* p2map = pm.second;
 				for(unsigned s = 0; s < MySets.size(); s++){
 					KPlot* ptmp = p2map->Get(MySets[s]->GetName());
-					if(ptmp) MySets[s]->AddHisto(pm.first,ptmp->GetHisto());
+					if(ptmp) MySets[s]->AddHisto(pm.first,ptmp->GetHisto(),ptmp->GetLocalOpt());
 				}
 			}
 			

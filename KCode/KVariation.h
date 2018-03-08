@@ -2,9 +2,10 @@
 #define KVARIATION_H
 
 //custom headers
+#include "KMap.h"
+#include "KChecker.h"
 #include "KLooper.h"
 #include "KBase.h"
-#include "KMap.h"
 
 //ROOT headers
 
@@ -109,37 +110,23 @@ typedef KLinkedBranchT<vector<vector<TLorentzVector>>> KLinkedBranchVVL;
 
 //----------------------------------------------------------------
 //base class for Variators, has standard functions defined
-class KVariator {
+class KVariator : public KChecker {
 	public:
 		//constructor
-		KVariator() : name(""), localOpt(0), looper(0) {
-			//must always have local option map
-			if(localOpt==0) localOpt = new OptionMap();
-		}
-		KVariator(string name_, OptionMap* localOpt_) : name(name_), localOpt(localOpt_), looper(0) {
-			//must always have local option map
-			if(localOpt==0) localOpt = new OptionMap();
-		}
+		KVariator() : KChecker() {}
+		KVariator(string name_, OptionMap* localOpt_) : KChecker(name_, localOpt_) {}
 		//destructor
 		virtual ~KVariator(){
 			for(auto& branch : branches){
 				delete branch;
 			}
 		}
-		//accessors
-		string GetName() { return name; }
-		void SetBase(KBase* base_) { base = base_; looper = base->GetLooper(); }
 		//functions
-		virtual void CheckBranches() {}
 		virtual void DoVariation() {}
 		virtual void UndoVariation() {}
 		
 	protected:
 		//member variables
-		string name;
-		OptionMap* localOpt;
-		KLooper* looper;
-		KBase* base;
 		vector<KLinkedBranchBase*> branches; //in case used
 };
 typedef KFactory<KVariator,string,OptionMap*> KVariatorFactory;
@@ -198,7 +185,7 @@ namespace KParser {
 		string vname = tmp->fields[0];
 		OptionMap* omap = tmp->localOpt();
 		
-		KVariator* vtmp = KVariatorFactory::GetFactory().construct(vname,vname,omap);;
+		KVariator* vtmp = KVariatorFactory::GetFactory().construct(vname,vname,omap);
 		
 		if(!vtmp) cout << "Input error: unknown variator " << vname << ". This variator will be skipped." << endl;
 

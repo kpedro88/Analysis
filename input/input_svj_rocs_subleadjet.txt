@@ -1,7 +1,6 @@
 OPTION
 string+:rocsuffix[_subleadjet]
 vstring:disable_branches[*]
-vstring:enable_branches[JetsAK8,JetsAK8_girth,JetsAK8_momenthalf,JetsAK8_overflow,JetsAK8_axismajor,JetsAK8_axisminor,JetsAK8_multiplicity,JetsAK8_ptD,JetsAK8_NsubjettinessTau1,JetsAK8_NsubjettinessTau2,JetsAK8_NsubjettinessTau3,JetsAK8_softDropMass]
 
 HISTO
 subleadjetAK8abseta	i:xnum[100]	d:xmin[0]	d:xmax[5]	s:xtitle[|#eta(j_{2})|]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlack]
