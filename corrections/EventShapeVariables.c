@@ -3,8 +3,7 @@
 #include "TMath.h"
 
 /// constructor from XYZ coordinates
-EventShapeVariables::EventShapeVariables(const std::vector<math::XYZVector>& inputVectors) 
-  : inputVectors_(inputVectors)
+EventShapeVariables::EventShapeVariables(const std::vector<math::XYZVector>& inputVectors) : inputVectors_(inputVectors), eigenVectors_(3,3)
 {
   //default values
   set_r(2.);
@@ -12,7 +11,7 @@ EventShapeVariables::EventShapeVariables(const std::vector<math::XYZVector>& inp
 }
 
 /// constructor from rho eta phi coordinates
-EventShapeVariables::EventShapeVariables(const std::vector<math::RhoEtaPhiVector>& inputVectors)
+EventShapeVariables::EventShapeVariables(const std::vector<math::RhoEtaPhiVector>& inputVectors) : eigenVectors_(3,3)
 {
   inputVectors_.reserve( inputVectors.size() );
   for (const auto& vec : inputVectors){
@@ -24,7 +23,7 @@ EventShapeVariables::EventShapeVariables(const std::vector<math::RhoEtaPhiVector
 }
 
 /// constructor from r theta phi coordinates
-EventShapeVariables::EventShapeVariables(const std::vector<math::RThetaPhiVector>& inputVectors)
+EventShapeVariables::EventShapeVariables(const std::vector<math::RThetaPhiVector>& inputVectors) : eigenVectors_(3,3)
 {
   inputVectors_.reserve( inputVectors.size() );
   for (const auto& vec : inputVectors){
@@ -192,27 +191,31 @@ EventShapeVariables::D()
 
 /// set number of Fox-Wolfram moments to compute
 void 
-EventShapeVariables::setFWmax(int m)
+EventShapeVariables::setFWmax(unsigned m)
 {
   fwmom_maxl_ = m;
   fwmom_computed_ = false;
   fwmom_ = std::vector<double>(fwmom_maxl_,0.);
 }
 
-double EventShapeVariables::getFWmoment( int l ) {
+double EventShapeVariables::getFWmoment( unsigned l ) {
 
-   if ( l < 0 || l > fwmom_maxl_ ) return 0. ;
+  if ( l > fwmom_maxl_ ) return 0. ;
 
-   if ( !fwmom_computed_ ) {
-      computeFWmoments() ;
-      fwmom_computed_ = true ;
-   }
+  if ( !fwmom_computed_ ) computeFWmoments() ;
 
-   return fwmom_[l] ;
+  return fwmom_[l] ;
 
 } // getFWmoment
 
+const std::vector<double>& EventShapeVariables::getFWmoments() {
+  if ( !fwmom_computed_ ) computeFWmoments() ;
+
+  return fwmom_;
+}
+
 void EventShapeVariables::computeFWmoments() {
+  if(fwmom_computed_) return;
 
   double esum_total(0.) ;
   for ( unsigned int i = 0 ; i < inputVectors_.size() ; i ++ ) {
@@ -264,19 +267,8 @@ void EventShapeVariables::computeFWmoments() {
      } // j
   } // i
 
+  fwmom_computed_ = true;
+
 } // computeFWmoments
 
 //========================================================================================================
-
-
-
-
-
-
-
-
-
-
-
-
-

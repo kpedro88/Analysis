@@ -53,7 +53,7 @@ class EventShapeVariables {
   void set_r(double r);
 
   /// set number of Fox-Wolfram moments to compute
-  void setFWmax(int m);
+  void setFWmax(unsigned m);
 
   /// 1.5*(q1+q2) where q0>=q1>=q2>=0 are the eigenvalues of the momentum tensor 
   /// sum{p_j[a]*p_j[b]}/sum{p_j**2} normalized to 1. Return values are 1 for spherical, 3/4 for 
@@ -76,7 +76,8 @@ class EventShapeVariables {
   const std::vector<double>& getEigenValuesNoNorm() { if(!tensors_computed_) compTensorsAndVectors(); return eigenValuesNoNorm_; }
   const TMatrixD& getEigenVectors() { if(!tensors_computed_) compTensorsAndVectors(); return eigenVectors_; }
 
-  double getFWmoment( int l ) ;
+  double getFWmoment( unsigned l ) ;
+  const std::vector<double>& getFWmoments();
 
  private:
   /// helper function to fill the 3 dimensional momentum tensor from the inputVectors where needed
@@ -97,7 +98,7 @@ class EventShapeVariables {
   std::vector<double> eigenValues_, eigenValuesNoNorm_;
 
   /// Owen ; save computed Fox-Wolfram moments
-  int fwmom_maxl_;
+  unsigned fwmom_maxl_;
   std::vector<double> fwmom_;
   bool   fwmom_computed_ ;
 
