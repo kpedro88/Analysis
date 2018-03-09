@@ -327,7 +327,7 @@ TH1* KBase::AddHisto(string s, TH1* h, OptionMap* omap){
 }
 //in case of normalization to yield or other scaling
 void KBase::Normalize(double nn, bool toYield){
-	if(khtmp->IsSpecial()) return;
+	if(khtmp and khtmp->IsSpecial()) return;
 	double simyield = htmp->GetDimension()==2 ? ((TH2*)htmp)->Integral(0,htmp->GetNbinsX()+1,0,htmp->GetNbinsY()+1) : htmp->Integral(0,htmp->GetNbinsX()+1);
 	if(toYield) htmp->Scale(nn/simyield);
 	else htmp->Scale(nn);

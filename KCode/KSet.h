@@ -127,7 +127,7 @@ class KSet : public KBase {
 		}
 		//in case of normalization to yield or other scaling
 		virtual void Normalize(double nn, bool toYield=true){
-			if(khtmp->IsSpecial()) return;
+			if(khtmp and khtmp->IsSpecial()) return;
 			//first, normalize all children
 			for(unsigned c = 0; c < children.size(); c++){
 				children[c]->Normalize(nn,toYield);
