@@ -1069,6 +1069,11 @@ class KHistoSelector : public KSelector {
 			canfail = false;
 		}
 		
+		virtual void CheckBranches(){
+			for(auto& hit : base->GetKTable()){
+				hit.second->CheckBranches();
+			}
+		}
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			for(auto& hit : base->GetKTable()){

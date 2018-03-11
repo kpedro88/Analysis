@@ -243,6 +243,11 @@ class KHisto : public KChecker {
 				filler->SetBase(base);
 			}
 		}
+		virtual void CheckBranches() {
+			for(auto filler : fillers){
+				filler->CheckBranches();
+			}			
+		}
 		
 		//helpers
 		bool IsPerJet(const string& vname, string& vname2, vector<unsigned>& indices){
