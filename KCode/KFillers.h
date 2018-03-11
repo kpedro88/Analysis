@@ -741,6 +741,13 @@ class KFiller_boost : public KFillerEventShapeAK4 {
 };
 REGISTER_FILLER(boost);
 
+class KFiller_absboost : public KFillerEventShapeAK4 {
+	public:
+		using KFillerEventShapeAK4::KFillerEventShapeAK4;
+		virtual void Fill_(KValue& value, double w) { value.Fill(abs(EventShapeAK4->boost),w); }
+};
+REGISTER_FILLER(absboost);
+
 class KFiller_sphericity : public KFillerEventShapeAK4 {
 	public:
 		using KFillerEventShapeAK4::KFillerEventShapeAK4;
@@ -825,6 +832,13 @@ class KFiller_fwm5 : public KFillerEventShapeAK4 {
 };
 REGISTER_FILLER(fwm5);
 
+class KFiller_fwm6 : public KFillerEventShapeAK4 {
+	public:
+		using KFillerEventShapeAK4::KFillerEventShapeAK4;
+		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK4->fwm6,w); }
+};
+REGISTER_FILLER(fwm6);
+
 //-----------------------------------------------------------------------------
 //event shape quantities (from AK8 jets)
 class KFillerEventShapeAK8 : public KFiller {
@@ -843,6 +857,13 @@ class KFiller_boostAK8 : public KFillerEventShapeAK8 {
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK8->boost,w); }
 };
 REGISTER_FILLER(boostAK8);
+
+class KFiller_absboostAK8 : public KFillerEventShapeAK8 {
+	public:
+		using KFillerEventShapeAK8::KFillerEventShapeAK8;
+		virtual void Fill_(KValue& value, double w) { value.Fill(abs(EventShapeAK8->boost),w); }
+};
+REGISTER_FILLER(absboostAK8);
 
 class KFiller_sphericityAK8 : public KFillerEventShapeAK8 {
 	public:
@@ -927,6 +948,13 @@ class KFiller_fwm5AK8 : public KFillerEventShapeAK8 {
 		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK8->fwm5,w); }
 };
 REGISTER_FILLER(fwm5AK8);
+
+class KFiller_fwm6AK8 : public KFillerEventShapeAK8 {
+	public:
+		using KFillerEventShapeAK8::KFillerEventShapeAK8;
+		virtual void Fill_(KValue& value, double w) { value.Fill(EventShapeAK8->fwm6,w); }
+};
+REGISTER_FILLER(fwm6AK8);
 
 //-----------------------------------------------------------------------------
 //per-jet quantities

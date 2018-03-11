@@ -374,7 +374,7 @@ class KEventShapeSelector : public KSelector {
 			//clear output vars
 			sphericity = aplanarity = esvC = esvD = -1;
 			lambda1 = lambda2 = lambda3 = -1;
-			fwm1 = fwm2 = fwm3 = fwm4 = fwm5 = -1;
+			fwm1 = fwm2 = fwm3 = fwm4 = fwm5 = fwm6 = -1;
 
 			if(source==NoSource) return true;
 
@@ -407,7 +407,7 @@ class KEventShapeSelector : public KSelector {
 			lambda1 = eigenvals[0];
 			lambda2 = eigenvals[1];
 			lambda3 = eigenvals[2];
-			esv.setFWmax(6);
+			esv.setFWmax(7);
 			double fwm0 = esv.getFWmoment(0);
 			if(fwm0==0.) fwm0 = 1; //avoid nan
 			fwm1 = esv.getFWmoment(1)/fwm0;
@@ -415,13 +415,14 @@ class KEventShapeSelector : public KSelector {
 			fwm3 = esv.getFWmoment(3)/fwm0;
 			fwm4 = esv.getFWmoment(4)/fwm0;
 			fwm5 = esv.getFWmoment(5)/fwm0;
+			fwm6 = esv.getFWmoment(6)/fwm0;
 
 			return true;
 		}
 		
 		//member variables
 		JetSource source;
-		double boost, sphericity, aplanarity, esvC, esvD, lambda1, lambda2, lambda3, fwm1, fwm2, fwm3, fwm4, fwm5;
+		double boost, sphericity, aplanarity, esvC, esvD, lambda1, lambda2, lambda3, fwm1, fwm2, fwm3, fwm4, fwm5, fwm6;
 };
 REGISTER_SELECTOR(EventShape);
 
