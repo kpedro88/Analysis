@@ -30,13 +30,53 @@ using namespace std;
 class KRocEntry {
 	public:
 		//constructor
-		KRocEntry() : graph(nullptr), style(nullptr), auc(0.0), panel(0), legname("") {}
+		KRocEntry(vector<double> effsig_, vector<double> effbkg_, string name_, OptionMap* localOpt_, OptionMap* globalOpt_, KMap<string>& allStyles_, int prcsn_) : 
+			effsig(effsig_), effbkg(effbkg_), name(name_), localOpt(localOpt_), globalOpt(globalOpt_),
+			graph(nullptr), style(nullptr), auc(0.0), panel(0), legname("") 
+		{
+			//check integral
+			auc = KMath::Integral(effsig,effbkg);
+			if(auc>0.5){
+				//reverse!
+				for(unsigned e = 0; e < effsig.size(); ++e){
+					effsig[e] = 1 - effsig[e];
+					effbkg[e] = 1 - effbkg[e];
+				}
+				auc = KMath::Integral(effsig,effbkg);
+			}
+			
+			//create graph
+			graph = new TGraph(effsig.size(),effsig.data(),effbkg.data());
+			graph->SetName(name.c_str());
+			graph->SetTitle("");
+
+			//format graph using KPlot local options for this histo/qty
+			string styleName = "roc";
+			if(allStyles_.Has(styleName)){
+				KNamed* ntmp = KParser::processNamed<1>(styleName+"\t"+allStyles_.Get(styleName));
+				style = new KStyle(ntmp->fields[0],ntmp->localOpt(),localOpt);
+			}
+			style->Format(graph);
+			
+			//legend info: histo x-name (+ auc, optionally), panel
+			localOpt->Get("panel",panel);
+			string xtitle; localOpt->Get("xtitle",xtitle);
+			stringstream sleg;
+			sleg << fixed << setprecision(prcsn_);
+			sleg << xtitle;
+			if(globalOpt->Get("showAUC",false)) sleg << " (" << auc << ")";
+			legname = sleg.str();
+		}
 
 		//for sorting
 		bool operator<(const KRocEntry& r){
 			return auc < r.auc;
 		}
 		
+		//input variables
+		vector<double> effsig, effbkg;
+		string name;
+		OptionMap *localOpt, *globalOpt;
 		//member variables
 		TGraph* graph;
 		KStyle* style;
@@ -610,50 +650,14 @@ class KPlotManager : public KManager {
 					vector<KRocEntry> rocs;
 					rocs.reserve(MyPlots.GetTable().size());
 					for(auto& p : MyPlots.GetTable()){
-						//ROC tmp object
-						rocs.push_back(KRocEntry());
-						auto& roc_tmp = rocs.back();
-
 						//select current histogram in sets
-						TH1F* h_sig = (TH1F*)(roc_sig[s]->GetHisto(p.first));
-						TH1F* h_bkg = (TH1F*)(roc_bkg[b]->GetHisto(p.first)); //unused right now
+						roc_sig[s]->GetHisto(p.first);
+						roc_bkg[b]->GetHisto(p.first);
 						
+						//initialize roc entry
 						//get efficiencies as copies (in case of reversal)
 						//(cached results will be returned if the calculation was already done)
-						vector<double> eff_sig = *(roc_sig[s]->GetEff());
-						vector<double> eff_bkg = *(roc_bkg[b]->GetEff());
-						//check integral
-						roc_tmp.auc = KMath::Integral(eff_sig,eff_bkg);
-						if(roc_tmp.auc>0.5){
-							//reverse!
-							for(unsigned e = 0; e < eff_sig.size(); ++e){
-								eff_sig[e] = 1 - eff_sig[e];
-								eff_bkg[e] = 1 - eff_bkg[e];
-							}
-							roc_tmp.auc = KMath::Integral(eff_sig,eff_bkg);
-						}
-
-						//create graph
-						roc_tmp.graph = new TGraph(eff_sig.size(),eff_sig.data(),eff_bkg.data());
-						roc_tmp.graph->SetName(p.first.c_str());
-						roc_tmp.graph->SetTitle("");
-						
-						//format graph using KPlot local options for this histo/qty
-						string styleName = "roc";
-						roc_tmp.style = NULL;
-						if(allStyles.Has(styleName)){
-							KNamed* ntmp = KParser::processNamed<1>(styleName+"\t"+allStyles.Get(styleName));
-							roc_tmp.style = new KStyle(ntmp->fields[0],ntmp->localOpt(),p.second->GetLocalOpt());
-						}
-						roc_tmp.style->Format(roc_tmp.graph);
-						
-						//legend info: histo x-name (+ auc, optionally), panel
-						p.second->GetLocalOpt()->Get("panel",roc_tmp.panel);
-						stringstream sleg;
-						sleg << fixed << setprecision(prcsn);
-						sleg << h_sig->GetXaxis()->GetTitle();
-						if(globalOpt->Get("showAUC",false)) sleg << " (" << roc_tmp.auc << ")";
-						roc_tmp.legname = sleg.str();
+						rocs.emplace_back(*(roc_sig[s]->GetEff()),*(roc_bkg[b]->GetEff()),p.first,p.second->GetLocalOpt(),globalOpt,allStyles,prcsn);
 					}
 
 					//sort by auc
