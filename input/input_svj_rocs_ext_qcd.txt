@@ -1,0 +1,8 @@
+OPTION
+int:npanel[2]
+vstring:roc_bkg[QCD]
+
+SET
+hist	mc	QCD	s:legname[QCD]	c:color[kBlack]	i:panel[1]
+	base	ext	QCD	b:ext_auto[1]
+

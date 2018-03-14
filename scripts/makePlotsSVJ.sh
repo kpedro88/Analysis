@@ -47,6 +47,7 @@ CMDS=(
 	'KPlotDriver.C+(".",{"input/input_svj_rocs_hist_'${SEL}'.txt","input/input_svj_rocs.txt","input/input_svj_rocs_jetpt.txt","input/input_svj_rocs_ext_bkg.txt","'${SIG}'"},{},1)' \
 	'KPlotDriver.C+(".",{"input/input_svj_rocs_hist_'${SEL}'.txt","input/input_svj_rocs.txt","input/input_svj_rocs_bothjet.txt","input/input_svj_rocs_ext_bkg.txt","'${SIG}'","input/input_svj_flatten_bothjet.txt"},{},1)' \
 	'KPlotDriver.C+(".",{"input/input_svj_rocs_hist_'${SEL}'.txt","input/input_svj_rocs.txt","input/input_svj_rocs_met.txt","input/input_svj_rocs_ext_bkg.txt","'${SIG}'"},{},1)' \
+	'KPlotDriver.C+(".",{"input/input_svj_rocs_hist_'${SEL}'.txt","input/input_svj_rocs.txt","input/input_svj_met_unskimmed.txt","input/input_svj_rocs_ext_qcd.txt","'${SIG}'"},{},1)' \
 )
 
 	if [ -n "$LIST" ]; then
