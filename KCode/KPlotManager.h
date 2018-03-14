@@ -30,9 +30,8 @@ using namespace std;
 class KRocEntry {
 	public:
 		//constructor
-		KRocEntry(vector<double> effsig_, vector<double> effbkg_, string name_, OptionMap* localOpt_, OptionMap* globalOpt_, KMap<string>& allStyles_, int prcsn_) : 
-			effsig(effsig_), effbkg(effbkg_), name(name_), localOpt(localOpt_), globalOpt(globalOpt_),
-			graph(nullptr), style(nullptr), auc(0.0), panel(0), legname("") 
+		KRocEntry(vector<double> effsig_, vector<double> effbkg_, string name_, OptionMap* localOpt_, KMap<string>& allStyles_, bool roclogx_, bool roclogy_, bool showAUC_, int prcsn_) : 
+			effsig(effsig_), effbkg(effbkg_), name(name_), localOpt(localOpt_), graph(nullptr), style(nullptr), auc(0.0), panel(0), legname("") 
 		{
 			//check integral
 			auc = KMath::Integral(effsig,effbkg);
@@ -44,6 +43,22 @@ class KRocEntry {
 				}
 				auc = KMath::Integral(effsig,effbkg);
 			}
+			
+			//check minima
+			xmin = 1e100;
+			ymin = 1e100;
+			if(roclogx_) {
+				for(unsigned e = 0; e < effsig.size(); ++e){
+					if(effsig[e]<xmin and effsig[e]>0.) xmin = effsig[e];
+				}
+			}
+			else xmin = 0.;
+			if(roclogy_) {
+				for(unsigned e = 0; e < effbkg.size(); ++e){
+					if(effbkg[e]<ymin and effbkg[e]>0.) ymin = effbkg[e];
+				}
+			}
+			else ymin = 0.;
 			
 			//create graph
 			graph = new TGraph(effsig.size(),effsig.data(),effbkg.data());
@@ -64,7 +79,7 @@ class KRocEntry {
 			stringstream sleg;
 			sleg << fixed << setprecision(prcsn_);
 			sleg << xtitle;
-			if(globalOpt->Get("showAUC",false)) sleg << " (" << auc << ")";
+			if(showAUC_) sleg << " (" << auc << ")";
 			legname = sleg.str();
 		}
 
@@ -76,13 +91,14 @@ class KRocEntry {
 		//input variables
 		vector<double> effsig, effbkg;
 		string name;
-		OptionMap *localOpt, *globalOpt;
+		OptionMap *localOpt;
 		//member variables
 		TGraph* graph;
 		KStyle* style;
 		double auc;
 		int panel;
 		string legname;
+		double xmin, ymin;
 };
 
 //------------------------------------------
@@ -617,6 +633,10 @@ class KPlotManager : public KManager {
 				return;
 			}
 			
+			//check settings
+			bool roclogx = globalOpt->Get("roclogx",false);
+			bool roclogy = globalOpt->Get("roclogy",false);
+			bool showAUC = globalOpt->Get("showAUC",false);
 			//draw curves for each sig vs each bkg
 			for(unsigned s = 0; s < roc_sig.size(); s++){
 				for(unsigned b = 0; b < roc_bkg.size(); b++){
@@ -624,18 +644,38 @@ class KPlotManager : public KManager {
 					//anything desired should be specified in printsuffix option
 					string roc_name = "roc_" + roc_sig[s]->GetName() + "_vs_" + roc_bkg[b]->GetName();
 					if(globalOpt->Get("debugroc",false)) cout << roc_name << endl;
+
+					//loop over histos and make graphs
+					vector<KRocEntry> rocs;
+					rocs.reserve(MyPlots.GetTable().size());
+					double xmin = 1e100;
+					double ymin = 1e100;
+					for(auto& p : MyPlots.GetTable()){
+						//select current histogram in sets
+						roc_sig[s]->GetHisto(p.first);
+						roc_bkg[b]->GetHisto(p.first);
+						
+						//initialize roc entry
+						//get efficiencies as copies (in case of reversal)
+						//(cached results will be returned if the calculation was already done)
+						rocs.emplace_back(*(roc_sig[s]->GetEff()),*(roc_bkg[b]->GetEff()),p.first,p.second->GetLocalOpt(),allStyles,roclogx,roclogy,showAUC,prcsn);
+						const auto& roc_tmp = rocs.back();
+						//check minima
+						if(roc_tmp.xmin < xmin) xmin = roc_tmp.xmin;
+						if(roc_tmp.ymin < ymin) ymin = roc_tmp.ymin;
+					}
 					
-					//make base histo: 0..1 on both axes
-					TH1F* h_base = new TH1F(roc_name.c_str(),"",10,0.,1.);
-					h_base->GetYaxis()->SetRangeUser(0.,1.);
+					//make base histo: 0..1 on both axes (unless log scale)
+					TH1F* h_base = new TH1F(roc_name.c_str(),"",10,xmin,1.);
+					h_base->GetYaxis()->SetRangeUser(ymin,1.);
 					h_base->GetXaxis()->SetTitle(("#varepsilon_{sig} (" + roc_sig[s]->GetLegName() + ")").c_str());
 					h_base->GetYaxis()->SetTitle(("#varepsilon_{bkg} (" + roc_bkg[b]->GetLegName() + ")").c_str());
 					
 					//make plot
 					KPlot* p_roc = new KPlot(roc_name,NULL,globalOpt);
 					p_roc->GetLocalOpt()->Set("ratio",false);
-					p_roc->GetLocalOpt()->Set("logx",false);
-					p_roc->GetLocalOpt()->Set("logy",false);
+					p_roc->GetLocalOpt()->Set("logx",roclogx);
+					p_roc->GetLocalOpt()->Set("logy",roclogy);
 					p_roc->Initialize(h_base);
 					
 					//get drawing objects from KPlot
@@ -645,32 +685,20 @@ class KPlotManager : public KManager {
 					//get legend
 					KLegend* kleg = p_roc->GetLegend();
 					kleg->AddHist(p_roc->GetHisto());
-					
-					//loop over histos and make graphs
-					vector<KRocEntry> rocs;
-					rocs.reserve(MyPlots.GetTable().size());
-					for(auto& p : MyPlots.GetTable()){
-						//select current histogram in sets
-						roc_sig[s]->GetHisto(p.first);
-						roc_bkg[b]->GetHisto(p.first);
-						
-						//initialize roc entry
-						//get efficiencies as copies (in case of reversal)
-						//(cached results will be returned if the calculation was already done)
-						rocs.emplace_back(*(roc_sig[s]->GetEff()),*(roc_bkg[b]->GetEff()),p.first,p.second->GetLocalOpt(),globalOpt,allStyles,prcsn);
-					}
 
 					//sort by auc
 					sort(rocs.begin(),rocs.end());
+
+					for(const auto& roc_tmp : rocs){
+						//add to legend in order
+						kleg->AddEntry(roc_tmp.graph,roc_tmp.legname,roc_tmp.style->GetLegOpt(),roc_tmp.panel);
+					}
 
 					//draw blank histo for axes
 					p_roc->DrawHist();
 					//draw sets
 					pad1->cd();
 					for(const auto& roc_tmp : rocs){
-						//add to legend in order
-						kleg->AddEntry(roc_tmp.graph,roc_tmp.legname,roc_tmp.style->GetLegOpt(),roc_tmp.panel);
-
 						roc_tmp.graph->Draw(roc_tmp.style->GetDrawOpt("same").c_str()); //should this be "c" instead for smooth curve?
 						
 						//save graphs in root file if requested
@@ -682,8 +710,8 @@ class KPlotManager : public KManager {
 						}
 					}
 
-					//build legend: specified quadrant, no smart resizing
-					kleg->Build(KLegend::left, KLegend::top);
+					//build legend: find best quadrant, no resizing
+					kleg->Build(KLegend::hdefault, KLegend::vdefault);
 
 					p_roc->GetHisto()->Draw("sameaxis"); //draw again so axes on top
 					p_roc->DrawText();
