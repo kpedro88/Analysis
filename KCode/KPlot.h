@@ -320,6 +320,7 @@ class KPlot{
 			//get y axis range of histo from KLegend
 			if(leg->UseRange()) histo->GetYaxis()->SetRangeUser(leg->GetRange().first,leg->GetRange().second);
 			histo->Draw("hist");
+			pad1->Update();
 			//horizontal error bars for histograms are DISABLED by default
 			//but auto-enabled for variable-binned histograms (per CMS style guidelines)
 			//(note: TExec cannot be the first thing drawn on a pad)

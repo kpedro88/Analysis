@@ -8,6 +8,7 @@
 #include <TROOT.h>
 #include <TLegend.h>
 #include <TH1.h>
+#include <TGraph.h>
 #include <TLatex.h>
 #include <TPad.h>
 
@@ -40,6 +41,10 @@ class KLegendEntry {
 		string GetOption() { return option; }
 		TH1* GetHist() {
 			if(obj && obj->InheritsFrom("TH1")) return (TH1*)obj;
+			else return NULL;
+		}
+		TGraph* GetGraph() {
+			if(obj && obj->InheritsFrom("TGraph")) return (TGraph*)obj;
 			else return NULL;
 		}
 		void CheckSize(TPad* pad, double legentry){
@@ -165,6 +170,69 @@ class KLegend{
 		virtual ~KLegend() {}
 		
 		//functions
+		pair<Horz,Vert> BuildG(){
+			//first attempt at "best" placement of legend around graphs:
+			//find # of points in each quadrant
+			//todo: could also include histograms (treat each bin as a point)
+			//this doesn't handle a sparse graph with a line through a quadrant connecting points in other quadrants
+			//but it seems one would need a full-fledged graphics engine to handle that
+			
+			//quadrants: 0 = top left, 1 = top right, 2 = bottom right, 3 = bottom left
+			vector<unsigned> quadrants(4,0);
+			
+			//get display bounds; assumption: axis histo has already been drawn so user coords are known
+			double x0 = pad->GetLogx() ? pow(10,pad->GetUxmin()) : pad->GetUxmin();
+			double x2 = pad->GetLogx() ? pow(10,pad->GetUxmax()) : pad->GetUxmax();
+			double x1 = pad->GetLogx() ? pow(10,(pad->GetUxmin()+pad->GetUxmax())/2) : (x0+x2)/2; //midpoint
+			double y0 = pad->GetLogy() ? pow(10,pad->GetUymin()) : pad->GetUymin();
+			double y2 = pad->GetLogy() ? pow(10,pad->GetUymax()) : pad->GetUymax();
+			double y1 = pad->GetLogy() ? pow(10,(pad->GetUymin()+pad->GetUymax())/2) : (y0+y2)/2; //midpoint
+			
+			for(const auto graph : graphs){
+				double* x = graph->GetX();
+				double* y = graph->GetY();
+				int n = graph->GetN();
+				for(int i = 0; i < n; ++i){
+					Horz hdir = hdefault;
+					Vert vdir = vdefault;
+					//ignore off-scale points
+					if(x0 < x[i] and x[i] < x1) hdir = left;
+					else if(x1 < x[i] and x[i] < x2) hdir = right;
+					if(y0 < y[i] and y[i] < y1) vdir = bottom;
+					else if(y1 < y[i] and y[i] < y2) vdir = top;
+					
+					//assign to quadrant
+					if(hdir==left and vdir==top) ++quadrants[0];
+					else if(hdir==right and vdir==top) ++quadrants[1];
+					else if(hdir==right and vdir==bottom) ++quadrants[2];
+					else if(hdir==left and vdir==bottom) ++quadrants[3];
+				}
+			}
+			
+			//find the least populated quadrant
+			unsigned bestq = 0; //default
+			unsigned bestqval = quadrants[0];
+			for(unsigned q = 1; q < quadrants.size(); ++q){
+				if(quadrants[q] < bestqval){
+					bestqval = quadrants[q];
+					bestq = q;
+				}
+			}
+			
+			if(debug){
+				cout << scientific;
+				cout << "x: " << x0 << " " << x1 << " " << x2 << endl;
+				cout << "y: " << y0 << " " << y1 << " " << y2 << endl;
+				cout << "q: " << quadrants[0] << " " << quadrants[1] << " " << quadrants[2] << " " << quadrants[3] << endl;
+				cout << "b: " << bestq << endl;
+				cout << fixed;
+			}
+			
+			if(bestq==1) return make_pair(right,top);
+			else if(bestq==2) return make_pair(right,bottom);
+			else if(bestq==3) return make_pair(left,bottom);
+			else return make_pair(left,top); //default
+		}
 		void Build(Horz hdir, Vert vdir){
 			//boundaries of plot area
 			double ytick = (hists.size()>0) ? hists[0]->GetYaxis()->GetTickLength() : 0;
@@ -172,7 +240,15 @@ class KLegend{
 			lbound = pad->GetLeftMargin() + ytick;
 			rbound = 1 - (pad->GetRightMargin() + ytick);
 			tbound = 1 - (pad->GetTopMargin() + xtick);
-			bbound = 1 - (pad->GetTopMargin() + xtick);
+			bbound = pad->GetBottomMargin() + xtick;
+			if(debug) cout << "bounds: " << lbound << " " << rbound << " " << tbound << " " << bbound << endl;
+			
+			//use graph-based algo
+			if(hdir==hdefault and vdir==vdefault){
+				auto dirs = BuildG();
+				hdir = dirs.first;
+				vdir = dirs.second;
+			}
 			
 			//balancing algorithm, puts MultiEntry entries into panel entries vector(s)
 			if(balance_panels){
@@ -252,6 +328,7 @@ class KLegend{
 				vmax = (tbound + bbound)/2. + legheight/2.;
 			}
 			
+			if(debug) cout << "coords: " << umin << " " << vmin << " " << umax << " " << vmax << endl;
 			//initialize legend with determined coords
 			leg = new TLegend(umin,vmin,umax,vmax);
 			leg->SetFillColor(0);
@@ -392,10 +469,13 @@ class KLegend{
 			KLegendMultiEntry& multi = balance_panels ? multi_entries.back() : entries[panel];
 		
 			//add entry to multi & check histo
-			TH1* htest = NULL;
 			multi.push_back(KLegendEntry(obj,label,option,pad,legentry));
-			htest = multi.back().GetHist();
+			TH1* htest = multi.back().GetHist();
 			if(htest) hists.push_back(htest);
+			else {
+				TGraph* gtest = multi.back().GetGraph();
+				if(gtest) graphs.push_back(gtest);
+			}
 			//add extra text to multi
 			for(unsigned t = 0; t < extra_text.size(); t++){				
 				multi.push_back(KLegendEntry((TObject*)NULL,extra_text[t],"",pad,legentry));
@@ -428,6 +508,7 @@ class KLegend{
 		vector<KLegendMultiEntry> multi_entries;
 		vector<KLegendMultiEntry> entries;
 		vector<TH1*> hists;
+		vector<TGraph*> graphs;
 		TLegend* leg;
 		double ymin, ymax;
 		double ymin_min, ymin_max;
