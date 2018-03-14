@@ -117,9 +117,11 @@ class KLegend{
 			debug = globalOpt->Get("debug_legend",false);
 			
 			padH = pad->GetWh()*pad->GetAbsHNDC();
+			padW = pad->GetWw()*pad->GetAbsWNDC();
 			sizeLeg = 26; globalOpt->Get("sizeLeg",sizeLeg);
-			sizeSymb = 0.25; globalOpt->Get("sizeSymb",sizeSymb);
+			sizeSymb = 25; globalOpt->Get("sizeSymb",sizeSymb);
 			legentry = sizeLeg/padH; //line height for each entry
+			sizeSymb /= padW;
 			//todo: configurable font type
 			
 			//get panel setting (global overrides local)
@@ -297,8 +299,9 @@ class KLegend{
 				legwidth += entries[p].GetWidth();
 			}
 			
-			//symbol box takes up fMargin = 0.25 by default (now configurable)
-			legwidth /= (1-sizeSymb);
+			//symbol box takes up fMargin = 0.25 by default (now configurable in pixels)
+			legwidth += sizeSymb*npanel;
+			double sizeSymbRel = sizeSymb*npanel/legwidth;
 			//add a little padding for each line
 			legheight *= 1.2;
 			
@@ -336,7 +339,7 @@ class KLegend{
 			leg->SetTextSize(legentry);
 			leg->SetTextFont(42);
 			leg->SetNColumns(npanel);
-			leg->SetMargin(sizeSymb);
+			leg->SetMargin(sizeSymbRel);
 			
 			for(unsigned e = 0; e < max_panel_entries; e++){
 				for(int p = 0; p < npanel; p++){
@@ -504,7 +507,7 @@ class KLegend{
 		double legwidth, legheight;
 		double lbound, rbound, tbound, bbound;
 		double umin, umax, vmin, vmax;
-		double padH, sizeLeg, legentry, sizeSymb;
+		double padH, padW, sizeLeg, legentry, sizeSymb;
 		vector<KLegendMultiEntry> multi_entries;
 		vector<KLegendMultiEntry> entries;
 		vector<TH1*> hists;
