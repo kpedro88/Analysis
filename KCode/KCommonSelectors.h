@@ -82,6 +82,52 @@ class KHLTSelector : public KSelector {
 REGISTER_SELECTOR(HLT);
 
 //----------------------------------------------------
+class KDijetSelector : public KSelector {
+	public:
+		//constructor
+		KDijetSelector() : KSelector() { }
+		KDijetSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), njet(2), pt(-1), eta(2.4) {
+			//check for options
+			localOpt->Get("njet",njet);
+			id = localOpt->Get("id",true);
+			simple = localOpt->Get("simple",true);
+			localOpt->Get("pt",pt);
+			localOpt->Get("eta",eta);
+		}
+		virtual void CheckBranches(){
+			if(simple) {
+				//avoid loading jet branch just to check size==2
+				looper->fChain->SetBranchStatus("MT_AK8",1);
+			}
+			else{
+				looper->fChain->SetBranchStatus("JetsAK8",1);
+				if(id) looper->fChain->SetBranchStatus("JetsAK8_ID",1);
+			}
+		}
+
+		//this selector doesn't add anything to tree
+
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			if(simple) return looper->MT_AK8 > 0;
+			if(looper->JetsAK8->size()<njet) return false;
+			//per-jet cuts, if enabled
+			for(unsigned j = 0; j < njet; ++j){
+				if(id and !looper->JetsAK8_ID->at(j)) return false;
+				if(pt>0 and looper->JetsAK8->at(j).Pt()<=pt) return false;
+				if(eta>0 and abs(looper->JetsAK8->at(j).Eta())>=eta) return false;
+			}
+			return true;
+		}
+
+		//member variables
+		int njet;
+		bool simple, id;
+		double pt, eta;
+};
+REGISTER_SELECTOR(Dijet);
+
+//----------------------------------------------------
 //selects events based on HT value
 class KHTSelector : public KSelector {
 	public:
