@@ -13,7 +13,7 @@ input/input_global.txt
 
 OPTION
 double:sizeLeg[26]
-double:sizeSymb[0.25]
+double:sizeSymb[25]
 vstring:printformat[png]
 double:luminorm[35862.351]
 string:luminormunit[fbinv]

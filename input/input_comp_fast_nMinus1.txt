@@ -21,7 +21,7 @@ int:npanel[1]
 vstring:disable_branches[*]
 string:printsuffix[fast_Nminus1]
 double:sizeLeg[16.0]
-double:sizeSymb[0.075]
+double:sizeSymb[7.5]
 vstring:selections[corr]
 vstring:printformat[png,eps]
 

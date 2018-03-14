@@ -63,7 +63,7 @@ void plotPileupAcc(string fname, vector<string> printformats={"png"}){
 	hbase->GetYaxis()->SetTitle("relative acceptance");
 	OptionMap* globalOpt = new OptionMap();
 	globalOpt->Set<string>("lumi_text","(13 TeV)");
-	globalOpt->Set<double>("sizeSymb",0.15);
+	globalOpt->Set<double>("sizeSymb",15);
 	OptionMap* localOpt = new OptionMap();
 	localOpt->Set<bool>("ratio",false);
 	localOpt->Set<bool>("logy",false);
