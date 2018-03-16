@@ -1,0 +1,18 @@
+OPTION
+vstring:numers[met1,metMTratio1,metsig1]
+vstring:denoms[met0]
+int:npanel[1]
+string+:printsuffix[_metvars1]
+double:ratiomin[0]
+double:ratiomax[3]
+
+SET
+hist	mc	met0	s:legname[total]	c:color[kBlack]
+	base	ext	met0	b:ext_auto[1]
+hist	mc	met1	s:legname[#slash{E}_{T} > 100 GeV]	c:color[kBlue]
+	base	ext	met1	b:ext_auto[1]
+hist	mc	metMTratio1	s:legname[#slash{E}_{T}/M_{T} > 0.155]	c:color[kMagenta + 2]
+	base	ext	metMTratio1	b:ext_auto[1]
+hist	mc	metsig1	s:legname[S(#slash{E}_{T}) > 11.7]	c:color[kRed]
+	base	ext	metsig1	b:ext_auto[1]
+

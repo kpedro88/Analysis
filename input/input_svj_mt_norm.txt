@@ -1,0 +1,8 @@
+OPTION
+string:rationame[cut / total]
+bool:unitnorm[1]
+string+:printsuffix[_norm]
+string:lumi_text[(13 TeV)]
+
+HISTO
+MTAK8	i:xnum[50]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]

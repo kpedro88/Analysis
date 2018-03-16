@@ -11,7 +11,7 @@ dijet
 	Histo
 
 HISTO
-met	i:xnum[100]	d:xmin[0]	d:xmax[1500]	s:xtitle[#slash{E}_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlue]
+met	i:xnum[150]	d:xmin[0]	d:xmax[1500]	s:xtitle[#slash{E}_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlue]
 metMTratio	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[#slash{E}_{T}/M_{T}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta + 2]
 metsig	i:xnum[160]	d:xmin[0.001]	d:xmax[10000]	s:xtitle[S(#slash{E}_{T})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logx[1]	b:logxbin[1]	b:logy[1]	c:color[kRed]
 MTAK8	i:xnum[50]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta]

@@ -1,0 +1,23 @@
+OPTION
+vstring:numers[met2,metMTratio2,metsig2]
+vstring:denoms[met0]
+string:rationame[cut / total]
+double:ratiomin[0]
+double:ratiomax[10]
+bool:unitnorm[1]
+int:npanel[1]
+string+:printsuffix[_metvars2]
+
+HISTO
+MTAK8	i:xnum[50]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]
+
+SET
+hist	mc	met0	s:legname[total]	c:color[kBlack]
+	base	ext	met0	b:ext_auto[1]
+hist	mc	met2	s:legname[#slash{E}_{T} > 200 GeV]	c:color[kBlue]
+	base	ext	met2	b:ext_auto[1]
+hist	mc	metMTratio2	s:legname[#slash{E}_{T}/M_{T} > 0.24]	c:color[kMagenta + 2]
+	base	ext	metMTratio2	b:ext_auto[1]
+hist	mc	metsig2	s:legname[S(#slash{E}_{T}) > 43.4]	c:color[kRed]
+	base	ext	metsig2	b:ext_auto[1]
+

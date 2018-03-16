@@ -19,6 +19,7 @@ INPUT
 input/input_global.txt
 
 OPTION
+string:prelim_text[Simulation (work-in-progress)]
 double:luminorm[35900]
 bool:printyield[1]
 int:yieldprecision[2]
