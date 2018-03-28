@@ -15,31 +15,18 @@
 #for datasets, child-parent relationships are indicated by tab-indentation
 #selectors/variators are associated with a selection/variation by tab-indentation
 
-INPUT
-input/input_global.txt
-
 OPTION
-double:luminorm[35900]
-string:prelim_text[Simulation (work-in-progress)]
-#string:lumi_text[(13 TeV)]
-vstring:printformat[png]
-bool:printyield[1]
-int:yieldprecision[2]
-bool:plotoverflow[1]
-double:sizeLeg[20]
-double:sizeSymb[20]
-int:npanel[1]
-bool:treesuffix[1]
-#double:ymin[5e-4]
-double:ymin_min[1e-6]
-bool:appendsel[0]
-vstring:selections[sim]
-vstring:disable_branches[*]
 int:npanel[2]
-string:extfilename[test/allHistos_dijethad.root]
-string+:printsuffix[_dijethad]
+string:ratiocalc[Q1]
+vstring:numers[SVJ_1000_20_0.3_0.2,SVJ_2000_20_0.3_0.2,SVJ_3000_20_0.3_0.2,SVJ_4000_20_0.3_0.2]
+vstring:denoms[QCD]
+string:rationame[S/#sqrt{B}]
+double:ratiomin[0.01]
+double:ratiomax[20]
+bool:ratiology[1]
+double:pad2size[3.5]
+double:ratiolineval[-999]
+string+:printsuffix[_svsb]
 
-SELECTION
-sim
-	MCWeight
-	Histo
+HISTO
+MTAK8	i:xnum[50]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]
