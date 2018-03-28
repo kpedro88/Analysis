@@ -36,9 +36,10 @@ using namespace std;
 class KPlot{
 	public:
 		//constructor
-		KPlot() : name(""), localOpt(0), globalOpt(0), histo(0), ratio(0), exec(0), isInit(false), 
-				  can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0),
-				  pad1W(0), pad1H(0), pad2W(0), pad2H(0)
+		KPlot() : 
+			name(""), localOpt(0), globalOpt(0), histo(0), ratio(0), exec(0), isInit(false), 
+			can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0),
+			pad1size(0), pad1W(0), pad1H(0), pad2size(0), pad2W(0), pad2H(0)
 		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
@@ -47,9 +48,10 @@ class KPlot{
 			SetStyle();
 		}
 		//universal size values set in initialization list
-		KPlot(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : name(name_), localOpt(localOpt_), globalOpt(globalOpt_), histo(0), ratio(0), exec(0), isInit(false),
-																	   can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0),
-																	   pad1W(0), pad1H(0), pad2W(0), pad2H(0)
+		KPlot(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : 
+			name(name_), localOpt(localOpt_), globalOpt(globalOpt_), histo(0), ratio(0), exec(0), isInit(false),
+			can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0),
+			pad1size(0), pad1W(0), pad1H(0), pad2size(0), pad2W(0), pad2H(0)
 		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
@@ -81,7 +83,9 @@ class KPlot{
 			
 			//automatic calculation of ratio extension height
 			//to ensure plot area on pad1 equal to non-ratio case, given 5/7 for pad1, 2/7 for pad2
-			ratioH = canvasH*2./5.+(marginM1-marginB)*7./5.;
+			pad1size = 5.; globalOpt->Get("pad1size",pad1size);
+			pad2size = 2.; globalOpt->Get("pad2size",pad2size);
+			ratioH = canvasH*pad2size/pad1size+(marginM1-marginB)*(pad1size+pad2size)/pad1size;
 			
 			//todo: make relative size of pad2 vs pad1 configurable
 			
@@ -186,7 +190,7 @@ class KPlot{
 				//500/(5/7) = 700
 
 				//setup histo and ratio areas for canvas
-				pad1 = new TPad("graph","",0,2./7.,1.0,1.0);
+				pad1 = new TPad("graph","",0,pad2size/(pad1size+pad2size),1.0,1.0);
 				pad1W = pad1->GetWw()*pad1->GetAbsWNDC();
 				pad1H = pad1->GetWh()*pad1->GetAbsHNDC();
 				pad1->SetMargin(marginL/pad1W,marginR/pad1W,marginM1/pad1H,marginT/pad1H);
@@ -195,7 +199,7 @@ class KPlot{
 				if(localOpt->Get("logx",false)) pad1->SetLogx(); //logx off by default (i.e. linx on by default)
 				pad1->Draw();
 			
-				pad2 = new TPad("dmc","",0,0,1.0,2./7.);
+				pad2 = new TPad("dmc","",0,0,1.0,pad2size/(pad1size+pad2size));
 				pad2W = pad2->GetWw()*pad2->GetAbsWNDC();
 				pad2H = pad2->GetWh()*pad2->GetAbsHNDC();
 				can->cd();
@@ -531,7 +535,7 @@ class KPlot{
 		double marginL, marginR, marginB, marginT, marginM1, marginM2, marginPal;
 		double sizeT, sizeL, sizeP, sizeTick, sizeLoff, epsilon;
 		double NdivX, NdivYhisto, NdivYratio;
-		double pad1W, pad1H, pad2W, pad2H;
+		double pad1size, pad1W, pad1H, pad2size, pad2W, pad2H;
 		double ratiomin, ratiomax;
 		bool ratiology;
 		double ratiolineval;
