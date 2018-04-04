@@ -507,7 +507,7 @@ class KPlotManager : public KManager {
 					p.second->DrawRatio();
 					
 					for(unsigned r = 0; r < MyRatios.size(); ++r){
-						MyRatios[r]->Build(p.second->GetHisto());
+						MyRatios[r]->Build();
 						MyRatios[r]->Draw(pad2);
 					}
 					p.second->DrawLine();
@@ -568,7 +568,7 @@ class KPlotManager : public KManager {
 						if(ptmp) theSet = MyRatios[s-MySets.size()];
 						else continue;
 						//build ratio histo
-						theSet->Build(ptmp->GetHisto());
+						theSet->Build();
 					}
 					else {
 						theSet = MySets[s];

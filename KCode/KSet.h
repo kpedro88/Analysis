@@ -504,14 +504,17 @@ class KSetRatio: public KSet {
 		//only builds from the current histo of numer and denom
 		//(since some histos might not want ratios, and also has to wait for possible norm to yield)
 		using KBase::Build;
-		void Build(TH1* hrat_){
-			stmp = children[0]->GetHistoName();
-			TH1* hrat = (TH1*)hrat_->Clone();
-			TH1* hdata = children[0]->GetHisto();
-			TH1* hsim = children[1]->GetHisto();
+		void Build(){
+			Build(children[0]->GetHistoName(),children[0]->GetHisto(),children[1]->GetHisto());
+		}
+		//in case of standalone use
+		void Build(string histoname, TH1* h0, TH1* h1){
+			stmp = histoname;
+			TH1* hdata = h0;
+			TH1* hsim = h1;
 			TH1* hsim0 = (TH1*)hsim->Clone();
 			//in case displaying with different number of bins than original histo
-			hrat = (TH1*)children[0]->GetHisto()->Clone();
+			TH1* hrat = (TH1*)h0->Clone();
 			
 			int nbins = hrat->GetNbinsX()+1;
 			//only pull,data/MC supported for 2D
