@@ -477,15 +477,8 @@ class KSetRatio: public KSet {
 		KSetRatio(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KSet(name_, localOpt_, globalOpt_), btmp(0), calc(DataMC), noErrBand(false) { 
 			children.resize(2);
 			string calcName = "";
-			setCalc = globalOpt->Get("ratiocalc",calcName);
-			
-			if(calcName=="DataMC") calc = DataMC;
-			else if(calcName=="PctDiff") calc = PctDiff;
-			else if(calcName=="Pull") calc = Pull;
-			else if(calcName=="Q1") calc = Q1;
-			else if(calcName=="Q2") calc = Q2;
-			else if(calcName=="Q3") calc = Q3;
-			else if(calcName=="Binom") calc = Binom;
+			globalOpt->Get("ratiocalc",calcName);
+			SetCalc(calcName);
 		}
 		//destructor
 		virtual ~KSetRatio() {}
@@ -496,6 +489,15 @@ class KSetRatio: public KSet {
 		string GetRatioName2D() {
 			if(calc==DataMC) return "[" + children[0]->GetLegName() + " / " + children[1]->GetLegName() + "]";
 			else return "[" + children[0]->GetLegName() + " - " + children[1]->GetLegName() + "]/#sigma";
+		}
+		void SetCalc(string calcName){
+			if(calcName=="DataMC") calc = DataMC;
+			else if(calcName=="PctDiff") calc = PctDiff;
+			else if(calcName=="Pull") calc = Pull;
+			else if(calcName=="Q1") calc = Q1;
+			else if(calcName=="Q2") calc = Q2;
+			else if(calcName=="Q3") calc = Q3;
+			else if(calcName=="Binom") calc = Binom;			
 		}
 		
 		//ratio class acts a little differently:
@@ -675,12 +677,11 @@ class KSetRatio: public KSet {
 			KBase::SetStyle(allStyles,"data");
 		}
 		
-		protected:
+	protected:
 		//new member variables for binomial case
 		TGraphAsymmErrors* btmp;
 		ErrorMap MyBinoms;
 		ratiocalc calc;
-		bool setCalc;
 		bool noErrBand;
 };
 //not registered
