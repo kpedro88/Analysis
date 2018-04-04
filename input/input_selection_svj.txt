@@ -24,11 +24,20 @@ vetotk
 dijet
 	Dijet	i:njet[2]	b:id[1]	d:eta[5.0]
 	MET	d:min[100]
+dijetmt
+	Dijet	i:njet[2]	b:id[1]	d:eta[5.0]
+	METMTRatio	d:min[0.15]
 dijethad
 	dijet
 	veto
+dijetmthad
+	dijetmt
+	veto
 dijethadtk
 	dijet
+	vetotk
+dijetmthadtk
+	dijetmt
 	vetotk
 theory
 	DijetAK4	i:njet[2]	b:id[0]	d:pt[100]	d:eta[2.4]

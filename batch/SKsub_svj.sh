@@ -4,7 +4,7 @@ source exportProd.sh
 
 JOBDIR=jobs
 INPUT=input/input_selection_svj.txt
-SELTYPE=dijethad,dijethadtk,theory
+SELTYPE=dijetmthad
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}
 OUTDIR=tree
 STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims
