@@ -42,7 +42,8 @@ class KMCWeightSelector : public KSelector {
 		KMCWeightSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { 
 		}
 		//enum for flattening qtys
-		enum flatqtys { noqty = 0, leadjetAK8pt = 1, subleadjetAK8pt = 2, bothjetAK8pt = 3, thirdjetAK8pt = 4, fourthjetAK8pt = 5 };
+		enum flatqtys { noflatqty = 0, leadjetAK8pt = 1, subleadjetAK8pt = 2, bothjetAK8pt = 3, thirdjetAK8pt = 4, fourthjetAK8pt = 5 };
+		enum svbqtys { nosvbqty = 0, MTAK8 = 1 };
 		virtual void CheckBase(){
 			//standard weight options
 			normtype = ""; base->GetLocalOpt()->Get("normtype",normtype); GetNormTypeEnum();
@@ -165,7 +166,7 @@ class KMCWeightSelector : public KSelector {
 			//flattening options
 			flatten = localOpt->Get("flatten",false);
 			if(flatten){
-				flatqty = noqty;
+				flatqty = noflatqty;
 				TH1* flathist = NULL;
 				string flatname; localOpt->Get("flatname",flatname);
 				TFile* flatfile = TFile::Open(flatname.c_str(),"READ");
@@ -183,6 +184,42 @@ class KMCWeightSelector : public KSelector {
 					else if(sflatqty=="bothjetAK8pt") flatqty = bothjetAK8pt;
 					else if(sflatqty=="thirdjetAK8pt") flatqty = thirdjetAK8pt;
 					else if(sflatqty=="fourthjetAK8pt") flatqty = fourthjetAK8pt;
+				}
+			}
+
+			//svb weighting options
+			svbweight = localOpt->Get("svbweight",false);
+			hsvb = NULL;
+			if(svbweight){
+				svbqty = nosvbqty;
+				string svbname; localOpt->Get("svbname",svbname);
+				string svbnumer; localOpt->Get("svbnumer",svbnumer);
+				string svbdenom; localOpt->Get("svbdenom",svbdenom);
+				TFile* svbfile = TFile::Open(svbname.c_str(),"READ");
+				if(svbfile and !svbnumer.empty() and !svbdenom.empty()){
+					//get enum
+					string ssvbqty; localOpt->Get("svbqty",ssvbqty);
+					if(ssvbqty=="MTAK8") svbqty = MTAK8;
+
+					//use ratio object w/ built-in calculations
+					TH1F* numer = (TH1F*)svbfile->Get((ssvbqty+"_"+svbnumer).c_str());
+					TH1F* denom = (TH1F*)svbfile->Get((ssvbqty+"_"+svbdenom).c_str());
+					string svbcalc; localOpt->Get("svbcalc",svbcalc);
+					KSetRatio svbratio("svb",nullptr,nullptr);
+					svbratio.SetCalc(svbcalc);
+					svbratio.Build(ssvbqty,numer,denom);
+					hsvb = svbratio.GetHisto();
+
+					//check the assignment of this set (if not numer, then denom)
+					bool svb_isnumer = base->GetLocalOpt()->Get("svbnumer",false);
+
+					//normalize weights to preserve total # events in sample
+					if(localOpt->Get("svbnorm",false)){
+						TH1F* svbnorm = svb_isnumer ? (TH1F*)numer->Clone() : (TH1F*)denom->Clone();
+						svbnorm->Scale(1.0/svbnorm->Integral(0,svbnorm->GetNbinsX()+1));
+						hsvb->Multiply(svbnorm);
+					}
+
 				}
 			}
 
@@ -263,7 +300,10 @@ class KMCWeightSelector : public KSelector {
 				looper->fChain->SetBranchStatus("NJetsISR",1);
 			}
 			if(flatten){
-				if(flatqty>noqty and flatqty<=fourthjetAK8pt) looper->fChain->SetBranchStatus("JetsAK8",1);
+				if(flatqty>noflatqty and flatqty<=fourthjetAK8pt) looper->fChain->SetBranchStatus("JetsAK8",1);
+			}
+			if(svbweight){
+				if(svbqty==MTAK8) looper->fChain->SetBranchStatus("MT_AK8",1);
 			}
 			if(NTenum==ttbarLowHTLowMET || NTenum==ttbarLowHTHighMET || NTenum==ttbarLowHThad || NTenum==ttbarHighHT || NTenum==wjetsLowHT || NTenum==wjetsHighHT){
 				looper->fChain->SetBranchStatus("madHT",1);
@@ -357,6 +397,12 @@ class KMCWeightSelector : public KSelector {
 			if(lumicorr){
 				w *= lumicorrval;
 			}
+
+			if(svbweight){
+				double qty = 0;
+				if(svbqty==MTAK8) qty = looper->MT_AK8;
+				w *= hsvb->GetBinContent(hsvb->GetXaxis()->FindBin(min(qty,hsvb->GetBinLowEdge(hsvb->GetNbinsX()+1))));
+			}
 			
 			//now do scaling: norm*xsection/nevents
 			if(useTreeWeight && !fastsim) w *= looper->Weight;
@@ -414,7 +460,7 @@ class KMCWeightSelector : public KSelector {
 		
 		//member variables
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, debugWeight, didDebugWeight;
-		bool pucorr, trigcorr, isrcorr, realMET, signal, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten;
+		bool pucorr, trigcorr, isrcorr, realMET, signal, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight;
 		double jetidcorrval, isotrackcorrval, lumicorrval;
 		int puunc, pdfunc, isrunc, scaleunc, trigunc, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc;
 		vector<int> mother;
@@ -429,6 +475,8 @@ class KMCWeightSelector : public KSelector {
 		Flattener flattener;
 		string sflatqty;
 		flatqtys flatqty;
+		svbqtys svbqty;
+		TH1* hsvb;
 };
 REGISTER_SELECTOR(MCWeight);
 
@@ -614,7 +662,7 @@ double KHisto::GetWeight(){
 double KHisto::GetWeightPerJet(unsigned index){
 	double w = 1.0;
 	//range of flatqty for AK8 jet pt
-	if(MCWeight and MCWeight->flatten and MCWeight->flatqty>KMCWeightSelector::noqty and MCWeight->flatqty<=KMCWeightSelector::fourthjetAK8pt) {
+	if(MCWeight and MCWeight->flatten and MCWeight->flatqty>KMCWeightSelector::noflatqty and MCWeight->flatqty<=KMCWeightSelector::fourthjetAK8pt) {
 		w *= MCWeight->flattener.GetWeight(looper->JetsAK8->at(index).Pt());
 		if( (MCWeight->flatqty==KMCWeightSelector::leadjetAK8pt and index!=0) or
 			(MCWeight->flatqty==KMCWeightSelector::subleadjetAK8pt and index!=1) or
