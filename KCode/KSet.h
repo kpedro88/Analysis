@@ -557,7 +557,7 @@ class KSetRatio: public KSet {
 				}
 				
 				//formatting
-				MyStyle->Format(btmp);
+				if(MyStyle) MyStyle->Format(btmp);
 			}
 			else if(calc==Pull){ //(data-mc)/err
 				//todo: add option to allow removal of either data or mc errors
@@ -614,23 +614,20 @@ class KSetRatio: public KSet {
 			}
 			
 			//formatting
-			MyStyle->Format(hrat);
+			if(MyStyle) MyStyle->Format(hrat);
 			
 			htmp = hrat;
 			MyHistos.Add(stmp,htmp);
 			
 			//error band enabled by default for 1D histo
 			if(globalOpt->Get("errband",true) && htmp->GetDimension()==1) {
-				BuildErrorBand();
+				BuildErrorBand(h0,h1);
 				//style
-				MyStyle->FormatErr(etmp);
+				if(MyStyle) MyStyle->FormatErr(etmp);
 			}
 		}
 		//calculate ratio error band from denom
-		TGraphAsymmErrors* BuildErrorBand(){
-			TH1* hdata = children[0]->GetHisto();
-			TH1* hsim = children[1]->GetHisto();
-		
+		TGraphAsymmErrors* BuildErrorBand(TH1* hdata, TH1* hsim){
 			//make sim error band
 			TGraphAsymmErrors* erat = new TGraphAsymmErrors(htmp->GetNbinsX()+2); //under- and overflow
 			for(int b = 0; b < erat->GetN(); b++){
