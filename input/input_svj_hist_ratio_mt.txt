@@ -1,0 +1,7 @@
+OPTION
+vstring:disable_branches[*]
+vstring:enable_branches[MT_AK8]
+
+HISTO
+#MTAK8	i:xnum[83]	d:xmin[1020]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	c:color[kMagenta]
+MTAK8	i:xnum[150]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	c:color[kMagenta]

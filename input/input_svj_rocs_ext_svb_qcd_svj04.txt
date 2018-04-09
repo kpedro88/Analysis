@@ -1,0 +1,11 @@
+OPTION
+string:printsuffix[_svb-SVJ04-QCD]
+#int:npanel[2]
+vstring:roc_bkg[QCD]
+vstring:roc_sig[SVJ_4000_20_0.3_0.2]
+
+SET
+hist	mc	QCD	s:legname[QCD]	c:color[kBlack]	i:panel[1]
+	base	ext	QCD	b:ext_auto[1]	s:exthisto_extra[svb-SVJ04-QCD]
+hist	mc	SVJ_4000_20_0.3_0.2	s:legname[SVJ_4000_20_0.3_0.2]	c:color[kMagenta]	i:linestyle[7]	i:panel[0]
+	base	ext	SVJ_4000_20_0.3_0.2	b:ext_auto[1]	s:exthisto_extra[svb-SVJ04-QCD]

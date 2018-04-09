@@ -1,0 +1,17 @@
+SELECTION
+svb-SVJ01-QCD
+	Dijet	b:simple[1]
+	MCWeight	b:svbweight[1]	s:svbname[test/svj_unskimmed_met.root]	s:svbnumer[SVJ_3000_20_0.3_0.2]	s:svbdenom[QCD]	s:svbqty[MTAK8]	s:svbcalc[Q1]
+	Histo
+svb-SVJ02-QCD
+	Dijet	b:simple[1]
+	MCWeight	b:svbweight[1]	s:svbname[test/svj_unskimmed_met.root]	s:svbnumer[SVJ_1000_20_0.3_0.2]	s:svbdenom[QCD]	s:svbqty[MTAK8]	s:svbcalc[Q1]
+	Histo
+svb-SVJ03-QCD
+	Dijet	b:simple[1]
+	MCWeight	b:svbweight[1]	s:svbname[test/svj_unskimmed_met.root]	s:svbnumer[SVJ_2000_20_0.3_0.2]	s:svbdenom[QCD]	s:svbqty[MTAK8]	s:svbcalc[Q1]
+	Histo
+svb-SVJ04-QCD
+	Dijet	b:simple[1]
+	MCWeight	b:svbweight[1]	s:svbname[test/svj_unskimmed_met.root]	s:svbnumer[SVJ_4000_20_0.3_0.2]	s:svbdenom[QCD]	s:svbqty[MTAK8]	s:svbcalc[Q1]
+	Histo
