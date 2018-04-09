@@ -272,6 +272,9 @@ class KBaseExt : public KBase {
 				string hsuff;
 				if(localOpt->Get("exthisto_suff",hsuff)) ext_auto = true;
 				else hsuff = name;
+				string hextra; localOpt->Get("exthisto_extra",hextra);
+				//append extra suffix to default suffix
+				if(!hextra.empty()) hsuff += "_"+hextra;
 
 				add_ext = true;
 				if(ext_auto){
@@ -279,14 +282,13 @@ class KBaseExt : public KBase {
 					TIter next(file->GetListOfKeys());
 					while((key = (TKey*)next())) {
 						string ntmp = key->GetName();
-						//look for names in the format histo_suff
+						//look for names in the format histo_suff(_extra)
 						if(ntmp.size() > hsuff.size() and ntmp.compare(ntmp.size()-hsuff.size(),hsuff.size(),hsuff)==0){
 							TH1* extmp = (TH1*)file->Get(ntmp.c_str());
 							if(extmp) AddHisto(ntmp.substr(0,ntmp.size()-hsuff.size()-1),extmp);
 							else {
 								cout << "Input error: could not open histo " << ntmp << " in file " << filename << "!" << endl;
 							}
-							
 						}
 					}
 				}
