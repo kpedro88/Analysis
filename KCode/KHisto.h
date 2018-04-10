@@ -134,7 +134,7 @@ class KHisto : public KChecker {
 				vector<unsigned> indices;
 				string vname2;
 				for(const auto& var: vars){
-					if(IsPerJet(var,vname2,indices)) fillers.push_back(KJetFillerFactory::GetFactory().construct(var,var,localOpt,this,indices));
+					if(IsPerJet(var,vname2,indices)) fillers.push_back(KJetFillerFactory::GetFactory().construct(vname2,vname2,localOpt,this,indices));
 					else fillers.push_back(KFillerFactory::GetFactory().construct(var,var,localOpt,this));
 				}
 				
