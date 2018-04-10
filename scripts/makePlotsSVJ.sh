@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SEL=dijethad
+SEL=dijetmthad
 
 PLOTS_ALL=(
 0 \

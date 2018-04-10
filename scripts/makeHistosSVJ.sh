@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SEL=dijethad
+SEL=dijetmthad
 
 HISTOS_ALL=(
 0 \
