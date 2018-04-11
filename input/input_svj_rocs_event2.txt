@@ -10,4 +10,4 @@ msdAsymAK8	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[A[m_{sd}](j_{1},j_{2})]	s:yt
 ht	i:xnum[150]	d:xmin[0]	d:xmax[6000]	s:xtitle[H_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kGray + 1]
 njets	i:xnum[10]	d:xmin[-0.5]	d:xmax[9.5]	s:xtitle[N_{jet}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kCyan + 2]
 dRAK8	i:xnum[120]	d:xmin[0]	d:xmax[6]	s:xtitle[|#DeltaR(j_{1},j_{2})|]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta]
-deltaphijjmetAK8	i:xnum[100]	d:xmin[0]	d:xmax[3.15]	s:xtitle[#Delta#phi(j_{1},j_{2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kOrange + 7]
+deltaphijjmetAK8	i:xnum[100]	d:xmin[0]	d:xmax[3.15]	s:xtitle[#Delta#phi(jj,#slash{E}_{T})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kOrange + 7]

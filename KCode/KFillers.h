@@ -647,7 +647,7 @@ class KFiller_deltaphijjmetAK8 : public KFiller {
 				for(unsigned j = 0; j < 2; ++j){
 					vjj += looper->JetsAK8->at(j);
 				}
-				double dphi = KMath::DeltaPhi(vjj.Phi(),looper->METPhi);
+				double dphi = abs(KMath::DeltaPhi(vjj.Phi(),looper->METPhi));
 				value.Fill(dphi,w);
 			}
 		}
