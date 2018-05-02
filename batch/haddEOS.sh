@@ -9,13 +9,13 @@ UPDATE=0
 VERBOSE=0
 
 #check arguments
-while getopts "d:i:x:g:ruv" opt; do
+while getopts "d:i:s:g:ruv" opt; do
 	case "$opt" in
 	r) RUN=1
 	;;
 	u) UPDATE=1
 	;;
-	x) SUFF=$OPTARG
+	s) SUFF=$OPTARG
 	;;
 	d) DIR=$OPTARG
 	;;

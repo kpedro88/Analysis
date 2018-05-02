@@ -38,7 +38,7 @@ ARGS=""
 if [[ $UPDATE -eq 1 ]]; then
 	ARGS="-u"
 fi
-./haddEOS.sh -d ${DIR} -i ${INPUT} -x "${SUFF}" -g "${SEARCH}" -r ${ARGS}
+./haddEOS.sh -d ${DIR} -i ${INPUT} -s "${SUFF}" -g "${SEARCH}" -r ${ARGS}
 
 #check exit code
 HADDEXIT=$?

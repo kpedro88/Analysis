@@ -35,7 +35,7 @@ done
 
 TESTARGS="${TESTARGS} -d ${DIR} -g ${SEARCH}"
 if [[ -n "$SUFF" ]]; then
-  TESTARGS="${TESTARGS} -x ${SUFF}"
+  TESTARGS="${TESTARGS} -s ${SUFF}"
 fi
 
 ./SKcheck.sh ${CHECKARGS}
