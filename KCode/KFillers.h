@@ -600,6 +600,21 @@ class KFiller_MmcAK8 : public KFiller {
 };
 REGISTER_FILLER(MmcAK8);
 
+//trijet mass
+class KFiller_MJJJAK8 : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void ListBranches() { branches = {"JetsAK8"}; }
+		virtual void Fill(KValue& value, double w) {
+			TLorentzVector vjjj;
+			for(unsigned j = 0; j < min(looper->JetsAK8->size(),3ul); ++j){
+				vjjj += looper->JetsAK8->at(j);
+			}
+			value.Fill(vjjj.M(),w);
+		}
+};
+REGISTER_FILLER(MJJJAK8);
+
 //deta(j1,j2)
 class KFiller_deltaetaAK8 : public KFiller {
 	public:
