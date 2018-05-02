@@ -6,9 +6,10 @@ SUFF=""
 SEARCH=""
 RUN=0
 UPDATE=0
+VERBOSE=0
 
 #check arguments
-while getopts "d:i:x:g:ru" opt; do
+while getopts "d:i:x:g:ruv" opt; do
 	case "$opt" in
 	r) RUN=1
 	;;
@@ -21,6 +22,8 @@ while getopts "d:i:x:g:ru" opt; do
 	i) INPUT=$OPTARG
 	;;
 	g) SEARCH=$OPTARG
+	;;
+	v) VERBOSE=1
 	;;
 	esac
 done
@@ -47,18 +50,25 @@ for BASE in ${SAMPLES[@]}; do
 	if [[ $UPDATE -eq 1 ]]; then
 		ALLFILES="${XRDIR}/${BASE}.root ${ALLFILES}"
 	fi
-	
-	#dryrun (list nfiles) is default
-	if [[ $RUN -eq 0 ]]; then
-		echo ${ALLFILES} | wc -w
-		continue
-	fi
-	
-	#hadd to tmp file
+
+	#setup filename	
 	TMPFILE=${BASE}.root
 	if [[ -n "$SUFF" ]]; then
 		TMPFILE=${BASE}_${SUFF}.root
 	fi
+
+	#dryrun (list nfiles) is default
+	if [[ $RUN -eq 0 ]]; then
+		if [[ $VERBOSE -eq 0 ]]; then
+			echo ${ALLFILES} | wc -w
+		else
+			sed 's/ /\n\t/g' <<< "Input:$ALLFILES"
+			echo -e "Output:\n\t$TMPFILE"
+		fi
+		continue
+	fi
+	
+	#hadd to tmp file
 	hadd ${TMPFILE} ${ALLFILES}
 	
 	#check exit code
