@@ -7,9 +7,10 @@ SEARCH=""
 RUN=0
 UPDATE=0
 VERBOSE=0
+XRDLOC=root://cmseos.fnal.gov
 
 #check arguments
-while getopts "d:i:s:g:ruv" opt; do
+while getopts "d:i:s:g:x:ruv" opt; do
 	case "$opt" in
 	r) RUN=1
 	;;
@@ -25,17 +26,19 @@ while getopts "d:i:s:g:ruv" opt; do
 	;;
 	v) VERBOSE=1
 	;;
+	x) XRDLOC=$OPTARG
+	;;
 	esac
 done
 
-XRDIR=root://cmseos.fnal.gov/$DIR
+XRDIR=$XRDLOC/$DIR
 #convert input into array
 IFS=',' read -r -a SAMPLES <<< "$INPUT"; unset IFS
 for BASE in ${SAMPLES[@]}; do
 	echo $BASE
 	
 	#check to see if anything needs to be hadded
-	IFS=$'\n' LGFILES=($(xrdfs root://cmseos.fnal.gov ls ${DIR} | grep "${BASE}${SEARCH}")); unset IFS
+	IFS=$'\n' LGFILES=($(xrdfs $XRDLOC ls ${DIR} | grep "${BASE}${SEARCH}")); unset IFS
 	if [[ ${#LGFILES[@]} -eq 0 ]]; then
 		echo "nothing to hadd for $BASE"
 		continue
@@ -92,7 +95,7 @@ for BASE in ${SAMPLES[@]}; do
 	
 	#remove original files (only if hadd and xrdcp succeeded)
 	for FILE in ${LGFILES[@]}; do
-		xrdfs root://cmseos.fnal.gov/ rm ${FILE}
+		xrdfs $XRDLOC rm ${FILE}
 	done
 	
 	#remove tmp file
