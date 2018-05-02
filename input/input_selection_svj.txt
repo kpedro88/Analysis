@@ -27,6 +27,9 @@ dijet
 dijetmt
 	Dijet	i:njet[2]	b:id[1]	d:eta[5.0]
 	METMTRatio	d:min[0.15]
+dijetmjj
+	Dijet	i:njet[2]	b:id[1]	d:eta[5.0]
+	MJJAK8	d:min[1000]	d:max[-1]
 dijethad
 	dijet
 	veto

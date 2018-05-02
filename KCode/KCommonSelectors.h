@@ -256,6 +256,60 @@ class KMETSelector : public KSelector {
 };
 REGISTER_SELECTOR(MET);
 
+//-------------------------------------------------------------------
+//selects events based on AK8 MT(jj,MET) value (possibly in a window)
+class KMTAK8Selector : public KSelector {
+	public:
+		//constructor
+		KMTAK8Selector() : KSelector() { }
+		KMTAK8Selector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), min(1000), max(-1) { 
+			//check for option
+			localOpt->Get("min",min);
+			localOpt->Get("max",max);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("MT_AK8",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return ( (min<0 or looper->MT_AK8>min) and (max<0 or looper->MT_AK8<max) );
+		}
+		
+		//member variables
+		double min, max;
+};
+REGISTER_SELECTOR(MTAK8);
+
+//-------------------------------------------------------------------
+//selects events based on AK8 Mjj value (possibly in a window)
+class KMJJAK8Selector : public KSelector {
+	public:
+		//constructor
+		KMJJAK8Selector() : KSelector() { }
+		KMJJAK8Selector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), min(1000), max(-1) { 
+			//check for option
+			localOpt->Get("min",min);
+			localOpt->Get("max",max);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("MJJ_AK8",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return ( (min<0 or looper->MJJ_AK8>min) and (max<0 or looper->MJJ_AK8<max) );
+		}
+		
+		//member variables
+		double min, max;
+};
+REGISTER_SELECTOR(MJJAK8);
+
 //-------------------------------------------------------------
 //vetos events with leptons
 class KLeptonVetoSelector : public KSelector {
