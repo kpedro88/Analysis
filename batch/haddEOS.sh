@@ -1,5 +1,29 @@
 #!/bin/bash
 
+case `uname` in
+  Linux) ECHO="echo -e" ;;
+  *) ECHO="echo" ;;
+esac
+
+usage(){
+	EXIT=$1
+	$ECHO "haddEOS.sh [options]"
+	$ECHO
+	$ECHO "Options:"
+	$ECHO "-i input        \tcomma-separated list of samples to check for hadding (required)"
+	$ECHO "-d dir          \tlogical directory containing files, e.g. /store/user/... (required)"
+	$ECHO "-x xrd          \txrootd storage element location (default = root://cmseos.fnal.gov)"
+	$ECHO "-g search       \tadditional string to append when listing input files, e.g. _block"
+	$ECHO "-o output       \toutput dir for tmp file (default = pwd)"
+	$ECHO "-s suffix       \toptional suffix to append to output filename"
+	$ECHO "-u              \tupdate an existing file (output filename added to list of input files)"
+	$ECHO "-k              \tkeep input files when finished (default = delete upon successful hadd + stageout)"
+	$ECHO "-r              \tactually run (default = dry run, print number of input files)"
+	$ECHO "-v              \tverbose output for dry run"
+	$ECHO "-h              \tprint this message and exit"
+	exit $EXIT
+}
+
 INPUT=""
 DIR=""
 SUFF=""
@@ -12,7 +36,7 @@ OUTPUT=""
 KEEPINPUT=0
 
 #check arguments
-while getopts "d:i:s:g:x:o:kruv" opt; do
+while getopts "d:i:s:g:x:o:kruvh" opt; do
 	case "$opt" in
 	r) RUN=1
 	;;
@@ -34,19 +58,25 @@ while getopts "d:i:s:g:x:o:kruv" opt; do
 	;;
 	k) KEEPINPUT=1
 	;;
+	h) usage 0
+	;;
 	esac
 done
+
+if [[ -z "$INPUT" ]] || [[ -z "$DIR" ]]; then
+	usage 1
+fi
 
 XRDIR=$XRDLOC/$DIR
 #convert input into array
 IFS=',' read -r -a SAMPLES <<< "$INPUT"; unset IFS
 for BASE in ${SAMPLES[@]}; do
-	echo $BASE
+	$ECHO $BASE
 	
 	#check to see if anything needs to be hadded
 	IFS=$'\n' LGFILES=($(xrdfs $XRDLOC ls ${DIR} | grep "${BASE}${SEARCH}")); unset IFS
 	if [[ ${#LGFILES[@]} -eq 0 ]]; then
-		echo "nothing to hadd for $BASE"
+		$ECHO "nothing to hadd for $BASE"
 		continue
 	fi
 	
@@ -73,10 +103,10 @@ for BASE in ${SAMPLES[@]}; do
 	#dryrun (list nfiles) is default
 	if [[ $RUN -eq 0 ]]; then
 		if [[ $VERBOSE -eq 0 ]]; then
-			echo ${ALLFILES} | wc -w
+			$ECHO ${ALLFILES} | wc -w
 		else
 			sed 's/ /\n\t/g' <<< "Input:$ALLFILES"
-			echo -e "Output:\n\t$TMPFILE"
+			$ECHO "Output:\n\t$TMPFILE"
 		fi
 		continue
 	fi
@@ -88,7 +118,7 @@ for BASE in ${SAMPLES[@]}; do
 	HADDEXIT=$?
 	if [[ $HADDEXIT -ne 0 ]]; then
 		rm ${TMPFILE}
-		echo "exit code $HADDEXIT, skipping xrdcp"
+		$ECHO "exit code $HADDEXIT, skipping xrdcp"
 		exit $HADDEXIT
 	fi
 	
@@ -99,7 +129,7 @@ for BASE in ${SAMPLES[@]}; do
 	XRDEXIT=$?
 	if [[ $XRDEXIT -ne 0 ]]; then
 		rm ${TMPFILE}
-		echo "exit code $XRDEXIT, failure in xrdcp"
+		$ECHO "exit code $XRDEXIT, failure in xrdcp"
 		exit $XRDEXIT
 	fi	
 	
