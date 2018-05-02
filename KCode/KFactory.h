@@ -54,8 +54,12 @@ class KFactory {
 		ConstructorMap MyConstructors;
 };
 
-#define REGISTER_MACRO(x,y) static const x::KConstructor<y> ctor##y (#y)
+//preprocessor needs two layers of indirection to evaluate all variables while concatenating
+#define MAKECTOR_(a,b) a##ctor##b
+#define MAKECTOR(a,b) MAKECTOR_(a,b)
+
+#define REGISTER_MACRO(x,y) static const x::KConstructor<y> MAKECTOR(x,y) (#y)
 //allow different names for same class
-#define REGISTER_MACRO2(x,y,z) static const x::KConstructor<y> ctor##z (#z)
+#define REGISTER_MACRO2(x,y,z) static const x::KConstructor<y> MAKECTOR(x,z) (#z)
 
 #endif
