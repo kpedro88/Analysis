@@ -9,9 +9,10 @@ UPDATE=0
 VERBOSE=0
 XRDLOC=root://cmseos.fnal.gov
 OUTPUT=""
+KEEPINPUT=0
 
 #check arguments
-while getopts "d:i:s:g:x:o:ruv" opt; do
+while getopts "d:i:s:g:x:o:kruv" opt; do
 	case "$opt" in
 	r) RUN=1
 	;;
@@ -30,6 +31,8 @@ while getopts "d:i:s:g:x:o:ruv" opt; do
 	x) XRDLOC=$OPTARG
 	;;
 	o) OUTPUT=$OPTARG
+	;;
+	k) KEEPINPUT=1
 	;;
 	esac
 done
@@ -100,10 +103,12 @@ for BASE in ${SAMPLES[@]}; do
 		exit $XRDEXIT
 	fi	
 	
-	#remove original files (only if hadd and xrdcp succeeded)
-	for FILE in ${LGFILES[@]}; do
-		xrdfs $XRDLOC rm ${FILE}
-	done
+	#remove original files (only if hadd and xrdcp succeeded, and keep=0)
+	if [[ $KEEPINPUT -eq 0 ]]; then
+		for FILE in ${LGFILES[@]}; do
+			xrdfs $XRDLOC rm ${FILE}
+		done
+	fi
 	
 	#remove tmp file
 	rm ${TMPFILE}
