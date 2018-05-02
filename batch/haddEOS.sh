@@ -8,9 +8,10 @@ RUN=0
 UPDATE=0
 VERBOSE=0
 XRDLOC=root://cmseos.fnal.gov
+OUTPUT=""
 
 #check arguments
-while getopts "d:i:s:g:x:ruv" opt; do
+while getopts "d:i:s:g:x:o:ruv" opt; do
 	case "$opt" in
 	r) RUN=1
 	;;
@@ -27,6 +28,8 @@ while getopts "d:i:s:g:x:ruv" opt; do
 	v) VERBOSE=1
 	;;
 	x) XRDLOC=$OPTARG
+	;;
+	o) OUTPUT=$OPTARG
 	;;
 	esac
 done
@@ -58,6 +61,10 @@ for BASE in ${SAMPLES[@]}; do
 	TMPFILE=${BASE}.root
 	if [[ -n "$SUFF" ]]; then
 		TMPFILE=${BASE}_${SUFF}.root
+	fi
+	#use specified output dir
+	if [[ -n "$OUTPUT" ]]; then
+		TMPFILE=${OUTPUT}/${TMPFILE}
 	fi
 
 	#dryrun (list nfiles) is default
