@@ -133,9 +133,9 @@ class KHTSelector : public KSelector {
 	public:
 		//constructor
 		KHTSelector() : KSelector() { }
-		KHTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), HTmin(500) { 
+		KHTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), min(500) { 
 			//check for option
-			localOpt->Get("HTmin",HTmin);
+			localOpt->Get("min",min);
 			doGen = localOpt->Get("gen",false);
 		}
 		virtual void CheckBranches(){
@@ -147,12 +147,12 @@ class KHTSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			if(doGen) return looper->GenHT > HTmin;
-			else return looper->HT > HTmin;
+			if(doGen) return looper->GenHT > min;
+			else return looper->HT > min;
 		}
 		
 		//member variables
-		double HTmin;
+		double min;
 		bool doGen;
 };
 REGISTER_SELECTOR(HT);
@@ -163,9 +163,9 @@ class KMHTSelector : public KSelector {
 	public:
 		//constructor
 		KMHTSelector() : KSelector() { }
-		KMHTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), MHTmin(200) { 
+		KMHTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), min(200) { 
 			//check for option
-			localOpt->Get("MHTmin",MHTmin);
+			localOpt->Get("min",min);
 			doGen = localOpt->Get("gen",false);
 		}
 		virtual void CheckBranches(){
@@ -177,12 +177,12 @@ class KMHTSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			if(doGen) return looper->GenMHT > MHTmin;
-			else return looper->MHT > MHTmin;
+			if(doGen) return looper->GenMHT > min;
+			else return looper->MHT > min;
 		}
 		
 		//member variables
-		double MHTmin;
+		double min;
 		bool doGen;
 };
 REGISTER_SELECTOR(MHT);

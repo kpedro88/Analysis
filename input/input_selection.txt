@@ -34,12 +34,12 @@ evtunclean
 	EventCleaning	b:forceadd[1]	b:JetID[1]	b:METRatio[0]	b:MuonJet[0]	b:FakeJet[1]	b:HTRatio[0]
 baseline
 	NJet	i:njet[2]
-	HT	d:HTmin[200]
-	MHT	d:MHTmin[200]
+	HT	d:min[200]
+	MHT	d:min[200]
 baselinegj
 	NJet	i:njet[2]
-	HT	d:HTmin[200]
-	MHT	d:MHTmin[100]
+	HT	d:min[200]
+	MHT	d:min[100]
 dphi
 	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
 dphiinv
@@ -70,8 +70,8 @@ signalTight
 	Blind	i:run[275125]
 	common
 	NJet	i:njet[3]
-	HT	d:HTmin[300]
-	MHT	d:MHTmin[300]
+	HT	d:min[300]
+	MHT	d:min[300]
 	veto
 	dphi
 	evtclean
@@ -80,8 +80,8 @@ signalTight250
 	Blind	i:run[275125]
 	common
 	NJet	i:njet[3]
-	HT	d:HTmin[300]
-	MHT	d:MHTmin[250]
+	HT	d:min[300]
+	MHT	d:min[250]
 	veto
 	dphi
 	evtclean
@@ -90,8 +90,8 @@ signal2015
 	Blind	i:run[275125]
 	common
 	NJet	i:njet[4]
-	HT	d:HTmin[500]
-	MHT	d:MHTmin[200]
+	HT	d:min[500]
+	MHT	d:min[200]
 	veto
 	dphi
 	evtclean

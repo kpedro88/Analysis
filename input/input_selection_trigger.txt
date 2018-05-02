@@ -15,7 +15,7 @@ vstring:enable_branches[RunNum,LumiBlockNum,EvtNum,BTags,BadChargedCandidateFilt
 SELECTION
 signalTrigger
 	NJet	i:njet[2]
-	MHT	d:MHTmin[200]
+	MHT	d:min[200]
 SLmTrigger
 	NJet	i:njet[2]
 	MuonTrigger	d:pTmin[25]
@@ -23,13 +23,13 @@ SLeTrigger
 	NJet	i:njet[2]
 	ElectronTrigger	d:pTmin[25]
 QCDTrigger
-	HT	d:HTmin[900]
+	HT	d:min[900]
 PhotonTrigger
 	HLT	vs:HLTLines[HLT_Photon175_v]
 	Photon	b:loose[0]	b:trigger[1]
 	NJet	i:njet[2]
-	HT	d:HTmin[300]
-	MHT	d:MHTmin[50]
+	HT	d:min[300]
+	MHT	d:min[50]
 	MuonVeto
 	ElectronVeto
 

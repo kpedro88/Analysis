@@ -32,32 +32,32 @@ evtclean
 signal
 	common
 	NJet	i:njet[2]
-	HT	d:HTmin[300]
-	MHT	d:MHTmin[300]
+	HT	d:min[300]
+	MHT	d:min[300]
 	veto
 	dphi
 	evtclean
 signalMinusNJet
 	common
 #	NJet	i:njet[2]
-	HT	d:HTmin[300]
-	MHT	d:MHTmin[300]
+	HT	d:min[300]
+	MHT	d:min[300]
 	veto
 	dphi
 	evtclean
 signalMinusHT
 	common
 	NJet	i:njet[2]
-#	HT	d:HTmin[300]
-	MHT	d:MHTmin[300]
+#	HT	d:min[300]
+	MHT	d:min[300]
 	veto
 	dphi
 	evtclean
 signalMinusMHT
 	common
 	NJet	i:njet[2]
-	HT	d:HTmin[300]
-#	MHT	d:MHTmin[300]
+	HT	d:min[300]
+#	MHT	d:min[300]
 	veto
 	dphi
 	evtclean
@@ -65,8 +65,8 @@ signalHighPU
 	common
 	NVtx	i:num[20]
 	NJet	i:njet[2]
-	HT	d:HTmin[300]
-	MHT	d:MHTmin[300]
+	HT	d:min[300]
+	MHT	d:min[300]
 	veto
 	dphi
 	evtclean
@@ -74,8 +74,8 @@ signalLowPU
 	common
 	NVtx	i:num[20]	b:invert[1]
 	NJet	i:njet[2]
-	HT	d:HTmin[300]
-	MHT	d:MHTmin[300]
+	HT	d:min[300]
+	MHT	d:min[300]
 	veto
 	dphi
 	evtclean
@@ -83,8 +83,8 @@ signalAllPU
 	common
 	NVtx	i:num[0]
 	NJet	i:njet[2]
-	HT	d:HTmin[300]
-	MHT	d:MHTmin[300]
+	HT	d:min[300]
+	MHT	d:min[300]
 	veto
 	dphi
 	evtclean
