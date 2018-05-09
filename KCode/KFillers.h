@@ -615,6 +615,22 @@ class KFiller_MJJJAK8 : public KFiller {
 };
 REGISTER_FILLER(MJJJAK8);
 
+//trijet mT
+class KFiller_MTJJJAK8 : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void ListBranches() { branches = {"JetsAK8","MET","METPhi"}; }
+		virtual void Fill(KValue& value, double w) {
+			TLorentzVector vjjj;
+			for(unsigned j = 0; j < min(looper->JetsAK8->size(),3ul); ++j){
+				vjjj += looper->JetsAK8->at(j);
+			}
+			double MT = KMath::TransverseMass(vjjj.Px(),vjjj.Py(),vjjj.M(),looper->MET*cos(looper->METPhi),looper->MET*sin(looper->METPhi),0);
+			value.Fill(MT,w);
+		}
+};
+REGISTER_FILLER(MTJJJAK8);
+
 //deta(j1,j2)
 class KFiller_deltaetaAK8 : public KFiller {
 	public:
@@ -763,6 +779,36 @@ class KFiller_genmet : public KFiller {
 		virtual void Fill(KValue& value, double w) { value.Fill(looper->GenMET,w); }
 };
 REGISTER_FILLER(genmet);
+
+//num b hadrons (leading 2 jets)
+class KFiller_nbdijetAK8 : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_NumBhadrons"}; }
+		virtual void Fill(KValue& value, double w) {
+			int num = 0;
+			for(unsigned j = 0; j < min(looper->JetsAK8_NumBhadrons->size(),2ul); ++j){
+				num += looper->JetsAK8_NumBhadrons->at(j);
+			}
+			value.Fill(num,w);
+		}
+};
+REGISTER_FILLER(nbdijetAK8);
+
+//num c hadrons (leading 2 jets)
+class KFiller_ncdijetAK8 : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_NumChadrons"}; }
+		virtual void Fill(KValue& value, double w) {
+			int num = 0;
+			for(unsigned j = 0; j < min(looper->JetsAK8_NumChadrons->size(),2ul); ++j){
+				num += looper->JetsAK8_NumChadrons->at(j);
+			}
+			value.Fill(num,w);
+		}
+};
+REGISTER_FILLER(ncdijetAK8);
 
 //-----------------------------------------------------------------------------
 //event shape quantities (from AK4 jets)
