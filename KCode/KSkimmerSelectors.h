@@ -8,6 +8,7 @@
 #include "KPlot.h"
 #include "KHisto.h"
 #include "../corrections/EventListFilter.h"
+#include "../corrections/Flattener.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -1734,5 +1735,115 @@ class KIsoPionTrackSelector : public KSyncSelector {
 		//member variables
 };
 REGISTER_SELECTOR(IsoPionTrack);
+
+//-------------------------------------------------------------
+//generate per-jet training ntuples for tagging
+class KJetAK8TrainingSelector : public KSelector {
+	public:
+		//constructor
+		KJetAK8TrainingSelector() : KSelector() {}
+		KJetAK8TrainingSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
+			//check for option
+			localOpt->Get("flatname",flatname);
+			flatten = !flatname.empty();
+		}
+
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("JetsAK8",1);
+			looper->fChain->SetBranchStatus("JetsAK8_axismajor",1);
+			looper->fChain->SetBranchStatus("JetsAK8_axisminor",1);
+			looper->fChain->SetBranchStatus("JetsAK8_girth",1);
+			looper->fChain->SetBranchStatus("JetsAK8_momenthalf",1);
+			looper->fChain->SetBranchStatus("JetsAK8_multiplicity",1);
+			looper->fChain->SetBranchStatus("JetsAK8_NsubjettinessTau1",1);
+			looper->fChain->SetBranchStatus("JetsAK8_NsubjettinessTau2",1);
+			looper->fChain->SetBranchStatus("JetsAK8_NsubjettinessTau3",1);
+			looper->fChain->SetBranchStatus("JetsAK8_ptD",1);
+			looper->fChain->SetBranchStatus("JetsAK8_softDropMass",1);
+			looper->fChain->SetBranchStatus("DeltaPhi1_AK8",1);
+			looper->fChain->SetBranchStatus("DeltaPhi2_AK8",1);
+			looper->fChain->SetBranchStatus("MT_AK8",1);
+			looper->fChain->SetBranchStatus("Weight",1);
+		}
+
+		virtual void CheckBase(){
+			if(!flatten) return;
+			string flatsuff;
+			if(!base->GetLocalOpt()->Get("flatsuff",flatsuff)) flatsuff = base->GetName();
+			TFile* flatfile = TFile::Open(flatname.c_str(),"READ");
+			string flatdist = "bothjetAK8pt_" + flatsuff;
+			TH1* flathist = (TH1*)flatfile->Get(flatdist.c_str());
+			if(flathist){
+				flathist->SetDirectory(0);
+				flatfile->Close();
+				flattener.SetDist(flathist);
+			}
+		}
+
+		virtual void SetBranches(){
+			if(!tree) return;
+			
+			tree->Branch("pt",&b_pt,"pt/D");
+			tree->Branch("eta",&b_eta,"eta/D");
+			tree->Branch("phi",&b_phi,"phi/D");
+			tree->Branch("deltaphi",&b_deltaphi,"deltaphi/D");
+			tree->Branch("ptD",&b_ptD,"ptD/D");
+			tree->Branch("axismajor",&b_axismajor,"axismajor/D");
+			tree->Branch("axisminor",&b_axisminor,"axisminor/D");
+			tree->Branch("axisminor",&b_axisminor,"axisminor/D");
+			tree->Branch("girth",&b_girth,"girth/D");
+			tree->Branch("momenthalf",&b_momenthalf,"momenthalf/D");
+			tree->Branch("tau21",&b_tau21,"tau21/D");
+			tree->Branch("tau32",&b_tau32,"tau32/D");
+			tree->Branch("msd",&b_msd,"msd/D");
+			tree->Branch("mult",&b_mult,"mult/I");
+			tree->Branch("index",&b_index,"index/I");
+			tree->Branch("mt",&b_mt,"mt/D");
+			tree->Branch("weight",&b_weight,"weight/D");
+			if(flatten) tree->Branch("flatweight",&b_flatweight,"flatweight/D");
+		}
+
+		//used for non-dummy selectors
+		virtual bool Cut(){
+			for(unsigned j = 0; j < min(looper->JetsAK8->size(),2ul); ++j){
+				b_pt = looper->JetsAK8->at(j).Pt();
+				b_eta = looper->JetsAK8->at(j).Eta();
+				b_phi = looper->JetsAK8->at(j).Phi();
+				b_index = j;
+				if(j==0) b_deltaphi = looper->DeltaPhi1_AK8;
+				else if(j==1) b_deltaphi = looper->DeltaPhi2_AK8;
+				b_ptD = looper->JetsAK8_ptD->at(j);
+				b_axismajor = looper->JetsAK8_axismajor->at(j);
+				b_axisminor = looper->JetsAK8_axisminor->at(j);
+				b_girth = looper->JetsAK8_girth->at(j);
+				b_momenthalf = looper->JetsAK8_momenthalf->at(j);
+				b_tau21 = looper->JetsAK8_NsubjettinessTau1->at(j) > 0 ? looper->JetsAK8_NsubjettinessTau2->at(j)/looper->JetsAK8_NsubjettinessTau1->at(j) : -1;
+				b_tau32 = looper->JetsAK8_NsubjettinessTau2->at(j) > 0 ? looper->JetsAK8_NsubjettinessTau3->at(j)/looper->JetsAK8_NsubjettinessTau2->at(j) : -1;
+				b_msd = looper->JetsAK8_softDropMass->at(j);
+				b_mult = looper->JetsAK8_multiplicity->at(j);
+				b_mt = looper->MT_AK8;
+				b_weight = looper->Weight;
+				if(flatten) b_flatweight = flattener.GetWeight(b_pt);
+				//fill tree per jet
+				tree->Fill();
+			}
+			//prevents selection from trying to fill tree per event
+			return false;
+		}
+
+		//member variables
+		bool flatten;
+		string flatname;
+		Flattener flattener;
+		//per-jet branches
+		double b_pt, b_eta, b_phi, b_deltaphi;
+		double b_ptD, b_axismajor, b_axisminor;
+		double b_girth, b_momenthalf;
+		double b_tau21, b_tau32, b_msd;
+		int b_mult, b_index;
+		//spectators or per-event
+		double b_mt, b_weight, b_flatweight;
+};
+REGISTER_SELECTOR(JetAK8Training);
 
 #endif
