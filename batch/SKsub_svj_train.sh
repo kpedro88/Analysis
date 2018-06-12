@@ -4,8 +4,8 @@ source exportProd.sh
 
 JOBDIR=jobs
 INPUT=input/input_selection_svj_train.txt
-SELTYPE=dijetmthad-train
-INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims/tree_dijetmthad
+SELTYPE=dijetmthadloose-train-flatsig
+INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims/tree_dijetmthadloose
 OUTDIR=tree
 STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims
 CHECKARGS=""

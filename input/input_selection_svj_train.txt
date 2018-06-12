@@ -13,6 +13,10 @@ vstring:disable_branches[*]
 SELECTION
 dijetmthad-train
 	JetAK8Training	s:flatname[corrections/svj_dijetmthad_jetAK8.root]
+dijetmthadloose-train
+	JetAK8Training	s:flatname[corrections/svj_dijetmthadloose_jetAK8.root]
+dijetmthadloose-train-flatsig
+	JetAK8Training	s:flatname[corrections/svj_dijetmthadloose_jetAK8.root]	s:flatnumer[SVJ_3000_20_0.3_0.2]
 
 SET
 base	skim	QCD_Pt_1000to1400	s:filename[tree_QCD_Pt_1000to1400.root]	b:data[0]	s:flatsuff[QCD]

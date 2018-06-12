@@ -1768,15 +1768,24 @@ class KJetAK8TrainingSelector : public KSelector {
 
 		virtual void CheckBase(){
 			if(!flatten) return;
+			string qty = "bothjetAK8pt";
 			string flatsuff;
 			if(!base->GetLocalOpt()->Get("flatsuff",flatsuff)) flatsuff = base->GetName();
 			TFile* flatfile = TFile::Open(flatname.c_str(),"READ");
-			string flatdist = "bothjetAK8pt_" + flatsuff;
+			string flatdist = qty + "_" + flatsuff;
 			TH1* flathist = (TH1*)flatfile->Get(flatdist.c_str());
+			TH1* flatnumerhist = NULL;
+			string flatnumer;
+			localOpt->Get("flatnumer",flatnumer);
+			if(!flatnumer.empty()){
+				string flatnumerdist = qty + "_" + flatnumer;
+				flatnumerhist = (TH1*)flatfile->Get(flatnumerdist.c_str());
+				if(flatnumerhist) flatnumerhist->SetDirectory(0);
+			}
 			if(flathist){
 				flathist->SetDirectory(0);
 				flatfile->Close();
-				flattener.SetDist(flathist);
+				flattener.SetDist(flathist,flatnumerhist);
 			}
 		}
 
