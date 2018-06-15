@@ -1808,7 +1808,7 @@ class KJetAK8TrainingSelector : public KSelector {
 			tree->Branch("mult",&b_mult,"mult/I");
 			tree->Branch("index",&b_index,"index/I");
 			tree->Branch("mt",&b_mt,"mt/D");
-			tree->Branch("weight",&b_weight,"weight/D");
+			tree->Branch("procweight",&b_procweight,"procweight/D");
 			if(flatten) tree->Branch("flatweight",&b_flatweight,"flatweight/D");
 		}
 
@@ -1831,7 +1831,7 @@ class KJetAK8TrainingSelector : public KSelector {
 				b_msd = looper->JetsAK8_softDropMass->at(j);
 				b_mult = looper->JetsAK8_multiplicity->at(j);
 				b_mt = looper->MT_AK8;
-				b_weight = looper->Weight;
+				b_procweight = looper->Weight;
 				if(flatten) b_flatweight = flattener.GetWeight(b_pt);
 				//fill tree per jet
 				tree->Fill();
@@ -1851,7 +1851,7 @@ class KJetAK8TrainingSelector : public KSelector {
 		double b_tau21, b_tau32, b_msd;
 		int b_mult, b_index;
 		//spectators or per-event
-		double b_mt, b_weight, b_flatweight;
+		double b_mt, b_procweight, b_flatweight;
 };
 REGISTER_SELECTOR(JetAK8Training);
 
