@@ -9,6 +9,8 @@
 #include <TROOT.h>
 #include <TFile.h>
 #include <TTree.h>
+#include "TMVA/Tools.h"
+#include "TMVA/Reader.h"
 
 //STL headers
 #include <string>
@@ -16,6 +18,100 @@
 #include <algorithm>
 
 using namespace std;
+
+//----------------------------------------------------
+//selects events based on a BDT
+//todo: unify this w/ KJetAK8TrainingSelector somehow
+class KBDTSelector : public KSelector {
+	public:
+		//constructor
+		KBDTSelector() : KSelector() { }
+		KBDTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
+			//get BDT weights
+			localOpt->Get("weights",weights);
+			//get BDT type
+			localOpt->Get("type",type);
+			//get working point
+			localOpt->Get("wp",wp);
+			//check for tagging mode
+			tag = localOpt->Get("tag",false);
+			if(tag) canfail = false;
+
+			//load TMVA library
+			TMVA::Tools::Instance();
+			//input for reader
+			reader = new TMVA::Reader("Silent");
+			reader->AddVariable("mult",&b_mult);
+			reader->AddVariable("axisminor",&b_axisminor);
+			reader->AddVariable("axismajor",&b_axismajor);
+			reader->AddVariable("ptD",&b_ptD);
+			reader->AddVariable("girth",&b_girth);
+			reader->AddVariable("tau21",&b_tau21);
+			reader->AddVariable("tau32",&b_tau32);
+			reader->AddVariable("msd",&b_msd);
+			reader->AddVariable("momenthalf",&b_momenthalf);
+			reader->AddVariable("deltaphi",&b_deltaphi);
+			//setup reader
+			reader->BookMVA(type.c_str(),weights.c_str());
+		}
+		virtual void CheckBranches(){
+			//all the bdt input vars
+			looper->fChain->SetBranchStatus("JetsAK8",1);
+			looper->fChain->SetBranchStatus("JetsAK8_axismajor",1);
+			looper->fChain->SetBranchStatus("JetsAK8_axisminor",1);
+			looper->fChain->SetBranchStatus("JetsAK8_girth",1);
+			looper->fChain->SetBranchStatus("JetsAK8_momenthalf",1);
+			looper->fChain->SetBranchStatus("JetsAK8_multiplicity",1);
+			looper->fChain->SetBranchStatus("JetsAK8_NsubjettinessTau1",1);
+			looper->fChain->SetBranchStatus("JetsAK8_NsubjettinessTau2",1);
+			looper->fChain->SetBranchStatus("JetsAK8_NsubjettinessTau3",1);
+			looper->fChain->SetBranchStatus("JetsAK8_ptD",1);
+			looper->fChain->SetBranchStatus("JetsAK8_softDropMass",1);
+			looper->fChain->SetBranchStatus("DeltaPhi1_AK8",1);
+			looper->fChain->SetBranchStatus("DeltaPhi2_AK8",1);
+		}
+
+		//this selector doesn't add anything to tree
+
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			JetsAK8_bdt.clear();
+			unsigned njets = min(looper->JetsAK8->size(),2ul);
+			bool good = true;
+			for(unsigned j = 0; j < njets; ++j){
+				//load variables for this jet
+				if(j==0) b_deltaphi = looper->DeltaPhi1_AK8;
+				else if(j==1) b_deltaphi = looper->DeltaPhi2_AK8;
+				b_ptD = looper->JetsAK8_ptD->at(j);
+				b_axismajor = looper->JetsAK8_axismajor->at(j);
+				b_axisminor = looper->JetsAK8_axisminor->at(j);
+				b_girth = looper->JetsAK8_girth->at(j);
+				b_momenthalf = looper->JetsAK8_momenthalf->at(j);
+				b_tau21 = looper->JetsAK8_NsubjettinessTau1->at(j) > 0 ? looper->JetsAK8_NsubjettinessTau2->at(j)/looper->JetsAK8_NsubjettinessTau1->at(j) : -1;
+				b_tau32 = looper->JetsAK8_NsubjettinessTau2->at(j) > 0 ? looper->JetsAK8_NsubjettinessTau3->at(j)/looper->JetsAK8_NsubjettinessTau2->at(j) : -1;
+				b_msd = looper->JetsAK8_softDropMass->at(j);
+				b_mult = looper->JetsAK8_multiplicity->at(j);
+				JetsAK8_bdt.push_back(reader->EvaluateMVA(type.c_str()));
+				if(JetsAK8_bdt[j]<wp) good &= false;
+			}
+			return (tag or good);
+		}
+
+		//member variables
+		string weights, type;
+		double wp;
+		bool tag;
+		TMVA::Reader* reader;
+		//per-jet branches (bdt input, have to be floats)
+		float b_deltaphi;
+		float b_ptD, b_axismajor, b_axisminor;
+		float b_girth, b_momenthalf;
+		float b_tau21, b_tau32, b_msd;
+		float b_mult;
+		//bdt output
+		vector<double> JetsAK8_bdt;
+};
+REGISTER_SELECTOR(BDT);
 
 //----------------------------------------------------
 //selects events based on HLT line

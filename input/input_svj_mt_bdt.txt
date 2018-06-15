@@ -1,0 +1,68 @@
+OPTION
+vstring:disable_branches[*]
+#vstring:selections[pre,prebdt]
+string+:printsuffix[_prebdt]
+bool:useTreeWeight[1]
+bool:debugloop[1]
+bool:debugcut[1]
+double:ymin_min[5e-2]
+double:sizeLeg[18]
+int:npanel[1]
+
+SELECTION
+pre
+	MCWeight
+	Histo
+prebdt
+#	DeltaPhiMinAK8	d:max[0.4]
+#	METMTRatio	d:min[0.25]
+	BDT	s:weights[/uscms_data/d3/pedrok/SUSY2015/analysis/dev/CMSSW_8_0_30/src/SVJtagger/flatsig4/weights/TMVAClassification_BDTG.weights.xml]	s:type[BDTG]	d:wp[-0.16]
+	MCWeight
+	Histo	
+
+HISTO
+MTAK8	i:xnum[150]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta]
+
+SET
+hist	mc	QCD	s:legname[QCD]	c:color[kBlack]	vs:selections[pre]
+	base	mc	QCD_Pt_80to120	s:filename[tree_QCD_Pt_80to120.root]	s:flatsuff[QCD]
+	base	mc	QCD_Pt_120to170	s:filename[tree_QCD_Pt_120to170.root]	s:flatsuff[QCD]
+	base	mc	QCD_Pt_170to300	s:filename[tree_QCD_Pt_170to300.root]	s:flatsuff[QCD]
+	base	mc	QCD_Pt_300to470	s:filename[tree_QCD_Pt_300to470.root]	s:flatsuff[QCD]
+	base	mc	QCD_Pt_470to600	s:filename[tree_QCD_Pt_470to600.root]	s:flatsuff[QCD]
+	base	mc	QCD_Pt_600to800	s:filename[tree_QCD_Pt_600to800.root]	s:flatsuff[QCD]
+	base	mc	QCD_Pt_800to1000	s:filename[tree_QCD_Pt_800to1000.root]	s:flatsuff[QCD]
+	base	mc	QCD_Pt_1000to1400	s:filename[tree_QCD_Pt_1000to1400.root]	s:flatsuff[QCD]
+	base	mc	QCD_Pt_1400to1800	s:filename[tree_QCD_Pt_1400to1800.root]	s:flatsuff[QCD]
+	base	mc	QCD_Pt_1800to2400	s:filename[tree_QCD_Pt_1800to2400.root]	s:flatsuff[QCD]
+	base	mc	QCD_Pt_2400to3200	s:filename[tree_QCD_Pt_2400to3200.root]	s:flatsuff[QCD]
+	base	mc	QCD_Pt_3200toInf	s:filename[tree_QCD_Pt_3200toInf.root]	s:flatsuff[QCD]
+hist	mc	QCD	s:legname[QCD (BDT)]	c:color[kBlack]	i:linestyle[7]	vs:selections[prebdt]
+	base	mc	QCD_Pt_80to120	s:filename[tree_QCD_Pt_80to120.root]	s:flatsuff[QCD]
+	base	mc	QCD_Pt_120to170	s:filename[tree_QCD_Pt_120to170.root]	s:flatsuff[QCD]
+	base	mc	QCD_Pt_170to300	s:filename[tree_QCD_Pt_170to300.root]	s:flatsuff[QCD]
+	base	mc	QCD_Pt_300to470	s:filename[tree_QCD_Pt_300to470.root]	s:flatsuff[QCD]
+	base	mc	QCD_Pt_470to600	s:filename[tree_QCD_Pt_470to600.root]	s:flatsuff[QCD]
+	base	mc	QCD_Pt_600to800	s:filename[tree_QCD_Pt_600to800.root]	s:flatsuff[QCD]
+	base	mc	QCD_Pt_800to1000	s:filename[tree_QCD_Pt_800to1000.root]	s:flatsuff[QCD]
+	base	mc	QCD_Pt_1000to1400	s:filename[tree_QCD_Pt_1000to1400.root]	s:flatsuff[QCD]
+	base	mc	QCD_Pt_1400to1800	s:filename[tree_QCD_Pt_1400to1800.root]	s:flatsuff[QCD]
+	base	mc	QCD_Pt_1800to2400	s:filename[tree_QCD_Pt_1800to2400.root]	s:flatsuff[QCD]
+	base	mc	QCD_Pt_2400to3200	s:filename[tree_QCD_Pt_2400to3200.root]	s:flatsuff[QCD]
+	base	mc	QCD_Pt_3200toInf	s:filename[tree_QCD_Pt_3200toInf.root]	s:flatsuff[QCD]
+hist	mc	SVJ_1000_20_0.3_0.2	s:legname[SVJ_1000_20_0.3_0.2]	c:color[kRed]	i:linestyle[1]	vs:selections[pre]
+	base	mc	SVJ_1000_20_0.3_0.2	s:filename[tree_SVJ2_mZprime-1000_mDark-20_rinv-0.3_alpha-0.2.root]
+hist	mc	SVJ_1000_20_0.3_0.2	s:legname[SVJ_1000_20_0.3_0.2 (BDT)]	c:color[kRed]	i:linestyle[7]	vs:selections[prebdt]
+	base	mc	SVJ_1000_20_0.3_0.2	s:filename[tree_SVJ2_mZprime-1000_mDark-20_rinv-0.3_alpha-0.2.root]
+hist	mc	SVJ_2000_20_0.3_0.2	s:legname[SVJ_2000_20_0.3_0.2]	c:color[kBlue]	i:linestyle[1]	vs:selections[pre]
+	base	mc	SVJ_2000_20_0.3_0.2	s:filename[tree_SVJ2_mZprime-2000_mDark-20_rinv-0.3_alpha-0.2.root]
+hist	mc	SVJ_2000_20_0.3_0.2	s:legname[SVJ_2000_20_0.3_0.2 (BDT)]	c:color[kBlue]	i:linestyle[7]	vs:selections[prebdt]
+	base	mc	SVJ_2000_20_0.3_0.2	s:filename[tree_SVJ2_mZprime-2000_mDark-20_rinv-0.3_alpha-0.2.root]
+hist	mc	SVJ_3000_20_0.3_0.2	s:legname[SVJ_3000_20_0.3_0.2]	c:color[kCyan + 2]	i:linestyle[1]	vs:selections[pre]
+	base	mc	SVJ_3000_20_0.3_0.2	s:filename[tree_SVJ2_mZprime-3000_mDark-20_rinv-0.3_alpha-0.2.root]
+hist	mc	SVJ_3000_20_0.3_0.2	s:legname[SVJ_3000_20_0.3_0.2 (BDT)]	c:color[kCyan + 2]	i:linestyle[7]	vs:selections[prebdt]
+	base	mc	SVJ_3000_20_0.3_0.2	s:filename[tree_SVJ2_mZprime-3000_mDark-20_rinv-0.3_alpha-0.2.root]
+hist	mc	SVJ_4000_20_0.3_0.2	s:legname[SVJ_4000_20_0.3_0.2]	c:color[kMagenta]	i:linestyle[1]	vs:selections[pre]
+	base	mc	SVJ_4000_20_0.3_0.2	s:filename[tree_SVJ2_mZprime-4000_mDark-20_rinv-0.3_alpha-0.2.root]
+hist	mc	SVJ_4000_20_0.3_0.2	s:legname[SVJ_4000_20_0.3_0.2 (BDT)]	c:color[kMagenta]	i:linestyle[7]	vs:selections[prebdt]
+	base	mc	SVJ_4000_20_0.3_0.2	s:filename[tree_SVJ2_mZprime-4000_mDark-20_rinv-0.3_alpha-0.2.root]

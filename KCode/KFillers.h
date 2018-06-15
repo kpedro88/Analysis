@@ -1171,6 +1171,16 @@ class KJetFiller_nsubjet : public KJetFiller {
 };
 REGISTER_JETFILLER(nsubjet);
 
+//bdt output
+class KJetFiller_bdt : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void CheckDeps(){ BDT = sel->Get<KBDTSelector*>("BDT"); }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(BDT and BDT->JetsAK8_bdt.size()>index) value.Fill(BDT->JetsAK8_bdt[index],w); }		//member variables
+		KBDTSelector* BDT = NULL;
+};
+REGISTER_JETFILLER(bdt);
+
 //-----------------------------------------------------------------------------
 //per-jet quantities based on dark hadron gen info
 class KJetFillerDarkHadron : public KJetFiller {
