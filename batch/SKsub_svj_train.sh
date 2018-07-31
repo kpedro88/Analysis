@@ -4,7 +4,10 @@ source exportProd.sh
 
 JOBDIR=jobs
 INPUT=input/input_selection_svj_train.txt
-SELTYPE=dijetmthadloose-train-flatsig
+SELTYPE=dijetmthadloose-train-flatsig2,dijetmthadloose-train-flatsig1
+SELTYPE2=dijetmthadloose-train-flatsigD1,dijetmthadloose-train-flatsigD50,dijetmthadloose-train-flatsigD100
+SELTYPE3=dijetmthadloose-train-flatsigR1,dijetmthadloose-train-flatsigR5,dijetmthadloose-train-flatsigR7
+SELTYPE4=dijetmthadloose-train-flatsigA1,dijetmthadloose-train-flatsigA5,dijetmthadloose-train-flatsigA10
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims/tree_dijetmthadloose
 OUTDIR=tree
 STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims
@@ -51,4 +54,7 @@ SVJ2_mZprime-4000_mDark-20_rinv-0.3_alpha-0.2 \
 for SAMPLE in ${SAMPLES[@]}
   do
     ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} ${SELTYPE} ${INDIR} ${OUTDIR} ${STORE}
+    ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} ${SELTYPE2} ${INDIR} ${OUTDIR} ${STORE}
+    ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} ${SELTYPE3} ${INDIR} ${OUTDIR} ${STORE}
+    ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} ${SELTYPE4} ${INDIR} ${OUTDIR} ${STORE}
   done

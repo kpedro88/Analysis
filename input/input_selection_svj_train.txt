@@ -19,6 +19,30 @@ dijetmthadloose-train-flatsig
 	JetAK8Training	s:flatname[corrections/svj_dijetmthadloose_jetAK8.root]	s:flatnumer[SVJ_3000_20_0.3_0.2]
 dijetmthadloose-train-flatsig4
 	JetAK8Training	s:flatname[corrections/svj_dijetmthadloose_jetAK8.root]	s:flatnumer[SVJ_4000_20_0.3_0.2]
+dijetmthadloose-train-flatsig2
+	JetAK8Training	s:flatname[corrections/svj_dijetmthadloose_jetAK8.root]	s:flatnumer[SVJ_2000_20_0.3_0.2]
+dijetmthadloose-train-flatsig1
+	JetAK8Training	s:flatname[corrections/svj_dijetmthadloose_jetAK8.root]	s:flatnumer[SVJ_1000_20_0.3_0.2]
+dijetmthadloose-train-flatsigD1
+	JetAK8Training	s:flatname[corrections/svj_dijetmthadloose_jetAK8.root]	s:flatnumer[SVJ_3000_1_0.3_0.2]
+dijetmthadloose-train-flatsigD50
+	JetAK8Training	s:flatname[corrections/svj_dijetmthadloose_jetAK8.root]	s:flatnumer[SVJ_3000_50_0.3_0.2]
+dijetmthadloose-train-flatsigD100
+	JetAK8Training	s:flatname[corrections/svj_dijetmthadloose_jetAK8.root]	s:flatnumer[SVJ_3000_100_0.3_0.2]
+dijetmthadloose-train-flatsigR1
+	JetAK8Training	s:flatname[corrections/svj_dijetmthadloose_jetAK8.root]	s:flatnumer[SVJ_3000_20_0.1_0.2]
+dijetmthadloose-train-flatsigR5
+	JetAK8Training	s:flatname[corrections/svj_dijetmthadloose_jetAK8.root]	s:flatnumer[SVJ_3000_20_0.5_0.2]
+dijetmthadloose-train-flatsigR7
+	JetAK8Training	s:flatname[corrections/svj_dijetmthadloose_jetAK8.root]	s:flatnumer[SVJ_3000_20_0.7_0.2]
+dijetmthadloose-train-flatsigA1
+	JetAK8Training	s:flatname[corrections/svj_dijetmthadloose_jetAK8.root]	s:flatnumer[SVJ_3000_20_0.3_0.1]
+dijetmthadloose-train-flatsigA5
+	JetAK8Training	s:flatname[corrections/svj_dijetmthadloose_jetAK8.root]	s:flatnumer[SVJ_3000_20_0.3_0.5]
+dijetmthadloose-train-flatsigA10
+	JetAK8Training	s:flatname[corrections/svj_dijetmthadloose_jetAK8.root]	s:flatnumer[SVJ_3000_20_0.3_1]
+dijetmthadloose-train-flatsigall
+	JetAK8Training	s:flatname[corrections/svj_dijetmthadloose_jetAK8_all.root]	s:flatnumer[SVJ_mZprime_20_0.3_0.2]
 
 SET
 base	skim	QCD_Pt_1000to1400	s:filename[tree_QCD_Pt_1000to1400.root]	b:data[0]	s:flatsuff[QCD]
