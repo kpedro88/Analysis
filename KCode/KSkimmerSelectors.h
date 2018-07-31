@@ -1749,21 +1749,45 @@ class KJetAK8TrainingSelector : public KSelector {
 		}
 
 		virtual void CheckBranches(){
-			looper->fChain->SetBranchStatus("JetsAK8",1);
-			looper->fChain->SetBranchStatus("JetsAK8_axismajor",1);
-			looper->fChain->SetBranchStatus("JetsAK8_axisminor",1);
-			looper->fChain->SetBranchStatus("JetsAK8_girth",1);
-			looper->fChain->SetBranchStatus("JetsAK8_momenthalf",1);
-			looper->fChain->SetBranchStatus("JetsAK8_multiplicity",1);
-			looper->fChain->SetBranchStatus("JetsAK8_NsubjettinessTau1",1);
-			looper->fChain->SetBranchStatus("JetsAK8_NsubjettinessTau2",1);
-			looper->fChain->SetBranchStatus("JetsAK8_NsubjettinessTau3",1);
-			looper->fChain->SetBranchStatus("JetsAK8_ptD",1);
-			looper->fChain->SetBranchStatus("JetsAK8_softDropMass",1);
-			looper->fChain->SetBranchStatus("DeltaPhi1_AK8",1);
-			looper->fChain->SetBranchStatus("DeltaPhi2_AK8",1);
-			looper->fChain->SetBranchStatus("MT_AK8",1);
-			looper->fChain->SetBranchStatus("Weight",1);
+			vector<string> branches = {
+				"JetsAK8",
+				"JetsAK8_axismajor",
+				"JetsAK8_axisminor",
+				"JetsAK8_girth",
+				"JetsAK8_momenthalf",
+				"JetsAK8_multiplicity",
+				"JetsAK8_NsubjettinessTau1",
+				"JetsAK8_NsubjettinessTau2",
+				"JetsAK8_NsubjettinessTau3",
+				"JetsAK8_ptD",
+				"JetsAK8_softDropMass",
+				"JetsAK8_lean",
+				"JetsAK8_ptdrlog",
+				"DeltaPhi1_AK8",
+				"DeltaPhi2_AK8",
+				"MT_AK8",
+				"Weight",
+				"JetsAK8_constituents",
+				"JetsAK8_chargedEmEnergyFraction",
+				"JetsAK8_chargedHadronEnergyFraction",
+				"JetsAK8_electronEnergyFraction",
+				"JetsAK8_hfEMEnergyFraction",
+				"JetsAK8_hfHadronEnergyFraction",
+				"JetsAK8_muonEnergyFraction",
+				"JetsAK8_neutralEmEnergyFraction",
+				"JetsAK8_neutralHadronEnergyFraction",
+				"JetsAK8_photonEnergyFraction",
+				"JetsAK8_chargedHadronMultiplicity",
+				"JetsAK8_chargedMultiplicity",
+				"JetsAK8_electronMultiplicity",
+				"JetsAK8_muonMultiplicity",
+				"JetsAK8_neutralHadronMultiplicity",
+				"JetsAK8_neutralMultiplicity",
+				"JetsAK8_photonMultiplicity"
+			};
+			for(const auto& branch : branches){
+				looper->fChain->SetBranchStatus(branch.c_str(),1);
+			}
 		}
 
 		virtual void CheckBase(){
@@ -1792,6 +1816,8 @@ class KJetAK8TrainingSelector : public KSelector {
 		virtual void SetBranches(){
 			if(!tree) return;
 			
+			b_constituents = NULL;
+
 			tree->Branch("pt",&b_pt,"pt/D");
 			tree->Branch("eta",&b_eta,"eta/D");
 			tree->Branch("phi",&b_phi,"phi/D");
@@ -1805,15 +1831,35 @@ class KJetAK8TrainingSelector : public KSelector {
 			tree->Branch("tau21",&b_tau21,"tau21/D");
 			tree->Branch("tau32",&b_tau32,"tau32/D");
 			tree->Branch("msd",&b_msd,"msd/D");
+			tree->Branch("lean",&b_lean,"lean/D");
+			tree->Branch("ptdrlog",&b_ptdrlog,"ptdrlog/D");
 			tree->Branch("mult",&b_mult,"mult/I");
 			tree->Branch("index",&b_index,"index/I");
 			tree->Branch("mt",&b_mt,"mt/D");
 			tree->Branch("procweight",&b_procweight,"procweight/D");
+			tree->Branch("fChEM",&b_fChEM,"fChEM/D");
+			tree->Branch("fChHad",&b_fChHad,"fChHad/D");
+			tree->Branch("fEle",&b_fEle,"fEle/D");
+			tree->Branch("fHFEM",&b_fHFEM,"fHFEM/D");
+			tree->Branch("fHFHad",&b_fHFHad,"fHFHad/D");
+			tree->Branch("fMu",&b_fMu,"fMu/D");
+			tree->Branch("fNeuEM",&b_fNeuEM,"fNeuEM/D");
+			tree->Branch("fNeuHad",&b_fNeuHad,"fNeuHad/D");
+			tree->Branch("fPho",&b_fPho,"fPho/D");
+			tree->Branch("nCh",&b_nCh,"nCh/I");
+			tree->Branch("nChHad",&b_nChHad,"nChHad/I");
+			tree->Branch("nEle",&b_nEle,"nEle/I");
+			tree->Branch("nMu",&b_nMu,"nMu/I");
+			tree->Branch("nNeuHad",&b_nNeuHad,"nNeuHad/I");
+			tree->Branch("nNeu",&b_nNeu,"nNeu/I");
+			tree->Branch("nPho",&b_nPho,"nPho/I");
+			tree->Branch("constituents","std::vector<TLorentzVector>",&b_constituents);
 			if(flatten) tree->Branch("flatweight",&b_flatweight,"flatweight/D");
 		}
 
 		//used for non-dummy selectors
 		virtual bool Cut(){
+			delete b_constituents; b_constituents = new vector<TLorentzVector>();
 			for(unsigned j = 0; j < min(looper->JetsAK8->size(),2ul); ++j){
 				b_pt = looper->JetsAK8->at(j).Pt();
 				b_eta = looper->JetsAK8->at(j).Eta();
@@ -1830,6 +1876,25 @@ class KJetAK8TrainingSelector : public KSelector {
 				b_tau32 = looper->JetsAK8_NsubjettinessTau2->at(j) > 0 ? looper->JetsAK8_NsubjettinessTau3->at(j)/looper->JetsAK8_NsubjettinessTau2->at(j) : -1;
 				b_msd = looper->JetsAK8_softDropMass->at(j);
 				b_mult = looper->JetsAK8_multiplicity->at(j);
+				b_lean = looper->JetsAK8_lean->at(j);
+				b_ptdrlog = looper->JetsAK8_ptdrlog->at(j);
+				b_fChEM = looper->JetsAK8_chargedEmEnergyFraction->at(j);
+				b_fChHad = looper->JetsAK8_chargedHadronEnergyFraction->at(j);
+				b_fEle = looper->JetsAK8_electronEnergyFraction->at(j);
+				b_fHFEM = looper->JetsAK8_hfEMEnergyFraction->at(j);
+				b_fHFHad = looper->JetsAK8_hfHadronEnergyFraction->at(j);
+				b_fMu = looper->JetsAK8_muonEnergyFraction->at(j);
+				b_fNeuEM = looper->JetsAK8_neutralEmEnergyFraction->at(j);
+				b_fNeuHad = looper->JetsAK8_neutralHadronEnergyFraction->at(j);
+				b_fPho = looper->JetsAK8_photonEnergyFraction->at(j);
+				b_nCh = looper->JetsAK8_chargedHadronMultiplicity->at(j);
+				b_nChHad = looper->JetsAK8_chargedMultiplicity->at(j);
+				b_nEle = looper->JetsAK8_electronMultiplicity->at(j);
+				b_nMu = looper->JetsAK8_muonMultiplicity->at(j);
+				b_nNeuHad = looper->JetsAK8_neutralHadronMultiplicity->at(j);
+				b_nNeu = looper->JetsAK8_neutralMultiplicity->at(j);
+				b_nPho = looper->JetsAK8_photonMultiplicity->at(j);
+				*b_constituents = looper->JetsAK8_constituents->at(j);
 				b_mt = looper->MT_AK8;
 				b_procweight = looper->Weight;
 				if(flatten) b_flatweight = flattener.GetWeight(b_pt);
@@ -1849,7 +1914,11 @@ class KJetAK8TrainingSelector : public KSelector {
 		double b_ptD, b_axismajor, b_axisminor;
 		double b_girth, b_momenthalf;
 		double b_tau21, b_tau32, b_msd;
+		double b_lean, b_ptdrlog;
+		double b_fChEM, b_fChHad, b_fEle, b_fHFEM, b_fHFHad, b_fMu, b_fNeuEM, b_fNeuHad, b_fPho;
 		int b_mult, b_index;
+		int b_nCh, b_nChHad, b_nEle, b_nMu, b_nNeuHad, b_nNeu, b_nPho;
+		vector<TLorentzVector>* b_constituents;
 		//spectators or per-event
 		double b_mt, b_procweight, b_flatweight;
 };
