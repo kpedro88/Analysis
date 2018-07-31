@@ -32,6 +32,7 @@ class Flattener {
 					h_dist->SetBinContent(b,weight);
 				}
 			}
+			h_dist->SetDirectory(0);
 		}
 		
 		//function
