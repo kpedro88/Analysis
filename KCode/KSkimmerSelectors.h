@@ -1745,7 +1745,9 @@ class KJetAK8TrainingSelector : public KSelector {
 		KJetAK8TrainingSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
 			//check for option
 			localOpt->Get("flatname",flatname);
-			flatten = !flatname.empty();
+			localOpt->Get("flatnumers",flatnumers);
+			localOpt->Get("flatbranches",flatbranches);
+			flatten = !flatname.empty() and !flatnumers.empty() and !flatbranches.empty() and flatnumers.size()==flatbranches.size();
 		}
 
 		virtual void CheckBranches(){
@@ -1798,19 +1800,19 @@ class KJetAK8TrainingSelector : public KSelector {
 			TFile* flatfile = TFile::Open(flatname.c_str(),"READ");
 			string flatdist = qty + "_" + flatsuff;
 			TH1* flathist = (TH1*)flatfile->Get(flatdist.c_str());
-			TH1* flatnumerhist = NULL;
-			string flatnumer;
-			localOpt->Get("flatnumer",flatnumer);
-			if(!flatnumer.empty()){
-				string flatnumerdist = qty + "_" + flatnumer;
-				flatnumerhist = (TH1*)flatfile->Get(flatnumerdist.c_str());
-				if(flatnumerhist) flatnumerhist->SetDirectory(0);
-			}
-			if(flathist){
+			if(flatten and flathist){
 				flathist->SetDirectory(0);
-				flatfile->Close();
-				flattener.SetDist(flathist,flatnumerhist);
+				for(const auto& numer : flatnumers){
+					string flatnumerdist = qty + "_" + numer;
+					TH1* flatnumerhist = (TH1*)flatfile->Get(flatnumerdist.c_str());
+					if(flatnumerhist) flatnumerhist->SetDirectory(0);
+					flatteners.emplace_back();
+					flatteners.back().SetDist(flathist,flatnumerhist);
+				}
+				b_flatweights = vector<double>(flatbranches.size(),0);
 			}
+			else flatten = false;
+			if(flatfile) flatfile->Close();
 		}
 
 		virtual void SetBranches(){
@@ -1854,7 +1856,11 @@ class KJetAK8TrainingSelector : public KSelector {
 			tree->Branch("nNeu",&b_nNeu,"nNeu/I");
 			tree->Branch("nPho",&b_nPho,"nPho/I");
 			tree->Branch("constituents","std::vector<TLorentzVector>",&b_constituents);
-			if(flatten) tree->Branch("flatweight",&b_flatweight,"flatweight/D");
+			if(flatten){
+				for(unsigned b = 0; b < flatbranches.size(); ++b){
+					tree->Branch(("flatweight"+flatbranches[b]).c_str(),&b_flatweights[b],("flatweight"+flatbranches[b]+"/D").c_str());
+				}
+			}
 		}
 
 		//used for non-dummy selectors
@@ -1897,7 +1903,11 @@ class KJetAK8TrainingSelector : public KSelector {
 				*b_constituents = looper->JetsAK8_constituents->at(j);
 				b_mt = looper->MT_AK8;
 				b_procweight = looper->Weight;
-				if(flatten) b_flatweight = flattener.GetWeight(b_pt);
+				if(flatten) {
+					for(unsigned b = 0; b < b_flatweights.size(); ++b){
+						b_flatweights[b] = flatteners[b].GetWeight(b_pt);
+					}
+				}
 				//fill tree per jet
 				tree->Fill();
 			}
@@ -1907,8 +1917,9 @@ class KJetAK8TrainingSelector : public KSelector {
 
 		//member variables
 		bool flatten;
+		vector<string> flatnumers, flatbranches;
 		string flatname;
-		Flattener flattener;
+		vector<Flattener> flatteners;
 		//per-jet branches
 		double b_pt, b_eta, b_phi, b_deltaphi;
 		double b_ptD, b_axismajor, b_axisminor;
@@ -1920,7 +1931,8 @@ class KJetAK8TrainingSelector : public KSelector {
 		int b_nCh, b_nChHad, b_nEle, b_nMu, b_nNeuHad, b_nNeu, b_nPho;
 		vector<TLorentzVector>* b_constituents;
 		//spectators or per-event
-		double b_mt, b_procweight, b_flatweight;
+		double b_mt, b_procweight;
+		vector<double> b_flatweights;
 };
 REGISTER_SELECTOR(JetAK8Training);
 
