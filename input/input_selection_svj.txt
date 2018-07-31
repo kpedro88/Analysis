@@ -30,6 +30,10 @@ dijetmt
 dijetmtloose
 	Dijet	i:njet[2]	b:id[1]	d:eta[5.0]
 	METMTRatio	d:min[0.10]
+dijetmtfull1
+	Dijet	i:njet[2]	b:id[1]	d:eta[5.0]
+	METMTRatio	d:min[0.25]
+	DeltaPhiMinAK8	d:max[0.75]
 dijetmjj
 	Dijet	i:njet[2]	b:id[1]	d:eta[5.0]
 	MJJAK8	d:min[1000]	d:max[-1]
@@ -41,6 +45,9 @@ dijetmthad
 	veto
 dijetmthadloose
 	dijetmtloose
+	veto
+dijetmthadfull1
+	dijetmtfull1
 	veto
 dijethadtk
 	dijet
