@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Thu Jan  4 16:19:20 2018 by ROOT version 6.06/01
+// Mon Jul 30 22:36:07 2018 by ROOT version 6.06/01
 // from TTree PreSelection/PreSelection
 // found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV14/Summer16.SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
 //////////////////////////////////////////////////////////
@@ -180,19 +180,38 @@ public :
    vector<TLorentzVector> *JetsAK8;
    vector<double>  *JetsAK8_axismajor;
    vector<double>  *JetsAK8_axisminor;
+   vector<double>  *JetsAK8_chargedEmEnergyFraction;
+   vector<double>  *JetsAK8_chargedHadronEnergyFraction;
+   vector<int>     *JetsAK8_chargedHadronMultiplicity;
+   vector<int>     *JetsAK8_chargedMultiplicity;
+   vector<vector<TLorentzVector> > *JetsAK8_constituents;
    vector<double>  *JetsAK8_doubleBDiscriminator;
+   vector<double>  *JetsAK8_electronEnergyFraction;
+   vector<int>     *JetsAK8_electronMultiplicity;
    vector<double>  *JetsAK8_girth;
+   vector<double>  *JetsAK8_hfEMEnergyFraction;
+   vector<double>  *JetsAK8_hfHadronEnergyFraction;
    vector<bool>    *JetsAK8_ID;
+   vector<double>  *JetsAK8_lean;
    vector<double>  *JetsAK8_momenthalf;
    vector<int>     *JetsAK8_multiplicity;
+   vector<double>  *JetsAK8_muonEnergyFraction;
+   vector<int>     *JetsAK8_muonMultiplicity;
+   vector<double>  *JetsAK8_neutralEmEnergyFraction;
+   vector<double>  *JetsAK8_neutralHadronEnergyFraction;
+   vector<int>     *JetsAK8_neutralHadronMultiplicity;
+   vector<int>     *JetsAK8_neutralMultiplicity;
    vector<double>  *JetsAK8_NsubjettinessTau1;
    vector<double>  *JetsAK8_NsubjettinessTau2;
    vector<double>  *JetsAK8_NsubjettinessTau3;
    vector<int>     *JetsAK8_NumBhadrons;
    vector<int>     *JetsAK8_NumChadrons;
    vector<double>  *JetsAK8_overflow;
+   vector<double>  *JetsAK8_photonEnergyFraction;
+   vector<int>     *JetsAK8_photonMultiplicity;
    vector<double>  *JetsAK8_prunedMass;
    vector<double>  *JetsAK8_ptD;
+   vector<double>  *JetsAK8_ptdrlog;
    vector<double>  *JetsAK8_softDropMass;
    vector<vector<TLorentzVector> > *JetsAK8_subjets;
    vector<TLorentzVector> *JetsAK8Clean;
@@ -530,19 +549,38 @@ public :
    TBranch        *b_JetsAK8;   //!
    TBranch        *b_JetsAK8_axismajor;   //!
    TBranch        *b_JetsAK8_axisminor;   //!
+   TBranch        *b_JetsAK8_chargedEmEnergyFraction;   //!
+   TBranch        *b_JetsAK8_chargedHadronEnergyFraction;   //!
+   TBranch        *b_JetsAK8_chargedHadronMultiplicity;   //!
+   TBranch        *b_JetsAK8_chargedMultiplicity;   //!
+   TBranch        *b_JetsAK8_constituents;   //!
    TBranch        *b_JetsAK8_doubleBDiscriminator;   //!
+   TBranch        *b_JetsAK8_electronEnergyFraction;   //!
+   TBranch        *b_JetsAK8_electronMultiplicity;   //!
    TBranch        *b_JetsAK8_girth;   //!
+   TBranch        *b_JetsAK8_hfEMEnergyFraction;   //!
+   TBranch        *b_JetsAK8_hfHadronEnergyFraction;   //!
    TBranch        *b_JetsAK8_ID;   //!
+   TBranch        *b_JetsAK8_lean;   //!
    TBranch        *b_JetsAK8_momenthalf;   //!
    TBranch        *b_JetsAK8_multiplicity;   //!
+   TBranch        *b_JetsAK8_muonEnergyFraction;   //!
+   TBranch        *b_JetsAK8_muonMultiplicity;   //!
+   TBranch        *b_JetsAK8_neutralEmEnergyFraction;   //!
+   TBranch        *b_JetsAK8_neutralHadronEnergyFraction;   //!
+   TBranch        *b_JetsAK8_neutralHadronMultiplicity;   //!
+   TBranch        *b_JetsAK8_neutralMultiplicity;   //!
    TBranch        *b_JetsAK8_NsubjettinessTau1;   //!
    TBranch        *b_JetsAK8_NsubjettinessTau2;   //!
    TBranch        *b_JetsAK8_NsubjettinessTau3;   //!
    TBranch        *b_JetsAK8_NumBhadrons;   //!
    TBranch        *b_JetsAK8_NumChadrons;   //!
    TBranch        *b_JetsAK8_overflow;   //!
+   TBranch        *b_JetsAK8_photonEnergyFraction;   //!
+   TBranch        *b_JetsAK8_photonMultiplicity;   //!
    TBranch        *b_JetsAK8_prunedMass;   //!
    TBranch        *b_JetsAK8_ptD;   //!
+   TBranch        *b_JetsAK8_ptdrlog;   //!
    TBranch        *b_JetsAK8_softDropMass;   //!
    TBranch        *b_JetsAK8_subjets;   //!
    TBranch        *b_JetsAK8Clean;   //!
@@ -870,19 +908,38 @@ void NtupleClass::Init(TTree *tree)
    JetsAK8 = 0;
    JetsAK8_axismajor = 0;
    JetsAK8_axisminor = 0;
+   JetsAK8_chargedEmEnergyFraction = 0;
+   JetsAK8_chargedHadronEnergyFraction = 0;
+   JetsAK8_chargedHadronMultiplicity = 0;
+   JetsAK8_chargedMultiplicity = 0;
+   JetsAK8_constituents = 0;
    JetsAK8_doubleBDiscriminator = 0;
+   JetsAK8_electronEnergyFraction = 0;
+   JetsAK8_electronMultiplicity = 0;
    JetsAK8_girth = 0;
+   JetsAK8_hfEMEnergyFraction = 0;
+   JetsAK8_hfHadronEnergyFraction = 0;
    JetsAK8_ID = 0;
+   JetsAK8_lean = 0;
    JetsAK8_momenthalf = 0;
    JetsAK8_multiplicity = 0;
+   JetsAK8_muonEnergyFraction = 0;
+   JetsAK8_muonMultiplicity = 0;
+   JetsAK8_neutralEmEnergyFraction = 0;
+   JetsAK8_neutralHadronEnergyFraction = 0;
+   JetsAK8_neutralHadronMultiplicity = 0;
+   JetsAK8_neutralMultiplicity = 0;
    JetsAK8_NsubjettinessTau1 = 0;
    JetsAK8_NsubjettinessTau2 = 0;
    JetsAK8_NsubjettinessTau3 = 0;
    JetsAK8_NumBhadrons = 0;
    JetsAK8_NumChadrons = 0;
    JetsAK8_overflow = 0;
+   JetsAK8_photonEnergyFraction = 0;
+   JetsAK8_photonMultiplicity = 0;
    JetsAK8_prunedMass = 0;
    JetsAK8_ptD = 0;
+   JetsAK8_ptdrlog = 0;
    JetsAK8_softDropMass = 0;
    JetsAK8_subjets = 0;
    JetsAK8Clean = 0;
@@ -1170,19 +1227,38 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("JetsAK8", &JetsAK8, &b_JetsAK8);
    fChain->SetBranchAddress("JetsAK8_axismajor", &JetsAK8_axismajor, &b_JetsAK8_axismajor);
    fChain->SetBranchAddress("JetsAK8_axisminor", &JetsAK8_axisminor, &b_JetsAK8_axisminor);
+   fChain->SetBranchAddress("JetsAK8_chargedEmEnergyFraction", &JetsAK8_chargedEmEnergyFraction, &b_JetsAK8_chargedEmEnergyFraction);
+   fChain->SetBranchAddress("JetsAK8_chargedHadronEnergyFraction", &JetsAK8_chargedHadronEnergyFraction, &b_JetsAK8_chargedHadronEnergyFraction);
+   fChain->SetBranchAddress("JetsAK8_chargedHadronMultiplicity", &JetsAK8_chargedHadronMultiplicity, &b_JetsAK8_chargedHadronMultiplicity);
+   fChain->SetBranchAddress("JetsAK8_chargedMultiplicity", &JetsAK8_chargedMultiplicity, &b_JetsAK8_chargedMultiplicity);
+   fChain->SetBranchAddress("JetsAK8_constituents", &JetsAK8_constituents, &b_JetsAK8_constituents);
    fChain->SetBranchAddress("JetsAK8_doubleBDiscriminator", &JetsAK8_doubleBDiscriminator, &b_JetsAK8_doubleBDiscriminator);
+   fChain->SetBranchAddress("JetsAK8_electronEnergyFraction", &JetsAK8_electronEnergyFraction, &b_JetsAK8_electronEnergyFraction);
+   fChain->SetBranchAddress("JetsAK8_electronMultiplicity", &JetsAK8_electronMultiplicity, &b_JetsAK8_electronMultiplicity);
    fChain->SetBranchAddress("JetsAK8_girth", &JetsAK8_girth, &b_JetsAK8_girth);
+   fChain->SetBranchAddress("JetsAK8_hfEMEnergyFraction", &JetsAK8_hfEMEnergyFraction, &b_JetsAK8_hfEMEnergyFraction);
+   fChain->SetBranchAddress("JetsAK8_hfHadronEnergyFraction", &JetsAK8_hfHadronEnergyFraction, &b_JetsAK8_hfHadronEnergyFraction);
    fChain->SetBranchAddress("JetsAK8_ID", &JetsAK8_ID, &b_JetsAK8_ID);
+   fChain->SetBranchAddress("JetsAK8_lean", &JetsAK8_lean, &b_JetsAK8_lean);
    fChain->SetBranchAddress("JetsAK8_momenthalf", &JetsAK8_momenthalf, &b_JetsAK8_momenthalf);
    fChain->SetBranchAddress("JetsAK8_multiplicity", &JetsAK8_multiplicity, &b_JetsAK8_multiplicity);
+   fChain->SetBranchAddress("JetsAK8_muonEnergyFraction", &JetsAK8_muonEnergyFraction, &b_JetsAK8_muonEnergyFraction);
+   fChain->SetBranchAddress("JetsAK8_muonMultiplicity", &JetsAK8_muonMultiplicity, &b_JetsAK8_muonMultiplicity);
+   fChain->SetBranchAddress("JetsAK8_neutralEmEnergyFraction", &JetsAK8_neutralEmEnergyFraction, &b_JetsAK8_neutralEmEnergyFraction);
+   fChain->SetBranchAddress("JetsAK8_neutralHadronEnergyFraction", &JetsAK8_neutralHadronEnergyFraction, &b_JetsAK8_neutralHadronEnergyFraction);
+   fChain->SetBranchAddress("JetsAK8_neutralHadronMultiplicity", &JetsAK8_neutralHadronMultiplicity, &b_JetsAK8_neutralHadronMultiplicity);
+   fChain->SetBranchAddress("JetsAK8_neutralMultiplicity", &JetsAK8_neutralMultiplicity, &b_JetsAK8_neutralMultiplicity);
    fChain->SetBranchAddress("JetsAK8_NsubjettinessTau1", &JetsAK8_NsubjettinessTau1, &b_JetsAK8_NsubjettinessTau1);
    fChain->SetBranchAddress("JetsAK8_NsubjettinessTau2", &JetsAK8_NsubjettinessTau2, &b_JetsAK8_NsubjettinessTau2);
    fChain->SetBranchAddress("JetsAK8_NsubjettinessTau3", &JetsAK8_NsubjettinessTau3, &b_JetsAK8_NsubjettinessTau3);
    fChain->SetBranchAddress("JetsAK8_NumBhadrons", &JetsAK8_NumBhadrons, &b_JetsAK8_NumBhadrons);
    fChain->SetBranchAddress("JetsAK8_NumChadrons", &JetsAK8_NumChadrons, &b_JetsAK8_NumChadrons);
    fChain->SetBranchAddress("JetsAK8_overflow", &JetsAK8_overflow, &b_JetsAK8_overflow);
+   fChain->SetBranchAddress("JetsAK8_photonEnergyFraction", &JetsAK8_photonEnergyFraction, &b_JetsAK8_photonEnergyFraction);
+   fChain->SetBranchAddress("JetsAK8_photonMultiplicity", &JetsAK8_photonMultiplicity, &b_JetsAK8_photonMultiplicity);
    fChain->SetBranchAddress("JetsAK8_prunedMass", &JetsAK8_prunedMass, &b_JetsAK8_prunedMass);
    fChain->SetBranchAddress("JetsAK8_ptD", &JetsAK8_ptD, &b_JetsAK8_ptD);
+   fChain->SetBranchAddress("JetsAK8_ptdrlog", &JetsAK8_ptdrlog, &b_JetsAK8_ptdrlog);
    fChain->SetBranchAddress("JetsAK8_softDropMass", &JetsAK8_softDropMass, &b_JetsAK8_softDropMass);
    fChain->SetBranchAddress("JetsAK8_subjets", &JetsAK8_subjets, &b_JetsAK8_subjets);
    fChain->SetBranchAddress("JetsAK8Clean", &JetsAK8Clean, &b_JetsAK8Clean);
