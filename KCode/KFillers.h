@@ -1181,6 +1181,150 @@ class KJetFiller_bdt : public KJetFiller {
 };
 REGISTER_JETFILLER(bdt);
 
+class KJetFiller_fChEM : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_chargedEmEnergyFraction"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_chargedEmEnergyFraction->size()>index) value.Fill(looper->JetsAK8_chargedEmEnergyFraction->at(index),w); }
+};
+REGISTER_JETFILLER(fChEM);
+
+class KJetFiller_fChHad : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_chargedHadronEnergyFraction"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_chargedHadronEnergyFraction->size()>index) value.Fill(looper->JetsAK8_chargedHadronEnergyFraction->at(index),w); }
+};
+REGISTER_JETFILLER(fChHad);
+
+class KJetFiller_nChHad : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_chargedHadronMultiplicity"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_chargedHadronMultiplicity->size()>index) value.Fill(looper->JetsAK8_chargedHadronMultiplicity->at(index),w); }
+};
+REGISTER_JETFILLER(nChHad);
+
+class KJetFiller_nCh : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_chargedMultiplicity"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_chargedMultiplicity->size()>index) value.Fill(looper->JetsAK8_chargedMultiplicity->at(index),w); }
+};
+REGISTER_JETFILLER(nCh);
+
+class KJetFiller_fEle : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_electronEnergyFraction"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_electronEnergyFraction->size()>index) value.Fill(looper->JetsAK8_electronEnergyFraction->at(index),w); }
+};
+REGISTER_JETFILLER(fEle);
+
+class KJetFiller_nEle : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_electronMultiplicity"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_electronMultiplicity->size()>index) value.Fill(looper->JetsAK8_electronMultiplicity->at(index),w); }
+};
+REGISTER_JETFILLER(nEle);
+
+class KJetFiller_fHFEM : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_hfEMEnergyFraction"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_hfEMEnergyFraction->size()>index) value.Fill(looper->JetsAK8_hfEMEnergyFraction->at(index),w); }
+};
+REGISTER_JETFILLER(fHFEM);
+
+class KJetFiller_fHFHad : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_hfHadronEnergyFraction"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_hfHadronEnergyFraction->size()>index) value.Fill(looper->JetsAK8_hfHadronEnergyFraction->at(index),w); }
+};
+REGISTER_JETFILLER(fHFHad);
+
+class KJetFiller_lean : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_lean"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_lean->size()>index) value.Fill(looper->JetsAK8_lean->at(index),w); }
+};
+REGISTER_JETFILLER(lean);
+
+class KJetFiller_fMu : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_muonEnergyFraction"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_muonEnergyFraction->size()>index) value.Fill(looper->JetsAK8_muonEnergyFraction->at(index),w); }
+};
+REGISTER_JETFILLER(fMu);
+
+class KJetFiller_nMu : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_muonMultiplicity"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_muonMultiplicity->size()>index) value.Fill(looper->JetsAK8_muonMultiplicity->at(index),w); }
+};
+REGISTER_JETFILLER(nMu);
+
+class KJetFiller_fNeuEM : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_neutralEmEnergyFraction"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_neutralEmEnergyFraction->size()>index) value.Fill(looper->JetsAK8_neutralEmEnergyFraction->at(index),w); }
+};
+REGISTER_JETFILLER(fNeuEM);
+
+class KJetFiller_fNeuHad : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_neutralHadronEnergyFraction"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_neutralHadronEnergyFraction->size()>index) value.Fill(looper->JetsAK8_neutralHadronEnergyFraction->at(index),w); }
+};
+REGISTER_JETFILLER(fNeuHad);
+
+class KJetFiller_nNeuHad : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_neutralHadronMultiplicity"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_neutralHadronMultiplicity->size()>index) value.Fill(looper->JetsAK8_neutralHadronMultiplicity->at(index),w); }
+};
+REGISTER_JETFILLER(nNeuHad);
+
+class KJetFiller_nNeu : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_neutralMultiplicity"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_neutralMultiplicity->size()>index) value.Fill(looper->JetsAK8_neutralMultiplicity->at(index),w); }
+};
+REGISTER_JETFILLER(nNeu);
+
+class KJetFiller_fPho : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_photonEnergyFraction"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_photonEnergyFraction->size()>index) value.Fill(looper->JetsAK8_photonEnergyFraction->at(index),w); }
+};
+REGISTER_JETFILLER(fPho);
+
+class KJetFiller_nPho : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_photonMultiplicity"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_photonMultiplicity->size()>index) value.Fill(looper->JetsAK8_photonMultiplicity->at(index),w); }
+};
+REGISTER_JETFILLER(nPho);
+
+class KJetFiller_ptdrlog : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_ptdrlog"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_ptdrlog->size()>index) value.Fill(looper->JetsAK8_ptdrlog->at(index),w); }
+};
+REGISTER_JETFILLER(ptdrlog);
+
 //-----------------------------------------------------------------------------
 //per-jet quantities based on dark hadron gen info
 class KJetFillerDarkHadron : public KJetFiller {
