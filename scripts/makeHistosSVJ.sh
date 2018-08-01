@@ -31,6 +31,9 @@ test/svj_${SEL}_event2 \
 test/svj_${SEL}_thirdjet \
 test/svj_${SEL}_bothjet \
 test/svj_${SEL}_shape \
+test/svj_${SEL}_bothjet_extra \
+test/svj_${SEL}_bothjet_fractions \
+test/svj_${SEL}_bothjet_mults \
 )
 
 COMMANDS=(
@@ -40,6 +43,9 @@ COMMANDS=(
 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV14/Skims/tree_'${SEL}'",{"input/input_svj_hist.txt","input/input_svj_rocs_thirdjet.txt","input/input_svj_rocs_sets.txt"},{"OPTION","string:rootfile['${FILES[3]}']"},0)' \
 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV14/Skims/tree_'${SEL}'",{"input/input_svj_hist.txt","input/input_svj_rocs_bothjet.txt","input/input_svj_rocs_sets.txt","input/input_svj_flatten_bothjet.txt"},{"OPTION","string:rootfile['${FILES[4]}']"},0)' \
 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV14/Skims/tree_'${SEL}'",{"input/input_svj_hist.txt","input/input_svj_eventshape.txt","input/input_svj_rocs_shapeAK4.txt","input/input_svj_rocs_fwmAK4.txt","input/input_svj_rocs_shapeAK8.txt","input/input_svj_rocs_fwmAK8.txt","input/input_svj_rocs_sets.txt"},{"OPTION","string:rootfile['${FILES[5]}']"},0)' \
+'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/ProductionV2/Skims/tree_'${SEL}'",{"input/input_svj_hist.txt","input/input_svj_rocs_bothjet_extra.txt","input/input_svj_rocs_sets_qcdsig.txt","input/input_svj_flatten_bothjet.txt"},{"OPTION","string:rootfile['${FILES[6]}']"},0)' \
+'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/ProductionV2/Skims/tree_'${SEL}'",{"input/input_svj_hist.txt","input/input_svj_rocs_bothjet_fractions.txt","input/input_svj_rocs_sets_qcdsig.txt","input/input_svj_flatten_bothjet.txt"},{"OPTION","string:rootfile['${FILES[7]}']"},0)' \
+'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/ProductionV2/Skims/tree_'${SEL}'",{"input/input_svj_hist.txt","input/input_svj_rocs_bothjet_mults.txt","input/input_svj_rocs_sets_qcdsig.txt","input/input_svj_flatten_bothjet.txt"},{"OPTION","string:rootfile['${FILES[8]}']"},0)' \
 )
 
 PIDS=()

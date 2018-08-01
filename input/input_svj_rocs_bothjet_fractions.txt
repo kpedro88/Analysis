@@ -1,0 +1,14 @@
+OPTION
+string+:rocsuffix[_bothjet_fractions]
+vstring:disable_branches[*]
+
+HISTO
+bothjetAK8fChEM	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[fChEM(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlack]
+bothjetAK8fChHad	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[fChHad(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlue]
+bothjetAK8fEle	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[fEle(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta + 2]
+bothjetAK8fHFEM	i:xnum[100]	d:xmin[0]	d:xmax[0.1]	s:xtitle[fHFEM(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kRed]
+bothjetAK8fHFHad	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[fHFHad(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kCyan + 2]
+bothjetAK8fMu	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[fMu(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta]
+bothjetAK8fNeuEM	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[fNeuEM(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kOrange + 7]
+bothjetAK8fNeuHad	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[fNeuHad(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kYellow + 3]
+bothjetAK8fPho	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[fPho(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kPink - 9]

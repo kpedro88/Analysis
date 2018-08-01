@@ -1,0 +1,15 @@
+OPTION
+string+:rocsuffix[_bothjet_extra]
+vstring:disable_branches[*]
+
+HISTO
+bothjetAK8girth	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[girth(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlack]
+bothjetAK8axisminor	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[#sigma_{minor}(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlue]
+bothjetAK8mult	i:xnum[100]	d:xmin[0]	d:xmax[400]	s:xtitle[n_{constituents}(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta + 2]
+bothjetAK8ptD	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[p_{T}D(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kRed]
+bothjetAK8tau21	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#tau_{21}(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kCyan + 2]
+bothjetAK8tau32	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#tau_{32}(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta]
+bothjetAK8msd	i:xnum[100]	d:xmin[0]	d:xmax[500]	s:xtitle[m_{sd}(j_{1,2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kOrange + 7]
+bothjetAK8lean	i:xnum[100]	d:xmin[0]	d:xmax[0.35]	s:xtitle[lean(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kYellow + 3]
+bothjetAK8ptdrlog	i:xnum[100]	d:xmin[0]	d:xmax[500]	s:xtitle[pt_dr_log(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kPink - 9]
+bothjetAK8ptdrlognorm	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[pt_dr_log_norm(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kGray + 1]

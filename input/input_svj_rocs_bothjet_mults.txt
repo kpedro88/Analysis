@@ -1,0 +1,12 @@
+OPTION
+string+:rocsuffix[_bothjet_mults]
+vstring:disable_branches[*]
+
+HISTO
+bothjetAK8nCh	i:xnum[100]	d:xmin[0]	d:xmax[200]	s:xtitle[nCh(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlack]
+bothjetAK8nChHad	i:xnum[100]	d:xmin[0]	d:xmax[200]	s:xtitle[nChHad(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlue]
+bothjetAK8nEle	i:xnum[5]	d:xmin[0]	d:xmax[5]	s:xtitle[nEle(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta + 2]
+bothjetAK8nMu	i:xnum[5]	d:xmin[0]	d:xmax[5]	s:xtitle[nMu(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kRed]
+bothjetAK8nNeu	i:xnum[100]	d:xmin[0]	d:xmax[200]	s:xtitle[nNeu(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kCyan + 2]
+bothjetAK8nNeuHad	i:xnum[20]	d:xmin[0]	d:xmax[20]	s:xtitle[nNeuHad(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta]
+bothjetAK8nPho	i:xnum[100]	d:xmin[0]	d:xmax[200]	s:xtitle[nPho(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kOrange + 7]
