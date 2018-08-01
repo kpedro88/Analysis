@@ -1325,6 +1325,14 @@ class KJetFiller_ptdrlog : public KJetFiller {
 };
 REGISTER_JETFILLER(ptdrlog);
 
+class KJetFiller_ptdrlognorm : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_ptdrlog","JetsAK8","JetsAK8_multiplicity"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_ptdrlog->size()>index) value.Fill(looper->JetsAK8_multiplicity->at(index)*log(looper->JetsAK8->at(index).Pt())-looper->JetsAK8_ptdrlog->at(index),w); }
+};
+REGISTER_JETFILLER(ptdrlognorm);
+
 //-----------------------------------------------------------------------------
 //per-jet quantities based on dark hadron gen info
 class KJetFillerDarkHadron : public KJetFiller {
