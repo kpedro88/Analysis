@@ -20,6 +20,9 @@ using namespace std;
 
 //base class for variators is in KVariation.h
 
+//todo: rework this class to handle new method of storing systematics (origIndex, etc.)
+//      consider separating clean and jec/jer parts
+/*
 //----------------------------------------------------
 //variation of jet-related variables
 //for: JECs, JERs, Zinv cleaning
@@ -123,6 +126,7 @@ class KJetVariator : public KVariator {
 		vartypes vtype;
 };
 REGISTER_VARIATOR(Jet);
+*/
 
 class KGenMHTVariator : public KVariator {
 	public:
