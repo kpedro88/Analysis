@@ -1769,7 +1769,7 @@ class KJetAK8TrainingSelector : public KSelector {
 				"DeltaPhi2_AK8",
 				"MT_AK8",
 				"Weight",
-				"JetsAK8_constituents",
+/*				"JetsAK8_constituents",
 				"JetsAK8_chargedEmEnergyFraction",
 				"JetsAK8_chargedHadronEnergyFraction",
 				"JetsAK8_electronEnergyFraction",
@@ -1786,7 +1786,7 @@ class KJetAK8TrainingSelector : public KSelector {
 				"JetsAK8_neutralHadronMultiplicity",
 				"JetsAK8_neutralMultiplicity",
 				"JetsAK8_photonMultiplicity"
-			};
+*/			};
 			for(const auto& branch : branches){
 				looper->fChain->SetBranchStatus(branch.c_str(),1);
 			}
@@ -1839,7 +1839,7 @@ class KJetAK8TrainingSelector : public KSelector {
 			tree->Branch("index",&b_index,"index/I");
 			tree->Branch("mt",&b_mt,"mt/D");
 			tree->Branch("procweight",&b_procweight,"procweight/D");
-			tree->Branch("fChEM",&b_fChEM,"fChEM/D");
+/*			tree->Branch("fChEM",&b_fChEM,"fChEM/D");
 			tree->Branch("fChHad",&b_fChHad,"fChHad/D");
 			tree->Branch("fEle",&b_fEle,"fEle/D");
 			tree->Branch("fHFEM",&b_fHFEM,"fHFEM/D");
@@ -1856,7 +1856,7 @@ class KJetAK8TrainingSelector : public KSelector {
 			tree->Branch("nNeu",&b_nNeu,"nNeu/I");
 			tree->Branch("nPho",&b_nPho,"nPho/I");
 			tree->Branch("constituents","std::vector<TLorentzVector>",&b_constituents);
-			if(flatten){
+*/			if(flatten){
 				for(unsigned b = 0; b < flatbranches.size(); ++b){
 					tree->Branch(("flatweight"+flatbranches[b]).c_str(),&b_flatweights[b],("flatweight"+flatbranches[b]+"/D").c_str());
 				}
@@ -1884,7 +1884,7 @@ class KJetAK8TrainingSelector : public KSelector {
 				b_mult = looper->JetsAK8_multiplicity->at(j);
 				b_lean = looper->JetsAK8_lean->at(j);
 				b_ptdrlog = looper->JetsAK8_ptdrlog->at(j);
-				b_fChEM = looper->JetsAK8_chargedEmEnergyFraction->at(j);
+/*				b_fChEM = looper->JetsAK8_chargedEmEnergyFraction->at(j);
 				b_fChHad = looper->JetsAK8_chargedHadronEnergyFraction->at(j);
 				b_fEle = looper->JetsAK8_electronEnergyFraction->at(j);
 				b_fHFEM = looper->JetsAK8_hfEMEnergyFraction->at(j);
@@ -1901,7 +1901,7 @@ class KJetAK8TrainingSelector : public KSelector {
 				b_nNeu = looper->JetsAK8_neutralMultiplicity->at(j);
 				b_nPho = looper->JetsAK8_photonMultiplicity->at(j);
 				*b_constituents = looper->JetsAK8_constituents->at(j);
-				b_mt = looper->MT_AK8;
+*/				b_mt = looper->MT_AK8;
 				b_procweight = looper->Weight;
 				if(flatten) {
 					for(unsigned b = 0; b < b_flatweights.size(); ++b){

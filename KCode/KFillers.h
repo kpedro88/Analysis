@@ -1180,7 +1180,7 @@ class KJetFiller_bdt : public KJetFiller {
 		KBDTSelector* BDT = NULL;
 };
 REGISTER_JETFILLER(bdt);
-
+/*
 class KJetFiller_fChEM : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
@@ -1316,7 +1316,7 @@ class KJetFiller_nPho : public KJetFiller {
 		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_photonMultiplicity->size()>index) value.Fill(looper->JetsAK8_photonMultiplicity->at(index),w); }
 };
 REGISTER_JETFILLER(nPho);
-
+*/
 class KJetFiller_ptdrlog : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
