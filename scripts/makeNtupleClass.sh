@@ -21,7 +21,7 @@ for ((i=0; i < ${#SAMPLES[@]}; i++)); do
 	len1=$(wc -L < NtupleClass.h)
 	len2=$(wc -L < TempClass.h)
 	len=$(( $len1 > $len2 ? $len1 : $len2 ))
-	len=$(( $len*2 + 10 ))
+	len=$(( $len*2 ))
 
 	# diff side-by-side format:
 	# xxxx * yyyy
