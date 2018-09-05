@@ -1,0 +1,12 @@
+OPTION
+vstring:extra_text[SVJ_3000_20_0.3_0.2]
+
+SET
+hist	mc	SVJ_2016_mAODv2_sigV2	s:legname[SVJ_2016_mAODv2_sigV2]	c:color[kBlack]	i:linestyle[1]
+	base	ext	SVJ_2016_mAODv2_sigV2	s:extfilename[test/val_signal_old.root]	b:ext_auto[1]
+hist	mc	SVJ_2016_mAODv3_sigV2	s:legname[SVJ_2016_mAODv3_sigV2]	c:color[kBlue]	i:linestyle[1]
+	base	ext	SVJ_2016_mAODv3_sigV2	s:extfilename[test/val_signal_new.root]	b:ext_auto[1]
+hist	mc	SVJ_2016_mAODv3_sigV3	s:legname[SVJ_2016_mAODv3_sigV3]	c:color[kMagenta]	i:linestyle[1]
+	base	ext	SVJ_2016_mAODv3_sigV3	s:extfilename[test/val_signal_new.root]	b:ext_auto[1]
+hist	mc	SVJ_2017_mAODv2_sigV3	s:legname[SVJ_2017_mAODv2_sigV3]	c:color[kRed]	i:linestyle[1]
+	base	ext	SVJ_2017_mAODv2_sigV3	s:extfilename[test/val_signal_new.root]	b:ext_auto[1]
