@@ -487,6 +487,42 @@ class KDeltaEtaSelector : public KSelector {
 REGISTER_SELECTOR(DeltaEta);
 
 //----------------------------------------------------
+//selects events based on num b or c hadrons in j_i
+class KNumBCHadronSelector : public KSelector {
+	public:
+		//constructor
+		KNumBCHadronSelector() : KSelector() { }
+		KNumBCHadronSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), index(0), cut(-1) { 
+			//check for option
+			localOpt->Get("index",index);
+			localOpt->Get("cut",cut);
+			use_c = localOpt->Get("c",false);
+			invert = localOpt->Get("invert",false);
+		}
+		virtual void CheckBranches(){
+			if(use_c) looper->fChain->SetBranchStatus("JetsAK8_NumChadrons",1);
+			else looper->fChain->SetBranchStatus("JetsAK8_NumBhadrons",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			auto NumHadrons = use_c ? looper->JetsAK8_NumChadrons : looper-> JetsAK8_NumBhadrons;
+			if(NumHadrons->size()<index+1) return true;
+			auto num = NumHadrons->at(index);
+			if(invert) return num <= cut;
+			else return num > cut;
+		}
+		
+		//member variables
+		unsigned index;
+		int cut;
+		bool use_c, invert;
+};
+REGISTER_SELECTOR(NumBCHadron);
+
+//----------------------------------------------------
 //selects events based on METsig value
 class KMETSignificanceSelector : public KSelector {
 	public:
