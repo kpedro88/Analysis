@@ -1058,7 +1058,7 @@ class KJetFiller_genpt : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
 		virtual void ListBranches() { branches = {"GenJetsAK8"}; }
-		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->GenJetsAK8->size()>index) value.Fill(looper->GenJetsAK8->at(index).Pt(),w); }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->GenJetsAK8->size()>index and looper->GenJetsAK8->at(index).Pt()>170) value.Fill(looper->GenJetsAK8->at(index).Pt(),w); }
 };
 REGISTER_JETFILLER(genpt);
 
