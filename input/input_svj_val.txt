@@ -17,3 +17,5 @@ leadjetAK8nb	i:xnum[11]	d:xmin[-0.5]	d:xmax[10.5]	s:xtitle[N^{B}(j_{1})]	s:ytitl
 subleadjetAK8nb	i:xnum[11]	d:xmin[-0.5]	d:xmax[10.5]	s:xtitle[N^{B}(j_{2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlack]
 leadjetAK8nc	i:xnum[11]	d:xmin[-0.5]	d:xmax[20.5]	s:xtitle[N^{C}(j_{1})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlack]
 subleadjetAK8nc	i:xnum[11]	d:xmin[-0.5]	d:xmax[20.5]	s:xtitle[N^{C}(j_{2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlack]
+leadjetAK8genpt	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}^{gen}(j_{1}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+subleadjetAK8genpt	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}^{gen}(j_{2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kRed]
