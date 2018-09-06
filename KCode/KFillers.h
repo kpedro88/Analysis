@@ -1070,6 +1070,24 @@ class KJetFiller_abseta : public KJetFiller {
 };
 REGISTER_JETFILLER(abseta);
 
+//num b hadrons
+class KJetFiller_nb : public KJetFiller {
+    public:
+        using KJetFiller::KJetFiller;
+        virtual void ListBranches() { branches = {"JetsAK8_NumBhadrons"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_NumBhadrons->size()>index) value.Fill(looper->JetsAK8_NumBhadrons->at(index),w); }
+};
+REGISTER_JETFILLER(nb);
+
+//num c hadrons
+class KJetFiller_nc : public KJetFiller {
+    public:
+        using KJetFiller::KJetFiller;
+        virtual void ListBranches() { branches = {"JetsAK8_NumChadrons"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_NumChadrons->size()>index) value.Fill(looper->JetsAK8_NumChadrons->at(index),w); }
+};
+REGISTER_JETFILLER(nc);
+
 class KJetFiller_mass : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
