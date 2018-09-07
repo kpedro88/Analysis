@@ -233,7 +233,7 @@ DYeLDP
 
 VARIATION
 CleanVars
-	Jet	s:vartype[clean]
+	Clean
 JECup
 	Jet	s:vartype[JECup]
 JECdown

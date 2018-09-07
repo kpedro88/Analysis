@@ -44,6 +44,9 @@ typedef KBranchT<vector<bool>> KBranchVB;
 typedef KBranchT<vector<int>> KBranchVI;
 typedef KBranchT<vector<double>> KBranchVD;
 typedef KBranchT<vector<TLorentzVector>> KBranchVL;
+typedef KBranchT<vector<vector<bool>>> KBranchVVB;
+typedef KBranchT<vector<vector<int>>> KBranchVVI;
+typedef KBranchT<vector<vector<double>>> KBranchVVD;
 typedef KBranchT<vector<vector<TLorentzVector>>> KBranchVVL;
 
 class KLinkedBranchBase {
@@ -106,7 +109,63 @@ typedef KLinkedBranchT<vector<bool>> KLinkedBranchVB;
 typedef KLinkedBranchT<vector<int>> KLinkedBranchVI;
 typedef KLinkedBranchT<vector<double>> KLinkedBranchVD;
 typedef KLinkedBranchT<vector<TLorentzVector>> KLinkedBranchVL;
+typedef KLinkedBranchT<vector<vector<bool>>> KLinkedBranchVVB;
+typedef KLinkedBranchT<vector<vector<int>>> KLinkedBranchVVI;
+typedef KLinkedBranchT<vector<vector<double>>> KLinkedBranchVVD;
 typedef KLinkedBranchT<vector<vector<TLorentzVector>>> KLinkedBranchVVL;
+
+template <class T>
+class KReorderedBranchT : public KLinkedBranchBase {
+	public:
+		KReorderedBranchT(KBranchT<T> branch_, const vector<unsigned>& order_) : branch(branch_), order(order_), good(true) {
+		}
+		~KReorderedBranchT() {}
+
+		void Enable(TTree* fChain, int which=-1){
+			if(fChain){
+				if(which==-1 or which==0) branch.Enable(fChain);
+			}
+		}
+		void Check(TTree* fChain, int which=-1){
+			if(fChain){
+				if(which==-1 or which==0) branch.Check(fChain);
+			}
+			good = (branch.value and branch.status);
+		}
+		void Store() {
+			if(!good) return;
+			original = *(branch.value);
+		}
+		void Vary() {
+			if(!good) return;
+			if(order.size()>original.size()) return;
+			T temp;
+			temp.reserve(original.size());
+			for(unsigned io = 0; io < order.size(); ++io){
+				temp.push_back(original[order[io]]);
+			}
+			*(branch.value) = temp;
+		}
+		void Restore() {
+			if(!good) return;
+			*(branch.value) = original;
+		}
+		
+	protected:
+		KBranchT<T> branch;
+		const vector<unsigned>& order;
+		T original;
+		bool good;
+};
+//pointless for scalar types
+typedef KReorderedBranchT<vector<bool>> KReorderedBranchVB;
+typedef KReorderedBranchT<vector<int>> KReorderedBranchVI;
+typedef KReorderedBranchT<vector<double>> KReorderedBranchVD;
+typedef KReorderedBranchT<vector<TLorentzVector>> KReorderedBranchVL;
+typedef KReorderedBranchT<vector<vector<bool>>> KReorderedBranchVVB;
+typedef KReorderedBranchT<vector<vector<int>>> KReorderedBranchVVI;
+typedef KReorderedBranchT<vector<vector<double>>> KReorderedBranchVVD;
+typedef KReorderedBranchT<vector<vector<TLorentzVector>>> KReorderedBranchVVL;
 
 //----------------------------------------------------------------
 //base class for Variators, has standard functions defined
