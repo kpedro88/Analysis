@@ -1,0 +1,6 @@
+OPTION
+vstring:extra_text[SVJ_3000_20_0.3_0.2]
+
+SET
+hist	mc	SVJ_2017_mAODv2_sigV3simple	s:legname[SVJ_2017_mAODv2_sigV3simple]	c:color[kCyan + 2]	i:linestyle[1]
+	base	ext	SVJ_2017_mAODv3_sigV3simple	s:extfilename[test/val_signal_simple.root]	b:ext_auto[1]

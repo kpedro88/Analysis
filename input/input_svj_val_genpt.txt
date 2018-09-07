@@ -1,0 +1,8 @@
+OPTION
+string+:rocsuffix[_event]
+vstring:disable_branches[*]
+string+:printsuffix[_simple]
+
+HISTO
+leadjetAK8genpt	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}^{gen}(j_{1}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+subleadjetAK8genpt	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}^{gen}(j_{2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kRed]
