@@ -20,16 +20,16 @@ using namespace std;
 template <class T>
 class KBranchT {
 	public:
-		KBranchT(T* value_, string name_, bool status_=true) :
+		KBranchT(T* value_, string name_="", bool status_=true) :
 			value(value_), name(name_), status(status_)
 		{}
 		virtual ~KBranchT() {}
 		
 		void Check(TTree* fChain) {
-			if(!fChain->GetBranchStatus(name.c_str()) || !fChain->GetBranch(name.c_str())) status = false;
+			if(!name.empty() and (!fChain->GetBranchStatus(name.c_str()) || !fChain->GetBranch(name.c_str()))) status = false;
 		}
 		void Enable(TTree* fChain) {
-			fChain->SetBranchStatus(name.c_str(),1);
+			if(!name.empty()) fChain->SetBranchStatus(name.c_str(),1);
 		}
 		
 		T* value;
@@ -138,7 +138,6 @@ class KReorderedBranchT : public KLinkedBranchBase {
 		}
 		void Vary() {
 			if(!good) return;
-			if(order.size()>original.size()) return;
 			T temp;
 			temp.reserve(original.size());
 			for(unsigned io = 0; io < order.size(); ++io){

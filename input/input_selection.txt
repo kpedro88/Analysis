@@ -9,7 +9,8 @@ OPTION
 int:yieldprecision[2]
 bool:doClone[1]
 #bool:quickchain[1]
-vstring:disable_branches[*clean*,*JECdown*,*JECup*,*JERdown*,*JERup*,*Clean*]
+vstring:disable_branches[*clean*,*Clean*]
+#*JECdown*,*JECup*,*JERdown*,*JERup*
 
 SELECTION
 common

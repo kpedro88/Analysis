@@ -153,7 +153,7 @@ class KJetVariator : public KVariator {
 			//set up linked branches for all variations
 			branches = {
 				//4-vector modified "by hand"
-				new KLinkedBranchVL(KBranchVL(looper->Jets,"Jets"),KBranchVL(&Jets,"Jets_")),
+				new KLinkedBranchVL(KBranchVL(looper->Jets,"Jets"),KBranchVL(&Jets)),
 				//scalars get replaced
 				new KLinkedBranchI(KBranchI(&looper->BTagsDeepCSV,"BTagsDeepCSV"),vtype==JECup?KBranchI(&looper->BTagsDeepCSVJECup,"BTagsDeepCSVJECup"):vtype==JECdown?KBranchI(&looper->BTagsDeepCSVJECdown,"BTagsDeepCSVJECdown"):vtype==JERup?KBranchI(&looper->BTagsDeepCSVJERup,"BTagsDeepCSVJERup"):vtype==JERdown?KBranchI(&looper->BTagsDeepCSVJERdown,"BTagsDeepCSVJERdown"):KBranchI(NULL,"")),
 				new KLinkedBranchI(KBranchI(&looper->BTags,"BTags"),vtype==JECup?KBranchI(&looper->BTagsJECup,"BTagsJECup"):vtype==JECdown?KBranchI(&looper->BTagsJECdown,"BTagsJECdown"):vtype==JERup?KBranchI(&looper->BTagsJERup,"BTagsJERup"):vtype==JERdown?KBranchI(&looper->BTagsJERdown,"BTagsJERdown"):KBranchI(NULL,"")),
@@ -373,22 +373,22 @@ class KJetLeptonVariator : public KVariator {
 		}
 		virtual void CheckBranches(){
 			branches = {
-				new KLinkedBranchVL(KBranchVL(looper->Jets,"Jets"),KBranchVL(&Jets,"Jets_")),
-				new KLinkedBranchVB(KBranchVB(looper->Jets_HTMask,"Jets_HTMask"),KBranchVB(&Jets_HTMask,"Jets_HTMask_")),
-				new KLinkedBranchVB(KBranchVB(looper->Jets_MHTMask,"Jets_MHTMask"),KBranchVB(&Jets_MHTMask,"Jets_MHTMask_")),
-				new KLinkedBranchVB(KBranchVB(looper->Jets_ID,"Jets_ID"),KBranchVB(&Jets_ID,"Jets_ID_")),
-				new KLinkedBranchVD(KBranchVD(looper->Jets_bDiscriminatorCSV,"Jets_bDiscriminatorCSV"),KBranchVD(&Jets_bDiscriminatorCSV,"Jets_bDiscriminatorCSV_")),
-				new KLinkedBranchVD(KBranchVD(looper->Jets_muonEnergyFraction,"Jets_muonEnergyFraction"),KBranchVD(&Jets_muonEnergyFraction,"Jets_muonEnergyFraction_")),
-				new KLinkedBranchB(KBranchB(&looper->JetID,"JetID"),KBranchB(&JetID,"JetID_")),
-				new KLinkedBranchI(KBranchI(&looper->NJets,"NJets"),KBranchI(&NJets,"NJets_")),
-				new KLinkedBranchI(KBranchI(&looper->BTags,"BTags"),KBranchI(&BTags,"BTags_")),
-				new KLinkedBranchD(KBranchD(&looper->MHT,"MHT"),KBranchD(&MHT,"MHT_")),
-				new KLinkedBranchD(KBranchD(&looper->MHTPhi,"MHTPhi"),KBranchD(&MHTPhi,"MHTPhi_")),
-				new KLinkedBranchD(KBranchD(&looper->HT,"HT"),KBranchD(&HT,"HT_")),
-				new KLinkedBranchD(KBranchD(&looper->DeltaPhi1,"DeltaPhi1"),KBranchD(&DeltaPhi1,"DeltaPhi1_")),
-				new KLinkedBranchD(KBranchD(&looper->DeltaPhi2,"DeltaPhi2"),KBranchD(&DeltaPhi2,"DeltaPhi2_")),
-				new KLinkedBranchD(KBranchD(&looper->DeltaPhi3,"DeltaPhi3"),KBranchD(&DeltaPhi3,"DeltaPhi3_")),
-				new KLinkedBranchD(KBranchD(&looper->DeltaPhi4,"DeltaPhi4"),KBranchD(&DeltaPhi4,"DeltaPhi4_"))
+				new KLinkedBranchVL(KBranchVL(looper->Jets,"Jets"),KBranchVL(&Jets)),
+				new KLinkedBranchVB(KBranchVB(looper->Jets_HTMask,"Jets_HTMask"),KBranchVB(&Jets_HTMask)),
+				new KLinkedBranchVB(KBranchVB(looper->Jets_MHTMask,"Jets_MHTMask"),KBranchVB(&Jets_MHTMask)),
+				new KLinkedBranchVB(KBranchVB(looper->Jets_ID,"Jets_ID"),KBranchVB(&Jets_ID)),
+				new KLinkedBranchVD(KBranchVD(looper->Jets_bDiscriminatorCSV,"Jets_bDiscriminatorCSV"),KBranchVD(&Jets_bDiscriminatorCSV)),
+				new KLinkedBranchVD(KBranchVD(looper->Jets_muonEnergyFraction,"Jets_muonEnergyFraction"),KBranchVD(&Jets_muonEnergyFraction)),
+				new KLinkedBranchB(KBranchB(&looper->JetID,"JetID"),KBranchB(&JetID)),
+				new KLinkedBranchI(KBranchI(&looper->NJets,"NJets"),KBranchI(&NJets)),
+				new KLinkedBranchI(KBranchI(&looper->BTags,"BTags"),KBranchI(&BTags)),
+				new KLinkedBranchD(KBranchD(&looper->MHT,"MHT"),KBranchD(&MHT)),
+				new KLinkedBranchD(KBranchD(&looper->MHTPhi,"MHTPhi"),KBranchD(&MHTPhi)),
+				new KLinkedBranchD(KBranchD(&looper->HT,"HT"),KBranchD(&HT)),
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhi1,"DeltaPhi1"),KBranchD(&DeltaPhi1)),
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhi2,"DeltaPhi2"),KBranchD(&DeltaPhi2)),
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhi3,"DeltaPhi3"),KBranchD(&DeltaPhi3)),
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhi4,"DeltaPhi4"),KBranchD(&DeltaPhi4))
 			};
 			
 			//only check branch0 since branch1 does not come from tree
