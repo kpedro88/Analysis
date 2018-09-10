@@ -2,6 +2,9 @@
 
 Important note: the current version of this code uses ROOT6 and C++11 features. It is not compatible with older versions of ROOT, i.e. ROOT5.
 
+Currently, the skimming functionality (copying vector branches) does not work in ROOT version 6.10 (CMSSW_9_4_X).
+Instead, ROOT version 6.06 (CMSSW_8_0_X) should be used.
+
 ## Recompiling
 
 To recompile all drivers, testing code changes or preparing for batch submission:
