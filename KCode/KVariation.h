@@ -20,9 +20,7 @@ using namespace std;
 template <class T>
 class KBranchT {
 	public:
-		KBranchT(T* value_, string name_="", bool status_=true) :
-			value(value_), name(name_), status(status_)
-		{}
+		KBranchT(T* value_, string name_="", bool status_=true) : name(name_), status(status_), value(value_) {}
 		virtual ~KBranchT() {}
 		
 		void Check(TTree* fChain) {
@@ -30,6 +28,9 @@ class KBranchT {
 		}
 		void Enable(TTree* fChain) {
 			if(!name.empty()) fChain->SetBranchStatus(name.c_str(),1);
+		}
+		virtual void Copy(const KBranchT<T>& other){
+			*(value) = *(other.value);
 		}
 		
 		T* value;
@@ -40,14 +41,25 @@ typedef KBranchT<bool> KBranchB;
 typedef KBranchT<int> KBranchI;
 typedef KBranchT<double> KBranchD;
 typedef KBranchT<TLorentzVector> KBranchL;
-typedef KBranchT<vector<bool>> KBranchVB;
-typedef KBranchT<vector<int>> KBranchVI;
-typedef KBranchT<vector<double>> KBranchVD;
-typedef KBranchT<vector<TLorentzVector>> KBranchVL;
-typedef KBranchT<vector<vector<bool>>> KBranchVVB;
-typedef KBranchT<vector<vector<int>>> KBranchVVI;
-typedef KBranchT<vector<vector<double>>> KBranchVVD;
-typedef KBranchT<vector<vector<TLorentzVector>>> KBranchVVL;
+
+//derived version for pointers
+//(for a pointer branch, ROOT changes the value of the pointer)
+template <class T>
+class KBranchPtrT : public KBranchT<T> {
+	public:
+		using KBranchT<T>::KBranchT;
+		void Copy(const KBranchPtrT<T>& other){
+			*(*(this->value)) = *(*(other.value));
+		}
+};
+typedef KBranchPtrT<vector<bool>*> KBranchVB;
+typedef KBranchPtrT<vector<int>*> KBranchVI;
+typedef KBranchPtrT<vector<double>*> KBranchVD;
+typedef KBranchPtrT<vector<TLorentzVector>*> KBranchVL;
+typedef KBranchPtrT<vector<vector<bool>>*> KBranchVVB;
+typedef KBranchPtrT<vector<vector<int>>*> KBranchVVI;
+typedef KBranchPtrT<vector<vector<double>>*> KBranchVVD;
+typedef KBranchPtrT<vector<vector<TLorentzVector>>*> KBranchVVL;
 
 class KLinkedBranchBase {
 	public:
@@ -62,12 +74,12 @@ class KLinkedBranchBase {
 		virtual void Restore() {}
 };
 
-template <class T>
+template <class T, class B = KBranchT<T>>
 class KLinkedBranchT : public KLinkedBranchBase {
 	public:
-		KLinkedBranchT(KBranchT<T> branch0_, KBranchT<T> branch1_) : branch0(branch0_), branch1(branch1_), good0(true), good1(true) {
+		KLinkedBranchT(B branch0_, B branch1_) : KLinkedBranchBase(), branch0(branch0_), branch1(branch1_), branchOrig(&original), good0(true), good1(true) {
 		}
-		~KLinkedBranchT() {}
+		virtual ~KLinkedBranchT() {}
 
 		void Enable(TTree* fChain, int which=-1){
 			if(fChain){
@@ -85,19 +97,19 @@ class KLinkedBranchT : public KLinkedBranchBase {
 		}
 		void Store() {
 			if(!good0) return;
-			original = *(branch0.value);
+			branchOrig.Copy(branch0);
 		}
 		void Vary() {
 			if(!good0 or !good1) return;
-			*(branch0.value) = *(branch1.value);
+			branch0.Copy(branch1);
 		}
 		void Restore() {
 			if(!good0) return;
-			*(branch0.value) = original;
+			branch0.Copy(branchOrig);
 		}
 		
 	protected:
-		KBranchT<T> branch0, branch1;
+		B branch0, branch1, branchOrig;
 		T original;
 		bool good0, good1;
 };
@@ -105,21 +117,37 @@ typedef KLinkedBranchT<bool> KLinkedBranchB;
 typedef KLinkedBranchT<int> KLinkedBranchI;
 typedef KLinkedBranchT<double> KLinkedBranchD;
 typedef KLinkedBranchT<TLorentzVector> KLinkedBranchL;
-typedef KLinkedBranchT<vector<bool>> KLinkedBranchVB;
-typedef KLinkedBranchT<vector<int>> KLinkedBranchVI;
-typedef KLinkedBranchT<vector<double>> KLinkedBranchVD;
-typedef KLinkedBranchT<vector<TLorentzVector>> KLinkedBranchVL;
-typedef KLinkedBranchT<vector<vector<bool>>> KLinkedBranchVVB;
-typedef KLinkedBranchT<vector<vector<int>>> KLinkedBranchVVI;
-typedef KLinkedBranchT<vector<vector<double>>> KLinkedBranchVVD;
-typedef KLinkedBranchT<vector<vector<TLorentzVector>>> KLinkedBranchVVL;
 
+//derived version for pointers
+template <class T>
+class KLinkedBranchPtrT : public KLinkedBranchT<T*,KBranchPtrT<T*>> {
+	public:
+		KLinkedBranchPtrT(KBranchPtrT<T*> branch0_, KBranchPtrT<T*> branch1_) : KLinkedBranchT<T*,KBranchPtrT<T*>>(branch0_,branch1_) {
+			this->original = new T();
+		}
+		virtual ~KLinkedBranchPtrT() {
+			delete this->original;
+		}
+};
+typedef KLinkedBranchPtrT<vector<bool>> KLinkedBranchVB;
+typedef KLinkedBranchPtrT<vector<int>> KLinkedBranchVI;
+typedef KLinkedBranchPtrT<vector<double>> KLinkedBranchVD;
+typedef KLinkedBranchPtrT<vector<TLorentzVector>> KLinkedBranchVL;
+typedef KLinkedBranchPtrT<vector<vector<bool>>> KLinkedBranchVVB;
+typedef KLinkedBranchPtrT<vector<vector<int>>> KLinkedBranchVVI;
+typedef KLinkedBranchPtrT<vector<vector<double>>> KLinkedBranchVVD;
+typedef KLinkedBranchPtrT<vector<vector<TLorentzVector>>> KLinkedBranchVVL;
+
+//only works with pointers to vectors
 template <class T>
 class KReorderedBranchT : public KLinkedBranchBase {
 	public:
-		KReorderedBranchT(KBranchT<T> branch_, const vector<unsigned>& order_) : branch(branch_), order(order_), good(true) {
+		KReorderedBranchT(KBranchPtrT<T*> branch_, const vector<unsigned>& order_) : KLinkedBranchBase(), original(new T()), varied(new T()), branch(branch_), branchOrig(&original), branchVaried(&varied), order(order_), good(true) {
 		}
-		~KReorderedBranchT() {}
+		~KReorderedBranchT() {
+			delete original;
+			delete varied;			
+		}
 
 		void Enable(TTree* fChain, int which=-1){
 			if(fChain){
@@ -134,26 +162,26 @@ class KReorderedBranchT : public KLinkedBranchBase {
 		}
 		void Store() {
 			if(!good) return;
-			original = *(branch.value);
+			branchOrig.Copy(branch);
 		}
 		void Vary() {
 			if(!good) return;
-			T temp;
-			temp.reserve(original.size());
+			varied->clear();
+			varied->reserve(original->size());
 			for(unsigned io = 0; io < order.size(); ++io){
-				temp.push_back(original[order[io]]);
+				varied->push_back((*original)[order[io]]);
 			}
-			*(branch.value) = temp;
+			branch.Copy(branchVaried);
 		}
 		void Restore() {
 			if(!good) return;
-			*(branch.value) = original;
+			branch.Copy(branchOrig);
 		}
 		
 	protected:
-		KBranchT<T> branch;
+		T *original, *varied;
+		KBranchPtrT<T*> branch, branchOrig, branchVaried;
 		const vector<unsigned>& order;
-		T original;
 		bool good;
 };
 //pointless for scalar types
