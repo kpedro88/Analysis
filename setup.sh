@@ -2,5 +2,5 @@
 
 for i in scripts/*.*; do
   j=`basename $i`
-  ln -s $i $j
+  ln -s -f $i $j
 done
