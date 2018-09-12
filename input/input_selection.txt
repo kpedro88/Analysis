@@ -249,6 +249,6 @@ genMHT
 INPUT
 input/input_sets_skim.txt
 input/input_sets_skim_signal.txt
-input/input_sets_skim_data.txt
-input/input_sets_skim_data_reMiniAOD.txt
+input/input_sets_skim_data_2016.txt
+input/input_sets_skim_data_2017.txt
 input/input_sets_skim_fast.txt

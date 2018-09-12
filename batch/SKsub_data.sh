@@ -21,10 +21,11 @@ done
 
 ./SKcheck.sh ${CHECKARGS}
 
-source exportSkimData.sh
+for year in 2016 2017; do
+  source exportSkimData${year}.sh
 
-for SAMPLE in ${SAMPLES[@]}
-  do
+  for SAMPLE in ${SAMPLES[@]}; do
     ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} ${SELTYPE} ${INDIR} ${OUTDIR} ${STORE}
     ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} ${SELTYPE2} ${INDIR} ${OUTDIR} ${STORE}
   done
+done

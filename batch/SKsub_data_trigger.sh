@@ -19,18 +19,20 @@ done
 
 ./SKcheck.sh ${CHECKARGS}
 
-source exportSkimData.sh
+for year in 2016 2017; do
+  source exportSkimData${year}.sh
 
-for SAMPLE in ${SAMPLES[@]}; do
-  if [[ $SAMPLE == *"SingleElectron"* ]]; then
-    ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} SLeTrigger,SLeTrigger_JetLeptonClean ${INDIR} ${OUTDIR} ${STORE}
-  elif [[ $SAMPLE == *"SingleMuon"* ]]; then
-    ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} SLmTrigger,SLmTrigger_JetLeptonClean ${INDIR} ${OUTDIR} ${STORE}
-  elif [[ $SAMPLE == *"MET"* ]]; then
-    ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} signalTrigger,signalTrigger_JetLeptonClean ${INDIR} ${OUTDIR} ${STORE}
-  elif [[ $SAMPLE == *"JetHT"* ]]; then
-    ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} QCDTrigger,QCDTrigger_JetLeptonClean ${INDIR} ${OUTDIR} ${STORE}
-  elif [[ $SAMPLE == *"SinglePhoton"* ]]; then
-    ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} PhotonTrigger ${INDIR} ${OUTDIR} ${STORE}
-  fi
+  for SAMPLE in ${SAMPLES[@]}; do
+    if [[ $SAMPLE == *"SingleElectron"* ]]; then
+      ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} SLeTrigger,SLeTrigger_JetLeptonClean ${INDIR} ${OUTDIR} ${STORE}
+    elif [[ $SAMPLE == *"SingleMuon"* ]]; then
+      ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} SLmTrigger,SLmTrigger_JetLeptonClean ${INDIR} ${OUTDIR} ${STORE}
+    elif [[ $SAMPLE == *"MET"* ]]; then
+      ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} signalTrigger,signalTrigger_JetLeptonClean ${INDIR} ${OUTDIR} ${STORE}
+    elif [[ $SAMPLE == *"JetHT"* ]]; then
+      ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} QCDTrigger,QCDTrigger_JetLeptonClean ${INDIR} ${OUTDIR} ${STORE}
+    elif [[ $SAMPLE == *"SinglePhoton"* ]]; then
+      ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} PhotonTrigger ${INDIR} ${OUTDIR} ${STORE}
+    fi
+  done
 done
