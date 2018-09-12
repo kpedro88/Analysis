@@ -1,5 +1,5 @@
 universe = vanilla
-Executable = ../jobExecCondor.sh
+Executable = ../jobExecCondorHist.sh
 +REQUIRED_OS = "rhel6"
 request_disk = 1000000
 request_memory = 2000
@@ -11,7 +11,8 @@ Error = hist_JOBNAME_$(Cluster).stderr
 Log = hist_JOBNAME_$(Cluster).condor
 notification = Never
 x509userproxy = $ENV(X509_USER_PROXY)
-Arguments = CMSSWVER INDIR STORE INPUTS OUTPUT EXTRA
+# use "new syntax" to handle nested quotes
+Arguments = "CMSSWVER INDIR STORE 'INPUTS' 'OUTPUT' 'EXTRA'"
 on_exit_remove = (ExitBySignal == False) && (ExitCode == 0)
 on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
 on_exit_hold_reason = strcat("Job held by ON_EXIT_HOLD due to ",\

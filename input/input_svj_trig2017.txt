@@ -4,14 +4,17 @@ vstring:selections[trigDenom,trigNumerJet,trigNumerHT,trigNumerJetHT]
 
 SELECTION
 trigDenom
-	HLT	vs:HLTLines[HLT_Mu50_v]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
 	Histo
 trigNumerJet
-	HLT	vs:HLTLines[HLT_Mu50_v,HLT_AK8PFJet500_v]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v]
 	Histo
 trigNumerHT
-	HLT	vs:HLTLines[HLT_Mu50_v,HLT_PFHT1050_v]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_PFHT1050_v]
 	Histo
 trigNumerJetHT
-	HLT	vs:HLTLines[HLT_Mu50_v,HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
 	Histo

@@ -12,7 +12,12 @@ echo ">> `/bin/date` Submitting condor job(s) : $1 $2 $3 $4 $5 $6"
 
 mkdir -p ${JOBDIR}
 
-cat ./jobExecCondor.jdl \
+# repeat quotes to escape (condor "new syntax")
+INPUTS=$(echo "$INPUTS" | sed 's/"/""/g')
+OUTPUT=$(echo "$OUTPUT" | sed 's/"/""/g')
+EXTRA=$(echo "$EXTRA" | sed 's/"/""/g')
+
+cat ./jobExecCondorHist.jdl \
 | sed -e s/CMSSWVER/${CMSSW_VERSION}/ \
 | sed -e s~INDIR~${INDIR}~ \
 | sed -e s~STORE~${STORE}~ \
