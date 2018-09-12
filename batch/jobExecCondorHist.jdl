@@ -1,0 +1,20 @@
+universe = vanilla
+Executable = ../jobExecCondor.sh
+Requirements = OpSys == "LINUX" && (Arch != "DUMMY" )
+request_disk = 10000000
+request_memory = 2100
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT
+Transfer_Input_Files = ../jobExecCondor.sh, CMSSWVER.tar.gz
+Output = hist_JOBNAME_$(Cluster).stdout
+Error = hist_JOBNAME_$(Cluster).stderr
+Log = hist_JOBNAME_$(Cluster).condor
+notification = Never
+x509userproxy = $ENV(X509_USER_PROXY)
+Arguments = CMSSWVER INDIR STORE INPUTS OUTPUT EXTRA
+on_exit_remove = (ExitBySignal == False) && (ExitCode == 0)
+on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
+on_exit_hold_reason = strcat("Job held by ON_EXIT_HOLD due to ",\
+	ifThenElse((ExitBySignal == True), "exit by signal", \
+				strcat("exit code ",ExitCode)), ".")
+Queue 1
