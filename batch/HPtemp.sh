@@ -22,6 +22,6 @@ cat ./jobExecCondor.jdl \
 | sed -e s/JOBNAME/${JOBNAME}/ \
 > ${JOBDIR}/jobExecCondorHist_${JOBNAME}.jdl
 
-#cd ${JOBDIR}
-#condor_submit jobExecCondorHist_${JOBNAME}.jdl
-#cd -
+cd ${JOBDIR}
+condor_submit jobExecCondorHist_${JOBNAME}.jdl
+cd -
