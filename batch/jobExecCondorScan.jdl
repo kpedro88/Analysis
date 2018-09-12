@@ -1,6 +1,6 @@
 universe = vanilla
 Executable = ../jobExecCondorScan.sh
-Requirements = OpSys == "LINUX" && (Arch != "DUMMY" )
++REQUIRED_OS = "rhel6"
 request_disk = 10000000
 request_memory = 3100
 Should_Transfer_Files = YES
