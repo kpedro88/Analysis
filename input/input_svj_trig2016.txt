@@ -1,0 +1,17 @@
+OPTION
+vstring:disable_branches[*]
+vstring:selections[trigDenom,trigNumerJet,trigNumerHT,trigNumerJetHT]
+
+SELECTION
+trigDenom
+	HLT	vs:HLTLines[HLT_Mu50_v]
+	Histo
+trigNumerJet
+	HLT	vs:HLTLines[HLT_Mu50_v,HLT_AK8PFJet450_v]
+	Histo
+trigNumerHT
+	HLT	vs:HLTLines[HLT_Mu50_v,HLT_PFHT800_v,HLT_PFHT900_v]
+	Histo
+trigNumerJetHT
+	HLT	vs:HLTLines[HLT_Mu50_v,HLT_AK8PFJet450_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT800_v,HLT_PFHT900_v,HLT_PFJet450_v]
+	Histo

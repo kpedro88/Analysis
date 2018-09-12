@@ -1,0 +1,34 @@
+#sections:
+# other input files to include in INPUT
+# global options in OPTION
+# 1D histograms in HISTO
+# 2D histograms in HISTO2D
+# datasets in SET
+# selections in SELECTION
+# variations in VARIATION
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c, chain/ch, input/in
+#items on each line in the HISTO, HISTO2D, SET, SELECTION, VARIATION sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#SELECTION/VARIATION: only required item is name
+#for datasets, child-parent relationships are indicated by tab-indentation
+#selectors/variators are associated with a selection/variation by tab-indentation
+
+INPUT
+input/input_global.txt
+
+OPTION
+string:prelim_text[work-in-progress]
+double:luminorm[41500]
+bool:printyield[1]
+int:yieldprecision[2]
+bool:plotoverflow[1]
+double:ymin_min[1e-6]
+bool:appendsel[0]
+vstring:selections[dat]
+bool:debugloop[1]
+
+SELECTION
+dat
+	Histo

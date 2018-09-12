@@ -23,22 +23,24 @@ vetotk
 	IsoPionTrackVeto
 dijet
 	Dijet	i:njet[2]	b:id[1]	d:eta[5.0]
+dijetmet
+	dijet
 	MET	d:min[100]
 dijetmt
-	Dijet	i:njet[2]	b:id[1]	d:eta[5.0]
+	dijet
 	METMTRatio	d:min[0.15]
 dijetmtloose
-	Dijet	i:njet[2]	b:id[1]	d:eta[5.0]
+	dijet
 	METMTRatio	d:min[0.10]
 dijetmtfull1
-	Dijet	i:njet[2]	b:id[1]	d:eta[5.0]
+	dijet
 	METMTRatio	d:min[0.25]
 	DeltaPhiMinAK8	d:max[0.75]
 dijetmjj
-	Dijet	i:njet[2]	b:id[1]	d:eta[5.0]
+	dijet
 	MJJAK8	d:min[1000]	d:max[-1]
 dijethad
-	dijet
+	dijetmet
 	veto
 dijetmthad
 	dijetmt
@@ -50,7 +52,7 @@ dijetmthadfull1
 	dijetmtfull1
 	veto
 dijethadtk
-	dijet
+	dijetmet
 	vetotk
 dijetmthadtk
 	dijetmt
@@ -58,7 +60,12 @@ dijetmthadtk
 theory
 	DijetAK4	i:njet[2]	b:id[0]	d:pt[100]	d:eta[2.4]
 	MET	d:min[200]
+dijetmutrig
+	dijet
+	MuonTrigger	d:pTmin[50]
 
 INPUT
 input/input_sets_skim_svj_bkg.txt
 input/input_sets_skim_svj.txt
+input/input_sets_skim_data_2016.txt
+input/input_sets_skim_data_2017.txt
