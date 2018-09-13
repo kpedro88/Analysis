@@ -4,7 +4,7 @@ source exportProd.sh
 
 JOBDIR=jobs
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims/tree_dijetmutrig
-STORE=$INDIR/hist
+STORE=$INDIR/histMETMT
 OUTPUT=
 EXTRA=
 CHECKARGS=""
