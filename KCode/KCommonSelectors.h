@@ -186,7 +186,7 @@ class KDijetSelector : public KSelector {
 			//check for options
 			localOpt->Get("njet",njet);
 			id = localOpt->Get("id",true);
-			simple = localOpt->Get("simple",true);
+			simple = localOpt->Get("simple",false);
 			localOpt->Get("pt",pt);
 			localOpt->Get("eta",eta);
 		}
