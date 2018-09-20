@@ -10,8 +10,8 @@ ht2017
 htmt
 	HTMTRatio	d:max[0.7]
 pt2016
-	DijetPT	d:min[1000]
+	LeadJetPT	d:min[600]
 pt2017
-	DijetPT	d:min[1200]
+	LeadJetPT	d:min[700]
 ptmt
 	PTMTRatio	d:max[0.7]

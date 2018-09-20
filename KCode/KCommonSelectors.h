@@ -281,6 +281,32 @@ class KDijetPTSelector : public KSelector {
 REGISTER_SELECTOR(DijetPT);
 
 //----------------------------------------------------
+//selects events based on lead jet pt value
+class KLeadJetPTSelector : public KSelector {
+	public:
+		//constructor
+		KLeadJetPTSelector() : KSelector() { }
+		KLeadJetPTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), min(500) { 
+			//check for option
+			localOpt->Get("min",min);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("JetsAK8",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return (looper->JetsAK8->at(0).Pt()) > min;
+		}
+		
+		//member variables
+		double min;
+};
+REGISTER_SELECTOR(LeadJetPT);
+
+//----------------------------------------------------
 //selects events based on MHT value
 class KMHTSelector : public KSelector {
 	public:
@@ -545,6 +571,34 @@ class KPTMTRatioSelector : public KSelector {
 		double max;
 };
 REGISTER_SELECTOR(PTMTRatio);
+
+//----------------------------------------------------
+//selects events based on PT1/MT value
+class KPT1MTRatioSelector : public KSelector {
+	public:
+		//constructor
+		KPT1MTRatioSelector() : KSelector() { }
+		KPT1MTRatioSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), max(0.7) { 
+			//check for option
+			localOpt->Get("max",max);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("MT_AK8",1);
+			looper->fChain->SetBranchStatus("JetsAK8",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			double ptMTratio = looper->MT_AK8 > 0 ? looper->JetsAK8->at(0).Pt()/looper->MT_AK8 : 0.0;
+			return ptMTratio < max;
+		}
+		
+		//member variables
+		double max;
+};
+REGISTER_SELECTOR(PT1MTRatio);
 
 //----------------------------------------------------
 //selects events based on delta eta(j1,j2)
