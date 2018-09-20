@@ -7,7 +7,7 @@ SELECTION
 fullt
 	LeptonVeto
 	METMTRatio	d:min[0.15]
-	DeltaEta	d:detamax[1.1]
+	DeltaEta	d:max[1.1]
 	DeltaPhiMinAK8	d:dphimin[0.4]
 	MCWeight
 	Histo	

@@ -1,0 +1,17 @@
+SELECTION
+deta1
+	DeltaEta	d:max[1.0]
+deta2
+	DeltaEta	d:max[2.0]
+ht2016
+	HT	d:min[1100]
+ht2017
+	HT	d:min[1500]
+htmt
+	HTMTRatio	d:max[0.7]
+pt2016
+	DijetPT	d:min[1000]
+pt2017
+	DijetPT	d:min[1200]
+ptmt
+	PTMTRatio	d:max[0.7]

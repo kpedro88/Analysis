@@ -1,0 +1,4 @@
+OPTION
+string:extfilename[test/allHistos_dijetmthad.root]
+string+:printsuffix[_dijetmthad]
+string+:rocsuffix[_dijetmthad]

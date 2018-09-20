@@ -6,7 +6,7 @@ string+:printsuffix[_full2]
 SELECTION
 full2
 	MET	d:min[200]
-	DeltaEta	d:detamax[1.1]
+	DeltaEta	d:max[1.1]
 	DeltaPhiMinAK8	d:max[0.4]
 	METSignificance	d:min[50]
 	MCWeight

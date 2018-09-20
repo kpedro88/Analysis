@@ -780,6 +780,45 @@ class KFiller_genmet : public KFiller {
 };
 REGISTER_FILLER(genmet);
 
+//HT/MT
+class KFiller_htMTratio : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void ListBranches() { branches = {"HT","MT_AK8"}; }
+		virtual void Fill(KValue& value, double w) { value.Fill(looper->MT_AK8>0 ? looper->HT/looper->MT_AK8 : 0.0,w); }
+};
+REGISTER_FILLER(htMTratio);
+
+//sum pt of leading 2 jets
+class KFiller_ptdijetAK8 : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void ListBranches() { branches = {"JetsAK8"}; }
+		virtual void Fill(KValue& value, double w) {
+			double pt = 0.0;
+			for(unsigned j = 0; j < min(looper->JetsAK8->size(),2ul); ++j){
+				pt += looper->JetsAK8->at(j).Pt();
+			}
+			value.Fill(pt,w);
+		}
+};
+REGISTER_FILLER(ptdijetAK8);
+
+//ptdijetAK8/MT
+class KFiller_ptMTratio : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void ListBranches() { branches = {"JetsAK8","MT_AK8"}; }
+		virtual void Fill(KValue& value, double w) {
+			double pt = 0.0;
+			for(unsigned j = 0; j < min(looper->JetsAK8->size(),2ul); ++j){
+				pt += looper->JetsAK8->at(j).Pt();
+			}
+			value.Fill(looper->MT_AK8>0 ? pt/looper->MT_AK8 : 0.0, w);
+		}
+};
+REGISTER_FILLER(ptMTratio);
+
 //num b hadrons (leading 2 jets)
 class KFiller_nbdijetAK8 : public KFiller {
 	public:

@@ -1,0 +1,38 @@
+INPUT
+input/input_svj_plateau_cuts.txt
+
+OPTION
+vstring:disable_branches[*]
+vstring:selections[Presel,Deta1,Deta2,HT2016,HT2017,HTMT,PT2016,PT2017,PTMT]
+
+SELECTION
+Presel
+	sim
+Deta1
+	deta1
+	sim
+Deta2
+	deta2
+	sim
+HT2016
+	ht2016
+	sim
+HT2017
+	ht2017
+	sim
+HTMT
+	htmt
+	sim
+PT2016
+	pt2016
+	sim
+PT2017
+	pt2017
+	sim
+PTMT
+	ptmt
+	sim
+
+HISTO
+MTAK8	i:xnum[150]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kMagenta]
+

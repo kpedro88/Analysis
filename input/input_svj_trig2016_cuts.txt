@@ -1,0 +1,62 @@
+INPUT
+input/input_svj_plateau_cuts.txt
+
+OPTION
+vstring:disable_branches[*]
+vstring:selections[trigDenomDeta1,trigDenomDeta2,trigDenomHT2016,trigDenomHTMT,trigDenomPT2016,trigDenomPTMT,trigNumerDeta1,trigNumerDeta2,trigNumerHT2016,trigNumerHTMT,trigNumerPT2016,trigNumerPTMT]
+
+SELECTION
+denom
+	METMTRatio	d:min[0.15]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+numer
+	denom
+	HLT	vs:HLTLines[HLT_AK8PFJet450_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT800_v,HLT_PFHT900_v,HLT_PFJet450_v]
+trigDenomDeta1
+	deta1
+	denom
+	Histo
+trigDenomDeta2
+	deta2
+	denom
+	Histo
+trigDenomHT2016
+	ht2016
+	denom
+	Histo
+trigDenomHTMT
+	htmt
+	denom
+	Histo
+trigDenomPT2016
+	pt2016
+	denom
+	Histo
+trigDenomPTMT
+	ptmt
+	denom
+	Histo
+trigNumerDeta1
+	deta1
+	numer
+	Histo
+trigNumerDeta2
+	deta2
+	numer
+	Histo
+trigNumerHT2016
+	ht2016
+	numer
+	Histo
+trigNumerHTMT
+	htmt
+	numer
+	Histo
+trigNumerPT2016
+	pt2016
+	numer
+	Histo
+trigNumerPTMT
+	ptmt
+	numer
+	Histo
