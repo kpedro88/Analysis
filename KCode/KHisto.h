@@ -18,6 +18,7 @@
 #include <vector>
 #include <string>
 #include <array>
+#include <tuple>
 
 using namespace std;
 
@@ -251,27 +252,24 @@ class KHisto : public KChecker {
 		
 		//helpers
 		bool IsPerJet(const string& vname, string& vname2, vector<unsigned>& indices){
-			if(vname.compare(0,10,"leadjetAK8")==0) {
-				indices = {0};
-				vname2 = vname.substr(10,string::npos);
+			vector<tuple<string,vector<unsigned>>> jetcases{
+				make_tuple("leadjet",vector<unsigned>{0}),
+				make_tuple("subleadjet",vector<unsigned>{1}),
+				make_tuple("bothjet",vector<unsigned>{0,1}),
+				make_tuple("thirdjet",vector<unsigned>{2}),
+				make_tuple("fourthjet",vector<unsigned>{3})
+			};
+			bool foundcase = false;
+			for(const auto& jetcase: jetcases){
+				const auto& jetstr = get<0>(jetcase);
+				if(vname.compare(0,jetstr.size(),jetstr)==0){
+					indices = get<1>(jetcase);
+					vname2 = vname.substr(jetstr.size(),string::npos);
+					foundcase = true;
+					break;
+				}
 			}
-			else if(vname.compare(0,13,"subleadjetAK8")==0){
-				indices = {1};
-				vname2 = vname.substr(13,string::npos);
-			}
-			else if(vname.compare(0,10,"bothjetAK8")==0) {
-				indices = {0,1};
-				vname2 = vname.substr(10,string::npos);
-			}
-			else if(vname.compare(0,11,"thirdjetAK8")==0) {
-				indices = {2};
-				vname2 = vname.substr(11,string::npos);
-			}
-			else if(vname.compare(0,12,"fourthjetAK8")==0) {
-				indices = {3};
-				vname2 = vname.substr(12,string::npos);
-			}
-			else {
+			if(!foundcase){
 				indices.clear();
 				vname2 = "";
 			}
