@@ -780,6 +780,22 @@ class KFiller_genmet : public KFiller {
 };
 REGISTER_FILLER(genmet);
 
+//event weight (always 1 per event)
+class KFiller_eventweight : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void Fill(KValue& value, double w) { value.Fill(w); }
+};
+REGISTER_FILLER(eventweight);
+
+//log event weight (always 1 per event)
+class KFiller_logeventweight : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void Fill(KValue& value, double w) { value.Fill(log(abs(w))); }
+};
+REGISTER_FILLER(logeventweight);
+
 //HT/MT
 class KFiller_htMTratio : public KFiller {
 	public:
