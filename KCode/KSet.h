@@ -75,6 +75,13 @@ class KSet : public KBase {
 				for(unsigned c = 0; c < children.size(); c++){ //include option to subtract histos, off by default
 					htmp->Add(children[c]->GetHisto(), children[c]->GetLocalOpt()->Get("subtract",false) ? -1 : 1);				
 				}
+
+				//build error band, disabled by default
+				if(localOpt->Get("errband",false)) {
+					BuildErrorBand();
+					//style
+					MyStyle->FormatErr(etmp);
+				}
 			}
 		}
 		virtual void MakeCutflows(){
@@ -202,19 +209,6 @@ class KSetMC: public KSet {
 		//destructor
 		virtual ~KSetMC() {}
 
-		//build for MC sets
-		using KBase::Build;
-		using KSet::Build;
-		virtual void Build(){
-			KSet::Build();
-
-			//build error band, disabled by default
-			if(localOpt->Get("errband",false)) {
-				BuildErrorBand();
-				//style
-				MyStyle->FormatErr(etmp);
-			}
-		}
 		//adds histo to legend
 		void AddToLegend(KLegend* kleg) {
 			int panel_tmp = 0;
