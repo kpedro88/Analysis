@@ -1,0 +1,13 @@
+OPTION
+int:npanel[1]
+string+:printsuffix[_qcd_met_weight]
+string:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/qcd/hist/svj_qcd_met_weight.root]
+vstring:extra_text[QCD (p_{T}-binned)]
+
+SET
+hist	mc	QCD_unskimmed	s:legname[unskimmed]	c:color[kBlack]	b:errband[1]
+	base	ext	QCD_unskimmed	b:ext_auto[1]
+hist	mc	QCD_genmet	s:legname[#slash{E}_{T}^{gen} > 150 GeV]	c:color[kBlue]	b:errband[1]
+	base	ext	QCD_genmet	b:ext_auto[1]
+hist	mc	QCD_met	s:legname[#slash{E}_{T} > 250 GeV]	c:color[kRed]	b:errband[1]
+	base	ext	QCD_met	b:ext_auto[1]

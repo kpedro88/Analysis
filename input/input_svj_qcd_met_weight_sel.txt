@@ -1,0 +1,13 @@
+OPTION
+vstring:disable_branches[*]
+vstring:selections[unskimmed,genmet,met]
+
+SELECTION
+unskimmed
+	sim
+genmet
+	MET	b:gen[1]	d:min[150]
+	sim
+met
+	MET	d:min[250]
+	sim
