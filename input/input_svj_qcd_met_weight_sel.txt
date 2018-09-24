@@ -1,6 +1,6 @@
 OPTION
 vstring:disable_branches[*]
-vstring:selections[unskimmed,genmet,met]
+vstring:selections[unskimmed,genmet,met,lowgenmet,lowgenmet-highmet]
 
 SELECTION
 unskimmed
@@ -9,5 +9,12 @@ genmet
 	MET	b:gen[1]	d:min[150]
 	sim
 met
+	MET	d:min[250]
+	sim
+lowgenmet
+	MET	b:gen[1]	d:min[15]	b:invert[1]
+	sim
+lowgenmet-highmet
+	MET	s:name[genMET]	b:gen[1]	d:min[15]	b:invert[1]
 	MET	d:min[250]
 	sim

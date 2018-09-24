@@ -2,7 +2,9 @@ HISTO
 genmet	i:xnum[100]	d:xmin[0]	d:xmax[1500]	s:xtitle[#slash{E}_{T}^{gen} [GeV]]	s:ytitle[number of events]	b:ratio[0]	b:logy[1]
 met	i:xnum[100]	d:xmin[0]	d:xmax[1500]	s:xtitle[#slash{E}_{T} [GeV]]	s:ytitle[number of events]	b:ratio[0]	b:logy[1]
 eventweight	i:xnum[20]	d:xmin[1e-6]	d:xmax[1e4]	s:xtitle[event weight (#sigmaL/N_{event})]	s:ytitle[number of events]	b:ratio[0]	b:logx[1]	b:logxbin[1]	b:logy[1]
+leadjetAK4genpt	i:xnum[100]	d:xmin[0]	d:xmax[1500]	s:xtitle[p_{T}^{gen}(j_{1}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
 
 HISTO2D
 met_genmet	i:xnum[100]	d:xmin[0]	d:xmax[1500]	s:xtitle[#slash{E}_{T} [GeV]]	i:ynum[100]	d:ymin[0]	d:ymax[1500]	s:ytitle[#slash{E}_{T}^{gen} [GeV]]	s:ztitle[number of events]	b:ratio[0]	b:logy[0]	b:logz[1]
 eventweight_genmet	i:xnum[20]	d:xmin[1e-6]	d:xmax[1e4]	s:xtitle[event weight (#sigmaL/N_{event})]	i:ynum[100]	d:ymin[0]	d:ymax[1500]	s:ytitle[#slash{E}_{T}^{gen} [GeV]]	s:ztitle[number of events]	b:ratio[0]	b:logx[1]	b:logxbin[1]	b:logy[0]	b:logz[1]
+met_leadjetAK4genpt	i:xnum[100]	d:xmin[0]	d:xmax[1500]	s:xtitle[#slash{E}_{T} [GeV]]	i:ynum[100]	d:ymin[0]	d:ymax[1500]	s:ytitle[p_{T}^{gen}(j_{1}) [GeV]]	s:ztitle[number of events]	b:ratio[0]	b:logy[0]	b:logz[1]

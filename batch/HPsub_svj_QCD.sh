@@ -14,10 +14,10 @@ while getopts "k" opt; do
 done
 
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV14
-STORE=root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/qcd/hist
+STORE=root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/qcd/hist2
 ./SKcheck.sh ${CHECKARGS}
 
-SETS=../input/input_sets_hp_qcd.txt
+SETS=../input/input_sets_hp_qcd_sep.txt
 INPUTS='"input/input_svj_hist.txt","input/input_svj_qcd_met_weight_sel.txt","input/input_svj_qcd_met_weight_hist.txt"'
 for ((i=0; i < $(cat $SETS | wc -l); i+=2)); do
 	LINE1=$(sed -n -e $((i+1))p ${SETS})

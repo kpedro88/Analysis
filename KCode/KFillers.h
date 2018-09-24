@@ -1133,6 +1133,14 @@ class KJetFiller_AK8abseta : public KJetFiller {
 };
 REGISTER_JETFILLER(AK8abseta);
 
+class KJetFiller_AK4genpt : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"GenJets"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->GenJets->size()>index) value.Fill(looper->GenJets->at(index).Pt(),w); }
+};
+REGISTER_JETFILLER(AK4genpt);
+
 //num b hadrons
 class KJetFiller_AK8nb : public KJetFiller {
     public:
