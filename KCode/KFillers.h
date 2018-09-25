@@ -1133,6 +1133,14 @@ class KJetFiller_AK8abseta : public KJetFiller {
 };
 REGISTER_JETFILLER(AK8abseta);
 
+class KJetFiller_AK4pt : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"Jets"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->Jets->size()>index) value.Fill(looper->Jets->at(index).Pt(),w); }
+};
+REGISTER_JETFILLER(AK4pt);
+
 class KJetFiller_AK4genpt : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
