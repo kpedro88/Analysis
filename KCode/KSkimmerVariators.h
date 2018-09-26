@@ -365,6 +365,136 @@ class KGenMHTVariator : public KVariator {
 };
 REGISTER_VARIATOR(GenMHT);
 
+class KCentralAK8Variator : public KVariator {
+	public:
+		//constructor
+		KCentralAK8Variator() : KVariator() { }
+		KCentralAK8Variator(string name_, OptionMap* localOpt_) : KVariator(name_,localOpt_) { }
+		virtual void CheckBranches(){
+			//set up linked branches for all variations
+			branches = {
+				//scalars get recalculated and replaced
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhi1_AK8,"DeltaPhi1_AK8"),KBranchD(&DeltaPhi1_AK8)),
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhi2_AK8,"DeltaPhi2_AK8"),KBranchD(&DeltaPhi2_AK8)),
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhiMin_AK8,"DeltaPhiMin_AK8"),KBranchD(&DeltaPhiMin_AK8)),
+				new KLinkedBranchD(KBranchD(&looper->MJJ_AK8,"MJJ_AK8"),KBranchD(&MJJ_AK8)),
+				new KLinkedBranchD(KBranchD(&looper->MT_AK8,"MT_AK8"),KBranchD(&MT_AK8)),
+				new KLinkedBranchD(KBranchD(&looper->Mmc_AK8,"Mmc_AK8"),KBranchD(&Mmc_AK8)),
+				new KLinkedBranchB(KBranchB(&looper->JetIDAK8,"JetIDAK8"),KBranchB(&JetIDAK8)),
+				//vectors get reordered (unwanted entries removed)
+				new KReorderedBranchVL(KBranchVL(&looper->JetsAK8,"JetsAK8"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_axismajor,"JetsAK8_axismajor"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_axisminor,"JetsAK8_axisminor"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_doubleBDiscriminator,"JetsAK8_doubleBDiscriminator"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_ecfN2b1,"JetsAK8_ecfN2b1"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_ecfN2b2,"JetsAK8_ecfN2b2"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_ecfN3b1,"JetsAK8_ecfN3b1"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_ecfN3b2,"JetsAK8_ecfN3b2"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_girth,"JetsAK8_girth"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_hDiscriminatorDeep,"JetsAK8_hDiscriminatorDeep"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_hDiscriminatorDeepDecorrel,"JetsAK8_hDiscriminatorDeepDecorrel"),order),
+				new KReorderedBranchVB(KBranchVB(&looper->JetsAK8_ID,"JetsAK8_ID"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_lean,"JetsAK8_lean"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_momenthalf,"JetsAK8_momenthalf"),order),
+				new KReorderedBranchVI(KBranchVI(&looper->JetsAK8_multiplicity,"JetsAK8_multiplicity"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_NsubjettinessTau1,"JetsAK8_NsubjettinessTau1"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_NsubjettinessTau2,"JetsAK8_NsubjettinessTau2"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_NsubjettinessTau3,"JetsAK8_NsubjettinessTau3"),order),
+				new KReorderedBranchVI(KBranchVI(&looper->JetsAK8_NumBhadrons,"JetsAK8_NumBhadrons"),order),
+				new KReorderedBranchVI(KBranchVI(&looper->JetsAK8_NumChadrons,"JetsAK8_NumChadrons"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_overflow,"JetsAK8_overflow"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_prunedMass,"JetsAK8_prunedMass"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_ptD,"JetsAK8_ptD"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_ptdrlog,"JetsAK8_ptdrlog"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_softDropMass,"JetsAK8_softDropMass"),order),
+				new KReorderedBranchVVL(KBranchVVL(&looper->JetsAK8_subjets,"JetsAK8_subjets"),order),
+				new KReorderedBranchVVD(KBranchVVD(&looper->JetsAK8_subjets_axismajor,"JetsAK8_subjets_axismajor"),order),
+				new KReorderedBranchVVD(KBranchVVD(&looper->JetsAK8_subjets_axisminor,"JetsAK8_subjets_axisminor"),order),
+				new KReorderedBranchVVD(KBranchVVD(&looper->JetsAK8_subjets_bDiscriminatorCSV,"JetsAK8_subjets_bDiscriminatorCSV"),order),
+				new KReorderedBranchVVI(KBranchVVI(&looper->JetsAK8_subjets_multiplicity,"JetsAK8_subjets_multiplicity"),order),
+				new KReorderedBranchVVD(KBranchVVD(&looper->JetsAK8_subjets_ptD,"JetsAK8_subjets_ptD"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_tDiscriminatorDeep,"JetsAK8_tDiscriminatorDeep"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_tDiscriminatorDeepDecorrel,"JetsAK8_tDiscriminatorDeepDecorrel"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_wDiscriminatorDeep,"JetsAK8_wDiscriminatorDeep"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_wDiscriminatorDeepDecorrel,"JetsAK8_wDiscriminatorDeepDecorrel"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_zDiscriminatorDeep,"JetsAK8_zDiscriminatorDeep"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_zDiscriminatorDeepDecorrel,"JetsAK8_zDiscriminatorDeepDecorrel"),order)
+			};
+
+			for(auto& branch : branches){
+				//enable varied branches which might be disabled by default
+				branch->Enable(looper->fChain,1);
+				branch->Check(looper->fChain);
+			}
+		}
+
+		virtual void DoVariation(){
+			for(auto& branch : branches){
+				//store original values
+				branch->Store();
+			}
+			
+			//clear temp branches
+			clear();
+
+			//remove high-eta jets and recalculate scalars
+			TLorentzVector vjj;
+			const auto& JetsAK8 = *looper->JetsAK8;
+			for(unsigned j = 0; j < JetsAK8.size(); ++j){
+				if(abs(JetsAK8[j].Eta())<2.4){
+					order.push_back(j);
+					vjj += JetsAK8[j];
+					JetIDAK8 &= looper->JetsAK8_ID->at(j);
+					if(DeltaPhi1_AK8>9) DeltaPhi1_AK8 = abs(KMath::DeltaPhi(JetsAK8[j].Phi(),looper->METPhi));
+					else if(DeltaPhi2_AK8>9) DeltaPhi2_AK8 = abs(KMath::DeltaPhi(JetsAK8[j].Phi(),looper->METPhi));
+				}
+			}
+
+			//check for 2 jets
+			DeltaPhiMin_AK8 = min(DeltaPhi1_AK8,DeltaPhi2_AK8);
+			if(order.size()>=2){
+				MJJ_AK8 = vjj.M();
+				MT_AK8 = KMath::TransverseMass(vjj.Px(),vjj.Py(),vjj.M(),looper->MET*cos(looper->METPhi),looper->MET*sin(looper->METPhi),0);
+				//skipping Mmc for now
+			}
+
+			for(auto& branch : branches){
+				//set to new vars
+				branch->Vary();
+			}
+		}
+		virtual void UndoVariation(){
+			//restore original values
+			for(auto& branch : branches){
+				branch->Restore();
+			}
+		}
+
+		//helper
+		void clear(){
+			order.clear();
+			DeltaPhi1_AK8 = 10;
+			DeltaPhi2_AK8 = 10;
+			DeltaPhiMin_AK8 = 10;
+			JetIDAK8 = true;
+			MJJ_AK8 = 0;
+			MT_AK8 = 0;
+			Mmc_AK8 = 0;
+		}
+
+		//member variables
+		vector<unsigned> order;
+		double DeltaPhi1_AK8;
+		double DeltaPhi2_AK8;
+		double DeltaPhiMin_AK8;
+		bool JetIDAK8;
+		double MJJ_AK8;
+		double Mmc_AK8;
+		double MT_AK8;
+
+};
+REGISTER_VARIATOR(CentralAK8);
+
 class KJetLeptonVariator : public KVariator {
 	public:
 		//constructor

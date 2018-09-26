@@ -167,7 +167,7 @@ class KReorderedBranchT : public KLinkedBranchBase {
 		void Vary() {
 			if(!good) return;
 			varied->clear();
-			varied->reserve(original->size());
+			varied->reserve(std::min(original->size(),order.size()));
 			for(unsigned io = 0; io < order.size(); ++io){
 				varied->push_back((*original)[order[io]]);
 			}

@@ -29,6 +29,10 @@ dijetmet
 dijetmt
 	dijet
 	METMTRatio	d:min[0.15]
+dijetmtpt
+	dijet
+	METMTRatio	d:min[0.15]
+	LeadJetPT	d:min[600]
 dijetmtloose
 	dijet
 	METMTRatio	d:min[0.10]
@@ -44,6 +48,9 @@ dijethad
 	veto
 dijetmthad
 	dijetmt
+	veto
+dijetmtpthad
+	dijetmtpt
 	veto
 dijetmthadloose
 	dijetmtloose
@@ -63,6 +70,10 @@ theory
 dijetmutrig
 	dijet
 	MuonTrigger	d:pTmin[50]
+
+VARIATION
+central
+	CentralAK8
 
 INPUT
 input/input_sets_skim_svj_bkg.txt
