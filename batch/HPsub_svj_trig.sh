@@ -27,7 +27,7 @@ for YEAR in 2016 2017; do
 		PERIODS=(B C D E F)
 	fi
 
-	INPUTS='"input/input_svj_hist_data_'${YEAR}'.txt","input/input_svj_trig'${YEAR}'.txt","input/input_svj_trig_hist.txt"'
+	INPUTS='"input/input_svj_hist_data_'${YEAR}'.txt","input/input_svj_trig'${YEAR}'.txt","input/input_svj_trig_hist2Dzoom.txt"'
 
 	for PERIOD in ${PERIODS[@]}; do
 		OUTPUT='"OPTION","string:rootfile[hist_trig_'${YEAR}${PERIOD}']"'

@@ -1,0 +1,8 @@
+OPTION
+vstring:disable_branches[*]
+
+HISTO2D
+MTAK8_leadjetAK8pt	i:xnum[24]	d:xmin[600]	d:xmax[3000]	s:xtitle[M_{T} [GeV]]	i:ynum[12]	d:ymin[400]	d:ymax[1000]	s:ytitle[p_{T}(j_{1}) [GeV]]	s:ztitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kMagenta]
+MTAK8_deltaetaAK8	i:xnum[24]	d:xmin[600]	d:xmax[3000]	s:xtitle[M_{T} [GeV]]	i:ynum[20]	d:ymin[0]	d:ymax[2.5]	s:ytitle[|#Delta#eta(j_{1},j_{2})|]	s:ztitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kMagenta]
+leadjetAK8pt_deltaetaAK8	i:xnum[12]	d:xmin[400]	d:xmax[1000]	s:xtitle[p_{T}(j_{1}) [GeV]]	i:ynum[20]	d:ymin[0]	d:ymax[2.5]	s:ytitle[|#Delta#eta(j_{1},j_{2})|]	s:ztitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+
