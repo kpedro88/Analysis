@@ -33,6 +33,10 @@ dijetmtpt
 	dijet
 	METMTRatio	d:min[0.15]
 	LeadJetPT	d:min[600]
+dijetmtdeta
+	dijet
+	METMTRatio	d:min[0.15]
+	DeltaEta	d:max[1.5]
 dijetmtloose
 	dijet
 	METMTRatio	d:min[0.10]
@@ -51,6 +55,9 @@ dijetmthad
 	veto
 dijetmtpthad
 	dijetmtpt
+	veto
+dijetmtdetahad
+	dijetmtdeta
 	veto
 dijetmthadloose
 	dijetmtloose
