@@ -3,7 +3,7 @@ input/input_svj_plateau_cuts.txt
 
 OPTION
 vstring:disable_branches[*]
-vstring:selections[trigDenomDeta1,trigDenomDeta2,trigDenomHT2017,trigDenomHTMT,trigDenomPT2017,trigDenomPTMT,trigNumerDeta1,trigNumerDeta2,trigNumerHT2017,trigNumerHTMT,trigNumerPT2017,trigNumerPTMT]
+vstring:selections[trigDenomDeta1,trigDenomDeta15,trigDenomDeta2,trigDenomHT2017,trigDenomHTMT,trigDenomPT2017,trigDenomPTMT,trigNumerDeta1,trigNumerDeta15,trigNumerDeta2,trigNumerHT2017,trigNumerHTMT,trigNumerPT2017,trigNumerPTMT]
 
 SELECTION
 denom
@@ -14,6 +14,10 @@ numer
 	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
 trigDenomDeta1
 	deta1
+	denom
+	Histo
+trigDenomDeta15
+	deta15
 	denom
 	Histo
 trigDenomDeta2
@@ -38,6 +42,10 @@ trigDenomPTMT
 	Histo
 trigNumerDeta1
 	deta1
+	numer
+	Histo
+trigNumerDeta15
+	deta15
 	numer
 	Histo
 trigNumerDeta2

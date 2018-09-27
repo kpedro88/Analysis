@@ -1,6 +1,8 @@
 SELECTION
 deta1
 	DeltaEta	d:max[1.0]
+deta15
+	DeltaEta	d:max[1.5]
 deta2
 	DeltaEta	d:max[2.0]
 ht2016
