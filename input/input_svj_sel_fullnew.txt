@@ -1,0 +1,11 @@
+OPTION
+vstring:selections[fullnew]
+string+:printsuffix[_fullnew_svb]
+
+SELECTION
+fullnew
+	MTAK8	d:min[1400]
+	METMTRatio	d:min[0.25]
+	DeltaPhiMinAK8	d:max[0.75]
+	MCWeight
+	Histo	
