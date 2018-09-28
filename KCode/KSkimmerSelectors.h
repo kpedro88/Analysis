@@ -79,6 +79,11 @@ class KBlindSelector : public KSelector {
 			//check for option
 			localOpt->Get("firstUnblindRun",firstUnblindRun);
 			localOpt->Get("lastUnblindRun",lastUnblindRun);
+			localOpt->Get("intervalUnblindRuns",intervalUnblindRuns);
+			if(intervalUnblindRuns.size()%2!=0){
+				cout << "Input error: intervalUnblindRuns must have an even number of entries. This input will be ignored." << endl;
+				intervalUnblindRuns.clear();
+			}
 		}
 		virtual void CheckBase(){
 			//disable this for non-data
@@ -89,11 +94,19 @@ class KBlindSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
+			if(intervalUnblindRuns.size()>0){
+				//check each run pair
+				for(unsigned r = 0; r < intervalUnblindRuns.size(); r+=2){
+					if(looper->RunNum >= intervalUnblindRuns[r] and looper->RunNum <= intervalUnblindRuns[r+1]) return true;
+				}
+				return false;
+			}
 			return (firstUnblindRun==-1 or looper->RunNum >= firstUnblindRun) and (lastUnblindRun==-1 or looper->RunNum <= lastUnblindRun);
 		}
 		
 		//member variables
 		int firstUnblindRun, lastUnblindRun;
+		vector<int> intervalUnblindRuns;
 };
 REGISTER_SELECTOR(Blind);
 
@@ -200,13 +213,7 @@ class KMuonSelector : public KSelector {
 
 			if(doMTcut){
 				//find the good muon
-				int m_index = -1;
-				for(unsigned m = 0; m < looper->Muons_passIso->size(); ++m){
-					if(looper->Muons_passIso->at(m)){
-						m_index = m;
-						break;
-					}
-				}
+				unsigned m_index = distance(looper->Muons_passIso->begin(),find(looper->Muons_passIso->begin(),looper->Muons_passIso->end(),true));
 			
 				double mT = KMath::TransverseMass(looper->MET,looper->METPhi,looper->Muons->at(m_index).Pt(),looper->Muons->at(m_index).Phi());
 				return mT<100;
@@ -238,13 +245,7 @@ class KElectronSelector : public KSelector {
 			
 			if(doMTcut){
 				//find the good electron
-				int e_index = -1;
-				for(unsigned e = 0; e < looper->Electrons_passIso->size(); ++e){
-					if(looper->Electrons_passIso->at(e)){
-						e_index = e;
-						break;
-					}
-				}
+				unsigned e_index = distance(looper->Electrons_passIso->begin(),find(looper->Electrons_passIso->begin(),looper->Electrons_passIso->end(),true));
 			
 				double mT = KMath::TransverseMass(looper->MET,looper->METPhi,looper->Electrons->at(e_index).Pt(),looper->Electrons->at(e_index).Phi());
 				return mT<100;
@@ -278,10 +279,14 @@ class KPhotonSelector : public KSelector {
 			if(loose){
 				NumPhotons = looper->Photons->size();
 			}
-			else{
+			else if(!trigger){
 				//tighten up ID
+				NumPhotons = count(looper->Photons_fullID->begin(),looper->Photons_fullID->end(),true);
+			}
+			else{
+				//tight up ID and pT
 				for(unsigned p = 0; p < looper->Photons->size(); ++p){
-					if(looper->Photons_fullID->at(p) and (!trigger || looper->Photons->at(p).Pt()>200)) ++NumPhotons;
+					if(looper->Photons_fullID->at(p) and looper->Photons->at(p).Pt()>200) ++NumPhotons;
 				}
 			}
 			
@@ -310,14 +315,9 @@ class KDiMuonSelector : public KSelector {
 			//todo: add mass cut?
 			if(looper->NMuons!=2) return false;
 			//find the good muons
-			int m_index = -1;
-			for(unsigned m = 0; m < looper->Muons_passIso->size(); ++m){
-				if(looper->Muons_passIso->at(m)){
-					if(m_index==-1) m_index = m;
-					else return looper->Muons_charge->at(m_index) != looper->Muons_charge->at(m);
-				}
-			}
-			return false;
+			unsigned m_index = distance(looper->Muons_passIso->begin(),find(looper->Muons_passIso->begin(),looper->Muons_passIso->end(),true));
+			unsigned m_index2 = distance(looper->Muons_passIso->begin(),find(looper->Muons_passIso->begin()+m_index+1,looper->Muons_passIso->end(),true));
+			return looper->Muons_charge->at(m_index) != looper->Muons_charge->at(m_index2);
 		}
 		
 		//member variables
@@ -339,14 +339,9 @@ class KDiElectronSelector : public KSelector {
 			//todo: add mass cut?
 			if(looper->NElectrons!=2) return false;
 			//find the good electrons
-			int e_index = -1;
-			for(unsigned e = 0; e < looper->Electrons_passIso->size(); ++e){
-				if(looper->Electrons_passIso->at(e)){
-					if(e_index==-1) e_index = e;
-					else return looper->Electrons_charge->at(e_index) != looper->Electrons_charge->at(e);
-				}
-			}
-			return false;
+			unsigned e_index = distance(looper->Electrons_passIso->begin(),find(looper->Electrons_passIso->begin(),looper->Electrons_passIso->end(),true));
+			unsigned e_index2 = distance(looper->Electrons_passIso->begin(),find(looper->Electrons_passIso->begin()+e_index+1,looper->Electrons_passIso->end(),true));
+			return looper->Electrons_charge->at(e_index) != looper->Electrons_charge->at(e_index2);
 		}
 		
 		//member variables
@@ -574,10 +569,6 @@ class KEventCleaningSelector : public KSelector {
 		}
 		virtual void SetBranches(){
 			if(!tree) return;
-
-			//default values
-			HT5 = 0;
-			tree->Branch("HT5",&HT5,"HT5/D");
 		}
 		
 		//this selector doesn't add anything to tree
@@ -585,7 +576,8 @@ class KEventCleaningSelector : public KSelector {
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			bool goodEvent = (!doJetID || looper->JetID) &&
-							 (!doMETRatio || looper->PFCaloMETRatio < 5);
+							 (!doMETRatio || looper->PFCaloMETRatio < 5) &&
+							 (!doHTRatio || looper->HT5/looper->HT <= 2.0);
 			if(doMuonJet){
 				bool noMuonJet = true;
 				for(unsigned j = 0; j < looper->Jets->size(); ++j){
@@ -615,20 +607,11 @@ class KEventCleaningSelector : public KSelector {
 				}
 				goodEvent &= noFakeJet;
 			}
-			if(doHTRatio or forceadd){
-				HT5 = 0;
-				for(unsigned j = 0; j < looper->Jets->size(); ++j){
-					if(looper->Jets->at(j).Pt() <= 30 || fabs(looper->Jets->at(j).Eta())>=5.0) continue;
-					HT5 += looper->Jets->at(j).Pt();
-				}
-				if(doHTRatio and HT5/looper->HT > 2.0) goodEvent = false;
-			}
 			return goodEvent;
 		}
 		
 		//member variables
 		bool doJetID, doMETRatio, doMuonJet, doFakeJet, doHTRatio;
-		double HT5;
 };
 REGISTER_SELECTOR(EventCleaning);
 

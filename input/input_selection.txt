@@ -28,11 +28,11 @@ ra2bin
 	RA2Bin	in:options[input/input_RA2bin_options.txt]	b:forceadd[1]
 	PileupAcc	s:name[PileupAccAfter]	i:cut[20]	i:xnum[101]	d:xmin[-0.5]	d:xmax[100.5]	s:depname[PileupAccBefore]
 evtclean
-	EventCleaning	b:forceadd[1]	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]	b:HTRatio[1]
+	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]	b:HTRatio[1]
 evtcleannomu
-	EventCleaning	b:forceadd[1]	b:JetID[1]	b:METRatio[1]	b:MuonJet[0]	b:FakeJet[1]	b:HTRatio[1]
+	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[0]	b:FakeJet[1]	b:HTRatio[1]
 evtunclean
-	EventCleaning	b:forceadd[1]	b:JetID[1]	b:METRatio[0]	b:MuonJet[0]	b:FakeJet[1]	b:HTRatio[0]
+	EventCleaning	b:JetID[1]	b:METRatio[0]	b:MuonJet[0]	b:FakeJet[1]	b:HTRatio[0]
 baseline
 	NJet	i:njet[2]
 	HT	d:min[200]
@@ -45,14 +45,6 @@ dphi
 	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
 dphiinv
 	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]	b:invert[1]
-signal
-#	Blind	i:firstUnblindRun[278820]	i:lastUnblindRun[279931]
-	common
-	baseline
-	veto
-	dphi
-	evtclean
-	ra2bin
 signalUnblind
 	common
 	baseline
@@ -60,6 +52,10 @@ signalUnblind
 	dphi
 	evtclean
 	ra2bin
+# all 2016, 5/fb 2017BCDE, 5/fb 2017F, 7.5/fb 2018AB, 7.5/fb 2018D
+signal
+	Blind	vi:intervalUnblindRuns[273158,284044,297050,299370,305044,305365,315257,316202,320673,321396]
+	signalUnblind
 signalUnclean
 	common
 	baseline
