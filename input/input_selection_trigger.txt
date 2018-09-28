@@ -40,3 +40,4 @@ JetLeptonClean
 INPUT
 input/input_sets_skim_data_2016.txt
 input/input_sets_skim_data_2017.txt
+input/input_sets_skim_data_2018.txt

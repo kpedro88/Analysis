@@ -87,3 +87,4 @@ input/input_sets_skim_svj_bkg.txt
 input/input_sets_skim_svj.txt
 input/input_sets_skim_data_2016.txt
 input/input_sets_skim_data_2017.txt
+input/input_sets_skim_data_2018.txt
