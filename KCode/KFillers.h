@@ -1175,6 +1175,14 @@ class KJetFiller_AK8mass : public KJetFiller {
 };
 REGISTER_JETFILLER(AK8mass);
 
+class KJetFiller_AK8deltaphi : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"DeltaPhi1_AK8","DeltaPhi2_AK8"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { value.Fill(index==0?looper->DeltaPhi1_AK8:index==1?looper->DeltaPhi2_AK8:0.0,w); }
+};
+REGISTER_JETFILLER(AK8deltaphi);
+
 class KJetFiller_AK8axisminor : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
