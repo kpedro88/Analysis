@@ -36,6 +36,8 @@ class KBDTSelector : public KSelector {
 			//check for tagging mode
 			tag = localOpt->Get("tag",false);
 			if(tag) canfail = false;
+			//check for reduced set of vars, todo: make this better
+			reduced = localOpt->Get("reduced",false);
 
 			//load TMVA library
 			TMVA::Tools::Instance();
@@ -43,13 +45,13 @@ class KBDTSelector : public KSelector {
 			reader = new TMVA::Reader("Silent");
 			reader->AddVariable("mult",&b_mult);
 			reader->AddVariable("axisminor",&b_axisminor);
-			reader->AddVariable("axismajor",&b_axismajor);
-			reader->AddVariable("ptD",&b_ptD);
+			if(!reduced) reader->AddVariable("axismajor",&b_axismajor);
+			if(!reduced) reader->AddVariable("ptD",&b_ptD);
 			reader->AddVariable("girth",&b_girth);
 			reader->AddVariable("tau21",&b_tau21);
 			reader->AddVariable("tau32",&b_tau32);
 			reader->AddVariable("msd",&b_msd);
-			reader->AddVariable("momenthalf",&b_momenthalf);
+			if(!reduced) reader->AddVariable("momenthalf",&b_momenthalf);
 			reader->AddVariable("deltaphi",&b_deltaphi);
 			//setup reader
 			reader->BookMVA(type.c_str(),weights.c_str());
@@ -100,7 +102,7 @@ class KBDTSelector : public KSelector {
 		//member variables
 		string weights, type;
 		double wp;
-		bool tag;
+		bool tag, reduced;
 		TMVA::Reader* reader;
 		//per-jet branches (bdt input, have to be floats)
 		float b_deltaphi;
