@@ -44,7 +44,7 @@ class KBDTSelector : public KSelector {
 			//input for reader
 			reader = new TMVA::Reader("Silent");
 			reader->AddVariable("mult",&b_mult);
-			reader->AddVariable("axisminor",&b_axisminor);
+			if(!reduced) reader->AddVariable("axisminor",&b_axisminor);
 			if(!reduced) reader->AddVariable("axismajor",&b_axismajor);
 			if(!reduced) reader->AddVariable("ptD",&b_ptD);
 			reader->AddVariable("girth",&b_girth);
@@ -93,7 +93,10 @@ class KBDTSelector : public KSelector {
 				b_tau32 = looper->JetsAK8_NsubjettinessTau2->at(j) > 0 ? looper->JetsAK8_NsubjettinessTau3->at(j)/looper->JetsAK8_NsubjettinessTau2->at(j) : -1;
 				b_msd = looper->JetsAK8_softDropMass->at(j);
 				b_mult = looper->JetsAK8_multiplicity->at(j);
-				JetsAK8_bdt.push_back(reader->EvaluateMVA(type.c_str()));
+				double bdt_val = reader->EvaluateMVA(type.c_str());
+				//convert range from [-1,1] to [0,1]: (x-xmin)/(xmax-xmin)
+				bdt_val = (bdt_val + 1)*0.5;
+				JetsAK8_bdt.push_back(bdt_val);
 				if(JetsAK8_bdt[j]<wp) good &= false;
 			}
 			return (tag or good);
