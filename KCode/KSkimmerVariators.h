@@ -440,10 +440,14 @@ class KCentralAK8Variator : public KVariator {
 			//remove high-eta jets and recalculate scalars
 			TLorentzVector vjj;
 			const auto& JetsAK8 = *looper->JetsAK8;
+			int counter = 0;
 			for(unsigned j = 0; j < JetsAK8.size(); ++j){
 				if(abs(JetsAK8[j].Eta())<2.4){
 					order.push_back(j);
-					vjj += JetsAK8[j];
+					if(counter<2) {
+						vjj += JetsAK8[j];
+						++counter;
+					}
 					JetIDAK8 &= looper->JetsAK8_ID->at(j);
 					if(DeltaPhi1_AK8>9) DeltaPhi1_AK8 = abs(KMath::DeltaPhi(JetsAK8[j].Phi(),looper->METPhi));
 					else if(DeltaPhi2_AK8>9) DeltaPhi2_AK8 = abs(KMath::DeltaPhi(JetsAK8[j].Phi(),looper->METPhi));
