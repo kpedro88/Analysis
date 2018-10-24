@@ -23,6 +23,8 @@ vetotk
 	IsoPionTrackVeto
 dijet
 	Dijet	i:njet[2]	b:id[1]	d:eta[5.0]
+dijetc
+	Dijet	i:njet[2]	b:id[1]	d:eta[2.4]
 dijetmet
 	dijet
 	MET	d:min[100]
@@ -35,6 +37,14 @@ dijetmtpt
 	LeadJetPT	d:min[600]
 dijetmtdeta
 	dijet
+	METMTRatio	d:min[0.15]
+	DeltaEta	d:max[1.5]
+dijetcmtpt
+	dijetc
+	METMTRatio	d:min[0.15]
+	LeadJetPT	d:min[600]
+dijetcmtdeta
+	dijetc
 	METMTRatio	d:min[0.15]
 	DeltaEta	d:max[1.5]
 dijetmtloose
@@ -59,6 +69,12 @@ dijetmtpthad
 dijetmtdetahad
 	dijetmtdeta
 	veto
+dijetcmtpthad
+	dijetcmtpt
+	veto
+dijetcmtdetahad
+	dijetcmtdeta
+	veto
 dijetmthadloose
 	dijetmtloose
 	veto
@@ -76,6 +92,9 @@ theory
 	MET	d:min[200]
 dijetmutrig
 	dijet
+	MuonTrigger	d:pTmin[50]
+dijetcmutrig
+	dijetc
 	MuonTrigger	d:pTmin[50]
 
 VARIATION
