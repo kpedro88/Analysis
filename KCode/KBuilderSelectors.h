@@ -184,6 +184,10 @@ class KMCWeightSelector : public KSelector {
 					else if(sflatqty=="bothjetAK8pt") flatqty = bothjetAK8pt;
 					else if(sflatqty=="thirdjetAK8pt") flatqty = thirdjetAK8pt;
 					else if(sflatqty=="fourthjetAK8pt") flatqty = fourthjetAK8pt;
+					else cout << "Input error: unknown flatqty " << sflatqty << endl;
+				}
+				else{
+					cout << "Input error: could not open flattening file " << flatname << endl;
 				}
 			}
 
