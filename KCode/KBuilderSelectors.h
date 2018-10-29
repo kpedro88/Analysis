@@ -49,6 +49,7 @@ class KMCWeightSelector : public KSelector {
 			normtype = ""; base->GetLocalOpt()->Get("normtype",normtype); GetNormTypeEnum();
 			unweighted = base->GetLocalOpt()->Get("unweighted",false);
 			useTreeWeight = base->GetGlobalOpt()->Get("useTreeWeight",false);
+			useKFactor = base->GetLocalOpt()->Get("kfactor",kfactor);
 			nEventProc = 0; got_nEventProc = base->GetLocalOpt()->Get("nEventProc",nEventProc);
 			xsection = 0; got_xsection = base->GetLocalOpt()->Get("xsection",xsection);
 			norm = 0; got_luminorm = base->GetGlobalOpt()->Get("luminorm",norm);
@@ -425,6 +426,7 @@ class KMCWeightSelector : public KSelector {
 					cout.precision(oldprec);
 				}
 			}
+			if(useKFactor) w *= kfactor;
 			
 			//use lumi norm (default)
 			if(got_luminorm) w *= norm;
@@ -463,7 +465,7 @@ class KMCWeightSelector : public KSelector {
 		}
 		
 		//member variables
-		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, debugWeight, didDebugWeight;
+		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, useKFactor, debugWeight, didDebugWeight;
 		bool pucorr, trigcorr, isrcorr, realMET, signal, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight;
 		double jetidcorrval, isotrackcorrval, lumicorrval;
 		int puunc, pdfunc, isrunc, scaleunc, trigunc, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc;
@@ -473,7 +475,7 @@ class KMCWeightSelector : public KSelector {
 		string normtype;
 		normtypes NTenum;
 		int nEventProc;
-		double xsection, norm;
+		double xsection, norm, kfactor;
 		ISRCorrector isrcorror;
 		PileupAcceptanceUncertainty puacc;
 		Flattener flattener;
