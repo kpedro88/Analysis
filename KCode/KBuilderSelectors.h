@@ -453,7 +453,7 @@ class KMCWeightSelector : public KSelector {
 			
 			//check normalization type here
 			if(NTenum==ttbarLowHTLowMET) { goodEvent &= looper->madHT < 600 and looper->GenMET < 150; }
-			else if(NTenum==ttbarLowHTLowMET) { goodEvent &= looper->madHT < 600 and looper->GenMET >= 150; }
+			else if(NTenum==ttbarLowHTHighMET) { goodEvent &= looper->madHT < 600 and looper->GenMET >= 150; }
 			else if(NTenum==ttbarLowHThad) { goodEvent &= looper->madHT < 600 && looper->GenElectrons->size()==0 && looper->GenMuons->size()==0 && looper->GenTaus->size()==0; }
 			else if(NTenum==ttbarHighHT) { goodEvent &= looper->madHT >= 600; }
 			else if(NTenum==wjetsLowHT) { goodEvent &= looper->madHT < 100; }
