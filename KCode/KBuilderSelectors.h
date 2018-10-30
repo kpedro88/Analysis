@@ -852,6 +852,72 @@ class KMETFilterSelector : public KSelector {
 REGISTER_SELECTOR(METFilter);
 
 //---------------------------------------------------------------
+//individual MET filters
+class KNVtxFilterSelector : public KSelector {
+	public:
+		using KSelector::KSelector;
+		virtual void CheckBranches(){ looper->fChain->SetBranchStatus("NVtx",1); }
+		virtual bool Cut() { return looper->NVtx > 0; }
+};
+REGISTER_SELECTOR(NVtxFilter);
+
+class KeeBadScFilterSelector : public KSelector {
+	public:
+		using KSelector::KSelector;
+		virtual void CheckBranches(){ looper->fChain->SetBranchStatus("eeBadScFilter",1); }
+		virtual bool Cut() { return looper->eeBadScFilter==1; }
+};
+REGISTER_SELECTOR(eeBadScFilter);
+
+class KEcalDeadCellTriggerPrimitiveFilterSelector : public KSelector {
+	public:
+		using KSelector::KSelector;
+		virtual void CheckBranches(){ looper->fChain->SetBranchStatus("EcalDeadCellTriggerPrimitiveFilter",1); }
+		virtual bool Cut() { return looper->EcalDeadCellTriggerPrimitiveFilter==1; }
+};
+REGISTER_SELECTOR(EcalDeadCellTriggerPrimitiveFilter);
+
+class KHBHENoiseFilterSelector : public KSelector {
+	public:
+		using KSelector::KSelector;
+		virtual void CheckBranches(){ looper->fChain->SetBranchStatus("HBHENoiseFilter",1); }
+		virtual bool Cut() { return looper->HBHENoiseFilter==1; }
+};
+REGISTER_SELECTOR(HBHENoiseFilter);
+
+class KHBHEIsoNoiseFilterSelector : public KSelector {
+	public:
+		using KSelector::KSelector;
+		virtual void CheckBranches(){ looper->fChain->SetBranchStatus("HBHEIsoNoiseFilter",1); }
+		virtual bool Cut() { return looper->HBHEIsoNoiseFilter==1; }
+};
+REGISTER_SELECTOR(HBHEIsoNoiseFilter);
+
+class KglobalTightHalo2016FilterSelector : public KSelector {
+	public:
+		using KSelector::KSelector;
+		virtual void CheckBranches(){ looper->fChain->SetBranchStatus("globalTightHalo2016Filter",1); }
+		virtual bool Cut() { return looper->globalTightHalo2016Filter==1; }
+};
+REGISTER_SELECTOR(globalTightHalo2016Filter);
+
+class KBadChargedCandidateFilterSelector : public KSelector {
+	public:
+		using KSelector::KSelector;
+		virtual void CheckBranches(){ looper->fChain->SetBranchStatus("BadChargedCandidateFilter",1); }
+		virtual bool Cut() { return looper->BadChargedCandidateFilter==1; }
+};
+REGISTER_SELECTOR(BadChargedCandidateFilter);
+
+class KBadPFMuonFilterSelector : public KSelector {
+	public:
+		using KSelector::KSelector;
+		virtual void CheckBranches(){ looper->fChain->SetBranchStatus("BadPFMuonFilter",1); }
+		virtual bool Cut() { return looper->BadPFMuonFilter==1; }
+};
+REGISTER_SELECTOR(BadPFMuonFilter);
+
+//---------------------------------------------------------------
 //eta regions for PFJetID: 0 = 0.0 < |eta| < 2.4; 1 = 0.0 < |eta| < 3.0; 2 = 3.0 < |eta|
 //all require pt > 30
 class KJetEtaRegionSelector : public KSelector {

@@ -724,6 +724,43 @@ class KDeltaPhiMinAK8Selector : public KSelector {
 REGISTER_SELECTOR(DeltaPhiMinAK8);
 
 //----------------------------------------------------
+//selects events based on dphi(jj,MET) value
+class KDeltaPhiJJMETSelector : public KSelector {
+	public:
+		//constructor
+		KDeltaPhiJJMETSelector() : KSelector() { }
+		KDeltaPhiJJMETSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), min(2.0) { 
+			//check for option
+			localOpt->Get("min",min);
+			invert = localOpt->Get("invert",false);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("METPhi",1);
+			looper->fChain->SetBranchStatus("JetsAK8",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+            TLorentzVector vjj;
+			double dphi = 0.;
+            if(looper->JetsAK8->size()>1){
+                for(unsigned j = 0; j < 2; ++j){
+                    vjj += looper->JetsAK8->at(j);
+                }
+                dphi = abs(KMath::DeltaPhi(vjj.Phi(),looper->METPhi));
+            }
+			return ( invert ? dphi <= min : dphi > min );
+		}
+		
+		//member variables
+		double min;
+		bool invert;
+};
+REGISTER_SELECTOR(DeltaPhiJJMET);
+
+//----------------------------------------------------
 //computes event shape variables (from jets)
 class KEventShapeSelector : public KSelector {
 	public:
@@ -1024,5 +1061,49 @@ class KRA2BinSelector : public KSelector {
 		vector<unsigned> RA2binsBranch;
 };
 REGISTER_SELECTOR(RA2Bin);
+
+//-------------------------------------------------------------
+//vetos events with muons
+class KMuonVetoSelector : public KSelector {
+	public:
+		//constructor
+		KMuonVetoSelector() : KSelector() { }
+		KMuonVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("NMuons",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return looper->NMuons==0;
+		}
+		
+		//member variables
+};
+REGISTER_SELECTOR(MuonVeto);
+
+//-------------------------------------------------------------
+//vetos events with electrons
+class KElectronVetoSelector : public KSelector {
+	public:
+		//constructor
+		KElectronVetoSelector() : KSelector() { }
+		KElectronVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("NElectrons",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return looper->NElectrons==0;
+		}
+		
+		//member variables
+};
+REGISTER_SELECTOR(ElectronVeto);
 
 #endif

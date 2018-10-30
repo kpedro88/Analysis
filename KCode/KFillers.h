@@ -198,6 +198,15 @@ class KFiller_met : public KFiller {
 };
 REGISTER_FILLER(met);
 
+//missing energy angle
+class KFiller_metphi : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void ListBranches() { branches = {"METPhi"}; }
+		virtual void Fill(KValue& value, double w) { value.Fill(looper->METPhi,w); }
+};
+REGISTER_FILLER(metphi);
+
 //# leptons (mu or ele)
 class KFiller_nleptons : public KFiller {
 	public:
@@ -1108,6 +1117,14 @@ class KJetFiller_AK8pt : public KJetFiller {
 		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8->size()>index) value.Fill(looper->JetsAK8->at(index).Pt(),w); }
 };
 REGISTER_JETFILLER(AK8pt);
+
+class KJetFiller_AK8phi : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8->size()>index) value.Fill(looper->JetsAK8->at(index).Phi(),w); }
+};
+REGISTER_JETFILLER(AK8phi);
 
 class KJetFiller_AK8genpt : public KJetFiller {
 	public:

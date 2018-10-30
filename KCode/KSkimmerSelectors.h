@@ -156,44 +156,6 @@ class KLowMHTSelector : public KSelector {
 };
 REGISTER_SELECTOR(LowMHT);
 
-//-------------------------------------------------------------
-//vetos events with muons
-class KMuonVetoSelector : public KSelector {
-	public:
-		//constructor
-		KMuonVetoSelector() : KSelector() { }
-		KMuonVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
-		
-		//this selector doesn't add anything to tree
-		
-		//used for non-dummy selectors
-		virtual bool Cut() {
-			return looper->NMuons==0;
-		}
-		
-		//member variables
-};
-REGISTER_SELECTOR(MuonVeto);
-
-//-------------------------------------------------------------
-//vetos events with electrons
-class KElectronVetoSelector : public KSelector {
-	public:
-		//constructor
-		KElectronVetoSelector() : KSelector() { }
-		KElectronVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
-		
-		//this selector doesn't add anything to tree
-		
-		//used for non-dummy selectors
-		virtual bool Cut() {
-			return looper->NElectrons==0;
-		}
-		
-		//member variables
-};
-REGISTER_SELECTOR(ElectronVeto);
-
 //------------------------------------------------------
 //single muon selector
 class KMuonSelector : public KSelector {
