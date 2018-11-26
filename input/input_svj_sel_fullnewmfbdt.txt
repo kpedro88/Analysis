@@ -9,6 +9,7 @@ fullnewmfbdtUZH
 	METMTRatio	d:min[0.25]
 	DeltaPhiMinAK8	d:max[0.75]
 	METFilter
-	BDT	s:weights[test/TMVAClassification_BDTG_UZH.weights.xml]	s:type[BDTG]	d:wp[-0.17]	b:reduced[1]
+#	BDT	s:weights[test/TMVAClassification_BDTG_UZH.weights.xml]	s:type[BDTG]	d:wp[-0.17]	b:reduced[1]
+	BDT	s:weights[test/TMVAClassification_BDTG_UZH.weights.xml]	s:type[BDTG]	d:wp[0.415]	b:reduced[1]
 	MCWeight
 	Histo	
