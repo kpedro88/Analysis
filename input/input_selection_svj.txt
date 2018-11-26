@@ -81,6 +81,15 @@ dijetmthadloose
 dijetmthadfull1
 	dijetmtfull1
 	veto
+dijetmtdetahadmf
+	dijetmtdetahad
+	MTAK8	d:min[1400]
+	METFilter
+dijetmtdetahadfull2
+	dijetmtdetahad
+	MTAK8	d:min[1400]
+	METMTRatio	s:name[METMTRatioFull]	d:min[0.25]
+	DeltaPhiMinAK8	d:max[0.75]
 dijethadtk
 	dijetmet
 	vetotk
@@ -107,3 +116,4 @@ input/input_sets_skim_svj.txt
 input/input_sets_skim_data_2016.txt
 input/input_sets_skim_data_2017.txt
 input/input_sets_skim_data_2018.txt
+

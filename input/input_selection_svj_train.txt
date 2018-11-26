@@ -19,6 +19,8 @@ dijetmthadloose-train-flatsig
 	JetAK8Training	s:flatname[corrections/svj_dijetmthadloose_jetAK8.root]	vs:flatnumers[SVJ_3000_20_0.3_0.2,SVJ_4000_20_0.3_0.2,SVJ_2000_20_0.3_0.2,SVJ_1000_20_0.3_0.2,SVJ_3000_1_0.3_0.2,SVJ_3000_50_0.3_0.2,SVJ_3000_100_0.3_0.2,SVJ_3000_20_0.1_0.2,SVJ_3000_20_0.5_0.2,SVJ_3000_20_0.7_0.2,SVJ_3000_20_0.3_0.1,SVJ_3000_20_0.3_0.5,SVJ_3000_20_0.3_1]	vs:flatbranches[Z3,Z4,Z2,Z1,D1,D50,D100,R1,R5,R7,A1,A5,A10]
 dijetmthadloose-train-flatsigall
 	JetAK8Training	s:flatname[corrections/svj_dijetmthadloose_jetAK8_all.root]	vs:flatnumer[SVJ_mZprime_20_0.3_0.2] vs:flatbranches[all]
+dijetmtdetahadmf-train-flatsig
+	JetAK8Training	s:flatname[corrections/svj_dijetmtdetahadmf_jetAK8.root]	vs:flatnumers[SVJ_3000_20_0.3_0.2,SVJ_4000_20_0.3_0.2,SVJ_2000_20_0.3_0.2,SVJ_1000_20_0.3_0.2,SVJ_3000_1_0.3_0.2,SVJ_3000_50_0.3_0.2,SVJ_3000_100_0.3_0.2,SVJ_3000_20_0.1_0.2,SVJ_3000_20_0.5_0.2,SVJ_3000_20_0.7_0.2,SVJ_3000_20_0.3_0.1,SVJ_3000_20_0.3_0.5,SVJ_3000_20_0.3_1]	vs:flatbranches[Z3,Z4,Z2,Z1,D1,D50,D100,R1,R5,R7,A1,A5,A10]
 
 SET
 base	skim	QCD_Pt_1000to1400	s:filename[tree_QCD_Pt_1000to1400.root]	b:data[0]	s:flatsuff[QCD]
