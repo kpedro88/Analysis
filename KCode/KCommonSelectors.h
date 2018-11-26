@@ -1106,4 +1106,73 @@ class KElectronVetoSelector : public KSelector {
 };
 REGISTER_SELECTOR(ElectronVeto);
 
+//---------------------------------------------------------------
+//applies MET filters
+class KMETFilterSelector : public KSelector {
+	public:
+		//constructor
+		KMETFilterSelector() : KSelector() { }
+		KMETFilterSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
+			localOpt->Get("filterfiles",filterfiles);
+			for(unsigned f = 0; f < filterfiles.size(); ++f){
+				filters.push_back(new EventListFilter(filterfiles[f]));
+			}
+			onlydata = localOpt->Get("onlydata",false);
+			filter2015 = localOpt->Get("filter2015",false);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("NVtx",1);
+			looper->fChain->SetBranchStatus("eeBadScFilter",1);
+			looper->fChain->SetBranchStatus("eeBadSc4Filter",1);
+			looper->fChain->SetBranchStatus("HBHENoiseFilter",1);
+			looper->fChain->SetBranchStatus("HBHEIsoNoiseFilter",1);
+			looper->fChain->SetBranchStatus("CSCTightHaloFilter",1);
+			looper->fChain->SetBranchStatus("EcalDeadCellTriggerPrimitiveFilter",1);
+			looper->fChain->SetBranchStatus("globalTightHalo2016Filter",1);
+			looper->fChain->SetBranchStatus("BadChargedCandidateFilter",1);
+			looper->fChain->SetBranchStatus("BadPFMuonFilter",1);
+			if(filters.size()>0 && filters[0]->Initialized()){
+				looper->fChain->SetBranchStatus("RunNum",1);
+				looper->fChain->SetBranchStatus("LumiBlockNum",1);
+				looper->fChain->SetBranchStatus("EvtNum",1);				
+			}
+		}
+		virtual void CheckBase(){
+			//check fastsim stuff
+			bool fastsim = base->GetLocalOpt()->Get("fastsim",false);
+			if(fastsim){
+				//disable this for fastsim
+				dummy = true;
+			}
+			if(onlydata and !base->IsData()){
+				//disable this for non-data if desired
+				dummy = true;
+			}
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			bool TightHaloFilter = looper->globalTightHalo2016Filter==1;
+			bool HBHENoiseFilter = looper->HBHENoiseFilter==1;
+			bool HBHEIsoNoiseFilter = looper->HBHEIsoNoiseFilter==1;
+			bool EcalDeadCellTriggerPrimitiveFilter = looper->EcalDeadCellTriggerPrimitiveFilter==1;
+			bool eeBadScFilter = looper->eeBadScFilter==1;
+			bool BadChargedCandidateFilter = looper->BadChargedCandidateFilter;
+			bool BadPFMuonFilter = looper->BadPFMuonFilter;
+			bool otherFilters = true;
+			for(unsigned f = 0; f < filters.size(); ++f){
+				otherFilters &= filters[f]->CheckEvent(looper->RunNum,looper->LumiBlockNum,looper->EvtNum);
+			}
+			if(filter2015) return looper->NVtx > 0 && eeBadScFilter && HBHENoiseFilter && HBHEIsoNoiseFilter && looper->CSCTightHaloFilter==1 && EcalDeadCellTriggerPrimitiveFilter && otherFilters;
+			return looper->NVtx > 0 && eeBadScFilter && HBHENoiseFilter && HBHEIsoNoiseFilter && TightHaloFilter 
+				&& EcalDeadCellTriggerPrimitiveFilter && BadChargedCandidateFilter && BadPFMuonFilter && otherFilters;
+		}
+		
+		//member variables
+		bool onlydata, filter2015;
+		vector<string> filterfiles;
+		vector<EventListFilter*> filters;
+};
+REGISTER_SELECTOR(METFilter);
+
 #endif
