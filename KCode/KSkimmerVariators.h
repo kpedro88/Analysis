@@ -365,6 +365,125 @@ class KGenMHTVariator : public KVariator {
 };
 REGISTER_VARIATOR(GenMHT);
 
+class KGenJetVariator : public KVariator {
+	public:
+		//constructor
+		KGenJetVariator() : KVariator() { }
+		KGenJetVariator(string name_, OptionMap* localOpt_) : KVariator(name_,localOpt_),
+			placeholderB(true), placeholderN(0), placeholderF(1), JetsAK8_ID(new vector<bool>)
+		{
+			clear();
+		}
+		~KGenJetVariator() {
+			delete JetsAK8_ID;
+		}
+		virtual void CheckBranches(){
+			//set up linked branches for all variations
+			branches = {
+				//scalars get recalculated and replaced
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhi1_AK8,"DeltaPhi1_AK8"),KBranchD(&DeltaPhi1_AK8)),
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhi2_AK8,"DeltaPhi2_AK8"),KBranchD(&DeltaPhi2_AK8)),
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhiMin_AK8,"DeltaPhiMin_AK8"),KBranchD(&DeltaPhiMin_AK8)),
+				new KLinkedBranchD(KBranchD(&looper->MJJ_AK8,"MJJ_AK8"),KBranchD(&MJJ_AK8)),
+				new KLinkedBranchD(KBranchD(&looper->MT_AK8,"MT_AK8"),KBranchD(&MT_AK8)),
+				new KLinkedBranchD(KBranchD(&looper->Mmc_AK8,"Mmc_AK8"),KBranchD(&Mmc_AK8)),
+				new KLinkedBranchVB(KBranchVB(&looper->JetsAK8_ID,"JetsAK8_ID"),KBranchVB(&JetsAK8_ID)),
+				//filters replaced with default placeholder values
+				new KLinkedBranchB(KBranchB(&looper->JetIDAK8,"JetIDAK8"),KBranchB(&placeholderB)),
+				new KLinkedBranchB(KBranchB(&looper->BadChargedCandidateFilter,"BadChargedCandidateFilter"),KBranchB(&placeholderB)),
+				new KLinkedBranchB(KBranchB(&looper->BadPFMuonFilter,"BadPFMuonFilter"),KBranchB(&placeholderB)),
+				new KLinkedBranchI(KBranchI(&looper->CSCTightHaloFilter,"CSCTightHaloFilter"),KBranchI(&placeholderF)),
+				new KLinkedBranchI(KBranchI(&looper->ecalBadCalibFilter,"ecalBadCalibFilter"),KBranchI(&placeholderF)),
+				new KLinkedBranchI(KBranchI(&looper->EcalDeadCellTriggerPrimitiveFilter,"EcalDeadCellTriggerPrimitiveFilter"),KBranchI(&placeholderF)),
+				new KLinkedBranchI(KBranchI(&looper->eeBadScFilter,"eeBadScFilter"),KBranchI(&placeholderF)),
+				new KLinkedBranchI(KBranchI(&looper->globalTightHalo2016Filter,"globalTightHalo2016Filter"),KBranchI(&placeholderF)),
+				new KLinkedBranchI(KBranchI(&looper->HBHEIsoNoiseFilter,"HBHEIsoNoiseFilter"),KBranchI(&placeholderF)),
+				new KLinkedBranchI(KBranchI(&looper->HBHENoiseFilter,"HBHENoiseFilter"),KBranchI(&placeholderF)),
+				new KLinkedBranchI(KBranchI(&looper->PrimaryVertexFilter,"PrimaryVertexFilter"),KBranchI(&placeholderF)),
+				new KLinkedBranchI(KBranchI(&looper->NVtx,"NVtx"),KBranchI(&placeholderF)),
+				new KLinkedBranchI(KBranchI(&looper->NElectrons,"NElectrons"),KBranchI(&placeholderN)),
+				new KLinkedBranchI(KBranchI(&looper->NMuons,"NMuons"),KBranchI(&placeholderN)),
+				//"top-level" quantities get replaced
+				new KLinkedBranchVL(KBranchVL(&looper->JetsAK8,"JetsAK8"),KBranchVL(&looper->GenJetsAK8)),
+				new KLinkedBranchD(KBranchD(&looper->MET,"MET"),KBranchD(&looper->GenMET)),
+				new KLinkedBranchD(KBranchD(&looper->METPhi,"METPhi"),KBranchD(&looper->GenMETPhi))
+			};
+
+			for(auto& branch : branches){
+				//enable varied branches which might be disabled by default
+				branch->Enable(looper->fChain,1);
+				branch->Check(looper->fChain);
+			}
+		}
+		virtual void DoVariation(){
+			for(auto& branch : branches){
+				//store original values
+				branch->Store();
+			}
+			
+			//clear temp branches
+			clear();
+
+			//recalculate scalars from gen
+			TLorentzVector vjj;
+			const auto& JetsAK8 = *looper->GenJetsAK8;
+			double MET = looper->GenMET;
+			double METPhi = looper->GenMETPhi;
+			int counter = 0;
+			for(unsigned j = 0; j < JetsAK8.size(); ++j){
+				if(counter<2){
+					vjj += JetsAK8[j];
+					if(DeltaPhi1_AK8>9) DeltaPhi1_AK8 = abs(KMath::DeltaPhi(JetsAK8[j].Phi(),METPhi));
+					else if(DeltaPhi2_AK8>9) DeltaPhi2_AK8 = abs(KMath::DeltaPhi(JetsAK8[j].Phi(),METPhi));
+					++counter;
+				}
+				JetsAK8_ID->push_back(true);
+			}
+
+			//check for 2 jets
+			DeltaPhiMin_AK8 = min(DeltaPhi1_AK8,DeltaPhi2_AK8);
+			if(JetsAK8.size()>=2){
+				MJJ_AK8 = vjj.M();
+				MT_AK8 = KMath::TransverseMass(vjj.Px(),vjj.Py(),vjj.M(),MET*cos(METPhi),MET*sin(METPhi),0);
+				//skipping Mmc for now
+			}
+
+			for(auto& branch : branches){
+				//set to new vars
+				branch->Vary();
+			}
+		}
+		virtual void UndoVariation(){
+			//restore original values
+			for(auto& branch : branches){
+				branch->Restore();
+			}
+		}
+
+		//helper
+		void clear(){
+			JetsAK8_ID->clear();
+			DeltaPhi1_AK8 = 10;
+			DeltaPhi2_AK8 = 10;
+			DeltaPhiMin_AK8 = 10;
+			MJJ_AK8 = 0;
+			MT_AK8 = 0;
+			Mmc_AK8 = 0;
+		}
+
+		//member variables
+		bool placeholderB;
+		int placeholderN, placeholderF;
+		vector<bool>* JetsAK8_ID;
+		double DeltaPhi1_AK8;
+		double DeltaPhi2_AK8;
+		double DeltaPhiMin_AK8;
+		double MJJ_AK8;
+		double Mmc_AK8;
+		double MT_AK8;
+};
+REGISTER_VARIATOR(GenJet);
+
 class KCentralAK8Variator : public KVariator {
 	public:
 		//constructor
