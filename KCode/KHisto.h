@@ -230,6 +230,8 @@ class KHisto : public KChecker {
 		
 		//common checkers
 		virtual void CheckDeps(){
+			//in case of special histo, sel might not be defined
+			if(!sel) return;
 			MCWeight = sel->Get<KMCWeightSelector*>("MCWeight");
 			FakeHLT = sel->Get<KFakeHLTSelector*>("FakeHLT");
 		}
@@ -286,9 +288,9 @@ class KHisto : public KChecker {
 		}
 		bool IsSpecial() { return isSpecial; }
 		TH1* GetSpecial() {
-			if(stmp=="cutflowRaw") return base->GetCutflow(KCutflow::CutRaw);
-			else if(stmp=="cutflowAbs") return base->GetCutflow(KCutflow::CutAbs);
-			else if(stmp=="cutflowRel") return base->GetCutflow(KCutflow::CutRel);
+			if(name=="cutflowRaw") return base->GetCutflow(KCutflow::CutRaw);
+			else if(name=="cutflowAbs") return base->GetCutflow(KCutflow::CutAbs);
+			else if(name=="cutflowRel") return base->GetCutflow(KCutflow::CutRel);
 			else return NULL;
 		}
 
@@ -298,7 +300,6 @@ class KHisto : public KChecker {
 		
 	protected:
 		//member variables
-		string stmp;
 		TH1* htmp;
 		bool isSpecial;
 		vector<KFiller*> fillers;
@@ -319,6 +320,7 @@ TH1* KBase::AddHisto(string s, TH1* h, OptionMap* omap){
 			htmp = (TH1*)h->Clone();
 			htmp->Sumw2();					
 		}
+		else htmp = NULL;
 		//KHisto will generate special histo automatically (if h==NULL)
 		//but don't make KHisto if no omap provided
 		if(omap) khtmp = new KHisto(s,omap,htmp,this);

@@ -81,6 +81,7 @@ class KCutflow {
 				for(auto& name_ : names) name_ += "_"+name;
 			}
 			h_raw->SetName((names[0]).c_str());
+			h_raw->SetTitle("");
 			h_abs = new TH1F((names[1]).c_str(),"",h_raw->GetNbinsX(),0,h_raw->GetNbinsX());
 			h_rel = new TH1F((names[2]).c_str(),"",h_raw->GetNbinsX(),0,h_raw->GetNbinsX());
 			
