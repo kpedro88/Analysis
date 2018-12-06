@@ -68,7 +68,7 @@ class KBase {
 
 			//store this value (number of events processed) at the beginning so histo only has to be accessed once
 			int nEventProc = 0;
-			if(nEventHist) {
+			if(nEventHist and not localOpt->Get("nEventProc",nEventProc)) {
 				nEventProc = nEventHist->GetBinContent(1);
 				//for samples with negative weights, Neff = Npos - Nneg = Ntot - 2*Nneg
 				if(nEventNegHist) nEventProc -= 2*(nEventNegHist->GetBinContent(1));
