@@ -44,7 +44,8 @@ class KBDTSelector : public KSelector {
 			//input for reader
 			reader = new TMVA::Reader("Silent");
 			reader->AddVariable("mult",&b_mult);
-			if(!reduced) reader->AddVariable("axisminor",&b_axisminor);
+			reader->AddVariable("axisminor",&b_axisminor);
+//			if(!reduced) reader->AddVariable("axisminor",&b_axisminor);
 			if(!reduced) reader->AddVariable("axismajor",&b_axismajor);
 			if(!reduced) reader->AddVariable("ptD",&b_ptD);
 			reader->AddVariable("girth",&b_girth);
@@ -463,6 +464,34 @@ class KMJJAK8Selector : public KSelector {
 		double min, max;
 };
 REGISTER_SELECTOR(MJJAK8);
+
+//-------------------------------------------------------------------
+//selects events based on EvtNum (possibly in a window)
+class KEvtNumSelector : public KSelector {
+	public:
+		//constructor
+		KEvtNumSelector() : KSelector() { }
+		KEvtNumSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), min(0), max(0) { 
+			//check for option
+			hasmin = localOpt->Get("min",min);
+			hasmax = localOpt->Get("max",max);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("MT_AK8",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return ( (!hasmin or looper->EvtNum>min) and (!hasmax or looper->EvtNum<max) );
+		}
+		
+		//member variables
+		bool hasmin, hasmax;
+		unsigned min, max;
+};
+REGISTER_SELECTOR(EvtNum);
 
 //-------------------------------------------------------------
 //vetos events with leptons
