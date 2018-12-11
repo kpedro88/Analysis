@@ -1,0 +1,11 @@
+HISTO
+deltaetaAK8	i:xnum[20]	d:xmin[0]	d:xmax[5]	s:xtitle[#Delta#eta(j_{1},j_{2})]	s:ytitle[arbitrary units]	b:logy[1]	b:ratio[1]
+metMTratio	i:xnum[20]	d:xmin[0]	d:xmax[0.5]	s:xtitle[#slash{E}_{T}/M_{T}]	s:ytitle[arbitrary units]	b:logy[1]	b:ratio[1]
+MTAK8	i:xnum[20]	d:xmin[0]	d:xmax[4000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:logy[1]	b:ratio[1]
+leadjetAK8pt	i:xnum[20]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}(j_{1}) [GeV]]	s:ytitle[arbitrary units]	b:logy[1]	b:ratio[1]
+subleadjetAK8pt	i:xnum[20]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}(j_{2}) [GeV]]	s:ytitle[arbitrary units]	b:logy[1]	b:ratio[1]
+met	i:xnum[20]	d:xmin[0]	d:xmax[1000]	s:xtitle[#slash{E}_{T} [GeV]]	s:ytitle[arbitrary units]	b:logy[1]	b:ratio[1]
+deltaphiminAK8	i:xnum[20]	d:xmin[0]	d:xmax[3.15]	s:xtitle[#Delta#phi_{min}]	s:ytitle[arbitrary units]	b:logy[0]	b:ratio[1]
+metphi	i:xnum[20]	d:xmin[-3.15]	d:xmax[3.15]	s:xtitle[#phi(#slash{E}_{T})]	s:ytitle[arbitrary units]	b:logy[0]	b:ratio[1]
+leadjetAK8phi	i:xnum[20]	d:xmin[-3.15]	d:xmax[3.15]	s:xtitle[#phi(j_{1})]	s:ytitle[arbitrary units]	b:logy[0]	b:ratio[1]
+subleadjetAK8phi	i:xnum[20]	d:xmin[-3.15]	d:xmax[3.15]	s:xtitle[#phi(j_{2})]	s:ytitle[arbitrary units]	b:logy[0]	b:ratio[1]

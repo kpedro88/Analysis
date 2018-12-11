@@ -1,0 +1,11 @@
+OPTION
+vstring:selections[fullubdt]
+string+:printsuffix[_fullubdt_svb]
+vstring:extra_text[BDT > 0.34]
+
+SELECTION
+fullubdt
+	METFilter
+	BDT	s:weights[/uscms_data/d3/pedrok/SUSY2015/analysis/CMSSW_10_3_0_pre5/src/SVJtagger/uBDT/TMVA_uGBFL_weights_dijetmtdetahadmf.xml]	s:type[BDTG]	d:wp[0.34]	b:reduced[1]
+	MCWeight
+	Histo	

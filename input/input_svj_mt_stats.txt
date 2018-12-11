@@ -1,0 +1,54 @@
+#sections:
+# other input files to include in INPUT
+# global options in OPTION
+# 1D histograms in HISTO
+# 2D histograms in HISTO2D
+# datasets in SET
+# selections in SELECTION
+# variations in VARIATION
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c, chain/ch, input/in
+#items on each line in the HISTO, HISTO2D, SET, SELECTION, VARIATION sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#SELECTION/VARIATION: only required item is name
+#for datasets, child-parent relationships are indicated by tab-indentation
+#selectors/variators are associated with a selection/variation by tab-indentation
+
+INPUT
+input/input_global.txt
+
+OPTION
+string:prelim_text[Simulation (work-in-progress)]
+double:luminorm[35900]
+bool:printyield[1]
+int:yieldprecision[2]
+bool:plotoverflow[1]
+double:ymin_min[1e-6]
+bool:appendsel[0]
+bool:useTreeWeight[0]
+bool:debugloop[1]
+bool:debugcut[1]
+vs:numers[SVJ_10K]
+vs:denoms[SVJ_50K]
+s:rationame[10K/50K]
+vs:extra_text[SVJ_3000_20_0.3_0.2]
+d:sizeLeg[18]
+
+SELECTION
+sim
+	MCWeight
+	Histo
+sim10
+	EvtNum	u:max[20000]
+	MCWeight
+	Histo
+
+HISTO
+MTAK8	i:xnum[150]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	c:color[kMagenta]
+
+SET
+hist	mc	SVJ_50K	s:legname[50K simulated]	c:color[kBlue]	i:linestyle[1]	b:errband[1]	vs:selections[sim]
+	base	mc	SVJ_3000_20_0.3_0.2	s:filename[tree_SVJ2_mZprime-3000_mDark-20_rinv-0.3_alpha-0.2.root]	d:xsection[0.0155]	i:nEventProc[50686]
+hist	mc	SVJ_10K	s:legname[10K simulated]	c:color[kRed]	i:linestyle[1]	b:errband[1]	vs:selections[sim10]
+	base	mc	SVJ_3000_20_0.3_0.2	s:filename[tree_SVJ2_mZprime-3000_mDark-20_rinv-0.3_alpha-0.2.root]	d:xsection[0.0155]	i:nEventProc[10190]

@@ -1,0 +1,13 @@
+OPTION
+vstring:selections[presel]
+
+SELECTION
+presel
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	Dijet	i:njet[2]	b:id[1]
+	DeltaEta	d:max[1.5]
+	METMTRatio	d:min[0.15]
+	MTAK8	d:min[1400]
+	MuonVeto
+	ElectronVeto
+	Histo

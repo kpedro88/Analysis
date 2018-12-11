@@ -1,0 +1,22 @@
+OPTION
+string+:rocsuffix[_event]
+vstring:disable_branches[*]
+vstring:selections[highBj1,lowBj1,highBj2,lowBj2]
+
+SELECTION
+highBj1
+	NumBCHadron	u:index[0]	u:cut[1]
+	sim
+lowBj1
+	NumBCHadron	u:index[0]	u:cut[1]	b:invert[1]
+	sim
+highBj2
+	NumBCHadron	u:index[1]	u:cut[1]
+	sim
+lowBj2
+	NumBCHadron	u:index[1]	u:cut[1]	b:invert[1]
+	sim
+
+HISTO
+leadjetAK8pt	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}(j_{1}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+subleadjetAK8pt	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}(j_{2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kRed]

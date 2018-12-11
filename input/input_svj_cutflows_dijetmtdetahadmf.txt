@@ -1,0 +1,12 @@
+OPTION
+string+:printsuffix[_genvars]
+vstring:disable_branches[*]
+double:marginB[150]
+double:canvasH[700]
+double:ratiomin[0.9]
+double:ratiomax[1.1]
+
+HISTO
+cutflowRaw	b:ratio[1]	s:ytitle[Number of Events]	b:logy[0]	b:xbinlabel[1]	vs{|}:xlabels[N_{jet} #geq 2 & JetID|#slash{E}_{T}/M_{T} > 0.15|#Delta#eta(j_{1},j_{2}) < 1.5|N_{muon} = 0|N_{electron} = 0|M_{T} > 1400 GeV|MET filters]
+cutflowAbs	b:ratio[1]	s:ytitle[Abs. Eff. [%]]	b:logy[0]	b:xbinlabel[1]	vs{|}:xlabels[N_{jet} #geq 2 & JetID|#slash{E}_{T}/M_{T} > 0.15|#Delta#eta(j_{1},j_{2}) < 1.5|N_{muon} = 0|N_{electron} = 0|M_{T} > 1400 GeV|MET filters]
+cutflowRel	b:ratio[1]	s:ytitle[Rel. Eff. [%]]	b:logy[0]	b:xbinlabel[1]	vs{|}:xlabels[N_{jet} #geq 2 & JetID|#slash{E}_{T}/M_{T} > 0.15|#Delta#eta(j_{1},j_{2}) < 1.5|N_{muon} = 0|N_{electron} = 0|M_{T} > 1400 GeV|MET filters]

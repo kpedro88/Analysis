@@ -1,0 +1,17 @@
+OPTION
+int:npanel[1]
+string+:printsuffix[_mass]
+string:extfilename[test/svj_unskimmed_mass.root]
+vstring:extra_text[SVJ_2000_20_0.3_0.2]
+double:sizeLeg[26]
+
+HISTO
+MTAK8	i:xnum[150]	d:xmin[0]	d:xmax[6000]	s:xtitle[mass [GeV]]	s:ytitle[arbitrary units]
+
+SET
+hist	mc	MTAK8	s:legname[M_{T}(jj,#slash{E}_{T})]	c:color[kBlue]
+	base	ext	MTAK8	vs:exthisto_in[MTAK8_SVJ2_2000_20_0.3_0.2]	vs:exthisto_out[MTAK8]
+hist	mc	MJJAK8	s:legname[M(jj)]	c:color[kMagenta + 2]
+	base	ext	MJJAK8	vs:exthisto_in[MJJAK8_SVJ2_2000_20_0.3_0.2]	vs:exthisto_out[MTAK8]
+hist	mc	MmcAK8	s:legname[M_{MC}(jj,invis.)]	c:color[kCyan + 2]
+	base	ext	MmcAK8	vs:exthisto_in[MmcAK8_SVJ2_2000_20_0.3_0.2]	vs:exthisto_out[MTAK8]

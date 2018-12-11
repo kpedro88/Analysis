@@ -1,0 +1,10 @@
+OPTION
+vstring:selections[fullnewdphijjmet]
+string+:printsuffix[_fullnewdphijjmet_svb]
+
+SELECTION
+fullnewdphijjmet
+#	METFilter
+	DeltaPhiJJMET	d:min[2.0]
+	MCWeight
+	Histo	

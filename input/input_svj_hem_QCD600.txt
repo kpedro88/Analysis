@@ -1,0 +1,15 @@
+OPTION
+string+:printsuffix[QCD600]
+string:prelim_text[Simulation (work-in-progress)]
+string:lumi_text[(13 TeV)]
+bool:unitnorm[1]
+vstring:numers[QCDHEM]
+vstring:denoms[QCD]
+double:ratiomin[0]
+double:ratiomax[2]
+
+SET
+hist	data	QCD	s:legname[QCD]	c:color[kBlue]
+	base	data	QCD	s:filename[MCRelVal.RelValQCD_Pt_600_800_13_0_RA2AnalysisTree.root]	s:treename[/TreeMaker2/PreSelection]
+hist	data	QCDHEM	s:legname[QCD (HEM)]	c:color[kRed]
+	base	data	QCDHEM	s:filename[MCRelValHEMiss.RelValQCD_Pt_600_800_13_0_RA2AnalysisTree.root]	s:treename[/TreeMaker2/PreSelection]

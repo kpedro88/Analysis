@@ -1,0 +1,15 @@
+OPTION
+vs:numers[SVJ_2017_mAODv2_sigV3]
+vs:denoms[SVJ_2016_mAODv3_sigV3]
+s:rationame[2017/2016]
+vs:extra_text[SVJ_3000_20_0.3_0.2]
+b:useTreeWeight[1]
+s:lumi_text[(13 TeV)]
+d:luminorm[1.0]
+b:unitnorm[1]
+
+SET
+hist	mc	SVJ_2016_mAODv3_sigV3	s:legname[2016]	c:color[kBlue]	i:linestyle[1]
+	base	mc	SVJ_3000_20_0.3_0.2	s:filename[PrivateSamples.SVJ_2016_mZprime-3000_mDark-20_rinv-0p3_alpha-0p2_n-1000_0_RA2AnalysisTree.root]	s:treename[TreeMaker2/PreSelection]
+hist	mc	SVJ_2017_mAODv2_sigV3	s:legname[2017]	c:color[kRed]	i:linestyle[1]
+	base	mc	SVJ_3000_20_0.3_0.2	s:filename[PrivateSamples.SVJ_2017_mZprime-3000_mDark-20_rinv-0p3_alpha-0p2_n-1000_0_RA2AnalysisTree.root]	s:treename[TreeMaker2/PreSelection]

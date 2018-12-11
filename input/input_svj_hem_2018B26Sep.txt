@@ -1,0 +1,16 @@
+OPTION
+string+:printsuffix[2018B]
+double:luminorm[350]
+string:luminormunit[pbinv]
+string:prelim_text[Work-in-progress]
+#string:lumi_text[(13 TeV)]
+vstring:numers[2018BHEM,2018BHEMmiti]
+vstring:denoms[2018B]
+
+SET
+hist	data	2018B	s:legname[2018B]	c:color[kBlue]
+	base	data	2018B	b:chain[1]	ch:filenames[Run2018B-26Sep2018-v1.JetHT_,0,67,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+hist	data	2018BHEM	s:legname[2018B (HEM)]	c:color[kRed]
+	base	data	2018BHEM	b:chain[1]	ch:filenames[Run2018B-26Sep2018_HEM-v1.JetHT_,0,66,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
+hist	data	2018BHEMmiti	s:legname[2018B (HEM miti.)]	c:color[kMagenta]
+	base	data	2018BHEMmiti	b:chain[1]	ch:filenames[Run2018B-26Sep2018_HEMmitigation-v1.JetHT_,0,68,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]

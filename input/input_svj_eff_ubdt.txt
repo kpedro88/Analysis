@@ -1,0 +1,25 @@
+OPTION
+#vstring:selections[ubdt]
+#string+:printsuffix[_ubdt]
+vstring:selections[bdt]
+string+:printsuffix[_bdtg]
+#vstring:extra_text[BDTG > -0.17]
+double:ymax[1]
+#double:ymin[-1]
+bool:treesuffix[1]
+
+SELECTION
+bdt
+	BDT	s:weights[/uscms_data/d3/pedrok/SUSY2015/analysis/CMSSW_10_3_0_pre5/src/SVJtagger/uBDT/flat_proc/TMVA_GradBoost_weights_full_flat_proc.xml]	s:type[BDT]	d:wp[0.44]	b:reduced[1]	b:tag[1]
+	MCWeight	b:flatten[1]	s:flatname[corrections/svj_dijetmthadloose_jetAK8.root]	s:flatqty[bothjetAK8pt]
+	Histo	
+ubdt
+	BDT	s:weights[/uscms_data/d3/pedrok/SUSY2015/analysis/CMSSW_10_3_0_pre5/src/SVJtagger/uBDT/flat_proc/TMVA_uGBFL_weights_full_flat_proc.xml]	s:type[BDT]	d:wp[0.30]	b:reduced[1]	b:tag[1]
+	MCWeight
+	Histo	
+
+HISTO
+bothjetAK8bdt	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[uBDT response]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]
+MTAK8_bothjetAK8bdt	i:xnum[150]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[#LTuBDT#GT]	b:ratio[0]	b:logy[0]
+bothjetAK8abseta_bothjetAK8bdt	i:xnum[100]	d:xmin[0]	d:xmax[5]	s:xtitle[|#eta(j_{1,2})|]	s:ytitle[#LTuBDT#GT]	b:ratio[0]	b:logy[0]
+bothjetAK8pt_bothjetAK8bdt	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}(j_{1,2}) [GeV]]	s:ytitle[#LTuBDT#GT]	b:ratio[0]	b:logy[0]

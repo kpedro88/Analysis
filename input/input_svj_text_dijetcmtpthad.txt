@@ -1,0 +1,3 @@
+OPTION
+string+:printsuffix[_dijetcmtpthad]
+vstring:extra_text[p_{T}(j_{1}) > 600 GeV]

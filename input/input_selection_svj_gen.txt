@@ -1,0 +1,17 @@
+#sections: global options in OPTION, selections in SELECTION, variations in VARIATION, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the SELECTION, VARIATION, and SET sections must be tab-separated, with required items first, in order
+#SELECTION/VARIATION: only required item is name, selectors/variators are associated with a selection/variation by tab-indentation
+#SET: required items are type (base), subtype (skim), name (but without filenames, nothing will happen)
+
+INPUT
+input/input_selection_svj.txt
+
+OPTION
+vstring+:disable_branches[JetsAK8_*]
+vstring+:enable_branches[JetsAK8_ID]
+
+VARIATION
+gen
+	GenJet

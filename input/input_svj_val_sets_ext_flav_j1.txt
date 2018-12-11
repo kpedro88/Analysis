@@ -1,0 +1,13 @@
+OPTION
+vstring:extra_text[SVJ_3000_20_0.3_0.2]
+string+:printsuffix[_nbj1]
+#bool:unitnorm[0]
+vstring:selections[sim]
+
+SET
+hist	mc	SVJ_2016_mAODv3_sigV3	s:legname[SVJ_2016_mAODv3_sigV3]	c:color[kBlack]	i:linestyle[1]
+	base	ext	SVJ_2016_mAODv3_sigV3	s:extfilename[test/val_signal_new.root]	b:ext_auto[1]
+hist	mc	SVJ_2016_mAODv3_sigV3_highBj1	s:legname[SVJ_2016_mAODv3_sigV3, ^{}N^{B}(j_{1}) > 1]	c:color[kBlue]	i:linestyle[1]
+	base	ext	SVJ_2016_mAODv3_sigV3_highBj1	s:extfilename[test/val_signal_flav_new.root]	b:ext_auto[1]
+hist	mc	SVJ_2016_mAODv3_sigV3_lowBj1	s:legname[SVJ_2016_mAODv3_sigV3, ^{}N^{B}(j_{1}) #leq 1]	c:color[kRed]	i:linestyle[1]
+	base	ext	SVJ_2016_mAODv3_sigV3_lowBj1	s:extfilename[test/val_signal_flav_new.root]	b:ext_auto[1]

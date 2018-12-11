@@ -1,0 +1,10 @@
+OPTION
+vstring:selections[fullbdtUZH]
+string+:printsuffix[_full1bdtUZH_svb]
+vstring:extra_text[BDTG > -0.17]
+
+SELECTION
+fullbdtUZH
+	BDT	s:weights[test/TMVAClassification_BDTG_UZH.weights.xml]	s:type[BDTG]	d:wp[-0.17]	b:reduced[1]
+	MCWeight
+	Histo	

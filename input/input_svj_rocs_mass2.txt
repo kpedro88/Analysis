@@ -1,0 +1,22 @@
+OPTION
+string+:rocsuffix[_mass]
+vstring:disable_branches[*]
+vstring:selections[dijet]
+
+SELECTION
+dijet
+	Dijet	b:simple[1]
+	SVJDijetMass
+	sim
+
+HISTO
+MJJAK8	i:xnum[150]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{jj} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kCyan + 2]
+MTAK8	i:xnum[150]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kMagenta]
+MmcAK8	i:xnum[150]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{mc} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kOrange + 7]
+MSVJ	i:xnum[150]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{SVJ} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kOrange + 7]
+alphaSVJ	i:xnum[100]	d:xmin[0]	d:xmax[2]	s:xtitle[#alpha_{SVJ}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kOrange + 7]
+betaSVJ	i:xnum[100]	d:xmin[0]	d:xmax[2]	s:xtitle[#betaa_{SVJ}]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kOrange + 7]
+
+SET
+hist	mc	SVJ2_2000_20_0.3_0.2	s:legname[SVJ_2000_20_0.3_0.2]	c:color[kBlue]	i:linestyle[1]
+	base	mc	SVJ2_2000_20_0.3_0.2	s:filename[PrivateSamples.SVJ_mZprime-2000_mDark-20_rinv-0p3_alpha-0p2_n-1000_0_RA2AnalysisTree.root]	s:treename[TreeMaker2/PreSelection]

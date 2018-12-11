@@ -1,0 +1,3 @@
+OPTION
+string+:printsuffix[_dijetmtcdetahad]
+vstring{|}:extra_text[#Delta#eta(j_{1},j_{2}) < 1.5]

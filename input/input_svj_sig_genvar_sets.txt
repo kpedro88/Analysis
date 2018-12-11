@@ -1,0 +1,15 @@
+OPTION
+vs:numers[SVJ_3000_20_0.3_0.2_RECO]
+vs:denoms[SVJ_3000_20_0.3_0.2_GEN]
+s:rationame[RECO/GEN]
+vs:extra_text[SVJ_3000_20_0.3_0.2]
+b:useTreeWeight[1]
+#s:lumi_text[(13 TeV)]
+#d:luminorm[1.0]
+#b:unitnorm[1]
+
+SET
+hist	mc	SVJ_3000_20_0.3_0.2_RECO	s:legname[RECO]	c:color[kBlue]	i:linestyle[1]
+	base	mc	SVJ_3000_20_0.3_0.2	s:filename[tree_dijetmtdetahadmf/tree_SVJ2_mZprime-3000_mDark-20_rinv-0.3_alpha-0.2.root]
+hist	mc	SVJ_3000_20_0.3_0.2_GEN	s:legname[GEN]	c:color[kRed]	i:linestyle[1]
+	base	mc	SVJ_3000_20_0.3_0.2	s:filename[tree_dijetmtdetahadmf_gen/tree_SVJ2_mZprime-3000_mDark-20_rinv-0.3_alpha-0.2.root]
