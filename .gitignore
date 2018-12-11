@@ -65,3 +65,5 @@ input/fast*/
 /makePlotsUnskimmed.sh
 /projectMT.py
 /plotTrigEff.C
+/datacard_svj.py
+/plotLimit.C
