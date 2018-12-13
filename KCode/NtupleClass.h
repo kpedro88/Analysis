@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Tue Dec 11 17:44:36 2018 by ROOT version 6.06/01
+// Thu Dec 13 15:32:16 2018 by ROOT version 6.06/01
 // from TTree PreSelection/PreSelection
 // found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16/RunIIFall17MiniAODv2.TTJets_TuneCP5_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
 //////////////////////////////////////////////////////////
@@ -147,6 +147,8 @@ public :
    Bool_t          hasGenPromptPhoton;
    Int_t           HBHEIsoNoiseFilter;
    Int_t           HBHENoiseFilter;
+   vector<TLorentzVector> *HLTMuonObjects;
+   vector<TLorentzVector> *HLTElectronObjects;
    Double_t        HT;
    Double_t        HT5;
    Double_t        HT5clean;
@@ -156,6 +158,7 @@ public :
    Double_t        HT5JERup;
    Double_t        HTclean;
    Double_t        HTJECdown;
+   Double_t        HTOnline;
    Double_t        HTJECup;
    Double_t        HTJERdown;
    Double_t        HTJERup;
@@ -364,6 +367,7 @@ public :
    Double_t        MHTclean2p4;
    Double_t        MHTcleanOrig;
    Double_t        MHTJECdown;
+   Double_t        MHTOnline;
    Double_t        MHTJECup;
    Double_t        MHTJERdown;
    Double_t        MHTJERup;
@@ -427,6 +431,7 @@ public :
    vector<double>  *Photons_pfNeutralIsoRhoCorr;
    vector<double>  *Photons_sigmaIetaIeta;
    Double_t        PmssmId;
+   Double_t        PrescaleWeightHT;
    Int_t           PrimaryVertexFilter;
    vector<double>  *PSweights;
    Double_t        puSysDown;
@@ -583,6 +588,8 @@ public :
    TBranch        *b_hasGenPromptPhoton;   //!
    TBranch        *b_HBHEIsoNoiseFilter;   //!
    TBranch        *b_HBHENoiseFilter;   //!
+   TBranch        *b_HLTMuonObjects;   //!
+   TBranch        *b_HLTElectronObjects;   //!
    TBranch        *b_HT;   //!
    TBranch        *b_HT5;   //!
    TBranch        *b_HT5clean;   //!
@@ -592,6 +599,7 @@ public :
    TBranch        *b_HT5JERup;   //!
    TBranch        *b_HTclean;   //!
    TBranch        *b_HTJECdown;   //!
+   TBranch        *b_HTOnline;   //!
    TBranch        *b_HTJECup;   //!
    TBranch        *b_HTJERdown;   //!
    TBranch        *b_HTJERup;   //!
@@ -800,6 +808,7 @@ public :
    TBranch        *b_MHTclean2p4;   //!
    TBranch        *b_MHTcleanOrig;   //!
    TBranch        *b_MHTJECdown;   //!
+   TBranch        *b_MHTOnline;   //!
    TBranch        *b_MHTJECup;   //!
    TBranch        *b_MHTJERdown;   //!
    TBranch        *b_MHTJERup;   //!
@@ -863,6 +872,7 @@ public :
    TBranch        *b_Photons_pfNeutralIsoRhoCorr;   //!
    TBranch        *b_Photons_sigmaIetaIeta;   //!
    TBranch        *b_PmssmId;   //!
+   TBranch        *b_PrescaleWeightHT;   //!
    TBranch        *b_PrimaryVertexFilter;   //!
    TBranch        *b_PSweights;   //!
    TBranch        *b_puSysDown;   //!
@@ -971,6 +981,8 @@ void NtupleClass::Init(TTree *tree)
    Electrons_tightID = 0;
    Electrons_TrkEnergyCorr = 0;
    GenElectrons = 0;
+   HLTElectronObjects = 0;
+   HLTMuonObjects = 0;
    GenElectrons_fromTau = 0;
    GenElectrons_MT2Activity = 0;
    GenElectrons_RecoTrkAct = 0;
@@ -1351,6 +1363,8 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("hasGenPromptPhoton", &hasGenPromptPhoton, &b_hasGenPromptPhoton);
    fChain->SetBranchAddress("HBHEIsoNoiseFilter", &HBHEIsoNoiseFilter, &b_HBHEIsoNoiseFilter);
    fChain->SetBranchAddress("HBHENoiseFilter", &HBHENoiseFilter, &b_HBHENoiseFilter);
+   fChain->SetBranchAddress("HLTMuonObjects", &HLTMuonObjects, &b_HLTMuonObjects);
+   fChain->SetBranchAddress("HLTElectronObjects", &HLTElectronObjects, &b_HLTElectronObjects);
    fChain->SetBranchAddress("HT", &HT, &b_HT);
    fChain->SetBranchAddress("HT5", &HT5, &b_HT5);
    fChain->SetBranchAddress("HT5clean", &HT5clean, &b_HT5clean);
@@ -1360,6 +1374,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("HT5JERup", &HT5JERup, &b_HT5JERup);
    fChain->SetBranchAddress("HTclean", &HTclean, &b_HTclean);
    fChain->SetBranchAddress("HTJECdown", &HTJECdown, &b_HTJECdown);
+   fChain->SetBranchAddress("HTOnline", &HTOnline, &b_HTOnline);
    fChain->SetBranchAddress("HTJECup", &HTJECup, &b_HTJECup);
    fChain->SetBranchAddress("HTJERdown", &HTJERdown, &b_HTJERdown);
    fChain->SetBranchAddress("HTJERup", &HTJERup, &b_HTJERup);
@@ -1568,6 +1583,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("MHTclean2p4", &MHTclean2p4, &b_MHTclean2p4);
    fChain->SetBranchAddress("MHTcleanOrig", &MHTcleanOrig, &b_MHTcleanOrig);
    fChain->SetBranchAddress("MHTJECdown", &MHTJECdown, &b_MHTJECdown);
+   fChain->SetBranchAddress("MHTOnline", &MHTOnline, &b_MHTOnline);
    fChain->SetBranchAddress("MHTJECup", &MHTJECup, &b_MHTJECup);
    fChain->SetBranchAddress("MHTJERdown", &MHTJERdown, &b_MHTJERdown);
    fChain->SetBranchAddress("MHTJERup", &MHTJERup, &b_MHTJERup);
@@ -1631,6 +1647,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("Photons_pfNeutralIsoRhoCorr", &Photons_pfNeutralIsoRhoCorr, &b_Photons_pfNeutralIsoRhoCorr);
    fChain->SetBranchAddress("Photons_sigmaIetaIeta", &Photons_sigmaIetaIeta, &b_Photons_sigmaIetaIeta);
    fChain->SetBranchAddress("PmssmId", &PmssmId, &b_PmssmId);
+   fChain->SetBranchAddress("PrescaleWeightHT", &PrescaleWeightHT, &b_PrescaleWeightHT);
    fChain->SetBranchAddress("PrimaryVertexFilter", &PrimaryVertexFilter, &b_PrimaryVertexFilter);
    fChain->SetBranchAddress("PSweights", &PSweights, &b_PSweights);
    fChain->SetBranchAddress("puSysDown", &puSysDown, &b_puSysDown);

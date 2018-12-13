@@ -6,12 +6,18 @@ source batch/exportProd.sh
 SAMPLES=(
 RunIIFall17MiniAODv2.TTJets_TuneCP5_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root \
 PrivateSamples.SVJ_2017_mZprime-3000_mDark-20_rinv-0p3_alpha-0p2_n-1000_0_RA2AnalysisTree.root \
+Run2017B-31Mar2018-v1.SingleMuon_0_RA2AnalysisTree.root \
+Run2017B-31Mar2018-v1.SingleElectron_0_RA2AnalysisTree.root \
 )
 DIRS=(
 root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/$RUN2PRODV \
 root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/$RUN2PRODV \
+root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/$RUN2PRODV \
+root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/$RUN2PRODV \
 )
 TREES=(
+TreeMaker2/PreSelection \
+TreeMaker2/PreSelection \
 TreeMaker2/PreSelection \
 TreeMaker2/PreSelection \
 )

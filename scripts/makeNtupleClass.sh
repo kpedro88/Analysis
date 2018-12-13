@@ -21,21 +21,21 @@ for ((i=0; i < ${#SAMPLES[@]}; i++)); do
 	len1=$(wc -L < NtupleClass.h)
 	len2=$(wc -L < TempClass.h)
 	len=$(( $len1 > $len2 ? $len1 : $len2 ))
-	len=$(( $len*2 ))
+	len=$(( $len*2 + 4 ))
 
 	# diff side-by-side format:
 	# xxxx * yyyy
 	# * can be ), <, |, >
 	# split into two sides, strip trailing whitespace
 	# keep any new lines from TempClass
-	diff -y -W $len --left-column NtupleClass.h TempClass.h | expand | \
+	diff -y -t -W $len --left-column NtupleClass.h TempClass.h |  \
 	awk -v sample=$SAMPLE ' 
 		BEGIN { len = 0; }
 			  { if ( len == 0 ) len = length($0)-1;
 				leftside = substr($0,1,len);
 				sub(/[ \t]+$/,"",leftside);
 				diffchar = substr($0,len+1,1);
-				rightside = substr($0,len+3,length($0));
+				rightside = substr($0,len+4,length($0));
 				sub(/[ \t]+$/,"",rightside);
 				if  ( length(leftside)>0 || length(rightside)==0 )
 				{
