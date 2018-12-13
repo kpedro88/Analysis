@@ -52,10 +52,6 @@ class KCleanVariator : public KVariator {
 				new KLinkedBranchB(KBranchB(&looper->JetID,"JetID"),KBranchB(&looper->JetIDclean,"JetIDclean")),
 				new KLinkedBranchVL(KBranchVL(&looper->JetsAK8,"JetsAK8"),KBranchVL(&looper->JetsAK8Clean,"JetsAK8Clean")),
 				new KLinkedBranchVD(KBranchVD(&looper->JetsAK8_doubleBDiscriminator,"JetsAK8_doubleBDiscriminator"),KBranchVD(&looper->JetsAK8Clean_doubleBDiscriminator,"JetsAK8Clean_doubleBDiscriminator")),
-				new KLinkedBranchVD(KBranchVD(&looper->JetsAK8_ecfN2b1,"JetsAK8_ecfN2b1"),KBranchVD(&looper->JetsAK8Clean_ecfN2b1,"JetsAK8Clean_ecfN2b1")),
-				new KLinkedBranchVD(KBranchVD(&looper->JetsAK8_ecfN2b2,"JetsAK8_ecfN2b2"),KBranchVD(&looper->JetsAK8Clean_ecfN2b2,"JetsAK8Clean_ecfN2b2")),
-				new KLinkedBranchVD(KBranchVD(&looper->JetsAK8_ecfN3b1,"JetsAK8_ecfN3b1"),KBranchVD(&looper->JetsAK8Clean_ecfN3b1,"JetsAK8Clean_ecfN3b1")),
-				new KLinkedBranchVD(KBranchVD(&looper->JetsAK8_ecfN3b2,"JetsAK8_ecfN3b2"),KBranchVD(&looper->JetsAK8Clean_ecfN3b2,"JetsAK8Clean_ecfN3b2")),
 				new KLinkedBranchVB(KBranchVB(&looper->JetsAK8_ID,"JetsAK8_ID"),KBranchVB(&looper->JetsAK8Clean_ID,"JetsAK8Clean_ID")),
 				new KLinkedBranchVD(KBranchVD(&looper->JetsAK8_NsubjettinessTau1,"JetsAK8_NsubjettinessTau1"),KBranchVD(&looper->JetsAK8Clean_NsubjettinessTau1,"JetsAK8Clean_NsubjettinessTau1")),
 				new KLinkedBranchVD(KBranchVD(&looper->JetsAK8_NsubjettinessTau2,"JetsAK8_NsubjettinessTau2"),KBranchVD(&looper->JetsAK8Clean_NsubjettinessTau2,"JetsAK8Clean_NsubjettinessTau2")),
@@ -511,7 +507,7 @@ class KCentralAK8Variator : public KVariator {
 				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_ecfN3b2,"JetsAK8_ecfN3b2"),order),
 				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_girth,"JetsAK8_girth"),order),
 				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_hDiscriminatorDeep,"JetsAK8_hDiscriminatorDeep"),order),
-				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_hDiscriminatorDeepDecorrel,"JetsAK8_hDiscriminatorDeepDecorrel"),order),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_zhDiscriminatorDeepDecorrel,"JetsAK8_zhDiscriminatorDeepDecorrel"),order),
 				new KReorderedBranchVB(KBranchVB(&looper->JetsAK8_ID,"JetsAK8_ID"),order),
 				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_lean,"JetsAK8_lean"),order),
 				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_momenthalf,"JetsAK8_momenthalf"),order),
@@ -521,7 +517,6 @@ class KCentralAK8Variator : public KVariator {
 				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_NsubjettinessTau3,"JetsAK8_NsubjettinessTau3"),order),
 				new KReorderedBranchVI(KBranchVI(&looper->JetsAK8_NumBhadrons,"JetsAK8_NumBhadrons"),order),
 				new KReorderedBranchVI(KBranchVI(&looper->JetsAK8_NumChadrons,"JetsAK8_NumChadrons"),order),
-				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_overflow,"JetsAK8_overflow"),order),
 				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_prunedMass,"JetsAK8_prunedMass"),order),
 				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_ptD,"JetsAK8_ptD"),order),
 				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_ptdrlog,"JetsAK8_ptdrlog"),order),
@@ -537,7 +532,6 @@ class KCentralAK8Variator : public KVariator {
 				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_wDiscriminatorDeep,"JetsAK8_wDiscriminatorDeep"),order),
 				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_wDiscriminatorDeepDecorrel,"JetsAK8_wDiscriminatorDeepDecorrel"),order),
 				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_zDiscriminatorDeep,"JetsAK8_zDiscriminatorDeep"),order),
-				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_zDiscriminatorDeepDecorrel,"JetsAK8_zDiscriminatorDeepDecorrel"),order)
 			};
 
 			for(auto& branch : branches){

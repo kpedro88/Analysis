@@ -1240,14 +1240,6 @@ class KJetFiller_AK8mult : public KJetFiller {
 };
 REGISTER_JETFILLER(AK8mult);
 
-class KJetFiller_AK8overflow : public KJetFiller {
-	public:
-		using KJetFiller::KJetFiller;
-		virtual void ListBranches() { branches = {"JetsAK8_overflow"}; }
-		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_overflow->size()>index) value.Fill(looper->JetsAK8_overflow->at(index),w); }
-};
-REGISTER_JETFILLER(AK8overflow);
-
 class KJetFiller_AK8ptD : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;

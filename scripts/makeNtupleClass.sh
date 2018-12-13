@@ -44,6 +44,7 @@ for ((i=0; i < ${#SAMPLES[@]}; i++)); do
 				if  ( (diffchar == "|" || diffchar == ">") && 
 						index(rightside,sample)==0 && index(rightside,"ROOT version")==0 && 
 						index(rightside,"fChain(0)")==0 && index(rightside,".root")==0 &&
+                        index(rightside,"GetListOfFiles")==0 && 
 						length(rightside)>0 )
 				{
 					 print rightside;
