@@ -395,8 +395,8 @@ class KPlotManager : public KManager {
 						//todo: consider special 2D histos here
 						omap->Set<string>(theSet->GetName()+"_legname",theSet->GetLegName());
 						KPlot* ptmp = new KPlot2D(ntmp->fields[0],theSet->GetName(),omap,globalOpt);
+						if(!rationame2D.empty()) ptmp->GetLocalOpt()->Set<string>(theSet->GetName()+"_name2D",rationame2D);
 						if(ptmp->Initialize()) {
-							if(!rationame2D.empty()) ptmp->GetLocalOpt()->Set<string>(theSet->GetName()+"_name2D",rationame2D);
 							p2map->Add(theSet->GetName(),ptmp);
 						}
 						else {
@@ -528,7 +528,7 @@ class KPlotManager : public KManager {
 				}
 				double yield = 0;
 				if(p2map->GetTable().begin()->second->GetLocalOpt()->Get("yieldnorm",false) && yieldref){
-						yield = yieldref->GetYield();
+					yield = yieldref->GetYield();
 				}
 				else if(p2map->GetTable().begin()->second->GetLocalOpt()->Get("yieldnorm",false) && !yieldref){
 					cout << "Input error: normalization to yield requested for " << pm.first << ", but yieldref not set. Normalization will not be performed." << endl;
@@ -569,6 +569,8 @@ class KPlotManager : public KManager {
 						else continue;
 						//build ratio histo
 						theSet->Build();
+						//reset the title because root is stupid
+						theSet->GetHisto()->GetZaxis()->SetTitle(ptmp->GetHisto()->GetZaxis()->GetTitle());
 					}
 					else {
 						theSet = MySets[s];
