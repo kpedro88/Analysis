@@ -501,14 +501,17 @@ class KSetRatio: public KSet {
 		void Build(){
 			Build(children[0]->GetHistoName(),children[0]->GetHisto(),children[1]->GetHisto());
 		}
+		void Build(TH1* htemp){
+			Build(children[0]->GetHistoName(),children[0]->GetHisto(),children[1]->GetHisto(),htemp);			
+		}
 		//in case of standalone use
-		void Build(string histoname, TH1* h0, TH1* h1){
+		void Build(string histoname, TH1* h0, TH1* h1, TH1* htemp=NULL){
 			stmp = histoname;
 			TH1* hdata = h0;
 			TH1* hsim = h1;
 			TH1* hsim0 = (TH1*)hsim->Clone();
 			//in case displaying with different number of bins than original histo
-			TH1* hrat = (TH1*)h0->Clone();
+			TH1* hrat = (htemp ? (TH1*)htemp->Clone() : (TH1*)h0->Clone());
 			
 			int nbins = hrat->GetNbinsX()+1;
 			//only pull,data/MC supported for 2D

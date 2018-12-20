@@ -567,10 +567,8 @@ class KPlotManager : public KManager {
 						ptmp = p2map->Get(MyRatios[s-MySets.size()]->GetName());
 						if(ptmp) theSet = MyRatios[s-MySets.size()];
 						else continue;
-						//build ratio histo
-						theSet->Build();
-						//reset the title because root is stupid
-						theSet->GetHisto()->GetZaxis()->SetTitle(ptmp->GetHisto()->GetZaxis()->GetTitle());
+						//build ratio histo (use plot histo as template)
+						((KSetRatio*)theSet)->Build(ptmp->GetHisto());
 					}
 					else {
 						theSet = MySets[s];
