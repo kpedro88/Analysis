@@ -24,8 +24,10 @@ root -b -q -l 'KSkimDriver.C+("T1tttt_1500_100","signal","root://cmseos.fnal.gov
 
 To remake the input list of sets automatically, for data and MC:
 ```
-python makeSkimInput.py -r input/dict_skim.py -w input/input_sets_skim.txt -e batch/exportSkim.sh -n 50
-python makeSkimInput.py -r input/dict_skim_signal.py -w input/input_sets_skim_signal.txt -e batch/exportSkimSignal.sh -n 50
+python makeSkimInput.py -r input/dict_skim_mc_2016.py -w input/input_sets_skim_mc_2016.txt -e batch/exportSkimMC2016.sh -n 50
+python makeSkimInput.py -r input/dict_skim_mc_2017.py -w input/input_sets_skim_mc_2017.txt -e batch/exportSkimMC2017.sh -n 50
+python makeSkimInput.py -r input/dict_skim_signal_2016.py -w input/input_sets_skim_signal_2016.txt -e batch/exportSkimSignal2016.sh -n 50
+python makeSkimInput.py -r input/dict_skim_signal_2017.py -w input/input_sets_skim_signal_2017.txt -e batch/exportSkimSignal2017.sh -n 50
 python makeSkimInput.py -r input/dict_skim_data_2016.py -w input/input_sets_skim_data_2016.txt -e batch/exportSkimData2016.sh --data -n 50 -f /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16
 python makeSkimInput.py -r input/dict_skim_data_2017.py -w input/input_sets_skim_data_2017.txt -e batch/exportSkimData2017.sh --data -n 50 -f /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16
 python makeSkimInput.py -r input/dict_skim_data_2018.py -w input/input_sets_skim_data_2018.txt -e batch/exportSkimData2018.sh --data -n 50 -f /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16
@@ -35,9 +37,7 @@ Note: this script uses the python file lists in [TreeMaker/Production/python](ht
 To submit jobs to Condor (add the flag `-k` to reuse the existing CMSSW tarball):
 ```
 cd batch
-./SKsub.sh
-./SKsub_signal.sh
-./SKsub_data.sh
+./SKsub.sh -t MC,Signal,Data -y 2016,2017
 ./SKsub_fast.sh
 ```
 Note: `SKsub_fast.sh` should only be run after the scanning step, below, is completed.

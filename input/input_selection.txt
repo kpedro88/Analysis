@@ -29,6 +29,8 @@ ra2bin
 	PileupAcc	s:name[PileupAccAfter]	i:cut[20]	i:xnum[101]	d:xmin[-0.5]	d:xmax[100.5]	s:depname[PileupAccBefore]
 evtclean
 	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]	b:HTRatio[1]
+evtcleanmin
+	EventCleaning	b:JetID[1]	b:METRatio[0]	b:MuonJet[0]	b:FakeJet[0]	b:HTRatio[0]
 evtcleannomu
 	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[0]	b:FakeJet[1]	b:HTRatio[1]
 evtunclean
@@ -50,7 +52,7 @@ signalUnblind
 	baseline
 	veto
 	dphi
-	evtclean
+	evtcleanmin
 	ra2bin
 # all 2016, 5/fb 2017BCDE, 5/fb 2017F, 7.5/fb 2018AB, 7.5/fb 2018D
 signal
@@ -71,7 +73,7 @@ signalTight
 	MHT	d:min[300]
 	veto
 	dphi
-	evtclean
+	evtcleanmin
 	ra2bin
 signalTight250
 	Blind	i:run[275125]
@@ -81,7 +83,7 @@ signalTight250
 	MHT	d:min[250]
 	veto
 	dphi
-	evtclean
+	evtcleanmin
 	ra2bin
 signal2015
 	Blind	i:run[275125]
@@ -91,14 +93,14 @@ signal2015
 	MHT	d:min[200]
 	veto
 	dphi
-	evtclean
+	evtcleanmin
 	ra2bin
 LDP
 	common
 	baseline
 	veto
 	dphiinv
-	evtclean
+	evtcleanmin
 	ra2bin
 LDPUnclean
 	common
@@ -113,7 +115,7 @@ SLm
 	Muon
 	ElectronVeto
 	dphi
-	evtclean
+	evtcleanmin
 	ra2bin
 SLe
 	common
@@ -121,7 +123,7 @@ SLe
 	MuonVeto
 	Electron
 	dphi
-	evtclean
+	evtcleanmin
 	ra2bin
 SLmUnclean
 	common
@@ -145,7 +147,7 @@ SLmLDP
 	Muon
 	ElectronVeto
 	dphiinv
-	evtclean
+	evtcleanmin
 	ra2bin
 SLeLDP
 	common
@@ -153,7 +155,7 @@ SLeLDP
 	MuonVeto
 	Electron
 	dphiinv
-	evtclean
+	evtcleanmin
 	ra2bin
 GJet
 	common
@@ -161,7 +163,7 @@ GJet
 	Photon	b:loose[0]
 	veto
 	dphi
-	evtcleannomu
+	evtcleanmin
 	ra2bin
 GJetLoose
 	common
@@ -169,7 +171,7 @@ GJetLoose
 	Photon
 	veto
 	dphi
-	evtcleannomu
+	evtcleanmin
 	ra2bin
 DYm
 	common
@@ -179,7 +181,7 @@ DYm
 	IsoElectronTrackVeto
 	IsoPionTrackVeto
 	dphi
-	evtcleannomu
+	evtcleanmin
 	ra2bin
 DYe
 	common
@@ -189,7 +191,7 @@ DYe
 	IsoMuonTrackVeto
 	IsoPionTrackVeto
 	dphi
-	evtcleannomu
+	evtcleanmin
 	ra2bin
 GJetLDP
 	common
@@ -197,7 +199,7 @@ GJetLDP
 	Photon	b:loose[0]
 	veto
 	dphiinv
-	evtcleannomu
+	evtcleanmin
 	ra2bin
 GJetLooseLDP
 	common
@@ -205,7 +207,7 @@ GJetLooseLDP
 	Photon
 	veto
 	dphiinv
-	evtcleannomu
+	evtcleanmin
 	ra2bin
 DYmLDP
 	common
@@ -215,7 +217,7 @@ DYmLDP
 	IsoElectronTrackVeto
 	IsoPionTrackVeto
 	dphiinv
-	evtcleannomu
+	evtcleanmin
 	ra2bin
 DYeLDP
 	common
@@ -225,7 +227,7 @@ DYeLDP
 	IsoMuonTrackVeto
 	IsoPionTrackVeto
 	dphiinv
-	evtcleannomu
+	evtcleanmin
 	ra2bin
 
 VARIATION
@@ -243,8 +245,10 @@ genMHT
 	GenMHT
 
 INPUT
-input/input_sets_skim.txt
-input/input_sets_skim_signal.txt
+input/input_sets_skim_mc_2016.txt
+input/input_sets_skim_mc_2017.txt
+input/input_sets_skim_signal_2016.txt
+input/input_sets_skim_signal_2017.txt
 input/input_sets_skim_data_2016.txt
 input/input_sets_skim_data_2017.txt
 input/input_sets_skim_data_2018.txt
