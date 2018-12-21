@@ -18,6 +18,7 @@ usage(){
 	$ECHO "-s suffix       \toptional suffix to append to output filename"
 	$ECHO "-u              \tupdate an existing file (output filename added to list of input files)"
 	$ECHO "-k              \tkeep input files when finished (default = delete upon successful hadd + stageout)"
+	$ECHO "-t              \tskip trees (e.g. in case all trees are empty)"
 	$ECHO "-r              \tactually run (default = dry run, print number of input files)"
 	$ECHO "-v              \tverbose output for dry run"
 	$ECHO "-h              \tprint this message and exit"
@@ -34,9 +35,10 @@ VERBOSE=0
 XRDLOC=root://cmseos.fnal.gov
 OUTPUT=""
 KEEPINPUT=0
+SKIPTREE=""
 
 #check arguments
-while getopts "d:i:s:g:x:o:kruvh" opt; do
+while getopts "d:i:s:g:x:o:kruvht" opt; do
 	case "$opt" in
 	r) RUN=1
 	;;
@@ -57,6 +59,8 @@ while getopts "d:i:s:g:x:o:kruvh" opt; do
 	o) OUTPUT=$OPTARG
 	;;
 	k) KEEPINPUT=1
+	;;
+	t) SKIPTREE="-T"
 	;;
 	h) usage 0
 	;;
@@ -112,7 +116,7 @@ for BASE in ${SAMPLES[@]}; do
 	fi
 	
 	#hadd to tmp file
-	hadd ${TMPFILE} ${ALLFILES}
+	hadd ${SKIPTREE} ${TMPFILE} ${ALLFILES}
 	
 	#check exit code
 	HADDEXIT=$?

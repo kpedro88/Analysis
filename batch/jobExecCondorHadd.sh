@@ -14,7 +14,8 @@ INPUT=$2
 DIR=$3
 SEARCH=$4
 UPDATE=$5
-SUFF=$6
+SKIPTREE=$6
+SUFF=$7
 
 echo ""
 echo "parameter set:"
@@ -23,6 +24,7 @@ echo "INPUT:      $INPUT"
 echo "DIR:        $DIR"
 echo "SEARCH:     $SEARCH"
 echo "UPDATE:     $UPDATE"
+echo "SKIPTREE:   $SKIPTREE"
 echo "SUFF:       $SUFF"
 
 tar -xzf ${CMSSWVER}.tar.gz
@@ -37,6 +39,9 @@ cd src/Analysis/batch
 ARGS=""
 if [[ $UPDATE -eq 1 ]]; then
 	ARGS="-u"
+fi
+if [[ $SKIPTREE -eq 1 ]]; then
+	ARGS="$ARGS -t"
 fi
 ./haddEOS.sh -d ${DIR} -i ${INPUT} -s "${SUFF}" -g "${SEARCH}" -r ${ARGS}
 

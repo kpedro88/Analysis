@@ -11,9 +11,10 @@ RUN=0
 SUFF=fast
 SEARCH="_block"
 UPDATE=0
+SKIPTREE=0
 
 #check arguments
-while getopts "kn:rsd:g:u" opt; do
+while getopts "kn:rsd:g:ut" opt; do
   case "$opt" in
   k) CHECKARGS="${CHECKARGS} -k"
     ;;
@@ -29,6 +30,8 @@ while getopts "kn:rsd:g:u" opt; do
     ;;
   u) UPDATE=1
      TESTARGS="${TESTARGS} -u"
+    ;;
+  t) SKIPTREE=1
     ;;
   esac
 done
@@ -66,7 +69,7 @@ for ((i=0; i < ${#SAMPLES[@]}; i++)); do
     #dryrun (list input) is default
     if [[ $RUN -eq 1 ]]; then
       #submit job with this input list
-      ./HStemp.sh ${JOBDIR} ${INPUT} ${DIR} ${SEARCH} ${UPDATE} ${SUFF}
+      ./HStemp.sh ${JOBDIR} ${INPUT} ${DIR} ${SEARCH} ${UPDATE} ${SKIPTREE} ${SUFF}
     else
       #echo ${INPUT}
       ./haddEOS.sh ${TESTARGS} -i ${INPUT}
