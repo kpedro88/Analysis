@@ -1,0 +1,5 @@
+SET
+base	skim	JetHT_2018B	b:chain[1]	ch:filenames[Run2018B-26Sep2018-v1.JetHT_,0,67,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[1]
+base	skim	JetHT_2018BHEM	b:chain[1]	ch:filenames[Run2018B-26Sep2018_HEM-v1.JetHT_,0,66,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[1]
+base	skim	JetHT_2018BHEMmiti	b:chain[1]	ch:filenames[Run2018B-26Sep2018_HEMmitigation-v1.JetHT_,0,68,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[1]
+

@@ -1,0 +1,18 @@
+OPTION
+int:yieldprecision[2]
+bool:doClone[1]
+#bool:quickchain[1]
+vstring:disable_branches[*clean*,*JECdown*,*JECup*,*JERdown*,*JERup*,*Clean*]
+
+SELECTION
+HEMpresel
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	Dijet	i:njet[2]	b:id[1]
+	DeltaEta	d:max[1.5]
+	METMTRatio	d:min[0.15]
+	MTAK8	d:min[1400]
+	MuonVeto
+	ElectronVeto
+
+INPUT
+input/input_sets_skim_2018B26Sep.txt
