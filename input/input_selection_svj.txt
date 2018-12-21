@@ -15,19 +15,8 @@ SELECTION
 veto
 	MuonVeto
 	ElectronVeto
-vetotk
-	MuonVeto
-	IsoMuonTrackVeto
-	ElectronVeto
-	IsoElectronTrackVeto
-	IsoPionTrackVeto
 dijet
-	Dijet	i:njet[2]	b:id[1]	d:eta[5.0]
-dijetc
-	Dijet	i:njet[2]	b:id[1]	d:eta[2.4]
-dijetmet
-	dijet
-	MET	d:min[100]
+	Dijet	i:njet[2]	b:id[1]	d:eta[2.4]	d:pt[200]
 dijetmt
 	dijet
 	METMTRatio	d:min[0.15]
@@ -39,27 +28,9 @@ dijetmtdeta
 	dijet
 	METMTRatio	d:min[0.15]
 	DeltaEta	d:max[1.5]
-dijetcmtpt
-	dijetc
-	METMTRatio	d:min[0.15]
-	LeadJetPT	d:min[600]
-dijetcmtdeta
-	dijetc
-	METMTRatio	d:min[0.15]
-	DeltaEta	d:max[1.5]
-dijetmtloose
-	dijet
-	METMTRatio	d:min[0.10]
-dijetmtfull1
-	dijet
-	METMTRatio	d:min[0.25]
-	DeltaPhiMinAK8	d:max[0.75]
 dijetmjj
 	dijet
 	MJJAK8	d:min[1000]	d:max[-1]
-dijethad
-	dijetmet
-	veto
 dijetmthad
 	dijetmt
 	veto
@@ -69,41 +40,19 @@ dijetmtpthad
 dijetmtdetahad
 	dijetmtdeta
 	veto
-dijetcmtpthad
-	dijetcmtpt
-	veto
-dijetcmtdetahad
-	dijetcmtdeta
-	veto
-dijetmthadloose
-	dijetmtloose
-	veto
-dijetmthadfull1
-	dijetmtfull1
-	veto
 dijetmtdetahadmf
 	dijetmtdetahad
 	MTAK8	d:min[1400]
 	METFilter
-dijetmtdetahadfull2
-	dijetmtdetahad
-	MTAK8	d:min[1400]
+dijetmtdetahadmffull1
+	dijetmtdetahadmf
 	METMTRatio	s:name[METMTRatioFull]	d:min[0.25]
 	DeltaPhiMinAK8	d:max[0.75]
-dijethadtk
-	dijetmet
-	vetotk
-dijetmthadtk
-	dijetmt
-	vetotk
 theory
 	DijetAK4	i:njet[2]	b:id[0]	d:pt[100]	d:eta[2.4]
 	MET	d:min[200]
 dijetmutrig
 	dijet
-	MuonTrigger	d:pTmin[50]
-dijetcmutrig
-	dijetc
 	MuonTrigger	d:pTmin[50]
 
 VARIATION
@@ -111,8 +60,9 @@ central
 	CentralAK8
 
 INPUT
-input/input_sets_skim_svj_bkg.txt
-input/input_sets_skim_svj.txt
+input/input_sets_skim_svj_bkg_2016.txt
+input/input_sets_skim_svj_bkg_2017.txt
+input/input_sets_skim_svj_2017.txt
 input/input_sets_skim_data_2016.txt
 input/input_sets_skim_data_2017.txt
 input/input_sets_skim_data_2018.txt

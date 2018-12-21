@@ -169,14 +169,15 @@ Currently available uncertainties:
 
 To remake the list of input files for semi-visible jet samples:
 ```
-python makeSkimInput.py -r input/dict_skim_svj_bkg.py -w input/input_sets_skim_svj_bkg.txt -e batch/exportSkimSVJBkg.sh -n 50
-python makeSkimInput.py -r input/dict_skim_svj.py -w input/input_sets_skim_svj.txt -e batch/exportSkimSVJ.sh -n 50 -N 200
+python makeSkimInput.py -r input/dict_skim_svj_bkg_2016.py -w input/input_sets_skim_svj_bkg_2016.txt -e batch/exportSkimSVJBkg2016.sh -n 50
+python makeSkimInput.py -r input/dict_skim_svj_bkg_2017.py -w input/input_sets_skim_svj_bkg_2017.txt -e batch/exportSkimSVJBkg2017.sh -n 50
+python makeSkimInput.py -r input/dict_skim_svj_2017.py -w input/input_sets_skim_svj_2017.txt -e batch/exportSkimSVJ2017.sh -n 50 -N 200
 ```
 
 To submit jobs to Condor:
 ```
 cd batch
-./SKsub_svj.sh
+./SKsub_svj.sh -t SVJ,SVJBkg,Data -y 2016,2017
 (wait for jobs to finish)
 ./hadd_skims.sh -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV16/Skims -n 1 -r
 ```
