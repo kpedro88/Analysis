@@ -33,7 +33,7 @@ for TYPE in ${TYPES[@]}; do
 		if [[ $? -ne 0 ]]; then continue; fi
 
 		for SAMPLE in ${SAMPLES[@]}; do
-			if [ "$TYPE" = data ] && [[ $SAMPLE != *"JetHT"* ]]; then continue; fi
+			if [ "$TYPE" = Data ] && [[ $SAMPLE != *"JetHT"* ]]; then continue; fi
 			./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} ${SELTYPE} ${INDIR} ${OUTDIR} ${STORE}
 		done
 	done
