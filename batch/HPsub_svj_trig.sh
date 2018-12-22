@@ -3,8 +3,8 @@
 source exportProd.sh
 
 JOBDIR=jobs
-INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims/tree_dijetmutrig
-STORE=$INDIR/histMETMT
+INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims/tree_dijetmtmutrig
+STORE=$INDIR/hist
 OUTPUT=
 EXTRA=
 CHECKARGS=""
@@ -19,7 +19,8 @@ done
 
 ./SKcheck.sh ${CHECKARGS}
 
-for YEAR in 2016 2017; do
+#for YEAR in 2016 2017; do
+for YEAR in 2017; do
 	PERIODS=()
 	if [ "$YEAR" -eq 2016 ]; then
 		PERIODS=(B2 C D E F G H)

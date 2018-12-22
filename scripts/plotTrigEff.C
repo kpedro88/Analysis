@@ -71,6 +71,7 @@ void plotTrigEff(string filename, string region, int year, string denom, vector<
 	map<string,string> ctitles{
 		{"Deta1","#Delta#eta(j_{1},j_{2}) < 1.0"},
 		{"Deta15","#Delta#eta(j_{1},j_{2}) < 1.5"},
+		{"Deta","#Delta#eta(j_{1},j_{2}) < 1.5"},
 		{"Deta2","#Delta#eta(j_{1},j_{2}) < 2.0"},
 		{"HT2016","H_{T} > 1100 GeV"},
 		{"HT2017","H_{T} > 1500 GeV"},
@@ -103,9 +104,9 @@ void plotTrigEff(string filename, string region, int year, string denom, vector<
 		prefix += "Zoom";
 	}
 
+	//get denom
+	if(!cutname.empty()) denom += cutname;
 	for(const auto& qty: quantities){
-		//get denom
-        if(!cutname.empty()) denom += cutname;
 		const auto& hname = histName(region,year,denom,qty);
 
 		//1D hist
@@ -115,7 +116,7 @@ void plotTrigEff(string filename, string region, int year, string denom, vector<
 			//compare to numers
 			for(auto numer: numers){
 				string ytitle = ytitles[numer].c_str();
-        	    if(!cutname.empty()) numer += cutname;
+				if(!cutname.empty()) numer += cutname;
 				const auto& hname2 = histName(region,year,numer,qty);
 				TH1F* hnumer = (TH1F*)file->Get(hname2.c_str());
 				TGraphAsymmErrors* btmp = new TGraphAsymmErrors(hnumer,hdenom);
@@ -202,7 +203,7 @@ void plotTrigEff(string filename, string region, int year, string denom, vector<
 
 			//compare to numers
 			for(auto numer: numers){
-        	    if(!cutname.empty()) numer += cutname;
+			if(!cutname.empty()) numer += cutname;
 				const auto& hname2 = histName(region,year,numer,qty);
 				TH2F* hnumer = (TH2F*)file->Get(hname2.c_str());
 				TH2F* heff = (TH2F*)hnumer->Clone();

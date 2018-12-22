@@ -29,6 +29,8 @@ done
 for TYPE in ${TYPES[@]}; do
 	for YEAR in ${YEARS[@]}; do
 		source exportSkim${TYPE}${YEAR}.sh
+		# skip nonexistent ones
+		if [[ $? -ne 0 ]]; then continue; fi
 
 		for SAMPLE in ${SAMPLES[@]}; do
 			if [ "$TYPE" = data ] && [[ $SAMPLE != *"JetHT"* ]]; then continue; fi

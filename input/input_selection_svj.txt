@@ -21,12 +21,10 @@ dijetmt
 	dijet
 	METMTRatio	d:min[0.15]
 dijetmtpt
-	dijet
-	METMTRatio	d:min[0.15]
+	dijetmt
 	LeadJetPT	d:min[600]
 dijetmtdeta
-	dijet
-	METMTRatio	d:min[0.15]
+	dijetmt
 	DeltaEta	d:max[1.5]
 dijetmjj
 	dijet
@@ -51,8 +49,8 @@ dijetmtdetahadmffull1
 theory
 	DijetAK4	i:njet[2]	b:id[0]	d:pt[100]	d:eta[2.4]
 	MET	d:min[200]
-dijetmutrig
-	dijet
+dijetmtmutrig
+	dijetmt
 	MuonTrigger	d:pTmin[50]
 
 VARIATION
