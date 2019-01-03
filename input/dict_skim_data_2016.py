@@ -13,4 +13,6 @@ datasets = ["HTMHT","JetHT","MET","SingleElectron","SingleMuon","SinglePhoton"]
 flist = []
 for pshort,plong in sorted(periods.iteritems()):
     for dataset in datasets:
-        flist.append([[plong+"."+dataset],[dataset+"_"+pshort]])
+        plong2 = plong
+        if (dataset=="JetHT" and pshort=="2016B") or (dataset=="MET" and pshort=="2016H"): plong2 = plong2.replace("v1","v2")
+        flist.append([[plong2+"."+dataset],[dataset+"_"+pshort]])

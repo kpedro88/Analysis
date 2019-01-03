@@ -27,6 +27,9 @@ JetHT_2016B_block15 \
 JetHT_2016B_block16 \
 JetHT_2016B_block17 \
 JetHT_2016B_block18 \
+JetHT_2016B_block19 \
+JetHT_2016B_block20 \
+JetHT_2016B_block21 \
 MET_2016B_block0 \
 MET_2016B_block1 \
 MET_2016B_block2 \
@@ -402,6 +405,7 @@ MET_2016H_block3 \
 MET_2016H_block4 \
 MET_2016H_block5 \
 MET_2016H_block6 \
+MET_2016H_block7 \
 SingleElectron_2016H_block0 \
 SingleElectron_2016H_block1 \
 SingleElectron_2016H_block2 \
