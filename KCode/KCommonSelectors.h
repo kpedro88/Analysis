@@ -1092,6 +1092,43 @@ class KRA2BinSelector : public KSelector {
 REGISTER_SELECTOR(RA2Bin);
 
 //-------------------------------------------------------------
+//vetos events where reco muons don't match HLT muons
+class KMuonHLTSelector : public KSelector {
+	public:
+		//constructor
+		KMuonHLTSelector() : KSelector() { }
+		KMuonHLTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), minDR(0.2) {
+			localOpt->Get("minDR",minDR);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("HLTMuonObjects",1);
+			looper->fChain->SetBranchStatus("Muons",1);
+			looper->fChain->SetBranchStatus("Muons_mediumID",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			const auto& HLTMuons = *looper->HLTMuonObjects;
+			if(HLTMuons.size()==0) return false;
+
+			const auto& Muons = *looper->Muons;
+			const auto& Muons_mediumID = *looper->Muons_mediumID;
+			for(unsigned m = 0; m < Muons.size(); ++m){
+				if(Muons_mediumID[m]){
+					return HLTMuons[0].DeltaR(Muons[m]) < minDR;
+				}
+			}
+			return false;
+		}
+		
+		//member variables
+		double minDR;
+};
+REGISTER_SELECTOR(MuonHLT);
+
+//-------------------------------------------------------------
 //vetos events with muons
 class KMuonVetoSelector : public KSelector {
 	public:

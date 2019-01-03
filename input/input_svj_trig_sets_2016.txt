@@ -1,0 +1,10 @@
+SET
+hist	data	SingleMuon_2016
+	base	data	SingleMuon_2016B	s:filename[tree_SingleMuon_2016B.root]
+	base	data	SingleMuon_2016C	s:filename[tree_SingleMuon_2016C.root]
+	base	data	SingleMuon_2016D	s:filename[tree_SingleMuon_2016D.root]
+	base	data	SingleMuon_2016E	s:filename[tree_SingleMuon_2016E.root]
+	base	data	SingleMuon_2016F	s:filename[tree_SingleMuon_2016F.root]
+	base	data	SingleMuon_2016G	s:filename[tree_SingleMuon_2016G.root]
+	base	data	SingleMuon_2016H	s:filename[tree_SingleMuon_2016H.root]
+

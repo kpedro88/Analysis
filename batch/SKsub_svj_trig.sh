@@ -21,7 +21,7 @@ done
 ./SKcheck.sh ${CHECKARGS}
 
 #for year in 2016 2017; do
-for year in 2017; do
+for year in 2016; do
   source exportSkimData${year}.sh
   for SAMPLE in ${SAMPLES[@]}; do
     if [[ $SAMPLE == *"SingleMuon"* ]]; then

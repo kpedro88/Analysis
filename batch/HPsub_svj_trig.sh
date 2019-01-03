@@ -19,11 +19,10 @@ done
 
 ./SKcheck.sh ${CHECKARGS}
 
-#for YEAR in 2016 2017; do
-for YEAR in 2017; do
+for YEAR in 2016 2017; do
 	PERIODS=()
 	if [ "$YEAR" -eq 2016 ]; then
-		PERIODS=(B2 C D E F G H)
+		PERIODS=(B C D E F G H)
 	elif [ "$YEAR" -eq 2017 ]; then
 		PERIODS=(B C D E F)
 	fi

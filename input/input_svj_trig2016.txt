@@ -1,6 +1,6 @@
 OPTION
 vstring:disable_branches[*]
-vstring:selections[trigDenom,trigNumerJetHT,trigDenomDeta,trigNumerJetHTDeta]
+vstring:selections[trigDenom,trigNumerJetHT,trigDenomDeta,trigNumerJetHTDeta,trigDenomDetaHLTmatch,trigNumerJetHTDetaHLTmatch]
 
 SELECTION
 trigDenom
@@ -15,6 +15,17 @@ trigDenomDeta
 	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
 	Histo
 trigNumerJetHTDeta
+	DeltaEta	d:max[1.5]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_AK8PFJet450_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT800_v,HLT_PFHT900_v,HLT_PFJet450_v]
+	Histo
+trigDenomDetaHLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[1.5]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	Histo
+trigNumerJetHTDetaHLTmatch
+	MuonHLT	d:minDR[0.2]
 	DeltaEta	d:max[1.5]
 	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
 	HLT	vs:HLTLines[HLT_AK8PFJet450_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT800_v,HLT_PFHT900_v,HLT_PFJet450_v]
