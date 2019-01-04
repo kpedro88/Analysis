@@ -175,7 +175,8 @@ class KMuonSelector : public KSelector {
 
 			if(doMTcut){
 				//find the good muon
-				unsigned m_index = distance(looper->Muons_passIso->begin(),find(looper->Muons_passIso->begin(),looper->Muons_passIso->end(),true));
+				const auto& Muons_passIsoMediumID = KMath::vector_and(*looper->Muons_passIso,*looper->Muons_mediumID);
+				unsigned m_index = distance(Muons_passIsoMediumID.begin(),find(Muons_passIsoMediumID.begin(),Muons_passIsoMediumID.end(),true));
 			
 				double mT = KMath::TransverseMass(looper->MET,looper->METPhi,looper->Muons->at(m_index).Pt(),looper->Muons->at(m_index).Phi());
 				return mT<100;
@@ -277,8 +278,9 @@ class KDiMuonSelector : public KSelector {
 			//todo: add mass cut?
 			if(looper->NMuons!=2) return false;
 			//find the good muons
-			unsigned m_index = distance(looper->Muons_passIso->begin(),find(looper->Muons_passIso->begin(),looper->Muons_passIso->end(),true));
-			unsigned m_index2 = distance(looper->Muons_passIso->begin(),find(looper->Muons_passIso->begin()+m_index+1,looper->Muons_passIso->end(),true));
+			const auto& Muons_passIsoMediumID = KMath::vector_and(*looper->Muons_passIso,*looper->Muons_mediumID);
+			unsigned m_index = distance(Muons_passIsoMediumID.begin(),find(Muons_passIsoMediumID.begin(),Muons_passIsoMediumID.end(),true));
+			unsigned m_index2 = distance(Muons_passIsoMediumID.begin(),find(Muons_passIsoMediumID.begin()+m_index+1,Muons_passIsoMediumID.end(),true));
 			return looper->Muons_charge->at(m_index) != looper->Muons_charge->at(m_index2);
 		}
 		
@@ -327,7 +329,7 @@ class KMuonTriggerSelector : public KSelector {
 		virtual bool Cut() {
 			int num = 0;
 			for(unsigned m = 0; m < looper->Muons->size(); ++m){
-				if(looper->Muons_passIso->at(m) and looper->Muons->at(m).Pt()>pTmin) ++num;
+				if(looper->Muons_mediumID->at(m) and looper->Muons_passIso->at(m) and looper->Muons->at(m).Pt()>pTmin) ++num;
 			}
 
 			return num>0;

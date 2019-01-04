@@ -12,6 +12,8 @@
 #include <sstream>
 #include <iostream>
 #include <cmath>
+#include <algorithm>
+#include <functional>
 
 using namespace std;
 
@@ -72,6 +74,12 @@ namespace KMath {
 			result += fabs(x[i]-x[i-1])*(y[i]+y[i-1])/2.;
 		}
 		return result;
+	}
+	vector<bool> vector_and(const vector<bool>& v1, const vector<bool>& v2){
+		vector<bool> v3;
+		v3.resize(v1.size());
+		transform(v1.begin(),v1.end(),v2.begin(),v3.begin(),logical_and<bool>());
+		return v3;
 	}
 }
 
