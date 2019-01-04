@@ -31,6 +31,8 @@ done
 for TYPE in ${TYPES[@]}; do
 	for YEAR in ${YEARS[@]}; do
 		source exportSkim${TYPE}${YEAR}.sh
+		# skip nonexistent ones
+		if [[ $? -ne 0 ]]; then continue; fi
 
 		for SAMPLE in ${SAMPLES[@]}; do
 			./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} ${SELTYPE} ${INDIR} ${OUTDIR} ${STORE}
