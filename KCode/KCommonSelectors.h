@@ -343,6 +343,36 @@ class KMHTSelector : public KSelector {
 REGISTER_SELECTOR(MHT);
 
 //----------------------------------------------------
+//selects events based on a diagonal cut along the HT/MHT plane
+class KMHTHTRatioSelector : public KSelector {
+	public:
+		//constructor
+		KMHTHTRatioSelector() : KSelector() { }
+		KMHTHTRatioSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), debug(0) { 
+			//check for option
+			localOpt->Get("debug",debug);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("HT",1);
+			looper->fChain->SetBranchStatus("MHT",1);
+		}
+
+		//this selector doesn't add anything to tree
+
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			ratio = looper->MHT/looper->HT;
+			if (debug) cout << "HT=" << looper->HT << " MHT=" << looper->MHT << " Ratio=" << ratio << endl;
+			return ratio <= 1.0;
+		}
+
+		//member variables;
+		bool debug;
+		double ratio;
+};
+REGISTER_SELECTOR(MHTHTRatio);
+
+//----------------------------------------------------
 class KDijetAK4Selector : public KSelector {
 	public:
 		//constructor

@@ -42,10 +42,12 @@ baseline
 	NJet	i:njet[2]
 	HT	d:min[200]
 	MHT	d:min[200]
+	MHTHTRatio
 baselinegj
 	NJet	i:njet[2]
 	HT	d:min[200]
 	MHT	d:min[100]
+	MHTHTRatio
 dphi
 	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
 dphiinv
