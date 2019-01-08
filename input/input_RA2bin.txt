@@ -16,17 +16,18 @@ double:NdivX[518]
 vstring:selections[ra2bin]
 vstring:extra_text[#color[2]{n_{j} bin},#color[4]{n_{b} bin}]
 vstring:disable_branches[*]
-#bool:useTreeWeight[1]
+bool:useTreeWeight[1]
 #bool:debugWeight[1]
 
 SELECTION
 ra2bin
-	MCWeight
+	MCWeight	in:options[input/input_MCWeight_options.txt]
 	RA2Bin	in:options[input/input_RA2bin_options.txt]
 	Histo
 
 HISTO
 RA2bin	i:xnum[174]	d:xmin[0.5]	d:xmax[174.5]	s:xtitle[RA2 bin [^{}n_{j},^{}n_{b},^{}H_{T}^{miss},^{}H_{T}]]	s:ytitle[number of events]	b:ratio[0]	vd:xcuts[6.5,12.5,18.5,24.5,48.5]	vc:xcut_colors[kBlue,kBlue,kBlue,kRed,kRed]
 
-INPUT
-input/input_sets.txt
+SET
+hist	mc	T1tttt_2000_100	s:legname[T1tttt (2000/100)]	c:color[kBlue]	i:markerstyle[20]	s:drawopt[hist p]	s:legopt[p]	i:panel[0]
+	base	mc	T1tttt_2000_100	s:filename[tree_T1tttt_2000_100_MC2017.root]	b:signal[1]
