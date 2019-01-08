@@ -24,6 +24,9 @@ veto
 	IsoMuonTrackVeto
 	IsoElectronTrackVeto
 	IsoPionTrackVeto
+vetop
+	veto
+	Photon	b:veto[1]
 ra2bin
 	RA2Bin	in:options[input/input_RA2bin_options.txt]	b:forceadd[1]
 	PileupAcc	s:name[PileupAccAfter]	i:cut[20]	i:xnum[101]	d:xmin[-0.5]	d:xmax[100.5]	s:depname[PileupAccBefore]
@@ -50,7 +53,7 @@ dphiinv
 signalUnblind
 	common
 	baseline
-	veto
+	vetop
 	dphi
 	evtcleanmin
 	ra2bin
@@ -61,7 +64,7 @@ signal
 signalUnclean
 	common
 	baseline
-	veto
+	vetop
 	dphi
 	evtunclean
 	ra2bin
@@ -71,7 +74,7 @@ signalTight
 	NJet	i:njet[3]
 	HT	d:min[300]
 	MHT	d:min[300]
-	veto
+	vetop
 	dphi
 	evtcleanmin
 	ra2bin
@@ -81,7 +84,7 @@ signalTight250
 	NJet	i:njet[3]
 	HT	d:min[300]
 	MHT	d:min[250]
-	veto
+	vetop
 	dphi
 	evtcleanmin
 	ra2bin
@@ -91,21 +94,21 @@ signal2015
 	NJet	i:njet[4]
 	HT	d:min[500]
 	MHT	d:min[200]
-	veto
+	vetop
 	dphi
 	evtcleanmin
 	ra2bin
 LDP
 	common
 	baseline
-	veto
+	vetop
 	dphiinv
 	evtcleanmin
 	ra2bin
 LDPUnclean
 	common
 	baseline
-	veto
+	vetop
 	dphiinv
 	evtunclean
 	ra2bin
@@ -114,6 +117,7 @@ SLm
 	baseline
 	Muon
 	ElectronVeto
+	Photon	b:veto[1]
 	dphi
 	evtcleanmin
 	ra2bin
@@ -122,6 +126,7 @@ SLe
 	baseline
 	MuonVeto
 	Electron
+	Photon	b:veto[1]
 	dphi
 	evtcleanmin
 	ra2bin
@@ -130,6 +135,7 @@ SLmUnclean
 	baseline
 	Muon
 	ElectronVeto
+	Photon	b:veto[1]
 	dphi
 	evtunclean
 	ra2bin
@@ -138,6 +144,7 @@ SLeUnclean
 	baseline
 	MuonVeto
 	Electron
+	Photon	b:veto[1]
 	dphi
 	evtunclean
 	ra2bin
@@ -146,6 +153,7 @@ SLmLDP
 	baseline
 	Muon
 	ElectronVeto
+	Photon	b:veto[1]
 	dphiinv
 	evtcleanmin
 	ra2bin
@@ -154,6 +162,7 @@ SLeLDP
 	baseline
 	MuonVeto
 	Electron
+	Photon	b:veto[1]
 	dphiinv
 	evtcleanmin
 	ra2bin
@@ -180,6 +189,7 @@ DYm
 	ElectronVeto
 	IsoElectronTrackVeto
 	IsoPionTrackVeto
+	Photon	b:veto[1]
 	dphi
 	evtcleanmin
 	ra2bin
@@ -190,6 +200,7 @@ DYe
 	DiElectron
 	IsoMuonTrackVeto
 	IsoPionTrackVeto
+	Photon	b:veto[1]
 	dphi
 	evtcleanmin
 	ra2bin
@@ -216,6 +227,7 @@ DYmLDP
 	ElectronVeto
 	IsoElectronTrackVeto
 	IsoPionTrackVeto
+	Photon	b:veto[1]
 	dphiinv
 	evtcleanmin
 	ra2bin
@@ -226,6 +238,7 @@ DYeLDP
 	DiElectron
 	IsoMuonTrackVeto
 	IsoPionTrackVeto
+	Photon	b:veto[1]
 	dphiinv
 	evtcleanmin
 	ra2bin

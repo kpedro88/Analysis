@@ -239,18 +239,10 @@ class KPhotonSelector : public KSelector {
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			int NumPhotons = 0;
-			if(loose){
-				NumPhotons = looper->Photons->size();
-			}
-			else if(!trigger){
-				//tighten up ID
-				NumPhotons = count(looper->Photons_fullID->begin(),looper->Photons_fullID->end(),true);
-			}
-			else{
-				//tight up ID and pT
-				for(unsigned p = 0; p < looper->Photons->size(); ++p){
-					if(looper->Photons_fullID->at(p) and looper->Photons->at(p).Pt()>200) ++NumPhotons;
-				}
+			for(unsigned p = 0; p < looper->Photons->size(); ++p){
+				if(trigger){ if(looper->Photons_fullID->at(p) and looper->Photons->at(p).Pt()>200) ++NumPhotons; }
+				else if(loose){ if(looper->Photons->at(p).Pt()>100) ++NumPhotons; }
+				else{ if(looper->Photons_fullID->at(p) and looper->Photons->at(p).Pt()>100) ++NumPhotons; }
 			}
 			
 			return NumPhotons==(veto? 0 : 1);
