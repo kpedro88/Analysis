@@ -1073,6 +1073,20 @@ class KRA2BinSelector : public KSelector {
 			}
 			return -1;
 		}
+
+		float GetBinMax(string qty_name, const vector<unsigned>& bin_num){
+			for(unsigned q = 0; q < RA2VarNames.size(); ++q){
+				if(RA2VarNames[q]==qty_name) return RA2VarMax[q][bin_num[q]];
+			}
+			return -1;
+		}
+		
+		float GetBinMin(string qty_name, const vector<unsigned>& bin_num){
+			for(unsigned q = 0; q < RA2VarNames.size(); ++q){
+				if(RA2VarNames[q]==qty_name) return RA2VarMin[q][bin_num[q]];
+			}
+			return -1;
+		}
 		
 	public:
 		//member variables

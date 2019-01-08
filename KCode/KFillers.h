@@ -58,9 +58,14 @@ class KFiller_RA2bin : public KFiller {
 					double wb = w;
 					//weight by btag scale factor probability if available
 					if(BTagSF) {
-						int nb = RA2Bin->GetBin("BTags",RA2Bin->RA2binVec[b]);
-						if(nb>=0 && ((unsigned)nb)<BTagSF->prob.size()) wb *= BTagSF->prob[nb];
-						else wb = 0; //btag sf failed
+						double sfsum = 0;
+						float bmin = RA2Bin->GetBinMin("BTags",RA2Bin->RA2binVec[b]);
+						float bmax = RA2Bin->GetBinMax("BTags",RA2Bin->RA2binVec[b]);
+						for(int nb = (int)bmin+1; nb <= (int)bmax; ++nb){
+							if(nb>=BTagSF->prob.size()) break;
+							sfsum += BTagSF->prob[nb];
+						}
+						wb *= sfsum;
 					}
 					value.Fill(RA2Bin->RA2bins[b],wb);
 				}
