@@ -31,13 +31,13 @@ ra2bin
 	RA2Bin	in:options[input/input_RA2bin_options.txt]	b:forceadd[1]
 	PileupAcc	s:name[PileupAccAfter]	i:cut[20]	i:xnum[101]	d:xmin[-0.5]	d:xmax[100.5]	s:depname[PileupAccBefore]
 evtclean
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]	b:HTRatio[1]
-evtcleanmin
-	EventCleaning	b:JetID[1]	b:METRatio[0]	b:MuonJet[0]	b:FakeJet[0]	b:HTRatio[0]
-evtcleannomu
-	EventCleaning	b:JetID[1]	b:METRatio[1]	b:MuonJet[0]	b:FakeJet[1]	b:HTRatio[1]
-evtunclean
-	EventCleaning	b:JetID[1]	b:METRatio[0]	b:MuonJet[0]	b:FakeJet[1]	b:HTRatio[0]
+	JetID
+	METRatio	b:tag[1]
+	MuonJet	b:tag[1]
+	FakeJet	b:tag[1]
+	EcalNoiseJet	b:tag[1]
+	HTRatio	b:tag[1]
+	HTRatio	s:name[HTRatioDPhi]	b:HTDphi[1]	b:tag[1]
 baseline
 	NJet	i:njet[2]
 	HT	d:min[200]
@@ -57,19 +57,12 @@ signalUnblind
 	baseline
 	vetop
 	dphi
-	evtcleanmin
+	evtclean
 	ra2bin
 # all 2016, 5/fb 2017BCDE, 5/fb 2017F, 7.5/fb 2018AB, 7.5/fb 2018D
 signal
 	Blind	vi:intervalUnblindRuns[273158,284044,297050,299370,305044,305365,315257,316202,320673,321396]
 	signalUnblind
-signalUnclean
-	common
-	baseline
-	vetop
-	dphi
-	evtunclean
-	ra2bin
 signalTight
 	Blind	i:run[275125]
 	common
@@ -78,7 +71,7 @@ signalTight
 	MHT	d:min[300]
 	vetop
 	dphi
-	evtcleanmin
+	evtclean
 	ra2bin
 signalTight250
 	Blind	i:run[275125]
@@ -88,7 +81,7 @@ signalTight250
 	MHT	d:min[250]
 	vetop
 	dphi
-	evtcleanmin
+	evtclean
 	ra2bin
 signal2015
 	Blind	i:run[275125]
@@ -98,21 +91,14 @@ signal2015
 	MHT	d:min[200]
 	vetop
 	dphi
-	evtcleanmin
+	evtclean
 	ra2bin
 LDP
 	common
 	baseline
 	vetop
 	dphiinv
-	evtcleanmin
-	ra2bin
-LDPUnclean
-	common
-	baseline
-	vetop
-	dphiinv
-	evtunclean
+	evtclean
 	ra2bin
 SLm
 	common
@@ -121,7 +107,7 @@ SLm
 	ElectronVeto
 	Photon	b:veto[1]
 	dphi
-	evtcleanmin
+	evtclean
 	ra2bin
 SLe
 	common
@@ -130,25 +116,7 @@ SLe
 	Electron
 	Photon	b:veto[1]
 	dphi
-	evtcleanmin
-	ra2bin
-SLmUnclean
-	common
-	baseline
-	Muon
-	ElectronVeto
-	Photon	b:veto[1]
-	dphi
-	evtunclean
-	ra2bin
-SLeUnclean
-	common
-	baseline
-	MuonVeto
-	Electron
-	Photon	b:veto[1]
-	dphi
-	evtunclean
+	evtclean
 	ra2bin
 SLmLDP
 	common
@@ -157,7 +125,7 @@ SLmLDP
 	ElectronVeto
 	Photon	b:veto[1]
 	dphiinv
-	evtcleanmin
+	evtclean
 	ra2bin
 SLeLDP
 	common
@@ -166,7 +134,7 @@ SLeLDP
 	Electron
 	Photon	b:veto[1]
 	dphiinv
-	evtcleanmin
+	evtclean
 	ra2bin
 GJet
 	common
@@ -174,7 +142,7 @@ GJet
 	Photon	b:loose[0]
 	veto
 	dphi
-	evtcleanmin
+	evtclean
 	ra2bin
 GJetLoose
 	common
@@ -182,7 +150,7 @@ GJetLoose
 	Photon
 	veto
 	dphi
-	evtcleanmin
+	evtclean
 	ra2bin
 DYm
 	common
@@ -193,7 +161,7 @@ DYm
 	IsoPionTrackVeto
 	Photon	b:veto[1]
 	dphi
-	evtcleanmin
+	evtclean
 	ra2bin
 DYe
 	common
@@ -204,7 +172,7 @@ DYe
 	IsoPionTrackVeto
 	Photon	b:veto[1]
 	dphi
-	evtcleanmin
+	evtclean
 	ra2bin
 GJetLDP
 	common
@@ -212,7 +180,7 @@ GJetLDP
 	Photon	b:loose[0]
 	veto
 	dphiinv
-	evtcleanmin
+	evtclean
 	ra2bin
 GJetLooseLDP
 	common
@@ -220,7 +188,7 @@ GJetLooseLDP
 	Photon
 	veto
 	dphiinv
-	evtcleanmin
+	evtclean
 	ra2bin
 DYmLDP
 	common
@@ -231,7 +199,7 @@ DYmLDP
 	IsoPionTrackVeto
 	Photon	b:veto[1]
 	dphiinv
-	evtcleanmin
+	evtclean
 	ra2bin
 DYeLDP
 	common
@@ -242,7 +210,7 @@ DYeLDP
 	IsoPionTrackVeto
 	Photon	b:veto[1]
 	dphiinv
-	evtcleanmin
+	evtclean
 	ra2bin
 
 VARIATION

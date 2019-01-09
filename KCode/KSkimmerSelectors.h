@@ -502,74 +502,188 @@ class KIsoPionTrackVetoSelector : public KSelector {
 REGISTER_SELECTOR(IsoPionTrackVeto);
 
 //-------------------------------------------------------------
-//vetos events with bad jets (using PFJetID loose WP)
-class KEventCleaningSelector : public KSelector {
+//base class for filters (w/ tag mode to add branches)
+class KFilterSelector : public KSelector {
 	public:
 		//constructor
-		KEventCleaningSelector() : KSelector() { }
-		KEventCleaningSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { 
+		KFilterSelector() : KSelector() { }
+		KFilterSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), result(false), disable(false) {
 			//check for option
-			doJetID = localOpt->Get("JetID",false);
-			doMETRatio = localOpt->Get("METRatio",false);
-			doMuonJet = localOpt->Get("MuonJet",false);
-			doFakeJet = localOpt->Get("FakeJet",false);
-			doHTRatio = localOpt->Get("HTRatio",false);
-		}
-		virtual void CheckBase(){
-			//check if fastsim
-			bool fastsim = base->GetLocalOpt()->Get("fastsim",false);
-			//disable JetID for fastsim
-			if(fastsim) doJetID = false;
-			//disable FakeJet for non-fastsim
-			if(!fastsim) doFakeJet = false;
+			tag = localOpt->Get("tag",false);
+			if(tag) {
+				canfail = false;
+				forceadd = true;
+			}
 		}
 		virtual void SetBranches(){
 			if(!tree) return;
+			if(tag) tree->Branch((branchname+"Filter").c_str(),&result,"result/B");
 		}
-		
-		//this selector doesn't add anything to tree
-		
-		//used for non-dummy selectors
-		virtual bool Cut() {
-			bool goodEvent = (!doJetID || looper->JetID) &&
-							 (!doMETRatio || looper->PFCaloMETRatio < 5) &&
-							 (!doHTRatio || looper->HT5/looper->HT <= 2.0);
-			if(doMuonJet){
-				bool noMuonJet = true;
-				for(unsigned j = 0; j < looper->Jets->size(); ++j){
-					if(looper->Jets->at(j).Pt() > 200 && looper->Jets_muonEnergyFraction->at(j) > 0.5 && fabs(KMath::DeltaPhi(looper->Jets->at(j).Phi(),looper->METPhi)) > (TMath::Pi() - 0.4)){
-						noMuonJet = false;
-						break;
-					}
-				}
-				goodEvent &= noMuonJet;
-			}
-			if(doFakeJet){
-				bool noFakeJet = true;
-				//reject events with any jet pt>20, |eta|<2.5 NOT matched to a GenJet (w/in DeltaR<0.3) and chfrac < 0.1
-				for(unsigned j = 0; j < looper->Jets->size(); ++j){
-					if(looper->Jets->at(j).Pt() <= 20 || fabs(looper->Jets->at(j).Eta())>=2.5) continue;
-					bool genMatched = false;
-					for(unsigned g = 0; g < looper->GenJets->size(); ++g){
-						if(looper->GenJets->at(g).DeltaR(looper->Jets->at(j)) < 0.3) {
-							genMatched = true;
-							break;
-						}
-					}
-					if(!genMatched && looper->Jets_chargedHadronEnergyFraction->at(j) < 0.1){
-						noFakeJet = false;
-						break;
-					}
-				}
-				goodEvent &= noFakeJet;
-			}
-			return goodEvent;
+		virtual void GetResult() { }
+		virtual bool Cut(){
+			if(disable) result = true;
+			else GetResult();
+
+			return (tag or result);
 		}
-		
-		//member variables
-		bool doJetID, doMETRatio, doMuonJet, doFakeJet, doHTRatio;
+
+		//members
+		bool tag;
+		bool result;
+		bool disable;
+		string branchname;
 };
-REGISTER_SELECTOR(EventCleaning);
+
+//-------------------------------------------------------------
+//vetos events with bad jets (using PFJetID loose WP)
+class KJetIDSelector : public KFilterSelector {
+	public:
+		//constructor
+		KJetIDSelector() : KFilterSelector() { }
+		KJetIDSelector(string name_, OptionMap* localOpt_) : KFilterSelector(name_,localOpt_) {
+			branchname = "JetID";
+		}
+		virtual void CheckBase(){
+			//disable JetID for fastsim
+			if(base->GetLocalOpt()->Get("fastsim",false)) {
+				disable = true;
+			}
+		}
+		virtual void GetResult() {
+			result = looper->JetID;
+		}
+};
+REGISTER_SELECTOR(JetID);
+
+//-------------------------------------------------------------
+//vetos events with bad PFMET/CaloMET ratio
+class KMETRatioSelector : public KFilterSelector {
+	public:
+		//constructor
+		KMETRatioSelector() : KFilterSelector() { }
+		KMETRatioSelector(string name_, OptionMap* localOpt_) : KFilterSelector(name_,localOpt_) {
+			branchname = "METRatio";
+		}
+		virtual void GetResult() {
+			double ratio = looper->PFCaloMETRatio;
+			//negative value denotes buggy AK8 jets
+			if(ratio<0) ratio = looper->MET/looper->CaloMET;
+			result = (ratio < 5.0);
+		}
+};
+REGISTER_SELECTOR(METRatio);
+
+//-------------------------------------------------------------
+//vetos events with bad muon jets
+class KMuonJetSelector : public KFilterSelector {
+	public:
+		//constructor
+		KMuonJetSelector() : KFilterSelector() { }
+		KMuonJetSelector(string name_, OptionMap* localOpt_) : KFilterSelector(name_,localOpt_) {
+			branchname = "MuonJet";
+		}
+		virtual void GetResult() {
+			bool noMuonJet = true;
+			for(unsigned j = 0; j < looper->Jets->size(); ++j){
+				if(looper->Jets->at(j).Pt() > 200 && looper->Jets_muonEnergyFraction->at(j) > 0.5 && abs(KMath::DeltaPhi(looper->Jets->at(j).Phi(),looper->METPhi)) > (TMath::Pi() - 0.4)){
+					noMuonJet = false;
+					break;
+				}
+			}
+			result = noMuonJet;
+		}
+};
+REGISTER_SELECTOR(MuonJet);
+
+//-------------------------------------------------------------
+//vetos events with fake jets (fastsim only)
+class KFakeJetSelector : public KFilterSelector {
+	public:
+		//constructor
+		KFakeJetSelector() : KFilterSelector() { }
+		KFakeJetSelector(string name_, OptionMap* localOpt_) : KFilterSelector(name_,localOpt_) {
+			branchname = "FakeJet";
+		}
+		virtual void CheckBase(){
+			//disable JetID for fastsim
+			if(base->GetLocalOpt()->Get("fastsim",false)) {
+				disable = true;
+			}
+		}
+		virtual void GetResult() {
+			bool noFakeJet = true;
+			//reject events with any jet pt>20, |eta|<2.5 NOT matched to a GenJet (w/in DeltaR<0.3) and chfrac < 0.1
+			for(unsigned j = 0; j < looper->Jets->size(); ++j){
+				if(looper->Jets->at(j).Pt() <= 20 || abs(looper->Jets->at(j).Eta())>=2.5) continue;
+				bool genMatched = false;
+				for(unsigned g = 0; g < looper->GenJets->size(); ++g){
+					if(looper->GenJets->at(g).DeltaR(looper->Jets->at(j)) < 0.3) {
+						genMatched = true;
+						break;
+					}
+				}
+				if(!genMatched && looper->Jets_chargedHadronEnergyFraction->at(j) < 0.1){
+					noFakeJet = false;
+					break;
+				}
+			}
+			result = noFakeJet;
+		}
+};
+REGISTER_SELECTOR(FakeJet);
+
+//-------------------------------------------------------------
+//vetos events with ecal noise jet
+class KEcalNoiseJetSelector : public KFilterSelector {
+	public:
+		//constructor
+		KEcalNoiseJetSelector() : KFilterSelector() { }
+		KEcalNoiseJetSelector(string name_, OptionMap* localOpt_) : KFilterSelector(name_,localOpt_) {
+			branchname = "EcalNoiseJet";
+		}
+		virtual void GetResult() {
+			int counter = 0;
+			bool goodJet[2] = {true,true};
+			for(unsigned j = 0; j < looper->Jets->size(); ++j){
+				if(counter>=2) break;
+				if(looper->Jets_MHTMask->at(j)){
+					const auto& Jet = looper->Jets->at(j);
+					double dphi = abs(KMath::DeltaPhi(Jet.Phi(),looper->MHTPhi));
+					if(Jet.Pt()>250 and (dphi > 2.6 or dphi < 0.1)) goodJet[counter] = false;
+					++counter;
+				}
+			}
+			result = (goodJet[0] and goodJet[1]);
+		}
+};
+REGISTER_SELECTOR(EcalNoiseJet);
+
+//----------------------------------------------------
+//selects events based on a cut along the HT/DeltaPhi plane
+class KHTRatioSelector : public KFilterSelector {
+	public:
+		//constructor
+		KHTRatioSelector() : KFilterSelector() { }
+		KHTRatioSelector(string name_, OptionMap* localOpt_) : KFilterSelector(name_,localOpt_) { 
+			//check for option
+            doHTDPhiCut = localOpt->Get("HTDPhi",false);
+			if(doHTDPhiCut) branchname = "HTRatioDPhi";
+			else branchname = "HTRatio";
+		}
+		virtual void GetResult() {
+            //line slope from: https://indico.cern.ch/event/769759/contributions/3198262/attachments/1744238/2823253/HT5_noisyForwardJets.pdf
+            //x1 = 1.5 y1 = 0.95
+            //x2 = 3.5 y2 = 3.0
+            //slope = (3-0.95)/(3.5-1.5) = 1.025
+            //y = mx + b == > 0.95 = 1.025 *1.5 + b == > b = -0.5875            
+            if(doHTDPhiCut) result = (looper->DeltaPhi1 >= ((1.025*looper->HT5/looper->HT)-0.5875));
+            else result = (looper->HT5/looper->HT <= 2.0);
+		}
+
+		//member variables;
+		bool doHTDPhiCut;
+};
+REGISTER_SELECTOR(HTRatio);
 
 //-------------------------------------------------------------
 //selects based on nvtx
