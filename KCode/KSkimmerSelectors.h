@@ -9,6 +9,7 @@
 #include "KHisto.h"
 #include "../corrections/EventListFilter.h"
 #include "../corrections/Flattener.h"
+#include "../corrections/L1ECALPrefiringWeightCorrector.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -1160,6 +1161,59 @@ class KPileupAccSelector : public KSelector {
 		KRA2BinSelector* RA2Bin;
 };
 REGISTER_SELECTOR(PileupAcc);
+
+//-------------------------------------------------------------
+//add L1 prefiring weights to skims
+class KL1PrefiringWeightSelector : public KSelector {
+	public:
+		//constructor
+		KL1PrefiringWeightSelector() : KSelector() { }
+		KL1PrefiringWeightSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), systUnc(0.2), setup(false) {
+			forceadd = true;
+			canfail = false;
+			//check for option
+			useEMpt = localOpt->Get("useEMpt",true);
+			localOpt->Get("systUnc",systUnc);
+			localOpt->Get("fname",fname);
+		}
+		virtual void CheckBase(){
+			//disable this for data
+			if(base->IsData()) dummy = true;
+			else {
+				string basename = base->GetName();
+				string dataEra;
+				if(basename.find("2016")!=string::npos) dataEra = "2016BtoH";
+				else if(basename.find("2017")!=string::npos) dataEra = "2017BtoF";
+				setup = corrector.setup(fname,dataEra,useEMpt,systUnc);
+				if(!setup) cout << "Input error: could not set up L1ECALPrefiringWeightCorrector." << endl;
+			}
+		}
+		virtual void SetBranches(){
+			if(!tree or dummy) return;
+			tree->Branch("NonPrefiringProb",&prob,"prob/D");
+			tree->Branch("NonPrefiringProbUp",&probup,"probup/D");
+			tree->Branch("NonPrefiringProbDn",&probdn,"probdn/D");
+		}
+		virtual bool Cut(){
+			prob = probup = probdn = 1.0;
+			if(setup){
+				const auto& probs = corrector.getWeights(*looper->Photons, *looper->Jets, *looper->Jets_neutralEmEnergyFraction, *looper->Jets_chargedEmEnergyFraction);
+				prob = probs[0];
+				probup = probs[1];
+				probdn = probs[2];
+			}
+			return true;
+		}
+
+		//members
+		bool useEMpt;
+		double systUnc;
+		string fname;
+		L1ECALPrefiringWeightCorrector corrector;
+		bool setup;
+		double prob, probup, probdn;
+};
+REGISTER_SELECTOR(L1PrefiringWeight);
 
 //-------------------------------------------------------------
 //look at only a specific range of events
