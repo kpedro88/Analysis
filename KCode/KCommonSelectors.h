@@ -907,11 +907,13 @@ class KRA2BinSelector : public KSelector {
 	public:
 		//constructor
 		KRA2BinSelector() : KSelector() { }
-		KRA2BinSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), RA2Exclusive(true), DoBTagSF(false), debug(0), MCWeight(0) { 
+		KRA2BinSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), RA2Exclusive(true), DoBTagSF(false), bqty(-1), debug(0), MCWeight(0) { 
 			//assemble member vars from user input
 			localOpt->Get("RA2VarNames",RA2VarNames);
 			
 			for(unsigned q = 0; q < RA2VarNames.size(); ++q){
+				if(RA2VarNames[q]=="BTags") bqty = q;
+
 				stringstream pre;
 				pre << "RA2Var" << q;
 				
@@ -1045,8 +1047,31 @@ class KRA2BinSelector : public KSelector {
 			vector<unsigned> indices(RA2VarNames.size(),0);
 			vector<unsigned> bin_num(RA2VarNames.size(),0);
 			vector<unsigned> found_bins;
-			vector<vector<unsigned> > found_bin_nums;
+			vector<vector<unsigned>> found_bin_nums;
 			FindBin(indices,bins,0,bin_num,found_bins,found_bin_nums);
+
+			if(DoBTagSF and bqty>=0){
+				//search for other possible btag bins
+				vector<unsigned> extra_bins;
+				vector<vector<unsigned>> extra_bin_nums;
+				for(unsigned n = 0; n < found_bins.size(); ++n){
+					unsigned borig = found_bin_nums[n][bqty];
+					for(unsigned b = 0; b < RA2VarMax[bqty].size(); ++b){
+						//avoid duplicates
+						if(b==borig) continue;
+						auto new_bin_num = found_bin_nums[n];
+						new_bin_num[bqty] = b;
+						auto it = IDtoBinNumber.find(new_bin_num);
+						if(it != IDtoBinNumber.end()){
+							extra_bins.push_back(it->second);
+							extra_bin_nums.push_back(new_bin_num);
+						}
+					}
+				}
+				found_bins.insert(found_bins.end(),extra_bins.begin(),extra_bins.end());
+				found_bin_nums.insert(found_bin_nums.end(),extra_bin_nums.begin(),extra_bin_nums.end());
+			}
+
 			bin_vec = found_bin_nums;
 			return found_bins;
 		}
@@ -1056,7 +1081,7 @@ class KRA2BinSelector : public KSelector {
 			for(indices[pos] = 0; indices[pos] < bins[pos].size(); indices[pos]++){
 				bin_num[pos] = bins[pos][indices[pos]];
 				if(pos == indices.size()-1){
-					map<vector<unsigned>, unsigned>::iterator it = IDtoBinNumber.find(bin_num);
+					auto it = IDtoBinNumber.find(bin_num);
 					if(it != IDtoBinNumber.end()){
 						found_bins.push_back(it->second);
 						found_bin_nums.push_back(bin_num);
@@ -1072,15 +1097,7 @@ class KRA2BinSelector : public KSelector {
 			//assume all values are floats
 			vector<float> val;
 			if(RA2VarNames[qty]=="NJets") val.push_back(looper->NJets);
-			else if(RA2VarNames[qty]=="BTags") {
-				if(DoBTagSF){
-					//put this event into all btag bins
-					for(unsigned b = 0; b < RA2VarMax[qty].size(); ++b){
-						val.push_back(RA2VarMax[qty][b]);
-					}
-				}
-				else val.push_back(looper->BTags);
-			}
+			else if(RA2VarNames[qty]=="BTags") val.push_back(looper->BTags);
 			else if(RA2VarNames[qty]=="MHT") val.push_back(looper->MHT);
 			else if(RA2VarNames[qty]=="HT") val.push_back(looper->HT);
 			else if(RA2VarNames[qty]=="GenMHT") val.push_back(looper->GenMHT);
@@ -1121,6 +1138,7 @@ class KRA2BinSelector : public KSelector {
 	public:
 		//member variables
 		bool RA2Exclusive, DoBTagSF;
+		int bqty;
 		int debug;
 		vector<vector<unsigned> > all_bins;
 		vector<unsigned> RA2bins;
