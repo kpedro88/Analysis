@@ -606,8 +606,8 @@ class KFakeJetSelector : public KFilterSelector {
 			branchname = "FakeJet";
 		}
 		virtual void CheckBase(){
-			//disable JetID for fastsim
-			if(base->GetLocalOpt()->Get("fastsim",false)) {
+			//only enable for fastsim
+			if(!base->GetLocalOpt()->Get("fastsim",false)) {
 				disable = true;
 			}
 		}
