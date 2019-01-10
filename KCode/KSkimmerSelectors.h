@@ -647,8 +647,9 @@ class KEcalNoiseJetSelector : public KFilterSelector {
 			bool goodJet[2] = {true,true};
 			for(unsigned j = 0; j < looper->Jets->size(); ++j){
 				if(counter>=2) break;
-				if(looper->Jets_MHTMask->at(j)){
-					const auto& Jet = looper->Jets->at(j);
+				const auto& Jet = looper->Jets->at(j);
+				//MHT mask doesn't work for 2017 because of EE "fix", so check manually
+				if(Jet.Pt()>30 and abs(Jet.Eta())<5.0){
 					double dphi = abs(KMath::DeltaPhi(Jet.Phi(),looper->MHTPhi));
 					if(Jet.Pt()>250 and (dphi > 2.6 or dphi < 0.1)) goodJet[counter] = false;
 					++counter;
