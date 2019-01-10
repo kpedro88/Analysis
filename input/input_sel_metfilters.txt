@@ -1,5 +1,5 @@
 OPTION
-vstring:selections[sim,NVtx,eeBadSc,EcalDeadCellTP,HBHENoise,HBHEIsoNoise,globalTightHalo2016,BadChargedCandidate,BadPFMuon,METFilter]
+vstring:selections[sim,NVtx,eeBadSc,EcalDeadCellTP,HBHENoise,HBHEIsoNoise,globalSuperTightHalo2016,BadChargedCandidate,BadPFMuon,METFilter]
 
 SELECTION
 NVtx
@@ -17,8 +17,8 @@ HBHENoise
 HBHEIsoNoise
 	HBHEIsoNoiseFilter
 	sim
-globalTightHalo2016
-	globalTightHalo2016Filter
+globalSuperTightHalo2016
+	globalSuperTightHalo2016Filter
 	sim
 BadChargedCandidate
 	BadChargedCandidateFilter
@@ -32,7 +32,7 @@ METFilter
 	EcalDeadCellTriggerPrimitiveFilter
 	HBHENoiseFilter
 	HBHEIsoNoiseFilter
-	globalTightHalo2016Filter
+	globalSuperTightHalo2016Filter
 	BadChargedCandidateFilter
 	BadPFMuonFilter
 	sim

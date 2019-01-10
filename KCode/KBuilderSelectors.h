@@ -820,13 +820,13 @@ class KHBHEIsoNoiseFilterSelector : public KSelector {
 };
 REGISTER_SELECTOR(HBHEIsoNoiseFilter);
 
-class KglobalTightHalo2016FilterSelector : public KSelector {
+class KglobalSuperTightHalo2016FilterSelector : public KSelector {
 	public:
 		using KSelector::KSelector;
-		virtual void CheckBranches(){ looper->fChain->SetBranchStatus("globalTightHalo2016Filter",1); }
-		virtual bool Cut() { return looper->globalTightHalo2016Filter==1; }
+		virtual void CheckBranches(){ looper->fChain->SetBranchStatus("globalSuperTightHalo2016Filter",1); }
+		virtual bool Cut() { return looper->globalSuperTightHalo2016Filter==1; }
 };
-REGISTER_SELECTOR(globalTightHalo2016Filter);
+REGISTER_SELECTOR(globalSuperTightHalo2016Filter);
 
 class KBadChargedCandidateFilterSelector : public KSelector {
 	public:
