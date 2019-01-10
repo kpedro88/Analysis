@@ -22,7 +22,8 @@ bool:useTreeWeight[1]
 SELECTION
 ra2bin
 	MCWeight	in:options[input/input_MCWeight_options.txt]
-	RA2Bin	in:options[input/input_RA2bin_options.txt]
+	BTagSF
+	RA2Bin	in:options[input/input_RA2bin_options.txt]	b:RA2Exclusive[0]
 	Histo
 
 HISTO
