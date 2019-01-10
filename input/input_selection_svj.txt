@@ -12,10 +12,21 @@ bool:doClone[1]
 vstring:disable_branches[*clean*,*JECdown*,*JECup*,*JERdown*,*JERup*,*Clean*]
 
 SELECTION
+common
+	PDFNorm
+	L1PrefiringWeight	b:useEMpt[1]	d:systUnc[0.2]	s:fname[corrections/L1PrefiringMaps_new.root]
+evtclean
+	METRatio	b:tag[1]
+	MuonJet	b:tag[1]
+	EcalNoiseJet	b:tag[1]
+	HTRatio	b:tag[1]
+	HTRatio	s:name[HTRatioDPhi]	b:HTDPhi[1]	b:tag[1]
 veto
 	MuonVeto
 	ElectronVeto
 dijet
+	common
+	evtclean
 	Dijet	i:njet[2]	b:id[1]	d:eta[2.4]	d:pt[200]
 dijetmt
 	dijet
