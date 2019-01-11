@@ -518,7 +518,7 @@ class KFilterSelector : public KSelector {
 		}
 		virtual void SetBranches(){
 			if(!tree) return;
-			if(tag) tree->Branch((branchname+"Filter").c_str(),&result,"result/B");
+			if(tag) tree->Branch((branchname+"Filter").c_str(),&result,(branchname+"Filter/O").c_str());
 		}
 		virtual void GetResult() { }
 		virtual bool Cut(){
