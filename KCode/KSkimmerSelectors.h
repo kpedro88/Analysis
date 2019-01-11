@@ -242,8 +242,8 @@ class KPhotonSelector : public KSelector {
 			int NumPhotons = 0;
 			for(unsigned p = 0; p < looper->Photons->size(); ++p){
 				if(trigger){ if(looper->Photons_fullID->at(p) and looper->Photons->at(p).Pt()>200) ++NumPhotons; }
-				else if(loose){ if(looper->Photons->at(p).Pt()>100) ++NumPhotons; }
-				else{ if(looper->Photons_fullID->at(p) and looper->Photons->at(p).Pt()>100) ++NumPhotons; }
+				else if(loose){ if(looper->Photons_hasPixelSeed->at(p)==0. and looper->Photons->at(p).Pt()>100) ++NumPhotons; }
+				else{ if(looper->Photons_hasPixelSeed->at(p)==0. and looper->Photons_fullID->at(p) and looper->Photons->at(p).Pt()>100) ++NumPhotons; }
 			}
 			
 			return NumPhotons==(veto? 0 : 1);
