@@ -1,7 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Thu Dec 13 15:32:16 2018 by ROOT version 6.06/01
+// Sat Jan 12 19:14:10 2019 by ROOT version 6.06/01
 // from TTree PreSelection/PreSelection
+// from TTree tree/all observables, signal
 // found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16/RunIIFall17MiniAODv2.TTJets_TuneCP5_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
 //////////////////////////////////////////////////////////
 
@@ -462,6 +463,17 @@ public :
    Double_t        TrueNumInteractions;
    Double_t        Weight;
    vector<TLorentzVector> *ZCandidates;
+   Double_t        NonPrefiringProb;
+   Double_t        NonPrefiringProbUp;
+   Double_t        NonPrefiringProbDn;
+   Bool_t          METRatioFilter;
+   Bool_t          MuonJetFilter;
+   Bool_t          FakeJetFilter;
+   Bool_t          EcalNoiseJetFilter;
+   Bool_t          HTRatioFilter;
+   Bool_t          HTRatioDPhiFilter;
+   UInt_t          RA2bin;
+   vector<unsigned int> *RA2bins;
 
    // List of branches
    TBranch        *b_RunNum;   //!
@@ -903,6 +915,17 @@ public :
    TBranch        *b_TrueNumInteractions;   //!
    TBranch        *b_Weight;   //!
    TBranch        *b_ZCandidates;   //!
+   TBranch        *b_prob;   //!
+   TBranch        *b_probup;   //!
+   TBranch        *b_probdn;   //!
+   TBranch        *b_METRatioFilter;   //!
+   TBranch        *b_MuonJetFilter;   //!
+   TBranch        *b_FakeJetFilter;   //!
+   TBranch        *b_EcalNoiseJetFilter;   //!
+   TBranch        *b_HTRatioFilter;   //!
+   TBranch        *b_HTRatioDPhiFilter;   //!
+   TBranch        *b_RA2binBranch;   //!
+   TBranch        *b_RA2bins;   //!
 
    NtupleClass(TTree *tree=0);
    virtual ~NtupleClass();
@@ -928,6 +951,7 @@ NtupleClass::NtupleClass(TTree *tree) : fChain(0)
          f = new TFile("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16/RunIIFall17MiniAODv2.TTJets_TuneCP5_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root");
       }
       TDirectory * dir = (TDirectory*)f->Get("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16/RunIIFall17MiniAODv2.TTJets_TuneCP5_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root:/TreeMaker2");
+      f->GetObject("tree",tree);
       dir->GetObject("PreSelection",tree);
 
    }
@@ -1233,6 +1257,7 @@ void NtupleClass::Init(TTree *tree)
    TriggerPrescales = 0;
    TriggerVersion = 0;
    ZCandidates = 0;
+   RA2bins = 0;
    // Set branch addresses and branch pointers
    if (!tree) return;
    fChain = tree;
@@ -1678,6 +1703,17 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("TrueNumInteractions", &TrueNumInteractions, &b_TrueNumInteractions);
    fChain->SetBranchAddress("Weight", &Weight, &b_Weight);
    fChain->SetBranchAddress("ZCandidates", &ZCandidates, &b_ZCandidates);
+   fChain->SetBranchAddress("NonPrefiringProb", &NonPrefiringProb, &b_prob);
+   fChain->SetBranchAddress("NonPrefiringProbUp", &NonPrefiringProbUp, &b_probup);
+   fChain->SetBranchAddress("NonPrefiringProbDn", &NonPrefiringProbDn, &b_probdn);
+   fChain->SetBranchAddress("METRatioFilter", &METRatioFilter, &b_METRatioFilter);
+   fChain->SetBranchAddress("MuonJetFilter", &MuonJetFilter, &b_MuonJetFilter);
+   fChain->SetBranchAddress("FakeJetFilter", &FakeJetFilter, &b_FakeJetFilter);
+   fChain->SetBranchAddress("EcalNoiseJetFilter", &EcalNoiseJetFilter, &b_EcalNoiseJetFilter);
+   fChain->SetBranchAddress("HTRatioFilter", &HTRatioFilter, &b_HTRatioFilter);
+   fChain->SetBranchAddress("HTRatioDPhiFilter", &HTRatioDPhiFilter, &b_HTRatioDPhiFilter);
+   fChain->SetBranchAddress("RA2bin", &RA2bin, &b_RA2binBranch);
+   fChain->SetBranchAddress("RA2bins", &RA2bins, &b_RA2bins);
    Notify();
 }
 
