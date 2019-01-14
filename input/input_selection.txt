@@ -38,7 +38,11 @@ evtclean
 	FakeJet	b:tag[1]
 	EcalNoiseJet	b:tag[1]
 	HTRatio	b:tag[1]
+	HTRatio	s:name[HTRatioTight]	b:tight[1]	b:tag[1]
 	HTRatio	s:name[HTRatioDPhi]	b:HTDPhi[1]	b:tag[1]
+	HTRatio	s:name[HTRatioDPhiTight]	b:tight[1]	b:HTDPhi[1]	b:tag[1]
+	LowNeutralJet	b:tag[1]
+	LowNeutralJet	s:name[LowNeutralJetTight]	b:tight[1]	b:tag[1]
 baseline
 	NJet	i:njet[2]
 	HT	d:min[200]

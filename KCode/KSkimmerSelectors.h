@@ -649,7 +649,7 @@ class KEcalNoiseJetSelector : public KFilterSelector {
 				if(counter>=2) break;
 				const auto& Jet = looper->Jets->at(j);
 				//MHT mask doesn't work for 2017 because of EE "fix", so check manually
-				if(Jet.Pt()>30 and abs(Jet.Eta())<5.0){
+				if(Jet.Pt()>30 and abs(Jet.Eta())<5.0 and abs(Jet.Eta())>2.4){
 					double dphi = abs(KMath::DeltaPhi(Jet.Phi(),looper->MHTPhi));
 					if(Jet.Pt()>250 and (dphi > 2.6 or dphi < 0.1)) goodJet[counter] = false;
 					++counter;
@@ -660,6 +660,26 @@ class KEcalNoiseJetSelector : public KFilterSelector {
 };
 REGISTER_SELECTOR(EcalNoiseJet);
 
+//-------------------------------------------------------------
+//vetos events with leading jet having low neutral em
+class KLowNeutralJetSelector : public KFilterSelector {
+	public:
+		//constructor
+		KLowNeutralJetSelector() : KFilterSelector() { }
+		KLowNeutralJetSelector(string name_, OptionMap* localOpt_) : KFilterSelector(name_,localOpt_) {
+			tight = localOpt->Get("tight",false);
+			if(tight) branchname = "LowNeutralJetTight";
+			else branchname = "LowNeutralJet";
+		}
+		virtual void GetResult() {
+			result = !(looper->Jets_neutralEmEnergyFraction->at(0)<(tight ? 0.05 : 0.03) and abs(looper->DeltaPhi1)>(TMath::Pi()-0.4));
+		}
+
+		//member variables
+		bool tight;
+};
+REGISTER_SELECTOR(LowNeutralJet);
+
 //----------------------------------------------------
 //selects events based on a cut along the HT/DeltaPhi plane
 class KHTRatioSelector : public KFilterSelector {
@@ -669,21 +689,30 @@ class KHTRatioSelector : public KFilterSelector {
 		KHTRatioSelector(string name_, OptionMap* localOpt_) : KFilterSelector(name_,localOpt_) { 
 			//check for option
             doHTDPhiCut = localOpt->Get("HTDPhi",false);
-			if(doHTDPhiCut) branchname = "HTRatioDPhi";
-			else branchname = "HTRatio";
+            tight = localOpt->Get("tight",false);
+			if(doHTDPhiCut) {
+				if(tight) branchname = "HTRatioDPhiTight";
+				else branchname = "HTRatioDPhi";
+			}
+			else {
+				if(tight) branchname = "HTRatioTight";
+				else branchname = "HTRatio";
+			}
 		}
 		virtual void GetResult() {
             //line slope from: https://indico.cern.ch/event/769759/contributions/3198262/attachments/1744238/2823253/HT5_noisyForwardJets.pdf
             //x1 = 1.5 y1 = 0.95
             //x2 = 3.5 y2 = 3.0
             //slope = (3-0.95)/(3.5-1.5) = 1.025
-            //y = mx + b == > 0.95 = 1.025 *1.5 + b == > b = -0.5875            
-            if(doHTDPhiCut) result = (looper->DeltaPhi1 >= ((1.025*looper->HT5/looper->HT)-0.5875));
-            else result = (looper->HT5/looper->HT <= 2.0);
+            //y = mx + b == > 0.95 = 1.025 *1.5 + b == > b = -0.5875
+			double htratio = looper->HT5/looper->HT;
+			//keep any event with ht5/ht < 1.2
+            if(doHTDPhiCut) result = (htratio < 1.2 ? true : (looper->DeltaPhi1 >= tight ? 5.3*htratio - 4.78 : 1.025*htratio - 0.5875) );
+            else result = (htratio <= (tight ? 1.3 : 2.0));
 		}
 
-		//member variables;
-		bool doHTDPhiCut;
+		//member variables
+		bool doHTDPhiCut, tight;
 };
 REGISTER_SELECTOR(HTRatio);
 
