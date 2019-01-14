@@ -1,8 +1,8 @@
 periods = {
-    "2018A1": "Run2018A-PromptReco-v1",
-    "2018A2": "Run2018A-PromptReco-v2",
-    "2018A3": "Run2018A-PromptReco-v3",
-    "2018B1": "Run2018B-PromptReco-v1",
+    "2018A": "Run2018A-17Sep2018-v1",
+    "2018B": "Run2018B-17Sep2018-v1",
+    "2018C": "Run2018C-17Sep2018-v1",
+    "2018D": "Run2018D-PromptReco-v2",
 }
 
 datasets = ["JetHT","MET","EGamma","SingleMuon"]
