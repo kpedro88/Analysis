@@ -1925,6 +1925,8 @@ class KJetAK8TrainingSelector : public KSelector {
 				"JetsAK8_neutralMultiplicity",
 				"JetsAK8_photonMultiplicity",
 				"JetsAK8_isHV",
+				"JetsAK8_subjets",
+				"JetsAK8_subjets_bDiscriminatorCSV",
 				"MT_AK8",
 				"Weight"
 			};
@@ -1966,7 +1968,6 @@ class KJetAK8TrainingSelector : public KSelector {
 			tree->Branch("ptD",&b_ptD,"ptD/D");
 			tree->Branch("axismajor",&b_axismajor,"axismajor/D");
 			tree->Branch("axisminor",&b_axisminor,"axisminor/D");
-			tree->Branch("axisminor",&b_axisminor,"axisminor/D");
 			tree->Branch("ecfN2b1",&b_ecfN2b1,"ecfN2b1/D");
 			tree->Branch("ecfN2b2",&b_ecfN2b2,"ecfN2b2/D");
 			tree->Branch("ecfN3b1",&b_ecfN3b1,"ecfN3b1/D");
@@ -1999,6 +2000,9 @@ class KJetAK8TrainingSelector : public KSelector {
 			tree->Branch("nNeuHad",&b_nNeuHad,"nNeuHad/I");
 			tree->Branch("nNeu",&b_nNeu,"nNeu/I");
 			tree->Branch("nPho",&b_nPho,"nPho/I");
+			tree->Branch("nSubjets",&b_nSubjets,"nSubjets/I");
+			tree->Branch("subjetCSV1",&b_subjetCSV1,"subjetCSV1/I");
+			tree->Branch("subjetCSV2",&b_subjetCSV2,"subjetCSV2/I");
 			if(flatten){
 				for(unsigned b = 0; b < flatbranches.size(); ++b){
 					tree->Branch(("flatweight"+flatbranches[b]).c_str(),&b_flatweights[b],("flatweight"+flatbranches[b]+"/D").c_str());
@@ -2046,6 +2050,9 @@ class KJetAK8TrainingSelector : public KSelector {
 				b_nNeuHad = looper->JetsAK8_neutralHadronMultiplicity->at(j);
 				b_nNeu = looper->JetsAK8_neutralMultiplicity->at(j);
 				b_nPho = looper->JetsAK8_photonMultiplicity->at(j);
+				b_nSubjets = looper->JetsAK8_subjets->at(j).size();
+				b_subjetCSV1 = b_nSubjets>0 ? looper->JetsAK8_subjets_bDiscriminatorCSV->at(j).at(0) : -10;
+				b_subjetCSV2 = b_nSubjets>1 ? looper->JetsAK8_subjets_bDiscriminatorCSV->at(j).at(1) : -10;
 				b_isHV = looper->JetsAK8_isHV->at(j);
 				b_mt = looper->MT_AK8;
 				b_procweight = looper->Weight;
@@ -2074,7 +2081,8 @@ class KJetAK8TrainingSelector : public KSelector {
 		double b_tau21, b_tau32, b_msd;
 		double b_lean, b_ptdrlog;
 		double b_fChEM, b_fChHad, b_fEle, b_fHFEM, b_fHFHad, b_fMu, b_fNeuEM, b_fNeuHad, b_fPho;
-		int b_mult, b_index;
+		int b_mult, b_index, b_nSubjets;
+		double b_subjetCSV1, b_subjetCSV2;
 		int b_nCh, b_nChHad, b_nEle, b_nMu, b_nNeuHad, b_nNeu, b_nPho;
 		bool b_isHV;
 		//spectators or per-event
