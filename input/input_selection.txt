@@ -27,7 +27,7 @@ veto
 	IsoPionTrackVeto
 vetop
 	veto
-	Photon	b:veto[1]
+	Photon	s:name[PhotonVeto]	b:veto[1]
 ra2bin
 	RA2Bin	in:options[input/input_RA2bin_options.txt]	b:forceadd[1]
 #	PileupAcc	s:name[PileupAccAfter]	i:cut[20]	i:xnum[101]	d:xmin[-0.5]	d:xmax[100.5]	s:depname[PileupAccBefore]
