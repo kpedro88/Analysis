@@ -1936,6 +1936,7 @@ class KJetAK8TrainingSelector : public KSelector {
 		}
 
 		virtual void CheckBase(){
+			//get pt flattening weights
 			if(!flatten) return;
 			string qty = "bothjetAK8pt";
 			string flatsuff;
@@ -1956,6 +1957,11 @@ class KJetAK8TrainingSelector : public KSelector {
 			}
 			else flatten = false;
 			if(flatfile) flatfile->Close();
+			//get signal parameters
+			base->GetLocalOpt()->Get("mZprime",b_mZprime);
+			base->GetLocalOpt()->Get("mDark",b_mDark);
+			base->GetLocalOpt()->Get("rinv",b_rinv);
+			base->GetLocalOpt()->Get("alpha",b_alpha);
 		}
 
 		virtual void SetBranches(){
@@ -1984,6 +1990,10 @@ class KJetAK8TrainingSelector : public KSelector {
 			tree->Branch("index",&b_index,"index/I");
 			tree->Branch("mt",&b_mt,"mt/D");
 			tree->Branch("procweight",&b_procweight,"procweight/D");
+			tree->Branch("mZprime",&b_mZprime,"mZprime/D");
+			tree->Branch("mDark",&b_mDark,"mDark/D");
+			tree->Branch("rinv",&b_rinv,"rinv/D");
+			tree->Branch("alpha",&b_alpha,"alpha/D");
 			tree->Branch("fChEM",&b_fChEM,"fChEM/D");
 			tree->Branch("fChHad",&b_fChHad,"fChHad/D");
 			tree->Branch("fEle",&b_fEle,"fEle/D");
@@ -2001,8 +2011,8 @@ class KJetAK8TrainingSelector : public KSelector {
 			tree->Branch("nNeu",&b_nNeu,"nNeu/I");
 			tree->Branch("nPho",&b_nPho,"nPho/I");
 			tree->Branch("nSubjets",&b_nSubjets,"nSubjets/I");
-			tree->Branch("subjetCSV1",&b_subjetCSV1,"subjetCSV1/I");
-			tree->Branch("subjetCSV2",&b_subjetCSV2,"subjetCSV2/I");
+			tree->Branch("subjetCSV1",&b_subjetCSV1,"subjetCSV1/D");
+			tree->Branch("subjetCSV2",&b_subjetCSV2,"subjetCSV2/D");
 			if(flatten){
 				for(unsigned b = 0; b < flatbranches.size(); ++b){
 					tree->Branch(("flatweight"+flatbranches[b]).c_str(),&b_flatweights[b],("flatweight"+flatbranches[b]+"/D").c_str());
@@ -2085,6 +2095,7 @@ class KJetAK8TrainingSelector : public KSelector {
 		double b_subjetCSV1, b_subjetCSV2;
 		int b_nCh, b_nChHad, b_nEle, b_nMu, b_nNeuHad, b_nNeu, b_nPho;
 		bool b_isHV;
+		double b_mZprime, b_mDark, b_rinv, b_alpha;
 		//spectators or per-event
 		double b_mt, b_procweight;
 		vector<double> b_flatweights;
