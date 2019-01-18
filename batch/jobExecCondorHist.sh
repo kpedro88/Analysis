@@ -12,18 +12,14 @@ echo "CMSSW on Condor"
 CMSSWVER="$1"
 INDIR="$2"
 STORE="$3"
-INPUTS="$4"
-OUTPUT="$5"
-EXTRA="$6"
+JOBNAME="$4"
 
 echo ""
 echo "parameter set:"
 echo "CMSSWVER:   $CMSSWVER"
 echo "INDIR:      $INDIR"
 echo "STORE:      $STORE"
-echo "INPUTS:     $INPUTS"
-echo "OUTPUT:     $OUTPUT"
-echo "EXTRA:      $EXTRA"
+echo "JOBNAME:    $JOBNAME"
 
 tar -xzf ${CMSSWVER}.tar.gz
 cd ${CMSSWVER}
@@ -33,15 +29,10 @@ source /cvmfs/cms.cern.ch/cmsset_default.sh
 eval `scramv1 runtime -sh`
 cd src/Analysis
 
-if [ -n "$EXTRA" ] && [ -n "$OUTPUT" ]; then
-  EXTRA="$EXTRA","$OUTPUT"
-elif [ -z "$EXTRA" ] && [ -n "$OUTPUT" ]; then
-  EXTRA="$OUTPUT"
-fi
-
 #run macro
-echo "run: root -b -q -l 'KPlotDriver.C+("'"'"$INDIR"'",{'"$INPUTS"'},{'"$EXTRA"")' 2>&1"
-root -b -q -l 'KPlotDriver.C+("'"$INDIR"'",{'"$INPUTS"'},{'"$EXTRA"'})' 2>&1
+MACRO=$(cat $_CONDOR_SCRATCH_DIR/macro_${JOBNAME}.txt)
+echo "run: root -b -q -l '$MACRO'"
+root -b -q -l "${MACRO}" 2>&1
 
 ROOTEXIT=$?
 
