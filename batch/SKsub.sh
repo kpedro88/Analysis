@@ -4,7 +4,7 @@ source exportProd.sh
 
 JOBDIR=jobs
 INPUT=input/input_selection.txt
-SELTYPE=signal,LDP,SLm,SLe,SLmLDP,SLeLDP,GJet_CleanVars,DYm_CleanVars,DYe_CleanVars
+SELTYPE=signal,signalSideband,LDP,SLm,SLe,SLmLDP,SLeLDP,GJet_CleanVars,DYm_CleanVars,DYe_CleanVars
 SELTYPE2=GJetLoose_CleanVars,GJetLDP_CleanVars,GJetLooseLDP_CleanVars,DYmLDP_CleanVars,DYeLDP_CleanVars
 SELTYPE3=signal_JECup,signal_JECdown,signal_JERup,signal_JERdown
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}

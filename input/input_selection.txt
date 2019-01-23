@@ -53,6 +53,11 @@ baselinegj
 	HT	d:min[200]
 	MHT	d:min[100]
 	MHTHTRatio
+baselinesb
+	NJet	i:njet[2]
+	HT	d:min[200]
+	MHT	d:min[200]	d:max[300]
+	MHTHTRatio
 dphi
 	DeltaPhi	vd:DeltaPhi[0.5,0.5,0.3,0.3]
 dphiinv
@@ -68,6 +73,13 @@ signalUnblind
 signal
 	Blind	vi:intervalUnblindRuns[273158,284044,297050,299370,305044,305365,315257,316202,320673,321396]
 	signalUnblind
+signalSideband
+	common
+	baselinesb
+	vetop
+	dphi
+	evtclean
+	ra2bin
 signalTight
 	Blind	i:run[275125]
 	common

@@ -318,9 +318,10 @@ class KMHTSelector : public KSelector {
 	public:
 		//constructor
 		KMHTSelector() : KSelector() { }
-		KMHTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), min(200) { 
-			//check for option
+		KMHTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), min(200), max(-1) { 
+			//check for options
 			localOpt->Get("min",min);
+			localOpt->Get("max",max);
 			doGen = localOpt->Get("gen",false);
 		}
 		virtual void CheckBranches(){
@@ -332,12 +333,12 @@ class KMHTSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			if(doGen) return looper->GenMHT > min;
-			else return looper->MHT > min;
+			double mht = doGen ? looper->GenMHT : looper->MHT;
+			return ( (min<0 or mht>min) and (max<0 or mht<max) );
 		}
 		
 		//member variables
-		double min;
+		double min, max;
 		bool doGen;
 };
 REGISTER_SELECTOR(MHT);
