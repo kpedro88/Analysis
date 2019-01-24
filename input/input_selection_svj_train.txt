@@ -11,40 +11,22 @@ bool:doClone[0]
 vstring:disable_branches[*]
 
 SELECTION
-dijetmthad-train
-	JetAK8Training	s:flatname[corrections/svj_dijetmthad_jetAK8.root]
-dijetmthadloose-train
-	JetAK8Training	s:flatname[corrections/svj_dijetmthadloose_jetAK8.root]
-dijetmthadloose-train-flatsig
-	JetAK8Training	s:flatname[corrections/svj_dijetmthadloose_jetAK8.root]	vs:flatnumers[SVJ_3000_20_0.3_0.2,SVJ_4000_20_0.3_0.2,SVJ_2000_20_0.3_0.2,SVJ_1000_20_0.3_0.2,SVJ_3000_1_0.3_0.2,SVJ_3000_50_0.3_0.2,SVJ_3000_100_0.3_0.2,SVJ_3000_20_0.1_0.2,SVJ_3000_20_0.5_0.2,SVJ_3000_20_0.7_0.2,SVJ_3000_20_0.3_0.1,SVJ_3000_20_0.3_0.5,SVJ_3000_20_0.3_1]	vs:flatbranches[Z3,Z4,Z2,Z1,D1,D50,D100,R1,R5,R7,A1,A5,A10]
-dijetmthadloose-train-flatsigall
-	JetAK8Training	s:flatname[corrections/svj_dijetmthadloose_jetAK8_all.root]	vs:flatnumer[SVJ_mZprime_20_0.3_0.2] vs:flatbranches[all]
 dijetmtdetahadmf-train-flatsig
-	JetAK8Training	s:flatname[corrections/svj_dijetmtdetahadmf_jetAK8.root]	vs:flatnumers[SVJ_3000_20_0.3_0.2,SVJ_4000_20_0.3_0.2,SVJ_2000_20_0.3_0.2,SVJ_1000_20_0.3_0.2,SVJ_3000_1_0.3_0.2,SVJ_3000_50_0.3_0.2,SVJ_3000_100_0.3_0.2,SVJ_3000_20_0.1_0.2,SVJ_3000_20_0.5_0.2,SVJ_3000_20_0.7_0.2,SVJ_3000_20_0.3_0.1,SVJ_3000_20_0.3_0.5,SVJ_3000_20_0.3_1]	vs:flatbranches[Z3,Z4,Z2,Z1,D1,D50,D100,R1,R5,R7,A1,A5,A10]
+	JetAK8Training	s:flatname[corrections/svj_dijetmtdetahadmf_jetAK8.root]	in:options[input/input_svj_train_options.txt]
 
 SET
-base	skim	QCD_Pt_1000to1400	s:filename[tree_QCD_Pt_1000to1400.root]	b:data[0]	s:flatsuff[QCD]
-base	skim	QCD_Pt_120to170	s:filename[tree_QCD_Pt_120to170.root]	b:data[0]	s:flatsuff[QCD]
-base	skim	QCD_Pt_1400to1800	s:filename[tree_QCD_Pt_1400to1800.root]	b:data[0]	s:flatsuff[QCD]
-base	skim	QCD_Pt_170to300	s:filename[tree_QCD_Pt_170to300.root]	b:data[0]	s:flatsuff[QCD]
-base	skim	QCD_Pt_1800to2400	s:filename[tree_QCD_Pt_1800to2400.root]	b:data[0]	s:flatsuff[QCD]
-base	skim	QCD_Pt_2400to3200	s:filename[tree_QCD_Pt_2400to3200.root]	b:data[0]	s:flatsuff[QCD]
-base	skim	QCD_Pt_300to470	s:filename[tree_QCD_Pt_300to470.root]	b:data[0]	s:flatsuff[QCD]
-base	skim	QCD_Pt_3200toInf	s:filename[tree_QCD_Pt_3200toInf.root]	b:data[0]	s:flatsuff[QCD]
-base	skim	QCD_Pt_470to600	s:filename[tree_QCD_Pt_470to600.root]	b:data[0]	s:flatsuff[QCD]
-base	skim	QCD_Pt_600to800	s:filename[tree_QCD_Pt_600to800.root]	b:data[0]	s:flatsuff[QCD]
-base	skim	QCD_Pt_800to1000	s:filename[tree_QCD_Pt_800to1000.root]	b:data[0]	s:flatsuff[QCD]
-base	skim	QCD_Pt_80to120	s:filename[tree_QCD_Pt_80to120.root]	b:data[0]	s:flatsuff[QCD]
-base	skim	SVJ2_mZprime-1000_mDark-20_rinv-0.3_alpha-0.2	s:filename[tree_SVJ2_mZprime-1000_mDark-20_rinv-0.3_alpha-0.2.root]	b:data[0]	s:flatsuff[SVJ_1000_20_0.3_0.2]
-base	skim	SVJ2_mZprime-2000_mDark-20_rinv-0.3_alpha-0.2	s:filename[tree_SVJ2_mZprime-2000_mDark-20_rinv-0.3_alpha-0.2.root]	b:data[0]	s:flatsuff[SVJ_2000_20_0.3_0.2]
-base	skim	SVJ2_mZprime-3000_mDark-100_rinv-0.3_alpha-0.2	s:filename[tree_SVJ2_mZprime-3000_mDark-100_rinv-0.3_alpha-0.2.root]	b:data[0]	s:flatsuff[SVJ_3000_100_0.3_0.2]
-base	skim	SVJ2_mZprime-3000_mDark-1_rinv-0.3_alpha-0.2	s:filename[tree_SVJ2_mZprime-3000_mDark-1_rinv-0.3_alpha-0.2.root]	b:data[0]	s:flatsuff[SVJ_3000_1_0.3_0.2]
-base	skim	SVJ2_mZprime-3000_mDark-20_rinv-0.1_alpha-0.2	s:filename[tree_SVJ2_mZprime-3000_mDark-20_rinv-0.1_alpha-0.2.root]	b:data[0]	s:flatsuff[SVJ_3000_20_0.1_0.2]
-base	skim	SVJ2_mZprime-3000_mDark-20_rinv-0.3_alpha-0.1	s:filename[tree_SVJ2_mZprime-3000_mDark-20_rinv-0.3_alpha-0.1.root]	b:data[0]	s:flatsuff[SVJ_3000_20_0.3_0.1]
-base	skim	SVJ2_mZprime-3000_mDark-20_rinv-0.3_alpha-0.2	s:filename[tree_SVJ2_mZprime-3000_mDark-20_rinv-0.3_alpha-0.2.root]	b:data[0]	s:flatsuff[SVJ_3000_20_0.3_0.2]
-base	skim	SVJ2_mZprime-3000_mDark-20_rinv-0.3_alpha-0.5	s:filename[tree_SVJ2_mZprime-3000_mDark-20_rinv-0.3_alpha-0.5.root]	b:data[0]	s:flatsuff[SVJ_3000_20_0.3_0.5]
-base	skim	SVJ2_mZprime-3000_mDark-20_rinv-0.3_alpha-1	s:filename[tree_SVJ2_mZprime-3000_mDark-20_rinv-0.3_alpha-1.root]	b:data[0]	s:flatsuff[SVJ_3000_20_0.3_1]
-base	skim	SVJ2_mZprime-3000_mDark-20_rinv-0.5_alpha-0.2	s:filename[tree_SVJ2_mZprime-3000_mDark-20_rinv-0.5_alpha-0.2.root]	b:data[0]	s:flatsuff[SVJ_3000_20_0.5_0.2]
-base	skim	SVJ2_mZprime-3000_mDark-20_rinv-0.7_alpha-0.2	s:filename[tree_SVJ2_mZprime-3000_mDark-20_rinv-0.7_alpha-0.2.root]	b:data[0]	s:flatsuff[SVJ_3000_20_0.7_0.2]
-base	skim	SVJ2_mZprime-3000_mDark-50_rinv-0.3_alpha-0.2	s:filename[tree_SVJ2_mZprime-3000_mDark-50_rinv-0.3_alpha-0.2.root]	b:data[0]	s:flatsuff[SVJ_3000_50_0.3_0.2]
-base	skim	SVJ2_mZprime-4000_mDark-20_rinv-0.3_alpha-0.2	s:filename[tree_SVJ2_mZprime-4000_mDark-20_rinv-0.3_alpha-0.2.root]	b:data[0]	s:flatsuff[SVJ_4000_20_0.3_0.2]
+base	skim	QCD_Pt_1000to1400_MC2017	s:filename[tree_QCD_Pt_1000to1400_MC2017.root]	b:data[0]	s:flatsuff[QCD]
+base	skim	QCD_Pt_120to170_MC2017	s:filename[tree_QCD_Pt_120to170_MC2017.root]	b:data[0]	s:flatsuff[QCD]
+base	skim	QCD_Pt_1400to1800_MC2017	s:filename[tree_QCD_Pt_1400to1800_MC2017.root]	b:data[0]	s:flatsuff[QCD]
+base	skim	QCD_Pt_170to300_MC2017	s:filename[tree_QCD_Pt_170to300_MC2017.root]	b:data[0]	s:flatsuff[QCD]
+base	skim	QCD_Pt_1800to2400_MC2017	s:filename[tree_QCD_Pt_1800to2400_MC2017.root]	b:data[0]	s:flatsuff[QCD]
+base	skim	QCD_Pt_2400to3200_MC2017	s:filename[tree_QCD_Pt_2400to3200_MC2017.root]	b:data[0]	s:flatsuff[QCD]
+base	skim	QCD_Pt_300to470_MC2017	s:filename[tree_QCD_Pt_300to470_MC2017.root]	b:data[0]	s:flatsuff[QCD]
+base	skim	QCD_Pt_3200toInf_MC2017	s:filename[tree_QCD_Pt_3200toInf_MC2017.root]	b:data[0]	s:flatsuff[QCD]
+base	skim	QCD_Pt_470to600_MC2017	s:filename[tree_QCD_Pt_470to600_MC2017.root]	b:data[0]	s:flatsuff[QCD]
+base	skim	QCD_Pt_600to800_MC2017	s:filename[tree_QCD_Pt_600to800_MC2017.root]	b:data[0]	s:flatsuff[QCD]
+base	skim	QCD_Pt_800to1000_MC2017	s:filename[tree_QCD_Pt_800to1000_MC2017.root]	b:data[0]	s:flatsuff[QCD]
+base	skim	QCD_Pt_80to120_MC2017	s:filename[tree_QCD_Pt_80to120_MC2017.root]	b:data[0]	s:flatsuff[QCD]
+
+INPUT
+input/input_svj_sets_sig.txt
