@@ -19,7 +19,7 @@ Add the flag `-f` to force recompilation of all drivers.
 
 To run interactively, applying the "signal" selection to the "T1tttt\_1500\_100" sample and writing output trees to a folder "test/tree\_${SELECTION}":
 ```
-root -b -q -l 'KSkimDriver.C+("T1tttt_1500_100","signal","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16",{"input/input_selection.txt"},{},"test/tree")'
+root -b -q -l 'KSkimDriver.C+("T1tttt_2000_100_MC2017","signal","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16",{"input/input_selection.txt"},{},"test/tree")'
 ```
 
 To remake the input list of sets automatically, for data and MC:
@@ -38,9 +38,9 @@ To submit jobs to Condor (add the flag `-k` to reuse the existing CMSSW tarball)
 ```
 cd batch
 ./SKsub.sh -t MC,Signal,Data -y 2016,2017
-./SKsub_fast.sh
+./SKsub.sh -t Fast -y 2016,2017
 ```
-Note: `SKsub_fast.sh` should only be run after the scanning step, below, is completed.
+Note: the command with the argument `-t Fast` should only be run after the scanning step, below, is completed.
 
 After the skims finish, some may need to be hadded (split or extended samples):
 ```
@@ -59,12 +59,13 @@ The SUSY FastSim signal samples contain multiple model points per file. Before s
 
 To run the scanner interactively:
 ```
-root -b -q -l 'KScanDriver.C+("T1bbbb_block0","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16",{"input/input_scan.txt"},{})'
+root -b -q -l 'KScanDriver.C+("T1tttt_MC2017_block0","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16",{"input/input_scan.txt"},{})'
 ```
 
 To make the input lists (.txt and .sh) of FastSim samples automatically:
 ```
-python makeScanInput.py -n 10
+python makeScanInput.py -d Summer16v3Fast -r input/dict_scan_2016.py -w input/input_sets_scan_2016.txt -e batch/exportScan2016.sh -y 2016 -n 10
+python makeScanInput.py -d Fall17Fast -r input/dict_scan_2017.py -w input/input_sets_scan_2017.txt -e batch/exportScan2017.sh -y 2017 -n 10
 ```
 The last argument splits the scan input list into multiple blocks (each containing `n` ntuple files) for batch submission.  
 Note: as above, this script uses the python file lists in [TreeMaker/Production/python](https://github.com/TreeMaker/TreeMaker/tree/Run2/Production/python).
@@ -72,7 +73,7 @@ Note: as above, this script uses the python file lists in [TreeMaker/Production/
 To submit jobs to Condor:
 ```
 cd batch
-./SCsub.sh
+./SCsub.sh -y 2016,2017
 ```
 
 After the jobs finish, the split output files should be combined (in batch mode due to the typically large number of hadd operations necessary):
@@ -82,7 +83,8 @@ After the jobs finish, the split output files should be combined (in batch mode 
 
 To make the input lists of model points automatically for skimming, plotting, and datacards, after the scan jobs are finished and combined:
 ```
-python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16/scan/
+python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16/scan/ -m MC2016 -s input/input_sets_skim_fast_2016.txt -c input/input_sets_DC_fast_2016.txt -e batch/exportFast2016.sh
+python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16/scan/ -m MC2017 -s input/input_sets_skim_fast_2017.txt -c input/input_sets_DC_fast_2017.txt -e batch/exportFast2017.sh
 ```
 
 <a name="combined"></a>A separate script is available to create a "combined" model by adding together multiple signal models with different weights.

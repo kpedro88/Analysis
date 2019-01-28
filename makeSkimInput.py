@@ -10,13 +10,14 @@ def makeSkimLine(short_name,full_names,file_mins,file_maxs,mothers,btype="skim",
     expline = the_name + " \\\n"
     return (line,expline)
 
-def makeSkimInput(read,write,export,btype="skim",nfiles=0,data=False,folder="",nfilesTM=1):
+def makeSkimInput(read,write,export,btype="skim",nfiles=0,data=False,folder="",nfilesTM=1,preamble=""):
     readname = read.replace(".py","").split("/")[-1]
     rfile = imp.load_source(readname,read)
     wfile = open(write,'w')
     efile = open(export,'w')
 
     # preamble for file
+    if len(preamble)>0: wfile.write(preamble+"\n")
     wfile.write("SET\n")
     
     # preamble for script to export array of sample names

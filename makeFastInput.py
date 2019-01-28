@@ -19,6 +19,10 @@ def msplit(line):
 parser = OptionParser()
 parser.add_option("-d", "--dir", dest="dir", default="/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV8/scan/", help="location of root files (LFN)")
 parser.add_option("-k", "--skip", dest="skip", default="", help="topologies to skip (comma-separated)")
+parser.add_option("-m", "--match", dest="match", default="", help="pick only files matching this string")
+parser.add_option("-s", "--skim", dest="skim", default="input/input_sets_skim_fast.txt", help="skim output file to write")
+parser.add_option("-c", "--card", dest="card", default="input/input_sets_DC_fast.txt", help="datacard output file to write")
+parser.add_option("-e", "--export", dest="export", default="batch/exportFast.sh", help="export file to write")
 (options, args) = parser.parse_args()
 
 # parse skip list
@@ -28,11 +32,14 @@ skiplist = options.skip.split(",") if len(options.skip)>0 else []
 files = filter(None,os.popen("xrdfs root://cmseos.fnal.gov/ ls "+options.dir).read().split('\n'))
 # basename
 files = [ f.split("/")[-1] for f in files]
+# match
+if len(options.match)>0:
+    files = [f for f in files if options.match in f]
 
 # open files
-wfile = open("input/input_sets_skim_fast.txt",'w')
-dfile = open("input/input_sets_DC_fast.txt",'w')
-sfile = open("batch/exportFast.sh",'w')
+wfile = open(options.skim,'w')
+dfile = open(options.card,'w')
+sfile = open(options.export,'w')
 
 # preamble for script
 sfile.write("#!/bin/bash\n")
@@ -51,16 +58,17 @@ for file in files:
             skip = True
             break
     if skip: continue
-    # parse filename: model, mMother-X, mLSP-Y, fast.root
+    # parse filename: model, mMother-X, mLSP-Y, [MC####], fast.root
     fsplit = file.split('_')
     model = '_'.join(fsplit[0:-3])
+    year = fsplit[-4]
     mMother = msplit(fsplit[-3])
     mLSP = msplit(fsplit[-2])
     mother_ID = []
     # get cross section
     this_xsec, mother_ID = get_xsec(model,mMother)
     # make short name
-    short_name = model + "_" + str(mMother) + "_" + str(mLSP) + "_" + "fast"
+    short_name = model + "_" + str(mMother) + "_" + str(mLSP) + ("_" + year if len(fsplit)>4 else "") + "_" + "fast"
     # make set list for skimming
     wline = "base" + "\t" + "skim" + "\t" + short_name + "\t" + "s:filename[" + file + "]" + "\t" + "b:fastsim[1]" + "\t" + "vi:mother[" + str(','.join(str(m) for m in mother_ID)) + "]" + "\t" + "b:data[0]" + "\n"
     wfile.write(wline)
