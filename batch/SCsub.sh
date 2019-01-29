@@ -21,8 +21,6 @@ done
 
 ./SKcheck.sh ${CHECKARGS}
 
-source exportScan.sh
-
 for YEAR in ${YEARS[@]}; do
 	source exportScan${YEAR}.sh
 

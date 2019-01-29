@@ -50,7 +50,7 @@ while getopts "d:i:s:g:x:o:kruvht" opt; do
 	;;
 	i) INPUT=$OPTARG
 	;;
-	g) SEARCH=$OPTARG
+	g) SEARCH="$OPTARG"
 	;;
 	v) VERBOSE=1
 	;;

@@ -13,7 +13,8 @@ fileArray = filter(None,os.popen("xrdfs root://cmseos.fnal.gov/ ls "+options.dir
 fileArray = [ f.split("/")[-1] for f in fileArray]
 
 #find sample names
-fileArray = [ "_".join(f.split("_")[:-( ("block" in f)+("part" in f)+("fast" in f) )]) for f in fileArray ]
+checks = ["block","part","fast","MC20"]
+fileArray = [ "_".join([ff for ff in f.split("_") if not any(c in ff for c in checks)]) for f in fileArray ]
 
 #find unique samples
 fileSet = set(fileArray)

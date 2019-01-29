@@ -12,9 +12,10 @@ SUFF=fast
 SEARCH="_block"
 UPDATE=0
 SKIPTREE=0
+VERBOSE=0
 
 #check arguments
-while getopts "kn:rsd:g:ut" opt; do
+while getopts "kn:rsS:d:g:utv" opt; do
   case "$opt" in
   k) CHECKARGS="${CHECKARGS} -k"
     ;;
@@ -24,14 +25,18 @@ while getopts "kn:rsd:g:ut" opt; do
     ;;
   s) SUFF=""
     ;;
+  S) SUFF="$OPTARG"
+    ;;
   d) DIR=$OPTARG;
     ;;
-  g) SEARCH=$OPTARG;
+  g) SEARCH="$OPTARG";
     ;;
   u) UPDATE=1
      TESTARGS="${TESTARGS} -u"
     ;;
   t) SKIPTREE=1
+    ;;
+  v) VERBOSE=1
     ;;
   esac
 done
@@ -39,6 +44,9 @@ done
 TESTARGS="${TESTARGS} -d ${DIR} -g ${SEARCH}"
 if [[ -n "$SUFF" ]]; then
   TESTARGS="${TESTARGS} -s ${SUFF}"
+fi
+if [ "$VERBOSE" -eq 1 ]; then
+  TESTARGS="${TESTARGS} -v"
 fi
 
 ./SKcheck.sh ${CHECKARGS}
