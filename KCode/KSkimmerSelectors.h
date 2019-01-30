@@ -2024,6 +2024,8 @@ class KJetAK8TrainingSelector : public KSelector {
 		virtual bool Cut(){
 			for(unsigned j = 0; j < min(looper->JetsAK8->size(),3ul); ++j){
 				b_pt = looper->JetsAK8->at(j).Pt();
+				//temporary protection for crazy values
+				if(b_pt<100) continue;
 				b_eta = looper->JetsAK8->at(j).Eta();
 				b_phi = looper->JetsAK8->at(j).Phi();
 				b_index = j;
