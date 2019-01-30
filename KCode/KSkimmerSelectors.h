@@ -756,7 +756,7 @@ class KNBJetSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return ( (nbjet_min==-1 || looper->BTags >= nbjet_min) && (nbjet_max==-1 || looper->BTags <= nbjet_max) );
+			return ( (nbjet_min==-1 || looper->BTagsDeepCSV >= nbjet_min) && (nbjet_max==-1 || looper->BTagsDeepCSV <= nbjet_max) );
 		}
 		
 		//member variables
@@ -812,8 +812,10 @@ class KBTagEfficiencySelector : public KSelector {
 	public:
 		//constructor
 		KBTagEfficiencySelector() : KSelector() { }
-		KBTagEfficiencySelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), CSVv2WP(0.8484) {
+		KBTagEfficiencySelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
 			canfail = false;
+			set_wp = localOpt->Get("wp",wp);
+			if(!set_wp) localOpt->Get("wps",wps);
 			//initialize histograms using KPlot2D::CreateHist() method
 			TH1::AddDirectory(kFALSE);
 			KPlot2D* ptmp = new KPlot2D("n_eff_b","",localOpt,NULL);
@@ -829,6 +831,19 @@ class KBTagEfficiencySelector : public KSelector {
 			d_eff_c = (TH2F*)n_eff_b->Clone("d_eff_c");
 			d_eff_udsg = (TH2F*)n_eff_b->Clone("d_eff_udsg");
 		}
+		virtual void CheckBase(){
+			//disable this for data
+			if(base->IsData()) {
+				dummy = true;
+			}
+			//year-dependent WP
+			if(!set_wp){
+				if(base->GetName().find("MC2016")!=std::string::npos) wp = wps[0];
+				else if(base->GetName().find("MC2017")!=std::string::npos) wp = wps[1];
+				else if(base->GetName().find("MC2018")!=std::string::npos) wp = wps[2];
+				else wp = 0.;
+			}
+		}
 		
 		//this selector doesn't add anything to tree
 		
@@ -841,21 +856,21 @@ class KBTagEfficiencySelector : public KSelector {
 				
 				//fill by flavor
 				int flav = abs(looper->Jets_hadronFlavor->at(ja));
-				double csv = looper->Jets_bDiscriminatorCSV->at(ja);
+				double csv = looper->Jets_bJetTagDeepCSVBvsAll->at(ja);
 				double pt = looper->Jets->at(ja).Pt();
 				//use abs(eta) for now
 				double eta = fabs(looper->Jets->at(ja).Eta());
 				if(flav==5){
 					d_eff_b->Fill(pt,eta);
-					if(csv > CSVv2WP) n_eff_b->Fill(pt,eta);
+					if(csv > wp) n_eff_b->Fill(pt,eta);
 				}
 				else if(flav==4){
 					d_eff_c->Fill(pt,eta);
-					if(csv > CSVv2WP) n_eff_c->Fill(pt,eta);
+					if(csv > wp) n_eff_c->Fill(pt,eta);
 				}
 				else if(flav<4 || flav==21){
 					d_eff_udsg->Fill(pt,eta);
-					if(csv > CSVv2WP) n_eff_udsg->Fill(pt,eta);
+					if(csv > wp) n_eff_udsg->Fill(pt,eta);
 				}
 			}
 			
@@ -863,30 +878,22 @@ class KBTagEfficiencySelector : public KSelector {
 		}
 		
 		virtual void Finalize(TFile* file){
-			if(localOpt->Get("saveAll",false)){
-				//write to file
-				file->cd();
-				d_eff_b->Write();
-				d_eff_c->Write();
-				d_eff_udsg->Write();
-				n_eff_b->Write();
-				n_eff_c->Write();
-				n_eff_udsg->Write();
-			}
-			else{		
+			if(!dummy){
 				//write numer and denom to file (in case of hadding)
 				file->cd();
-				n_eff_b->Write();
 				d_eff_b->Write();
-				n_eff_c->Write();
 				d_eff_c->Write();
-				n_eff_udsg->Write();
 				d_eff_udsg->Write();
+				n_eff_b->Write();
+				n_eff_c->Write();
+				n_eff_udsg->Write();
 			}
 		}
 		
 		//member variables
-		double CSVv2WP;
+		bool set_wp;
+		double wp;
+		vector<double> wps;
 		TH2F *n_eff_b, *n_eff_c, *n_eff_udsg;
 		TH2F *d_eff_b, *d_eff_c, *d_eff_udsg;
 };
