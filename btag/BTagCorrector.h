@@ -160,7 +160,7 @@ class BTagCorrector {
 		}
 		
 		//method 1a
-		double GetSimpleCorrection(vector<TLorentzVector>* Jets, vector<int>* Jets_flavor, vector<bool>* Jets_HTMask, vector<double>* Jets_bDiscriminatorCSV){
+		double GetSimpleCorrection(vector<TLorentzVector>* Jets, vector<int>* Jets_flavor, vector<bool>* Jets_HTMask, vector<double>* Jets_bDiscriminator, double wp){
 			//result
 			double c_numer = 1.0; //data
 			double c_denom = 1.0; //mc
@@ -177,10 +177,10 @@ class BTagCorrector {
 				double sf_a = sfEffLists[ja][1];
 				
 				//jet index, pt, eta, flavor, csv, eff, sf, cf
-				if(debug) cout << "Jet " << ja << ": " << Jets->at(ja).Pt() << ", " << fabs(Jets->at(ja).Eta()) << ", " << abs(Jets_flavor->at(ja))  << ", " << Jets_bDiscriminatorCSV->at(ja)
+				if(debug) cout << "Jet " << ja << ": " << Jets->at(ja).Pt() << ", " << fabs(Jets->at(ja).Eta()) << ", " << abs(Jets_flavor->at(ja))  << ", " << Jets_bDiscriminator->at(ja)
 								<< ", " << sfEffLists[ja][0] << ", " << sfEffLists[ja][1] << ", " << sfEffLists[ja][2] << endl;
 							
-				if(Jets_bDiscriminatorCSV->at(ja) > 0.8484){
+				if(Jets_bDiscriminator->at(ja) > wp){
 					c_numer *= eff_a;
 					c_denom *= eff_a*sf_a;
 				}
@@ -251,7 +251,7 @@ btagcorr->SetCalibFastSim("btag/CSV_13TEV_Combined_14_7_2016.csv");
 vector<double> prob = btagcorr->GetCorrections(Jets,Jets_hadronFlavor,Jets_HTMask);
 //put event in each btag bin, weighted by prob[0], prob[1], prob[2], prob[3] for nb = 0, 1, 2, 3+
 //instead, if cutting on nb, use method 1a in event loop to get event weight
-double corr = btagcorr->GetSimpleCorrection(Jets,Jets_hadronFlavor,Jets_HTMask,Jets_bDiscriminatorCSV);
+double corr = btagcorr->GetSimpleCorrection(Jets,Jets_hadronFlavor,Jets_HTMask,Jets_bJetTagDeepCSVBvsAll,0.6324);
 */
 
 #endif

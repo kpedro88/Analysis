@@ -939,8 +939,10 @@ class KBTagSFSelector : public KSelector {
 			localOpt->Get("debug",debug);
 			if(debug==2) btagcorr.SetDebug(true);
 			
-			//initialize btag corrector calibrations
-			btagcorr.SetCalib("btag/CSVv2_Moriond17_B_H_mod.csv");
+			has_calib = localOpt->Get("calib",calib);
+			if(!has_calib) localOpt->Get("calibs",calibs);
+			has_calibfast = localOpt->Get("calibfast",calibfast);
+			if(!has_calibfast) localOpt->Get("calibsfast",calibsfast);
 		}
 		virtual void CheckDeps(){
 			//set dependencies here
@@ -951,11 +953,22 @@ class KBTagSFSelector : public KSelector {
 			looper->fChain->SetBranchStatus("Jets_HTMask",1);
 			looper->fChain->SetBranchStatus("Jets",1);
 			looper->fChain->SetBranchStatus("Jets_hadronFlavor",1);
-			if(debug) looper->fChain->SetBranchStatus("BTags",1);
+			if(debug) looper->fChain->SetBranchStatus("BTagsDeepCSV",1);
 		}
 		virtual void CheckBase(){
 			//don't even bother
 			if(depfailed) return;
+
+			//check for year
+			if(!has_calib){
+				if(base->GetName().find("MC2016")!=std::string::npos) calib = calibs[0];
+				else if(base->GetName().find("MC2017")!=std::string::npos) calib = calibs[1];
+				else if(base->GetName().find("MC2018")!=std::string::npos) calib = calibs[2];
+				else calib = "";
+			}
+			//initialize btag corrector calibrations
+			btagcorr.SetCalib(calib);
+
 			//check for option
 			int btagSFunc = MCWeight->btagSFunc; btagcorr.SetBtagSFunc(btagSFunc);
 			int mistagSFunc = MCWeight->mistagSFunc; btagcorr.SetMistagSFunc(mistagSFunc);
@@ -971,9 +984,16 @@ class KBTagSFSelector : public KSelector {
 			//check fastsim stuff
 			bool fastsim = base->GetLocalOpt()->Get("fastsim",false); btagcorr.SetFastSim(fastsim);
 			if(fastsim){
+				//check for year
+				if(!has_calibfast){
+					if(base->GetName().find("MC2016")!=std::string::npos) calibfast = calibsfast[0];
+					else if(base->GetName().find("MC2017")!=std::string::npos) calibfast = calibsfast[1];
+					else if(base->GetName().find("MC2018")!=std::string::npos) calibfast = calibsfast[2];
+					else calibfast = "";
+				}
 				//initialize btag corrector fastsim calibrations
 				//todo: check the sample name and choose the appropriate CFs (once available)
-				btagcorr.SetCalibFastSim("btag/fastsim_csvv2_ttbar_26_1_2017.csv");
+				if(!calibfast.empty()) btagcorr.SetCalibFastSim(calibfast);
 				
 				//check for option
 				int btagCFunc = MCWeight->btagCFunc; btagcorr.SetBtagCFunc(btagCFunc);
@@ -988,7 +1008,7 @@ class KBTagSFSelector : public KSelector {
 			//get probabilities
 			prob = btagcorr.GetCorrections(looper->Jets,looper->Jets_hadronFlavor,looper->Jets_HTMask);
 			if(debug>0) {
-				cout << "BTags = " << looper->BTags << endl;
+				cout << "BTags = " << looper->BTagsDeepCSV << endl;
 				cout << "prob = ";
 				copy(prob.begin(),prob.end(),ostream_iterator<double>(cout," "));
 				cout << endl;
@@ -998,6 +1018,9 @@ class KBTagSFSelector : public KSelector {
 		
 		//member variables
 		int debug;
+		string calib, calibfast;
+		bool has_calib, has_calibfast;
+		vector<string> calibs, calibsfast;
 		BTagCorrector btagcorr;
 		vector<double> prob;
 		KMCWeightSelector* MCWeight;

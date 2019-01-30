@@ -29,5 +29,5 @@ SELECTION
 corr
 	MCWeight	in:options[input/input_MCWeight_options.txt]	b:trigcorr[0]	b:puacccorr[0]
 	METFilter	b:onlydata[1]
-	BTagSF
+	BTagSF	vs:calibs[btag/DeepCSV_Moriond17_B_H_mod.csv,btag/DeepCSV_94XSF_V3_B_F_mod.csv,btag/DeepCSV_94XSF_V3_B_F_mod.csv]
 	Histo
