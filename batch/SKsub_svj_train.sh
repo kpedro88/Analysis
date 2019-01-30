@@ -9,21 +9,19 @@ INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims/t
 OUTDIR=tree
 STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims
 CHECKARGS=""
+TYPES=()
 
 #check arguments
-while getopts "k" opt; do
+while getopts "kt:" opt; do
 	case "$opt" in
 		k) CHECKARGS="${CHECKARGS} -k"
+		;;
+		t) IFS="," read -a TYPES <<< "$OPTARG"
 		;;
 	esac
 done
 
 ./SKcheck.sh ${CHECKARGS}
-
-TYPES=(
-SVJ \
-SVJBkg \
-)
 
 for TYPE in ${TYPES[@]}; do
 	if [ "$TYPE" = SVJ ]; then

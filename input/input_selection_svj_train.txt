@@ -15,18 +15,18 @@ dijetmtdetahadmf-train-flatsig
 	JetAK8Training	s:flatname[corrections/svj_dijetmtdetahadmf_jetAK8.root]	in:options[input/input_svj_train_options.txt]
 
 SET
-base	skim	QCD_Pt_1000to1400_MC2017	s:filename[tree_QCD_Pt_1000to1400_MC2017.root]	b:data[0]	s:flatsuff[QCD]
-base	skim	QCD_Pt_120to170_MC2017	s:filename[tree_QCD_Pt_120to170_MC2017.root]	b:data[0]	s:flatsuff[QCD]
-base	skim	QCD_Pt_1400to1800_MC2017	s:filename[tree_QCD_Pt_1400to1800_MC2017.root]	b:data[0]	s:flatsuff[QCD]
-base	skim	QCD_Pt_170to300_MC2017	s:filename[tree_QCD_Pt_170to300_MC2017.root]	b:data[0]	s:flatsuff[QCD]
-base	skim	QCD_Pt_1800to2400_MC2017	s:filename[tree_QCD_Pt_1800to2400_MC2017.root]	b:data[0]	s:flatsuff[QCD]
-base	skim	QCD_Pt_2400to3200_MC2017	s:filename[tree_QCD_Pt_2400to3200_MC2017.root]	b:data[0]	s:flatsuff[QCD]
-base	skim	QCD_Pt_300to470_MC2017	s:filename[tree_QCD_Pt_300to470_MC2017.root]	b:data[0]	s:flatsuff[QCD]
-base	skim	QCD_Pt_3200toInf_MC2017	s:filename[tree_QCD_Pt_3200toInf_MC2017.root]	b:data[0]	s:flatsuff[QCD]
-base	skim	QCD_Pt_470to600_MC2017	s:filename[tree_QCD_Pt_470to600_MC2017.root]	b:data[0]	s:flatsuff[QCD]
-base	skim	QCD_Pt_600to800_MC2017	s:filename[tree_QCD_Pt_600to800_MC2017.root]	b:data[0]	s:flatsuff[QCD]
-base	skim	QCD_Pt_800to1000_MC2017	s:filename[tree_QCD_Pt_800to1000_MC2017.root]	b:data[0]	s:flatsuff[QCD]
-base	skim	QCD_Pt_80to120_MC2017	s:filename[tree_QCD_Pt_80to120_MC2017.root]	b:data[0]	s:flatsuff[QCD]
+base	skim	QCD_Pt_1000to1400_MC2017	s:filename[tree_QCD_Pt_1000to1400_MC2017.root]	b:data[0]	s:flatsuff[QCD_MC2017]
+base	skim	QCD_Pt_120to170_MC2017	s:filename[tree_QCD_Pt_120to170_MC2017.root]	b:data[0]	s:flatsuff[QCD_MC2017]
+base	skim	QCD_Pt_1400to1800_MC2017	s:filename[tree_QCD_Pt_1400to1800_MC2017.root]	b:data[0]	s:flatsuff[QCD_MC2017]
+base	skim	QCD_Pt_170to300_MC2017	s:filename[tree_QCD_Pt_170to300_MC2017.root]	b:data[0]	s:flatsuff[QCD_MC2017]
+base	skim	QCD_Pt_1800to2400_MC2017	s:filename[tree_QCD_Pt_1800to2400_MC2017.root]	b:data[0]	s:flatsuff[QCD_MC2017]
+base	skim	QCD_Pt_2400to3200_MC2017	s:filename[tree_QCD_Pt_2400to3200_MC2017.root]	b:data[0]	s:flatsuff[QCD_MC2017]
+base	skim	QCD_Pt_300to470_MC2017	s:filename[tree_QCD_Pt_300to470_MC2017.root]	b:data[0]	s:flatsuff[QCD_MC2017]
+base	skim	QCD_Pt_3200toInf_MC2017	s:filename[tree_QCD_Pt_3200toInf_MC2017.root]	b:data[0]	s:flatsuff[QCD_MC2017]
+base	skim	QCD_Pt_470to600_MC2017	s:filename[tree_QCD_Pt_470to600_MC2017.root]	b:data[0]	s:flatsuff[QCD_MC2017]
+base	skim	QCD_Pt_600to800_MC2017	s:filename[tree_QCD_Pt_600to800_MC2017.root]	b:data[0]	s:flatsuff[QCD_MC2017]
+base	skim	QCD_Pt_800to1000_MC2017	s:filename[tree_QCD_Pt_800to1000_MC2017.root]	b:data[0]	s:flatsuff[QCD_MC2017]
+base	skim	QCD_Pt_80to120_MC2017	s:filename[tree_QCD_Pt_80to120_MC2017.root]	b:data[0]	s:flatsuff[QCD_MC2017]
 
 INPUT
 input/input_svj_sets_sig.txt
