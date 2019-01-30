@@ -913,7 +913,7 @@ class KRA2BinSelector : public KSelector {
 			localOpt->Get("RA2VarNames",RA2VarNames);
 			
 			for(unsigned q = 0; q < RA2VarNames.size(); ++q){
-				if(RA2VarNames[q]=="BTags") bqty = q;
+				if(RA2VarNames[q]=="BTags" or RA2VarNames[q]=="BTagsDeepCSV") bqty = q;
 
 				stringstream pre;
 				pre << "RA2Var" << q;
@@ -1099,6 +1099,7 @@ class KRA2BinSelector : public KSelector {
 			vector<float> val;
 			if(RA2VarNames[qty]=="NJets") val.push_back(looper->NJets);
 			else if(RA2VarNames[qty]=="BTags") val.push_back(looper->BTags);
+			else if(RA2VarNames[qty]=="BTagsDeepCSV") val.push_back(looper->BTagsDeepCSV);
 			else if(RA2VarNames[qty]=="MHT") val.push_back(looper->MHT);
 			else if(RA2VarNames[qty]=="HT") val.push_back(looper->HT);
 			else if(RA2VarNames[qty]=="GenMHT") val.push_back(looper->GenMHT);
@@ -1136,6 +1137,11 @@ class KRA2BinSelector : public KSelector {
 			return -1;
 		}
 		
+		string GetBtagBinName(){
+			if(bqty>=0) return RA2VarNames[bqty];
+			else return "";
+		}
+
 	public:
 		//member variables
 		bool RA2Exclusive, DoBTagSF;

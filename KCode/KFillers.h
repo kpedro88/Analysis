@@ -42,6 +42,7 @@ class KFiller_RA2bin : public KFiller {
 					for(unsigned q = 0; q < RA2Bin->RA2VarNames.size(); ++q){
 						if(RA2Bin->RA2VarNames[q]=="NJets") cout << ", NJets = " << looper->NJets;
 						else if(RA2Bin->RA2VarNames[q]=="BTags") cout << ", BTags = " << looper->BTags;
+						else if(RA2Bin->RA2VarNames[q]=="BTagsDeepCSV") cout << ", BTags = " << looper->BTagsDeepCSV;
 						else if(RA2Bin->RA2VarNames[q]=="MHT") cout << ", MHT = " << looper->MHT;
 						else if(RA2Bin->RA2VarNames[q]=="HT") cout << ", HT = " << looper->HT;
 					}
@@ -59,8 +60,9 @@ class KFiller_RA2bin : public KFiller {
 					//weight by btag scale factor probability if available
 					if(BTagSF) {
 						double sfsum = 0;
-						float bmin = RA2Bin->GetBinMin("BTags",RA2Bin->RA2binVec[b]);
-						float bmax = RA2Bin->GetBinMax("BTags",RA2Bin->RA2binVec[b]);
+						string bname = RA2Bin->GetBtagBinName();
+						float bmin = RA2Bin->GetBinMin(bname,RA2Bin->RA2binVec[b]);
+						float bmax = RA2Bin->GetBinMax(bname,RA2Bin->RA2binVec[b]);
 						for(int nb = (int)bmin+1; nb <= (int)bmax; ++nb){
 							if(nb>=BTagSF->prob.size()) break;
 							sfsum += BTagSF->prob[nb];
@@ -105,7 +107,7 @@ class KFiller_nbjets : public KFiller {
 			if(!DoBTagSF) BTagSF = NULL;
 		}
 		virtual void CheckBranches(){
-			if(!BTagSF) looper->fChain->SetBranchStatus("BTags",1);
+			if(!BTagSF) looper->fChain->SetBranchStatus("BTagsDeepCSV",1);
 		}
 		virtual void Fill(KValue& value, double w) {
 			if(BTagSF){
@@ -115,7 +117,7 @@ class KFiller_nbjets : public KFiller {
 					value.Fill(b,wb);
 				}
 			}
-			else value.Fill(looper->BTags,w);
+			else value.Fill(looper->BTagsDeepCSV,w);
 		}
 		//member variables
 		KBTagSFSelector* BTagSF = NULL;

@@ -1,4 +1,4 @@
-vstring:RA2VarNames[NJets,BTags,MHT,HT]
+vstring:RA2VarNames[NJets,BTagsDeepCSV,MHT,HT]
 vfloat:RA2Var0Min[1,3,5,7,9]
 vfloat:RA2Var0Max[3,5,7,9,99]
 vfloat:RA2Var1Min[-1,0,1,2,1]
