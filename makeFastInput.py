@@ -58,17 +58,17 @@ for file in files:
             skip = True
             break
     if skip: continue
-    # parse filename: model, mMother-X, mLSP-Y, [MC####], fast.root
+    # parse filename: model, mMother-X, mLSP-Y, MC####, fast.root
     fsplit = file.split('_')
-    model = '_'.join(fsplit[0:-3])
-    year = fsplit[-4]
-    mMother = msplit(fsplit[-3])
-    mLSP = msplit(fsplit[-2])
+    model = '_'.join(fsplit[0:-4])
+    mMother = msplit(fsplit[-4])
+    mLSP = msplit(fsplit[-3])
+    year = fsplit[-2]
     mother_ID = []
     # get cross section
     this_xsec, mother_ID = get_xsec(model,mMother)
     # make short name
-    short_name = model + "_" + str(mMother) + "_" + str(mLSP) + ("_" + year if len(fsplit)>4 else "") + "_" + "fast"
+    short_name = model + "_" + str(mMother) + "_" + str(mLSP) + "_" + year + "_" + "fast"
     # make set list for skimming
     wline = "base" + "\t" + "skim" + "\t" + short_name + "\t" + "s:filename[" + file + "]" + "\t" + "b:fastsim[1]" + "\t" + "vi:mother[" + str(','.join(str(m) for m in mother_ID)) + "]" + "\t" + "b:data[0]" + "\n"
     wfile.write(wline)
