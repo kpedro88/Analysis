@@ -252,4 +252,5 @@ input/input_sets_skim_signal_2017.txt
 input/input_sets_skim_data_2016.txt
 input/input_sets_skim_data_2017.txt
 input/input_sets_skim_data_2018.txt
-input/input_sets_skim_fast.txt
+input/input_sets_skim_fast_2016.txt
+input/input_sets_skim_fast_2017.txt
