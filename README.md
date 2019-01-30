@@ -5,6 +5,21 @@ Important note: the current version of this code uses ROOT6 and C++11 features. 
 Currently, the skimming functionality (copying vector branches) does not work in ROOT version 6.10 (CMSSW_9_4_X).
 Instead, ROOT version 6.06 (CMSSW_8_0_X) should be used.
 
+## Setup
+
+```
+cmsrel CMSSW_8_0_30
+cd CMSSW_8_0_30/src
+cmsenv
+git clone git@github.com:kpedro88/Analysis
+./setup.sh
+./setupTM.sh
+```
+
+The script `setup.sh` links useful tools kept in the `scripts` folder for easier use.
+
+The script `setupTM.sh` compiles specific parts of [TreeMaker](https://github.com/TreeMaker/TreeMaker) that are used in this code.
+
 ## Recompiling
 
 To recompile all drivers, testing code changes or preparing for batch submission:
@@ -32,7 +47,7 @@ python makeSkimInput.py -r input/dict_skim_data_2016.py -w input/input_sets_skim
 python makeSkimInput.py -r input/dict_skim_data_2017.py -w input/input_sets_skim_data_2017.txt -e batch/exportSkimData2017.sh --data -n 50 -f /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16
 python makeSkimInput.py -r input/dict_skim_data_2018.py -w input/input_sets_skim_data_2018.txt -e batch/exportSkimData2018.sh --data -n 50 -f /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16
 ```
-Note: this script uses the python file lists in [TreeMaker/Production/python](https://github.com/TreeMaker/TreeMaker/tree/Run2/Production/python) to determine the number of files to chain together for each sample. Make sure to follow the [TreeMaker](https://github.com/TreeMaker/TreeMaker) installation instructions so this information is accessible. (For 2018 data, it is necessary to check out the `Run2_2018_prompt` branch of `TreeMaker`.)
+Note: this script uses the python file lists in [TreeMaker/Production/python](https://github.com/TreeMaker/TreeMaker/tree/Run2/Production/python) to determine the number of files to chain together for each sample.
 
 To submit jobs to Condor (add the flag `-k` to reuse the existing CMSSW tarball):
 ```
