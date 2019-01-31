@@ -158,7 +158,7 @@ and another with the relative effect per bin of each systematic.
 This driver also produces trees which store the effect of each systematic on the yield. These trees can be combined and analyzed:
 ```
 cd batch
-./HSsub.sh -d /store/user/pedrok/SUSY2015/Analysis/Datacards/Run2ProductionV16 -r
+./HSsub.sh -c block,part,fast -d /store/user/pedrok/SUSY2015/Analysis/Datacards/Run2ProductionV16 -r
 cd ..
 python summarizeSyst.py -d /store/user/pedrok/SUSY2015/Analysis/Datacards/Run2ProductionV16
 ```

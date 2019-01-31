@@ -13,9 +13,10 @@ SEARCH="_block"
 UPDATE=0
 SKIPTREE=0
 VERBOSE=0
+CHECKS=""
 
 #check arguments
-while getopts "kn:rsS:d:g:utv" opt; do
+while getopts "kn:rsS:d:g:c:utv" opt; do
   case "$opt" in
   k) CHECKARGS="${CHECKARGS} -k"
     ;;
@@ -30,6 +31,8 @@ while getopts "kn:rsS:d:g:utv" opt; do
   d) DIR=$OPTARG;
     ;;
   g) SEARCH="$OPTARG";
+    ;;
+  c) CHECKS="-c $OPTARG"
     ;;
   u) UPDATE=1
      TESTARGS="${TESTARGS} -u"
@@ -52,7 +55,7 @@ fi
 ./SKcheck.sh ${CHECKARGS}
 
 #list samples
-IFS=$'\n' SAMPLES=($(python findHadds.py -d ${DIR} -g ${SEARCH})); unset IFS
+IFS=$'\n' SAMPLES=($(python findHadds.py $CHECKS -d ${DIR} -g ${SEARCH})); unset IFS
 
 #loop vars
 counter=0
