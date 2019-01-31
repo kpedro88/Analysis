@@ -201,7 +201,8 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	
 	//fill and write tree w/ hadd-able filename
 	tree->Fill();
-	string thetrfile = "tree_syst_"+setnames[0]+"_block"+setnames[1]+"-"+setnames[2]+"_fast.root";
+	//include year in file name
+	string thetrfile = "tree_syst_"+setnames[0]+"_"+setnames[3]+"_block"+setnames[1]+"-"+setnames[2]+"_fast.root";
 	TFile* trfile = TFile::Open(thetrfile.c_str(),"RECREATE");
 	trfile->cd();
 	tree->Write();
