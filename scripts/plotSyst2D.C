@@ -28,6 +28,7 @@ map<string,string> legnames = {
 	{"puaccunc", "pileup acceptance uncertainty [%]"},
 	{"scaleunc", "#mu_{R}/#mu_{F} uncertainty [%]"},
 	{"trigunc", "trigger uncertainty [%]"},
+	{"prefireunc","L1 prefiring weight uncertainty [%]"},
 	{"mMother", "M_{mother} [GeV]"},
 	{"mLSP", "M_{LSP} [GeV]"},
 	{"deltaM", "#DeltaM_{mother,LSP} [GeV]"},

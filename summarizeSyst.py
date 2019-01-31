@@ -7,7 +7,8 @@ def list_callback(option, opt, value, parser):
     setattr(parser.values, option.dest, value.split(','))
 
 def getModel(file):
-    return file.split('_')[2]
+    # include year
+    return '_'.join(file.split('_')[2:4])
 
 def printSigFigs(num,fig,maxdec):
     # use scientific notation to get sig figs, then convert back to regular notation
