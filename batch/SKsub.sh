@@ -31,9 +31,8 @@ done
 
 for TYPE in ${TYPES[@]}; do
 	# temporary vars
-	SELS=(
-"$SELTYPE1" \
-	)
+	SELS=()
+	SELS+=("$SELTYPE1")
 	TMPINDIR="$INDIR"
 	TMPSTORE="$STORE"
 
@@ -57,7 +56,7 @@ for TYPE in ${TYPES[@]}; do
 
 		for SAMPLE in ${SAMPLES[@]}; do
 			for SEL in ${SELS[@]}; do
-				echo ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} ${SEL} ${TMPINDIR} ${OUTDIR} ${TMPSTORE}
+				./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} ${SEL} ${TMPINDIR} ${OUTDIR} ${TMPSTORE}
 			done
 		done
 	done
