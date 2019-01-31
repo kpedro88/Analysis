@@ -1,6 +1,7 @@
 SELECTION
 common
-	METFilter	b:onlydata[1]
+	METFilter
+	ExtraFilter
 	BTagSF	vs:calibs[btag/DeepCSV_Moriond17_B_H_mod.csv,btag/DeepCSV_94XSF_V3_B_F_mod.csv,btag/DeepCSV_94XSF_V3_B_F_mod.csv]
 	RA2Bin	in:options[input/input_RA2bin_options.txt]	b:RA2Exclusive[0]
 	Histo
