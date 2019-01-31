@@ -1300,7 +1300,7 @@ class KMETFilterSelector : public KSelector {
 		}
 		
 		//member variables
-		bool onlydata, filter2015;
+		bool onlydata;
 		vector<string> filterfiles;
 		vector<EventListFilter*> filters;
 };

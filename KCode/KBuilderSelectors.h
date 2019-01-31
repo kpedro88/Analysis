@@ -1160,4 +1160,53 @@ class KHistoSelector : public KSelector {
 };
 REGISTER_SELECTOR(Histo);
 
+//---------------------------------------------------------------
+//applies extra filters
+class KExtraFilterSelector : public KSelector {
+	public:
+		//constructor
+		KExtraFilterSelector() : KSelector() { }
+		KExtraFilterSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), fastsim(false), data(false), data2017(false) {
+			//check option
+			onlydata = localOpt->Get("onlydata",false);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("METRatioFilter",1);
+			looper->fChain->SetBranchStatus("MuonJetFilter",1);
+			looper->fChain->SetBranchStatus("EcalNoiseJetFilter",1);
+			looper->fChain->SetBranchStatus("HTRatioDPhiTightFilter",1);
+			looper->fChain->SetBranchStatus("LowNeutralJetFilter",1);
+			looper->fChain->SetBranchStatus("FakeJetFilter",1);
+		}
+		virtual void CheckBase(){
+			//check fastsim stuff
+			if(base->GetLocalOpt()->Get("fastsim",false)) fastsim = true;
+			if(base->IsData()) {
+				data = true;
+				if(base->GetName().find("2017")!=string::npos) data2017 = true;
+			}
+			if(onlydata and !data){
+				//disable this for non-data if desired
+				dummy = true;
+			}
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			bool METRatioFilter = looper->METRatioFilter;
+			bool MuonJetFilter = looper->MuonJetFilter;
+			bool EcalNoiseJetFilter = (!data2017) or looper->EcalNoiseJetFilter;
+			bool HTRatioDPhiTightFilter = looper->HTRatioDPhiTightFilter;
+			bool LowNeutralJetFilter = looper->LowNeutralJetFilter;
+			bool FakeJetFilter = (!fastsim) or looper->FakeJetFilter;
+
+			return METRatioFilter and MuonJetFilter and EcalNoiseJetFilter and HTRatioDPhiTightFilter and LowNeutralJetFilter and FakeJetFilter;
+		}
+		
+		//member variables
+		bool fastsim, data, data2017;
+		bool onlydata;
+};
+REGISTER_SELECTOR(ExtraFilter);
+
 #endif
