@@ -180,7 +180,8 @@ Currently available uncertainties:
 * mistagging correction factors (fastsim only)
 * MHT modeling (fastsim only)
 * MC statistics
-* pileup acceptance
+* pileup acceptance (not used)
+* L1 prefiring correction
 
 ### Semi-visible jet commands
 

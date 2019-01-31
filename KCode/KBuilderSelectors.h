@@ -273,6 +273,10 @@ class KMCWeightSelector : public KSelector {
 			btagCFunc = 0; localOpt->Get("btagCFunc",btagCFunc);
 			ctagCFunc = 0; localOpt->Get("ctagCFunc",ctagCFunc);
 			mistagCFunc = 0; localOpt->Get("mistagCFunc",mistagCFunc);
+
+			//prefire corr options
+			prefirecorr = localOpt->Get("prefirecorr",false);
+			prefireunc = 0; localOpt->Get("prefireunc",prefireunc);
 			
 			//other uncertainty options
 			pdfunc = 0; localOpt->Get("pdfunc",pdfunc);
@@ -326,6 +330,11 @@ class KMCWeightSelector : public KSelector {
 			}
 			if(scaleunc!=0){
 				looper->fChain->SetBranchStatus("ScaleWeights",1);
+			}
+			if(prefirecorr){
+				if(prefireunc==0) looper->fChain->SetBranchStatus("NonPrefiringProb");
+				else if(prefireunc>0) looper->fChain->SetBranchStatus("NonPrefiringProbUp");
+				else if(prefireunc<0) looper->fChain->SetBranchStatus("NonPrefiringProbDn");
 			}
 		}
 		//enum for normtypes
@@ -403,6 +412,13 @@ class KMCWeightSelector : public KSelector {
 				w *= lumicorrval;
 			}
 
+			if(prefirecorr){
+				if(prefireunc==0) w *= looper->NonPrefiringProb;
+				else if(prefireunc>0) w *= looper->NonPrefiringProbUp;
+				else if(prefireunc<0) w *= looper->NonPrefiringProbDn;
+
+			}
+
 			if(svbweight){
 				double qty = 0;
 				if(svbqty==MTAK8) qty = looper->MT_AK8;
@@ -466,9 +482,9 @@ class KMCWeightSelector : public KSelector {
 		
 		//member variables
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, useKFactor, debugWeight, didDebugWeight;
-		bool pucorr, trigcorr, isrcorr, realMET, signal, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight;
+		bool pucorr, trigcorr, isrcorr, realMET, signal, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr;
 		double jetidcorrval, isotrackcorrval, lumicorrval;
-		int puunc, pdfunc, isrunc, scaleunc, trigunc, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc;
+		int puunc, pdfunc, isrunc, scaleunc, trigunc, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc, prefireunc;
 		vector<int> mother;
 		TH1 *puhist, *puhistUp, *puhistDown;
 		vector<double> pdfnorms;
