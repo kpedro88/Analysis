@@ -976,7 +976,7 @@ class KBTagSFSelector : public KSelector {
 			if(depfailed) return;
 
 			//check for year
-			if(!has_calib){
+			if(!has_calib and !calibs.empty()){
 				if(base->GetName().find("MC2016")!=std::string::npos) calib = calibs[0];
 				else if(base->GetName().find("MC2017")!=std::string::npos) calib = calibs[1];
 				else if(base->GetName().find("MC2018")!=std::string::npos) calib = calibs[2];
@@ -998,10 +998,10 @@ class KBTagSFSelector : public KSelector {
 			}
 			
 			//check fastsim stuff
-			bool fastsim = base->GetLocalOpt()->Get("fastsim",false); btagcorr.SetFastSim(fastsim);
+			bool fastsim = base->GetLocalOpt()->Get("fastsim",false);
 			if(fastsim){
 				//check for year
-				if(!has_calibfast){
+				if(!has_calibfast and !calibsfast.empty()){
 					if(base->GetName().find("MC2016")!=std::string::npos) calibfast = calibsfast[0];
 					else if(base->GetName().find("MC2017")!=std::string::npos) calibfast = calibsfast[1];
 					else if(base->GetName().find("MC2018")!=std::string::npos) calibfast = calibsfast[2];
@@ -1009,12 +1009,15 @@ class KBTagSFSelector : public KSelector {
 				}
 				//initialize btag corrector fastsim calibrations
 				//todo: check the sample name and choose the appropriate CFs (once available)
-				if(!calibfast.empty()) btagcorr.SetCalibFastSim(calibfast);
+				if(!calibfast.empty()) {
+					btagcorr.SetFastSim(true);
+					btagcorr.SetCalibFastSim(calibfast);
 				
-				//check for option
-				int btagCFunc = MCWeight->btagCFunc; btagcorr.SetBtagCFunc(btagCFunc);
-				int ctagCFunc = MCWeight->ctagCFunc; btagcorr.SetCtagCFunc(ctagCFunc);
-				int mistagCFunc = MCWeight->mistagCFunc;  btagcorr.SetMistagCFunc(mistagCFunc);
+					//check for option
+					int btagCFunc = MCWeight->btagCFunc; btagcorr.SetBtagCFunc(btagCFunc);
+					int ctagCFunc = MCWeight->ctagCFunc; btagcorr.SetCtagCFunc(ctagCFunc);
+					int mistagCFunc = MCWeight->mistagCFunc;  btagcorr.SetMistagCFunc(mistagCFunc);
+				}
 			}			
 		}
 		
