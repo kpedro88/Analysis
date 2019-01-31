@@ -27,9 +27,9 @@ if [ -n "SKIPFILE" ]; then
 fi
 
 if [ -n "$SUFFIX" ]; then
-  source exportFast${SUFFIX}.sh
+  source exportSkimFast${SUFFIX}.sh
 else
-  source exportFast.sh
+  source exportSkimFast.sh
 fi
 
 ./SKcheck.sh ${CHECKARGS}

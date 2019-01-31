@@ -99,8 +99,8 @@ After the jobs finish, the split output files should be combined (in batch mode 
 
 To make the input lists of model points automatically for skimming, plotting, and datacards, after the scan jobs are finished and combined:
 ```
-python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16/scan/ -m MC2016 -s input/input_sets_skim_fast_2016.txt -c input/input_sets_DC_fast_2016.txt -e batch/exportFast2016.sh
-python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16/scan/ -m MC2017 -s input/input_sets_skim_fast_2017.txt -c input/input_sets_DC_fast_2017.txt -e batch/exportFast2017.sh
+python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16/scan/ -m MC2016 -s input/input_sets_skim_fast_2016.txt -c input/input_sets_DC_fast_2016.txt -e batch/exportSkimFast2016.sh
+python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16/scan/ -m MC2017 -s input/input_sets_skim_fast_2017.txt -c input/input_sets_DC_fast_2017.txt -e batch/exportSkimFast2017.sh
 ```
 
 <a name="combined"></a>A separate script is available to create a "combined" model by adding together multiple signal models with different weights.
