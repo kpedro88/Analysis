@@ -1,5 +1,6 @@
 bool:btagcorr[1]
-bool:trigcorr[1]
+# temporarily disabled until available
+#bool:trigcorr[1]
 #bool:pucorr[1]
 #string:puname[corrections/PileupHistograms_0721_63mb_pm5.root]
 bool:isrcorr[1]
