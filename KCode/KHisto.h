@@ -46,7 +46,6 @@ class KValue {
 
 //forward declarations
 class KMCWeightSelector;
-class KFakeHLTSelector;
 class KHisto;
 
 //---------------------------------------------------------------
@@ -118,8 +117,8 @@ typedef KFactory<KFiller,string,OptionMap*,KHisto*,vector<unsigned>> KJetFillerF
 class KHisto : public KChecker {
 	public:
 		//constructors
-		KHisto() : KChecker(), isSpecial(false), MCWeight(0), FakeHLT(0) {}
-		KHisto(string name_, OptionMap* localOpt_, TH1* htmp_, KBase* base_) : KChecker(name_, localOpt_), htmp(htmp_), isSpecial(false), MCWeight(0), FakeHLT(0) {
+		KHisto() : KChecker(), isSpecial(false), MCWeight(0) {}
+		KHisto(string name_, OptionMap* localOpt_, TH1* htmp_, KBase* base_) : KChecker(name_, localOpt_), htmp(htmp_), isSpecial(false), MCWeight(0) {
 			vector<string> vars;
 			if(!localOpt->Get("vars",vars)){
 				//split up histo variables from name (if not otherwise specified)
@@ -233,7 +232,6 @@ class KHisto : public KChecker {
 			//in case of special histo, sel might not be defined
 			if(!sel) return;
 			MCWeight = sel->Get<KMCWeightSelector*>("MCWeight");
-			FakeHLT = sel->Get<KFakeHLTSelector*>("FakeHLT");
 		}
 		virtual void CheckBase(){
 			//do not use MCWeight with data
@@ -296,7 +294,6 @@ class KHisto : public KChecker {
 
 		//member variables needed by fillers
 		KMCWeightSelector* MCWeight;
-		KFakeHLTSelector* FakeHLT;
 		
 	protected:
 		//member variables
