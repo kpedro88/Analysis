@@ -36,9 +36,9 @@ def get_xsec(model,mMother):
         mother_ID = [1000021]
     return (this_xsec,mother_ID)
 
-xsec_list = [("input/dict_xsec.txt","T1"), # taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVgluglu
-             ("input/dict_xsec_T2.txt","T2"), # taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVstopsbottom
-             ("input/dict_xsec_T2qq.txt","T2qq"), # taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVsquarkantisquark
+xsec_list = [("input/dict_xsec_T1_NNLO.txt","T1"), # taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVgluglu
+             ("input/dict_xsec_T2_NNLO.txt","T2"), # taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVstopsbottom
+             ("input/dict_xsec_T2qq_NNLO.txt","T2qq"), # taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVsquarkantisquark
              ("input/dict_xsec_TChiHH.txt","TChiHH"), # taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVhino
             ]
 
