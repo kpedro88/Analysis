@@ -20,8 +20,8 @@ cat ./jobExecCondor.jdl \
 | sed -e s~INDIR~${INDIR}~ \
 | sed -e s~OUTDIR~${OUTDIR}~ \
 | sed -e s~STORE~${STORE}~ \
-> ${JOBDIR}/jobExecCondor_${SAMPLE}_${SELTYPE}.jdl
+> ${JOBDIR}/jobExecCondor_${SAMPLE}_skim.jdl
 
 cd ${JOBDIR}
-condor_submit jobExecCondor_${SAMPLE}_${SELTYPE}.jdl
+condor_submit jobExecCondor_${SAMPLE}_skim.jdl
 cd -
