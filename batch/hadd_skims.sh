@@ -27,6 +27,6 @@ IFS=$'\n' DIRS=($(xrdfs root://cmseos.fnal.gov ls ${SKIMDIR} | grep "tree_")); u
 #loop over hadd script for each dir
 for DIR in ${DIRS[@]}; do
   echo ${DIR}
-  ./HSsub.sh ${CHECKARGS} -d ${DIR}
+  ./HSsub.sh ${CHECKARGS} -d ${DIR} -c block,part,fast
 done
 
