@@ -673,6 +673,10 @@ class KLowNeutralJetSelector : public KFilterSelector {
 			else branchname = "LowNeutralJet";
 		}
 		virtual void GetResult() {
+			if(looper->Jets_neutralEmEnergyFraction->empty()) {
+				result = true;
+				return;
+			}
 			result = !(looper->Jets_neutralEmEnergyFraction->at(0)<(tight ? 0.05 : 0.03) and abs(looper->DeltaPhi1)>(TMath::Pi()-0.4));
 		}
 
