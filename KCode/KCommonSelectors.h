@@ -66,6 +66,11 @@ class KBDTSelector : public KSelector {
 				v->SetBase(base);
 			}
 		}
+		virtual void SetBranches(){
+			if(!tree) return;
+
+			tree->Branch("JetsAK8_SVJtag","std::vector<double>",&JetsAK8_bdt,32000,0);
+		}
 
 		//this selector doesn't add anything to tree
 
