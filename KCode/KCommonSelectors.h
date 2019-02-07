@@ -3,6 +3,7 @@
 
 //custom headers
 #include "KSelection.h"
+#include "KBDTVar.h"
 #include "../corrections/EventShapeVariables.c"
 
 //ROOT headers
@@ -21,57 +22,49 @@ using namespace std;
 
 //----------------------------------------------------
 //selects events based on a BDT
-//todo: unify this w/ KJetAK8TrainingSelector somehow
 class KBDTSelector : public KSelector {
 	public:
 		//constructor
 		KBDTSelector() : KSelector() { }
-		KBDTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
+		KBDTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), wp(-1) {
 			//get BDT weights
 			localOpt->Get("weights",weights);
 			//get BDT type
 			localOpt->Get("type",type);
+			//get BDT range
+			positive = localOpt->Get("positive",true);
 			//get working point
 			localOpt->Get("wp",wp);
 			//check for tagging mode
 			tag = localOpt->Get("tag",false);
 			if(tag) canfail = false;
-			//check for reduced set of vars, todo: make this better
-			reduced = localOpt->Get("reduced",false);
+			//get variables used
+			vector<string> variable_names;
+			localOpt->Get("variables",variable_names);
+			for(const auto& v: variable_names){
+				variables.push_back(KBDTVarFactory::GetFactory().construct(v,v));
+			}
 
 			//load TMVA library
 			TMVA::Tools::Instance();
 			//input for reader
 			reader = new TMVA::Reader("Silent");
-			reader->AddVariable("mult",&b_mult);
-			reader->AddVariable("axisminor",&b_axisminor);
-//			if(!reduced) reader->AddVariable("axisminor",&b_axisminor);
-			if(!reduced) reader->AddVariable("axismajor",&b_axismajor);
-			if(!reduced) reader->AddVariable("ptD",&b_ptD);
-			reader->AddVariable("girth",&b_girth);
-			reader->AddVariable("tau21",&b_tau21);
-			reader->AddVariable("tau32",&b_tau32);
-			reader->AddVariable("msd",&b_msd);
-			if(!reduced) reader->AddVariable("momenthalf",&b_momenthalf);
-			reader->AddVariable("deltaphi",&b_deltaphi);
+			for(auto& v : variables){
+				v->SetVariable(reader);
+			}
 			//setup reader
 			reader->BookMVA(type.c_str(),weights.c_str());
 		}
 		virtual void CheckBranches(){
-			//all the bdt input vars
-			looper->fChain->SetBranchStatus("JetsAK8",1);
-			looper->fChain->SetBranchStatus("JetsAK8_axismajor",1);
-			looper->fChain->SetBranchStatus("JetsAK8_axisminor",1);
-			looper->fChain->SetBranchStatus("JetsAK8_girth",1);
-			looper->fChain->SetBranchStatus("JetsAK8_momenthalf",1);
-			looper->fChain->SetBranchStatus("JetsAK8_multiplicity",1);
-			looper->fChain->SetBranchStatus("JetsAK8_NsubjettinessTau1",1);
-			looper->fChain->SetBranchStatus("JetsAK8_NsubjettinessTau2",1);
-			looper->fChain->SetBranchStatus("JetsAK8_NsubjettinessTau3",1);
-			looper->fChain->SetBranchStatus("JetsAK8_ptD",1);
-			looper->fChain->SetBranchStatus("JetsAK8_softDropMass",1);
-			looper->fChain->SetBranchStatus("DeltaPhi1_AK8",1);
-			looper->fChain->SetBranchStatus("DeltaPhi2_AK8",1);
+			for(auto& v : variables){
+				v->CheckBranches();
+			}
+		}
+		virtual void CheckBase(){
+			//propagate to vars
+			for(auto& v : variables){
+				v->SetBase(base);
+			}
 		}
 
 		//this selector doesn't add anything to tree
@@ -79,24 +72,16 @@ class KBDTSelector : public KSelector {
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			JetsAK8_bdt.clear();
-			unsigned njets = min(looper->JetsAK8->size(),2ul);
+			unsigned njets = min(looper->JetsAK8->size(),3ul);
 			bool good = true;
-			for(unsigned j = 0; j < njets; ++j){
+			for(unsigned j = 0; j < looper->JetsAK8->size(); ++j){
 				//load variables for this jet
-				if(j==0) b_deltaphi = looper->DeltaPhi1_AK8;
-				else if(j==1) b_deltaphi = looper->DeltaPhi2_AK8;
-				b_ptD = looper->JetsAK8_ptD->at(j);
-				b_axismajor = looper->JetsAK8_axismajor->at(j);
-				b_axisminor = looper->JetsAK8_axisminor->at(j);
-				b_girth = looper->JetsAK8_girth->at(j);
-				b_momenthalf = looper->JetsAK8_momenthalf->at(j);
-				b_tau21 = looper->JetsAK8_NsubjettinessTau1->at(j) > 0 ? looper->JetsAK8_NsubjettinessTau2->at(j)/looper->JetsAK8_NsubjettinessTau1->at(j) : -1;
-				b_tau32 = looper->JetsAK8_NsubjettinessTau2->at(j) > 0 ? looper->JetsAK8_NsubjettinessTau3->at(j)/looper->JetsAK8_NsubjettinessTau2->at(j) : -1;
-				b_msd = looper->JetsAK8_softDropMass->at(j);
-				b_mult = looper->JetsAK8_multiplicity->at(j);
+				for(auto& v : variables){
+					v->Fill(j);
+				}
 				double bdt_val = reader->EvaluateMVA(type.c_str());
 				//convert range from [-1,1] to [0,1]: (x-xmin)/(xmax-xmin)
-				bdt_val = (bdt_val + 1)*0.5;
+				if(positive) bdt_val = (bdt_val + 1)*0.5;
 				JetsAK8_bdt.push_back(bdt_val);
 				if(JetsAK8_bdt[j]<wp) good &= false;
 			}
@@ -106,14 +91,10 @@ class KBDTSelector : public KSelector {
 		//member variables
 		string weights, type;
 		double wp;
-		bool tag, reduced;
+		bool tag, positive;
 		TMVA::Reader* reader;
-		//per-jet branches (bdt input, have to be floats)
-		float b_deltaphi;
-		float b_ptD, b_axismajor, b_axisminor;
-		float b_girth, b_momenthalf;
-		float b_tau21, b_tau32, b_msd;
-		float b_mult;
+		//input variables
+		vector<KBDTVar*> variables;
 		//bdt output
 		vector<double> JetsAK8_bdt;
 };
