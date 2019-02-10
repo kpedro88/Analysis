@@ -1247,6 +1247,14 @@ class KJetFiller_AK8mult : public KJetFiller {
 };
 REGISTER_JETFILLER(AK8mult);
 
+class KJetFiller_AK8genmult : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"GenJetsAK8_multiplicity"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->GenJetsAK8_multiplicity->size()>index) value.Fill(looper->GenJetsAK8_multiplicity->at(index),w); }
+};
+REGISTER_JETFILLER(AK8genmult);
+
 class KJetFiller_AK8ptD : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;

@@ -1,0 +1,8 @@
+OPTION
+string+:printsuffix[_allvars]
+vstring:disable_branches[*]
+
+HISTO
+leadjetAK8genpt	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}^{gen}(j_{1}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[0]	c:color[kBlue]
+subleadjetAK8genpt	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}^{gen}(j_{2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[0]	c:color[kRed]
+bothjetAK8genmult	i:xnum[100]	d:xmin[0]	d:xmax[400]	s:xtitle[n_{constituents}^{gen}(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	c:color[kOrange + 7]
