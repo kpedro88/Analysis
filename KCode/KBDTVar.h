@@ -11,6 +11,7 @@
 
 #include <string>
 #include <vector>
+#include <cmath>
 
 using namespace std;
 
@@ -82,7 +83,7 @@ class KBDTVar_deltaphi : public KBDTVar {
 	public:
 		using KBDTVar::KBDTVar;
 		virtual void ListBranches() { branches = {"JetsAK8","METPhi"}; }
-		virtual void Fill(unsigned j) { branch = KMath::DeltaPhi(looper->METPhi,looper->JetsAK8->at(j).Phi()); }
+		virtual void Fill(unsigned j) { branch = abs(KMath::DeltaPhi(looper->METPhi,looper->JetsAK8->at(j).Phi())); }
 };
 REGISTER_BDTVAR(deltaphi);
 
