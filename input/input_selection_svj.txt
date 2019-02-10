@@ -53,9 +53,9 @@ dijetmtpthad
 dijetmtdetahad
 	dijetmtdeta
 	veto
+	MTAK8	d:min[1500]
 dijetmtdetahadmf
 	dijetmtdetahad
-	MTAK8	d:min[1500]
 	METFilter
 	BDT	s:weights[corrections/TMVAClassification_BDTG_UZH.weights.xml]	s:type[BDTG]	b:positive[0]	b:tag[1]	b:forceadd[1]	vs:variables[mult,axisminor,girth,tau21,tau32,msd,deltaphi]
 dijetmtdetahadmffull1
