@@ -1,0 +1,16 @@
+OPTION
+vs:numers[TTJets_SingleLeptFromT_MC2017]
+vs:denoms[TTJets_SingleLeptFromT_MC2016]
+s:rationame[2017/2016]
+vs:extra_text[TTJets_SingleLeptFromT]
+b:useTreeWeight[1]
+s:lumi_text[(13 TeV)]
+d:luminorm[1.0]
+b:unitnorm[1]
+s+:printsuffix[_ttbar]
+
+SET
+hist	mc	TTJets_SingleLeptFromT_MC2016	s:legname[2016]	c:color[kBlue]	i:linestyle[1]
+	base	mc	TTJets_SingleLeptFromT_MC2016	s:filename[tree_TTJets_SingleLeptFromT_MC2016.root]
+hist	mc	TTJets_SingleLeptFromT_MC2017	s:legname[2017]	c:color[kRed]	i:linestyle[1]
+	base	mc	TTJets_SingleLeptFromT_MC2017	s:filename[tree_TTJets_SingleLeptFromT_MC2017.root]

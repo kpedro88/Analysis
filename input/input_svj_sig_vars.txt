@@ -23,3 +23,5 @@ bothjetAK8tau21	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#tau_{21}(j_{1,2})]	s:y
 bothjetAK8tau32	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#tau_{32}(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	c:color[kPink - 9]
 bothjetAK8msd	i:xnum[100]	d:xmin[0]	d:xmax[500]	s:xtitle[m_{sd}(j_{1,2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	c:color[kGray + 1]
 bothjetAK8deltaphi	i:xnum[100]	d:xmin[0]	d:xmax[3.15]	s:xtitle[#Delta#phi(j_{1,2},#slash{E}_{T})]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	c:color[kBlack]
+leadjetAK4pt	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}^{AK4}(j_{1}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[0]	c:color[kBlue]
+subleadjetAK4pt	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}^{AK4}(j_{2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[0]	c:color[kBlue]
