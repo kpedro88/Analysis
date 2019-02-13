@@ -29,8 +29,6 @@ QCD_Pt_2400to3200_MC2016 \
 QCD_Pt_3200toInf_MC2016 \
 TTJets_MC2016_block0 \
 TTJets_MC2016_block1 \
-TTJets_MC2016_block2 \
-TTJets_MC2016_block3 \
 TTJets_SingleLeptFromT_MC2016_block0 \
 TTJets_SingleLeptFromT_MC2016_block1 \
 TTJets_SingleLeptFromT_MC2016_block2 \
@@ -144,9 +142,7 @@ ZJetsToNuNu_HT-200to400_MC2016_block2 \
 ZJetsToNuNu_HT-200to400_MC2016_block3 \
 ZJetsToNuNu_HT-400to600_MC2016_block0 \
 ZJetsToNuNu_HT-400to600_MC2016_block1 \
-ZJetsToNuNu_HT-600to800_MC2016_block0 \
-ZJetsToNuNu_HT-600to800_MC2016_block1 \
-ZJetsToNuNu_HT-600to800_MC2016_block2 \
+ZJetsToNuNu_HT-600to800_MC2016 \
 ZJetsToNuNu_HT-800to1200_MC2016 \
 ZJetsToNuNu_HT-1200to2500_MC2016 \
 ZJetsToNuNu_HT-2500toInf_MC2016 \
