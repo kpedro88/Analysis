@@ -1,0 +1,43 @@
+OPTION
+vstring:selections[full,NVtx,eeBadSc,EcalDeadCellTP,HBHENoise,HBHEIsoNoise,globalSuperTightHalo2016,BadChargedCandidate,BadPFMuon,METFilter]
+
+SELECTION
+full
+	METMTRatio	s:name[METMTRatioFull]	d:min[0.25]
+	DeltaPhiMinAK8	d:max[0.75]	
+	MCWeight
+	Histo
+NVtx
+	NVtxFilter
+	full
+eeBadSc
+	eeBadScFilter
+	full
+EcalDeadCellTP
+	EcalDeadCellTriggerPrimitiveFilter
+	full
+HBHENoise
+	HBHENoiseFilter
+	full
+HBHEIsoNoise
+	HBHEIsoNoiseFilter
+	full
+globalSuperTightHalo2016
+	globalSuperTightHalo2016Filter
+	full
+BadChargedCandidate
+	BadChargedCandidateFilter
+	full
+BadPFMuon
+	BadPFMuonFilter
+	full
+METFilter
+	NVtxFilter
+	eeBadScFilter
+	EcalDeadCellTriggerPrimitiveFilter
+	HBHENoiseFilter
+	HBHEIsoNoiseFilter
+	globalSuperTightHalo2016Filter
+	BadChargedCandidateFilter
+	BadPFMuonFilter
+	full
