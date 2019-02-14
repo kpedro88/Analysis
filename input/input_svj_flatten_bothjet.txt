@@ -5,7 +5,7 @@ string+:printsuffix[_flatpt]
 
 SELECTION
 simw
-	MCWeight	b:flatten[1]	s:flatname[corrections/svj_dijetmthad_jetAK8.root]	s:flatqty[bothjetAK8pt]
+	MCWeight	b:flatten[1]	s:flatname[corrections/svj_dijetmtdetahadmf_jetAK8.root]	s:flatqty[bothjetAK8pt]
 simf
 	simw
 	Histo

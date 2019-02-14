@@ -1,0 +1,4 @@
+OPTION
+string:extfilename[test/svj_dijetmtdetahadmf_bothjet.root]
+string+:printsuffix[_dijetmtdetahadmf]
+string+:rocsuffix[_dijetmtdetahadmf]

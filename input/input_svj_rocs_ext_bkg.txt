@@ -4,11 +4,11 @@ vstring:roc_bkg[QCD,ttbar,wjets,zinv]
 
 SET
 hist	mc	QCD	s:legname[QCD]	c:color[kBlack]	i:panel[1]
-	base	ext	QCD	b:ext_auto[1]
+	base	ext	QCD_MC2017	b:ext_auto[1]
 hist	mc	ttbar	s:legname[t#bar{t}]	c:color[kGray + 1]	i:panel[1]
-	base	ext	ttbar	b:ext_auto[1]
+	base	ext	ttbar_MC2017	b:ext_auto[1]
 hist	mc	wjets	s:legname[W(l#nu)+jets]	c:color[kGreen + 3]	i:panel[1]
-	base	ext	wjets	b:ext_auto[1]
+	base	ext	wjets_MC2017	b:ext_auto[1]
 hist	mc	zinv	s:legname[Z(#nu#nu)+jets]	c:color[kYellow + 3]	i:panel[1]
-	base	ext	zinv	b:ext_auto[1]
+	base	ext	zinv_MC2017	b:ext_auto[1]
 

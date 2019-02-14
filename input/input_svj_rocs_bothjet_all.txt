@@ -1,0 +1,5 @@
+INPUT
+input/input_svj_rocs_bothjet.txt
+input/input_svj_rocs_bothjet_extra.txt
+input/input_svj_rocs_bothjet_fractions.txt
+input/input_svj_rocs_bothjet_mults.txt
