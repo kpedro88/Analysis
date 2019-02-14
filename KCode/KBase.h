@@ -28,6 +28,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <exception>
 
 using namespace std;
 
@@ -263,9 +264,9 @@ class KBaseExt : public KBase {
 			//first check for global file, then local file
 			globalOpt->Get("extfilename",filename);
 			localOpt->Get("extfilename",filename);
-			if(!filename.empty()){
+			if(!filename.empty()) file = TFile::Open(filename.c_str());
+			if(file){
 				//open file
-				file = TFile::Open(filename.c_str());
 
 				//check for importing histos automatically
 				bool ext_auto = localOpt->Get("ext_auto",false);
@@ -314,6 +315,7 @@ class KBaseExt : public KBase {
 				}
 				add_ext = false;
 			}
+			else throw runtime_error("Could not open file: "+filename);
 		}
 		
 		//change histo add mode
