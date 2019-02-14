@@ -1309,7 +1309,7 @@ class KJetFiller_AK8bdt : public KJetFiller {
 		KBDTSelector* BDT = NULL;
 };
 REGISTER_JETFILLER(AK8bdt);
-/*
+
 class KJetFiller_AK8fChEM : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
@@ -1326,7 +1326,7 @@ class KJetFiller_AK8fChHad : public KJetFiller {
 };
 REGISTER_JETFILLER(AK8fChHad);
 
-class KJetFiller_nChHad : public KJetFiller {
+class KJetFiller_AK8nChHad : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
 		virtual void ListBranches() { branches = {"JetsAK8_chargedHadronMultiplicity"}; }
@@ -1334,7 +1334,7 @@ class KJetFiller_nChHad : public KJetFiller {
 };
 REGISTER_JETFILLER(AK8nChHad);
 
-class KJetFiller_nCh : public KJetFiller {
+class KJetFiller_AK8nCh : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
 		virtual void ListBranches() { branches = {"JetsAK8_chargedMultiplicity"}; }
@@ -1445,7 +1445,7 @@ class KJetFiller_AK8nPho : public KJetFiller {
 		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_photonMultiplicity->size()>index) value.Fill(looper->JetsAK8_photonMultiplicity->at(index),w); }
 };
 REGISTER_JETFILLER(AK8nPho);
-*/
+
 class KJetFiller_AK8ptdrlog : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
@@ -1461,6 +1461,38 @@ class KJetFiller_AK8ptdrlognorm : public KJetFiller {
 		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_ptdrlog->size()>index) value.Fill(looper->JetsAK8_multiplicity->at(index)*log(looper->JetsAK8->at(index).Pt())-looper->JetsAK8_ptdrlog->at(index),w); }
 };
 REGISTER_JETFILLER(AK8ptdrlognorm);
+
+class KJetFiller_AK8ecfN2b1 : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_ecfN2b1"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_ecfN2b1->size()>index) value.Fill(looper->JetsAK8_ecfN2b1->at(index),w); }
+};
+REGISTER_JETFILLER(AK8ecfN2b1);
+
+class KJetFiller_AK8ecfN2b2 : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_ecfN2b2"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_ecfN2b2->size()>index) value.Fill(looper->JetsAK8_ecfN2b2->at(index),w); }
+};
+REGISTER_JETFILLER(AK8ecfN2b2);
+
+class KJetFiller_AK8ecfN3b1 : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_ecfN3b1"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_ecfN3b1->size()>index) value.Fill(looper->JetsAK8_ecfN3b1->at(index),w); }
+};
+REGISTER_JETFILLER(AK8ecfN3b1);
+
+class KJetFiller_AK8ecfN3b2 : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_ecfN3b2"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_ecfN3b2->size()>index) value.Fill(looper->JetsAK8_ecfN3b2->at(index),w); }
+};
+REGISTER_JETFILLER(AK8ecfN3b2);
 
 //-----------------------------------------------------------------------------
 //per-jet quantities based on dark hadron gen info
