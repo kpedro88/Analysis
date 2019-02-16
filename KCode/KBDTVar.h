@@ -115,7 +115,7 @@ class KBDTVar_ecfN2b1 : public KBDTVar {
 	public:
 		using KBDTVar::KBDTVar;
 		virtual void ListBranches() { branches = {"JetsAK8_ecfN2b1"}; }
-		virtual void Fill(unsigned j) { branch = looper->JetsAK8_ecfN2b1->at(j); }
+		virtual void Fill(unsigned j) { branch = max(looper->JetsAK8_ecfN2b1->at(j),-1.); }
 };
 REGISTER_BDTVAR(ecfN2b1);
 
@@ -123,7 +123,7 @@ class KBDTVar_ecfN2b2 : public KBDTVar {
 	public:
 		using KBDTVar::KBDTVar;
 		virtual void ListBranches() { branches = {"JetsAK8_ecfN2b2"}; }
-		virtual void Fill(unsigned j) { branch = looper->JetsAK8_ecfN2b2->at(j); }
+		virtual void Fill(unsigned j) { branch = max(looper->JetsAK8_ecfN2b2->at(j),-1.); }
 };
 REGISTER_BDTVAR(ecfN2b2);
 
@@ -131,7 +131,7 @@ class KBDTVar_ecfN3b1 : public KBDTVar {
 	public:
 		using KBDTVar::KBDTVar;
 		virtual void ListBranches() { branches = {"JetsAK8_ecfN3b1"}; }
-		virtual void Fill(unsigned j) { branch = looper->JetsAK8_ecfN3b1->at(j); }
+		virtual void Fill(unsigned j) { branch = max(looper->JetsAK8_ecfN3b1->at(j),-1.); }
 };
 REGISTER_BDTVAR(ecfN3b1);
 
@@ -139,7 +139,7 @@ class KBDTVar_ecfN3b2 : public KBDTVar {
 	public:
 		using KBDTVar::KBDTVar;
 		virtual void ListBranches() { branches = {"JetsAK8_ecfN3b2"}; }
-		virtual void Fill(unsigned j) { branch = looper->JetsAK8_ecfN3b2->at(j); }
+		virtual void Fill(unsigned j) { branch = max(looper->JetsAK8_ecfN3b2->at(j),-1.); }
 };
 REGISTER_BDTVAR(ecfN3b2);
 
@@ -282,16 +282,16 @@ REGISTER_BDTVAR(fPho);
 class KBDTVar_nCh : public KBDTVar {
 	public:
 		using KBDTVar::KBDTVar;
-		virtual void ListBranches() { branches = {"JetsAK8_chargedHadronMultiplicity"}; }
-		virtual void Fill(unsigned j) { branch = looper->JetsAK8_chargedHadronMultiplicity->at(j); }
+		virtual void ListBranches() { branches = {"JetsAK8_chargedMultiplicity"}; }
+		virtual void Fill(unsigned j) { branch = looper->JetsAK8_chargedMultiplicity->at(j); }
 };
 REGISTER_BDTVAR(nCh);
 
 class KBDTVar_nChHad : public KBDTVar {
 	public:
 		using KBDTVar::KBDTVar;
-		virtual void ListBranches() { branches = {"JetsAK8_chargedMultiplicity"}; }
-		virtual void Fill(unsigned j) { branch = looper->JetsAK8_chargedMultiplicity->at(j); }
+		virtual void ListBranches() { branches = {"JetsAK8_chargedHadronMultiplicity"}; }
+		virtual void Fill(unsigned j) { branch = looper->JetsAK8_chargedHadronMultiplicity->at(j); }
 };
 REGISTER_BDTVAR(nChHad);
 
