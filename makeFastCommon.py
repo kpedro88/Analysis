@@ -14,8 +14,8 @@ def msplit(line):
 def makeLineDCHist(name):
     return "hist" + "\t" + "mc" + "\t" + name + "\n"
 
-def makeLineDCBase(name, xsec, mother):
-    return "\t" + "base" + "\t" + "mc" + "\t" + name + "\t" + "s:filename[tree_" + name + ".root]" + "\t" + "d:xsection[" + str(xsec) + "]" + "\t" + "b:signal[1]" + "\t" + "b:fastsim[1]" + "\t" + "vi:mother[" + str(','.join(str(m) for m in mother)) + "]" + "\n"
+def makeLineDCBase(name, fname, xsec, mother):
+    return "\t" + "base" + "\t" + "mc" + "\t" + name + "\t" + "s:filename[tree_" + fname + ".root]" + "\t" + "d:xsection[" + str(xsec) + "]" + "\t" + "b:signal[1]" + "\t" + "b:fastsim[1]" + "\t" + "vi:mother[" + str(','.join(str(m) for m in mother)) + "]" + "\n"
 
 def get_xsec(model,mMother):
     # get cross section

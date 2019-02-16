@@ -20,6 +20,7 @@ parser = OptionParser()
 parser.add_option("-d", "--dir", dest="dir", default="/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV8/scan/", help="location of root files (LFN)")
 parser.add_option("-k", "--skip", dest="skip", default="", help="topologies to skip (comma-separated)")
 parser.add_option("-m", "--match", dest="match", default="", help="pick only files matching this string")
+parser.add_option("-y", "--year", dest="year", default="", help="year name for output files (if not default)")
 parser.add_option("-s", "--skim", dest="skim", default="input/input_sets_skim_fast.txt", help="skim output file to write")
 parser.add_option("-c", "--card", dest="card", default="input/input_sets_DC_fast.txt", help="datacard output file to write")
 parser.add_option("-e", "--export", dest="export", default="batch/exportFast.sh", help="export file to write")
@@ -63,18 +64,21 @@ for file in files:
     model = '_'.join(fsplit[0:-4])
     mMother = msplit(fsplit[-4])
     mLSP = msplit(fsplit[-3])
-    year = fsplit[-2]
+    year = options.year if len(options.year)>0 else fsplit[-2]
+    fyear = fsplit[-2]
     mother_ID = []
     # get cross section
     this_xsec, mother_ID = get_xsec(model,mMother)
     # make short name
     short_name = model + "_" + str(mMother) + "_" + str(mLSP) + "_" + year + "_" + "fast"
+    # make dc input file name (maybe different from short name)
+    fname = model + "_" + str(mMother) + "_" + str(mLSP) + "_" + fyear + "_" + "fast"
     # make set list for skimming
     wline = "base" + "\t" + "skim" + "\t" + short_name + "\t" + "s:filename[" + file + "]" + "\t" + "b:fastsim[1]" + "\t" + "vi:mother[" + str(','.join(str(m) for m in mother_ID)) + "]" + "\t" + "b:data[0]" + "\n"
     wfile.write(wline)
     # make set list for datacards with xsecs
     dline = makeLineDCHist(short_name)
-    dline += makeLineDCBase(short_name,this_xsec,mother_ID)
+    dline += makeLineDCBase(short_name,fname,this_xsec,mother_ID)
     dfile.write(dline)
     # make per-set list
     with open("input/fast/input_set_DC_"+short_name+".txt",'w') as ofile:

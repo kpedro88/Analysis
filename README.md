@@ -101,7 +101,10 @@ To make the input lists of model points automatically for skimming, plotting, an
 ```
 python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16/scan/ -m MC2016 -s input/input_sets_skim_fast_2016.txt -c input/input_sets_DC_fast_2016.txt -e batch/exportSkimFast2016.sh
 python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16/scan/ -m MC2017 -s input/input_sets_skim_fast_2017.txt -c input/input_sets_DC_fast_2017.txt -e batch/exportSkimFast2017.sh
+python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16/scan/ -m MC2017 -y MC2018 -s input/input_sets_skim_fast_2018.txt -c input/input_sets_DC_fast_2018.txt -e batch/exportSkimFast2018.sh
+python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16/scan/ -m MC2017 -y MC2018HEM -s input/input_sets_skim_fast_2018HEM.txt -c input/input_sets_DC_fast_2018HEM.txt -e batch/exportSkimFast2018HEM.sh
 ```
+Currently, the 2017 FastSim is reused for 2018, with separate entries for the run periods with or without the HEM problem.
 
 <a name="combined"></a>A separate script is available to create a "combined" model by adding together multiple signal models with different weights.
 This script creates input lists for plotting and datacards (the existing skims are re-used).
