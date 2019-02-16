@@ -34,7 +34,10 @@ for YEAR in 2016 2017; do
 		# name all sets the same for each year in order to hadd
 		EXTRA='"SET","hist\tdata\tSingleMuon_'${YEAR}'","\tbase\tdata\tSingleMuon_'${YEAR}${PERIOD}'\ts:filename[tree_SingleMuon_'${YEAR}${PERIOD}'.root]"'
 		JOBNAME="hist_trig_"${YEAR}${PERIOD}
-		./HPtemp.sh ${JOBDIR} ${INDIR} ${STORE} "$INPUTS" "$OUTPUT" "$EXTRA" "$JOBNAME"
+
+		echo 'KPlotDriver.C+("'"$INDIR"'",{'"$INPUTS"'},{'"$EXTRA"','"$OUTPUT"'})' > jobs/input/macro_${JOBNAME}.txt
+
+		./HPtemp.sh ${JOBDIR} ${INDIR} ${STORE} ${JOBNAME}
 	done
 done
 
