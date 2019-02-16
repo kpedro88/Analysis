@@ -15,6 +15,7 @@
 #include <TStyle.h>
 #include <TF1.h>
 #include <TMath.h>
+#include <TGaxis.h>
 
 //STL headers
 #include <string>
@@ -45,7 +46,7 @@ void print(TCanvas* can, const string& oname, const vector<string>& pformats){
 }
 
 //root -b -l -q 'plotTrigEff.C+("test/hist_trig_2016.root","SingleMuon",2016,"trigDenom",{"trigNumerJet","trigNumerHT","trigNumerJetHT"},{"MTAK8","ht","leadjetAK8pt","met","subleadjetAK8pt"})'
-void plotTrigEff(string filename, string region, int year, string denom, vector<string> numers, vector<string> quantities, bool fit=false, string cutname="", vector<string> pformats={"png"}){
+void plotTrigEff(string filename, string region, int year, string denom, vector<string> numers, vector<string> quantities, bool fit=false, bool showhist=false, string cutname="", vector<string> pformats={"png"}){
 	TFile* file = TFile::Open(filename.c_str());
 	if(!file) return;
 
@@ -90,6 +91,7 @@ void plotTrigEff(string filename, string region, int year, string denom, vector<
 	globalOpt->Set<string>("lumi_text",year==2016?"35.9 fb^{-1} (13 TeV)":year==2017?"41.5 fb^{-1} (13 TeV)":"(13 TeV)");
 	globalOpt->Set<bool>("checkerr",false);
 	globalOpt->Set<int>("npanel",1);
+	if(showhist) globalOpt->Set<double>("marginR",95);
 	OptionMap* localOpt = new OptionMap();
 	localOpt->Set<bool>("ratio",false);
 	localOpt->Set<bool>("logy",false);
@@ -149,10 +151,15 @@ void plotTrigEff(string filename, string region, int year, string denom, vector<
 				KLegend* kleg = plot->GetLegend();
 				TCanvas* can = plot->GetCanvas();
 				TPad* pad1 = plot->GetPad1();
+				if(showhist) pad1->SetTicks(1,0);
 				pad1->cd();
 			
 				//make legend
 				kleg->AddHist(plot->GetHisto()); //for tick sizes
+				TH1F* leghist = (TH1F*)plot->GetHisto()->Clone();
+				for(unsigned b = 0; b <= leghist->GetNbinsX(); ++b) { leghist->SetBinContent(b,1.0); }
+				leghist->SetBinContent(1,2.0);
+				kleg->AddHist(leghist); //for placement
 				if(!cutname.empty()) kleg->AddEntry(btmp,ctitles[cutname],"pel");
 				if(fn){
 					double mu = fn->GetParameter(1);
@@ -171,9 +178,9 @@ void plotTrigEff(string filename, string region, int year, string denom, vector<
 					string eps("#scale[1.3]{#font[122]{e}}");
 					stringstream ss;
 					ss << fixed << setprecision(0);
-					ss << eps << "[" << qtitles[qty] << " #geq " << plateau << " " << utitles[qty] << "] = ";
+					ss << eps << "[^{}" << qtitles[qty] << " #geq " << plateau << " " << utitles[qty] << "] = ";
 					ss << fixed << setprecision(1);
-					ss << effplateau*100 << "^{+" << eupplateau*100 << "}_{-" << ednplateau*100 << "} %";
+					ss << "^{}" << effplateau*100 << "^{+" << eupplateau*100 << "}_{-" << ednplateau*100 << "} %";
 					kleg->AddEntry((TObject*)NULL,ss.str(),"");
 					
 					stringstream ss2;
@@ -181,10 +188,57 @@ void plotTrigEff(string filename, string region, int year, string denom, vector<
 					ss2 << "98% of plateau at " << p98 << " " << utitles[qty];
 					kleg->AddEntry((TObject*)NULL,ss2.str(),"");
 				}
-				kleg->Build(KLegend::right,KLegend::bottom);
+				kleg->Build();//KLegend::right,KLegend::bottom);
 
 				//draw blank histo for axes
 				plot->DrawHist();
+
+				if(showhist){
+					TH1F* hnumer2 = (TH1F*)hnumer->Clone();
+					TH1F* hdenom2 = (TH1F*)hdenom->Clone();
+					
+					//scale so numer goes up to 0.5
+					double scale = 0.5/hnumer2->GetMaximum();
+					double hymax = kleg->GetRange().second/scale;
+
+					//denom settings
+					Color_t shcol = kBlue + 2;
+					hdenom2->Scale(scale);
+					hdenom2->SetLineColor(shcol);
+					hdenom2->SetLineStyle(2);
+					hdenom2->SetFillColor(0);
+					hdenom2->SetLineWidth(2);
+					hdenom2->Draw("hist same");
+
+					//numer settings
+					hnumer2->Scale(scale);
+					hnumer2->SetFillColor(kBlue - 9);
+					hnumer2->SetLineStyle(0);
+					hnumer2->Draw("hist same");
+
+					//extra y axis
+					double xmax = hnumer->GetXaxis()->GetXmax();
+					TAxis* yaxis = plot->GetHisto()->GetYaxis();
+					TGaxis* hyaxis = new TGaxis(xmax, 0, xmax, kleg->GetRange().second, 0, hymax, 507, "+L");
+					hyaxis->SetTitleFont(42);
+					hyaxis->SetLabelFont(42);
+					hyaxis->SetLineColor(shcol);
+					hyaxis->SetTextColor(shcol);
+					hyaxis->SetLabelColor(shcol);
+					hyaxis->SetTitleOffset(yaxis->GetTitleOffset());
+					hyaxis->SetTitleSize(yaxis->GetTitleSize());
+					hyaxis->SetLabelSize(yaxis->GetLabelSize());
+					hyaxis->SetLabelOffset(yaxis->GetLabelOffset());
+					hyaxis->SetTickLength(yaxis->GetTickLength());
+					hyaxis->SetTitle("number of events");
+					hyaxis->Draw();
+
+					TLine* unitline = new TLine(hnumer->GetXaxis()->GetXmin(),1,xmax,1);
+					unitline->SetLineColor(kBlack);
+					unitline->SetLineStyle(7);
+					unitline->SetLineWidth(2);
+					unitline->Draw("same");
+				}
 			
 				//draw eff
 				btmp->Draw("PZ same");
@@ -213,7 +267,6 @@ void plotTrigEff(string filename, string region, int year, string denom, vector<
 				//axis settings
 				heff->GetZaxis()->SetRangeUser(zmin,1);
 				heff->GetZaxis()->SetTitle(ytitles[numer].c_str());
-//				heff->SetMarkerSize(0.8);
 			
 				string oname = prefix+"_"+hname2;
 			
