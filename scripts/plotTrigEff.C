@@ -46,7 +46,7 @@ void print(TCanvas* can, const string& oname, const vector<string>& pformats){
 }
 
 //root -b -l -q 'plotTrigEff.C+("test/hist_trig_2016.root","SingleMuon",2016,"trigDenom",{"trigNumerJet","trigNumerHT","trigNumerJetHT"},{"MTAK8","ht","leadjetAK8pt","met","subleadjetAK8pt"})'
-void plotTrigEff(string filename, string region, int year, string denom, vector<string> numers, vector<string> quantities, bool fit=false, bool showhist=false, string cutname="", vector<string> pformats={"png"}){
+void plotTrigEff(string filename, string region, int year, string denom, vector<string> numers, vector<string> quantities, bool fit=false, bool showhist=false, int rebin=0, string cutname="", vector<string> pformats={"png"}){
 	TFile* file = TFile::Open(filename.c_str());
 	if(!file) return;
 
@@ -115,6 +115,20 @@ void plotTrigEff(string filename, string region, int year, string denom, vector<
 		//1D hist
 		if(qty.find("_")==string::npos){
 			TH1F* hdenom = (TH1F*)file->Get(hname.c_str());
+
+			vector<double> newbins;
+			if(rebin>0){
+				int sum = 0;
+				newbins.push_back(hdenom->GetBinLowEdge(1));
+				for(unsigned b = 1; b <= hdenom->GetNbinsX(); ++b){
+					sum += hdenom->GetBinContent(b);
+					if(sum>rebin or b==hdenom->GetNbinsX()){
+						newbins.push_back(hdenom->GetBinLowEdge(b+1));
+						sum = 0;
+					}
+				}
+				hdenom = (TH1F*)hdenom->Rebin(newbins.size()-1,(hname+"_rebin").c_str(),newbins.data());
+			}
 	
 			//compare to numers
 			for(auto numer: numers){
@@ -122,6 +136,7 @@ void plotTrigEff(string filename, string region, int year, string denom, vector<
 				if(!cutname.empty()) numer += cutname;
 				const auto& hname2 = histName(region,year,numer,qty);
 				TH1F* hnumer = (TH1F*)file->Get(hname2.c_str());
+				if(rebin>0) hnumer = (TH1F*)hnumer->Rebin(newbins.size()-1,(hname2+"_rebin").c_str(),newbins.data());
 				TGraphAsymmErrors* btmp = new TGraphAsymmErrors(hnumer,hdenom);
 
 				TF1* fn = nullptr;
@@ -143,10 +158,12 @@ void plotTrigEff(string filename, string region, int year, string denom, vector<
 				haxis->GetYaxis()->SetRangeUser(0,1);
 				haxis->GetYaxis()->SetTitle(ytitle.c_str());
 			
-				string oname = prefix+"_"+hname2;
+				stringstream oname;
+				oname << prefix << "_" << hname2;
+				if(rebin>0) oname << "_rebin" << rebin;
 			
 				//make plot
-				KPlot* plot = new KPlot(oname,localOpt,globalOpt);
+				KPlot* plot = new KPlot(oname.str(),localOpt,globalOpt);
 				plot->Initialize(haxis);
 				KLegend* kleg = plot->GetLegend();
 				TCanvas* can = plot->GetCanvas();
@@ -156,9 +173,9 @@ void plotTrigEff(string filename, string region, int year, string denom, vector<
 			
 				//make legend
 				kleg->AddHist(plot->GetHisto()); //for tick sizes
-				TH1F* leghist = (TH1F*)plot->GetHisto()->Clone();
+				TH1F* leghist = (TH1F*)plot->GetHisto()->Clone("leghist");
 				for(unsigned b = 0; b <= leghist->GetNbinsX(); ++b) { leghist->SetBinContent(b,1.0); }
-				leghist->SetBinContent(1,2.0);
+				leghist->SetBinContent(1,1.4);
 				kleg->AddHist(leghist); //for placement
 				if(!cutname.empty()) kleg->AddEntry(btmp,ctitles[cutname],"pel");
 				if(fn){
@@ -248,7 +265,7 @@ void plotTrigEff(string filename, string region, int year, string denom, vector<
 				plot->DrawText();
 			
 				//print image
-				print(can,oname,pformats);
+				print(can,oname.str(),pformats);
 			}
 		}
 
@@ -268,10 +285,12 @@ void plotTrigEff(string filename, string region, int year, string denom, vector<
 				heff->GetZaxis()->SetRangeUser(zmin,1);
 				heff->GetZaxis()->SetTitle(ytitles[numer].c_str());
 			
-				string oname = prefix+"_"+hname2;
+				stringstream oname;
+				oname << prefix << "_" << hname2;
+				if(rebin>0) oname << "_rebin" << rebin;
 			
 				//make plot
-				KPlot2D* plot = new KPlot2D(oname,numer,localOpt,globalOpt);
+				KPlot2D* plot = new KPlot2D(oname.str(),numer,localOpt,globalOpt);
 				plot->Initialize(heff);
 				TCanvas* can = plot->GetCanvas();
 				TPad* pad1 = plot->GetPad1();
@@ -283,7 +302,7 @@ void plotTrigEff(string filename, string region, int year, string denom, vector<
 				plot->DrawText();
 			
 				//print image
-				print(can,oname,pformats);
+				print(can,oname.str(),pformats);
 			}
 		}
 	}
