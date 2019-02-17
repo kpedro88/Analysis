@@ -81,6 +81,7 @@ class KCutflow {
 				for(auto& name_ : names) name_ += "_"+name;
 			}
 			h_raw->SetName((names[0]).c_str());
+			title = h_raw->GetTitle();
 			h_raw->SetTitle("");
 			h_abs = new TH1F((names[1]).c_str(),"",h_raw->GetNbinsX(),0,h_raw->GetNbinsX());
 			h_rel = new TH1F((names[2]).c_str(),"",h_raw->GetNbinsX(),0,h_raw->GetNbinsX());
@@ -131,7 +132,7 @@ class KCutflow {
 			
 			//print preamble
 			cout << string(widths[0]+widths[1]+widths[2]+widths[3]+2*(4-1),'-') << endl;
-			cout << "Selection: " << h_raw->GetTitle() << endl;
+			cout << "Selection: " << title << endl;
 			cout << left << setw(widths[0]) << "Selector" << "  " << right << setw(widths[1]) << "Raw # Events" << "  " << right << setw(widths[2]) << "Abs. Eff. (%)" << "  " << right << setw(widths[3]) << "Rel. Eff. (%)" << endl;
 			cout << left << setw(widths[0]) << "NEventProc";
 			if(printerrors) cout << "  " << right << setw(widths[4]) << nentries << " +/- " << right << setw(widths[4]) << nentriesE << endl;
@@ -174,7 +175,7 @@ class KCutflow {
 	
 	private:
 		//members
-		string name;
+		string name, title;
 		TH1F *h_raw, *h_abs, *h_rel;
 		int nentries;
 		double nentriesE;
