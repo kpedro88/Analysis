@@ -31,6 +31,7 @@ else:
 
 nfiles = int(options.nfiles)
 yearsuff = "_MC"+options.year if len(options.year)>0 else ""
+fdict = {}
 for file in files:
     # skip unwanted things (including non-SMS)
     if file[-3:]=="pyc" or file[0:8]=="__init__" or file[0:3]!="SMS": continue
@@ -44,9 +45,13 @@ for file in files:
         short_name += fpart + '_'
     # remove SMS-
     short_name = short_name.replace("SMS-","")[:-1]+yearsuff
-    if not options.keep:
+    if short_name not in fdict: fdict[short_name] = [full_name]
+    else: fdict[short_name].append(full_name)
+
+if not options.keep:
+    for key,val in sorted(fdict.iteritems()):
         # make dict for makeSkimInput.py
-        wline = "[['" + full_name + "'], ['" + short_name + "']],\n"        
+        wline = "[" + str(val) + ", ['" + key + "']],\n"        
         wfile.write(wline)
 
 # close files
