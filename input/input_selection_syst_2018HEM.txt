@@ -1,0 +1,88 @@
+SELECTION
+common
+	METFilter
+	ExtraFilter
+	BTagSF	s:calib[btag/DeepCSV_94XSF_V3_B_F_mod.csv]
+	RA2Bin	in:options[input/input_RA2bin_options.txt]	b:RA2Exclusive[0]
+	Histo
+nominal
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]
+	common
+scaleuncUp
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:scaleunc[1]
+	common
+scaleuncDown
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:scaleunc[-1]
+	common
+triguncUp
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:trigunc[1]
+	common
+triguncDown
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:trigunc[-1]
+	common
+trigsystuncUp
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:trigsystunc[1]
+	common
+trigsystuncDown
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:trigsystunc[-1]
+	common
+btagSFuncUp
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:btagSFunc[1]
+	common
+btagSFuncDown
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:btagSFunc[-1]
+	common
+mistagSFuncUp
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:mistagSFunc[1]
+	common
+mistagSFuncDown
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:mistagSFunc[-1]
+	common
+btagCFuncUp
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:btagCFunc[1]
+	common
+btagCFuncDown
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:btagCFunc[-1]
+	common
+ctagCFuncUp
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:ctagCFunc[1]
+	common
+ctagCFuncDown
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:ctagCFunc[-1]
+	common
+mistagCFuncUp
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:mistagCFunc[1]
+	common
+mistagCFuncDown
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:mistagCFunc[-1]
+	common
+jetiduncUp
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:jetidunc[1]
+	common
+jetiduncDown
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:jetidunc[-1]
+	common
+isotrackuncUp
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:isotrackunc[1]
+	common
+isotrackuncDown
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:isotrackunc[-1]
+	common
+lumiuncUp
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:lumiunc[1]
+	common
+lumiuncDown
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:lumiunc[-1]
+	common
+puaccuncUp
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:puaccunc[1]
+	common
+puaccuncDown
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:puaccunc[-1]
+	common
+hemvetouncUp
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:hemvetounc[1]
+	common
+hemvetouncDown
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:hemvetounc[-1]
+	common

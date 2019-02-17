@@ -14,6 +14,7 @@
 #include <sstream>
 #include <algorithm>
 #include <iterator>
+#include <exception>
 
 using namespace std;
 
@@ -30,7 +31,7 @@ string changeHistoName(string name, string suff){
 
 //recompile:
 //root -b -l -q MakeAllDCsyst.C++
-void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV11", string systTypes="nominal,scaleuncUp,scaleuncDown,isruncUp,isruncDown,triguncUp,triguncDown,btagSFuncUp,btagSFuncDown,mistagSFuncUp,mistagSFuncDown,isotrackuncUp,isotrackuncDown,lumiuncUp,lumiuncDown,prefireuncUp,prefireuncDown", string varTypes="JECup,JECdown,JERup,JERdown"){
+void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV11", string systTypes="nominal,scaleuncUp,scaleuncDown,isruncUp,isruncDown,triguncUp,triguncDown,trigsystuncUp,trigsystuncDown,btagSFuncUp,btagSFuncDown,mistagSFuncUp,mistagSFuncDown,isotrackuncUp,isotrackuncDown,lumiuncUp,lumiuncDown,prefireuncUp,prefireuncDown", string varTypes="JECup,JECdown,JERup,JERdown"){
 	gErrorIgnoreLevel = kBreak;
 	
 	if(mode==-1){
@@ -47,6 +48,14 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	//string inputQCD = "input/input_RA2bin_DC_QCD.txt";
 	string setlist = "";
 	string osuff = "";
+	string selection = "";
+
+	//find selection by year
+	if(setname.find("MC2018HEM")!=string::npos) selection = "input/input_selection_syst_2018HEM.txt";
+	else if(setname.find("MC2018")!=string::npos) selection = "input/input_selection_syst_2018.txt";
+	else if(setname.find("MC2017")!=string::npos) selection = "input/input_selection_syst_2017.txt";
+	else if(setname.find("MC2016")!=string::npos) selection = "input/input_selection_syst_2016.txt";
+	else throw runtime_error("Could not determine year for setname: "+setname);
 	
 	//process variaton types - comma-separated input, need to be run separately
 	vector<string> vars;
@@ -71,7 +80,7 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	
 	//do the simple systematics all at once
 	rootfiles.push_back(outdir+outpre+region+osuff);
-	KPlotDriver(indir+inpre+region,{input,setlist},{"OPTION","string:rootfile["+rootfiles.back()+"]","vstring:selections["+systTypes+"]"});
+	KPlotDriver(indir+inpre+region,{input,setlist},{"INPUT",selection,"OPTION","string:rootfile["+rootfiles.back()+"]","vstring:selections["+systTypes+"]"});
 	
 	//do the full variations separately
 	//produce a selection for each variation on the fly, cloned from nominal
@@ -79,7 +88,7 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 		//change region
 		string region_ = region + "_"+ivar;
 		rootfiles.push_back(outdir+outpre+region_+osuff);
-		KPlotDriver(indir+inpre+region_,{input,setlist},{"OPTION","string:rootfile["+rootfiles.back()+"]","vstring:selections["+ivar+"]","SELECTION",ivar,"\tnominal"});
+		KPlotDriver(indir+inpre+region_,{input,setlist},{"INPUT",selection,"OPTION","string:rootfile["+rootfiles.back()+"]","vstring:selections["+ivar+"]","SELECTION",ivar,"\tnominal"});
 	}
 	
 	//hadd
@@ -146,6 +155,8 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 			//if central value is zero, treat syst as a shift
 			if(denom==0.) denom = 1.0;
 			unc = isyst->GetBinContent(b)/denom;
+			//zero check
+			if(unc==0.) unc = 1.0;
 			//bound
 			unc = min(max(unc,0.01),3.0);
 			//set

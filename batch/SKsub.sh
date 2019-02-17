@@ -50,6 +50,9 @@ for TYPE in ${TYPES[@]}; do
 		TMPINDIR="$INDIR"/scan
 		TMPSTORE="$STORE"/scan
 	fi
+	if [ "$TYPE" = Data ]; then
+		SELS=$SELS,signalUnblind
+	fi
 
 	for YEAR in ${YEARS[@]}; do
 		source exportSkim${TYPE}${YEAR}.sh

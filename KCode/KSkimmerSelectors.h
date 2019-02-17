@@ -71,47 +71,6 @@ class KNegativeWeightSelector : public KSelector {
 };
 REGISTER_SELECTOR(NegativeWeight);
 
-//------------------------------------------------------
-//selects events based on run number (for blinding data)
-class KBlindSelector : public KSelector {
-	public:
-		//constructor
-		KBlindSelector() : KSelector() { }
-		KBlindSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), firstUnblindRun(0), lastUnblindRun(257599) { 
-			//check for option
-			localOpt->Get("firstUnblindRun",firstUnblindRun);
-			localOpt->Get("lastUnblindRun",lastUnblindRun);
-			localOpt->Get("intervalUnblindRuns",intervalUnblindRuns);
-			if(intervalUnblindRuns.size()%2!=0){
-				cout << "Input error: intervalUnblindRuns must have an even number of entries. This input will be ignored." << endl;
-				intervalUnblindRuns.clear();
-			}
-		}
-		virtual void CheckBase(){
-			//disable this for non-data
-			if(!base->IsData()) dummy = true;
-		}
-		
-		//this selector doesn't add anything to tree
-		
-		//used for non-dummy selectors
-		virtual bool Cut() {
-			if(intervalUnblindRuns.size()>0){
-				//check each run pair
-				for(unsigned r = 0; r < intervalUnblindRuns.size(); r+=2){
-					if(looper->RunNum >= intervalUnblindRuns[r] and looper->RunNum <= intervalUnblindRuns[r+1]) return true;
-				}
-				return false;
-			}
-			return (firstUnblindRun==-1 or looper->RunNum >= firstUnblindRun) and (lastUnblindRun==-1 or looper->RunNum <= lastUnblindRun);
-		}
-		
-		//member variables
-		int firstUnblindRun, lastUnblindRun;
-		vector<int> intervalUnblindRuns;
-};
-REGISTER_SELECTOR(Blind);
-
 //----------------------------------------------------
 //selects events based on number of jets
 class KNJetSelector : public KSelector {
@@ -720,6 +679,35 @@ class KHTRatioSelector : public KFilterSelector {
 		bool doHTDPhiCut, tight;
 };
 REGISTER_SELECTOR(HTRatio);
+
+//-------------------------------------------------------------
+//vetos events with activity in HEM region
+class KHEMVetoSelector : public KFilterSelector {
+	public:
+		//constructor
+		KHEMVetoSelector() : KFilterSelector() { }
+		KHEMVetoSelector(string name_, OptionMap* localOpt_) : KFilterSelector(name_,localOpt_) {
+			branchname = "HEMVeto";
+		}
+		bool InHEMRegion(const TLorentzVector& tlv){
+			return tlv.Pt()>30 and -3 < tlv.Eta() and tlv.Eta() < -1.4 and -1.57 < tlv.Phi() and tlv.Phi() < -0.87;
+		}
+		virtual void GetResult() {
+			bool activity = false;
+			//check electrons
+			for(const auto& Electron : *looper->Electrons){
+				if(!activity and InHEMRegion(Electron)) activity = true;
+				if(activity) break;
+			}
+			//check jets
+			for(const auto& Jet : *looper->Jets){
+				if(!activity and InHEMRegion(Jet)) activity = true;
+				if(activity) break;
+			}
+			result = !activity;
+		}
+};
+REGISTER_SELECTOR(HEMVeto);
 
 //-------------------------------------------------------------
 //selects based on nvtx

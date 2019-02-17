@@ -119,13 +119,17 @@ class KMCWeightSelector : public KSelector {
 			trigunc = 0; localOpt->Get("trigunc", trigunc);
 			if(trigcorr){
 				string trigfile; localOpt->Get("trigfile",trigfile);
-				vector<string> trigeffs; localOpt->Get("trigeffs",trigeffs);
-				trigcorror.SetEffs(trigfile,trigeffs);
+				string trigeff; localOpt->Get("trigeff",trigeff);
+				trigcorror.SetEff(trigfile,trigeff);
 				trigcorror.debug = localOpt->Get("trigdebug",false);
-				if(base->GetName().find("MC2016")!=string::npos) trigyear = 2016;
-				else if(base->GetName().find("MC2017")!=string::npos) trigyear = 2017;
-				else if(base->GetName().find("MC2018")!=string::npos) trigyear = 2018;
-				else trigyear = 0;
+			}
+			trigsystcorrval = 1;
+			trigsystcorr = localOpt->Get("trigsystcorr",false);
+			int trigsystunc = 0; localOpt->Get("trigsystunc", trigsystunc);
+			vector<double> trigsystcorrvals;
+			if(localOpt->Get("trigsystcorrvals",trigsystcorrvals) && trigsystcorrvals.size()==3){
+				//vector has down, central, up
+				trigsystcorrval = trigsystunc==0 ? trigsystcorrvals[1] : ( trigsystunc==1 ? trigsystcorrvals[2] : trigsystcorrvals[0] );
 			}
 			
 			//ISR corr options
@@ -281,6 +285,10 @@ class KMCWeightSelector : public KSelector {
 			//prefire corr options
 			prefirecorr = localOpt->Get("prefirecorr",false);
 			prefireunc = 0; localOpt->Get("prefireunc",prefireunc);
+
+			//hem veto options
+			hemvetocorr = localOpt->Get("hemvetocorr",false);
+			hemvetounc = 0; localOpt->Get("hemvetounc",hemvetounc);
 			
 			//other uncertainty options
 			pdfunc = 0; localOpt->Get("pdfunc",pdfunc);
@@ -340,6 +348,9 @@ class KMCWeightSelector : public KSelector {
 				else if(prefireunc>0) looper->fChain->SetBranchStatus("NonPrefiringProbUp");
 				else if(prefireunc<0) looper->fChain->SetBranchStatus("NonPrefiringProbDn");
 			}
+			if(hemvetocorr){
+				if(hemvetounc<1) looper->fChain->SetBranchStatus("HEMVetoFilter",1);
+			}
 		}
 		//enum for normtypes
 		enum normtypes { NoNT=0, ttbarLowHTLowMET=1, ttbarLowHTHighMET=2, ttbarLowHThad=3, ttbarHighHT=4, wjetsLowHT=5, wjetsHighHT=6 };
@@ -388,10 +399,14 @@ class KMCWeightSelector : public KSelector {
 					else if(trigunc<0) w *= .95;
 				}
 				else {
-					w *= trigcorror.GetCorrection(trigyear,looper->HT,trigunc);
+					w *= trigcorror.GetCorrection(looper->HT,trigunc);
 				}
 			}
 			
+			if(trigsystcorr){
+				w *= trigsystcorrval;
+			}
+
 			if(isrcorr){
 				w *= isrcorror.GetCorrection(looper->NJetsISR);
 			}
@@ -429,7 +444,17 @@ class KMCWeightSelector : public KSelector {
 				if(prefireunc==0) w *= looper->NonPrefiringProb;
 				else if(prefireunc>0) w *= looper->NonPrefiringProbUp;
 				else if(prefireunc<0) w *= looper->NonPrefiringProbDn;
+			}
 
+			if(hemvetocorr){
+				//nominal: hem veto, up: no veto, dn: hem veto - (no veto - hem veto) = 2*hem veto - no veto
+				//to implement uncDown on per-event basis, remove vetoed event "twice" (weight of 0 = removed, weight of -1 = removed again)
+				if(hemvetounc==0) w *= looper->HEMVetoFilter;
+				else if(hemvetounc>0) w *= 1;
+				else if(hemvetounc<0) {
+					if(!looper->HEMVetoFilter) w *= -1;
+					else w *= 1;
+				}
 			}
 
 			if(svbweight){
@@ -495,9 +520,9 @@ class KMCWeightSelector : public KSelector {
 		
 		//member variables
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, useKFactor, debugWeight, didDebugWeight;
-		bool pucorr, trigcorr, isrcorr, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr;
-		double jetidcorrval, isotrackcorrval, lumicorrval;
-		int puunc, pdfunc, isrunc, scaleunc, trigunc, trigyear, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc, prefireunc;
+		bool pucorr, trigcorr, trigsystcorr, isrcorr, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr, hemvetocorr;
+		double jetidcorrval, isotrackcorrval, trigsystcorrval, lumicorrval;
+		int puunc, pdfunc, isrunc, scaleunc, trigunc, trigyear, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc, prefireunc, hemvetounc;
 		vector<int> mother;
 		TH1 *puhist, *puhistUp, *puhistDown;
 		vector<double> pdfnorms;
@@ -838,10 +863,8 @@ class KBTagSFSelector : public KSelector {
 			localOpt->Get("debug",debug);
 			if(debug==2) btagcorr.SetDebug(true);
 			
-			has_calib = localOpt->Get("calib",calib);
-			if(!has_calib) localOpt->Get("calibs",calibs);
-			has_calibfast = localOpt->Get("calibfast",calibfast);
-			if(!has_calibfast) localOpt->Get("calibsfast",calibsfast);
+			localOpt->Get("calib",calib);
+			localOpt->Get("calibfast",calibfast);
 		}
 		virtual void CheckDeps(){
 			//set dependencies here
@@ -858,13 +881,6 @@ class KBTagSFSelector : public KSelector {
 			//don't even bother
 			if(depfailed) return;
 
-			//check for year
-			if(!has_calib and !calibs.empty()){
-				if(base->GetName().find("MC2016")!=std::string::npos) calib = calibs[0];
-				else if(base->GetName().find("MC2017")!=std::string::npos) calib = calibs[1];
-				else if(base->GetName().find("MC2018")!=std::string::npos) calib = calibs[2];
-				else calib = "";
-			}
 			//initialize btag corrector calibrations
 			btagcorr.SetCalib(calib);
 
@@ -883,13 +899,6 @@ class KBTagSFSelector : public KSelector {
 			//check fastsim stuff
 			bool fastsim = base->GetLocalOpt()->Get("fastsim",false);
 			if(fastsim){
-				//check for year
-				if(!has_calibfast and !calibsfast.empty()){
-					if(base->GetName().find("MC2016")!=std::string::npos) calibfast = calibsfast[0];
-					else if(base->GetName().find("MC2017")!=std::string::npos) calibfast = calibsfast[1];
-					else if(base->GetName().find("MC2018")!=std::string::npos) calibfast = calibsfast[2];
-					else calibfast = "";
-				}
 				//initialize btag corrector fastsim calibrations
 				//todo: check the sample name and choose the appropriate CFs (once available)
 				if(!calibfast.empty()) {
@@ -921,7 +930,6 @@ class KBTagSFSelector : public KSelector {
 		//member variables
 		int debug;
 		string calib, calibfast;
-		bool has_calib, has_calibfast;
 		vector<string> calibs, calibsfast;
 		BTagCorrector btagcorr;
 		vector<double> prob;
@@ -1068,25 +1076,25 @@ class KExtraFilterSelector : public KSelector {
 	public:
 		//constructor
 		KExtraFilterSelector() : KSelector() { }
-		KExtraFilterSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), fastsim(false), data(false), data2017(false) {
+		KExtraFilterSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), fastsim(false), data(false) {
 			//check option
 			onlydata = localOpt->Get("onlydata",false);
+			ecalnoise = localOpt->Get("ecalnoise",false);
+			hem = localOpt->Get("hem",false);
 		}
 		virtual void CheckBranches(){
 			looper->fChain->SetBranchStatus("METRatioFilter",1);
 			looper->fChain->SetBranchStatus("MuonJetFilter",1);
-			looper->fChain->SetBranchStatus("EcalNoiseJetFilter",1);
+			if(ecalnoise) looper->fChain->SetBranchStatus("EcalNoiseJetFilter",1);
 			looper->fChain->SetBranchStatus("HTRatioDPhiTightFilter",1);
 			looper->fChain->SetBranchStatus("LowNeutralJetFilter",1);
 			looper->fChain->SetBranchStatus("FakeJetFilter",1);
+			if(hem) looper->fChain->SetBranchStatus("HEMVetoFilter",1);
 		}
 		virtual void CheckBase(){
 			//check fastsim stuff
-			if(base->GetLocalOpt()->Get("fastsim",false)) fastsim = true;
-			if(base->IsData()) {
-				data = true;
-				if(base->GetName().find("2017")!=string::npos) data2017 = true;
-			}
+			fastsim = base->GetLocalOpt()->Get("fastsim",false);
+			data = base->IsData();
 			if(onlydata and !data){
 				//disable this for non-data if desired
 				dummy = true;
@@ -1097,17 +1105,18 @@ class KExtraFilterSelector : public KSelector {
 		virtual bool Cut() {
 			bool METRatioFilter = looper->METRatioFilter;
 			bool MuonJetFilter = looper->MuonJetFilter;
-			bool EcalNoiseJetFilter = (!data2017) or looper->EcalNoiseJetFilter;
+			bool EcalNoiseJetFilter = (!ecalnoise) or looper->EcalNoiseJetFilter;
 			bool HTRatioDPhiTightFilter = looper->HTRatioDPhiTightFilter;
 			bool LowNeutralJetFilter = looper->LowNeutralJetFilter;
 			bool FakeJetFilter = (!fastsim) or looper->FakeJetFilter;
+			bool HEMVetoFilter = (!hem) or looper->HEMVetoFilter;
 
-			return METRatioFilter and MuonJetFilter and EcalNoiseJetFilter and HTRatioDPhiTightFilter and LowNeutralJetFilter and FakeJetFilter;
+			return METRatioFilter and MuonJetFilter and EcalNoiseJetFilter and HTRatioDPhiTightFilter and LowNeutralJetFilter and FakeJetFilter and HEMVetoFilter;
 		}
 		
 		//member variables
-		bool fastsim, data, data2017;
-		bool onlydata;
+		bool onlydata, ecalnoise, hem;
+		bool fastsim, data;
 };
 REGISTER_SELECTOR(ExtraFilter);
 

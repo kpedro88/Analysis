@@ -1292,4 +1292,45 @@ class KMETFilterSelector : public KSelector {
 };
 REGISTER_SELECTOR(METFilter);
 
+//------------------------------------------------------
+//selects events based on run number (for blinding data)
+class KBlindSelector : public KSelector {
+	public:
+		//constructor
+		KBlindSelector() : KSelector() { }
+		KBlindSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), firstUnblindRun(-1), lastUnblindRun(-1) { 
+			//check for option
+			localOpt->Get("firstUnblindRun",firstUnblindRun);
+			localOpt->Get("lastUnblindRun",lastUnblindRun);
+			localOpt->Get("intervalUnblindRuns",intervalUnblindRuns);
+			if(intervalUnblindRuns.size()%2!=0){
+				cout << "Input error: intervalUnblindRuns must have an even number of entries. This input will be ignored." << endl;
+				intervalUnblindRuns.clear();
+			}
+		}
+		virtual void CheckBase(){
+			//disable this for non-data
+			if(!base->IsData()) dummy = true;
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			if(intervalUnblindRuns.size()>0){
+				//check each run pair
+				for(unsigned r = 0; r < intervalUnblindRuns.size(); r+=2){
+					if(looper->RunNum >= intervalUnblindRuns[r] and looper->RunNum <= intervalUnblindRuns[r+1]) return true;
+				}
+				return false;
+			}
+			return (firstUnblindRun==-1 or looper->RunNum >= firstUnblindRun) and (lastUnblindRun==-1 or looper->RunNum <= lastUnblindRun);
+		}
+		
+		//member variables
+		int firstUnblindRun, lastUnblindRun;
+		vector<int> intervalUnblindRuns;
+};
+REGISTER_SELECTOR(Blind);
+
 #endif

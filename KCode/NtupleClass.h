@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Fri Jan 18 09:05:54 2019 by ROOT version 6.06/01
+// Sat Feb 16 22:23:48 2019 by ROOT version 6.06/01
 // from TTree PreSelection/PreSelection
 // from TTree tree/all observables, signal
 // found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16/RunIIFall17MiniAODv2.TTJets_TuneCP5_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
@@ -476,6 +476,7 @@ public :
    Bool_t          HTRatioDPhiTightFilter;
    Bool_t          LowNeutralJetFilter;
    Bool_t          LowNeutralJetTightFilter;
+   Bool_t          HEMVetoFilter;
    UInt_t          RA2bin;
    vector<unsigned int> *RA2bins;
 
@@ -932,6 +933,7 @@ public :
    TBranch        *b_HTRatioDPhiTightFilter;   //!
    TBranch        *b_LowNeutralJetFilter;   //!
    TBranch        *b_LowNeutralJetTightFilter;   //!
+   TBranch        *b_HEMVetoFilter;   //!
    TBranch        *b_RA2binBranch;   //!
    TBranch        *b_RA2bins;   //!
 
@@ -1724,6 +1726,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("HTRatioDPhiTightFilter", &HTRatioDPhiTightFilter, &b_HTRatioDPhiTightFilter);
    fChain->SetBranchAddress("LowNeutralJetFilter", &LowNeutralJetFilter, &b_LowNeutralJetFilter);
    fChain->SetBranchAddress("LowNeutralJetTightFilter", &LowNeutralJetTightFilter, &b_LowNeutralJetTightFilter);
+   fChain->SetBranchAddress("HEMVetoFilter", &HEMVetoFilter, &b_HEMVetoFilter);
    fChain->SetBranchAddress("RA2bin", &RA2bin, &b_RA2binBranch);
    fChain->SetBranchAddress("RA2bins", &RA2bins, &b_RA2bins);
    Notify();
