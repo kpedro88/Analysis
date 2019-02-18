@@ -26,6 +26,7 @@
 #include <cstdlib>
 #include <map>
 #include <set>
+#include <array>
 
 using namespace std;
 
@@ -1069,55 +1070,5 @@ class KHistoSelector : public KSelector {
 		}
 };
 REGISTER_SELECTOR(Histo);
-
-//---------------------------------------------------------------
-//applies extra filters
-class KExtraFilterSelector : public KSelector {
-	public:
-		//constructor
-		KExtraFilterSelector() : KSelector() { }
-		KExtraFilterSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), fastsim(false), data(false) {
-			//check option
-			onlydata = localOpt->Get("onlydata",false);
-			ecalnoise = localOpt->Get("ecalnoise",false);
-			hem = localOpt->Get("hem",false);
-		}
-		virtual void CheckBranches(){
-			looper->fChain->SetBranchStatus("METRatioFilter",1);
-			looper->fChain->SetBranchStatus("MuonJetFilter",1);
-			if(ecalnoise) looper->fChain->SetBranchStatus("EcalNoiseJetFilter",1);
-			looper->fChain->SetBranchStatus("HTRatioDPhiTightFilter",1);
-			looper->fChain->SetBranchStatus("LowNeutralJetFilter",1);
-			looper->fChain->SetBranchStatus("FakeJetFilter",1);
-			if(hem) looper->fChain->SetBranchStatus("HEMVetoFilter",1);
-		}
-		virtual void CheckBase(){
-			//check fastsim stuff
-			fastsim = base->GetLocalOpt()->Get("fastsim",false);
-			data = base->IsData();
-			if(onlydata and !data){
-				//disable this for non-data if desired
-				dummy = true;
-			}
-		}
-		
-		//used for non-dummy selectors
-		virtual bool Cut() {
-			bool METRatioFilter = looper->METRatioFilter;
-			bool MuonJetFilter = looper->MuonJetFilter;
-			bool EcalNoiseJetFilter = (!ecalnoise) or looper->EcalNoiseJetFilter;
-			bool HTRatioDPhiTightFilter = looper->HTRatioDPhiTightFilter;
-			bool LowNeutralJetFilter = looper->LowNeutralJetFilter;
-			bool FakeJetFilter = (!fastsim) or looper->FakeJetFilter;
-			bool HEMVetoFilter = (!hem) or looper->HEMVetoFilter;
-
-			return METRatioFilter and MuonJetFilter and EcalNoiseJetFilter and HTRatioDPhiTightFilter and LowNeutralJetFilter and FakeJetFilter and HEMVetoFilter;
-		}
-		
-		//member variables
-		bool onlydata, ecalnoise, hem;
-		bool fastsim, data;
-};
-REGISTER_SELECTOR(ExtraFilter);
 
 #endif

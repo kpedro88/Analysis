@@ -1292,6 +1292,56 @@ class KMETFilterSelector : public KSelector {
 };
 REGISTER_SELECTOR(METFilter);
 
+//---------------------------------------------------------------
+//applies extra filters
+class KExtraFilterSelector : public KSelector {
+	public:
+		//constructor
+		KExtraFilterSelector() : KSelector() { }
+		KExtraFilterSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), fastsim(false), data(false) {
+			//check option
+			onlydata = localOpt->Get("onlydata",false);
+			ecalnoise = localOpt->Get("ecalnoise",false);
+			hem = localOpt->Get("hem",false);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("METRatioFilter",1);
+			looper->fChain->SetBranchStatus("MuonJetFilter",1);
+			if(ecalnoise) looper->fChain->SetBranchStatus("EcalNoiseJetFilter",1);
+			looper->fChain->SetBranchStatus("HTRatioDPhiTightFilter",1);
+			looper->fChain->SetBranchStatus("LowNeutralJetFilter",1);
+			looper->fChain->SetBranchStatus("FakeJetFilter",1);
+			if(hem) looper->fChain->SetBranchStatus("HEMVetoFilter",1);
+		}
+		virtual void CheckBase(){
+			//check fastsim stuff
+			fastsim = base->GetLocalOpt()->Get("fastsim",false);
+			data = base->IsData();
+			if(onlydata and !data){
+				//disable this for non-data if desired
+				dummy = true;
+			}
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			bool METRatioFilter = looper->METRatioFilter;
+			bool MuonJetFilter = looper->MuonJetFilter;
+			bool EcalNoiseJetFilter = (!ecalnoise) or looper->EcalNoiseJetFilter;
+			bool HTRatioDPhiTightFilter = looper->HTRatioDPhiTightFilter;
+			bool LowNeutralJetFilter = looper->LowNeutralJetFilter;
+			bool FakeJetFilter = (!fastsim) or looper->FakeJetFilter;
+			bool HEMVetoFilter = (!hem) or looper->HEMVetoFilter;
+
+			return METRatioFilter and MuonJetFilter and EcalNoiseJetFilter and HTRatioDPhiTightFilter and LowNeutralJetFilter and FakeJetFilter and HEMVetoFilter;
+		}
+		
+		//member variables
+		bool onlydata, ecalnoise, hem;
+		bool fastsim, data;
+};
+REGISTER_SELECTOR(ExtraFilter);
+
 //------------------------------------------------------
 //selects events based on run number (for blinding data)
 class KBlindSelector : public KSelector {
@@ -1332,5 +1382,52 @@ class KBlindSelector : public KSelector {
 		vector<int> intervalUnblindRuns;
 };
 REGISTER_SELECTOR(Blind);
+
+//---------------------------------------------------------------
+//compares ecal noise filters
+class KEcalNoiseComparisonSelector : public KSelector {
+	public:
+		//constructor
+		KEcalNoiseComparisonSelector() : KSelector() { }
+		KEcalNoiseComparisonSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
+			//check option
+			localOpt->Get("filterfile",filterfile);
+			filter = new EventListFilter(filterfile);
+			counters = {0,0,0};
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("EcalNoiseJetFilter",1);
+			looper->fChain->SetBranchStatus("RunNum",1);
+			looper->fChain->SetBranchStatus("LumiBlockNum",1);
+			looper->fChain->SetBranchStatus("EvtNum",1);
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			bool fails1 = !looper->EcalNoiseJetFilter;
+			bool fails2 = !filter->CheckEvent(looper->RunNum,looper->LumiBlockNum,looper->EvtNum);
+			bool fails_both = fails1 and fails2;
+			bool fails_only_1 = fails1 and not fails2;
+			bool fails_only_2 = fails2 and not fails1;
+
+			counters[0] += fails_only_1;
+			counters[1] += fails_only_2;
+			counters[2] += fails_both;
+			
+			return true;
+		}
+
+		virtual void Finalize(TFile* file){
+			cout << "Fail      EcalNoiseJetFilter: " << counters[0] << "\n";
+			cout << "Fail ecalBadCalib event list: " << counters[1] << "\n";
+			cout << "Fail                    both: " << counters[2] << "\n";
+		}
+		
+		//member variables
+		string filterfile;
+		EventListFilter* filter;
+		array<int,3> counters;
+};
+REGISTER_SELECTOR(EcalNoiseComparison);
 
 #endif

@@ -1,0 +1,28 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+OPTION
+int:yieldprecision[2]
+bool:doClone[1]
+#bool:quickchain[1]
+vstring:disable_branches[*clean*,*Clean*]
+
+SELECTION
+ecalcomp
+	HLT	vs:HLTLines[HLT_PFMET100_PFMHT100_IDTight_v,HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_v,HLT_PFMET110_PFMHT110_IDTight_v,HLT_PFMETNoMu110_PFMHTNoMu110_IDTight_v,HLT_PFMET120_PFMHT120_IDTight_v,HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v,HLT_PFMET130_PFMHT130_IDTight_v,HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v,HLT_PFMET140_PFMHT140_IDTight_v,HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v,HLT_PFMET100_PFMHT100_IDTight_PFHT60_v,HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_PFHT60_v,HLT_PFMET110_PFMHT110_IDTight_PFHT60_v,HLT_PFMETNoMu110_PFMHTNoMu110_IDTight_PFHT60_v,HLT_PFMET120_PFMHT120_IDTight_PFHT60_v,HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v,HLT_PFMET130_PFMHT130_IDTight_PFHT60_v,HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_PFHT60_v,HLT_PFMET140_PFMHT140_IDTight_PFHT60_v,HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_PFHT60_v,HLT_PFMET120_PFMHT120_IDTight_HFCleaned_v,HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_HFCleaned_v,HLT_PFMET120_PFMHT120_IDTight_PFHT60_HFCleaned_v,HLT_PFMET90_PFMHT90_IDTight_v,HLT_PFMETNoMu90_PFMHTNoMu90_IDTight_v]
+	METFilter
+	ExtraFilter	b:ecalnoise[0]
+	RA2Bin	in:options[input/input_RA2bin_options.txt]
+	EcalNoiseComparison	s:filterfile[corrections/MET_ecalBadCalibFilterList_Run2017.txt]
+
+SET
+base	skim	MET_2017B	s:filename[tree_MET_2017B.root]	b:data[1]
+base	skim	MET_2017C	s:filename[tree_MET_2017C.root]	b:data[1]
+base	skim	MET_2017D	s:filename[tree_MET_2017D.root]	b:data[1]
+base	skim	MET_2017E	s:filename[tree_MET_2017E.root]	b:data[1]
+base	skim	MET_2017F	s:filename[tree_MET_2017F.root]	b:data[1]
