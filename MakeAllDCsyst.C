@@ -79,16 +79,26 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	vector<string> rootfiles;
 	
 	//do the simple systematics all at once
-	rootfiles.push_back(outdir+outpre+region+osuff);
-	KPlotDriver(indir+inpre+region,{input,setlist},{"INPUT",selection,"OPTION","string:rootfile["+rootfiles.back()+"]","vstring:selections["+systTypes+"]"});
-	
+	if(!systTypes.empty()){
+		rootfiles.push_back(outdir+outpre+region+osuff);
+		KPlotDriver(indir+inpre+region,{input,setlist},{"INPUT",selection,"OPTION","string:rootfile["+rootfiles.back()+"]","vstring:selections["+systTypes+"]"});
+	}
+
 	//do the full variations separately
 	//produce a selection for each variation on the fly, cloned from nominal
 	for(auto& ivar : vars){
+		string selection_base = "nominal";
 		//change region
 		string region_ = region + "_"+ivar;
+		//hack for signal contamination
+		if(ivar=="SLe" or ivar=="SLm" or ivar=="SLe_genMHT" or ivar=="SLm_genMHT") {
+			selection_base = "singlelep";
+			region_ = ivar;
+			//terrible hack
+			if(ivar.size()>3) ivar[3] = '-';
+		}
 		rootfiles.push_back(outdir+outpre+region_+osuff);
-		KPlotDriver(indir+inpre+region_,{input,setlist},{"INPUT",selection,"OPTION","string:rootfile["+rootfiles.back()+"]","vstring:selections["+ivar+"]","SELECTION",ivar,"\tnominal"});
+		KPlotDriver(indir+inpre+region_,{input,setlist},{"INPUT",selection,"OPTION","string:rootfile["+rootfiles.back()+"]","vstring:selections["+ivar+"]","SELECTION",ivar,"\t"+selection_base});
 	}
 	
 	//hadd
