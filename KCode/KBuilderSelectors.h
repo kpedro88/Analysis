@@ -11,6 +11,7 @@
 #include "../corrections/TriggerEfficiencySextet.cpp"
 #include "../corrections/ISRCorrector.h"
 #include "../corrections/TriggerCorrector.h"
+#include "../corrections/LeptonCorrector.h"
 #include "../corrections/PileupAcceptanceUncertainty.h"
 #include "../corrections/Flattener.h"
 
@@ -290,6 +291,113 @@ class KMCWeightSelector : public KSelector {
 			//hem veto options
 			hemvetocorr = localOpt->Get("hemvetocorr",false);
 			hemvetounc = 0; localOpt->Get("hemvetounc",hemvetounc);
+
+			//lepton SF options
+			lepcorr = localOpt->Get("lepcorr",false);
+			lepidunc = 0; localOpt->Get("lepidunc",lepidunc);
+			lepisounc = 0; localOpt->Get("lepisounc",lepisounc);
+			leptrkunc = 0; localOpt->Get("leptrkunc",leptrkunc);
+			if(lepcorr){
+				int lepyear; localOpt->Get("lepyear",lepyear);
+				if(lepyear==2016){
+					elcorrors = {
+						LeptonCorrector(LeptonCorrector::LCtype::id,
+							"corrections/egamma_all.root",
+							"GsfElectronToCutBasedSpring15V",
+							{LeptonCorrector::LCaxes::pt, LeptonCorrector::LCaxes::abseta},
+							lepidunc
+						),
+						LeptonCorrector(LeptonCorrector::LCtype::iso,
+							"corrections/egamma_all.root",
+							"MVAVLooseElectronToMini",
+							{LeptonCorrector::LCaxes::pt, LeptonCorrector::LCaxes::abseta},
+							lepisounc
+						),
+						LeptonCorrector(LeptonCorrector::LCtype::trk,
+							"corrections/egamma_tracking.root",
+							"EGamma_SF2D",
+							{LeptonCorrector::LCaxes::eta, LeptonCorrector::LCaxes::pt},
+							leptrkunc
+						)
+					};
+					mucorrors = {
+						LeptonCorrector(LeptonCorrector::LCtype::id,
+							"corrections/TnP_NUM_MediumID_DENOM_generalTracks_VAR_map_pt_eta.root",
+							"SF",
+							{LeptonCorrector::LCaxes::pt, LeptonCorrector::LCaxes::abseta},
+							lepidunc,
+							0.017
+						),
+						LeptonCorrector(LeptonCorrector::LCtype::iso,
+							"corrections/TnP_NUM_MiniIsoTight_DENOM_MediumID_VAR_map_pt_eta.root",
+							"SF",
+							{LeptonCorrector::LCaxes::pt, LeptonCorrector::LCaxes::abseta},
+							lepisounc,
+							0.017
+						),
+						LeptonCorrector(LeptonCorrector::LCtype::trk,
+							"corrections/Tracking_EfficienciesAndSF_BCDEFGH_TH2.root",
+							"ratio_eff_eta3_tk0_dr030e030_corr",
+							{LeptonCorrector::LCaxes::eta, LeptonCorrector::LCaxes::pt},
+							leptrkunc,
+							0.01, -1, 10
+						),
+						LeptonCorrector(LeptonCorrector::LCtype::trk,
+							"corrections/Tracking_EfficienciesAndSF_BCDEFGH_TH2.root",
+							"ratio_eff_eta3_dr030e030_corr",
+							{LeptonCorrector::LCaxes::eta, LeptonCorrector::LCaxes::pt},
+							leptrkunc,
+							0.01, 10, -1
+						),
+					};
+				}
+				else if(lepyear==2017){
+					elcorrors = {
+						LeptonCorrector(LeptonCorrector::LCtype::id,
+							"corrections/ElectronScaleFactors_Run2017.root",
+							"Run2017_CutBasedVetoNoIso94XV2",
+							{LeptonCorrector::LCaxes::eta, LeptonCorrector::LCaxes::pt},
+							lepidunc
+						),
+						LeptonCorrector(LeptonCorrector::LCtype::iso,
+							"corrections/ElectronScaleFactors_Run2017.root",
+							"Run2017_MVAVLooseTightIP2DMini",
+							{LeptonCorrector::LCaxes::eta, LeptonCorrector::LCaxes::pt},
+							lepisounc
+						),
+						LeptonCorrector(LeptonCorrector::LCtype::trk,
+							"corrections/egammaEffi_EGM2D_runBCDEF_passingRECO_lowEt.root",
+							"EGamma_SF2D",
+							{LeptonCorrector::LCaxes::eta, LeptonCorrector::LCaxes::pt},
+							leptrkunc,
+							0., -1, 20
+						),
+						LeptonCorrector(LeptonCorrector::LCtype::trk,
+							"corrections/egammaEffi_EGM2D_runBCDEF_passingRECO.root",
+							"EGamma_SF2D",
+							{LeptonCorrector::LCaxes::eta, LeptonCorrector::LCaxes::pt},
+							leptrkunc,
+							0., 20, -1
+						)
+					};
+					mucorrors = {
+						//trk SF included w/ id SF
+						LeptonCorrector(LeptonCorrector::LCtype::id,
+							"corrections/RunBCDEF_Muon2017_SF_ID.root",
+							"NUM_MediumID_DEN_genTracks_pt_abseta",
+							{LeptonCorrector::LCaxes::pt, LeptonCorrector::LCaxes::abseta},
+							lepidunc,
+							0.017
+						),
+						LeptonCorrector(LeptonCorrector::LCtype::iso,
+							"corrections/SF_Muon2017_NUM_MiniIso02Cut_DEN_MediumID_PAR_pt_eta.root",
+							"TnP_MC_NUM_MiniIso02Cut_DEN_MediumID_PAR_pt_eta",
+							{LeptonCorrector::LCaxes::pt, LeptonCorrector::LCaxes::abseta},
+							lepisounc
+						)
+					};
+				}
+			}
 			
 			//other uncertainty options
 			pdfunc = 0; localOpt->Get("pdfunc",pdfunc);
@@ -351,6 +459,17 @@ class KMCWeightSelector : public KSelector {
 			}
 			if(hemvetocorr){
 				if(hemvetounc<1) looper->fChain->SetBranchStatus("HEMVetoFilter",1);
+			}
+			if(lepcorr){
+				looper->fChain->SetBranchStatus("GenElectrons",1);
+				looper->fChain->SetBranchStatus("GenMuons",1);
+				looper->fChain->SetBranchStatus("NElectrons",1);
+				looper->fChain->SetBranchStatus("Electrons",1);
+				looper->fChain->SetBranchStatus("Electrons_passIso",1);
+				looper->fChain->SetBranchStatus("NMuons",1);
+				looper->fChain->SetBranchStatus("Muons",1);
+				looper->fChain->SetBranchStatus("Muons_mediumID",1);
+				looper->fChain->SetBranchStatus("Muons_passIso",1);
 			}
 		}
 		//enum for normtypes
@@ -458,6 +577,38 @@ class KMCWeightSelector : public KSelector {
 				}
 			}
 
+			if(lepcorr){
+				//assume SL CR
+				double gen_pt_min = 5;
+				double gen_eta_max = 2.5;
+				double delta_pt_max = 0.1;
+				double delta_r_max = 0.03;
+				if(looper->NElectrons==1){
+					vector<vector<bool>> masks{*looper->Electrons_passIso};
+					auto matched = LeptonCorrector::MatchGenRec(
+						*looper->GenElectrons, gen_pt_min, gen_eta_max,
+						*looper->Electrons, masks, delta_pt_max, delta_r_max
+					);
+					if(!matched.empty()){
+						for(const auto& cor : elcorrors){
+							w *= cor.GetSF(matched[0]);
+						}
+					}
+				}
+				else if(looper->NMuons==1){
+					vector<vector<bool>> masks{*looper->Muons_mediumID,*looper->Muons_passIso};
+					auto matched = LeptonCorrector::MatchGenRec(
+						*looper->GenMuons, gen_pt_min, gen_eta_max,
+						*looper->Muons, masks, delta_pt_max, delta_r_max
+					);
+					if(!matched.empty()){
+						for(const auto& cor : mucorrors){
+							w *= cor.GetSF(matched[0]);
+						}
+					}
+				}
+			}
+
 			if(svbweight){
 				double qty = 0;
 				if(svbqty==MTAK8) qty = looper->MT_AK8;
@@ -521,9 +672,9 @@ class KMCWeightSelector : public KSelector {
 		
 		//member variables
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, useKFactor, debugWeight, didDebugWeight;
-		bool pucorr, trigcorr, trigsystcorr, isrcorr, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr, hemvetocorr;
+		bool pucorr, trigcorr, trigsystcorr, isrcorr, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr, hemvetocorr, lepcorr;
 		double jetidcorrval, isotrackcorrval, trigsystcorrval, lumicorrval;
-		int puunc, pdfunc, isrunc, scaleunc, trigunc, trigyear, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc, prefireunc, hemvetounc;
+		int puunc, pdfunc, isrunc, scaleunc, trigunc, trigyear, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc, prefireunc, hemvetounc, lepidunc, lepisounc, leptrkunc;
 		vector<int> mother;
 		TH1 *puhist, *puhistUp, *puhistDown;
 		vector<double> pdfnorms;
@@ -533,6 +684,7 @@ class KMCWeightSelector : public KSelector {
 		double xsection, norm, kfactor;
 		ISRCorrector isrcorror;
 		TriggerCorrector trigcorror;
+		vector<LeptonCorrector> elcorrors, mucorrors;
 		PileupAcceptanceUncertainty puacc;
 		Flattener flattener;
 		string sflatqty;
