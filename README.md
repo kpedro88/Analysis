@@ -53,7 +53,7 @@ To submit jobs to Condor (add the flag `-k` to reuse the existing CMSSW tarball)
 ```
 cd batch
 ./SKsub.sh -t MC,Signal,Data -y 2016,2017
-./SKsub.sh -t Fast -y 2016,2017
+./SKsub.sh -t Fast -y 2016,2017,2018,2018HEM
 ```
 Note: the command with the argument `-t Fast` should only be run after the scanning step, below, is completed.
 
