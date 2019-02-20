@@ -112,6 +112,7 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	TFile* infile = TFile::Open(therootfile.c_str());
 	TH1F* nominal = NULL;
 	TH1F* genMHT = NULL;
+	vector<TH1F*> hcontam;
 	vector<TH1F*> hsyst;
 	TKey *key;
 	TIter next(infile->GetListOfKeys());
@@ -119,6 +120,7 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 		string ntmp = key->GetName();
 		TH1F* htmp = (TH1F*)infile->Get(ntmp.c_str());
 		if(ntmp.find("nominal")!=string::npos) nominal = htmp;
+		else if(ntmp.find("SLe")!=string::npos or ntmp.find("SLm")!=string::npos) hcontam.push_back(htmp);
 		else if(ntmp.find("genMHT")!=string::npos) genMHT = htmp;
 		else hsyst.push_back(htmp);
 	}
@@ -234,6 +236,7 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	TFile* outfile = TFile::Open(thenewfile.c_str(),"RECREATE");
 	outfile->cd();
 	nominal->Write();
+	for(auto icontam : hcontam) icontam->Write();
 	for(auto isyst : hsyst) isyst->Write();
 	outfile->Close();
 }
