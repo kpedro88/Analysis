@@ -7,6 +7,7 @@ INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/${
 STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Datacards/${RUN2PRODV}_v3
 #SYSTS=nominal,scaleuncUp,scaleuncDown,isruncUp,isruncDown,triguncUp,triguncDown,btagSFuncUp,btagSFuncDown,mistagSFuncUp,mistagSFuncDown,btagCFuncUp,btagCFuncDown,ctagCFuncUp,ctagCFuncDown,mistagCFuncUp,mistagCFuncDown,isotrackuncUp,isotrackuncDown,lumiuncUp,lumiuncDown,jetiduncUp,jetiduncDown,puaccuncUp,puaccuncDown
 VARS=JECup,JECdown,JERup,JERdown,genMHT
+VARS2=SLe,SLm,SLe_genMHT,SLm_genMHT
 CHECKARGS=""
 SUFFIX=""
 SKIPFILE=""
@@ -64,7 +65,13 @@ for YEAR in ${YEARS[@]}; do
 		if [[ -n "$SKIPTHIS" ]]; then
 			continue
 		fi
+
+		# check for leptons
+		THEVARS=${VARS}
+		if [[ $SAMPLE == "T1t"* ]] || [[ $SAMPLE == "T5qqqqVV"* ]] || [[ $SAMPLE == "T2tt"* ]]; then
+			THEVARS=${THEVARS},${VARS2}
+		fi
   
-		./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} ${VARS} ${STORE} ${SAMPLE}
+		echo ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} ${THEVARS} ${STORE} ${SAMPLE}
 	done
 done
