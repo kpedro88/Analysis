@@ -170,7 +170,7 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 			//zero check
 			if(unc==0.) unc = 1.0;
 			//bound
-			unc = min(max(unc,0.01),3.0);
+			unc = min(max(unc,0.01),1.99);
 			//set
 			isyst->SetBinContent(b,unc);
 			isyst->GetXaxis()->SetBinLabel(b,binname.c_str());
