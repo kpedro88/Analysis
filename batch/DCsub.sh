@@ -12,9 +12,10 @@ CHECKARGS=""
 SUFFIX=""
 SKIPFILE=""
 YEARS=()
+DRYRUN=""
 
 #check arguments
-while getopts "kx:y:s:" opt; do
+while getopts "kx:y:s:d" opt; do
 	case "$opt" in
 		k) CHECKARGS="${CHECKARGS} -k"
 		;;
@@ -24,7 +25,9 @@ while getopts "kx:y:s:" opt; do
 		;;
 		s) SKIPFILE=$OPTARG
 		;;
-  esac
+		d) DRYRUN="echo"
+		;;
+	esac
 done
 
 ./SKcheck.sh ${CHECKARGS}
@@ -72,6 +75,6 @@ for YEAR in ${YEARS[@]}; do
 			THEVARS=${THEVARS},${VARS2}
 		fi
   
-		echo ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} ${THEVARS} ${STORE} ${SAMPLE}
+		$DRYRUN ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} ${THEVARS} ${STORE} ${SAMPLE}
 	done
 done

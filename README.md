@@ -152,7 +152,7 @@ root -b -l -q 'MakeAllDCsyst.C+(0,"T1tttt_1500_100","root://cmseos.fnal.gov//sto
 Because of the large number of model points in the FastSim signal samples, batch mode should be used to run over them:
 ```
 cd batch
-./DCsub.sh -y 2016,2017
+./DCsub.sh -y 2016,2017,2018,2018HEM
 ```
 
 This driver produces two files for each mass point of each model:
