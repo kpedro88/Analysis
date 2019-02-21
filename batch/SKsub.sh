@@ -4,10 +4,11 @@ source exportProd.sh
 
 JOBDIR=jobs
 INPUT=input/input_selection.txt
-SELTYPE1=signal,signalSideband,LDP,SLm,SLe,SLmLDP,SLeLDP,GJet_CleanVars,GJetLDP_CleanVars
-SELTYPE2=GJetLoose_CleanVars,GJetLooseLDP_CleanVars,DYm_CleanVars,DYe_CleanVars,DYmLDP_CleanVars,DYeLDP_CleanVars
+SELTYPE1=signal
+SELTYPE2=signalSideband,LDP,SLm,SLe,SLmLDP,SLeLDP,GJet_CleanVars,GJetLDP_CleanVars,GJetLoose_CleanVars,GJetLooseLDP_CleanVars,DYm_CleanVars,DYe_CleanVars,DYmLDP_CleanVars,DYeLDP_CleanVars
 SELTYPE3=signal_JECup,signal_JECdown,signal_JERup,signal_JERdown
-SELTYPE4=signal_genMHT,LDP_genMHT,SLm_genMHT,SLe_genMHT,SLmLDP_genMHT,SLeLDP_genMHT
+SELTYPE4=signal_genMHT
+SELTYPE5=SLm,SLe,SLm_genMHT,SLe_genMHT
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}
 OUTDIR=tree
 STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/${RUN2PRODV}
@@ -47,6 +48,9 @@ for TYPE in ${TYPES[@]}; do
 	fi
 	if [ "$TYPE" = Fast ]; then
 		SELS=$SELS,$SELTYPE4
+		if [[ $SAMPLE == "T1t"* ]] || [[ $SAMPLE == "T5qqqqVV"* ]] || [[ $SAMPLE == "T2tt"* ]]; then
+			SELS=$SELS,$SELTYPE5
+		fi
 		TMPINDIR="$INDIR"/scan
 		TMPSTORE="$STORE"/scan
 	fi
