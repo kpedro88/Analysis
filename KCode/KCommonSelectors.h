@@ -1358,6 +1358,9 @@ class KBlindSelector : public KSelector {
 				intervalUnblindRuns.clear();
 			}
 		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("RunNum",1);
+		}
 		virtual void CheckBase(){
 			//disable this for non-data
 			if(!base->IsData()) dummy = true;
