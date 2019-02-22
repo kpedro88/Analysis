@@ -8,13 +8,16 @@ INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PR
 STORE=${INDIR}/scan
 CHECKARGS=""
 YEARS=()
+DRYRUN=""
 
 #check arguments
-while getopts "ky:" opt; do
+while getopts "ky:d" opt; do
 	case "$opt" in
 		k) CHECKARGS="${CHECKARGS} -k"
 		;;
 		y) IFS="," read -a YEARS <<< "$OPTARG"
+		;;
+		d) DRYRUN="echo"
 		;;
 	esac
 done
@@ -22,10 +25,9 @@ done
 ./SKcheck.sh ${CHECKARGS}
 
 for YEAR in ${YEARS[@]}; do
-	source exportScan${YEAR}.sh
+	SNAME=Scan${YEAR}
+	source export${SNAME}.sh
 
-	for SAMPLE in ${SAMPLES[@]}; do
-		./SCtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} ${INDIR} ${STORE}
-	done
+	$DRYRUN ./SCtemp.sh ${JOBDIR} ${INPUT} ${SNAME} ${#SAMPLES[@]} ${INDIR} ${STORE}
 done
 
