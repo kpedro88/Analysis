@@ -10,7 +10,7 @@ using namespace std;
 
 //run in batch mode:
 //root -b -l -q MakeAllDCdata.C+
-void MakeAllDCdata(string indir="", string region="", string setlist="input/input_sets_DC_data.txt", string outdir="datacards/data/"){
+void MakeAllDCdata(string indir="", string region="", string input="input/input_RA2bin_DC_data.txt", string setlist="input/input_sets_DC_data.txt", string outdir="datacards/data/"){
 	if(indir.size()==0 || region.size()==0){
 		cout << "Recompiled MakeAllDCdata, exiting." << endl;
 		return;
@@ -19,7 +19,6 @@ void MakeAllDCdata(string indir="", string region="", string setlist="input/inpu
 	if(indir[indir.size()-1] != '/') indir = indir + "/";
 	string inpre = "tree_";
 	string outpre = "RA2bin_";
-	string input = "input/input_RA2bin_DC_data.txt";
 	
 	//check for directory
 	system(("mkdir -p "+outdir).c_str());
