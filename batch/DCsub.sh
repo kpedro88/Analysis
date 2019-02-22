@@ -5,17 +5,14 @@ source exportProd.sh
 JOBDIR=jobs
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/${RUN2PRODV}/scan
 STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Datacards/${RUN2PRODV}_v3
-#SYSTS=nominal,scaleuncUp,scaleuncDown,isruncUp,isruncDown,triguncUp,triguncDown,btagSFuncUp,btagSFuncDown,mistagSFuncUp,mistagSFuncDown,btagCFuncUp,btagCFuncDown,ctagCFuncUp,ctagCFuncDown,mistagCFuncUp,mistagCFuncDown,isotrackuncUp,isotrackuncDown,lumiuncUp,lumiuncDown,jetiduncUp,jetiduncDown,puaccuncUp,puaccuncDown
-VARS=JECup,JECdown,JERup,JERdown,genMHT
-VARS2=SLe,SLm,SLe_genMHT,SLm_genMHT
+VARS=JECup,JECdown,JERup,JERdown,genMHT,SLe,SLm,SLe_genMHT,SLm_genMHT
 CHECKARGS=""
 SUFFIX=""
-SKIPFILE=""
 YEARS=()
 DRYRUN=""
 
 #check arguments
-while getopts "kx:y:s:d" opt; do
+while getopts "kx:y:d" opt; do
 	case "$opt" in
 		k) CHECKARGS="${CHECKARGS} -k"
 		;;
@@ -23,18 +20,12 @@ while getopts "kx:y:s:d" opt; do
 		;;
 		y) IFS="," read -a YEARS <<< "$OPTARG"
 		;;
-		s) SKIPFILE=$OPTARG
-		;;
 		d) DRYRUN="echo"
 		;;
 	esac
 done
 
 ./SKcheck.sh ${CHECKARGS}
-
-if [ -n "$SKIPFILE" ]; then
-	source ${SKIPFILE}
-fi
 
 for YEAR in ${YEARS[@]}; do
 	if [ "$YEAR" = 2016 ]; then
@@ -51,30 +42,12 @@ for YEAR in ${YEARS[@]}; do
 	fi
 
 	if [ -n "$SUFFIX" ]; then
-		source exportSkimFast${SUFFIX}${YEAR}.sh
+		SNAME=SkimFast${SUFFIX}${YEAR}
 	else
-		source exportSkimFast${YEAR}.sh
+		SNAME=SkimFast${YEAR}
 	fi
 
-	for SAMPLE in ${SAMPLES[@]}; do
-		# check skips
-		SKIPTHIS=""
-		for SKIP in ${SKIPLIST[@]}; do
-			if [[ $SAMPLE == "$SKIP"* ]]; then
-				SKIPTHIS=yes
-				break
-			fi
-		done
-		if [[ -n "$SKIPTHIS" ]]; then
-			continue
-		fi
+	source export${SNAME}.sh
 
-		# check for leptons
-		THEVARS=${VARS}
-		if [[ $SAMPLE == "T1t"* ]] || [[ $SAMPLE == "T5qqqqVV"* ]] || [[ $SAMPLE == "T2tt"* ]]; then
-			THEVARS=${THEVARS},${VARS2}
-		fi
-  
-		$DRYRUN ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} ${THEVARS} ${STORE} ${SAMPLE}
-	done
+	$DRYRUN ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} ${VARS} ${STORE} ${SNAME} ${#SAMPLES[@]}
 done

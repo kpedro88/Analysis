@@ -14,7 +14,8 @@ INDIR=$2
 SYSTS=$3
 VARS=$4
 STORE=$5
-SAMPLE=$6
+SNAME=$6
+PROCESS=$7
 
 echo ""
 echo "parameter set:"
@@ -23,7 +24,12 @@ echo "INDIR:      $INDIR"
 echo "SYSTS:      $SYSTS"
 echo "VARS:       $VARS"
 echo "STORE:      $STORE"
-echo "SAMPLE:     $SAMPLE"
+echo "SNAME:      $SNAMEE"
+echo "PROCESS:    $PROCESS"
+
+#get sample
+source export${SNAME}.sh
+SAMPLE=${SAMPLES[$PROCESS]}
 
 tar -xzf ${CMSSWVER}.tar.gz
 cd ${CMSSWVER}
