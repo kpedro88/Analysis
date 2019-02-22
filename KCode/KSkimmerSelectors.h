@@ -694,8 +694,10 @@ class KHEMVetoSelector : public KFilterSelector {
 		}
 		virtual void GetResult() {
 			bool activity = false;
-			//check electrons
-			for(const auto& Electron : *looper->Electrons){
+			//check electrons - only isolated ones
+			for(unsigned e = 0; e < looper->Electrons->size(); ++e){
+				if(!looper->Electrons_passIso->at(e)) continue;
+				const auto& Electron = looper->Electrons->at(e);
 				if(!activity and InHEMRegion(Electron)) activity = true;
 				if(activity) break;
 			}
