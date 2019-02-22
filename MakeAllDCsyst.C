@@ -62,12 +62,12 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	KParser::process(varTypes,',',vars);
 	
 	if(mode==1){
-		outdir = "datacards_fast/";
+		outdir = "datacards/fast/";
 		setlist = "input/fast/input_set_DC_"+setname+".txt";
 		osuff = "_"+setname;
 	}
 	else {
-		outdir = "datacards_syst/";
+		outdir = "datacards/syst/";
 		setlist = "input/input_set_DC_"+setname+".txt";
 		osuff = "_"+setname;
 	}

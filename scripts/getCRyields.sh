@@ -14,5 +14,5 @@ REGIONS=(LDP SLe SLm signal)
 FOLDERS=(LDP SLe SLm SR)
 
 for ((i=0; i < ${#REGIONS[@]}; i++)); do
-	root -b -l -q 'MakeAllDCdata.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/'$RUN2PRODV'","'${REGIONS[$i]}'","'$SETLIST'","'$RUN2PRODV'/datacards_'${FOLDERS[$i]}'/")'
+	root -b -l -q 'MakeAllDCdata.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/'$RUN2PRODV'","'${REGIONS[$i]}'","'$SETLIST'","'$RUN2PRODV'/datacards/'${FOLDERS[$i]}'/")'
 done
