@@ -3,29 +3,39 @@
 source exportProd.sh
 
 JOBDIR=jobs
+JOBTYPE=trigskim
 INPUT=input/input_selection_svj.txt
 SELTYPE=dijetmtmutrig,dijetmtdetamutrig
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}
 OUTDIR=tree
 STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims
 CHECKARGS=""
+DRYRUN=""
 
 #check arguments
-while getopts "k" opt; do
-  case "$opt" in
-  k) CHECKARGS="${CHECKARGS} -k"
-    ;;
-  esac
+while getopts "kd" opt; do
+	case "$opt" in
+		k) CHECKARGS="${CHECKARGS} -k"
+		;;
+		d) DRYRUN="echo"
+		;;
+	esac
 done
 
 ./SKcheck.sh ${CHECKARGS}
 
-#for year in 2016 2017; do
-for year in 2016; do
-  source exportSkimData${year}.sh
-  for SAMPLE in ${SAMPLES[@]}; do
-    if [[ $SAMPLE == *"SingleMuon"* ]]; then
-      ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} ${SELTYPE} ${INDIR} ${OUTDIR} ${STORE}
-    fi
-  done
+for YEAR in 2016 2017; do
+	SNAME=SkimData${YEAR}
+	source export${SNAME}.sh
+
+	SLIST=""
+	for ((i=0; i < ${#SAMPLES[@]}; i++)); do
+		if [[ ${SAMPLES[$i]} == *"SingleMuon"* ]]; then
+			SLIST="$SLIST,$i"
+		fi
+	done
+	# remove first char, prepend condor stuf
+	SLIST="Process in ${SLIST:1}"
+
+	$DRYRUN ./SKtemp.sh ${JOBDIR} ${INPUT} ${SNAME} "${SLIST}" ${SELTYPE} ${INDIR} ${OUTDIR} ${STORE} ${JOBTYPE}
 done

@@ -52,8 +52,8 @@ Note: this script uses the python file lists in [TreeMaker/Production/python](ht
 To submit jobs to Condor (add the flag `-k` to reuse the existing CMSSW tarball):
 ```
 cd batch
-./SKsub.sh -t MC,Signal,Data -y 2016,2017
-./SKsub.sh -t Fast -y 2016,2017,2018,2018HEM
+./SKsub.sh -t MC,Signal,Data -y 2016,2017,2018
+./SKsub.sh -t Fast -y 2016,2017
 ```
 Note: the command with the argument `-t Fast` should only be run after the scanning step, below, is completed.
 
@@ -104,7 +104,7 @@ python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2Produc
 python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16/scan/ -m MC2017 -y MC2018 -s input/input_sets_skim_fast_2018.txt -c input/input_sets_DC_fast_2018.txt -e batch/exportSkimFast2018.sh
 python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16/scan/ -m MC2017 -y MC2018HEM -s input/input_sets_skim_fast_2018HEM.txt -c input/input_sets_DC_fast_2018HEM.txt -e batch/exportSkimFast2018HEM.sh
 ```
-Currently, the 2017 FastSim is reused for 2018, with separate entries for the run periods with or without the HEM problem.
+Currently, the 2017 FastSim scans and skims are reused for 2018, with separate entries for the run periods with or without the HEM problem.
 
 <a name="combined"></a>A separate script is available to create a "combined" model by adding together multiple signal models with different weights.
 This script creates input lists for plotting and datacards (the existing skims are re-used).

@@ -11,21 +11,27 @@ echo "CMSSW on Condor"
 
 CMSSWVER=$1
 INPUT=$2
-SAMPLE=$3
-SELTYPE=$4
-INDIR=$5
-OUTDIR=$6
-STORE=$7
+SNAME=$3
+PROCESS=$4
+SELTYPE=$5
+INDIR=$6
+OUTDIR=$7
+STORE=$8
 
 echo ""
 echo "parameter set:"
 echo "CMSSWVER:   $CMSSWVER"
 echo "INPUT:      $INPUT"
-echo "SAMPLE:     $SAMPLE"
+echo "SNAME:      $SNAME"
+echo "PROCESS:    $PROCESS"
 echo "SELTYPE:    $SELTYPE"
 echo "INDIR:      $INDIR"
 echo "OUTDIR:     $OUTDIR"
 echo "STORE:      $STORE"
+
+#get sample
+source export${SNAME}.sh
+SAMPLE=${SAMPLES[$PROCESS]}
 
 tar -xzf ${CMSSWVER}.tar.gz
 cd ${CMSSWVER}

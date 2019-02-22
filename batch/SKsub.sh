@@ -3,12 +3,12 @@
 source exportProd.sh
 
 JOBDIR=jobs
+JOBTYPE=skim
 INPUT=input/input_selection.txt
 SELTYPE1=signal
 SELTYPE2=signalSideband,LDP,SLm,SLe,SLmLDP,SLeLDP,GJet_CleanVars,GJetLDP_CleanVars,GJetLoose_CleanVars,GJetLooseLDP_CleanVars,DYm_CleanVars,DYe_CleanVars,DYmLDP_CleanVars,DYeLDP_CleanVars
 SELTYPE3=signal_JECup,signal_JECdown,signal_JERup,signal_JERdown
-SELTYPE4=signal_genMHT
-SELTYPE5=SLm,SLe,SLm_genMHT,SLe_genMHT
+SELTYPE4=signal_genMHT,SLm,SLe,SLm_genMHT,SLe_genMHT
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}
 OUTDIR=tree
 STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/${RUN2PRODV}
@@ -48,9 +48,6 @@ for TYPE in ${TYPES[@]}; do
 	fi
 	if [ "$TYPE" = Fast ]; then
 		SELS=$SELS,$SELTYPE4
-		if [[ $SAMPLE == "T1t"* ]] || [[ $SAMPLE == "T5qqqqVV"* ]] || [[ $SAMPLE == "T2tt"* ]]; then
-			SELS=$SELS,$SELTYPE5
-		fi
 		TMPINDIR="$INDIR"/scan
 		TMPSTORE="$STORE"/scan
 	fi
@@ -59,13 +56,12 @@ for TYPE in ${TYPES[@]}; do
 	fi
 
 	for YEAR in ${YEARS[@]}; do
-		source exportSkim${TYPE}${YEAR}.sh
+		SNAME=Skim${TYPE}${YEAR}
+		source export${SNAME}.sh
 		# skip nonexistent ones
 		if [[ $? -ne 0 ]]; then continue; fi
 
-		for SAMPLE in ${SAMPLES[@]}; do
-			$DRYRUN ./SKtemp.sh ${JOBDIR} ${INPUT} ${SAMPLE} ${SELS} ${TMPINDIR} ${OUTDIR} ${TMPSTORE}
-		done
+		$DRYRUN ./SKtemp.sh ${JOBDIR} ${INPUT} ${SNAME} ${#SAMPLES[@]} ${SELS} ${TMPINDIR} ${OUTDIR} ${TMPSTORE} ${JOBTYPE}
 	done
 done
 
