@@ -76,11 +76,12 @@ for sample in files:
     # make lines
     dline1 = "\t".join(["hist", "mc", sname+"_"+year, "s:legname["+sname+"]","c:color["+colors[cc]+"]","i:linestyle["+str(styles[cs])+"]"])
     alphaval = alphavals[params["alpha"]] if params["alpha"] in alphavals else params["alpha"]
-    dline2 = "\t".join(["", "base", "mc", sname+"_"+year, "s:filename["+sample+"]","d:mZprime["+str(params["mZprime"])+"]","d:mDark["+str(params["mDark"])+"]","d:rinv["+str(params["rinv"])+"]","d:alpha["+str(alphaval)+"]"])
+    plines = ["d:mZprime["+str(params["mZprime"])+"]","d:mDark["+str(params["mDark"])+"]","d:rinv["+str(params["rinv"])+"]","d:alpha["+str(alphaval)+"]"]
+    dline2 = "\t".join(["", "base", "mc", sname+"_"+year, "s:filename["+sample+"]"] + plines)
     dfile.write(dline1+"\n")
     dfile.write(dline2+"\n")
     # make skim line
-    sline = "\t".join(["base", "skim", name, "s:filename["+sample+"]","b:data[0]","s:flatsuff["+sname+"_"+year+"]"])
+    sline = "\t".join(["base", "skim", name, "s:filename["+sample+"]","b:data[0]","s:flatsuff["+sname+"_"+year+"]"] + plines)
     sfile.write(sline+"\n")
     # append to training lines
     numers.append(sname+"_"+year)

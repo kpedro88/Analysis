@@ -1928,10 +1928,10 @@ class KJetAK8TrainingSelector : public KSelector {
 			else flatten = false;
 			if(flatfile) flatfile->Close();
 			//get signal parameters
-			base->GetLocalOpt()->Get("mZprime",b_mZprime);
-			base->GetLocalOpt()->Get("mDark",b_mDark);
-			base->GetLocalOpt()->Get("rinv",b_rinv);
-			base->GetLocalOpt()->Get("alpha",b_alpha);
+			b_mZprime = 0.; base->GetLocalOpt()->Get("mZprime",b_mZprime);
+			b_mDark = 0.; base->GetLocalOpt()->Get("mDark",b_mDark);
+			b_rinv = 0.; base->GetLocalOpt()->Get("rinv",b_rinv);
+			b_alpha = 0.; base->GetLocalOpt()->Get("alpha",b_alpha);
 		}
 
 		virtual void SetBranches(){
