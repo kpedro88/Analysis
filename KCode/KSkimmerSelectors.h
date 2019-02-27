@@ -671,7 +671,7 @@ class KHTRatioSelector : public KFilterSelector {
             //y = mx + b == > 0.95 = 1.025 *1.5 + b == > b = -0.5875
 			double htratio = looper->HT5/looper->HT;
 			//keep any event with ht5/ht < 1.2
-            if(doHTDPhiCut) result = (htratio < 1.2 ? true : (looper->DeltaPhi1 >= tight ? 5.3*htratio - 4.78 : 1.025*htratio - 0.5875) );
+            if(doHTDPhiCut) result = (htratio < 1.2 ? true : (looper->DeltaPhi1 >= (tight ? 5.3*htratio - 4.78 : 1.025*htratio - 0.5875) ) );
             else result = (htratio <= (tight ? 1.3 : 2.0));
 		}
 
