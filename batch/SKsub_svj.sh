@@ -37,7 +37,19 @@ for TYPE in ${TYPES[@]}; do
 		# skip nonexistent ones
 		if [[ $? -ne 0 ]]; then continue; fi
 
-		$DRYRUN ./SKtemp.sh ${JOBDIR} ${INPUT} ${SNAME} ${#SAMPLES[@]} ${SELTYPE} ${INDIR} ${OUTDIR} ${STORE} ${JOBTYPE}
+		SLIST=${#SAMPLES[@]}
+		if [[ $TYPE == "Data" ]]; then
+			SLIST=""
+			for ((i=0; i < ${#SAMPLES[@]}; i++)); do
+				if [[ ${SAMPLES[$i]} == *"JetHT"* ]]; then
+					SLIST="$SLIST,$i"
+				fi
+			done
+			# remove first char, prepend condor stuff
+			SLIST="Process in ${SLIST:1}"
+		fi
+
+		$DRYRUN ./SKtemp.sh ${JOBDIR} ${INPUT} ${SNAME} "${SLIST}" ${SELTYPE} ${INDIR} ${OUTDIR} ${STORE} ${JOBTYPE}
 	done
 done
 

@@ -25,6 +25,7 @@ evtclean
 	HTRatio	s:name[HTRatioDPhiTight]	b:tight[1]	b:HTDPhi[1]	b:tag[1]
 	LowNeutralJet	b:tag[1]
 	LowNeutralJet	s:name[LowNeutralJetTight]	b:tight[1]	b:tag[1]
+	HEMVeto	b:tag[1]
 veto
 	MuonVeto
 	ElectronVeto
@@ -57,7 +58,7 @@ dijetmtdetahad
 dijetmtdetahadmf
 	dijetmtdetahad
 	METFilter
-	BDT	s:weights[corrections/TMVAClassification_BDTG_UZH.weights.xml]	s:type[BDTG]	b:positive[0]	b:tag[1]	b:forceadd[1]	vs:variables[mult,axisminor,girth,tau21,tau32,msd,deltaphi]
+#	BDT	s:weights[corrections/TMVAClassification_BDTG_UZH.weights.xml]	s:type[BDTG]	b:positive[0]	b:tag[1]	b:forceadd[1]	vs:variables[mult,axisminor,girth,tau21,tau32,msd,deltaphi]
 dijetmtdetahadmffull1
 	dijetmtdetahadmf
 	METMTRatio	s:name[METMTRatioFull]	d:min[0.25]

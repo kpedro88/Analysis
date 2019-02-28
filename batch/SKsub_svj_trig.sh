@@ -5,26 +5,29 @@ source exportProd.sh
 JOBDIR=jobs
 JOBTYPE=trigskim
 INPUT=input/input_selection_svj.txt
-SELTYPE=dijetmtmutrig,dijetmtdetamutrig
+SELTYPE=dijetmtmutrig
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}
 OUTDIR=tree
 STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims
 CHECKARGS=""
+YEARS=()
 DRYRUN=""
 
 #check arguments
-while getopts "kd" opt; do
+while getopts "kdy:" opt; do
 	case "$opt" in
 		k) CHECKARGS="${CHECKARGS} -k"
 		;;
 		d) DRYRUN="echo"
+		;;
+		y) IFS="," read -a YEARS <<< "$OPTARG"
 		;;
 	esac
 done
 
 ./SKcheck.sh ${CHECKARGS}
 
-for YEAR in 2016 2017; do
+for YEAR in ${YEARS[@]}; do
 	SNAME=SkimData${YEAR}
 	source export${SNAME}.sh
 
