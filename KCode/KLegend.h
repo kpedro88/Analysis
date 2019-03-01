@@ -108,7 +108,7 @@ class KLegend{
 		KLegend(TPad* pad_, OptionMap* localOpt_, OptionMap* globalOpt_) : 
 			pad(pad_), localOpt(localOpt_), globalOpt(globalOpt_), debug(false), npanel(1), balance_panels(false), legwidth(0), legheight(0), 
 			lbound(0), rbound(0), tbound(0), bbound(0), umin(0), umax(0), vmin(0), vmax(0),
-			leg(0), ymin(0), ymax(0), ymin_min(0.001), ymin_max(1), userange(false), manual_ymin(false) 
+			leg(0), ymin(0), ymax(0), ymin_min(0.001), ymin_max(1), userange(false), manual_ymin(false), manual_ymax(false)
 		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
@@ -167,6 +167,8 @@ class KLegend{
 			if(globalOpt->Get("ymin",ymin_)) SetManualYmin(ymin_);
 			globalOpt->Get("ymin_min",ymin_min);
 			globalOpt->Get("ymin_max",ymin_max);
+			double ymax_ = 1;
+			if(globalOpt->Get("ymax",ymax_)) SetManualYmax(ymax_);
 		}
 		//destructor
 		virtual ~KLegend() {}
@@ -395,8 +397,14 @@ class KLegend{
 			else {
 				if(!manual_ymin) ymin = 0; //just set to 0 for liny
 			}
+
+			//step 3.5: stop if manual ymax specified
+			if(manual_ymax){
+				userange = true;
+				return;
+			}
 			
-			//step 3: find highest bin that could overlap with legend, and set ymax to prevent overlap
+			//step 4: find highest bin that could overlap with legend, and set ymax to prevent overlap
 			double gy = 1 - (pad->GetBottomMargin() + pad->GetTopMargin());
 			double gx = 1 - (pad->GetLeftMargin() + pad->GetRightMargin());
 			double eps = 0.05; //small separation between legend and histos
@@ -491,6 +499,7 @@ class KLegend{
 		bool UseRange() { return userange; }
 		pair<double,double> GetRange(){ return make_pair(ymin,ymax); }
 		void SetManualYmin(double ym) { ymin = ym; manual_ymin = true; }
+		void SetManualYmax(double ym) { ymax = ym; manual_ymax = true; }
 		OptionMap* GetLocalOpt() { return localOpt; }
 		void SetLocalOpt(OptionMap* opt) { localOpt = opt; if(localOpt==0) localOpt = new OptionMap(); } //must always have an option map
 		OptionMap* GetGlobalOpt() { return globalOpt; }
@@ -516,7 +525,7 @@ class KLegend{
 		double ymin, ymax;
 		double ymin_min, ymin_max;
 		bool userange;
-		bool manual_ymin;
+		bool manual_ymin, manual_ymax;
 };
 
 #endif
