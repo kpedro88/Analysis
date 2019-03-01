@@ -1,0 +1,23 @@
+OPTION
+string+:printsuffix[_genpt]
+vstring:disable_branches[*]
+vstring:selections[genmatch]
+
+SELECTION
+genmatch
+	GenMatch
+	sim
+
+HISTO
+leadjetAK8pt	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}^{reco}(j_{1}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+subleadjetAK8pt	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}^{reco}(j_{2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kRed]
+leadjetAK8genptmatch	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}^{gen}(j_{1}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+subleadjetAK8genptmatch	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}^{gen}(j_{2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kRed]
+leadjetAK8genptnu	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}^{gen+#nu}(j_{1}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+subleadjetAK8genptnu	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}^{gen+#nu}(j_{2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kRed]
+leadjetAK8genpthv	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}^{gen+HV}(j_{1}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+subleadjetAK8genpthv	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}^{gen+HV}(j_{2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kRed]
+leadjetAK8genptnuhv	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}^{gen+#nu+HV}(j_{1}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+subleadjetAK8genptnuhv	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}^{gen+#nu+HV}(j_{2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kRed]
+leadjetAK8genptquark	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}^{quark}(j_{1}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+subleadjetAK8genptquark	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}^{quark}(j_{2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]	c:color[kRed]

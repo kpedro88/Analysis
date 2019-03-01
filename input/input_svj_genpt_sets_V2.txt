@@ -1,0 +1,10 @@
+OPTION
+b:useTreeWeight[1]
+s:lumi_text[(13 TeV)]
+d:luminorm[1.0]
+b:unitnorm[1]
+s:rootfile[test/hist_genpt_SVJ_3000_20_0.3_0.2_V2]
+
+SET
+hist	mc	SVJ_3000_20_0.3_0.2_V2	s:legname[SVJ_3000_20_0.3_0.2_V2]	c:color[kMagenta + 2]	i:linestyle[3]
+	base	mc	SVJ_3000_20_0.3_0.2_V2	s:filename[tree_SVJ2_mZprime-3000_mDark-20_rinv-0.3_alpha-0.2.root]	d:mZprime[3000]	d:mDark[20]	d:rinv[0.2]	d:alpha[0.2]	i:sigversion[2]

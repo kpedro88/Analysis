@@ -1,0 +1,18 @@
+OPTION
+int:npanel[1]
+string:extfilename[test/hist_genpt_SVJ_3000_20_0.3_0.2_MC2017.root]
+vstring:extra_text[SVJ_3000_20_0.3_0.2 (V3 2017)]
+string+:printsuffix[SVJ_3000_20_0.3_0.2_MC2017]
+double:ymax[0.12]
+
+SET
+hist	mc	reco	s:legname[reco]	c:color[kBlack]
+	base	ext	reco	vs:exthisto_in[leadjetAK8pt_SVJ_3000_20_0.3_0.2_MC2017,subleadjetAK8pt_SVJ_3000_20_0.3_0.2_MC2017]	vs:exthisto_out[leadjetAK8pt,subleadjetAK8pt]
+hist	mc	gen	s:legname[gen]	c:color[kBlue]
+	base	ext	gen	vs:exthisto_in[leadjetAK8genptmatch_SVJ_3000_20_0.3_0.2_MC2017,subleadjetAK8genptmatch_SVJ_3000_20_0.3_0.2_MC2017]	vs:exthisto_out[leadjetAK8pt,subleadjetAK8pt]
+hist	mc	gennu	s:legname[gen+#nu]	c:color[kMagenta + 2]
+	base	ext	gennu	vs:exthisto_in[leadjetAK8genptnu_SVJ_3000_20_0.3_0.2_MC2017,subleadjetAK8genptnu_SVJ_3000_20_0.3_0.2_MC2017]	vs:exthisto_out[leadjetAK8pt,subleadjetAK8pt]
+hist	mc	gennuhv	s:legname[gen+#nu+HV]	c:color[kRed]
+	base	ext	gennuhv	vs:exthisto_in[leadjetAK8genptnuhv_SVJ_3000_20_0.3_0.2_MC2017,subleadjetAK8genptnuhv_SVJ_3000_20_0.3_0.2_MC2017]	vs:exthisto_out[leadjetAK8pt,subleadjetAK8pt]
+hist	mc	quark	s:legname[HV quark]	c:color[kMagenta]
+	base	ext	quark	vs:exthisto_in[leadjetAK8genptquark_SVJ_3000_20_0.3_0.2_MC2017,subleadjetAK8genptquark_SVJ_3000_20_0.3_0.2_MC2017]	vs:exthisto_out[leadjetAK8pt,subleadjetAK8pt]
