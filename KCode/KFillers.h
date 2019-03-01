@@ -1137,9 +1137,114 @@ class KJetFiller_AK8genpt : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
 		virtual void ListBranches() { branches = {"GenJetsAK8"}; }
-		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->GenJetsAK8->size()>index and looper->GenJetsAK8->at(index).Pt()>150) value.Fill(looper->GenJetsAK8->at(index).Pt(),w); }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->GenJetsAK8->size()>index) value.Fill(looper->GenJetsAK8->at(index).Pt(),w); }
 };
 REGISTER_JETFILLER(AK8genpt);
+
+class KJetFiller_AK8genptmatch : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void CheckDeps(){ GenMatch = sel->Get<KGenMatchSelector*>("GenMatch"); }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(GenMatch and GenMatch->GenJetsAK8.size()>index) value.Fill(GenMatch->GenJetsAK8[index].Pt(),w); }
+		//member variables
+		KGenMatchSelector* GenMatch = NULL;
+};
+REGISTER_JETFILLER(AK8genptmatch);
+
+class KJetFiller_AK8genptnu : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void CheckDeps(){ GenMatch = sel->Get<KGenMatchSelector*>("GenMatch"); }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(GenMatch and GenMatch->GenJetsAK8.size()>index) value.Fill((GenMatch->GenJetsAK8[index]+GenMatch->GenNuAK8[index]).Pt(),w); }
+		//member variables
+		KGenMatchSelector* GenMatch = NULL;
+};
+REGISTER_JETFILLER(AK8genptnu);
+
+class KJetFiller_AK8genpthv : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void CheckDeps(){ GenMatch = sel->Get<KGenMatchSelector*>("GenMatch"); }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(GenMatch and GenMatch->GenJetsAK8.size()>index) value.Fill((GenMatch->GenJetsAK8[index]+GenMatch->GenHVAK8[index]).Pt(),w); }
+		//member variables
+		KGenMatchSelector* GenMatch = NULL;
+};
+REGISTER_JETFILLER(AK8genpthv);
+
+class KJetFiller_AK8genptnuhv : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void CheckDeps(){ GenMatch = sel->Get<KGenMatchSelector*>("GenMatch"); }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(GenMatch and GenMatch->GenJetsAK8.size()>index) value.Fill((GenMatch->GenJetsAK8[index]+GenMatch->GenNuAK8[index]+GenMatch->GenHVAK8[index]).Pt(),w); }
+		//member variables
+		KGenMatchSelector* GenMatch = NULL;
+};
+REGISTER_JETFILLER(AK8genptnuhv);
+
+class KJetFiller_AK8genptquark : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void CheckDeps(){ GenMatch = sel->Get<KGenMatchSelector*>("GenMatch"); }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(GenMatch and GenMatch->GenJetsAK8.size()>index) value.Fill(GenMatch->GenQuarkAK8[index].Pt(),w); }
+		//member variables
+		KGenMatchSelector* GenMatch = NULL;
+};
+REGISTER_JETFILLER(AK8genptquark);
+
+class KJetFiller_AK8genptratio : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void CheckDeps(){ GenMatch = sel->Get<KGenMatchSelector*>("GenMatch"); }
+		virtual void ListBranches() { branches = {"JetsAK8"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(GenMatch and GenMatch->GenJetsAK8.size()>index and looper->JetsAK8->size()>index) value.Fill(GenMatch->GenJetsAK8[index].Pt()/looper->JetsAK8->at(index).Pt(),w); }
+		//member variables
+		KGenMatchSelector* GenMatch = NULL;
+};
+REGISTER_JETFILLER(AK8genptratio);
+
+class KJetFiller_AK8genptnuratio : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void CheckDeps(){ GenMatch = sel->Get<KGenMatchSelector*>("GenMatch"); }
+		virtual void ListBranches() { branches = {"JetsAK8"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(GenMatch and GenMatch->GenJetsAK8.size()>index and looper->JetsAK8->size()>index) value.Fill((GenMatch->GenJetsAK8[index]+GenMatch->GenNuAK8[index]).Pt()/looper->JetsAK8->at(index).Pt(),w); }
+		//member variables
+		KGenMatchSelector* GenMatch = NULL;
+};
+REGISTER_JETFILLER(AK8genptnuratio);
+
+class KJetFiller_AK8genpthvratio : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void CheckDeps(){ GenMatch = sel->Get<KGenMatchSelector*>("GenMatch"); }
+		virtual void ListBranches() { branches = {"JetsAK8"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(GenMatch and GenMatch->GenJetsAK8.size()>index and looper->JetsAK8->size()>index) value.Fill((GenMatch->GenJetsAK8[index]+GenMatch->GenHVAK8[index]).Pt()/looper->JetsAK8->at(index).Pt(),w); }
+		//member variables
+		KGenMatchSelector* GenMatch = NULL;
+};
+REGISTER_JETFILLER(AK8genpthvratio);
+
+class KJetFiller_AK8genptnuhvratio : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void CheckDeps(){ GenMatch = sel->Get<KGenMatchSelector*>("GenMatch"); }
+		virtual void ListBranches() { branches = {"JetsAK8"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(GenMatch and GenMatch->GenJetsAK8.size()>index and looper->JetsAK8->size()>index) value.Fill((GenMatch->GenJetsAK8[index]+GenMatch->GenNuAK8[index]+GenMatch->GenHVAK8[index]).Pt()/looper->JetsAK8->at(index).Pt(),w); }
+		//member variables
+		KGenMatchSelector* GenMatch = NULL;
+};
+REGISTER_JETFILLER(AK8genptnuhvratio);
+
+class KJetFiller_AK8genptquarkratio : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void CheckDeps(){ GenMatch = sel->Get<KGenMatchSelector*>("GenMatch"); }
+		virtual void ListBranches() { branches = {"JetsAK8"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(GenMatch and GenMatch->GenJetsAK8.size()>index and looper->JetsAK8->size()>index) value.Fill(GenMatch->GenQuarkAK8[index].Pt()/looper->JetsAK8->at(index).Pt(),w); }
+		//member variables
+		KGenMatchSelector* GenMatch = NULL;
+};
+REGISTER_JETFILLER(AK8genptquarkratio);
 
 class KJetFiller_AK8eta : public KJetFiller {
 	public:

@@ -1191,6 +1191,105 @@ class KDarkHadronSelector : public KSelector {
 };
 REGISTER_SELECTOR(DarkHadron);
 
+//---------------------------------------------------------------
+//associate gen-level info with reco jets
+class KGenMatchSelector : public KSelector {
+	public:
+		//constructor
+		KGenMatchSelector() : KSelector() { }
+		KGenMatchSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), njet(2), sigversion(3) {
+			canfail = false;
+			//check options
+			localOpt->Get("njet",njet);
+		}
+		virtual void CheckBase(){
+			base->GetLocalOpt()->Get("sigversion",sigversion);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("JetsAK8",1);
+			looper->fChain->SetBranchStatus("GenJetsAK8",1);
+			looper->fChain->SetBranchStatus("GenParticles",1);
+			looper->fChain->SetBranchStatus("GenParticles_PdgId",1);
+			looper->fChain->SetBranchStatus("GenParticles_ParentId",1);
+			looper->fChain->SetBranchStatus("GenParticles_ParentIdx",1);
+			looper->fChain->SetBranchStatus("GenParticles_Status",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			unsigned njet_ = min(njet,(unsigned)looper->JetsAK8->size());
+			//clear
+			GenJetsAK8.clear(); GenJetsAK8.resize(njet_);
+			GenNuAK8.clear(); GenNuAK8.resize(njet_);
+			GenHVAK8.clear(); GenHVAK8.resize(njet_);
+			GenQuarkAK8.clear(); GenQuarkAK8.resize(njet_);
+
+			//make lists of indices
+			unordered_set<int> nu_indices, meson_indices, quark_indices;
+			for(unsigned g = 0; g < looper->GenParticles->size(); ++g){
+				const auto& GenPart = looper->GenParticles->at(g);
+				int absid = abs(looper->GenParticles_PdgId->at(g));
+				if(absid==12 or absid==14 or absid==16) {
+					nu_indices.insert(g);
+				}
+				//handle both versions of invisible HV particles
+				else if( (sigversion==3 and (absid==51 or absid==52 or absid==53)) or (sigversion==2 and absid==4900211)){
+					//save the parent
+					meson_indices.insert(looper->GenParticles_ParentIdx->at(g));
+				}
+				else if((absid==4900101 or absid==4900102) and looper->GenParticles_Status->at(g)==23){
+					quark_indices.insert(g);
+				}
+			}
+			
+
+			for(unsigned j = 0; j < njet_; ++j){
+				const auto& Jet = looper->JetsAK8->at(j);
+				//match gen jets to reco jets
+				double mindR = 100.0;
+				for(const auto& GenJet: *looper->GenJetsAK8){
+					double dR = GenJet.DeltaR(Jet);
+					if(dR<mindR){
+						mindR = dR;
+						GenJetsAK8[j] = GenJet;
+					}
+				}
+
+				//match neutrinos to GenJets
+				for(auto g : nu_indices){
+					const auto& GenPart = looper->GenParticles->at(g);
+					if(GenJetsAK8[j].DeltaR(GenPart)<0.8) GenNuAK8[j] += GenPart;
+				}
+
+				//match HVs to GenJets
+				for(auto g : meson_indices){
+					const auto& GenPart = looper->GenParticles->at(g);
+					if(GenJetsAK8[j].DeltaR(GenPart)<0.8) GenHVAK8[j] += GenPart;
+				}
+
+				//match quarks to GenJets
+				mindR = 100.0;
+				for(auto g : quark_indices){
+					const auto& GenPart = looper->GenParticles->at(g);
+					double dR = GenJetsAK8[j].DeltaR(GenPart);
+					if(dR < mindR){
+						mindR = dR;
+						GenQuarkAK8[j] = GenPart;
+					}
+				}
+			}
+			return true;
+		}
+		
+		//member variables
+		unsigned njet;
+		int sigversion;
+		vector<TLorentzVector> GenJetsAK8, GenNuAK8, GenHVAK8, GenQuarkAK8;
+};
+REGISTER_SELECTOR(GenMatch);
+
 //----------------------------------------------------
 //final selector to fill histograms
 //(just calls KHisto methods)
