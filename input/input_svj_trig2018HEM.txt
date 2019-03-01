@@ -1,0 +1,44 @@
+OPTION
+vstring:disable_branches[*]
+vstring:selections[trigDenom,trigNumerJetHT,trigDenomDeta,trigNumerJetHTDeta,trigDenomDetaHLTmatch,trigNumerJetHTDetaHLTmatch]
+
+SELECTION
+trigDenom
+	Blind	i:firstUnblindRun[319077]
+	HEMVetoFilter
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	Histo
+trigNumerJetHT
+	Blind	i:firstUnblindRun[319077]
+	HEMVetoFilter
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	Histo
+trigDenomDeta
+	Blind	i:firstUnblindRun[319077]
+	HEMVetoFilter
+	DeltaEta	d:max[1.5]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	Histo
+trigNumerJetHTDeta
+	Blind	i:firstUnblindRun[319077]
+	HEMVetoFilter
+	DeltaEta	d:max[1.5]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	Histo
+trigDenomDetaHLTmatch
+	Blind	i:firstUnblindRun[319077]
+	HEMVetoFilter
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[1.5]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	Histo
+trigNumerJetHTDetaHLTmatch
+	Blind	i:firstUnblindRun[319077]
+	HEMVetoFilter
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[1.5]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	Histo

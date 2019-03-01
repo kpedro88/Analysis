@@ -8,23 +8,33 @@ STORE=$INDIR/hist
 OUTPUT=
 EXTRA=
 CHECKARGS=""
+YEARS=()
+DRYRUN=""
 
 #check arguments
-while getopts "k" opt; do
-  case "$opt" in
-  k) CHECKARGS="${CHECKARGS} -k"
-    ;;
-  esac
+while getopts "kdy:" opt; do
+	case "$opt" in
+		k) CHECKARGS="${CHECKARGS} -k"
+		;;
+		y) IFS="," read -a YEARS <<< "$OPTARG"
+		;;
+		d) DRYRUN="echo"
+		;;
+	esac
 done
 
 ./SKcheck.sh ${CHECKARGS}
 
-for YEAR in 2016 2017; do
+for YEAR in ${YEARS[@]}; do
 	PERIODS=()
-	if [ "$YEAR" -eq 2016 ]; then
+	BASEYEAR=$YEAR
+	if [ "$YEAR" = "2016" ]; then
 		PERIODS=(B C D E F G H)
-	elif [ "$YEAR" -eq 2017 ]; then
+	elif [ "$YEAR" = "2017" ]; then
 		PERIODS=(B C D E F)
+	elif [[ $YEAR = "2018"* ]]; then
+		PERIODS=(A B C D)
+		BASEYEAR=2018
 	fi
 
 	INPUTS='"input/input_svj_hist_data_'${YEAR}'.txt","input/input_svj_trig'${YEAR}'.txt","input/input_svj_trig_hist.txt"'
@@ -32,12 +42,12 @@ for YEAR in 2016 2017; do
 	for PERIOD in ${PERIODS[@]}; do
 		OUTPUT='"OPTION","string:rootfile[hist_trig_'${YEAR}${PERIOD}']"'
 		# name all sets the same for each year in order to hadd
-		EXTRA='"SET","hist\tdata\tSingleMuon_'${YEAR}'","\tbase\tdata\tSingleMuon_'${YEAR}${PERIOD}'\ts:filename[tree_SingleMuon_'${YEAR}${PERIOD}'.root]"'
+		EXTRA='"SET","hist\tdata\tSingleMuon_'${YEAR}'","\tbase\tdata\tSingleMuon_'${YEAR}${PERIOD}'\ts:filename[tree_SingleMuon_'${BASEYEAR}${PERIOD}'.root]"'
 		JOBNAME="hist_trig_"${YEAR}${PERIOD}
 
 		echo 'KPlotDriver.C+("'"$INDIR"'",{'"$INPUTS"'},{'"$EXTRA"','"$OUTPUT"'})' > jobs/input/macro_${JOBNAME}.txt
 
-		./HPtemp.sh ${JOBDIR} ${INDIR} ${STORE} ${JOBNAME}
+		$DRYRUN ./HPtemp.sh ${JOBDIR} ${INDIR} ${STORE} ${JOBNAME}
 	done
 done
 

@@ -32,7 +32,7 @@ double trigErf(double *x, double *par) {
 }
 
 
-string histName(string region, int year, string sel, string qty){
+string histName(string region, string year, string sel, string qty){
 	stringstream ss;
 	ss << qty << "_" << region << "_" << year << "_" << sel;
 	return ss.str();
@@ -45,8 +45,8 @@ void print(TCanvas* can, const string& oname, const vector<string>& pformats){
 	}
 }
 
-//root -b -l -q 'plotTrigEff.C+("test/hist_trig_2016.root","SingleMuon",2016,"trigDenom",{"trigNumerJet","trigNumerHT","trigNumerJetHT"},{"MTAK8","ht","leadjetAK8pt","met","subleadjetAK8pt"})'
-void plotTrigEff(string filename, string region, int year, string denom, vector<string> numers, vector<string> quantities, bool fit=false, bool showhist=false, int rebin=0, string cutname="", vector<string> pformats={"png"}){
+//root -b -l -q 'plotTrigEff.C+("test/hist_trig_2016.root","SingleMuon","2016","trigDenom",{"trigNumerJet","trigNumerHT","trigNumerJetHT"},{"MTAK8","ht","leadjetAK8pt","met","subleadjetAK8pt"})'
+void plotTrigEff(string filename, string region, string year, string denom, vector<string> numers, vector<string> quantities, bool fit=false, bool showhist=false, int rebin=0, string cutname="", vector<string> pformats={"png"}){
 	TFile* file = TFile::Open(filename.c_str());
 	if(!file) return;
 
@@ -84,11 +84,19 @@ void plotTrigEff(string filename, string region, int year, string denom, vector<
 		{"PT2017","p_{T}(j_{1}) > 700 GeV"},
 		{"PTMT","(p_{T}(j_{1})+p_{T}(j_{2}) > 1000 GeV)/M_{T} < 0.7"},
 	};
+
+	map<string,string> ltitles{
+		{"2016","35.9 fb^{-1} (13 TeV)"},
+		{"2017","41.5 fb^{-1} (13 TeV)"},
+		{"2018","59.5 fb^{-1} (13 TeV)"},
+		{"2018NoHEM","21.0 fb^{-1} (13 TeV)"},
+		{"2018HEM","38.4 fb^{-1} (13 TeV)"},
+	};
 	
 	//make plot options
 	OptionMap* globalOpt = new OptionMap();
 	globalOpt->Set<string>("prelim_text","Work-in-progress");
-	globalOpt->Set<string>("lumi_text",year==2016?"35.9 fb^{-1} (13 TeV)":year==2017?"41.5 fb^{-1} (13 TeV)":"(13 TeV)");
+	globalOpt->Set<string>("lumi_text",ltitles[year]);
 	globalOpt->Set<bool>("checkerr",false);
 	globalOpt->Set<int>("npanel",1);
 	if(showhist) globalOpt->Set<double>("marginR",95);
