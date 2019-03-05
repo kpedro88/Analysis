@@ -1,0 +1,15 @@
+#!/bin/bash
+
+export SAMPLES=(
+QCD_Pt-15to7000_MC2018_block0 \
+QCD_Pt-15to7000_MC2018_block1 \
+QCD_Pt-15to7000_MC2018_block2 \
+QCD_Pt-15to7000_MC2018_block3 \
+QCD_Pt-15to7000_MC2018_block4 \
+QCD_Pt-15to7000_MC2018_block5 \
+QCD_Pt-15to7000_MC2018HEM_block0 \
+QCD_Pt-15to7000_MC2018HEM_block1 \
+QCD_Pt-15to7000_MC2018HEM_block2 \
+QCD_Pt-15to7000_MC2018HEM_block3 \
+QCD_Pt-15to7000_MC2018HEM_block4 \
+)
