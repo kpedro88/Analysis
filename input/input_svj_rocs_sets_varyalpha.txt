@@ -2,11 +2,9 @@ OPTION
 string+:printsuffix[_varyalpha]
 
 SET
-hist	mc	SVJ_3000_20_0.3_0.1	s:legname[SVJ_3000_20_0.3_0.1]	c:color[kRed]	i:linestyle[7]	i:panel[0]
-	base	mc	SVJ_3000_20_0.3_0.1	s:filename[tree_SVJ2_mZprime-3000_mDark-20_rinv-0.3_alpha-0.1.root]	d:xsection[0.0155]
-hist	mc	SVJ_3000_20_0.3_0.2	s:legname[SVJ_3000_20_0.3_0.2]	c:color[kCyan + 2]	i:linestyle[7]	i:panel[0]
-	base	mc	SVJ_3000_20_0.3_0.2	s:filename[tree_SVJ2_mZprime-3000_mDark-20_rinv-0.3_alpha-0.2.root]	d:xsection[0.0155]
-hist	mc	SVJ_3000_20_0.3_0.5	s:legname[SVJ_3000_20_0.3_0.5]	c:color[kBlue]	i:linestyle[7]	i:panel[0]
-	base	mc	SVJ_3000_20_0.3_0.5	s:filename[tree_SVJ2_mZprime-3000_mDark-20_rinv-0.3_alpha-0.5.root]	d:xsection[0.0155]
-hist	mc	SVJ_3000_20_0.3_1	s:legname[SVJ_3000_20_0.3_1]	c:color[kMagenta]	i:linestyle[7]	i:panel[0]
-	base	mc	SVJ_3000_20_0.3_1	s:filename[tree_SVJ2_mZprime-3000_mDark-20_rinv-0.3_alpha-1.root]	d:xsection[0.0155]
+hist	mc	SVJ_3000_20_0.3_low	s:legname[SVJ_3000_20_0.3_low]	c:color[kRed]	i:linestyle[7]	i:panel[0]
+	base	mc	SVJ_3000_20_0.3_low	s:filename[tree_SVJ_mZprime-3000_mDark-20_rinv-0.3_alpha-low_MC2017.root]	d:xsection[0.0155]
+hist	mc	SVJ_3000_20_0.3_peak	s:legname[SVJ_3000_20_0.3_peak]	c:color[kCyan + 2]	i:linestyle[7]	i:panel[0]
+	base	mc	SVJ_3000_20_0.3_peak	s:filename[tree_SVJ_mZprime-3000_mDark-20_rinv-0.3_alpha-peak_MC2017.root]	d:xsection[0.0155]
+hist	mc	SVJ_3000_20_0.3_high	s:legname[SVJ_3000_20_0.3_high]	c:color[kBlue]	i:linestyle[7]	i:panel[0]
+	base	mc	SVJ_3000_20_0.3_high	s:filename[tree_SVJ_mZprime-3000_mDark-20_rinv-0.3_alpha-high_MC2017.root]	d:xsection[0.0155]
