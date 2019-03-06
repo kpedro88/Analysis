@@ -1,5 +1,5 @@
 HISTO2D
-leadjetAK8eta_metphi	i:xnum[20]	d:xmin[-3]	d:xmax[3]	s:xtitle[#eta(j_{1})]	i:ynum[20]	d:ymin[-3.15]	d:ymax[3.15]	s:ytitle[#phi(#slash{E}_{T})]	s:ztitle[number of events]	b:logz[0]	b:ratio[1]
-subleadjetAK8eta_metphi	i:xnum[20]	d:xmin[-3]	d:xmax[3]	s:xtitle[#eta(j_{2})]	i:ynum[20]	d:ymin[-3.15]	d:ymax[3.15]	s:ytitle[#phi(#slash{E}_{T})]	s:ztitle[number of events]	b:logz[0]	b:ratio[1]
-leadjetAK8eta_leadjetAK8phi	i:xnum[20]	d:xmin[-3]	d:xmax[3]	s:xtitle[#eta(j_{1})]	i:ynum[20]	d:ymin[-3.15]	d:ymax[3.15]	s:ytitle[#phi(j_{1})]	s:ztitle[number of events]	b:logz[0]	b:ratio[1]
-subleadjetAK8eta_subleadjetAK8phi	i:xnum[20]	d:xmin[-3]	d:xmax[3]	s:xtitle[#eta(j_{2})]	i:ynum[20]	d:ymin[-3.15]	d:ymax[3.15]	s:ytitle[#phi(j_{2})]	s:ztitle[number of events]	b:logz[0]	b:ratio[1]
+leadjetAK8eta_metphi	i:xnum[50]	d:xmin[-3]	d:xmax[3]	s:xtitle[#eta(j_{1})]	i:ynum[50]	d:ymin[-3.15]	d:ymax[3.15]	s:ytitle[#phi(#slash{E}_{T})]	s:ztitle[number of events]	b:logz[0]	b:ratio[1]
+subleadjetAK8eta_metphi	i:xnum[50]	d:xmin[-3]	d:xmax[3]	s:xtitle[#eta(j_{2})]	i:ynum[50]	d:ymin[-3.15]	d:ymax[3.15]	s:ytitle[#phi(#slash{E}_{T})]	s:ztitle[number of events]	b:logz[0]	b:ratio[1]
+leadjetAK8eta_leadjetAK8phi	i:xnum[50]	d:xmin[-3]	d:xmax[3]	s:xtitle[#eta(j_{1})]	i:ynum[50]	d:ymin[-3.15]	d:ymax[3.15]	s:ytitle[#phi(j_{1})]	s:ztitle[number of events]	b:logz[0]	b:ratio[1]
+subleadjetAK8eta_subleadjetAK8phi	i:xnum[50]	d:xmin[-3]	d:xmax[3]	s:xtitle[#eta(j_{2})]	i:ynum[50]	d:ymin[-3.15]	d:ymax[3.15]	s:ytitle[#phi(j_{2})]	s:ztitle[number of events]	b:logz[0]	b:ratio[1]

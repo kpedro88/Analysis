@@ -1,0 +1,16 @@
+OPTION
+string+:printsuffix[QCDFlat]
+string:prelim_text[Simulation (work-in-progress)]
+double:luminorm[59500]
+#string:lumi_text[(13 TeV)]
+#bool:unitnorm[1]
+vstring:numers[QCDHEM]
+vstring:denoms[QCD]
+double:ratiomin[0]
+double:ratiomax[2]
+
+SET
+hist	mc	QCD	s:legname[QCD]	c:color[kBlue]	s:drawopt[pe]
+	base	mc	QCD	s:filename[tree_QCD_Pt-15to7000_MC2018.root]
+hist	mc	QCDHEM	s:legname[QCD (HEM)]	c:color[kRed]	s:drawopt[pe]
+	base	mc	QCDHEM	s:filename[tree_QCD_Pt-15to7000_MC2018HEM.root]
