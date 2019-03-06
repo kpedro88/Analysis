@@ -29,6 +29,7 @@ echo "STORE:      $STORE"
 source export${SNAME}.sh
 SAMPLE=${SAMPLES[$PROCESS]}
 
+source stageOut.sh
 tar -xzf ${CMSSWVER}.tar.gz
 cd ${CMSSWVER}
 scram b ProjectRename
@@ -74,7 +75,7 @@ fi
 echo "xrdcp output for condor"
 for FILE in *.root; do
 	echo "xrdcp -f ${FILE} ${STORE}/${FILE}"
-	xrdcp -f ${FILE} ${STORE}/${FILE}
+	stageOut -x "-f" -i ${FILE} -o ${STORE}/${FILE}
 	XRDEXIT=$?
 	if [[ $XRDEXIT -ne 0 ]]; then
 		rm *.root

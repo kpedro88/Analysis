@@ -21,6 +21,7 @@ echo "INDIR:      $INDIR"
 echo "STORE:      $STORE"
 echo "JOBNAME:    $JOBNAME"
 
+source stageOut.sh
 tar -xzf ${CMSSWVER}.tar.gz
 cd ${CMSSWVER}
 scram b ProjectRename
@@ -49,7 +50,7 @@ echo "xrdcp output for condor"
 for FILE in *.root
 do
   echo "xrdcp -f ${FILE} ${STORE}/${FILE}"
-  xrdcp -f ${FILE} ${STORE}/${FILE}
+  stageOut -x "-f" -i ${FILE} -o ${STORE}/${FILE}
   XRDEXIT=$?
   if [[ $XRDEXIT -ne 0 ]]; then
     rm *.root

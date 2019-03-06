@@ -33,6 +33,7 @@ echo "STORE:      $STORE"
 source export${SNAME}.sh
 SAMPLE=${SAMPLES[$PROCESS]}
 
+source stageOut.sh
 tar -xzf ${CMSSWVER}.tar.gz
 cd ${CMSSWVER}
 scram b ProjectRename
@@ -60,7 +61,7 @@ echo "xrdcp output for condor"
 for TREEDIR in ${OUTDIR}*/; do
   for FILE in ${TREEDIR}/*.root; do
     # FILE contains TREEDIR in path
-    xrdcp -f ${FILE} ${STORE}/${FILE}
+    stageOut -x "-f" -i ${FILE} -o ${STORE}/${FILE}
     XRDEXIT=$?
     if [[ $XRDEXIT -ne 0 ]]; then
       rm -r ${OUTDIR}*
