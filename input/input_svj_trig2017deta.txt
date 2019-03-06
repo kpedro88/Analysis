@@ -1,0 +1,181 @@
+OPTION
+vstring:disable_branches[*]
+vstring:selections[trigDenomDeta0.5HLTmatch,trigNumerJetHTDeta0.5HLTmatch,trigDenomDeta0.6HLTmatch,trigNumerJetHTDeta0.6HLTmatch,trigDenomDeta0.7HLTmatch,trigNumerJetHTDeta0.7HLTmatch,trigDenomDeta0.8HLTmatch,trigNumerJetHTDeta0.8HLTmatch,trigDenomDeta0.9HLTmatch,trigNumerJetHTDeta0.9HLTmatch,trigDenomDeta1.0HLTmatch,trigNumerJetHTDeta1.0HLTmatch,trigDenomDeta1.1HLTmatch,trigNumerJetHTDeta1.1HLTmatch,trigDenomDeta1.2HLTmatch,trigNumerJetHTDeta1.2HLTmatch,trigDenomDeta1.3HLTmatch,trigNumerJetHTDeta1.3HLTmatch,trigDenomDeta1.4HLTmatch,trigNumerJetHTDeta1.4HLTmatch,trigDenomDeta1.5HLTmatch,trigNumerJetHTDeta1.5HLTmatch,trigDenomDeta1.6HLTmatch,trigNumerJetHTDeta1.6HLTmatch,trigDenomDeta1.7HLTmatch,trigNumerJetHTDeta1.7HLTmatch,trigDenomDeta1.8HLTmatch,trigNumerJetHTDeta1.8HLTmatch,trigDenomDeta1.9HLTmatch,trigNumerJetHTDeta1.9HLTmatch,trigDenomDeta2.0HLTmatch,trigNumerJetHTDeta2.0HLTmatch]
+
+SELECTION
+trigDenomDeta0.5HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[0.5]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	Histo
+trigNumerJetHTDeta0.5HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[0.5]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	Histo
+trigDenomDeta0.6HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[0.6]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	Histo
+trigNumerJetHTDeta0.6HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[0.6]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	Histo
+trigDenomDeta0.7HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[0.7]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	Histo
+trigNumerJetHTDeta0.7HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[0.7]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	Histo
+trigDenomDeta0.8HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[0.8]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	Histo
+trigNumerJetHTDeta0.8HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[0.8]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	Histo
+trigDenomDeta0.9HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[0.9]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	Histo
+trigNumerJetHTDeta0.9HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[0.9]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	Histo
+trigDenomDeta1.0HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[1.0]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	Histo
+trigNumerJetHTDeta1.0HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[1.0]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	Histo
+trigDenomDeta1.1HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[1.1]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	Histo
+trigNumerJetHTDeta1.1HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[1.1]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	Histo
+trigDenomDeta1.2HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[1.2]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	Histo
+trigNumerJetHTDeta1.2HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[1.2]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	Histo
+trigDenomDeta1.3HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[1.3]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	Histo
+trigNumerJetHTDeta1.3HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[1.3]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	Histo
+trigDenomDeta1.4HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[1.4]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	Histo
+trigNumerJetHTDeta1.4HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[1.4]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	Histo
+trigDenomDeta1.5HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[1.5]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	Histo
+trigNumerJetHTDeta1.5HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[1.5]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	Histo
+trigDenomDeta1.6HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[1.6]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	Histo
+trigNumerJetHTDeta1.6HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[1.6]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	Histo
+trigDenomDeta1.7HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[1.7]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	Histo
+trigNumerJetHTDeta1.7HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[1.7]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	Histo
+trigDenomDeta1.8HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[1.8]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	Histo
+trigNumerJetHTDeta1.8HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[1.8]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	Histo
+trigDenomDeta1.9HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[1.9]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	Histo
+trigNumerJetHTDeta1.9HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[1.9]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	Histo
+trigDenomDeta2.0HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[2.0]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	Histo
+trigNumerJetHTDeta2.0HLTmatch
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:max[2.0]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	Histo

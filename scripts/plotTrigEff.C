@@ -83,6 +83,22 @@ void plotTrigEff(string filename, string region, string year, string denom, vect
 		{"PT2016","p_{T}(j_{1}) > 600 GeV"},
 		{"PT2017","p_{T}(j_{1}) > 700 GeV"},
 		{"PTMT","(p_{T}(j_{1})+p_{T}(j_{2}) > 1000 GeV)/M_{T} < 0.7"},
+		{"Deta0.5HLTmatch","#Delta#eta < 0.5, HLT match"},
+		{"Deta0.6HLTmatch","#Delta#eta < 0.6, HLT match"},
+		{"Deta0.7HLTmatch","#Delta#eta < 0.7, HLT match"},
+		{"Deta0.8HLTmatch","#Delta#eta < 0.8, HLT match"},
+		{"Deta0.9HLTmatch","#Delta#eta < 0.9, HLT match"},
+		{"Deta1.0HLTmatch","#Delta#eta < 1.0, HLT match"},
+		{"Deta1.1HLTmatch","#Delta#eta < 1.1, HLT match"},
+		{"Deta1.2HLTmatch","#Delta#eta < 1.2, HLT match"},
+		{"Deta1.3HLTmatch","#Delta#eta < 1.3, HLT match"},
+		{"Deta1.4HLTmatch","#Delta#eta < 1.4, HLT match"},
+		{"Deta1.5HLTmatch","#Delta#eta < 1.5, HLT match"},
+		{"Deta1.6HLTmatch","#Delta#eta < 1.6, HLT match"},
+		{"Deta1.7HLTmatch","#Delta#eta < 1.7, HLT match"},
+		{"Deta1.8HLTmatch","#Delta#eta < 1.8, HLT match"},
+		{"Deta1.9HLTmatch","#Delta#eta < 1.9, HLT match"},
+		{"Deta2.0HLTmatch","#Delta#eta < 2.0, HLT match"},
 	};
 
 	map<string,string> ltitles{

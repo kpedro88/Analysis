@@ -1,0 +1,84 @@
+OPTION
+vstring:selections[trigOptDeta0.5,trigOptDeta0.6,trigOptDeta0.7,trigOptDeta0.8,trigOptDeta0.9,trigOptDeta1.0,trigOptDeta1.1,trigOptDeta1.2,trigOptDeta1.3,trigOptDeta1.4,trigOptDeta1.5,trigOptDeta1.6,trigOptDeta1.7,trigOptDeta1.8,trigOptDeta1.9,trigOptDeta2.0]
+
+SELECTION
+trigOptDeta0.5
+	DeltaEta	d:max[0.5]
+	MTAK8	d:min[1419]
+	MCWeight
+	Histo
+trigOptDeta0.6
+	DeltaEta	d:max[0.6]
+	MTAK8	d:min[1426]
+	MCWeight
+	Histo
+trigOptDeta0.7
+	DeltaEta	d:max[0.7]
+	MTAK8	d:min[1431]
+	MCWeight
+	Histo
+trigOptDeta0.8
+	DeltaEta	d:max[0.8]
+	MTAK8	d:min[1437]
+	MCWeight
+	Histo
+trigOptDeta0.9
+	DeltaEta	d:max[0.9]
+	MTAK8	d:min[1448]
+	MCWeight
+	Histo
+trigOptDeta1.0
+	DeltaEta	d:max[1.0]
+	MTAK8	d:min[1459]
+	MCWeight
+	Histo
+trigOptDeta1.1
+	DeltaEta	d:max[1.1]
+	MTAK8	d:min[1468]
+	MCWeight
+	Histo
+trigOptDeta1.2
+	DeltaEta	d:max[1.2]
+	MTAK8	d:min[1481]
+	MCWeight
+	Histo
+trigOptDeta1.3
+	DeltaEta	d:max[1.3]
+	MTAK8	d:min[1493]
+	MCWeight
+	Histo
+trigOptDeta1.4
+	DeltaEta	d:max[1.4]
+	MTAK8	d:min[1508]
+	MCWeight
+	Histo
+trigOptDeta1.5
+	DeltaEta	d:max[1.5]
+	MTAK8	d:min[1527]
+	MCWeight
+	Histo
+trigOptDeta1.6
+	DeltaEta	d:max[1.6]
+	MTAK8	d:min[1548]
+	MCWeight
+	Histo
+trigOptDeta1.7
+	DeltaEta	d:max[1.7]
+	MTAK8	d:min[1565]
+	MCWeight
+	Histo
+trigOptDeta1.8
+	DeltaEta	d:max[1.8]
+	MTAK8	d:min[1586]
+	MCWeight
+	Histo
+trigOptDeta1.9
+	DeltaEta	d:max[1.9]
+	MTAK8	d:min[1606]
+	MCWeight
+	Histo
+trigOptDeta2.0
+	DeltaEta	d:max[2.0]
+	MTAK8	d:min[1626]
+	MCWeight
+	Histo

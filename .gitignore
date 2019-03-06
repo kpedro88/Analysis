@@ -68,3 +68,4 @@ input/fast*/
 /datacard_svj.py
 /plotLimit.C
 /makeSVJInputs.py
+/doTrigOpt.py
