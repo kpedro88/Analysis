@@ -881,6 +881,21 @@ class KFiller_ncdijetAK8 : public KFiller {
 };
 REGISTER_FILLER(ncdijetAK8);
 
+//pt of jets in HEM region
+class KFiller_hemjetpt : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void ListBranches() { branches = {"Jets"}; }
+		virtual void Fill(KValue& value, double w) {
+			for(const auto& Jet : *looper->Jets){
+				if(-3 < Jet.Eta() and Jet.Eta() < -1.4 and -1.57 < Jet.Phi() and Jet.Phi() < -0.87){
+					value.Fill(Jet.Pt(),w);
+				}
+			}
+		}
+};
+REGISTER_FILLER(hemjetpt);
+
 //-----------------------------------------------------------------------------
 //event shape quantities (from AK4 jets)
 class KFillerEventShapeAK4 : public KFiller {

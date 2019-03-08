@@ -5,3 +5,4 @@ deltaphiminAK8	i:xnum[50]	d:xmin[0]	d:xmax[1.0]	s:xtitle[#Delta#phi_{min}]	s:yti
 metphi	i:xnum[50]	d:xmin[-3.15]	d:xmax[3.15]	s:xtitle[#phi(#slash{E}_{T})]	s:ytitle[number of events]	b:logy[0]	b:ratio[1]
 leadjetAK8phi	i:xnum[50]	d:xmin[-3.15]	d:xmax[3.15]	s:xtitle[#phi(j_{1})]	s:ytitle[number of events]	b:logy[0]	b:ratio[1]
 subleadjetAK8phi	i:xnum[50]	d:xmin[-3.15]	d:xmax[3.15]	s:xtitle[#phi(j_{2})]	s:ytitle[number of events]	b:logy[0]	b:ratio[1]
+hemjetpt	i:xnum[100]	d:xmin[0]	d:xmax[1000]	s:xtitle[jet p_{T} [GeV]]	s:ytitle[number of events]	b:logy[1]	b:ratio[1]
