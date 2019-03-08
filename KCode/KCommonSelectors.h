@@ -1688,16 +1688,17 @@ class KHEMVetoSelector : public KFilterSelector {
 	public:
 		//constructor
 		KHEMVetoSelector() : KFilterSelector() { }
-		KHEMVetoSelector(string name_, OptionMap* localOpt_) : KFilterSelector(name_,localOpt_) {
+		KHEMVetoSelector(string name_, OptionMap* localOpt_) : KFilterSelector(name_,localOpt_), minpt(30) {
 			branchname = "HEMVeto";
+			localOpt->Get("minpt",minpt);
 		}
 		virtual void CheckBranches(){
 			looper->fChain->SetBranchStatus("Electrons",1);
 			looper->fChain->SetBranchStatus("Electrons_passIso",1);
 			looper->fChain->SetBranchStatus("Jets",1);
 		}
-		bool InHEMRegion(const TLorentzVector& tlv){
-			return tlv.Pt()>30 and -3 < tlv.Eta() and tlv.Eta() < -1.4 and -1.57 < tlv.Phi() and tlv.Phi() < -0.87;
+		bool InHEMRegion(const TLorentzVector& tlv, double ptcut){
+			return tlv.Pt()>ptcut and -3 < tlv.Eta() and tlv.Eta() < -1.4 and -1.57 < tlv.Phi() and tlv.Phi() < -0.87;
 		}
 		virtual void GetResult() {
 			bool activity = false;
@@ -1705,17 +1706,104 @@ class KHEMVetoSelector : public KFilterSelector {
 			for(unsigned e = 0; e < looper->Electrons->size(); ++e){
 				if(!looper->Electrons_passIso->at(e)) continue;
 				const auto& Electron = looper->Electrons->at(e);
-				if(!activity and InHEMRegion(Electron)) activity = true;
+				if(!activity and InHEMRegion(Electron,0.)) activity = true;
 				if(activity) break;
 			}
 			//check jets
 			for(const auto& Jet : *looper->Jets){
-				if(!activity and InHEMRegion(Jet)) activity = true;
+				if(!activity and InHEMRegion(Jet,minpt)) activity = true;
 				if(activity) break;
 			}
 			result = !activity;
 		}
+
+		//member variables
+		double minpt;
 };
 REGISTER_SELECTOR(HEMVeto);
+
+//-------------------------------------------------------------
+//vetos events with activity in wider HEM region (w/ dphi req.)
+class KHEMDPhiVetoSelector : public KFilterSelector {
+	public:
+		//constructor
+		KHEMDPhiVetoSelector() : KFilterSelector() { }
+		KHEMDPhiVetoSelector(string name_, OptionMap* localOpt_) : KFilterSelector(name_,localOpt_), minpt(30) {
+			branchname = "HEMDPhiVeto";
+			localOpt->Get("minpt",minpt);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("Electrons",1);
+			looper->fChain->SetBranchStatus("Electrons_passIso",1);
+			looper->fChain->SetBranchStatus("Jets",1);
+			looper->fChain->SetBranchStatus("MHTPhi",1);
+		}
+		bool InHEMRegion(const TLorentzVector& tlv, double ptcut){
+			return tlv.Pt()>ptcut and -3 < tlv.Eta() and tlv.Eta() < -1.4 and -1.57 < tlv.Phi() and tlv.Phi() < -0.87;
+		}
+		bool InWideHEMRegion(const TLorentzVector& tlv, double ptcut, double MHTPhi){
+			return tlv.Pt()>ptcut and -3.2 < tlv.Eta() and tlv.Eta() < -1.2 and -1.77 < tlv.Phi() and tlv.Phi() < -0.67 and KMath::DeltaPhi(tlv.Phi(),MHTPhi)<0.5;
+		}
+		virtual void GetResult() {
+			bool activity = false;
+			//check electrons - only isolated ones
+			for(unsigned e = 0; e < looper->Electrons->size(); ++e){
+				if(!looper->Electrons_passIso->at(e)) continue;
+				const auto& Electron = looper->Electrons->at(e);
+				if(!activity and InHEMRegion(Electron,0.)) activity = true;
+				if(activity) break;
+			}
+			//check jets
+			for(const auto& Jet : *looper->Jets){
+				if(!activity and InWideHEMRegion(Jet,minpt,looper->MHTPhi)) activity = true;
+				if(activity) break;
+			}
+			result = !activity;
+		}
+
+		//member variables
+		double minpt;
+};
+REGISTER_SELECTOR(HEMDPhiVeto);
+
+//---------------------------------------------------------
+//selects events based on DeltaPhi values (jets w/ |eta|<5)
+class KDeltaPhiExtendedSelector : public KSelector {
+	public:
+		//constructor
+		KDeltaPhiExtendedSelector() : KSelector() { }
+		KDeltaPhiExtendedSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), DeltaPhi(4,0), invert(false) { 
+			//check for option
+			DeltaPhi[0] = 0.3; DeltaPhi[1] = 0.3; DeltaPhi[2] = 0.3; DeltaPhi[3] = 0.3;
+			localOpt->Get("DeltaPhi",DeltaPhi);
+			invert = localOpt->Get("invert",false);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("Jets",1);
+			looper->fChain->SetBranchStatus("MHTPhi",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			vector<double> dphi(4,10.0);
+			int counter = 0;
+			for(const auto& Jet : *looper->Jets){
+				if(Jet.Pt()>30 and abs(Jet.Eta())<5.0){
+					dphi[counter] = abs(KMath::DeltaPhi(Jet.Phi(),looper->MHTPhi));
+					++counter;
+				}
+				if(counter>=4) break;
+			}
+			if(invert) return dphi[0] < DeltaPhi[0] || dphi[1] < DeltaPhi[1] || dphi[2] < DeltaPhi[2] || dphi[3] < DeltaPhi[3];
+			else return dphi[0] > DeltaPhi[0] && dphi[1] > DeltaPhi[1] && dphi[2] > DeltaPhi[2] && dphi[3] > DeltaPhi[3];
+		}
+		
+		//member variables
+		vector<double> DeltaPhi;
+		bool invert;
+};
+REGISTER_SELECTOR(DeltaPhiExtended);
 
 #endif
