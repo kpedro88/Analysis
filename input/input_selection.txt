@@ -44,6 +44,7 @@ evtclean
 	LowNeutralJet	b:tag[1]
 	LowNeutralJet	s:name[LowNeutralJetTight]	b:tight[1]	b:tag[1]
 	HEMVeto	b:tag[1]
+	HEMDPhiVeto	b:tag[1]
 baseline
 	NJet	i:njet[2]
 	HT	d:min[200]
