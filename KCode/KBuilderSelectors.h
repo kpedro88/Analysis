@@ -138,7 +138,8 @@ class KMCWeightSelector : public KSelector {
 			isrcorr = localOpt->Get("isrcorr",false);
 			base->GetLocalOpt()->Get("mother",mother);
 			isrunc = 0; localOpt->Get("isrunc", isrunc);
-			if(isrcorr){
+			useisrflat = localOpt->Get("isrflat", isrflat);
+			if(isrcorr and not useisrflat){
 				TH1* isrhist = NULL;
 				TH1* isrhistUp = NULL;
 				TH1* isrhistDown = NULL;
@@ -528,7 +529,11 @@ class KMCWeightSelector : public KSelector {
 			}
 
 			if(isrcorr){
-				w *= isrcorror.GetCorrection(looper->NJetsISR);
+				if(useisrflat){
+					if(isrunc<0) w *= (1 - isrflat);
+					else if(isrunc>0) w *= (1 + isrflat);
+				}
+				else w *= isrcorror.GetCorrection(looper->NJetsISR);
 			}
 
 			if(pdfunc!=0){
@@ -672,8 +677,8 @@ class KMCWeightSelector : public KSelector {
 		
 		//member variables
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, useKFactor, debugWeight, didDebugWeight;
-		bool pucorr, trigcorr, trigsystcorr, isrcorr, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr, hemvetocorr, lepcorr;
-		double jetidcorrval, isotrackcorrval, trigsystcorrval, lumicorrval;
+		bool pucorr, trigcorr, trigsystcorr, isrcorr, useisrflat, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr, hemvetocorr, lepcorr;
+		double jetidcorrval, isotrackcorrval, trigsystcorrval, lumicorrval, isrflat;
 		int puunc, pdfunc, isrunc, scaleunc, trigunc, trigyear, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc, prefireunc, hemvetounc, lepidunc, lepisounc, leptrkunc;
 		vector<int> mother;
 		TH1 *puhist, *puhistUp, *puhistDown;
