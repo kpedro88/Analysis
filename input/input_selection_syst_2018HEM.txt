@@ -18,10 +18,10 @@ scaleuncDown
 	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:scaleunc[-1]
 	common
 isruncUp
-	MCWeight	in:options[input/input_MCWeight_options_2016.txt]	int:isrunc[1]
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:isrunc[1]
 	common
 isruncDown
-	MCWeight	in:options[input/input_MCWeight_options_2016.txt]	int:isrunc[-1]
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:isrunc[-1]
 	common
 triguncUp
 	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:trigunc[1]
@@ -96,8 +96,8 @@ hemvetouncDown
 	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:hemvetounc[-1]
 	common
 puuncUp
-	MCWeight	in:options[input/input_MCWeight_options_2016.txt]	int:puunc[1]
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:puunc[1]
 	common
 puuncDown
-	MCWeight	in:options[input/input_MCWeight_options_2016.txt]	int:puunc[-1]
+	MCWeight	in:options[input/input_MCWeight_options_2018HEM.txt]	int:puunc[-1]
 	common
