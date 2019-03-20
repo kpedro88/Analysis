@@ -42,7 +42,7 @@ def printSigFigs(num,fig,maxdec):
         if set(result.replace('.',''))==set([0]): return "0.0"
         else: return result
 
-def findMinMax(fname,dir,exclude,output):
+def findMinMax(fname,dir,exclude,cut,output):
     model = getModel(fname)
     if not model in output.keys():
         output[model] = {}
@@ -63,7 +63,7 @@ def findMinMax(fname,dir,exclude,output):
             if len(quadsum)>5:
                 # change trailing + into )
                 quadsum = quadsum[:-1]+")"
-                tree.Draw(quadsum,"","goff")
+                tree.Draw(quadsum,cut,"goff")
                 v1 = tree.GetV1(); v1.SetSize(tree.GetSelectedRows())
                 tmin = min(v1)
                 tmax = max(v1)
@@ -74,8 +74,14 @@ def findMinMax(fname,dir,exclude,output):
         else:
             # build up quadrature sum
             quadsum += branch+"^2+"
-            tmin = tree.GetMinimum(branch)
-            tmax = tree.GetMaximum(branch)
+            if len(cut)>0:
+                tree.Draw(branch,cut,"goff")
+                v1 = tree.GetV1(); v1.SetSize(tree.GetSelectedRows())
+                tmin = min(v1)
+                tmax = max(v1)
+            else:
+                tmin = tree.GetMinimum(branch)
+                tmax = tree.GetMaximum(branch)
         output[model][branch] = [tmin,tmax]
     
 if __name__ == "__main__":
@@ -84,10 +90,14 @@ if __name__ == "__main__":
     parser.add_option("-k", "--skip", dest="skip", default=[], type="string", action="callback", callback=list_callback, help="comma-separated list of models to skip (default = %default)")
     parser.add_option("-x", "--exclude", dest="exclude", default=[], type="string", action="callback", callback=list_callback, help="comma-separated list of systematics to exclude from calculations (default = %default)")
     parser.add_option("-m", "--minimum", dest="minimum", default=0.01, help="minimum value to display, smaller values rounded to 0 (default = %default)")
+    parser.add_option("-g", "--grep", dest="grep", default="", help="select only models matching this string (default = %default)")
+    parser.add_option("-c", "--cut", dest="cut", default="", help="apply cut when computing syst min/max (default = %default)")
     (options, args) = parser.parse_args()
 
     # get list of files (one per model)
-    files = sorted(filter(None,os.popen('eos root://cmseos.fnal.gov/ ls '+options.dir+' | grep "tree_syst"').read().split('\n')))
+    cmd = 'eos root://cmseos.fnal.gov/ ls '+options.dir+' | grep "tree_syst"'
+    if len(options.grep)>0: cmd += ' | grep "'+options.grep+'"'
+    files = sorted(filter(None,os.popen(cmd).read().split('\n')))
     
     from ROOT import *
     
@@ -102,7 +112,7 @@ if __name__ == "__main__":
         if model in options.skip: continue
         models.append(model)
     
-        findMinMax(file,options.dir,options.exclude,output)
+        findMinMax(file,options.dir,options.exclude,options.cut,output)
     
     # transpose output (syst = rows, model = columns)
     output2 = {}

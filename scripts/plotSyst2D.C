@@ -24,11 +24,13 @@ map<string,string> legnames = {
 	{"JEC", "JEC uncertainty [%]"},
 	{"JER", "JER uncertainty [%]"},
 	{"MCStatErr", "MC statistical uncertainty [%]"},
-	{"MHTSyst", "H_{T}^{miss,gen} uncertainty [%]"},
+	{"MHTSyst", "H_{T}^{miss} modeling uncertainty [%]"},
 	{"puaccunc", "pileup acceptance uncertainty [%]"},
+	{"puunc", "pileup reweighting uncertainty [%]"},
 	{"scaleunc", "#mu_{R}/#mu_{F} uncertainty [%]"},
 	{"trigunc", "trigger uncertainty [%]"},
 	{"prefireunc","L1 prefiring weight uncertainty [%]"},
+	{"hemvetounc","HEM veto uncertainty [%]"},
 	{"mMother", "M_{mother} [GeV]"},
 	{"mLSP", "M_{LSP} [GeV]"},
 	{"deltaM", "#DeltaM_{mother,LSP} [GeV]"},
@@ -118,9 +120,11 @@ void plotSyst2D(string indir,
 				vector<string> systs={"isrunc","JEC","JER","MCStatErr","MHTSyst","puaccunc","scaleunc","trigunc"},
 				vector<string> compares={"mMother","mLSP","deltaM","massPlane"},
 				bool correlate=true,
-				string outdir="plots-syst",
+				string outdir="plots/syst",
 				vector<string> printformats={"png"})
 {
+	system(("mkdir -p "+outdir).c_str());
+
 	//explore correlations among all systs
 	if(correlate){
 		compares.insert(compares.end(),systs.begin(),systs.end());
