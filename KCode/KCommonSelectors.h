@@ -1311,7 +1311,7 @@ class KExtraFilterSelector : public KSelector {
 			looper->fChain->SetBranchStatus("HTRatioDPhiTightFilter",1);
 			looper->fChain->SetBranchStatus("LowNeutralJetFilter",1);
 			looper->fChain->SetBranchStatus("FakeJetFilter",1);
-			if(hem) looper->fChain->SetBranchStatus("HEMVetoFilter",1);
+			if(hem) looper->fChain->SetBranchStatus("HEMDPhiVetoFilter",1);
 		}
 		virtual void CheckBase(){
 			//check fastsim stuff
@@ -1331,9 +1331,9 @@ class KExtraFilterSelector : public KSelector {
 			bool HTRatioDPhiTightFilter = looper->HTRatioDPhiTightFilter;
 			bool LowNeutralJetFilter = looper->LowNeutralJetFilter;
 			bool FakeJetFilter = (!fastsim) or looper->FakeJetFilter;
-			bool HEMVetoFilter = (!hem) or looper->HEMVetoFilter;
+			bool HEMDPhiVetoFilter = (!hem) or looper->HEMDPhiVetoFilter;
 
-			return METRatioFilter and MuonJetFilter and EcalNoiseJetFilter and HTRatioDPhiTightFilter and LowNeutralJetFilter and FakeJetFilter and HEMVetoFilter;
+			return METRatioFilter and MuonJetFilter and EcalNoiseJetFilter and HTRatioDPhiTightFilter and LowNeutralJetFilter and FakeJetFilter and HEMDPhiVetoFilter;
 		}
 		
 		//member variables
