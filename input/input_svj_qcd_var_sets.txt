@@ -8,9 +8,10 @@ s:lumi_text[(13 TeV)]
 d:luminorm[1.0]
 b:unitnorm[1]
 s+:printsuffix[_qcd]
+i:maxevents[47000]
 
 SET
 hist	mc	QCD_Pt_1000to1400_MC2016	s:legname[2016]	c:color[kBlue]	i:linestyle[1]
-	base	mc	QCD_Pt_1000to1400_MC2016	s:filename[tree_QCD_Pt_1000to1400_MC2016.root]
+	base	mc	QCD_Pt_1000to1400_MC2016	s:filename[RunIISummer16MiniAODv3.QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8_0_RA2AnalysisTree.root]	s:treename[TreeMaker2/PreSelection]
 hist	mc	QCD_Pt_1000to1400_MC2017	s:legname[2017]	c:color[kRed]	i:linestyle[1]
-	base	mc	QCD_Pt_1000to1400_MC2017	s:filename[tree_QCD_Pt_1000to1400_MC2017.root]
+	base	mc	QCD_Pt_1000to1400_MC2017	s:filename[RunIIFall17MiniAODv2.QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8_0_RA2AnalysisTree.root]	s:treename[TreeMaker2/PreSelection]

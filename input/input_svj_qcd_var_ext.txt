@@ -1,0 +1,20 @@
+OPTION
+vs:numers[QCD_Pt_1000to1400_MC2017]
+vs:denoms[QCD_Pt_1000to1400_MC2016]
+s:rationame[2017/2016]
+vs:extra_text[QCD_Pt_1000to1400]
+b:useTreeWeight[1]
+s:lumi_text[(13 TeV)]
+d:luminorm[1.0]
+b:unitnorm[1]
+s+:printsuffix[_chs]
+
+HISTO
+leadjetAK8pt	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}^{CHS}(j_{1}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[0]	c:color[kBlue]
+subleadjetAK8pt	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}^{CHS}(j_{2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[0]	c:color[kRed]
+
+SET
+hist	mc	QCD_Pt_1000to1400_MC2016	s:legname[2016]	c:color[kBlue]	i:linestyle[1]
+	base	ext	QCD_Pt_1000to1400	s:extfilename[test/chs_pt_QCD_Pt_1000to1400_MC2016.root]	b:ext_auto[1]
+hist	mc	QCD_Pt_1000to1400_MC2017	s:legname[2017]	c:color[kRed]	i:linestyle[1]
+	base	ext	QCD_Pt_1000to1400	s:extfilename[test/chs_pt_QCD_Pt_1000to1400_MC2017.root]	b:ext_auto[1]
