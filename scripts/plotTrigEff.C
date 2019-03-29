@@ -3,11 +3,11 @@
 #include "Analysis/KCode/KLegend.h"
 #include "Analysis/KCode/KPlot.h"
 #include "Analysis/KCode/KMath.h"
-//#include "Analysis/KCode/KStyle.h"
 
 //ROOT headers
 #include <TFile.h>
 #include <TH1.h>
+#include <TGraphErrors.h>
 #include <TGraphAsymmErrors.h>
 #include <TCanvas.h>
 #include <TLegend.h>
@@ -16,6 +16,8 @@
 #include <TF1.h>
 #include <TMath.h>
 #include <TGaxis.h>
+#include <TFitResultPtr.h>
+#include <TFitResult.h>
 
 //STL headers
 #include <string>
@@ -27,10 +29,6 @@
 using namespace std;
 
 static const double sqrt2 = sqrt(2.);
-double trigErf(double *x, double *par) {
-	return 0.5*par[0]*(1. + TMath::Erf( (x[0] - par[1]) / (sqrt2*par[2]) ));
-}
-
 
 string histName(string region, string year, string sel, string qty){
 	stringstream ss;
@@ -131,6 +129,10 @@ void plotTrigEff(string filename, string region, string year, string denom, vect
 		prefix += "Zoom";
 	}
 
+	TFile* resfile = NULL;
+	string resfilename = prefix+"_"+region+"_"+year+"_"+cutname;
+	if(fit) resfile = TFile::Open((resfilename+".root").c_str(),"RECREATE");
+
 	//get denom
 	if(!cutname.empty()) denom += cutname;
 	for(const auto& qty: quantities){
@@ -164,16 +166,23 @@ void plotTrigEff(string filename, string region, string year, string denom, vect
 				TGraphAsymmErrors* btmp = new TGraphAsymmErrors(hnumer,hdenom);
 
 				TF1* fn = nullptr;
+				TFitResult* err = nullptr;
 				if(fit){
 					double xmin = 0;
 					double xmax = hnumer->GetXaxis()->GetXmax()*0.75;
-					fn = new TF1("trigErf",trigErf,xmin,xmax,3);
-					double params[] = {0.99,xmin+(xmin-xmax)/4.,50.};
+					fn = new TF1("trigErf","0.5*[0]*(1+TMath::Erf((x-[1])/[2]))",xmin,xmax);
+					double params[] = {0.99,xmin+(xmin-xmax)/4.,sqrt2*50.};
 					fn->SetParameters(params);
 					fn->SetLineColor(kRed);
 					fn->SetLineWidth(2);
 					gStyle->SetOptFit(0);
-					btmp->Fit("trigErf","0QEM+","",xmin,xmax);
+					TFitResultPtr res = btmp->Fit("trigErf","S0EM+","",xmin,xmax);
+					err = res.Get();
+					resfile->cd();
+					fn->SetName(("fit_"+qty).c_str());
+					fn->Write();
+					res->SetName(("err_"+qty).c_str());
+					res->Write();
 				}
 			
 				//clone for axis
@@ -202,9 +211,10 @@ void plotTrigEff(string filename, string region, string year, string denom, vect
 				leghist->SetBinContent(1,1.4);
 				kleg->AddHist(leghist); //for placement
 				if(!cutname.empty()) kleg->AddEntry(btmp,ctitles[cutname],"pel");
+				TGraphErrors* g_conf = NULL;
 				if(fn){
 					double mu = fn->GetParameter(1);
-					double sigma = fn->GetParameter(2);
+					double sigma = fn->GetParameter(2)/sqrt2;
 					double plateau = mu+3*sigma;
 					double p98 = mu+2.05*sigma;
 
@@ -228,6 +238,20 @@ void plotTrigEff(string filename, string region, string year, string denom, vect
 					ss2 << fixed << setprecision(0);
 					ss2 << "98% of plateau at " << p98 << " " << utitles[qty];
 					kleg->AddEntry((TObject*)NULL,ss2.str(),"");
+
+					if(err){
+						//make second graph to store confidence band
+						int nbinsx = fn->GetXmax();
+						g_conf = new TGraphErrors(nbinsx);
+						for(int i = 0; i < nbinsx; ++i){
+							g_conf->SetPoint(i,i,fn->Eval(i));
+						}
+						//get confidence band, stored in error bars of graph
+						err->GetConfidenceIntervals(g_conf->GetN(),1,1,g_conf->GetX(),g_conf->GetEY(),0.683,false);
+
+						//style
+						g_conf->SetFillColor(kGray);
+					}
 				}
 				kleg->Build();//KLegend::right,KLegend::bottom);
 
@@ -281,7 +305,8 @@ void plotTrigEff(string filename, string region, string year, string denom, vect
 					unitline->Draw("same");
 				}
 			
-				//draw eff
+				//draw eff on top of band, then fit
+				if(g_conf) g_conf->Draw("3 same");
 				btmp->Draw("PZ same");
 				if(fn) fn->Draw("same");
 
