@@ -43,7 +43,8 @@ ra2bin2018
 ra2bin2018HEM
 	ra2common
 	Blind	i:firstUnblindRun[319077]
-	ExtraFilter	b:hem[1]
+	ExtraFilter
+	HEMDPhiVeto
 	ra2bin
 
 HISTO
