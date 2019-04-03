@@ -459,7 +459,7 @@ class KMCWeightSelector : public KSelector {
 				else if(prefireunc<0) looper->fChain->SetBranchStatus("NonPrefiringProbDn");
 			}
 			if(hemvetocorr){
-				if(hemvetounc<1) looper->fChain->SetBranchStatus("HEMVetoFilter",1);
+				if(hemvetounc<1) looper->fChain->SetBranchStatus("HEMDPhiVetoFilter",1);
 			}
 			if(lepcorr){
 				looper->fChain->SetBranchStatus("GenElectrons",1);
@@ -574,7 +574,7 @@ class KMCWeightSelector : public KSelector {
 			if(hemvetocorr){
 				//nominal: hem veto, up: no veto, dn: hem veto - (no veto - hem veto) = 2*hem veto - no veto
 				//to implement uncDown on per-event basis, remove vetoed event "twice" (weight of 0 = removed, weight of -1 = removed again)
-				if(hemvetounc==0) w *= looper->HEMVetoFilter;
+				if(hemvetounc==0) w *= looper->HEMDPhiVetoFilter;
 				else if(hemvetounc>0) w *= 1;
 				else if(hemvetounc<0) {
 					if(!looper->HEMVetoFilter) w *= -1;
