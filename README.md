@@ -12,6 +12,7 @@ cmsrel CMSSW_8_0_30
 cd CMSSW_8_0_30/src
 cmsenv
 git clone git@github.com:kpedro88/Analysis
+cd Analysis
 ./setup.sh
 ./setupTM.sh
 ```
