@@ -42,6 +42,7 @@ To remake the input list of sets automatically, for data and MC:
 ```
 python makeSkimInput.py -r input/dict_skim_mc_2016.py -w input/input_sets_skim_mc_2016.txt -e batch/exportSkimMC2016.sh -n 50
 python makeSkimInput.py -r input/dict_skim_mc_2017.py -w input/input_sets_skim_mc_2017.txt -e batch/exportSkimMC2017.sh -n 50
+python makeSkimInput.py -r input/dict_skim_mc_2018.py -w input/input_sets_skim_mc_2018.txt -e batch/exportSkimMC2018.sh -n 50
 python makeSkimInput.py -r input/dict_skim_signal_2016.py -w input/input_sets_skim_signal_2016.txt -e batch/exportSkimSignal2016.sh -n 50
 python makeSkimInput.py -r input/dict_skim_signal_2017.py -w input/input_sets_skim_signal_2017.txt -e batch/exportSkimSignal2017.sh -n 50
 python makeSkimInput.py -r input/dict_skim_data_2016.py -w input/input_sets_skim_data_2016.txt -e batch/exportSkimData2016.sh --data -n 50 -f /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV17

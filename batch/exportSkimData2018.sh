@@ -766,6 +766,12 @@ EGamma_2018D_block161 \
 EGamma_2018D_block162 \
 EGamma_2018D_block163 \
 EGamma_2018D_block164 \
+EGamma_2018D_block165 \
+EGamma_2018D_block166 \
+EGamma_2018D_block167 \
+EGamma_2018D_block168 \
+EGamma_2018D_block169 \
+EGamma_2018D_block170 \
 SingleMuon_2018D_block0 \
 SingleMuon_2018D_block1 \
 SingleMuon_2018D_block2 \
@@ -870,8 +876,4 @@ SingleMuon_2018D_block100 \
 SingleMuon_2018D_block101 \
 SingleMuon_2018D_block102 \
 SingleMuon_2018D_block103 \
-SingleMuon_2018D_block104 \
-SingleMuon_2018D_block105 \
-SingleMuon_2018D_block106 \
-SingleMuon_2018D_block107 \
 )

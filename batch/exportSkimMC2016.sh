@@ -65,8 +65,6 @@ WJetsToLNu_HT-1200to2500_MC2016_block1 \
 WJetsToLNu_HT-2500toInf_MC2016 \
 TTJets_MC2016_block0 \
 TTJets_MC2016_block1 \
-TTJets_MC2016_block2 \
-TTJets_MC2016_block3 \
 TTJets_SingleLeptFromT_MC2016_block0 \
 TTJets_SingleLeptFromT_MC2016_block1 \
 TTJets_SingleLeptFromT_MC2016_block2 \
@@ -140,9 +138,7 @@ ZJetsToNuNu_HT-200to400_MC2016_block2 \
 ZJetsToNuNu_HT-200to400_MC2016_block3 \
 ZJetsToNuNu_HT-400to600_MC2016_block0 \
 ZJetsToNuNu_HT-400to600_MC2016_block1 \
-ZJetsToNuNu_HT-600to800_MC2016_block0 \
-ZJetsToNuNu_HT-600to800_MC2016_block1 \
-ZJetsToNuNu_HT-600to800_MC2016_block2 \
+ZJetsToNuNu_HT-600to800_MC2016 \
 ZJetsToNuNu_HT-800to1200_MC2016 \
 ZJetsToNuNu_HT-1200to2500_MC2016 \
 ZJetsToNuNu_HT-2500toInf_MC2016 \
@@ -206,10 +202,6 @@ ZZTo2Q2Nu_MC2016_block4 \
 ZZTo2L2Q_MC2016_block0 \
 ZZTo2L2Q_MC2016_block1 \
 ZZTo2L2Q_MC2016_block2 \
-ZZTo2L2Q_MC2016_block3 \
-ZZTo2L2Q_MC2016_block4 \
-ZZTo2L2Q_MC2016_block5 \
-ZZTo2L2Q_MC2016_block6 \
 WWZ_MC2016 \
 ZZZ_MC2016 \
 WZZ_MC2016 \
@@ -217,5 +209,8 @@ TTWJetsToQQ_MC2016 \
 TTWJetsToLNu_MC2016 \
 TTZToQQ_MC2016 \
 TTZToLLNuNu_MC2016 \
+TTGJets_MC2016_block0 \
+TTGJets_MC2016_block1 \
+TTGJets_MC2016_block2 \
 TTTT_MC2016 \
 )
