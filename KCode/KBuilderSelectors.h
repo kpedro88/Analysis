@@ -577,7 +577,7 @@ class KMCWeightSelector : public KSelector {
 				if(hemvetounc==0) w *= looper->HEMDPhiVetoFilter;
 				else if(hemvetounc>0) w *= 1;
 				else if(hemvetounc<0) {
-					if(!looper->HEMVetoFilter) w *= -1;
+					if(!looper->HEMDPhiVetoFilter) w *= -1;
 					else w *= 1;
 				}
 			}
