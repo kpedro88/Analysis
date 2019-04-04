@@ -456,7 +456,7 @@ class KMCWeightSelector : public KSelector {
 			if(prefirecorr){
 				if(prefireunc==0) looper->fChain->SetBranchStatus("NonPrefiringProb");
 				else if(prefireunc>0) looper->fChain->SetBranchStatus("NonPrefiringProbUp");
-				else if(prefireunc<0) looper->fChain->SetBranchStatus("NonPrefiringProbDn");
+				else if(prefireunc<0) looper->fChain->SetBranchStatus("NonPrefiringProbDown");
 			}
 			if(hemvetocorr){
 				if(hemvetounc<1) looper->fChain->SetBranchStatus("HEMDPhiVetoFilter",1);
@@ -568,7 +568,7 @@ class KMCWeightSelector : public KSelector {
 			if(prefirecorr){
 				if(prefireunc==0) w *= looper->NonPrefiringProb;
 				else if(prefireunc>0) w *= looper->NonPrefiringProbUp;
-				else if(prefireunc<0) w *= looper->NonPrefiringProbDn;
+				else if(prefireunc<0) w *= looper->NonPrefiringProbDown;
 			}
 
 			if(hemvetocorr){
