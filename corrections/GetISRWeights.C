@@ -28,7 +28,7 @@ vector<double> GetDoubles(const vector<string>& fields){
 }
 
 //root -b -l -q GetISRWeights.C+
-void GetISRWeights(){
+void GetISRWeights(string fname="ISRWeights"){
 	//to store results
 	vector<double> xbins;
 	vector<double> weights;
@@ -36,7 +36,6 @@ void GetISRWeights(){
 	vector<double> weightsDown;
 	
 	//input weights
-	string fname = "ISRWeights";
 	ifstream infile((fname+".txt").c_str());
 	string line;
 	int ctr = 0;
