@@ -167,7 +167,7 @@ python summarizeSyst.py -d /store/user/pedrok/SUSY2015/Analysis/Datacards/Run2Pr
 ```
 
 Currently available uncertainties:
-* pileup reweighting (not used)
+* pileup reweighting
 * scale weights (renormalization/factorization)
 * initial state radiation
 * trigger efficiency
@@ -185,6 +185,7 @@ Currently available uncertainties:
 * MC statistics
 * pileup acceptance (not used)
 * L1 prefiring correction
+* HEM veto
 
 ### Semi-visible jet commands
 

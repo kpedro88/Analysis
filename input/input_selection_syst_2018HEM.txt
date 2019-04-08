@@ -2,7 +2,7 @@ SELECTION
 common
 	METFilter
 	ExtraFilter
-	BTagSF	s:calib[btag/DeepCSV_94XSF_V3_B_F_mod.csv]
+	BTagSF	s:calib[btag/DeepCSV_102XSF_V1_mod.csv]	s:calibfast[btag/deepcsv_13TEV_1718SLDiff_18_3_2019ExUnc.csv]
 	RA2Bin	in:options[input/input_RA2bin_options.txt]	b:RA2Exclusive[0]
 	Histo
 nominal
