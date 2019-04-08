@@ -303,78 +303,72 @@ class KMCWeightSelector : public KSelector {
 				if(lepyear==2016){
 					elcorrors = {
 						LeptonCorrector(LeptonCorrector::LCtype::id,
-							"corrections/egamma_all.root",
-							"GsfElectronToCutBasedSpring15V",
-							{LeptonCorrector::LCaxes::pt, LeptonCorrector::LCaxes::abseta},
-							lepidunc
-						),
-						LeptonCorrector(LeptonCorrector::LCtype::iso,
-							"corrections/egamma_all.root",
-							"MVAVLooseElectronToMini",
-							{LeptonCorrector::LCaxes::pt, LeptonCorrector::LCaxes::abseta},
-							lepisounc
-						),
-						LeptonCorrector(LeptonCorrector::LCtype::trk,
-							"corrections/egamma_tracking.root",
-							"EGamma_SF2D",
-							{LeptonCorrector::LCaxes::eta, LeptonCorrector::LCaxes::pt},
-							leptrkunc
-						)
-					};
-					mucorrors = {
-						LeptonCorrector(LeptonCorrector::LCtype::id,
-							"corrections/TnP_NUM_MediumID_DENOM_generalTracks_VAR_map_pt_eta.root",
-							"SF",
-							{LeptonCorrector::LCaxes::pt, LeptonCorrector::LCaxes::abseta},
-							lepidunc,
-							0.017
-						),
-						LeptonCorrector(LeptonCorrector::LCtype::iso,
-							"corrections/TnP_NUM_MiniIsoTight_DENOM_MediumID_VAR_map_pt_eta.root",
-							"SF",
-							{LeptonCorrector::LCaxes::pt, LeptonCorrector::LCaxes::abseta},
-							lepisounc,
-							0.017
-						),
-						LeptonCorrector(LeptonCorrector::LCtype::trk,
-							"corrections/Tracking_EfficienciesAndSF_BCDEFGH_TH2.root",
-							"ratio_eff_eta3_tk0_dr030e030_corr",
-							{LeptonCorrector::LCaxes::eta, LeptonCorrector::LCaxes::pt},
-							leptrkunc,
-							0.01, -1, 10
-						),
-						LeptonCorrector(LeptonCorrector::LCtype::trk,
-							"corrections/Tracking_EfficienciesAndSF_BCDEFGH_TH2.root",
-							"ratio_eff_eta3_dr030e030_corr",
-							{LeptonCorrector::LCaxes::eta, LeptonCorrector::LCaxes::pt},
-							leptrkunc,
-							0.01, 10, -1
-						),
-					};
-				}
-				else if(lepyear==2017){
-					elcorrors = {
-						LeptonCorrector(LeptonCorrector::LCtype::id,
-							"corrections/ElectronScaleFactors_Run2017.root",
-							"Run2017_CutBasedVetoNoIso94XV2",
+							"corrections/leptonSFs/ElectronScaleFactors_Run2016_190404.root",
+							"Run2016_CutBasedVetoNoIso94XV2",
 							{LeptonCorrector::LCaxes::eta, LeptonCorrector::LCaxes::pt},
 							lepidunc
 						),
 						LeptonCorrector(LeptonCorrector::LCtype::iso,
-							"corrections/ElectronScaleFactors_Run2017.root",
-							"Run2017_MVAVLooseTightIP2DMini",
+							"corrections/leptonSFs/ElectronScaleFactors_Run2016_190404.root",
+							"Run2016_Mini",
 							{LeptonCorrector::LCaxes::eta, LeptonCorrector::LCaxes::pt},
 							lepisounc
 						),
 						LeptonCorrector(LeptonCorrector::LCtype::trk,
-							"corrections/egammaEffi_EGM2D_runBCDEF_passingRECO_lowEt.root",
+							"corrections/leptonSFs/EGM2D_BtoH_low_RecoSF_Legacy2016_190404.root",
 							"EGamma_SF2D",
 							{LeptonCorrector::LCaxes::eta, LeptonCorrector::LCaxes::pt},
 							leptrkunc,
 							0., -1, 20
 						),
 						LeptonCorrector(LeptonCorrector::LCtype::trk,
-							"corrections/egammaEffi_EGM2D_runBCDEF_passingRECO.root",
+							"corrections/leptonSFs/EGM2D_BtoH_GT20GeV_RecoSF_Legacy2016_190404.root",
+							"EGamma_SF2D",
+							{LeptonCorrector::LCaxes::eta, LeptonCorrector::LCaxes::pt},
+							leptrkunc,
+							0., 20, -1
+						),
+					};
+					mucorrors = {
+						LeptonCorrector(LeptonCorrector::LCtype::id,
+							"corrections/leptonSFs/RunBCDEFGH_weightedAvg_SF_ID_Mu_2016_190404.root",
+							"NUM_MediumID_DEN_genTracks_eta_pt",
+							{LeptonCorrector::LCaxes::eta, LeptonCorrector::LCaxes::pt},
+							lepidunc,
+							0.017
+						),
+						LeptonCorrector(LeptonCorrector::LCtype::iso,
+							"corrections/leptonSFs/RunBCDEFGH_weightedAvg_SF_ISO_Mu_2016_190404.root",
+							"NUM_TightRelIso_DEN_MediumID_eta_pt",
+							{LeptonCorrector::LCaxes::eta, LeptonCorrector::LCaxes::pt},
+							lepisounc,
+							0.017
+						),
+					};
+				}
+				else if(lepyear==2017){
+					elcorrors = {
+						LeptonCorrector(LeptonCorrector::LCtype::id,
+							"corrections/leptonSFs/ElectronScaleFactors_Run2017_190404.root",
+							"Run2017_CutBasedVetoNoIso94XV2",
+							{LeptonCorrector::LCaxes::eta, LeptonCorrector::LCaxes::pt},
+							lepidunc
+						),
+						LeptonCorrector(LeptonCorrector::LCtype::iso,
+							"corrections/leptonSFs/ElectronScaleFactors_Run2017_190404.root",
+							"Run2017_MVAVLooseTightIP2DMini",
+							{LeptonCorrector::LCaxes::eta, LeptonCorrector::LCaxes::pt},
+							lepisounc
+						),
+						LeptonCorrector(LeptonCorrector::LCtype::trk,
+							"corrections/leptonSFs/egammaEffi.txt_EGM2D_runBCDEF_passingRECO_lowEt_2017_190404.root",
+							"EGamma_SF2D",
+							{LeptonCorrector::LCaxes::eta, LeptonCorrector::LCaxes::pt},
+							leptrkunc,
+							0., -1, 20
+						),
+						LeptonCorrector(LeptonCorrector::LCtype::trk,
+							"corrections/leptonSFs/egammaEffi.txt_EGM2D_runBCDEF_passingRECO_2017_190404.root",
 							"EGamma_SF2D",
 							{LeptonCorrector::LCaxes::eta, LeptonCorrector::LCaxes::pt},
 							leptrkunc,
@@ -384,15 +378,54 @@ class KMCWeightSelector : public KSelector {
 					mucorrors = {
 						//trk SF included w/ id SF
 						LeptonCorrector(LeptonCorrector::LCtype::id,
-							"corrections/RunBCDEF_Muon2017_SF_ID.root",
+							"corrections/leptonSFs/RunBCDEF_SF_ID_Mu_2017_190404.root",
 							"NUM_MediumID_DEN_genTracks_pt_abseta",
 							{LeptonCorrector::LCaxes::pt, LeptonCorrector::LCaxes::abseta},
 							lepidunc,
 							0.017
 						),
 						LeptonCorrector(LeptonCorrector::LCtype::iso,
-							"corrections/SF_Muon2017_NUM_MiniIso02Cut_DEN_MediumID_PAR_pt_eta.root",
-							"TnP_MC_NUM_MiniIso02Cut_DEN_MediumID_PAR_pt_eta",
+							"corrections/leptonSFs/RunBCDEF_SF_ISO_Mu_2017_190404.root",
+							"NUM_TightRelIso_DEN_MediumID_pt_abseta",
+							{LeptonCorrector::LCaxes::pt, LeptonCorrector::LCaxes::abseta},
+							lepisounc
+						)
+					};
+				}
+				else if(lepyear==2018){
+					elcorrors = {
+						LeptonCorrector(LeptonCorrector::LCtype::id,
+							"corrections/leptonSFs/ElectronScaleFactors_Run2018_190404.root",
+							"Run2018_CutBasedVetoNoIso94XV2",
+							{LeptonCorrector::LCaxes::eta, LeptonCorrector::LCaxes::pt},
+							lepidunc
+						),
+						LeptonCorrector(LeptonCorrector::LCtype::iso,
+							"corrections/leptonSFs/ElectronScaleFactors_Run2018_190404.root",
+							"Run2018_Mini",
+							{LeptonCorrector::LCaxes::eta, LeptonCorrector::LCaxes::pt},
+							lepisounc
+						),
+						LeptonCorrector(LeptonCorrector::LCtype::trk,
+							"corrections/leptonSFs/egammaEffi.txt_EGM2D_updatedAll_Above10GeV_2018_190404.root",
+							"EGamma_SF2D",
+							{LeptonCorrector::LCaxes::eta, LeptonCorrector::LCaxes::pt},
+							leptrkunc,
+							0., 10, -1
+						)
+					};
+					mucorrors = {
+						//trk SF included w/ id SF
+						LeptonCorrector(LeptonCorrector::LCtype::id,
+							"corrections/leptonSFs/RunABCD_SF_ID_Mu_2018_190404.root",
+							"NUM_MediumID_DEN_TrackerMuons_pt_abseta",
+							{LeptonCorrector::LCaxes::pt, LeptonCorrector::LCaxes::abseta},
+							lepidunc,
+							0.017
+						),
+						LeptonCorrector(LeptonCorrector::LCtype::iso,
+							"corrections/leptonSFs/RunABCD_SF_ISO_Mu_2018_190404.root",
+							"NUM_TightRelIso_DEN_MediumID_pt_abseta",
 							{LeptonCorrector::LCaxes::pt, LeptonCorrector::LCaxes::abseta},
 							lepisounc
 						)
