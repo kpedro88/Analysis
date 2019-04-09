@@ -135,7 +135,7 @@ class KJetVariator : public KVariator {
 		enum vartypes { NoVar=0, JECup=1, JECdown=2, JERup=3, JERdown=4 };
 		//constructor
 		KJetVariator() : KVariator() { }
-		KJetVariator(string name_, OptionMap* localOpt_) : KVariator(name_,localOpt_), vtype(NoVar), Jets(new vector<TLorentzVector>)
+		KJetVariator(string name_, OptionMap* localOpt_) : KVariator(name_,localOpt_), vtype(NoVar), Jets(new vector<TLorentzVector>), JetsAK8(new vector<TLorentzVector>)
 		{
 			//check options
 			string vname = "";
@@ -216,6 +216,77 @@ class KJetVariator : public KVariator {
 				new KReorderedBranchVI(KBranchVI(&looper->Jets_photonMultiplicity,"Jets_photonMultiplicity"),order),
 				new KReorderedBranchVD(KBranchVD(&looper->Jets_ptD,"Jets_ptD"),order),
 				new KReorderedBranchVD(KBranchVD(&looper->Jets_qgLikelihood,"Jets_qgLikelihood"),order),
+				//4-vector modified "by hand"
+				new KLinkedBranchVL(KBranchVL(&looper->JetsAK8,"JetsAK8"),KBranchVL(&JetsAK8)),
+				//scalars get replaced
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhi1_AK8,"DeltaPhi1_AK8"),KBranchD(&DeltaPhi1_AK8)),
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhi2_AK8,"DeltaPhi2_AK8"),KBranchD(&DeltaPhi2_AK8)),
+				new KLinkedBranchD(KBranchD(&looper->DeltaPhiMin_AK8,"DeltaPhiMin_AK8"),KBranchD(&DeltaPhiMin_AK8)),
+				new KLinkedBranchD(KBranchD(&looper->MJJ_AK8,"MJJ_AK8"),KBranchD(&MJJ_AK8)),
+				new KLinkedBranchD(KBranchD(&looper->MT_AK8,"MT_AK8"),KBranchD(&MT_AK8)),
+				new KLinkedBranchD(KBranchD(&looper->Mmc_AK8,"Mmc_AK8"),KBranchD(&Mmc_AK8)),
+				new KLinkedBranchD(KBranchD(&looper->MET,"MET"),KBranchD(&MET)),
+				new KLinkedBranchD(KBranchD(&looper->METPhi,"METPhi"),KBranchD(&METPhi)),
+				new KLinkedBranchB(KBranchB(&looper->JetIDAK8,"JetIDAK8"),vtype==JECup?KBranchB(&looper->JetIDAK8JECup,"JetIDAK8JECup"):vtype==JECdown?KBranchB(&looper->JetIDAK8JECdown,"JetIDAK8JECdown"):vtype==JERup?KBranchB(&looper->JetIDAK8JERup,"JetIDAK8JERup"):vtype==JERdown?KBranchB(&looper->JetIDAK8JERdown,"JetIDAK8JERdown"):KBranchB(NULL,"")),
+				//vectors get reordered
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_axismajor,"JetsAK8_axismajor"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_axisminor,"JetsAK8_axisminor"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_chargedEmEnergyFraction,"JetsAK8_chargedEmEnergyFraction"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_chargedHadronEnergyFraction,"JetsAK8_chargedHadronEnergyFraction"),orderAK8),
+				new KReorderedBranchVI(KBranchVI(&looper->JetsAK8_chargedHadronMultiplicity,"JetsAK8_chargedHadronMultiplicity"),orderAK8),
+				new KReorderedBranchVI(KBranchVI(&looper->JetsAK8_chargedMultiplicity,"JetsAK8_chargedMultiplicity"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_deepDoubleBDiscriminatorH,"JetsAK8_deepDoubleBDiscriminatorH"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_deepDoubleBDiscriminatorQ,"JetsAK8_deepDoubleBDiscriminatorQ"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_doubleBDiscriminator,"JetsAK8_doubleBDiscriminator"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_ecfN2b1,"JetsAK8_ecfN2b1"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_ecfN2b2,"JetsAK8_ecfN2b2"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_ecfN3b1,"JetsAK8_ecfN3b1"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_ecfN3b2,"JetsAK8_ecfN3b2"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_electronEnergyFraction,"JetsAK8_electronEnergyFraction"),orderAK8),
+				new KReorderedBranchVI(KBranchVI(&looper->JetsAK8_electronMultiplicity,"JetsAK8_electronMultiplicity"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_girth,"JetsAK8_girth"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_hDiscriminatorDeep,"JetsAK8_hDiscriminatorDeep"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_hfEMEnergyFraction,"JetsAK8_hfEMEnergyFraction"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_hfHadronEnergyFraction,"JetsAK8_hfHadronEnergyFraction"),orderAK8),
+				new KReorderedBranchVB(KBranchVB(&looper->JetsAK8_ID,"JetsAK8_ID"),orderAK8),
+				new KReorderedBranchVB(KBranchVB(&looper->JetsAK8_isHV,"JetsAK8_isHV"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_jecFactor,"JetsAK8_jecFactor"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_jecUnc,"JetsAK8_jecUnc"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_jerFactor,"JetsAK8_jerFactor"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_jerFactorDown,"JetsAK8_jerFactorDown"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_jerFactorUp,"JetsAK8_jerFactorUp"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_lean,"JetsAK8_lean"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_momenthalf,"JetsAK8_momenthalf"),orderAK8),
+				new KReorderedBranchVI(KBranchVI(&looper->JetsAK8_multiplicity,"JetsAK8_multiplicity"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_muonEnergyFraction,"JetsAK8_muonEnergyFraction"),orderAK8),
+				new KReorderedBranchVI(KBranchVI(&looper->JetsAK8_muonMultiplicity,"JetsAK8_muonMultiplicity"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_neutralEmEnergyFraction,"JetsAK8_neutralEmEnergyFraction"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_neutralHadronEnergyFraction,"JetsAK8_neutralHadronEnergyFraction"),orderAK8),
+				new KReorderedBranchVI(KBranchVI(&looper->JetsAK8_neutralHadronMultiplicity,"JetsAK8_neutralHadronMultiplicity"),orderAK8),
+				new KReorderedBranchVI(KBranchVI(&looper->JetsAK8_neutralMultiplicity,"JetsAK8_neutralMultiplicity"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_NsubjettinessTau1,"JetsAK8_NsubjettinessTau1"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_NsubjettinessTau2,"JetsAK8_NsubjettinessTau2"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_NsubjettinessTau3,"JetsAK8_NsubjettinessTau3"),orderAK8),
+				new KReorderedBranchVI(KBranchVI(&looper->JetsAK8_NumBhadrons,"JetsAK8_NumBhadrons"),orderAK8),
+				new KReorderedBranchVI(KBranchVI(&looper->JetsAK8_NumChadrons,"JetsAK8_NumChadrons"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_photonEnergyFraction,"JetsAK8_photonEnergyFraction"),orderAK8),
+				new KReorderedBranchVI(KBranchVI(&looper->JetsAK8_photonMultiplicity,"JetsAK8_photonMultiplicity"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_prunedMass,"JetsAK8_prunedMass"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_ptD,"JetsAK8_ptD"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_ptdrlog,"JetsAK8_ptdrlog"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_softDropMass,"JetsAK8_softDropMass"),orderAK8),
+				new KReorderedBranchVVL(KBranchVVL(&looper->JetsAK8_subjets,"JetsAK8_subjets"),orderAK8),
+				new KReorderedBranchVVD(KBranchVVD(&looper->JetsAK8_subjets_axismajor,"JetsAK8_subjets_axismajor"),orderAK8),
+				new KReorderedBranchVVD(KBranchVVD(&looper->JetsAK8_subjets_axisminor,"JetsAK8_subjets_axisminor"),orderAK8),
+				new KReorderedBranchVVD(KBranchVVD(&looper->JetsAK8_subjets_bDiscriminatorCSV,"JetsAK8_subjets_bDiscriminatorCSV"),orderAK8),
+				new KReorderedBranchVVI(KBranchVVI(&looper->JetsAK8_subjets_multiplicity,"JetsAK8_subjets_multiplicity"),orderAK8),
+				new KReorderedBranchVVD(KBranchVVD(&looper->JetsAK8_subjets_ptD,"JetsAK8_subjets_ptD"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_tDiscriminatorDeep,"JetsAK8_tDiscriminatorDeep"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_tDiscriminatorDeepDecorrel,"JetsAK8_tDiscriminatorDeepDecorrel"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_wDiscriminatorDeep,"JetsAK8_wDiscriminatorDeep"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_wDiscriminatorDeepDecorrel,"JetsAK8_wDiscriminatorDeepDecorrel"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_zDiscriminatorDeep,"JetsAK8_zDiscriminatorDeep"),orderAK8),
+				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_zhDiscriminatorDeepDecorrel,"JetsAK8_zhDiscriminatorDeepDecorrel"),orderAK8),
 			};
 			
 			for(auto& branch : branches){
@@ -228,13 +299,20 @@ class KJetVariator : public KVariator {
 			vector<string> unc_branches = {
 				"Jets_origIndex",
 				"Jets_jerFactor",
+				"JetsAK8_origIndex",
+				"JetsAK8_jerFactor",
 			};
 			if(vtype==JECup) {
 				unc_branches.insert(
 					unc_branches.end(), {
 						"JetsJECup_origIndex",
 						"JetsJECup_jerFactor",
-						"Jets_jecUnc"
+						"Jets_jecUnc",
+						"JetsAK8JECup_origIndex",
+						"JetsAK8JECup_jerFactor",
+						"JetsAK8_jecUnc",
+						"METUp",
+						"METPhiUp",
 					}
 				);
 			}
@@ -243,7 +321,12 @@ class KJetVariator : public KVariator {
 					unc_branches.end(), {
 						"JetsJECdown_origIndex",
 						"JetsJECdown_jerFactor",
-						"Jets_jecUnc"
+						"Jets_jecUnc",
+						"JetsAK8JECdown_origIndex",
+						"JetsAK8JECdown_jerFactor",
+						"JetsAK8_jecUnc",
+						"METDown",
+						"METPhiDown",
 					}
 				);
 			}
@@ -251,7 +334,11 @@ class KJetVariator : public KVariator {
 				unc_branches.insert(
 					unc_branches.end(), {
 						"JetsJERup_origIndex",
-						"Jets_jerFactorUp"
+						"Jets_jerFactorUp",
+						"JetsAK8JERup_origIndex",
+						"JetsAK8_jerFactorUp",
+						"METUp",
+						"METPhiUp",
 					}
 				);
 			}
@@ -259,7 +346,11 @@ class KJetVariator : public KVariator {
 				unc_branches.insert(
 					unc_branches.end(), {
 						"JetsJERdown_origIndex",
-						"Jets_jerFactorDown"
+						"Jets_jerFactorDown",
+						"JetsAK8JERdown_origIndex",
+						"JetsAK8_jerFactorDown",
+						"METDown",
+						"METPhiDown",
 					}
 				);
 			}
@@ -275,45 +366,90 @@ class KJetVariator : public KVariator {
 				//store original values
 				branch->Store();
 			}
+
+			clear();
 			
 			//recompute 4-vector w/ desired unc
-			Jets->clear();
-			order.clear();
-			
-			//index of common ancestor (before JER smearing)
 			const auto& Jets_origIndex = *looper->Jets_origIndex;
+			const auto& Jets_jerFactor = *looper->Jets_jerFactor;
+			const auto& Jets_orig = *looper->Jets;
+
+			//get branches depending on which uncertainty type is chosen
+			const auto& JetsUnc_origIndex = vtype==JECup?*looper->JetsJECup_origIndex:vtype==JECdown?*looper->JetsJECdown_origIndex:vtype==JERup?*looper->JetsJERup_origIndex:vtype==JERdown?*looper->JetsJERdown_origIndex:*looper->Jets_origIndex; //last one is a dummy value
+			const auto& JetsUnc_jerFactor = vtype==JECup?*looper->JetsJECup_jerFactor:vtype==JECdown?*looper->JetsJECdown_jerFactor:*looper->Jets_jerFactor; //last one is a dummy value
+			const auto& Jets_unc = vtype==JECup?*looper->Jets_jecUnc:vtype==JECdown?*looper->Jets_jecUnc:vtype==JERup?*looper->Jets_jerFactorUp:vtype==JERdown?*looper->Jets_jerFactorDown:*looper->Jets_jecFactor; //last one is a dummy value
+
+			RecomputeJets(Jets_origIndex, Jets_jerFactor, Jets_orig, JetsUnc_origIndex, JetsUnc_jerFactor, Jets_unc, Jets, order);
+
+			//now the same for AK8
+			const auto& JetsAK8_origIndex = *looper->JetsAK8_origIndex;
+			const auto& JetsAK8_jerFactor = *looper->JetsAK8_jerFactor;
+			const auto& JetsAK8_orig = *looper->JetsAK8;
+
+			//get branches depending on which uncertainty type is chosen
+			const auto& JetsAK8Unc_origIndex = vtype==JECup?*looper->JetsAK8JECup_origIndex:vtype==JECdown?*looper->JetsAK8JECdown_origIndex:vtype==JERup?*looper->JetsAK8JERup_origIndex:vtype==JERdown?*looper->JetsAK8JERdown_origIndex:*looper->JetsAK8_origIndex; //last one is a dummy value
+			const auto& JetsAK8Unc_jerFactor = vtype==JECup?*looper->JetsAK8JECup_jerFactor:vtype==JECdown?*looper->JetsAK8JECdown_jerFactor:*looper->JetsAK8_jerFactor; //last one is a dummy value
+			const auto& JetsAK8_unc = vtype==JECup?*looper->JetsAK8_jecUnc:vtype==JECdown?*looper->JetsAK8_jecUnc:vtype==JERup?*looper->JetsAK8_jerFactorUp:vtype==JERdown?*looper->JetsAK8_jerFactorDown:*looper->JetsAK8_jecFactor; //last one is a dummy value
+
+			RecomputeJets(JetsAK8_origIndex, JetsAK8_jerFactor, JetsAK8_orig, JetsAK8Unc_origIndex, JetsAK8Unc_jerFactor, JetsAK8_unc, JetsAK8, orderAK8);
+
+			//vary MET coherently			
+			MET = vtype==JECup?looper->METUp->at(1):vtype==JECdown?looper->METDown->at(1):vtype==JERup?looper->METUp->at(0):vtype==JERdown?looper->METDown->at(0):looper->MET;
+			METPhi = vtype==JECup?looper->METPhiUp->at(1):vtype==JECdown?looper->METPhiDown->at(1):vtype==JERup?looper->METPhiUp->at(0):vtype==JERdown?looper->METPhiDown->at(0):looper->METPhi;
+
+			//recompute scalars by hand
+			TLorentzVector vjj;
+			int counter = 0;
+			for(unsigned j = 0; j < JetsAK8->size(); ++j){
+				if(counter>=2) break;
+				if(counter<2) {
+					vjj += JetsAK8->at(j);
+					++counter;
+				}
+				if(DeltaPhi1_AK8>9) DeltaPhi1_AK8 = abs(KMath::DeltaPhi(JetsAK8->at(j).Phi(),METPhi));
+				else if(DeltaPhi2_AK8>9) DeltaPhi2_AK8 = abs(KMath::DeltaPhi(JetsAK8->at(j).Phi(),METPhi));
+			}
+
+			//check for 2 jets
+			DeltaPhiMin_AK8 = min(DeltaPhi1_AK8,DeltaPhi2_AK8);
+			if(counter>=2){
+				MJJ_AK8 = vjj.M();
+				MT_AK8 = KMath::TransverseMass(vjj.Px(),vjj.Py(),vjj.M(),MET*cos(METPhi),MET*sin(METPhi),0);
+				//skipping Mmc for now
+			}
+
+			for(auto& branch : branches){
+				//set to variation
+				branch->Vary();
+			}
+		}
+		virtual void RecomputeJets(const vector<int>& Jets_origIndex, const vector<double>& Jets_jerFactor, const vector<TLorentzVector>& Jets_orig,
+								   const vector<int>& JetsUnc_origIndex, const vector<double>& JetsUnc_jerFactor, const vector<double>& Jets_unc,
+								   vector<TLorentzVector>* theJets, vector<unsigned>& theOrder)
+		{
+			//index of common ancestor (before JER smearing)
 			vector<int> newIndex(Jets_origIndex.size(),-1);
 			for(unsigned k = 0; k < Jets_origIndex.size(); ++k){
 				//reverse the index vector
 				newIndex[Jets_origIndex[k]] = k;
 			}
 			
-			const auto& Jets_orig = *looper->Jets;
-			const auto& Jets_jerFactor = *looper->Jets_jerFactor;
-			Jets->reserve(Jets_orig.size());
-			order.reserve(Jets_orig.size());
+			theJets->reserve(Jets_orig.size());
+			theOrder.reserve(Jets_orig.size());
 			
-			//get branches depending on which uncertainty type is chosen
-			const auto& JetsUnc_origIndex = vtype==JECup?*looper->JetsJECup_origIndex:vtype==JECdown?*looper->JetsJECdown_origIndex:vtype==JERup?*looper->JetsJERup_origIndex:vtype==JERdown?*looper->JetsJERdown_origIndex:*looper->Jets_origIndex; //last one is a dummy value
-			const auto& JetsUnc_jerFactor = vtype==JECup?*looper->JetsJECup_jerFactor:vtype==JECdown?*looper->JetsJECdown_jerFactor:*looper->Jets_jerFactor; //last one is a dummy value
-			const auto& Jets_unc = vtype==JECup?*looper->Jets_jecUnc:vtype==JECdown?*looper->Jets_jecUnc:vtype==JERup?*looper->Jets_jerFactorUp:vtype==JERdown?*looper->Jets_jerFactorDown:*looper->Jets_jecFactor; //last one is a dummy value
 			for(unsigned j = 0; j < JetsUnc_origIndex.size(); ++j){
 				//Jets[Unc]_origIndex is sorted in the final order after uncertainty variation is applied
 				//go up to common ancestor, then down to central smeared collection
 				int i = newIndex[JetsUnc_origIndex[j]];
-				order.push_back(i);
+				theOrder.push_back(i);
 				
 				//undo central smearing, apply JEC unc, redo smearing w/ new smearing factor
-				     if(vtype==JECup)   Jets->push_back(Jets_orig[i]*(1./Jets_jerFactor[i])*(1+Jets_unc[i])*JetsUnc_jerFactor[j]);
-				else if(vtype==JECdown) Jets->push_back(Jets_orig[i]*(1./Jets_jerFactor[i])*(1-Jets_unc[i])*JetsUnc_jerFactor[j]);
-				else if(vtype==JERup)   Jets->push_back(Jets_orig[i]*(1./Jets_jerFactor[i])*Jets_unc[i]);
-				else if(vtype==JERdown) Jets->push_back(Jets_orig[i]*(1./Jets_jerFactor[i])*Jets_unc[i]);
+				     if(vtype==JECup)   theJets->push_back(Jets_orig[i]*(1./Jets_jerFactor[i])*(1+Jets_unc[i])*JetsUnc_jerFactor[j]);
+				else if(vtype==JECdown) theJets->push_back(Jets_orig[i]*(1./Jets_jerFactor[i])*(1-Jets_unc[i])*JetsUnc_jerFactor[j]);
+				else if(vtype==JERup)   theJets->push_back(Jets_orig[i]*(1./Jets_jerFactor[i])*Jets_unc[i]);
+				else if(vtype==JERdown) theJets->push_back(Jets_orig[i]*(1./Jets_jerFactor[i])*Jets_unc[i]);
 			}
 			
-			for(auto& branch : branches){
-				//set to variation
-				branch->Vary();
-			}
 		}
 		virtual void UndoVariation() {
 			//restore original values
@@ -321,11 +457,36 @@ class KJetVariator : public KVariator {
 				branch->Restore();
 			}
 		}
+		//helper
+		void clear(){
+			Jets->clear();
+			order.clear();
+		
+			JetsAK8->clear();
+			orderAK8.clear();
+		
+			DeltaPhi1_AK8 = 10;
+			DeltaPhi2_AK8 = 10;
+			DeltaPhiMin_AK8 = 10;
+			MJJ_AK8 = 0;
+			MT_AK8 = 0;
+			Mmc_AK8 = 0;
+			MET = 0;
+			METPhi = 0;
+		}
 		
 		//member variables
 		vartypes vtype;
-		vector<unsigned> order;
-		vector<TLorentzVector>* Jets;
+		vector<unsigned> order, orderAK8;
+		vector<TLorentzVector> *Jets, *JetsAK8;
+		double DeltaPhi1_AK8;
+		double DeltaPhi2_AK8;
+		double DeltaPhiMin_AK8;
+		double MJJ_AK8;
+		double Mmc_AK8;
+		double MT_AK8;
+		double MET;
+		double METPhi;
 };
 REGISTER_VARIATOR(Jet);
 
