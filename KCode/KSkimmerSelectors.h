@@ -691,23 +691,25 @@ class KPDFNormSelector : public KSelector {
 	public:
 		//constructor
 		KPDFNormSelector() : KSelector() { }
-		KPDFNormSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), h_norm(NULL) {
+		KPDFNormSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), h_norm(NULL), h_all(NULL) {
 			canfail = false;
 			//initialize histogram
 			TH1::AddDirectory(kFALSE);
 			//bins:
 			//1: nominal, 2: PDF up, 3: PDF down, 4: scale up, 5: scale down
 			h_norm = new TH1F("PDFNorm","",5,0.5,5.5);
+			//1: nominal, 2-n: PDF weight i
+			h_all = new TH1F("PDFAllNorm","",103,0.5,103.5);
 		}
 		virtual void CheckBase(){
 			//disable this for data
 			if(base->IsData()) {
 				dummy = true;
 				delete h_norm;
+				delete h_all;
 			}
 		}
 
-		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
@@ -717,11 +719,18 @@ class KPDFNormSelector : public KSelector {
 			
 			//nominal
 			h_norm->Fill(1,weight);
+			h_all->Fill(1,weight);
 			if(looper->PDFweights->size()>0){
+				double mean = TMath::Mean(looper->PDFweights->begin(),looper->PDFweights->end());
+				double rms = TMath::RMS(looper->PDFweights->begin(),looper->PDFweights->end());
 				//PDF up
-				h_norm->Fill(2,*(TMath::LocMax(looper->PDFweights->begin(),looper->PDFweights->end()))*weight);
+				h_norm->Fill(2,(mean+rms)*weight);
 				//PDF down
-				h_norm->Fill(3,*(TMath::LocMin(looper->PDFweights->begin(),looper->PDFweights->end()))*weight);
+				h_norm->Fill(3,(mean-rms)*weight);
+				//fill the histo for all weights
+				for(unsigned p = 0; p < looper->PDFweights->size(); ++p){
+					h_all->Fill(p+2,looper->PDFweights->at(p));
+				}
 			}
 			
 			if(looper->ScaleWeights->size()>0){
@@ -745,10 +754,12 @@ class KPDFNormSelector : public KSelector {
 			//write to file
 			file->cd();
 			h_norm->Write();
+			h_all->Write();
 		}
 		
 		//member variables
 		TH1F *h_norm;
+		TH1F *h_all;
 };
 REGISTER_SELECTOR(PDFNorm);
 
