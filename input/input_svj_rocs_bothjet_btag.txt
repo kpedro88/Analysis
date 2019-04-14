@@ -1,0 +1,21 @@
+SELECTION
+bsim
+	MCWeight
+	JetMatch
+	Histo
+
+OPTION
+vstring:selections[bsim]
+string+:rocsuffix[_bothjet_btag]
+vstring:disable_branches[*]
+string:extfilename[test/svj_dijetmtdetahadmf_bothjet_btag.root]
+
+HISTO
+bothjetAK8maxcsv	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[max(CSVv2)(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlue]
+bothjetAK8avgcsv	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[avg(CSVv2)(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kCyan + 2]
+bothjetAK8maxbvsall	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[max(BvsAll)(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta]
+bothjetAK8avgbvsall	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[avg(BvsAll)(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kOrange + 7]
+bothjetAK8maxbcvsall	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[max(BCvsAll)(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kYellow + 3]
+bothjetAK8avgbcvsall	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[avg(BCvsAll)(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kGreen + 2]
+bothjetAK8doubleb	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[DoubleB(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kRed]
+bothjetAK8deepdoubleb	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[DeepDoubleB(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlack]
