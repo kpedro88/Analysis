@@ -1328,6 +1328,57 @@ class KGenMatchSelector : public KSelector {
 };
 REGISTER_SELECTOR(GenMatch);
 
+//---------------------------------------------------------------
+//associate ak4 jets w/ ak8 jets
+class KJetMatchSelector : public KSelector {
+	public:
+		//constructor
+		KJetMatchSelector() : KSelector() { }
+		KJetMatchSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), njet(2), mindr(0.8) {
+			canfail = false;
+			//check options
+			localOpt->Get("njet",njet);
+			localOpt->Get("mindr",mindr);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("JetsAK8",1);
+			looper->fChain->SetBranchStatus("Jets",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			unsigned njet_ = min(njet,(unsigned)looper->JetsAK8->size());
+			//clear
+			JetIndices.clear(); JetIndices.resize(njet_);
+
+			//compare each AK4 jet to all AK8 jets, take the closest (if < mindr)
+			const auto& Jets = *looper->Jets;
+			const auto& JetsAK8 = *looper->JetsAK8;
+			for(unsigned j = 0; j < Jets.size(); ++j){
+				double min = 1e10;
+				unsigned min_ind = njet_+1;
+				for(unsigned jj = 0; jj < njet_; ++jj){
+					double dr = Jets[j].DeltaR(JetsAK8[jj]);
+					if(dr < min) {
+						min = dr;
+						min_ind = jj;
+					}
+				}
+				if(min_ind < njet_ and min < mindr) JetIndices[min_ind].push_back(j);
+			}
+
+			return true;
+		}
+		
+		//member variables
+		unsigned njet;
+		double mindr;
+		vector<vector<unsigned>> JetIndices;
+};
+REGISTER_SELECTOR(JetMatch);
+
 //----------------------------------------------------
 //final selector to fill histograms
 //(just calls KHisto methods)
