@@ -647,6 +647,18 @@ class KFiller_MTJJJAK8 : public KFiller {
 };
 REGISTER_FILLER(MTJJJAK8);
 
+//-----------------------------------------------------------------------------
+//transverse mass w/ regression
+class KFiller_MTAK8reg : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void CheckDeps(){ MTRegression = sel->Get<KMTRegressionSelector*>("MTRegression"); }
+		virtual void Fill(KValue& value, double w) { if(MTRegression) value.Fill(MTRegression->MTAK8,w); }
+		//member variables
+		KMTRegressionSelector* MTRegression = NULL;
+};
+REGISTER_FILLER(MTAK8reg);
+
 //deta(j1,j2)
 class KFiller_deltaetaAK8 : public KFiller {
 	public:
