@@ -1380,6 +1380,63 @@ class KJetMatchSelector : public KSelector {
 REGISTER_SELECTOR(JetMatch);
 
 //----------------------------------------------------
+//selects events based on leading jet pt
+class KMTRegressionSelector : public KSelector {
+	public:
+		//constructor
+		KMTRegressionSelector() : KSelector() { }
+		KMTRegressionSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), version(1), MTAK8(0.) { 
+			canfail = false;
+			//check for option
+			localOpt->Get("version",version);
+		}
+		virtual void CheckDeps(){
+			JetMatch = sel->Get<KJetMatchSelector*>("JetMatch");
+			if(version==1 and !JetMatch) depfailed = true;			
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("JetsAK8",1);
+			looper->fChain->SetBranchStatus("MET",1);
+			looper->fChain->SetBranchStatus("METPhi",1);
+			if(version==1) looper->fChain->SetBranchStatus("Jets_bJetTagDeepCSVBvsAll",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			MTAK8 = 0.;
+
+			//apply regression to jet 4vecs, recalculate MT
+			if(looper->JetsAK8->size()>1){
+				array<TLorentzVector,2> vj;
+				array<double,2> params;
+				if(version==1) params = {0.0904739,0.125758};
+
+				for(unsigned j = 0; j < 2; ++j){
+					vj[j] = looper->JetsAK8->at(j);
+					if(version==1){
+						vector<double> discrs; discrs.reserve(JetMatch->JetIndices[j].size());
+						for(auto jj : JetMatch->JetIndices[j]) discrs.push_back(looper->Jets_bJetTagDeepCSVBvsAll->at(j));
+						vj[j] *= max(1.0, params[j]*sqrt(*(TMath::LocMax(discrs.begin(),discrs.end())))+1.0);
+					}
+				}
+
+				TLorentzVector vjj = vj[0] + vj[1];
+				MTAK8 = KMath::TransverseMass(vjj.Px(),vjj.Py(),vjj.M(),looper->MET*cos(looper->METPhi),looper->MET*sin(looper->METPhi),0);
+			}
+
+			return true;
+		}
+		
+		//member variables
+		int version;
+		KJetMatchSelector* JetMatch;
+		double MTAK8;
+};
+REGISTER_SELECTOR(MTRegression);
+
+//----------------------------------------------------
 //final selector to fill histograms
 //(just calls KHisto methods)
 class KHistoSelector : public KSelector {
