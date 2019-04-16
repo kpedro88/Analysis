@@ -1417,7 +1417,7 @@ class KMTRegressionSelector : public KSelector {
 					vj[j] = looper->JetsAK8->at(j);
 					if(version==1){
 						vector<double> discrs; discrs.reserve(JetMatch->JetIndices[j].size());
-						for(auto jj : JetMatch->JetIndices[j]) discrs.push_back(looper->Jets_bJetTagDeepCSVBvsAll->at(j));
+						for(auto jj : JetMatch->JetIndices[j]) discrs.push_back(looper->Jets_bJetTagDeepCSVBvsAll->at(jj));
 						vj[j] *= max(1.0, params[j]*sqrt(*(TMath::LocMax(discrs.begin(),discrs.end())))+1.0);
 					}
 				}
