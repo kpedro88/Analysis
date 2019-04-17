@@ -359,6 +359,26 @@ class KBDTVar_subjetCSV2 : public KBDTVar {
 };
 REGISTER_BDTVAR(subjetCSV2);
 
+class KBDTVar_maxbvsall : public KBDTVar {
+	public:
+		using KBDTVar::KBDTVar;
+		virtual void ListBranches() { branches = {"Jets_bJetTagDeepCSVBvsAll"}; }
+		virtual void Fill(unsigned j) {
+			if(j>=indices.size()){
+				branch = -10;
+				return;
+			}
+			vector<double> discrs; discrs.reserve(indices[j].size());
+			for(auto jj : indices[j]) discrs.push_back(looper->Jets_bJetTagDeepCSVBvsAll->at(jj));
+			branch = *(TMath::LocMax(discrs.begin(),discrs.end()));
+		}
+		//custom fn
+		virtual void SetIndices(const vector<vector<unsigned>>& indices_) { indices = indices_; }
+		//member
+		vector<vector<unsigned>> indices;
+};
+REGISTER_BDTVAR(maxbvsall);
+
 class KBDTVar_isHV : public KBDTVar {
 	public:
 		using KBDTVar::KBDTVar;

@@ -1649,6 +1649,7 @@ class KJetAK8TrainingSelector : public KSelector {
 			localOpt->Get("branches",branchnames);
 			for(const auto& b: branchnames){
 				branches.push_back(KBDTVarFactory::GetFactory().construct(b,b));
+				if(b=="maxbvsall") index_maxbvsall = branches.size()-1;
 			}
 			//flat options
 			localOpt->Get("flatname",flatname);
@@ -1656,7 +1657,10 @@ class KJetAK8TrainingSelector : public KSelector {
 			localOpt->Get("flatbranches",flatbranches);
 			flatten = !flatname.empty() and !flatnumers.empty() and !flatbranches.empty() and flatnumers.size()==flatbranches.size();
 		}
-
+		virtual void CheckDeps(){
+			JetMatch = sel->Get<KJetMatchSelector*>("JetMatch");
+			if(!JetMatch) depfailed = true;			
+		}
 		virtual void CheckBranches(){
 			for(auto&b : branches){
 				b->CheckBranches();
@@ -1721,8 +1725,9 @@ class KJetAK8TrainingSelector : public KSelector {
 				//temporary protection for crazy values
 				double pt = looper->JetsAK8->at(j).Pt();
 				if(pt<100) continue;
-				for(auto& b : branches){
-					b->Fill(j);
+				for(unsigned b = 0; b < branches.size(); ++b){
+					if(index_maxbvsall>=0 and b==index_maxbvsall) static_cast<KBDTVar_maxbvsall*>(branches[b])->SetIndices(JetMatch->JetIndices);
+					branches[b]->Fill(j);
 				}
 				if(flatten) {
 					for(unsigned b = 0; b < b_flatweights.size(); ++b){
@@ -1737,7 +1742,9 @@ class KJetAK8TrainingSelector : public KSelector {
 		}
 
 		//member variables
+		int index_maxbvsall = -1;
 		vector<KBDTVar*> branches;
+		KJetMatchSelector* JetMatch;
 		bool flatten;
 		vector<string> flatnumers, flatbranches;
 		string flatname;
