@@ -59,7 +59,9 @@ dijetmtdetahad
 dijetmtdetahadmf
 	dijetmtdetahad
 	METFilter
-#	BDT	s:weights[corrections/TMVAClassification_BDTG_UZH.weights.xml]	s:type[BDTG]	b:positive[0]	b:tag[1]	b:forceadd[1]	vs:variables[mult,axisminor,girth,tau21,tau32,msd,deltaphi]
+	JetMatch
+	BDT	s:name[BDT]	s:weights[corrections/D29_TMVA_bdt_weights.xml]	s:type[BDTG]	b:positive[1]	b:tag[1]	b:forceadd[1]	s:branchname[bdtSVJtag]	vs:variables[girth,tau21,tau32,msd,axisminor,axismajor,ptD,ecfN2b1,ecfN3b1,ptdrlog,fChHad,fEle,fMu,fNeuHad,fPho,maxbvsall]
+	BDT	s:name[uBDT]	s:weights[corrections/D29_TMVA_ubdt_weights.xml]	s:type[BDTG]	b:positive[1]	b:tag[1]	b:forceadd[1]	s:branchname[ubdtSVJtag]	vs:variables[girth,tau21,tau32,msd,axisminor,axismajor,ptD,ecfN2b1,ecfN3b1,ptdrlog,fChHad,fEle,fMu,fNeuHad,fPho,maxbvsall]
 dijetmtdetahadmffull1
 	dijetmtdetahadmf
 	METMTRatio	s:name[METMTRatioFull]	d:min[0.25]

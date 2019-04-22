@@ -1,0 +1,80 @@
+OPTION
+vstring:selections[B-Cut,S-Cut,B-BDT0,S-BDT0,B-BDT1,S-BDT1,B-BDT2,S-BDT2,B-uBDT0,S-uBDT0,B-uBDT1,S-uBDT1,B-uBDT2,S-uBDT2]
+string+:printsuffix[_fullbdtregions]
+
+SELECTION
+plot
+	MCWeight
+	Histo
+BDT0
+	SVJTag	s:branch[bdtSVJtag]	d:cut[0.36]	i:num[0]
+BDT1
+	SVJTag	s:branch[bdtSVJtag]	d:cut[0.36]	i:num[1]
+BDT2
+	SVJTag	s:branch[bdtSVJtag]	d:cut[0.36]	i:num[2]
+uBDT0
+	SVJTag	s:branch[ubdtSVJtag]	d:cut[0.52]	i:num[0]
+uBDT1
+	SVJTag	s:branch[ubdtSVJtag]	d:cut[0.52]	i:num[1]
+uBDT2
+	SVJTag	s:branch[ubdtSVJtag]	d:cut[0.52]	i:num[2]
+Bfull
+	METMTRatio	d:min[0.15]	d:max[0.25]
+	DeltaPhiMinAK8	d:max[0.75]
+Sfull
+	METMTRatio	d:min[0.25]
+	DeltaPhiMinAK8	d:max[0.75]
+B-Cut
+	Bfull
+	plot
+S-Cut
+	Sfull
+	plot
+B-BDT0
+	Bfull
+	BDT0
+	plot
+S-BDT0
+	Sfull
+	BDT0
+	plot
+B-BDT1
+	Bfull
+	BDT1
+	plot
+S-BDT1
+	Sfull
+	BDT1
+	plot
+B-BDT2
+	Bfull
+	BDT2
+	plot
+S-BDT2
+	Sfull
+	BDT2
+	plot
+B-uBDT0
+	Bfull
+	uBDT0
+	plot
+S-uBDT0
+	Sfull
+	uBDT0
+	plot
+B-uBDT1
+	Bfull
+	uBDT1
+	plot
+S-uBDT1
+	Sfull
+	uBDT1
+	plot
+B-uBDT2
+	Bfull
+	uBDT2
+	plot
+S-uBDT2
+	Sfull
+	uBDT2
+	plot

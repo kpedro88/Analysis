@@ -19,7 +19,7 @@ INPUT
 input/input_global.txt
 
 OPTION
-double:luminorm[35900]
+double:luminorm[137000]
 string:prelim_text[Simulation (work-in-progress)]
 #string:lumi_text[(13 TeV)]
 vstring:printformat[png]

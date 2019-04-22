@@ -1,7 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Wed Mar 20 09:04:50 2019 by ROOT version 6.06/01
+// Mon Apr 22 09:33:17 2019 by ROOT version 6.06/01
 // from TTree PreSelection/PreSelection
+// from TTree tree/all observables, dijetmtdetahadmf
 // from TTree tree/all observables, signal
 // found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV16/RunIIFall17MiniAODv2.TTJets_TuneCP5_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
 //////////////////////////////////////////////////////////
@@ -478,7 +479,9 @@ public :
    Bool_t          LowNeutralJetTightFilter;
    Bool_t          HEMVetoFilter;
    Bool_t          HEMDPhiVetoFilter;
+   vector<double>  *JetsAK8_bdtSVJtag;
    UInt_t          RA2bin;
+   vector<double>  *JetsAK8_ubdtSVJtag;
    vector<unsigned int> *RA2bins;
 
    // List of branches
@@ -936,7 +939,9 @@ public :
    TBranch        *b_LowNeutralJetTightFilter;   //!
    TBranch        *b_HEMVetoFilter;   //!
    TBranch        *b_HEMDPhiVetoFilter;   //!
+   TBranch        *b_JetsAK8_bdtSVJtag;   //!
    TBranch        *b_RA2binBranch;   //!
+   TBranch        *b_JetsAK8_ubdtSVJtag;   //!
    TBranch        *b_RA2bins;   //!
 
    NtupleClass(TTree *tree=0);
@@ -1270,6 +1275,8 @@ void NtupleClass::Init(TTree *tree)
    TriggerVersion = 0;
    ZCandidates = 0;
    RA2bins = 0;
+   JetsAK8_bdtSVJtag = 0;
+   JetsAK8_ubdtSVJtag = 0;
    // Set branch addresses and branch pointers
    if (!tree) return;
    fChain = tree;
@@ -1730,7 +1737,9 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("LowNeutralJetTightFilter", &LowNeutralJetTightFilter, &b_LowNeutralJetTightFilter);
    fChain->SetBranchAddress("HEMVetoFilter", &HEMVetoFilter, &b_HEMVetoFilter);
    fChain->SetBranchAddress("HEMDPhiVetoFilter", &HEMDPhiVetoFilter, &b_HEMDPhiVetoFilter);
+   fChain->SetBranchAddress("JetsAK8_bdtSVJtag", &JetsAK8_bdtSVJtag, &b_JetsAK8_bdtSVJtag);
    fChain->SetBranchAddress("RA2bin", &RA2bin, &b_RA2binBranch);
+   fChain->SetBranchAddress("JetsAK8_ubdtSVJtag", &JetsAK8_ubdtSVJtag, &b_JetsAK8_ubdtSVJtag);
    fChain->SetBranchAddress("RA2bins", &RA2bins, &b_RA2bins);
    Notify();
 }
