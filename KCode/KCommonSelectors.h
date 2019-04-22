@@ -20,13 +20,64 @@
 
 using namespace std;
 
+//---------------------------------------------------------------
+//associate ak4 jets w/ ak8 jets
+class KJetMatchSelector : public KSelector {
+	public:
+		//constructor
+		KJetMatchSelector() : KSelector() { }
+		KJetMatchSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), njet(2), mindr(0.8) {
+			canfail = false;
+			//check options
+			localOpt->Get("njet",njet);
+			localOpt->Get("mindr",mindr);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("JetsAK8",1);
+			looper->fChain->SetBranchStatus("Jets",1);
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			unsigned njet_ = min(njet,(unsigned)looper->JetsAK8->size());
+			//clear
+			JetIndices.clear(); JetIndices.resize(njet_);
+
+			//compare each AK4 jet to all AK8 jets, take the closest (if < mindr)
+			const auto& Jets = *looper->Jets;
+			const auto& JetsAK8 = *looper->JetsAK8;
+			for(unsigned j = 0; j < Jets.size(); ++j){
+				double min = 1e10;
+				unsigned min_ind = njet_+1;
+				for(unsigned jj = 0; jj < njet_; ++jj){
+					double dr = Jets[j].DeltaR(JetsAK8[jj]);
+					if(dr < min) {
+						min = dr;
+						min_ind = jj;
+					}
+				}
+				if(min_ind < njet_ and min < mindr) JetIndices[min_ind].push_back(j);
+			}
+
+			return true;
+		}
+		
+		//member variables
+		unsigned njet;
+		double mindr;
+		vector<vector<unsigned>> JetIndices;
+};
+REGISTER_SELECTOR(JetMatch);
+
 //----------------------------------------------------
 //selects events based on a BDT
 class KBDTSelector : public KSelector {
 	public:
 		//constructor
 		KBDTSelector() : KSelector() { }
-		KBDTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), wp(-1) {
+		KBDTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), wp(-1), branchname("SVJtag"), JetMatch(NULL) {
 			//get BDT weights
 			localOpt->Get("weights",weights);
 			//get BDT type
@@ -43,7 +94,10 @@ class KBDTSelector : public KSelector {
 			localOpt->Get("variables",variable_names);
 			for(const auto& v: variable_names){
 				variables.push_back(KBDTVarFactory::GetFactory().construct(v,v));
+				if(v=="maxbvsall") index_maxbvsall = variables.size()-1;
 			}
+			//get output branch name
+			localOpt->Get("branchname",branchname);
 
 			//load TMVA library
 			TMVA::Tools::Instance();
@@ -54,6 +108,10 @@ class KBDTSelector : public KSelector {
 			}
 			//setup reader
 			reader->BookMVA(type.c_str(),weights.c_str());
+		}
+		virtual void CheckDeps(){
+			JetMatch = sel->Get<KJetMatchSelector*>("JetMatch");
+			if(!JetMatch) depfailed = true;			
 		}
 		virtual void CheckBranches(){
 			for(auto& v : variables){
@@ -69,7 +127,7 @@ class KBDTSelector : public KSelector {
 		virtual void SetBranches(){
 			if(!tree) return;
 
-			tree->Branch("JetsAK8_SVJtag","std::vector<double>",&JetsAK8_bdt,32000,0);
+			tree->Branch(("JetsAK8_"+branchname).c_str(),"std::vector<double>",&JetsAK8_bdt,32000,0);
 		}
 
 		//this selector doesn't add anything to tree
@@ -77,12 +135,12 @@ class KBDTSelector : public KSelector {
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			JetsAK8_bdt.clear();
-			unsigned njets = min(looper->JetsAK8->size(),3ul);
 			bool good = true;
 			for(unsigned j = 0; j < looper->JetsAK8->size(); ++j){
 				//load variables for this jet
-				for(auto& v : variables){
-					v->Fill(j);
+				for(unsigned v = 0; v < variables.size(); ++v){
+					if(index_maxbvsall>=0 and v==index_maxbvsall) static_cast<KBDTVar_maxbvsall*>(variables[v])->SetIndices(JetMatch->JetIndices);
+					variables[v]->Fill(j);
 				}
 				double bdt_val = reader->EvaluateMVA(type.c_str());
 				//convert range from [-1,1] to [0,1]: (x-xmin)/(xmax-xmin)
@@ -96,10 +154,13 @@ class KBDTSelector : public KSelector {
 		//member variables
 		string weights, type;
 		double wp;
+		string branchname;
 		bool tag, positive;
 		TMVA::Reader* reader;
 		//input variables
 		vector<KBDTVar*> variables;
+		int index_maxbvsall = -1;
+		KJetMatchSelector* JetMatch;
 		//bdt output
 		vector<double> JetsAK8_bdt;
 };
@@ -540,9 +601,10 @@ class KMETMTRatioSelector : public KSelector {
 	public:
 		//constructor
 		KMETMTRatioSelector() : KSelector() { }
-		KMETMTRatioSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), min(0.15) { 
+		KMETMTRatioSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), min(0.15), max(-1) { 
 			//check for option
 			localOpt->Get("min",min);
+			localOpt->Get("max",max);
 		}
 		virtual void CheckBranches(){
 			looper->fChain->SetBranchStatus("MET",1);
@@ -556,11 +618,11 @@ class KMETMTRatioSelector : public KSelector {
 		virtual bool Cut() {
 			if(looper->JetsAK8->size()<2) return false;
 			double metMTratio = looper->MT_AK8 > 0 ? looper->MET/looper->MT_AK8 : 0.0;
-			return metMTratio > min;
+			return ( (min<0 or metMTratio>min) and (max<0 or metMTratio<max) );
 		}
 		
 		//member variables
-		double min;
+		double min, max;
 };
 REGISTER_SELECTOR(METMTRatio);
 
@@ -1805,56 +1867,5 @@ class KDeltaPhiExtendedSelector : public KSelector {
 		bool invert;
 };
 REGISTER_SELECTOR(DeltaPhiExtended);
-
-//---------------------------------------------------------------
-//associate ak4 jets w/ ak8 jets
-class KJetMatchSelector : public KSelector {
-	public:
-		//constructor
-		KJetMatchSelector() : KSelector() { }
-		KJetMatchSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), njet(2), mindr(0.8) {
-			canfail = false;
-			//check options
-			localOpt->Get("njet",njet);
-			localOpt->Get("mindr",mindr);
-		}
-		virtual void CheckBranches(){
-			looper->fChain->SetBranchStatus("JetsAK8",1);
-			looper->fChain->SetBranchStatus("Jets",1);
-		}
-		
-		//this selector doesn't add anything to tree
-		
-		//used for non-dummy selectors
-		virtual bool Cut() {
-			unsigned njet_ = min(njet,(unsigned)looper->JetsAK8->size());
-			//clear
-			JetIndices.clear(); JetIndices.resize(njet_);
-
-			//compare each AK4 jet to all AK8 jets, take the closest (if < mindr)
-			const auto& Jets = *looper->Jets;
-			const auto& JetsAK8 = *looper->JetsAK8;
-			for(unsigned j = 0; j < Jets.size(); ++j){
-				double min = 1e10;
-				unsigned min_ind = njet_+1;
-				for(unsigned jj = 0; jj < njet_; ++jj){
-					double dr = Jets[j].DeltaR(JetsAK8[jj]);
-					if(dr < min) {
-						min = dr;
-						min_ind = jj;
-					}
-				}
-				if(min_ind < njet_ and min < mindr) JetIndices[min_ind].push_back(j);
-			}
-
-			return true;
-		}
-		
-		//member variables
-		unsigned njet;
-		double mindr;
-		vector<vector<unsigned>> JetIndices;
-};
-REGISTER_SELECTOR(JetMatch);
 
 #endif

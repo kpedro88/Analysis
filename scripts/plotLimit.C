@@ -204,7 +204,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, int nsigma=0){
 
 	//setup plotting options
 	OptionMap* globalOpt = new OptionMap();
-	globalOpt->Set<string>("lumi_text","35.9 fb^{-1} (13 TeV)");
+	globalOpt->Set<string>("lumi_text","137 fb^{-1} (13 TeV)");
 	globalOpt->Set<bool>("checkerr",false);
 	globalOpt->Set<int>("npanel",1);
 	//globalOpt->Set<bool>("balance_panels",true);
