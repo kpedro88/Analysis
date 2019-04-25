@@ -48,8 +48,8 @@ for TYPE in ${TYPES[@]}; do
 			done
 			# remove first char, prepend condor stuff
 			SLIST="Process in ${SLIST:1}"
-		elif [[ $TYPE == "SVJ" ]]; then
-			TMPSELTYPE=$TMPSELTYPE,dijetmtdetahadmf_JECup,dijetmtdetahadmf_JECdown,dijetmtdetahadmf_JERup,dijetmtdetahadmf_JERdown
+#		elif [[ $TYPE == "SVJ" ]]; then
+#			TMPSELTYPE=$TMPSELTYPE,dijetmtdetahadmf_JECup,dijetmtdetahadmf_JECdown,dijetmtdetahadmf_JERup,dijetmtdetahadmf_JERdown
 		fi
 
 		$DRYRUN ./SKtemp.sh ${JOBDIR} ${INPUT} ${SNAME} "${SLIST}" ${TMPSELTYPE} ${INDIR} ${OUTDIR} ${STORE} ${JOBTYPE}
