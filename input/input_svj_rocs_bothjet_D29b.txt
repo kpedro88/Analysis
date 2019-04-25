@@ -1,0 +1,22 @@
+SELECTION
+bsim
+	MCWeight
+	JetMatch
+	Histo
+
+OPTION
+vstring:selections[bsim]
+string+:rocsuffix[_bothjetD29b]
+vstring:disable_branches[*]
+bool:skiphistos[1]
+string:extfilename[test/svj_dijetmtdetahadmf_bothjet_D29b.root]
+
+HISTO
+bothjetAK8ecfN2b1	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[N_{2}^{(1)}(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlack]
+bothjetAK8ecfN3b1	i:xnum[100]	d:xmin[0]	d:xmax[4.0]	s:xtitle[N_{3}^{(1)}(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kRed]
+bothjetAK8fChHad	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[fChHad(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlue]
+bothjetAK8fEle	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[fEle(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta + 2]
+bothjetAK8fNeuHad	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[fNeuHad(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kYellow + 3]
+bothjetAK8fMu	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[fMu(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta]
+bothjetAK8fPho	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[fPho(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kPink - 9]
+bothjetAK8maxbvsall	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[max(BvsAll)(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kCyan + 2]
