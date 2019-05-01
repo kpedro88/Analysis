@@ -35,15 +35,21 @@ class KJetMatchSelector : public KSelector {
 		virtual void CheckBranches(){
 			looper->fChain->SetBranchStatus("JetsAK8",1);
 			looper->fChain->SetBranchStatus("Jets",1);
+			looper->fChain->SetBranchStatus("Jets_bJetTagDeepCSVBvsAll",1);
 		}
-		
-		//this selector doesn't add anything to tree
+		virtual void SetBranches(){
+			if(!tree) return;
+
+			tree->Branch("JetsAK8_maxBvsAll","std::vector<double>",&JetsAK8_maxBvsAll,32000,0);
+		}
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			unsigned njet_ = min(njet,(unsigned)looper->JetsAK8->size());
+			if(forceadd) njet_ = (unsigned)looper->JetsAK8->size();
 			//clear
 			JetIndices.clear(); JetIndices.resize(njet_);
+			JetsAK8_maxBvsAll.clear(); JetsAK8_maxBvsAll.resize(njet_);
 
 			//compare each AK4 jet to all AK8 jets, take the closest (if < mindr)
 			const auto& Jets = *looper->Jets;
@@ -61,6 +67,14 @@ class KJetMatchSelector : public KSelector {
 				if(min_ind < njet_ and min < mindr) JetIndices[min_ind].push_back(j);
 			}
 
+			if(forceadd){
+				for(unsigned jj = 0; jj < njet_; ++jj){
+					vector<double> discrs; discrs.reserve(JetIndices[jj].size());
+					for(auto j : JetIndices[jj]) discrs.push_back(looper->Jets_bJetTagDeepCSVBvsAll->at(j));
+					JetsAK8_maxBvsAll[jj] = *(TMath::LocMax(discrs.begin(),discrs.end()));
+				}
+			}
+
 			return true;
 		}
 		
@@ -68,6 +82,7 @@ class KJetMatchSelector : public KSelector {
 		unsigned njet;
 		double mindr;
 		vector<vector<unsigned>> JetIndices;
+		vector<double> JetsAK8_maxBvsAll;
 };
 REGISTER_SELECTOR(JetMatch);
 
@@ -1783,6 +1798,46 @@ class KHEMVetoSelector : public KFilterSelector {
 		double minpt;
 };
 REGISTER_SELECTOR(HEMVeto);
+
+//-------------------------------------------------------------
+//vetos events with activity in HEM region (optimized for SVJ)
+class KHEMOptVetoSelector : public KFilterSelector {
+	public:
+		//constructor
+		KHEMOptVetoSelector() : KFilterSelector() { }
+		KHEMOptVetoSelector(string name_, OptionMap* localOpt_) : KFilterSelector(name_,localOpt_), minpt(30) {
+			branchname = "HEMOptVeto";
+			localOpt->Get("minpt",minpt);
+		}
+		virtual void CheckBranches(){
+			looper->fChain->SetBranchStatus("Electrons",1);
+			looper->fChain->SetBranchStatus("Electrons_passIso",1);
+			looper->fChain->SetBranchStatus("Jets",1);
+		}
+		bool InHEMRegion(const TLorentzVector& tlv, double ptcut){
+			return tlv.Pt()>ptcut and -3.05 < tlv.Eta() and tlv.Eta() < -1.35 and -1.62 < tlv.Phi() and tlv.Phi() < -0.82;
+		}
+		virtual void GetResult() {
+			bool activity = false;
+			//check electrons - only isolated ones
+			for(unsigned e = 0; e < looper->Electrons->size(); ++e){
+				if(!looper->Electrons_passIso->at(e)) continue;
+				const auto& Electron = looper->Electrons->at(e);
+				if(!activity and InHEMRegion(Electron,0.)) activity = true;
+				if(activity) break;
+			}
+			//check jets
+			for(const auto& Jet : *looper->Jets){
+				if(!activity and InHEMRegion(Jet,minpt)) activity = true;
+				if(activity) break;
+			}
+			result = !activity;
+		}
+
+		//member variables
+		double minpt;
+};
+REGISTER_SELECTOR(HEMOptVeto);
 
 //-------------------------------------------------------------
 //vetos events with activity in wider HEM region (w/ dphi req.)

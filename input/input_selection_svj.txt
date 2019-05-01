@@ -15,7 +15,10 @@ vstring:disable_branches[*clean*,*Clean*]
 SELECTION
 common
 	PDFNorm
-	L1PrefiringWeight	b:useEMpt[1]	d:systUnc[0.2]	s:fname[corrections/L1PrefiringMaps_new.root]
+endcommon
+	JetMatch	b:forceadd[1]
+	BDT	s:name[BDT]	s:weights[corrections/D29_TMVA_bdt_weights.xml]	s:type[BDTG]	b:positive[1]	b:tag[1]	b:forceadd[1]	s:branchname[bdtSVJtag]	vs:variables[girth,tau21,tau32,msd,axisminor,axismajor,ptD,ecfN2b1,ecfN3b1,ptdrlog,fChHad,fEle,fMu,fNeuHad,fPho,maxbvsall]
+	BDT	s:name[uBDT]	s:weights[corrections/D29_TMVA_ubdt_weights.xml]	s:type[BDTG]	b:positive[1]	b:tag[1]	b:forceadd[1]	s:branchname[ubdtSVJtag]	vs:variables[girth,tau21,tau32,msd,axisminor,axismajor,ptD,ecfN2b1,ecfN3b1,ptdrlog,fChHad,fEle,fMu,fNeuHad,fPho,maxbvsall]
 evtclean
 	METRatio	b:tag[1]
 	MuonJet	b:tag[1]
@@ -26,7 +29,7 @@ evtclean
 	HTRatio	s:name[HTRatioDPhiTight]	b:tight[1]	b:HTDPhi[1]	b:tag[1]
 	LowNeutralJet	b:tag[1]
 	LowNeutralJet	s:name[LowNeutralJetTight]	b:tight[1]	b:tag[1]
-	HEMVeto	b:tag[1]
+	HEMOptVeto	b:tag[1]
 veto
 	MuonVeto
 	ElectronVeto
@@ -56,12 +59,10 @@ dijetmtdetahad
 	dijetmtdeta
 	veto
 	MTAK8	d:min[1500]
+	endcommon
 dijetmtdetahadmf
 	dijetmtdetahad
 	METFilter
-	JetMatch
-	BDT	s:name[BDT]	s:weights[corrections/D29_TMVA_bdt_weights.xml]	s:type[BDTG]	b:positive[1]	b:tag[1]	b:forceadd[1]	s:branchname[bdtSVJtag]	vs:variables[girth,tau21,tau32,msd,axisminor,axismajor,ptD,ecfN2b1,ecfN3b1,ptdrlog,fChHad,fEle,fMu,fNeuHad,fPho,maxbvsall]
-	BDT	s:name[uBDT]	s:weights[corrections/D29_TMVA_ubdt_weights.xml]	s:type[BDTG]	b:positive[1]	b:tag[1]	b:forceadd[1]	s:branchname[ubdtSVJtag]	vs:variables[girth,tau21,tau32,msd,axisminor,axismajor,ptD,ecfN2b1,ecfN3b1,ptdrlog,fChHad,fEle,fMu,fNeuHad,fPho,maxbvsall]
 dijetmtdetahadmffull1
 	dijetmtdetahadmf
 	METMTRatio	s:name[METMTRatioFull]	d:min[0.25]
