@@ -196,6 +196,7 @@ To remake the list of input files for semi-visible jet samples:
 ```
 python makeSkimInput.py -r input/dict_skim_svj_bkg_2016.py -w input/input_sets_skim_svj_bkg_2016.txt -e batch/exportSkimSVJBkg2016.sh -n 50
 python makeSkimInput.py -r input/dict_skim_svj_bkg_2017.py -w input/input_sets_skim_svj_bkg_2017.txt -e batch/exportSkimSVJBkg2017.sh -n 50
+python makeSkimInput.py -r input/dict_skim_svj_bkg_2018.py -w input/input_sets_skim_svj_bkg_2018.txt -e batch/exportSkimSVJBkg2018.sh -n 50
 python makeSkimInput.py -r input/dict_skim_svj_2017.py -w input/input_sets_skim_svj_2017.txt -e batch/exportSkimSVJ2017.sh -n 50 -N 200
 ```
 
