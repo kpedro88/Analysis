@@ -7,18 +7,15 @@ double:ymin_min[5e-2]
 #double:sizeLeg[18]
 int:npanel[2]
 string:ratiocalc[Q1]
-vstring:numers[SVJ_2000_20_0.3_peak,SVJ_3000_20_0.3_peak,SVJ_4000_20_0.3_peak]
-vstring:denoms[bkg]
+vstring:numers[]
+vstring:denoms[]
 string:rationame[S/#sqrt{B}]
 double:ratiomin[0]
 double:ratiomax[3]
 double:ratiolineval[-999]
-double:luminorm[137000]
+string:lumi_text[(13 TeV)]
 bool:unitnorm[1]
 
 HISTO
-bothjetAK8bdtSVJtag	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[BDT discriminator]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]
-bothjetAK8ubdtSVJtag	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[uBDT discriminator]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[0]
-
-INPUT
-input/input_svj_sets_full_bdt_regions.txt
+bothjetAK8bdtSVJtag	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[BDT discriminator]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[0]
+bothjetAK8ubdtSVJtag	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[uBDT discriminator]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[0]

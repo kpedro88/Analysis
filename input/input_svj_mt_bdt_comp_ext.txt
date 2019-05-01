@@ -1,0 +1,24 @@
+OPTION
+vstring:disable_branches[*]
+bool:useTreeWeight[1]
+bool:debugloop[1]
+bool:debugcut[1]
+double:ymin_min[5e-2]
+#double:sizeLeg[18]
+int:npanel[1]
+vstring:numers[ubdt]
+vstring:denoms[bdt]
+double:ratiomin[0]
+double:ratiomax[3]
+string:rationame[uBDT/BDT]
+double:luminorm[137000]
+vstring:extra_text[sum MC bkg]
+
+HISTO
+MTAK8	i:xnum[45]	d:xmin[1500]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kMagenta]
+
+SET
+hist	mc	bdt	s:legname[BDT]	c:color[kBlue]
+	base	ext	bdt	s:extfilename[test/MTAK8_S-BDT2.root]	vs:exthisto_in[MTAK8_bkg]	vs:exthisto_out[MTAK8]
+hist	mc	ubdt	s:legname[uBDT]	c:color[kRed]
+	base	ext	ubdt	s:extfilename[test/MTAK8_S-uBDT2.root]	vs:exthisto_in[MTAK8_bkg]	vs:exthisto_out[MTAK8]
