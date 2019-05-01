@@ -301,7 +301,7 @@ class KPlotManager : public KManager {
 			}
 			
 			//numer:denom ratio cases: 1:1, 1:x, x:1
-			bool ratio_allowed = ( (numers.size()==1 && denoms.size()==1) || (numers.size()==1 && denoms.size()>1) || (numers.size()>1 && denoms.size()==1) );
+			bool ratio_allowed = ( (numers.size()==1 && denoms.size()==1) || (numers.size()==1 && denoms.size()>1) || (numers.size()>1 && denoms.size()==1) || (!numers.empty() && numers.size()==denoms.size()) );
 			if(ratio_allowed){
 				//add children to ratio
 				if(numers.size()==1 && denoms.size()==1){
@@ -334,6 +334,17 @@ class KPlotManager : public KManager {
 						MyRatios.push_back(rtmp);
 					}
 				}
+				else if(!numers.empty() && numers.size()==denoms.size()){
+					for(unsigned r = 0; r < numers.size(); r++){
+						KSetRatio* rtmp = new KSetRatio("ratio__"+numers[r]->GetName()+"__"+denoms[r]->GetName(),NULL,globalOpt);
+						rtmp->AddNumerator(numers[r]);
+						rtmp->AddDenominator(denoms[r]);
+						//numer style, but pe drawopt
+						rtmp->GetLocalOpt()->Set<string>("drawopt","pe");
+						rtmp->SetStyle(denoms[r]->GetStyle());
+						MyRatios.push_back(rtmp);
+					}
+				}
 			}
 
 			//create plots from local options
@@ -345,7 +356,9 @@ class KPlotManager : public KManager {
 					omap->Set("ratio",false); //disable ratios if components not available
 					if(!globalOpt->Get("roc",false)){
 						cout << "Input error: ratio requested for histo " << ntmp->fields[0] << ", but ";
-						if(numers.size()>0 && denoms.size()>0) cout << "numers and denoms both > 1. Pick one!";
+						if(!numers.empty() && !denoms.empty() && numers.size()!=denoms.size()){
+							cout << "numer size is " << numers.size() << " and denom size is " << denoms.size() << " -> inconsistency!";
+						}
 						else {
 							if(numers.size()==0 && denoms.size()==0) cout << "numer(s) and denom(s)";
 							else if(numers.size()==0) cout << "numer(s)";
