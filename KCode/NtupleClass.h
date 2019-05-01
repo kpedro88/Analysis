@@ -475,9 +475,6 @@ public :
    Double_t        TrueNumInteractions;
    Double_t        Weight;
    vector<TLorentzVector> *ZCandidates;
-   Double_t        NonPrefiringProb;
-   Double_t        NonPrefiringProbUp;
-   Double_t        NonPrefiringProbDn;
    Bool_t          METRatioFilter;
    Bool_t          MuonJetFilter;
    Bool_t          FakeJetFilter;
@@ -1760,9 +1757,6 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("TrueNumInteractions", &TrueNumInteractions, &b_TrueNumInteractions);
    fChain->SetBranchAddress("Weight", &Weight, &b_Weight);
    fChain->SetBranchAddress("ZCandidates", &ZCandidates, &b_ZCandidates);
-   fChain->SetBranchAddress("NonPrefiringProb", &NonPrefiringProb, &b_prob);
-   fChain->SetBranchAddress("NonPrefiringProbUp", &NonPrefiringProbUp, &b_probup);
-   fChain->SetBranchAddress("NonPrefiringProbDn", &NonPrefiringProbDn, &b_probdn);
    fChain->SetBranchAddress("METRatioFilter", &METRatioFilter, &b_METRatioFilter);
    fChain->SetBranchAddress("MuonJetFilter", &MuonJetFilter, &b_MuonJetFilter);
    fChain->SetBranchAddress("FakeJetFilter", &FakeJetFilter, &b_FakeJetFilter);
