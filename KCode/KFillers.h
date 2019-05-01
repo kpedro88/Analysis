@@ -647,6 +647,18 @@ class KFiller_MTJJJAK8 : public KFiller {
 };
 REGISTER_FILLER(MTJJJAK8);
 
+//-----------------------------------------------------------------------------
+//transverse mass w/ regression
+class KFiller_MTAK8reg : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void CheckDeps(){ MTRegression = sel->Get<KMTRegressionSelector*>("MTRegression"); }
+		virtual void Fill(KValue& value, double w) { if(MTRegression) value.Fill(MTRegression->MTAK8,w); }
+		//member variables
+		KMTRegressionSelector* MTRegression = NULL;
+};
+REGISTER_FILLER(MTAK8reg);
+
 //deta(j1,j2)
 class KFiller_deltaetaAK8 : public KFiller {
 	public:
@@ -1261,6 +1273,132 @@ class KJetFiller_AK8genptquarkratio : public KJetFiller {
 };
 REGISTER_JETFILLER(AK8genptquarkratio);
 
+class KJetFiller_AK8maxcsv : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void CheckDeps(){ JetMatch = sel->Get<KJetMatchSelector*>("JetMatch"); }
+		virtual void ListBranches() { branches = {"Jets_bDiscriminatorCSV"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) {
+			if(JetMatch and JetMatch->JetIndices.size()>index) {
+				vector<double> discrs; discrs.reserve(JetMatch->JetIndices[index].size());
+				for(auto j : JetMatch->JetIndices[index]) discrs.push_back(looper->Jets_bDiscriminatorCSV->at(j));
+				value.Fill(*(TMath::LocMax(discrs.begin(),discrs.end())),w);
+			}
+		}
+		//member variables
+		KJetMatchSelector* JetMatch = NULL;
+};
+REGISTER_JETFILLER(AK8maxcsv);
+
+class KJetFiller_AK8avgcsv : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void CheckDeps(){ JetMatch = sel->Get<KJetMatchSelector*>("JetMatch"); }
+		virtual void ListBranches() { branches = {"Jets_bDiscriminatorCSV"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) {
+			if(JetMatch and JetMatch->JetIndices.size()>index) {
+				vector<double> discrs; discrs.reserve(JetMatch->JetIndices[index].size());
+				for(auto j : JetMatch->JetIndices[index]) discrs.push_back(looper->Jets_bDiscriminatorCSV->at(j));
+				value.Fill(TMath::Mean(discrs.begin(),discrs.end()),w);
+			}
+		}
+		//member variables
+		KJetMatchSelector* JetMatch = NULL;
+};
+REGISTER_JETFILLER(AK8avgcsv);
+
+class KJetFiller_AK8maxbvsall : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void CheckDeps(){ JetMatch = sel->Get<KJetMatchSelector*>("JetMatch"); }
+		virtual void ListBranches() { branches = {"Jets_bJetTagDeepCSVBvsAll"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) {
+			if(JetMatch and JetMatch->JetIndices.size()>index) {
+				vector<double> discrs; discrs.reserve(JetMatch->JetIndices[index].size());
+				for(auto j : JetMatch->JetIndices[index]) discrs.push_back(looper->Jets_bJetTagDeepCSVBvsAll->at(j));
+				value.Fill(*(TMath::LocMax(discrs.begin(),discrs.end())),w);
+			}
+		}
+		//member variables
+		KJetMatchSelector* JetMatch = NULL;
+};
+REGISTER_JETFILLER(AK8maxbvsall);
+
+class KJetFiller_AK8avgbvsall : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void CheckDeps(){ JetMatch = sel->Get<KJetMatchSelector*>("JetMatch"); }
+		virtual void ListBranches() { branches = {"Jets_bJetTagDeepCSVBvsAll"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) {
+			if(JetMatch and JetMatch->JetIndices.size()>index) {
+				vector<double> discrs; discrs.reserve(JetMatch->JetIndices[index].size());
+				for(auto j : JetMatch->JetIndices[index]) discrs.push_back(looper->Jets_bJetTagDeepCSVBvsAll->at(j));
+				value.Fill(TMath::Mean(discrs.begin(),discrs.end()),w);
+			}
+		}
+		//member variables
+		KJetMatchSelector* JetMatch = NULL;
+};
+REGISTER_JETFILLER(AK8avgbvsall);
+
+class KJetFiller_AK8maxbcvsall : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void CheckDeps(){ JetMatch = sel->Get<KJetMatchSelector*>("JetMatch"); }
+		virtual void ListBranches() { branches = {"Jets_bJetTagDeepCSVprobb","Jets_bJetTagDeepCSVprobbb","Jets_bJetTagDeepCSVprobc","Jets_bJetTagDeepCSVprobudsg",}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) {
+			if(JetMatch and JetMatch->JetIndices.size()>index) {
+				vector<double> discrs; discrs.reserve(JetMatch->JetIndices[index].size());
+				for(auto j : JetMatch->JetIndices[index]) {
+					double numer = looper->Jets_bJetTagDeepCSVprobb->at(j) + looper->Jets_bJetTagDeepCSVprobbb->at(j) + looper->Jets_bJetTagDeepCSVprobc->at(j);
+					double denom = numer + looper->Jets_bJetTagDeepCSVprobudsg->at(j);
+					discrs.push_back(numer/denom);
+				}
+				value.Fill(*(TMath::LocMax(discrs.begin(),discrs.end())),w);
+			}
+		}
+		//member variables
+		KJetMatchSelector* JetMatch = NULL;
+};
+REGISTER_JETFILLER(AK8maxbcvsall);
+
+class KJetFiller_AK8avgbcvsall : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void CheckDeps(){ JetMatch = sel->Get<KJetMatchSelector*>("JetMatch"); }
+		virtual void ListBranches() { branches = {"Jets_bJetTagDeepCSVprobb","Jets_bJetTagDeepCSVprobbb","Jets_bJetTagDeepCSVprobc","Jets_bJetTagDeepCSVprobudsg",}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) {
+			if(JetMatch and JetMatch->JetIndices.size()>index) {
+				vector<double> discrs; discrs.reserve(JetMatch->JetIndices[index].size());
+				for(auto j : JetMatch->JetIndices[index]) {
+					double numer = looper->Jets_bJetTagDeepCSVprobb->at(j) + looper->Jets_bJetTagDeepCSVprobbb->at(j) + looper->Jets_bJetTagDeepCSVprobc->at(j);
+					double denom = numer + looper->Jets_bJetTagDeepCSVprobudsg->at(j);
+					discrs.push_back(numer/denom);
+				}
+				value.Fill(TMath::Mean(discrs.begin(),discrs.end()),w);
+			}
+		}
+		//member variables
+		KJetMatchSelector* JetMatch = NULL;
+};
+REGISTER_JETFILLER(AK8avgbcvsall);
+
+class KJetFiller_AK8doubleb : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_doubleBDiscriminator"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8->size()>index) value.Fill(looper->JetsAK8_doubleBDiscriminator->at(index),w); }
+};
+REGISTER_JETFILLER(AK8doubleb);
+
+class KJetFiller_AK8deepdoubleb : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_deepDoubleBDiscriminatorH"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8->size()>index) value.Fill(looper->JetsAK8_deepDoubleBDiscriminatorH->at(index),w); }
+};
+REGISTER_JETFILLER(AK8deepdoubleb);
+
 class KJetFiller_AK8eta : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
@@ -1429,6 +1567,24 @@ class KJetFiller_AK8bdt : public KJetFiller {
 		KBDTSelector* BDT = NULL;
 };
 REGISTER_JETFILLER(AK8bdt);
+
+//pre-existing bdt output
+class KJetFiller_AK8bdtSVJtag : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_bdtSVJtag"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_bdtSVJtag->size()>index) value.Fill(looper->JetsAK8_bdtSVJtag->at(index),w); }
+};
+REGISTER_JETFILLER(AK8bdtSVJtag);
+
+//pre-existing ubdt output
+class KJetFiller_AK8ubdtSVJtag : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_ubdtSVJtag"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_ubdtSVJtag->size()>index) value.Fill(looper->JetsAK8_ubdtSVJtag->at(index),w); }
+};
+REGISTER_JETFILLER(AK8ubdtSVJtag);
 
 class KJetFiller_AK8fChEM : public KJetFiller {
 	public:

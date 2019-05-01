@@ -47,6 +47,7 @@ class LeptonCorrector {
 			TFile* file = TFile::Open(fname_.c_str());
 			if(!file) throw runtime_error("Could not open file: "+fname_);
 			hist = (TH2F*)file->Get(hname_.c_str());
+			if(!hist) throw runtime_error("Could not open hist: "+hname_+" in file: "+fname_);
 			hist->SetDirectory(0);
 			file->Close();
 			

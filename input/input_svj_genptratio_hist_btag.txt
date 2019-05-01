@@ -1,0 +1,29 @@
+OPTION
+string+:printsuffix[_genptratio]
+vstring:disable_branches[*]
+vstring:selections[genmatch]
+double:ymax[2.0]
+
+SELECTION
+genmatch
+	GenMatch
+	JetMatch
+	sim
+
+HISTO
+#leadjetAK8maxbvsall_leadjetAK8genptratio	i:xnum[100]	d:xmin[0]	d:xmax[1.0]	s:xtitle[max(BvsAll)(j_{1})]	s:ytitle[p_{T}^{gen}/p_{T}^{reco}]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+#subleadjetAK8maxbvsall_subleadjetAK8genptratio	i:xnum[100]	d:xmin[0]	d:xmax[1.0]	s:xtitle[max(BvsAll)(j_{2})]	s:ytitle[p_{T}^{gen}/p_{T}^{reco}]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+leadjetAK8maxbvsall_leadjetAK8genptnuratio	i:xnum[100]	d:xmin[0]	d:xmax[1.0]	s:xtitle[max(BvsAll)(j_{1})]	s:ytitle[p_{T}^{gen+#nu}/p_{T}^{reco}]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+subleadjetAK8maxbvsall_subleadjetAK8genptnuratio	i:xnum[100]	d:xmin[0]	d:xmax[1.0]	s:xtitle[max(BvsAll)(j_{2})]	s:ytitle[p_{T}^{gen+#nu}/p_{T}^{reco}]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+#leadjetAK8maxbvsall_leadjetAK8genptnuhvratio	i:xnum[100]	d:xmin[0]	d:xmax[1.0]	s:xtitle[max(BvsAll)(j_{1})]	s:ytitle[p_{T}^{gen+#nu+HV}/p_{T}^{reco}]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+#subleadjetAK8maxbvsall_subleadjetAK8genptnuhvratio	i:xnum[100]	d:xmin[0]	d:xmax[1.0]	s:xtitle[max(BvsAll)(j_{2})]	s:ytitle[p_{T}^{gen+#nu+HV}/p_{T}^{reco}]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+#leadjetAK8maxbvsall_leadjetAK8genptquarkratio	i:xnum[100]	d:xmin[0]	d:xmax[1.0]	s:xtitle[max(BvsAll)(j_{1})]	s:ytitle[p_{T}^{quark}/p_{T}^{reco}]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+#subleadjetAK8maxbvsall_subleadjetAK8genptquarkratio	i:xnum[100]	d:xmin[0]	d:xmax[1.0]	s:xtitle[max(BvsAll)(j_{2})]	s:ytitle[p_{T}^{quark}/p_{T}^{reco}]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+#leadjetAK8maxcsv_leadjetAK8genptratio	i:xnum[100]	d:xmin[0]	d:xmax[1.0]	s:xtitle[max(CSVv2)(j_{1})]	s:ytitle[p_{T}^{gen}/p_{T}^{reco}]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+#subleadjetAK8maxcsv_subleadjetAK8genptratio	i:xnum[100]	d:xmin[0]	d:xmax[1.0]	s:xtitle[max(CSVv2)(j_{2})]	s:ytitle[p_{T}^{gen}/p_{T}^{reco}]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+leadjetAK8maxcsv_leadjetAK8genptnuratio	i:xnum[100]	d:xmin[0]	d:xmax[1.0]	s:xtitle[max(CSVv2)(j_{1})]	s:ytitle[p_{T}^{gen+#nu}/p_{T}^{reco}]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+subleadjetAK8maxcsv_subleadjetAK8genptnuratio	i:xnum[100]	d:xmin[0]	d:xmax[1.0]	s:xtitle[max(CSVv2)(j_{2})]	s:ytitle[p_{T}^{gen+#nu}/p_{T}^{reco}]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+#leadjetAK8maxcsv_leadjetAK8genptnuhvratio	i:xnum[100]	d:xmin[0]	d:xmax[1.0]	s:xtitle[max(CSVv2)(j_{1})]	s:ytitle[p_{T}^{gen+#nu+HV}/p_{T}^{reco}]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+#subleadjetAK8maxcsv_subleadjetAK8genptnuhvratio	i:xnum[100]	d:xmin[0]	d:xmax[1.0]	s:xtitle[max(CSVv2)(j_{2})]	s:ytitle[p_{T}^{gen+#nu+HV}/p_{T}^{reco}]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+#leadjetAK8maxcsv_leadjetAK8genptquarkratio	i:xnum[100]	d:xmin[0]	d:xmax[1.0]	s:xtitle[max(CSVv2)(j_{1})]	s:ytitle[p_{T}^{quark}/p_{T}^{reco}]	b:ratio[0]	b:logy[0]	c:color[kBlue]
+#subleadjetAK8maxcsv_subleadjetAK8genptquarkratio	i:xnum[100]	d:xmin[0]	d:xmax[1.0]	s:xtitle[max(CSVv2)(j_{2})]	s:ytitle[p_{T}^{quark}/p_{T}^{reco}]	b:ratio[0]	b:logy[0]	c:color[kBlue]

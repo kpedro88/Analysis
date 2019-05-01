@@ -8,5 +8,6 @@ simw
 	MCWeight	b:flatten[1]	s:flatname[corrections/svj_dijetmtdetahadmf_jetAK8.root]	s:flatqty[bothjetAK8pt]
 simf
 	simw
+	JetMatch
 	Histo
 

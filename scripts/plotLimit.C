@@ -16,6 +16,7 @@
 #include <TVirtualPadPainter.h>
 
 #include <vector>
+#include <map>
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -148,10 +149,19 @@ void plotLimit(string sname, vector<pair<string,double>> vars, int nsigma=0){
 	string dname = "limit:trackedParam_"+var+":trackedParam_xsec";
 	string yname, xname;
 	yname = "#sigma#timesB [pb]";
-	if(var=="mZprime") xname = "m_{Z'} [GeV]";
-	else if(var=="mDark") xname = "m_{d} [GeV]";
-	else if(var=="rinv") xname = "r_{inv}";
-	else if(var=="alpha") xname = "#alpha_{d}";
+	map<string,string> vdict{
+		{"mZprime","m_{Z'}"},
+		{"mDark","m_{d}"},
+		{"rinv","r_{inv}"},
+		{"alpha","#alpha_{d}"},
+	};
+	map<string,string> unitdict{
+		{"mZprime"," [GeV]"},
+		{"mDark"," [GeV]"},
+		{"rinv",""},
+		{"alpha",""},
+	};
+	xname = vdict[var]+unitdict[var];
 	
 	//get observed limit (w/ xsec)
 	int npts = limit->Draw(dname.c_str(),(cname+"abs(quantileExpected+1)<0.01").c_str(),"goff");
@@ -204,7 +214,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, int nsigma=0){
 
 	//setup plotting options
 	OptionMap* globalOpt = new OptionMap();
-	globalOpt->Set<string>("lumi_text","35.9 fb^{-1} (13 TeV)");
+	globalOpt->Set<string>("lumi_text","137 fb^{-1} (13 TeV)");
 	globalOpt->Set<bool>("checkerr",false);
 	globalOpt->Set<int>("npanel",1);
 	//globalOpt->Set<bool>("balance_panels",true);
@@ -246,6 +256,16 @@ void plotLimit(string sname, vector<pair<string,double>> vars, int nsigma=0){
 	kleg->AddEntry(g_central,"Median expected","l");
 	if(nsigma>=1) kleg->AddEntry(g_one,"68% expected","f");
 	if(nsigma>=2) kleg->AddEntry(g_two,"95% expected","f");
+	stringstream vname;
+	for(const auto& v : vars){
+		if(v.second==-1) continue;
+		vname << vdict[v.first] << " = ";
+		if(v.first=="alpha" and v.second<0) vname << "#alpha_{d}^{" << (v.second==-2?"peak":v.second==-3?"low":"high") << "}";
+		else vname << v.second;
+		vname << ", ";
+	}
+	string svname = vname.str(); svname.pop_back(); svname.pop_back();
+	kleg->AddEntry((TObject*)NULL,svname,"");
 	kleg->Build(KLegend::right,KLegend::top);
 	
 	//draw blank histo for axes

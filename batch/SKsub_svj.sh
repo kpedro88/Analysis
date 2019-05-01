@@ -37,6 +37,7 @@ for TYPE in ${TYPES[@]}; do
 		# skip nonexistent ones
 		if [[ $? -ne 0 ]]; then continue; fi
 
+		TMPSELTYPE=$SELTYPE
 		SLIST=${#SAMPLES[@]}
 		if [[ $TYPE == "Data" ]]; then
 			SLIST=""
@@ -47,9 +48,11 @@ for TYPE in ${TYPES[@]}; do
 			done
 			# remove first char, prepend condor stuff
 			SLIST="Process in ${SLIST:1}"
+#		elif [[ $TYPE == "SVJ" ]]; then
+#			TMPSELTYPE=$TMPSELTYPE,dijetmtdetahadmf_JECup,dijetmtdetahadmf_JECdown,dijetmtdetahadmf_JERup,dijetmtdetahadmf_JERdown
 		fi
 
-		$DRYRUN ./SKtemp.sh ${JOBDIR} ${INPUT} ${SNAME} "${SLIST}" ${SELTYPE} ${INDIR} ${OUTDIR} ${STORE} ${JOBTYPE}
+		$DRYRUN ./SKtemp.sh ${JOBDIR} ${INPUT} ${SNAME} "${SLIST}" ${TMPSELTYPE} ${INDIR} ${OUTDIR} ${STORE} ${JOBTYPE}
 	done
 done
 
