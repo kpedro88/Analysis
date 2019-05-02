@@ -16,8 +16,8 @@ root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/$RUN2PRODV \
 root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/$RUN2PRODV \
 root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/$RUN2PRODV \
 root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/$RUN2PRODV \
-root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV16/tree_signal \
-root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV16/Skims/tree_dijetmtdetahadmf \
+root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/$RUN2PRODV/tree_signal \
+root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/$RUN2PRODV/Skims/tree_dijetmtdetahadmf \
 )
 TREES=(
 TreeMaker2/PreSelection \

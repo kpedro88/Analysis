@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Wed May  1 17:35:58 2019 by ROOT version 6.06/01
+// Thu May  2 11:08:30 2019 by ROOT version 6.06/01
 // from TTree PreSelection/PreSelection
 // from TTree tree/all observables, dijetmtdetahadmf
 // from TTree tree/all observables, signal
@@ -134,7 +134,6 @@ public :
    vector<int>     *GenParticles_ParentIdx;
    vector<int>     *GenParticles_PdgId;
    vector<int>     *GenParticles_Status;
-   vector<bool>    *GenParticles_TTFlag;
    vector<TLorentzVector> *GenTaus;
    vector<bool>    *GenTaus_had;
    vector<double>  *GenTaus_LeadRecoTrkAct;
@@ -451,6 +450,7 @@ public :
    Double_t        puSysUp;
    Double_t        puWeight;
    vector<double>  *ScaleWeights;
+   vector<double>  *SignalParameters;
    Double_t        SusyLSPMass;
    Double_t        SusyMotherMass;
    vector<TLorentzVector> *TAPElectronTracks;
@@ -486,11 +486,13 @@ public :
    Bool_t          LowNeutralJetFilter;
    Bool_t          LowNeutralJetTightFilter;
    Bool_t          HEMVetoFilter;
+   Bool_t          HEMOptVetoFilter;
    Bool_t          HEMDPhiVetoFilter;
-   vector<double>  *JetsAK8_bdtSVJtag;
+   vector<double>  *JetsAK8_maxBvsAll;
    UInt_t          RA2bin;
-   vector<double>  *JetsAK8_ubdtSVJtag;
+   vector<double>  *JetsAK8_bdtSVJtag;
    vector<unsigned int> *RA2bins;
+   vector<double>  *JetsAK8_ubdtSVJtag;
 
    // List of branches
    TBranch        *b_RunNum;   //!
@@ -602,7 +604,6 @@ public :
    TBranch        *b_GenParticles_ParentIdx;   //!
    TBranch        *b_GenParticles_PdgId;   //!
    TBranch        *b_GenParticles_Status;   //!
-   TBranch        *b_GenParticles_TTFlag;   //!
    TBranch        *b_GenTaus;   //!
    TBranch        *b_GenTaus_had;   //!
    TBranch        *b_GenTaus_LeadRecoTrkAct;   //!
@@ -919,6 +920,7 @@ public :
    TBranch        *b_puSysUp;   //!
    TBranch        *b_puWeight;   //!
    TBranch        *b_ScaleWeights;   //!
+   TBranch        *b_SignalParameters;   //!
    TBranch        *b_SusyLSPMass;   //!
    TBranch        *b_SusyMotherMass;   //!
    TBranch        *b_TAPElectronTracks;   //!
@@ -943,9 +945,6 @@ public :
    TBranch        *b_TrueNumInteractions;   //!
    TBranch        *b_Weight;   //!
    TBranch        *b_ZCandidates;   //!
-   TBranch        *b_prob;   //!
-   TBranch        *b_probup;   //!
-   TBranch        *b_probdn;   //!
    TBranch        *b_METRatioFilter;   //!
    TBranch        *b_MuonJetFilter;   //!
    TBranch        *b_FakeJetFilter;   //!
@@ -957,11 +956,13 @@ public :
    TBranch        *b_LowNeutralJetFilter;   //!
    TBranch        *b_LowNeutralJetTightFilter;   //!
    TBranch        *b_HEMVetoFilter;   //!
+   TBranch        *b_HEMOptVetoFilter;   //!
    TBranch        *b_HEMDPhiVetoFilter;   //!
-   TBranch        *b_JetsAK8_bdtSVJtag;   //!
+   TBranch        *b_JetsAK8_maxBvsAll;   //!
    TBranch        *b_RA2binBranch;   //!
-   TBranch        *b_JetsAK8_ubdtSVJtag;   //!
+   TBranch        *b_JetsAK8_bdtSVJtag;   //!
    TBranch        *b_RA2bins;   //!
+   TBranch        *b_JetsAK8_ubdtSVJtag;   //!
 
    NtupleClass(TTree *tree=0);
    virtual ~NtupleClass();
@@ -1066,7 +1067,6 @@ void NtupleClass::Init(TTree *tree)
    GenParticles_ParentIdx = 0;
    GenParticles_PdgId = 0;
    GenParticles_Status = 0;
-   GenParticles_TTFlag = 0;
    GenTaus = 0;
    GenTaus_had = 0;
    GenTaus_LeadRecoTrkAct = 0;
@@ -1278,6 +1278,7 @@ void NtupleClass::Init(TTree *tree)
    Photons_sigmaIetaIeta = 0;
    PSweights = 0;
    ScaleWeights = 0;
+   SignalParameters = 0;
    TAPElectronTracks = 0;
    TAPElectronTracks_activity = 0;
    TAPElectronTracks_charge = 0;
@@ -1299,6 +1300,7 @@ void NtupleClass::Init(TTree *tree)
    TriggerVersion = 0;
    ZCandidates = 0;
    RA2bins = 0;
+   JetsAK8_maxBvsAll = 0;
    JetsAK8_bdtSVJtag = 0;
    JetsAK8_ubdtSVJtag = 0;
    // Set branch addresses and branch pointers
@@ -1416,7 +1418,6 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("GenParticles_ParentIdx", &GenParticles_ParentIdx, &b_GenParticles_ParentIdx);
    fChain->SetBranchAddress("GenParticles_PdgId", &GenParticles_PdgId, &b_GenParticles_PdgId);
    fChain->SetBranchAddress("GenParticles_Status", &GenParticles_Status, &b_GenParticles_Status);
-   fChain->SetBranchAddress("GenParticles_TTFlag", &GenParticles_TTFlag, &b_GenParticles_TTFlag);
    fChain->SetBranchAddress("GenTaus", &GenTaus, &b_GenTaus);
    fChain->SetBranchAddress("GenTaus_had", &GenTaus_had, &b_GenTaus_had);
    fChain->SetBranchAddress("GenTaus_LeadRecoTrkAct", &GenTaus_LeadRecoTrkAct, &b_GenTaus_LeadRecoTrkAct);
@@ -1733,6 +1734,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("puSysUp", &puSysUp, &b_puSysUp);
    fChain->SetBranchAddress("puWeight", &puWeight, &b_puWeight);
    fChain->SetBranchAddress("ScaleWeights", &ScaleWeights, &b_ScaleWeights);
+   fChain->SetBranchAddress("SignalParameters", &SignalParameters, &b_SignalParameters);
    fChain->SetBranchAddress("SusyLSPMass", &SusyLSPMass, &b_SusyLSPMass);
    fChain->SetBranchAddress("SusyMotherMass", &SusyMotherMass, &b_SusyMotherMass);
    fChain->SetBranchAddress("TAPElectronTracks", &TAPElectronTracks, &b_TAPElectronTracks);
@@ -1768,11 +1770,13 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("LowNeutralJetFilter", &LowNeutralJetFilter, &b_LowNeutralJetFilter);
    fChain->SetBranchAddress("LowNeutralJetTightFilter", &LowNeutralJetTightFilter, &b_LowNeutralJetTightFilter);
    fChain->SetBranchAddress("HEMVetoFilter", &HEMVetoFilter, &b_HEMVetoFilter);
+   fChain->SetBranchAddress("HEMOptVetoFilter", &HEMOptVetoFilter, &b_HEMOptVetoFilter);
    fChain->SetBranchAddress("HEMDPhiVetoFilter", &HEMDPhiVetoFilter, &b_HEMDPhiVetoFilter);
-   fChain->SetBranchAddress("JetsAK8_bdtSVJtag", &JetsAK8_bdtSVJtag, &b_JetsAK8_bdtSVJtag);
+   fChain->SetBranchAddress("JetsAK8_maxBvsAll", &JetsAK8_maxBvsAll, &b_JetsAK8_maxBvsAll);
    fChain->SetBranchAddress("RA2bin", &RA2bin, &b_RA2binBranch);
-   fChain->SetBranchAddress("JetsAK8_ubdtSVJtag", &JetsAK8_ubdtSVJtag, &b_JetsAK8_ubdtSVJtag);
+   fChain->SetBranchAddress("JetsAK8_bdtSVJtag", &JetsAK8_bdtSVJtag, &b_JetsAK8_bdtSVJtag);
    fChain->SetBranchAddress("RA2bins", &RA2bins, &b_RA2bins);
+   fChain->SetBranchAddress("JetsAK8_ubdtSVJtag", &JetsAK8_ubdtSVJtag, &b_JetsAK8_ubdtSVJtag);
    Notify();
 }
 
