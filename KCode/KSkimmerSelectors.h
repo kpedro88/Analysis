@@ -1659,7 +1659,7 @@ class KJetAK8TrainingSelector : public KSelector {
 		}
 		virtual void CheckDeps(){
 			JetMatch = sel->Get<KJetMatchSelector*>("JetMatch");
-			if(!JetMatch) depfailed = true;			
+			//if(!JetMatch) depfailed = true;			
 		}
 		virtual void CheckBranches(){
 			for(auto&b : branches){
@@ -1726,7 +1726,7 @@ class KJetAK8TrainingSelector : public KSelector {
 				double pt = looper->JetsAK8->at(j).Pt();
 				if(pt<100) continue;
 				for(unsigned b = 0; b < branches.size(); ++b){
-					if(index_maxbvsall>=0 and b==index_maxbvsall) static_cast<KBDTVar_maxbvsall*>(branches[b])->SetIndices(JetMatch->JetIndices);
+					if(JetMatch and index_maxbvsall>=0 and b==index_maxbvsall) static_cast<KBDTVar_maxbvsall*>(branches[b])->SetIndices(JetMatch->JetIndices);
 					branches[b]->Fill(j);
 				}
 				if(flatten) {

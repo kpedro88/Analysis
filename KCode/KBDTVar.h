@@ -362,20 +362,34 @@ REGISTER_BDTVAR(subjetCSV2);
 class KBDTVar_maxbvsall : public KBDTVar {
 	public:
 		using KBDTVar::KBDTVar;
-		virtual void ListBranches() { branches = {"Jets_bJetTagDeepCSVBvsAll"}; }
+		virtual void ListBranches() { branches = {"Jets_bJetTagDeepCSVBvsAll",prefilled_branch}; }
 		virtual void Fill(unsigned j) {
-			if(j>=indices.size()){
-				branch = -10;
-				return;
+			//check for prefilled branch
+			if(!set_indices and !branch_present){
+				branch_present = looper->fChain->GetBranchStatus(prefilled_branch.c_str()) and looper->fChain->GetBranch(prefilled_branch.c_str());
 			}
-			vector<double> discrs; discrs.reserve(indices[j].size());
-			for(auto jj : indices[j]) discrs.push_back(looper->Jets_bJetTagDeepCSVBvsAll->at(jj));
-			branch = *(TMath::LocMax(discrs.begin(),discrs.end()));
+
+			if(branch_present and j<looper->JetsAK8_maxBvsAll->size()){
+				branch = looper->JetsAK8_maxBvsAll->at(j);
+			}
+			else if(!branch_present and set_indices and j<indices.size()){
+				vector<double> discrs; discrs.reserve(indices[j].size());
+				for(auto jj : indices[j]) discrs.push_back(looper->Jets_bJetTagDeepCSVBvsAll->at(jj));
+				branch = *(TMath::LocMax(discrs.begin(),discrs.end()));
+				//reset indices for next jet/event
+				set_indices = false;
+			}
+			else {
+				branch = -10;
+			}
 		}
 		//custom fn
-		virtual void SetIndices(const vector<vector<unsigned>>& indices_) { indices = indices_; }
+		virtual void SetIndices(const vector<vector<unsigned>>& indices_) { indices = indices_; set_indices = true; }
 		//member
 		vector<vector<unsigned>> indices;
+		string prefilled_branch = "JetsAK8_maxBvsAll";
+		bool set_indices = false;
+		bool branch_present = false;
 };
 REGISTER_BDTVAR(maxbvsall);
 

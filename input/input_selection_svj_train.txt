@@ -12,7 +12,6 @@ vstring:disable_branches[*]
 
 SELECTION
 dijetmtdetahadmf-train-flatsig
-	JetMatch
 	JetAK8Training	s:flatname[corrections/svj_dijetmtdetahadmf_jetAK8.root]	in:options[input/input_svj_train_options.txt]
 
 SET

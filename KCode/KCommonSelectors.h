@@ -126,7 +126,7 @@ class KBDTSelector : public KSelector {
 		}
 		virtual void CheckDeps(){
 			JetMatch = sel->Get<KJetMatchSelector*>("JetMatch");
-			if(!JetMatch) depfailed = true;			
+			//if(!JetMatch) depfailed = true;			
 		}
 		virtual void CheckBranches(){
 			for(auto& v : variables){
@@ -154,7 +154,7 @@ class KBDTSelector : public KSelector {
 			for(unsigned j = 0; j < looper->JetsAK8->size(); ++j){
 				//load variables for this jet
 				for(unsigned v = 0; v < variables.size(); ++v){
-					if(index_maxbvsall>=0 and v==index_maxbvsall) static_cast<KBDTVar_maxbvsall*>(variables[v])->SetIndices(JetMatch->JetIndices);
+					if(JetMatch and index_maxbvsall>=0 and v==index_maxbvsall) static_cast<KBDTVar_maxbvsall*>(variables[v])->SetIndices(JetMatch->JetIndices);
 					variables[v]->Fill(j);
 				}
 				double bdt_val = reader->EvaluateMVA(type.c_str());
