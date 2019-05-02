@@ -89,6 +89,7 @@ JERdown
 INPUT
 input/input_sets_skim_svj_bkg_2016.txt
 input/input_sets_skim_svj_bkg_2017.txt
+input/input_sets_skim_svj_bkg_2018.txt
 input/input_sets_skim_svj_2017.txt
 input/input_sets_skim_data_2016.txt
 input/input_sets_skim_data_2017.txt
