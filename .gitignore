@@ -38,6 +38,7 @@
 *.png
 *.zip
 *.eps
+*.pdf
 
 # Folders
 tree*/
@@ -69,3 +70,4 @@ input/fast*/
 /plotLimit.C
 /makeSVJInputs.py
 /doTrigOpt.py
+/runTrig.sh
