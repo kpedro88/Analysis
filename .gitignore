@@ -71,3 +71,4 @@ input/fast*/
 /makeSVJInputs.py
 /doTrigOpt.py
 /runTrig.sh
+/sigAcc.py
