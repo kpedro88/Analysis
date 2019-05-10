@@ -44,9 +44,25 @@ class KMCWeightSelector : public KSelector {
 		//enum for flattening qtys
 		enum flatqtys { noflatqty = 0, leadjetAK8pt = 1, subleadjetAK8pt = 2, bothjetAK8pt = 3, thirdjetAK8pt = 4, fourthjetAK8pt = 5 };
 		enum svbqtys { nosvbqty = 0, MTAK8 = 1 };
+		virtual void CheckDeps(){
+			//if norm type not already provided, run it as a subordinate selector
+			NormType = sel->Get<KNormTypeSelector*>("NormType");
+			if(!NormType){
+				NormType = new KNormTypeSelector("NormType", new OptionMap());
+				internalNormType = true;
+				NormType->SetSelection(sel);
+			}
+			else {
+				internalNormType = false;
+				canfail = false;
+			}
+		}
 		virtual void CheckBase(){
 			//standard weight options
-			normtype = ""; base->GetLocalOpt()->Get("normtype",normtype); GetNormTypeEnum();
+			if(internalNormType){
+				NormType->SetBase(base);
+				NormType->CheckBase();
+			}
 			unweighted = base->GetLocalOpt()->Get("unweighted",false);
 			useTreeWeight = base->GetGlobalOpt()->Get("useTreeWeight",false);
 			useKFactor = base->GetLocalOpt()->Get("kfactor",kfactor);
@@ -453,6 +469,7 @@ class KMCWeightSelector : public KSelector {
 		virtual void CheckBranches(){
 			//force enable branches needed for cuts/weights/etc.
 			looper->fChain->SetBranchStatus("Weight",1); //needed for negative weights even if useTreeWeight==false
+			if(internalNormType) NormType->CheckBranches();
 			if(pucorr){
 				looper->fChain->SetBranchStatus("TrueNumInteractions",1);
 				looper->fChain->SetBranchStatus("NVtx",1);
@@ -468,17 +485,6 @@ class KMCWeightSelector : public KSelector {
 			}
 			if(svbweight){
 				if(svbqty==MTAK8) looper->fChain->SetBranchStatus("MT_AK8",1);
-			}
-			if(NTenum==ttbarLowHTLowMET || NTenum==ttbarLowHTHighMET || NTenum==ttbarLowHThad || NTenum==ttbarHighHT || NTenum==wjetsLowHT || NTenum==wjetsHighHT){
-				looper->fChain->SetBranchStatus("madHT",1);
-			}
-			if(NTenum==ttbarLowHTLowMET || NTenum==ttbarLowHTHighMET){
-				looper->fChain->SetBranchStatus("GenMET",1);
-			}
-			if(NTenum==ttbarLowHThad){
-				looper->fChain->SetBranchStatus("GenElectrons",1);
-				looper->fChain->SetBranchStatus("GenMuons",1);
-				looper->fChain->SetBranchStatus("GenTaus",1);
 			}
 			if(pdfunc!=0){
 				looper->fChain->SetBranchStatus("PDFweights",1);
@@ -506,25 +512,11 @@ class KMCWeightSelector : public KSelector {
 				looper->fChain->SetBranchStatus("Muons_passIso",1);
 			}
 		}
-		//enum for normtypes
-		enum normtypes { NoNT=0, ttbarLowHTLowMET=1, ttbarLowHTHighMET=2, ttbarLowHThad=3, ttbarHighHT=4, wjetsLowHT=5, wjetsHighHT=6 };
-		//convert normtype from string to enum for quicker compares
-		void GetNormTypeEnum(){
-			if(normtype=="ttbarLowHTLowMET") NTenum = ttbarLowHTLowMET;
-			else if(normtype=="ttbarLowHTHighMET") NTenum = ttbarLowHTHighMET;
-			else if(normtype=="ttbarLowHThad") NTenum = ttbarLowHThad;
-			else if(normtype=="ttbarHighHT") NTenum = ttbarHighHT;
-			else if(normtype=="wjetsLowHT") NTenum = wjetsLowHT;
-			else if(normtype=="wjetsHighHT") NTenum = wjetsHighHT;
-			else NTenum = NoNT;
-		}
 		double GetWeight(){
 			double w = 1.;
 			if(unweighted) return w;
 			
 			//check option in case correction types are disabled globally
-			//(enabled by default
-			//(*disabled* until 2015 data is available)
 			
 			if(pucorr) {
 				//use TreeMaker weights if no histo provided
@@ -696,19 +688,15 @@ class KMCWeightSelector : public KSelector {
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			bool goodEvent = true;
+
+			if(internalNormType) goodEvent &= NormType->Cut();
 			
-			//check normalization type here
-			if(NTenum==ttbarLowHTLowMET) { goodEvent &= looper->madHT < 600 and looper->GenMET < 150; }
-			else if(NTenum==ttbarLowHTHighMET) { goodEvent &= looper->madHT < 600 and looper->GenMET >= 150; }
-			else if(NTenum==ttbarLowHThad) { goodEvent &= looper->madHT < 600 && looper->GenElectrons->size()==0 && looper->GenMuons->size()==0 && looper->GenTaus->size()==0; }
-			else if(NTenum==ttbarHighHT) { goodEvent &= looper->madHT >= 600; }
-			else if(NTenum==wjetsLowHT) { goodEvent &= looper->madHT < 100; }
-			else if(NTenum==wjetsHighHT) { goodEvent &= looper->madHT >= 100; }
-		
 			return goodEvent;
 		}
 		
 		//member variables
+		KNormTypeSelector* NormType;
+		bool internalNormType;
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, useKFactor, debugWeight, didDebugWeight;
 		bool pucorr, trigcorr, trigsystcorr, isrcorr, useisrflat, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr, hemvetocorr, lepcorr;
 		double jetidcorrval, isotrackcorrval, trigsystcorrval, lumicorrval, isrflat;
@@ -716,8 +704,6 @@ class KMCWeightSelector : public KSelector {
 		vector<int> mother;
 		TH1 *puhist, *puhistUp, *puhistDown;
 		vector<double> pdfnorms;
-		string normtype;
-		normtypes NTenum;
 		int nEventProc;
 		double xsection, norm, kfactor;
 		ISRCorrector isrcorror;

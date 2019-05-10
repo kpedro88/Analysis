@@ -21,6 +21,61 @@
 using namespace std;
 
 //---------------------------------------------------------------
+//handle norm types for MC
+enum class NormTypes { None=0, ttbarLowHTLowMET=1, ttbarLowHTHighMET=2, ttbarLowHThad=3, ttbarHighHT=4, wjetsLowHT=5, wjetsHighHT=6 };
+class KNormTypeSelector : public KSelector {
+	public:
+		//constructor
+		KNormTypeSelector() : KSelector() { }
+		KNormTypeSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		virtual void CheckBranches(){
+			if(NTenum==NormTypes::ttbarLowHTLowMET || NTenum==NormTypes::ttbarLowHTHighMET || NTenum==NormTypes::ttbarLowHThad || NTenum==NormTypes::ttbarHighHT || NTenum==NormTypes::wjetsLowHT || NTenum==NormTypes::wjetsHighHT){
+				looper->fChain->SetBranchStatus("madHT",1);
+			}
+			if(NTenum==NormTypes::ttbarLowHTLowMET || NTenum==NormTypes::ttbarLowHTHighMET){
+				looper->fChain->SetBranchStatus("GenMET",1);
+			}
+			if(NTenum==NormTypes::ttbarLowHThad){
+				looper->fChain->SetBranchStatus("GenElectrons",1);
+				looper->fChain->SetBranchStatus("GenMuons",1);
+				looper->fChain->SetBranchStatus("GenTaus",1);
+			}
+		}
+		virtual void CheckBase(){
+			nt = ""; base->GetLocalOpt()->Get("normtype",nt); GetNormTypeEnum();
+		}
+		//convert normtype from string to enum for quicker compares
+		void GetNormTypeEnum(){
+			if(nt=="ttbarLowHTLowMET") NTenum = NormTypes::ttbarLowHTLowMET;
+			else if(nt=="ttbarLowHTHighMET") NTenum = NormTypes::ttbarLowHTHighMET;
+			else if(nt=="ttbarLowHThad") NTenum = NormTypes::ttbarLowHThad;
+			else if(nt=="ttbarHighHT") NTenum = NormTypes::ttbarHighHT;
+			else if(nt=="wjetsLowHT") NTenum = NormTypes::wjetsLowHT;
+			else if(nt=="wjetsHighHT") NTenum = NormTypes::wjetsHighHT;
+			else NTenum = NormTypes::None;
+		}
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			bool goodEvent = true;
+			
+			//check normalization type here
+			if(NTenum==NormTypes::ttbarLowHTLowMET) { goodEvent &= looper->madHT < 600 and looper->GenMET < 150; }
+			else if(NTenum==NormTypes::ttbarLowHTHighMET) { goodEvent &= looper->madHT < 600 and looper->GenMET >= 150; }
+			else if(NTenum==NormTypes::ttbarLowHThad) { goodEvent &= looper->madHT < 600 && looper->GenElectrons->size()==0 && looper->GenMuons->size()==0 && looper->GenTaus->size()==0; }
+			else if(NTenum==NormTypes::ttbarHighHT) { goodEvent &= looper->madHT >= 600; }
+			else if(NTenum==NormTypes::wjetsLowHT) { goodEvent &= looper->madHT < 100; }
+			else if(NTenum==NormTypes::wjetsHighHT) { goodEvent &= looper->madHT >= 100; }
+		
+			return goodEvent;
+		}
+
+		//members
+		string nt;
+		NormTypes NTenum;
+};
+REGISTER_SELECTOR(NormType);
+
+//---------------------------------------------------------------
 //associate ak4 jets w/ ak8 jets
 class KJetMatchSelector : public KSelector {
 	public:
