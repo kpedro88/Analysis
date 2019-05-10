@@ -382,6 +382,9 @@ class KBDTVar_maxbvsall : public KBDTVar {
 			else {
 				branch = -10;
 			}
+
+			//constrain range
+			branch = max(branch,-1.f);
 		}
 		//custom fn
 		virtual void SetIndices(const vector<vector<unsigned>>& indices_) { indices = indices_; set_indices = true; }
