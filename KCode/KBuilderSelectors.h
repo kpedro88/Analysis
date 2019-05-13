@@ -1387,6 +1387,7 @@ class KSVJTagSelector : public KSelector {
 			else throw runtime_error("Unknown bdt branch: "+branch);
 			localOpt->Get("cut",cut);
 			localOpt->Get("num",num);
+			tag = localOpt->Get("tag",false);
 		}
 		virtual void CheckBranches(){
 			looper->fChain->SetBranchStatus(("JetsAK8_"+branch).c_str(),1);
@@ -1402,20 +1403,21 @@ class KSVJTagSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			unsigned ntags = 0;
+			ntags = 0;
 			const auto& SVJTag = ebranch==seltor ? BDT->JetsAK8_bdt : ebranch==bdt ? *looper->JetsAK8_bdtSVJtag : *looper->JetsAK8_ubdtSVJtag;
 			for(unsigned j = 0; j < min(SVJTag.size(),2ul); ++j){
 				if(SVJTag[j] > cut) ++ntags;
 			}
 
-			return ntags==num;
+			return tag or (ntags==num);
 		}
 		
 		//member variables
 		string branch;
 		double cut;
-		unsigned num;
+		unsigned num, ntags;
 		branches ebranch;
+		bool tag;
 		KBDTSelector* BDT;
 };
 REGISTER_SELECTOR(SVJTag);

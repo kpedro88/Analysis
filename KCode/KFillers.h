@@ -124,6 +124,17 @@ class KFiller_nbjets : public KFiller {
 };
 REGISTER_FILLER(nbjets);
 
+//# of svj tags
+class KFiller_nsvj : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void CheckDeps(){ SVJTag = sel->Get<KSVJTagSelector*>("SVJTag"); }
+		virtual void Fill(KValue& value, double w) { if(SVJTag) value.Fill(SVJTag->ntags,w); }
+		//member variables
+		KSVJTagSelector* SVJTag = NULL;
+};
+REGISTER_FILLER(nsvj);
+
 //-----------------------------------------------------------------------------
 //for hemispheres
 class KFillerHemi : public KFiller {
@@ -1574,7 +1585,8 @@ class KJetFiller_AK8bdt : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
 		virtual void CheckDeps(){ BDT = sel->Get<KBDTSelector*>("BDT"); }
-		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(BDT and BDT->JetsAK8_bdt.size()>index) value.Fill(BDT->JetsAK8_bdt[index],w); }		//member variables
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(BDT and BDT->JetsAK8_bdt.size()>index) value.Fill(BDT->JetsAK8_bdt[index],w); }
+		//member variables
 		KBDTSelector* BDT = NULL;
 };
 REGISTER_JETFILLER(AK8bdt);

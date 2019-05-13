@@ -1,0 +1,5 @@
+SELECTION
+BDT012
+	SVJTag	s:branch[bdtSVJtag]	d:cut[0.36]	b:tag[1]
+uBDT012
+	SVJTag	s:branch[ubdtSVJtag]	d:cut[0.52]	b:tag[1]

@@ -72,3 +72,4 @@ input/fast*/
 /doTrigOpt.py
 /runTrig.sh
 /sigAcc.py
+/splitRegionsSVJ.py

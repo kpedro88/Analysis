@@ -7,8 +7,8 @@ double:ymin_min[5e-2]
 #double:sizeLeg[18]
 int:npanel[2]
 
-HISTO
-MTAK8	i:xnum[45]	d:xmin[1500]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kMagenta]
+HISTO2D
+MTAK8_nsvj	i:xnum[45]	d:xmin[1500]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	i:ynum[3]	d:ymin[-0.5]	d:ymax[2.5]	s:ytitle[N_{SVJ}]	s:ztitle[arbitrary units]	b:ratio[0]	b:logz[1]	c:color[kMagenta]
 
 INPUT
 input/input_svj_dc_sets_sig.txt
