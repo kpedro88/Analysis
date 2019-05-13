@@ -1375,14 +1375,15 @@ REGISTER_SELECTOR(MTRegression);
 //compute SVJ tags using stored BDT values
 class KSVJTagSelector : public KSelector {
 	public:
-		enum branches { bdt = 0, ubdt = 1};
+		enum branches { bdt = 0, ubdt = 1, seltor = 2 };
 		//constructor
 		KSVJTagSelector() : KSelector() { }
-		KSVJTagSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), branch(""), cut(0.), num(0) { 
+		KSVJTagSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), branch(""), cut(0.), num(0), BDT(NULL) { 
 			//check for option
 			localOpt->Get("branch",branch);
 			if(branch=="ubdtSVJtag") ebranch = ubdt;
 			else if(branch=="bdtSVJtag") ebranch = bdt;
+			else if(branch.empty()) ebranch = seltor;
 			else throw runtime_error("Unknown bdt branch: "+branch);
 			localOpt->Get("cut",cut);
 			localOpt->Get("num",num);
@@ -1390,13 +1391,19 @@ class KSVJTagSelector : public KSelector {
 		virtual void CheckBranches(){
 			looper->fChain->SetBranchStatus(("JetsAK8_"+branch).c_str(),1);
 		}
+		virtual void CheckDeps(){
+			if(ebranch==seltor){
+				BDT = sel->Get<KBDTSelector*>("BDT");
+				if(!BDT) depfailed = true;
+			}
+		}
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			unsigned ntags = 0;
-			const auto& SVJTag = ebranch==bdt ? *looper->JetsAK8_bdtSVJtag : *looper->JetsAK8_ubdtSVJtag;
+			const auto& SVJTag = ebranch==seltor ? BDT->JetsAK8_bdt : ebranch==bdt ? *looper->JetsAK8_bdtSVJtag : *looper->JetsAK8_ubdtSVJtag;
 			for(unsigned j = 0; j < min(SVJTag.size(),2ul); ++j){
 				if(SVJTag[j] > cut) ++ntags;
 			}
@@ -1409,6 +1416,7 @@ class KSVJTagSelector : public KSelector {
 		double cut;
 		unsigned num;
 		branches ebranch;
+		KBDTSelector* BDT;
 };
 REGISTER_SELECTOR(SVJTag);
 

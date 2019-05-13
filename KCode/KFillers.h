@@ -1311,16 +1311,27 @@ class KJetFiller_AK8maxbvsall : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
 		virtual void CheckDeps(){ JetMatch = sel->Get<KJetMatchSelector*>("JetMatch"); }
-		virtual void ListBranches() { branches = {"Jets_bJetTagDeepCSVBvsAll"}; }
+		virtual void ListBranches() { branches = {"Jets_bJetTagDeepCSVBvsAll",prefilled_branch}; }
 		virtual void FillPerJet(KValue& value, double w, unsigned index) {
-			if(JetMatch and JetMatch->JetIndices.size()>index) {
-				vector<double> discrs; discrs.reserve(JetMatch->JetIndices[index].size());
-				for(auto j : JetMatch->JetIndices[index]) discrs.push_back(looper->Jets_bJetTagDeepCSVBvsAll->at(j));
-				value.Fill(*(TMath::LocMax(discrs.begin(),discrs.end())),w);
+			//check for prefilled branch
+			if(!JetMatch and !branch_present){
+				branch_present = looper->fChain->GetBranchStatus(prefilled_branch.c_str()) and looper->fChain->GetBranch(prefilled_branch.c_str());
+			}
+
+			if(branch_present and index<looper->JetsAK8_maxBvsAll->size()){
+				value.Fill(looper->JetsAK8_maxBvsAll->at(index),w);
+			}
+			else if(!branch_present and JetMatch and JetMatch->JetsAK8_maxBvsAll.size()>index) {
+				value.Fill(JetMatch->JetsAK8_maxBvsAll[index],w);
+			}
+			else {
+				value.Fill(-10,w);
 			}
 		}
 		//member variables
 		KJetMatchSelector* JetMatch = NULL;
+		string prefilled_branch = "JetsAK8_maxBvsAll";
+		bool branch_present = false;
 };
 REGISTER_JETFILLER(AK8maxbvsall);
 

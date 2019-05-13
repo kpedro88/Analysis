@@ -122,12 +122,11 @@ class KJetMatchSelector : public KSelector {
 				if(min_ind < njet_ and min < mindr) JetIndices[min_ind].push_back(j);
 			}
 
-			if(forceadd){
-				for(unsigned jj = 0; jj < njet_; ++jj){
-					vector<double> discrs; discrs.reserve(JetIndices[jj].size());
-					for(auto j : JetIndices[jj]) discrs.push_back(looper->Jets_bJetTagDeepCSVBvsAll->at(j));
-					JetsAK8_maxBvsAll[jj] = *(TMath::LocMax(discrs.begin(),discrs.end()));
-				}
+			//always fill this one
+			for(unsigned jj = 0; jj < njet_; ++jj){
+				vector<double> discrs; discrs.reserve(JetIndices[jj].size());
+				for(auto j : JetIndices[jj]) discrs.push_back(looper->Jets_bJetTagDeepCSVBvsAll->at(j));
+				JetsAK8_maxBvsAll[jj] = *(TMath::LocMax(discrs.begin(),discrs.end()));
 			}
 
 			return true;
@@ -141,30 +140,51 @@ class KJetMatchSelector : public KSelector {
 };
 REGISTER_SELECTOR(JetMatch);
 
+//functions for maxbvsall BDT variable (handle dependency)
+void KBDTVar_maxbvsall::CheckDeps() {
+	JetMatch = sel->Get<KJetMatchSelector*>("JetMatch");
+	//if(!JetMatch) depfailed = true;
+}
+void KBDTVar_maxbvsall::Fill(unsigned j) {
+	//check for prefilled branch
+	if(!JetMatch and !branch_present){
+		branch_present = looper->fChain->GetBranchStatus(prefilled_branch.c_str()) and looper->fChain->GetBranch(prefilled_branch.c_str());
+	}
+
+	if(branch_present and j<looper->JetsAK8_maxBvsAll->size()){
+		branch = looper->JetsAK8_maxBvsAll->at(j);
+	}
+	else if(!branch_present and JetMatch and j<JetMatch->JetsAK8_maxBvsAll.size()){
+		branch = JetMatch->JetsAK8_maxBvsAll[j];
+	}
+	else {
+		branch = -10;
+	}
+
+	//constrain range
+	branch = max(branch,-1.f);
+}
+
 //----------------------------------------------------
 //selects events based on a BDT
 class KBDTSelector : public KSelector {
 	public:
 		//constructor
 		KBDTSelector() : KSelector() { }
-		KBDTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), wp(-1), branchname("SVJtag"), JetMatch(NULL) {
+		KBDTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), branchname("SVJtag") {
 			//get BDT weights
 			localOpt->Get("weights",weights);
 			//get BDT type
 			localOpt->Get("type",type);
 			//get BDT range
 			positive = localOpt->Get("positive",true);
-			//get working point
-			localOpt->Get("wp",wp);
-			//check for tagging mode
-			tag = localOpt->Get("tag",false);
-			if(tag) canfail = false;
+			//now always runs in tagging mode
+			canfail = false;
 			//get variables used
 			vector<string> variable_names;
 			localOpt->Get("variables",variable_names);
 			for(const auto& v: variable_names){
 				variables.push_back(KBDTVarFactory::GetFactory().construct(v,v));
-				if(v=="maxbvsall") index_maxbvsall = variables.size()-1;
 			}
 			//get output branch name
 			localOpt->Get("branchname",branchname);
@@ -179,10 +199,6 @@ class KBDTSelector : public KSelector {
 			//setup reader
 			reader->BookMVA(type.c_str(),weights.c_str());
 		}
-		virtual void CheckDeps(){
-			JetMatch = sel->Get<KJetMatchSelector*>("JetMatch");
-			//if(!JetMatch) depfailed = true;			
-		}
 		virtual void CheckBranches(){
 			for(auto& v : variables){
 				v->CheckBranches();
@@ -191,6 +207,7 @@ class KBDTSelector : public KSelector {
 		virtual void CheckBase(){
 			//propagate to vars
 			for(auto& v : variables){
+				v->SetSelection(sel);
 				v->SetBase(base);
 			}
 		}
@@ -205,32 +222,26 @@ class KBDTSelector : public KSelector {
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			JetsAK8_bdt.clear();
-			bool good = true;
 			for(unsigned j = 0; j < looper->JetsAK8->size(); ++j){
 				//load variables for this jet
 				for(unsigned v = 0; v < variables.size(); ++v){
-					if(JetMatch and index_maxbvsall>=0 and v==index_maxbvsall) static_cast<KBDTVar_maxbvsall*>(variables[v])->SetIndices(JetMatch->JetIndices);
 					variables[v]->Fill(j);
 				}
 				double bdt_val = reader->EvaluateMVA(type.c_str());
 				//convert range from [-1,1] to [0,1]: (x-xmin)/(xmax-xmin)
 				if(positive) bdt_val = (bdt_val + 1)*0.5;
 				JetsAK8_bdt.push_back(bdt_val);
-				if(JetsAK8_bdt[j]<wp) good &= false;
 			}
-			return (tag or good);
+			return true;
 		}
 
 		//member variables
 		string weights, type;
-		double wp;
 		string branchname;
-		bool tag, positive;
+		bool positive;
 		TMVA::Reader* reader;
 		//input variables
 		vector<KBDTVar*> variables;
-		int index_maxbvsall = -1;
-		KJetMatchSelector* JetMatch;
 		//bdt output
 		vector<double> JetsAK8_bdt;
 };

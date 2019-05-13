@@ -359,39 +359,19 @@ class KBDTVar_subjetCSV2 : public KBDTVar {
 };
 REGISTER_BDTVAR(subjetCSV2);
 
+//forward declaration
+class KJetMatchSelector;
 class KBDTVar_maxbvsall : public KBDTVar {
 	public:
 		using KBDTVar::KBDTVar;
 		virtual void ListBranches() { branches = {"Jets_bJetTagDeepCSVBvsAll",prefilled_branch}; }
-		virtual void Fill(unsigned j) {
-			//check for prefilled branch
-			if(!set_indices and !branch_present){
-				branch_present = looper->fChain->GetBranchStatus(prefilled_branch.c_str()) and looper->fChain->GetBranch(prefilled_branch.c_str());
-			}
+		//implemented in KCommonSelectors to avoid circular dependency
+		virtual void CheckDeps();
+		virtual void Fill(unsigned j);
 
-			if(branch_present and j<looper->JetsAK8_maxBvsAll->size()){
-				branch = looper->JetsAK8_maxBvsAll->at(j);
-			}
-			else if(!branch_present and set_indices and j<indices.size()){
-				vector<double> discrs; discrs.reserve(indices[j].size());
-				for(auto jj : indices[j]) discrs.push_back(looper->Jets_bJetTagDeepCSVBvsAll->at(jj));
-				branch = *(TMath::LocMax(discrs.begin(),discrs.end()));
-				//reset indices for next jet/event
-				set_indices = false;
-			}
-			else {
-				branch = -10;
-			}
-
-			//constrain range
-			branch = max(branch,-1.f);
-		}
-		//custom fn
-		virtual void SetIndices(const vector<vector<unsigned>>& indices_) { indices = indices_; set_indices = true; }
-		//member
-		vector<vector<unsigned>> indices;
+		//members
+		KJetMatchSelector* JetMatch = NULL;
 		string prefilled_branch = "JetsAK8_maxBvsAll";
-		bool set_indices = false;
 		bool branch_present = false;
 };
 REGISTER_BDTVAR(maxbvsall);
