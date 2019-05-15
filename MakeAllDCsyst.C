@@ -176,6 +176,15 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 			isyst->GetXaxis()->SetBinLabel(b,binname.c_str());
 		}
 	}
+
+	//add signal contamination (not a pct diff)
+	double cyield = 0.;
+	for(auto icontam : hcontam){
+		string ntmp = icontam->GetName();
+		if(ntmp.find("genMHT")!=string::npos) continue;
+		cyield += icontam->Integral(0,icontam->GetNbinsX()+1);
+	}
+	pctDiffMap.Add("contam",(cyield/nominal_yield)*100);
 	
 	//make stat error
 	string sname = changeHistoName(nominal->GetName(),"MCStatErr");

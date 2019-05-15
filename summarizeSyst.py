@@ -47,7 +47,9 @@ def findMinMax(fname,dir,exclude,cut,output):
     if not model in output.keys():
         output[model] = {}
     
-    file = TFile.Open("root://cmseos.fnal.gov/"+dir+"/"+fname)
+    if dir[:6]=="/store": dir2 = "root://cmseos.fnal.gov/"+dir
+    else: dir2 = dir
+    file = TFile.Open(dir2+"/"+fname)
     if file == None: return
     tree = file.Get("tree")
     
@@ -88,14 +90,16 @@ if __name__ == "__main__":
     parser = OptionParser()
     parser.add_option("-d", "--dir", dest="dir", default="/store/user/pedrok/SUSY2015/Analysis/Datacards/Run2ProductionV12", help="directory (LFN) of systematics files (default = %default)")
     parser.add_option("-k", "--skip", dest="skip", default=[], type="string", action="callback", callback=list_callback, help="comma-separated list of models to skip (default = %default)")
-    parser.add_option("-x", "--exclude", dest="exclude", default=[], type="string", action="callback", callback=list_callback, help="comma-separated list of systematics to exclude from calculations (default = %default)")
+    parser.add_option("-x", "--exclude", dest="exclude", default=["contam"], type="string", action="callback", callback=list_callback, help="comma-separated list of systematics to exclude from calculations (default = %default)")
     parser.add_option("-m", "--minimum", dest="minimum", default=0.01, help="minimum value to display, smaller values rounded to 0 (default = %default)")
     parser.add_option("-g", "--grep", dest="grep", default="", help="select only models matching this string (default = %default)")
     parser.add_option("-c", "--cut", dest="cut", default="", help="apply cut when computing syst min/max (default = %default)")
+    parser.add_option("-p", "--prefix", dest="prefix", default="tree_syst", help="prefix for file names (default = %default)")
     (options, args) = parser.parse_args()
 
     # get list of files (one per model)
-    cmd = 'eos root://cmseos.fnal.gov/ ls '+options.dir+' | grep "tree_syst"'
+    cmd = 'ls '+options.dir+' | grep '+options.prefix
+    if options.dir[:6]=="/store": cmd = 'eos root://cmseos.fnal.gov/ '+cmd
     if len(options.grep)>0: cmd += ' | grep "'+options.grep+'"'
     files = sorted(filter(None,os.popen(cmd).read().split('\n')))
     
@@ -113,7 +117,7 @@ if __name__ == "__main__":
         models.append(model)
     
         findMinMax(file,options.dir,options.exclude,options.cut,output)
-    
+
     # transpose output (syst = rows, model = columns)
     output2 = {}
     for model in output.keys():

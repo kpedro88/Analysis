@@ -31,6 +31,7 @@ map<string,string> legnames = {
 	{"trigunc", "trigger uncertainty [%]"},
 	{"prefireunc","L1 prefiring weight uncertainty [%]"},
 	{"hemvetounc","HEM veto uncertainty [%]"},
+	{"contam","SL contamination [%]"},
 	{"mMother", "M_{mother} [GeV]"},
 	{"mLSP", "M_{LSP} [GeV]"},
 	{"deltaM", "#DeltaM_{mother,LSP} [GeV]"},
@@ -42,7 +43,9 @@ void plotSyst(TTree* tree, string xqty, string yqty, string model, string outdir
 	//get ranges (use mMother for derived quantity deltaM)
 	string rxqty = (xqty=="deltaM") ? "mMother" : xqty;
 	string ryqty = (yqty=="deltaM") ? "mMother" : yqty;
+	bool isMassPlane = false;
 	if(xqty=="massPlane"){
+		isMassPlane = true;
 		rxqty = "mMother";
 		ryqty = "mLSP";
 	}
@@ -50,7 +53,7 @@ void plotSyst(TTree* tree, string xqty, string yqty, string model, string outdir
 	double xmax = tree->GetMaximum(rxqty.c_str());
 	double ymin = 0;
 	double ymax = tree->GetMaximum(ryqty.c_str());
-	if(xqty=="massPlane"){
+	if(isMassPlane){
 		xmin = tree->GetMinimum(rxqty.c_str());		
 		ymin = tree->GetMinimum(ryqty.c_str());
 	}
@@ -58,12 +61,12 @@ void plotSyst(TTree* tree, string xqty, string yqty, string model, string outdir
 	string hname = "plotSyst2D_"+yqty+"_vs_"+xqty+"_"+model;
 	
 	//initialize histos
-	if(xqty=="massPlane") {
+	if(isMassPlane) {
 		nbinsx = (xmax-xmin)/25;
 		nbinsy = (ymax-ymin)/25;
 	}
 	TH2F* hbase = new TH2F("hbase","",nbinsx,xmin,xmax,nbinsy,ymin,ymax);
-	if(xqty=="massPlane"){
+	if(isMassPlane){
 		hbase->GetXaxis()->SetTitle(legnames["mMother"].c_str());
 		hbase->GetYaxis()->SetTitle(legnames["mLSP"].c_str());
 		hbase->GetZaxis()->SetTitle(legnames[yqty].c_str());		
@@ -74,28 +77,38 @@ void plotSyst(TTree* tree, string xqty, string yqty, string model, string outdir
 		hbase->GetZaxis()->SetTitle((model+" model points").c_str());
 	}
 	TH2F* hfill = (TH2F*)hbase->Clone(hname.c_str());
+	TH2F* hfill_unweighted = (TH2F*)hbase->Clone((hname+"_unweighted").c_str());
 	
 	//draw into histo
 	string drawname = yqty+":"+xqty+">>"+hname;
 	string cutname = "";
-	if(xqty=="massPlane"){
+	if(isMassPlane){
 		drawname = "mLSP:mMother>>"+hname;
 		cutname = yqty;
 	}
 	tree->Draw(drawname.c_str(),cutname.c_str(),"colz goff");
-	double correl = hfill->GetCorrelationFactor();
-	stringstream ss;
-	ss << fixed << setprecision(2);
-	ss << "13 TeV (r = " << correl << ")";
-	string lumi_text = ss.str();
-	if(xqty=="massPlane") lumi_text = "13 TeV ("+model+")";
+	if(isMassPlane) {
+		//if some bins have multiple entries, take average (better than sum...)
+		tree->Draw((drawname+"_unweighted").c_str(),"","colz goff");
+		hfill->Divide(hfill_unweighted);
+	}
+
+	string lumi_text;
+	if(isMassPlane) lumi_text = "13 TeV ("+model+")";
+	else {
+		double correl = hfill->GetCorrelationFactor();
+		stringstream ss;
+		ss << fixed << setprecision(2);
+		ss << "13 TeV (r = " << correl << ")";
+		lumi_text = ss.str();
+	}
 	
 	//setup plot
 	OptionMap* globalOpt = new OptionMap();
 	globalOpt->Set<string>("lumi_text",lumi_text);
 	OptionMap* localOpt = new OptionMap();
 	localOpt->Set<bool>("ratio",false);
-	if(xqty=="massPlane") localOpt->Set<bool>("logz",false);
+	if(isMassPlane) localOpt->Set<bool>("logz",false);
 	KPlot2D* plot = new KPlot2D(hname,"",localOpt,globalOpt);
 	plot->Initialize(hbase);
 	
@@ -121,6 +134,7 @@ void plotSyst2D(string indir,
 				vector<string> compares={"mMother","mLSP","deltaM","massPlane"},
 				bool correlate=true,
 				string outdir="plots/syst",
+				string prefix="tree_syst",
 				vector<string> printformats={"png"})
 {
 	system(("mkdir -p "+outdir).c_str());
@@ -132,7 +146,7 @@ void plotSyst2D(string indir,
 	
 	for(const auto& model : models){
 		//get file/tree
-		string fname = indir+"/tree_syst_"+model+"_fast.root";
+		string fname = indir+"/"+prefix+"_"+model+"_fast.root";
 		TFile* file = TFile::Open(fname.c_str());
 		if(!file) {
 			cout << "Error: syst tree for model " << model << " not found!" << endl;
