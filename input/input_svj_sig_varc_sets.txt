@@ -1,0 +1,16 @@
+OPTION
+vs:numers[private]
+vs:denoms[central]
+s:rationame[private/central]
+vs:extra_text[SVJ_3000_20_0.3_peak_MC2017]
+b:useTreeWeight[1]
+s:lumi_text[(13 TeV)]
+d:luminorm[1.0]
+b:unitnorm[1]
+s+:printsuffix[_PvsC]
+
+SET
+hist	mc	private	s:legname[private]	c:color[kRed]	i:linestyle[1]
+	base	mc	SVJ_3000_20_0.3_peak	s:filename[PrivateSamples.SVJ_2017_mZprime-3000_mDark-20_rinv-0p3_alpha-peak_n-1000_0_RA2AnalysisTree.root]	s:treename[TreeMaker2/PreSelection]
+hist	mc	central	s:legname[central]	c:color[kBlue]	i:linestyle[1]
+	base	mc	SVJ_3000_20_0.3_peak	b:chain[1]	ch:filenames[Fall17.SVJ_mZprime-3000_mDark-20_rinv-0p3_alpha-peak_TuneCP2_13TeV_pythia8_,0,8,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]
