@@ -1,0 +1,3 @@
+SET
+hist	mc	T1qqqq_1400_100_MC2017
+	base	mc	T1qqqq_1400_100_MC2017	s:filename[tree_T1qqqq_1400_100_MC2017.root]	b:signal[1]	vi:mother[1000021]
