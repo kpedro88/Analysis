@@ -4,6 +4,7 @@
 //custom headers
 #include "KSelection.h"
 #include "KBDTVar.h"
+#include "../mva/BDTree.h"
 #include "../corrections/EventShapeVariables.c"
 
 //ROOT headers
@@ -171,7 +172,7 @@ class KBDTSelector : public KSelector {
 	public:
 		//constructor
 		KBDTSelector() : KSelector() { }
-		KBDTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), branchname("SVJtag") {
+		KBDTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), branchname("SVJtag"), reader(NULL), bdtree(NULL) {
 			//get BDT weights
 			localOpt->Get("weights",weights);
 			//get BDT type
@@ -189,15 +190,25 @@ class KBDTSelector : public KSelector {
 			//get output branch name
 			localOpt->Get("branchname",branchname);
 
-			//load TMVA library
-			TMVA::Tools::Instance();
-			//input for reader
-			reader = new TMVA::Reader("Silent");
-			for(auto& v : variables){
-				v->SetVariable(reader);
+			tmva = localOpt->Get("tmva",true);
+			if(tmva){
+				//load TMVA library
+				TMVA::Tools::Instance();
+				//input for reader
+				reader = new TMVA::Reader("Silent");
+				for(auto& v : variables){
+					v->SetVariable(reader);
+				}
+				//setup reader
+				reader->BookMVA(type.c_str(),weights.c_str());
 			}
-			//setup reader
-			reader->BookMVA(type.c_str(),weights.c_str());
+			else {
+				//setup compile-time tree
+				bdtree = new BDTree(weights);
+				for(auto& v : variables){
+					v->SetVariable(bdtree);
+				}
+			}
 		}
 		virtual void CheckBranches(){
 			for(auto& v : variables){
@@ -227,7 +238,7 @@ class KBDTSelector : public KSelector {
 				for(unsigned v = 0; v < variables.size(); ++v){
 					variables[v]->Fill(j);
 				}
-				double bdt_val = reader->EvaluateMVA(type.c_str());
+				double bdt_val = tmva ? reader->EvaluateMVA(type.c_str()) : bdtree->evaluate();
 				//convert range from [-1,1] to [0,1]: (x-xmin)/(xmax-xmin)
 				if(positive) bdt_val = (bdt_val + 1)*0.5;
 				JetsAK8_bdt.push_back(bdt_val);
@@ -239,7 +250,9 @@ class KBDTSelector : public KSelector {
 		string weights, type;
 		string branchname;
 		bool positive;
+		bool tmva;
 		TMVA::Reader* reader;
+		BDTree* bdtree;
 		//input variables
 		vector<KBDTVar*> variables;
 		//bdt output

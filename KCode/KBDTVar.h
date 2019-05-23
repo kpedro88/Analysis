@@ -8,6 +8,7 @@
 
 #include "TTree.h"
 #include "TMVA/Reader.h"
+#include "../mva/BDTree.h"
 
 #include <string>
 #include <vector>
@@ -37,6 +38,9 @@ class KBDTVar : public KChecker {
 		}
 		virtual void SetVariable(TMVA::Reader* reader){
 			reader->AddVariable(name.c_str(),&branch);
+		}
+		virtual void SetVariable(BDTree* bdtree){
+			bdtree->AddVariable(name,&branch);
 		}
 		
 		virtual void Fill(unsigned index) { }
