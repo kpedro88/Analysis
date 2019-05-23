@@ -14,17 +14,17 @@ Sfull
 	DeltaPhiMinAK8	d:max[0.75]
 B-BDT
 	Bfull
-	BDT012
+	BDTsel
 	plot
 S-BDT
 	Sfull
-	BDT012
+	BDTsel
 	plot
 B-uBDT
 	Bfull
-	uBDT012
+	uBDTsel
 	plot
 S-uBDT
 	Sfull
-	uBDT012
+	uBDTsel
 	plot

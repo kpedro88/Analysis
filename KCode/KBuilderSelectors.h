@@ -1378,7 +1378,7 @@ class KSVJTagSelector : public KSelector {
 		enum branches { bdt = 0, ubdt = 1, seltor = 2 };
 		//constructor
 		KSVJTagSelector() : KSelector() { }
-		KSVJTagSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), branch(""), cut(0.), num(0), BDT(NULL) { 
+		KSVJTagSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), branch(""), cut(0.), BDT(NULL) { 
 			//check for option
 			localOpt->Get("branch",branch);
 			if(branch=="ubdtSVJtag") ebranch = ubdt;
@@ -1386,11 +1386,10 @@ class KSVJTagSelector : public KSelector {
 			else if(branch.empty()) ebranch = seltor;
 			else throw runtime_error("Unknown bdt branch: "+branch);
 			localOpt->Get("cut",cut);
-			localOpt->Get("num",num);
-			tag = localOpt->Get("tag",false);
+			canfail = false;
 		}
 		virtual void CheckBranches(){
-			looper->fChain->SetBranchStatus(("JetsAK8_"+branch).c_str(),1);
+			if(!branch.empty()) looper->fChain->SetBranchStatus(("JetsAK8_"+branch).c_str(),1);
 		}
 		virtual void CheckDeps(){
 			if(ebranch==seltor){
@@ -1409,18 +1408,49 @@ class KSVJTagSelector : public KSelector {
 				if(SVJTag[j] > cut) ++ntags;
 			}
 
-			return tag or (ntags==num);
+			return true;
 		}
 		
 		//member variables
 		string branch;
 		double cut;
-		unsigned num, ntags;
+		unsigned ntags;
 		branches ebranch;
-		bool tag;
 		KBDTSelector* BDT;
 };
 REGISTER_SELECTOR(SVJTag);
+
+//----------------------------------------------------
+//compute SVJ tags using stored BDT values
+class KNSVJSelector : public KSelector {
+	public:
+		enum branches { bdt = 0, ubdt = 1, seltor = 2 };
+		//constructor
+		KNSVJSelector() : KSelector() { }
+		KNSVJSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), source(""), num(0), SVJTag(NULL) { 
+			//check for option
+			localOpt->Get("source",source);
+			localOpt->Get("num",num);
+			canfail = false;
+		}
+		virtual void CheckDeps(){
+			SVJTag = sel->Get<KSVJTagSelector*>(source);
+			if(!SVJTag) depfailed = true;
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return (SVJTag->ntags==num);
+		}
+		
+		//member variables
+		string source;
+		unsigned num;
+		KSVJTagSelector* SVJTag;
+};
+REGISTER_SELECTOR(NSVJ);
 
 //----------------------------------------------------
 //final selector to fill histograms
