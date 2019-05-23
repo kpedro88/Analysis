@@ -47,7 +47,7 @@ datacards*/
 batch/jobs*/
 input/fast*/
 
-# linked by setup.sh
+# linked by setupScripts.sh
 /getCRyields.sh
 /makeCutflow.py
 /makeNtupleClass.sh
@@ -73,3 +73,6 @@ input/fast*/
 /runTrig.sh
 /sigAcc.py
 /splitRegionsSVJ.py
+
+# linked by setupXML.sh
+/mva/pugi*.*

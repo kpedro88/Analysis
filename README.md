@@ -13,13 +13,15 @@ cd CMSSW_8_0_30/src
 cmsenv
 git clone git@github.com:kpedro88/Analysis
 cd Analysis
-./setup.sh
+./setupScripts.sh
 ./setupTM.sh
 ```
 
-The script `setup.sh` links useful tools kept in the `scripts` folder for easier use.
+The script `setupScripts.sh` links useful tools kept in the `scripts` folder for easier use.
 
 The script `setupTM.sh` compiles specific parts of [TreeMaker](https://github.com/TreeMaker/TreeMaker) that are used in this code.
+
+The script `setupXML.sh` downloads the [pugixml](https://github.com/zeux/pugixml) library (for use with the custom BDT evaluator).
 
 ## Recompiling
 
