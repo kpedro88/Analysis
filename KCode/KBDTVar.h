@@ -8,7 +8,7 @@
 
 #include "TTree.h"
 #include "TMVA/Reader.h"
-#include "../mva/BDTree.h"
+#include "../KMVA/BDTree.h"
 
 #include <string>
 #include <vector>

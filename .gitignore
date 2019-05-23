@@ -75,4 +75,4 @@ input/fast*/
 /splitRegionsSVJ.py
 
 # linked by setupXML.sh
-/mva/pugi*.*
+/KMVA/pugi*.*
