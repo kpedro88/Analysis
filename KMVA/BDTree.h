@@ -13,6 +13,14 @@
 #define PUGIXML_HEADER_ONLY
 #include "pugixml.hpp"
 
+struct DNode {
+	DNode(unsigned i, double c, int l=0, int r=0) : index_(i), cut_(c), left_(l), right_(r) {}
+	unsigned index_;
+	double cut_;
+	int left_;
+	int right_;
+};
+
 //now based on https://github.com/cms-sw/cmssw/blob/master/CondFormats/EgammaObjects/interface/GBRTree.h
 class DTree {
 	public:
@@ -21,14 +29,11 @@ class DTree {
 		double decision(const vector<float*>& features) const {
 			int index = 0;
 			do {
-				index = *(features[vindex_[index]]) <= vcut_[index] ? vleft_[index] : vright_[index];
+				index = *(features[nodes_[index].index_]) <= nodes_[index].cut_ ? nodes_[index].left_ : nodes_[index].right_;
 			} while (index>0);
 			return vres_[-index];
 		}
-		std::vector<unsigned> vindex_;
-		std::vector<double> vcut_;
-		std::vector<int> vleft_;
-		std::vector<int> vright_;
+		std::vector<DNode> nodes_;
 		std::vector<double> vres_;
 };
 
@@ -59,10 +64,10 @@ class BDTree {
 				//start parsing from the root
 				parseTree(btree.child("Node"),trees_[nt]);
 /*
-				std::cout << "vindex_ = "; std::copy(trees_[nt].vindex_.begin(),trees_[nt].vindex_.end(),std::ostream_iterator<unsigned>(std::cout,",")); std::cout << std::endl;
-				std::cout << "vcut_ = "; std::copy(trees_[nt].vcut_.begin(),trees_[nt].vcut_.end(),std::ostream_iterator<double>(std::cout,",")); std::cout << std::endl;
-				std::cout << "vleft_ = "; std::copy(trees_[nt].vleft_.begin(),trees_[nt].vleft_.end(),std::ostream_iterator<int>(std::cout,",")); std::cout << std::endl;
-				std::cout << "vright_ = "; std::copy(trees_[nt].vright_.begin(),trees_[nt].vright_.end(),std::ostream_iterator<int>(std::cout,",")); std::cout << std::endl;
+				std::cout << "vindex_ = "; std::copy(trees_[nt].nodes_.index_.begin(),trees_[nt].nodes_.index_.end(),std::ostream_iterator<unsigned>(std::cout,",")); std::cout << std::endl;
+				std::cout << "vcut_ = "; std::copy(trees_[nt].nodes_.cut_.begin(),trees_[nt].nodes_.cut_.end(),std::ostream_iterator<double>(std::cout,",")); std::cout << std::endl;
+				std::cout << "vleft_ = "; std::copy(trees_[nt].nodes_.left_.begin(),trees_[nt].nodes_.left_.end(),std::ostream_iterator<int>(std::cout,",")); std::cout << std::endl;
+				std::cout << "vright_ = "; std::copy(trees_[nt].nodes_.right_.begin(),trees_[nt].nodes_.right_.end(),std::ostream_iterator<int>(std::cout,",")); std::cout << std::endl;
 				std::cout << "vres_ = "; std::copy(trees_[nt].vres_.begin(),trees_[nt].vres_.end(),std::ostream_iterator<double>(std::cout,",")); std::cout << std::endl;
 				std::cout << std::endl;
 */
@@ -101,11 +106,8 @@ class BDTree {
 			}
 			//tree case
 			else {
-				int thisidx = tree.vcut_.size();
-				tree.vindex_.push_back(node.attribute("IVar").as_int());
-				tree.vcut_.push_back(node.attribute("Cut").as_double());
-				tree.vleft_.push_back(0);
-				tree.vright_.push_back(0);
+				int thisidx = tree.nodes_.size();
+				tree.nodes_.emplace_back(node.attribute("IVar").as_int(),node.attribute("Cut").as_double());
 
 				//get children
 				pugi::xml_node left;
@@ -117,9 +119,9 @@ class BDTree {
 				}
 
 				//now parse children recursively
-				tree.vleft_[thisidx] = isLeaf(left) ? -tree.vres_.size() : tree.vcut_.size();
+				tree.nodes_[thisidx].left_ = isLeaf(left) ? -tree.vres_.size() : tree.nodes_.size();
 				parseTree(left,tree);
-				tree.vright_[thisidx] = isLeaf(right) ? -tree.vres_.size() : tree.vcut_.size();
+				tree.nodes_[thisidx].right_ = isLeaf(right) ? -tree.vres_.size() : tree.nodes_.size();
 				parseTree(right,tree);
 			}
 		}
