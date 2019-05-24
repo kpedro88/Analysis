@@ -5,6 +5,8 @@
 #include <string>
 #include <unordered_map>
 #include <algorithm>
+#include <iterator>
+#include <iostream>
 #include <cmath>
 #include <exception>
 
@@ -56,6 +58,14 @@ class BDTree {
 
 				//start parsing from the root
 				parseTree(btree.child("Node"),trees_[nt]);
+/*
+				std::cout << "vindex_ = "; std::copy(trees_[nt].vindex_.begin(),trees_[nt].vindex_.end(),std::ostream_iterator<unsigned>(std::cout,",")); std::cout << std::endl;
+				std::cout << "vcut_ = "; std::copy(trees_[nt].vcut_.begin(),trees_[nt].vcut_.end(),std::ostream_iterator<double>(std::cout,",")); std::cout << std::endl;
+				std::cout << "vleft_ = "; std::copy(trees_[nt].vleft_.begin(),trees_[nt].vleft_.end(),std::ostream_iterator<int>(std::cout,",")); std::cout << std::endl;
+				std::cout << "vright_ = "; std::copy(trees_[nt].vright_.begin(),trees_[nt].vright_.end(),std::ostream_iterator<int>(std::cout,",")); std::cout << std::endl;
+				std::cout << "vres_ = "; std::copy(trees_[nt].vres_.begin(),trees_[nt].vres_.end(),std::ostream_iterator<double>(std::cout,",")); std::cout << std::endl;
+				std::cout << std::endl;
+*/
 				++nt;
 			}
 		}
@@ -98,19 +108,19 @@ class BDTree {
 				tree.vright_.push_back(0);
 
 				//get children
-				const pugi::xml_node* left;
-				const pugi::xml_node* right;
+				pugi::xml_node left;
+				pugi::xml_node right;
 				for(const auto& cnode : node.children("Node")){
 					std::string pos = cnode.attribute("pos").as_string();
-					if(pos.compare("l")==0) left = &cnode;
-					else if(pos.compare("r")==0) right = &cnode;
+					if(pos.compare("l")==0) left = cnode;
+					else if(pos.compare("r")==0) right = cnode;
 				}
 
 				//now parse children recursively
-				tree.vleft_[thisidx] = isLeaf(*left) ? -tree.vres_.size() : tree.vcut_.size();
-				parseTree(*left,tree);
-				tree.vright_[thisidx] = isLeaf(*right) ? -tree.vres_.size() : tree.vcut_.size();
-				parseTree(*right,tree);
+				tree.vleft_[thisidx] = isLeaf(left) ? -tree.vres_.size() : tree.vcut_.size();
+				parseTree(left,tree);
+				tree.vright_[thisidx] = isLeaf(right) ? -tree.vres_.size() : tree.vcut_.size();
+				parseTree(right,tree);
 			}
 		}
 	
