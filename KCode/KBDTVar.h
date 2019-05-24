@@ -41,16 +41,18 @@ class KBDTVar : public KChecker {
 		}
 		virtual void SetVariable(BDTree* bdtree){
 			pbranch = bdtree->SetVariable(name);
+			use_kmva = true;
 		}
 		
 		virtual void Fill(unsigned index) {
 			Fill_(index);
-			*pbranch = branch;
+			if(use_kmva) *pbranch = branch;
 		}
 		virtual void Fill_(unsigned index) { }
 		
 		//members
 		float branch;
+		bool use_kmva = false;
 		float* pbranch;
 		vector<string> branches;
 };
