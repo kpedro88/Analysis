@@ -17,8 +17,8 @@ common
 	PDFNorm
 endcommon
 	JetMatch	b:forceadd[1]
-	BDT	s:name[BDT]	s:weights[KMVA/D29_TMVA_bdt_weights.xml]	s:type[BDTG]	b:positive[1]	b:forceadd[1]	s:branchname[bdtSVJtag]	vs:variables[girth,tau21,tau32,msd,axisminor,axismajor,ptD,ecfN2b1,ecfN3b1,ptdrlog,fChHad,fEle,fMu,fNeuHad,fPho,maxbvsall]
-	BDT	s:name[uBDT]	s:weights[KMVA/D29_TMVA_ubdt_weights.xml]	s:type[BDTG]	b:positive[1]	b:forceadd[1]	s:branchname[ubdtSVJtag]	vs:variables[girth,tau21,tau32,msd,axisminor,axismajor,ptD,ecfN2b1,ecfN3b1,ptdrlog,fChHad,fEle,fMu,fNeuHad,fPho,maxbvsall]
+	BDT	s:name[BDT]	s:weights[KMVA/D29_TMVA_bdt_weights.xml]	s:type[BDTG]	b:positive[1]	b:forceadd[1]	s:branchname[bdtSVJtag]	vs:variables[girth,tau21,tau32,msd,axisminor,axismajor,ptD,ecfN2b1,ecfN3b1,ptdrlog,fChHad,fEle,fMu,fNeuHad,fPho,maxbvsall]	b:tmva[0]
+	BDT	s:name[uBDT]	s:weights[KMVA/D29_TMVA_ubdt_weights.xml]	s:type[BDTG]	b:positive[1]	b:forceadd[1]	s:branchname[ubdtSVJtag]	vs:variables[girth,tau21,tau32,msd,axisminor,axismajor,ptD,ecfN2b1,ecfN3b1,ptdrlog,fChHad,fEle,fMu,fNeuHad,fPho,maxbvsall]	b:tmva[0]
 evtclean
 	METRatio	b:tag[1]
 	MuonJet	b:tag[1]
@@ -70,7 +70,7 @@ dijetlowmtdetahad
 	dijetlowmt
 	DeltaEta	d:max[1.5]
 	veto
-	MTAK*	d:min[1500]
+	MTAK8	d:min[1500]
 	endcommon
 dijetlowmtdetahadmf
 	dijetlowmtdetahad
