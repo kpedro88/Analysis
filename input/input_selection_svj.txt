@@ -40,6 +40,9 @@ dijet
 dijetmt
 	dijet
 	METMTRatio	d:min[0.15]
+dijetlowmt
+	dijet
+	METMTRatio	d:min[0.10]	d:max[0.15]
 dijetmtpt
 	dijetmt
 	LeadJetPT	d:min[600]
@@ -62,6 +65,15 @@ dijetmtdetahad
 	endcommon
 dijetmtdetahadmf
 	dijetmtdetahad
+	METFilter
+dijetlowmtdetahad
+	dijetlowmt
+	DeltaEta	d:max[1.5]
+	veto
+	MTAK*	d:min[1500]
+	endcommon
+dijetlowmtdetahadmf
+	dijetlowmtdetahad
 	METFilter
 dijetmtdetahadmffull1
 	dijetmtdetahadmf
