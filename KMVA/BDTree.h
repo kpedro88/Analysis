@@ -18,10 +18,12 @@ class DTree {
 	public:
 		DTree() {}
 		virtual ~DTree() {}
-		double decision(const vector<float*>& features) const {
+		inline double decision(const vector<float*>& features) const {
 			int index = 0;
 			do {
-				index = *(features[vindex_[index]]) <= vcut_[index] ? vleft_[index] : vright_[index];
+				auto l = vleft_[index];
+				auto r = vright_[index];
+				index = *(features[vindex_[index]]) <= vcut_[index] ? l : r;
 			} while (index>0);
 			return vres_[-index];
 		}
