@@ -18,12 +18,12 @@ class DTree {
 	public:
 		DTree() {}
 		virtual ~DTree() {}
-		inline double decision(const vector<float*>& features) const {
+		inline double decision(const vector<float>& features) const {
 			int index = 0;
 			do {
 				auto l = vleft_[index];
 				auto r = vright_[index];
-				index = *(features[vindex_[index]]) <= vcut_[index] ? l : r;
+				index = features[vindex_[index]] <= vcut_[index] ? l : r;
 			} while (index>0);
 			return vres_[-index];
 		}
@@ -48,7 +48,7 @@ class BDTree {
 			for(const auto& v : variables.children("Variable")){
 				feature_indices_[v.attribute("Expression").as_string()] = v.attribute("VarIndex").as_int();
 			}
-			features_.resize(feature_indices_.size(),nullptr);
+			features_.resize(feature_indices_.size(),0.);
 
 			//set up trees
 			const auto& weights = method.child("Weights");
@@ -73,9 +73,9 @@ class BDTree {
 		}
 		
 		//accessors
-		void AddVariable(std::string vname, float* var){
+		float* SetVariable(std::string vname){
 			if(feature_indices_.find(vname)==feature_indices_.end()) throw std::runtime_error("Unknown variable: "+vname);
-			features_[feature_indices_[vname]] = var;
+			return &features_[feature_indices_[vname]];
 		}
 		double evaluate(){
 			double sum = 0.;
@@ -128,7 +128,7 @@ class BDTree {
 	
 		std::vector<DTree> trees_;
 		std::unordered_map<std::string,unsigned> feature_indices_;
-		std::vector<float*> features_;
+		std::vector<float> features_;
 };
 
 #endif
