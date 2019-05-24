@@ -146,7 +146,7 @@ void KBDTVar_maxbvsall::CheckDeps() {
 	JetMatch = sel->Get<KJetMatchSelector*>("JetMatch");
 	//if(!JetMatch) depfailed = true;
 }
-void KBDTVar_maxbvsall::Fill(unsigned j) {
+void KBDTVar_maxbvsall::Fill_(unsigned j) {
 	//check for prefilled branch
 	if(!JetMatch and !branch_present){
 		branch_present = looper->fChain->GetBranchStatus(prefilled_branch.c_str()) and looper->fChain->GetBranch(prefilled_branch.c_str());
