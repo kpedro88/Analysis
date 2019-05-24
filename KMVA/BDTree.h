@@ -11,25 +11,23 @@
 #define PUGIXML_HEADER_ONLY
 #include "pugixml.hpp"
 
+//now based on https://github.com/cms-sw/cmssw/blob/master/CondFormats/EgammaObjects/interface/GBRTree.h
 class DTree {
 	public:
-		DTree(double d, unsigned i=0) : left_(nullptr), right_(nullptr), index_(i), cut_(d), isLeaf_(true) {}
+		DTree() {}
 		virtual ~DTree() {}
 		double decision(const vector<float*>& features) const {
-			return isLeaf_ ? cut_ :
-				*(features[index_]) <= cut_ ? left_->decision(features) : right_->decision(features);
+			int index = 0;
+			do {
+				index = *(features[vindex_[index]]) <= vcut_[index] ? vleft_[index] : vright_[index];
+			} while (index>0);
+			return vres_[-index];
 		}
-		void setChildren(DTree* left, DTree* right) {
-			left_ = left;
-			right_ = right;
-			if(left_ and right_) isLeaf_ = false;
-		}
-	protected:
-		DTree* left_;
-		DTree* right_;
-		unsigned index_;
-		double cut_;
-		bool isLeaf_;
+		std::vector<unsigned> vindex_;
+		std::vector<double> vcut_;
+		std::vector<int> vleft_;
+		std::vector<int> vright_;
+		std::vector<double> vres_;
 };
 
 class BDTree {
@@ -50,13 +48,15 @@ class BDTree {
 
 			//set up trees
 			const auto& weights = method.child("Weights");
-			trees_.reserve(weights.attribute("NTrees").as_int());
+			trees_.resize(weights.attribute("NTrees").as_int());
+			unsigned nt = 0;
 			for(const auto& btree : weights.children("BinaryTree")){
 				size_t nc = nChildren(btree,"Node");
 				if(nc!=1) throw std::runtime_error("BinaryTree should have 1 root node, but has "+std::to_string(nc));
 
 				//start parsing from the root
-				trees_.push_back(parseTree(btree.child("Node")));
+				parseTree(btree.child("Node"),trees_[nt]);
+				++nt;
 			}
 		}
 		
@@ -68,7 +68,7 @@ class BDTree {
 		double evaluate(){
 			double sum = 0.;
 			for(auto tree : trees_){
-				sum += tree->decision(features_);
+				sum += tree.decision(features_);
 			}
 			//use dumb convention from TMVA::MethodBDT::GetGradBoostMVA() for consistency
 			return 2.0/(1.0+exp(-2.0*sum))-1;
@@ -80,29 +80,41 @@ class BDTree {
 		size_t nChildren(const pugi::xml_node& node, std::string cname) const {
 			return std::distance(node.children(cname.c_str()).begin(),node.children(cname.c_str()).end());
 		}
-		DTree* parseTree(const pugi::xml_node& node) const {
-			DTree* result = nullptr;
+		bool isLeaf(const pugi::xml_node& node) const {
 			size_t nc = nChildren(node,"Node");
+			return nc==0;
+		}
+		void parseTree(const pugi::xml_node& node, DTree& tree) const {
 			//leaf case
-			if(nc==0){
-				result = new DTree(node.attribute("res").as_double());
+			if(isLeaf(node)){
+				tree.vres_.push_back(node.attribute("res").as_double());
 			}
 			//tree case
 			else {
-				result = new DTree(node.attribute("Cut").as_double(),node.attribute("IVar").as_int());
-				std::array<DTree*,2> children{nullptr,nullptr};
-				//now parse children recursively
-				unsigned cindex = 0;
+				int thisidx = tree.vcut_.size();
+				tree.vindex_.push_back(node.attribute("IVar").as_int());
+				tree.vcut_.push_back(node.attribute("Cut").as_double());
+				tree.vleft_.push_back(0);
+				tree.vright_.push_back(0);
+
+				//get children
+				const pugi::xml_node* left;
+				const pugi::xml_node* right;
 				for(const auto& cnode : node.children("Node")){
-					children[cindex] = parseTree(cnode);
-					++cindex;
+					std::string pos = cnode.attribute("pos").as_string();
+					if(pos.compare("l")==0) left = &cnode;
+					else if(pos.compare("r")==0) right = &cnode;
 				}
-				result->setChildren(children[0],children[1]);
+
+				//now parse children recursively
+				tree.vleft_[thisidx] = isLeaf(*left) ? -tree.vres_.size() : tree.vcut_.size();
+				parseTree(*left,tree);
+				tree.vright_[thisidx] = isLeaf(*right) ? -tree.vres_.size() : tree.vcut_.size();
+				parseTree(*right,tree);
 			}
-			return result;
 		}
 	
-		std::vector<DTree*> trees_;
+		std::vector<DTree> trees_;
 		std::unordered_map<std::string,unsigned> feature_indices_;
 		std::vector<float*> features_;
 };
