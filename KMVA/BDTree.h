@@ -79,7 +79,7 @@ class BDTree {
 		}
 		double evaluate(){
 			double sum = 0.;
-			for(auto tree : trees_){
+			for(const auto& tree : trees_){
 				sum += tree.decision(features_);
 			}
 			//use dumb convention from TMVA::MethodBDT::GetGradBoostMVA() for consistency
