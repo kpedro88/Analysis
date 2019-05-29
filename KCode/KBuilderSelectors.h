@@ -759,30 +759,6 @@ class KPTRangeSelector : public KSelector {
 };
 REGISTER_SELECTOR(PTRange);
 
-
-//avoid unwanted dependency
-double KHisto::GetWeight(){
-	double w = 1.0;
-	if(MCWeight) w = MCWeight->GetWeight();
-	return w;
-}
-double KHisto::GetWeightPerJet(unsigned index){
-	double w = 1.0;
-	//range of flatqty for AK8 jet pt
-	if(MCWeight and MCWeight->flatten and MCWeight->flatqty>KMCWeightSelector::noflatqty and MCWeight->flatqty<=KMCWeightSelector::fourthjetAK8pt) {
-		w *= MCWeight->flattener.GetWeight(looper->JetsAK8->at(index).Pt());
-		if( (MCWeight->flatqty==KMCWeightSelector::leadjetAK8pt and index!=0) or
-			(MCWeight->flatqty==KMCWeightSelector::subleadjetAK8pt and index!=1) or
-			(MCWeight->flatqty==KMCWeightSelector::bothjetAK8pt and (index!=0 and index!=1)) or
-			(MCWeight->flatqty==KMCWeightSelector::thirdjetAK8pt and index!=2) or
-			(MCWeight->flatqty==KMCWeightSelector::fourthjetAK8pt and index!=3) )
-		{
-			cout << "Input error: flattening qty is " << MCWeight->sflatqty << " but jet index is " << index << endl;
-		}
-	}
-	return w;
-}
-
 //----------------------------------------------------
 //selects events based on leading jet pt
 class KLeadJetPtSelector : public KSelector {
@@ -1372,7 +1348,7 @@ class KMTRegressionSelector : public KSelector {
 REGISTER_SELECTOR(MTRegression);
 
 //----------------------------------------------------
-//compute SVJ tags using stored BDT values
+//compute SVJ tags using BDT values
 class KSVJTagSelector : public KSelector {
 	public:
 		enum branches { bdt = 0, ubdt = 1, seltor = 2 };
@@ -1402,10 +1378,14 @@ class KSVJTagSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
+			//reset
 			ntags = 0;
+			JetsAK8_tagged.clear();
 			const auto& SVJTag = ebranch==seltor ? BDT->JetsAK8_bdt : ebranch==bdt ? *looper->JetsAK8_bdtSVJtag : *looper->JetsAK8_ubdtSVJtag;
-			for(unsigned j = 0; j < min(SVJTag.size(),2ul); ++j){
-				if(SVJTag[j] > cut) ++ntags;
+			JetsAK8_tagged.reserve(SVJTag.size());
+			for(unsigned j = 0; j < SVJTag.size(); ++j){
+				JetsAK8_tagged.push_back(SVJTag[j] > cut);
+				if(JetsAK8_tagged.back()) ++ntags;
 			}
 
 			return true;
@@ -1415,13 +1395,45 @@ class KSVJTagSelector : public KSelector {
 		string branch;
 		double cut;
 		unsigned ntags;
+		vector<bool> JetsAK8_tagged;
 		branches ebranch;
 		KBDTSelector* BDT;
+		int filter;
 };
 REGISTER_SELECTOR(SVJTag);
 
 //----------------------------------------------------
-//compute SVJ tags using stored BDT values
+//filter jets based on svj tag for per-jet histos
+class KSVJFilterSelector : public KSelector {
+	public:
+		//constructor
+		KSVJFilterSelector() : KSelector() { }
+		KSVJFilterSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), filter(0), SVJTag(NULL) { 
+			//check for option
+			//1 selects tagged, -1 selects anti-tagged
+			localOpt->Get("filter",filter);
+			canfail = false;
+		}
+		virtual void CheckDeps(){
+			SVJTag = sel->Get<KSVJTagSelector*>("SVJTag");
+			if(!SVJTag) depfailed = true;
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return true;
+		}
+		
+		//member variables
+		int filter;
+		KSVJTagSelector* SVJTag;
+};
+REGISTER_SELECTOR(SVJFilter);
+
+//----------------------------------------------------
+//select number of SVJ tags
 class KNSVJSelector : public KSelector {
 	public:
 		enum branches { bdt = 0, ubdt = 1, seltor = 2 };
@@ -1451,6 +1463,34 @@ class KNSVJSelector : public KSelector {
 		KSVJTagSelector* SVJTag;
 };
 REGISTER_SELECTOR(NSVJ);
+
+//avoid unwanted dependency
+double KHisto::GetWeight(){
+	double w = 1.0;
+	if(MCWeight) w = MCWeight->GetWeight();
+	return w;
+}
+double KHisto::GetWeightPerJet(unsigned index){
+	double w = 1.0;
+	//range of flatqty for AK8 jet pt
+	if(MCWeight and MCWeight->flatten and MCWeight->flatqty>KMCWeightSelector::noflatqty and MCWeight->flatqty<=KMCWeightSelector::fourthjetAK8pt) {
+		w *= MCWeight->flattener.GetWeight(looper->JetsAK8->at(index).Pt());
+		if( (MCWeight->flatqty==KMCWeightSelector::leadjetAK8pt and index!=0) or
+			(MCWeight->flatqty==KMCWeightSelector::subleadjetAK8pt and index!=1) or
+			(MCWeight->flatqty==KMCWeightSelector::bothjetAK8pt and (index!=0 and index!=1)) or
+			(MCWeight->flatqty==KMCWeightSelector::thirdjetAK8pt and index!=2) or
+			(MCWeight->flatqty==KMCWeightSelector::fourthjetAK8pt and index!=3) )
+		{
+			cout << "Input error: flattening qty is " << MCWeight->sflatqty << " but jet index is " << index << endl;
+		}
+	}
+	//requiring svj tag for a jet
+	if(SVJFilter and SVJFilter->filter!=0 and !SVJFilter->FailedDependency()){
+		w *= (SVJFilter->filter==1 and SVJFilter->SVJTag->JetsAK8_tagged[index]) or
+			 (SVJFilter->filter==-1 and !SVJFilter->SVJTag->JetsAK8_tagged[index]);
+	}
+	return w;
+}
 
 //----------------------------------------------------
 //final selector to fill histograms

@@ -46,6 +46,7 @@ class KValue {
 
 //forward declarations
 class KMCWeightSelector;
+class KSVJFilterSelector;
 class KHisto;
 
 //---------------------------------------------------------------
@@ -232,6 +233,7 @@ class KHisto : public KChecker {
 			//in case of special histo, sel might not be defined
 			if(!sel) return;
 			MCWeight = sel->Get<KMCWeightSelector*>("MCWeight");
+			SVJFilter = sel->Get<KSVJFilterSelector*>("SVJFilter");
 		}
 		virtual void CheckBase(){
 			//do not use MCWeight with data
@@ -247,7 +249,7 @@ class KHisto : public KChecker {
 		virtual void CheckBranches() {
 			for(auto filler : fillers){
 				filler->CheckBranches();
-			}			
+			}
 		}
 		
 		//helpers
@@ -294,6 +296,7 @@ class KHisto : public KChecker {
 
 		//member variables needed by fillers
 		KMCWeightSelector* MCWeight;
+		KSVJFilterSelector* SVJFilter;
 		
 	protected:
 		//member variables
