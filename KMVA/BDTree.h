@@ -9,6 +9,7 @@
 #include <iostream>
 #include <cmath>
 #include <exception>
+#include <utility>
 
 #define PUGIXML_HEADER_ONLY
 #include "pugixml.hpp"
@@ -42,7 +43,7 @@ class DTree {
 class BDTree {
 	public:
 		//constructor (xml parsing)
-		BDTree(string xname){
+		BDTree(string xname) : init_(false) {
 			//parse xml
 			pugi::xml_document doc;
 			pugi::xml_parse_result result = doc.load_file(xname.c_str());
@@ -51,7 +52,7 @@ class BDTree {
 			const auto& method = doc.child("MethodSetup");
 			const auto& variables = method.child("Variables");
 			for(const auto& v : variables.children("Variable")){
-				feature_indices_[v.attribute("Expression").as_string()] = v.attribute("VarIndex").as_int();
+				feature_indices_[v.attribute("Expression").as_string()] = std::make_pair(unsigned(v.attribute("VarIndex").as_int()),false);
 			}
 			features_.resize(feature_indices_.size(),0.);
 
@@ -80,9 +81,11 @@ class BDTree {
 		//accessors
 		float* SetVariable(std::string vname){
 			if(feature_indices_.find(vname)==feature_indices_.end()) throw std::runtime_error("Unknown variable: "+vname);
-			return &features_[feature_indices_[vname]];
+			feature_indices_[vname].second = true;
+			return &features_[feature_indices_[vname].first];
 		}
 		double evaluate(){
+			check_init();
 			double sum = 0.;
 			for(const auto& tree : trees_){
 				sum += tree.decision(features_);
@@ -96,6 +99,17 @@ class BDTree {
 		//extend pugixml to get number of children
 		size_t nChildren(const pugi::xml_node& node, std::string cname) const {
 			return std::distance(node.children(cname.c_str()).begin(),node.children(cname.c_str()).end());
+		}
+		void check_init() {
+			if(init_) return;
+			std::string uninit;
+			for(const auto& feature : feature_indices_){
+				if(!feature.second.second) uninit += feature.first+",";
+			}
+			if(!uninit.empty()){
+				throw runtime_error("Unset variable(s): "+uninit);
+			}
+			init_ = true;
 		}
 		bool isLeaf(const pugi::xml_node& node) const {
 			size_t nc = nChildren(node,"Node");
@@ -127,9 +141,10 @@ class BDTree {
 				parseTree(right,tree);
 			}
 		}
-	
+
+		bool init_;
 		std::vector<DTree> trees_;
-		std::unordered_map<std::string,unsigned> feature_indices_;
+		std::unordered_map<std::string,std::pair<unsigned,bool>> feature_indices_;
 		std::vector<float> features_;
 };
 
