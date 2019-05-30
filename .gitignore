@@ -73,6 +73,9 @@ input/fast*/
 /runTrig.sh
 /sigAcc.py
 /splitRegionsSVJ.py
+/getBkgYields.py
+/runSVJ.sh
+/runLimits.sh
 
 # linked by setupXML.sh
 /KMVA/pugi*.*
