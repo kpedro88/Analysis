@@ -32,7 +32,7 @@ MODES_ALL=(
 	mt \
 )
 MODES=()
-INDIR=/uscmst1b_scratch/lpc1/3DayLifetime/pedrok/bdt/trainings_${CONFIG}
+INDIR=/uscmst1b_scratch/lpc1/3DayLifetime/pedrok/bdt
 
 #check arguments
 while getopts "C:m:" opt; do
@@ -50,7 +50,7 @@ for CONFIG in ${CONFIGS[@]}; do
 	for x in TMVA_bdt_weights.xml TMVA_ubdt_weights.xml; do
 		OUTFILE=test/${CONFIG}_${x}
 		if ! [ -f "$OUTFILE" ]; then
-			cp ${INDIR}/${x} $OUTFILE
+			cp ${INDIR}/trainings_${CONFIG}/${x} $OUTFILE
 		fi
 	done
 
