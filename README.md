@@ -57,7 +57,7 @@ To submit jobs to Condor (add the flag `-k` to reuse the existing CMSSW tarball)
 ```
 cd batch
 ./SKsub.sh -t MC,Signal,Data -y 2016,2017,2018
-./SKsub.sh -t Fast -y 2016,2017
+./SKsub.sh -t Fast -y 2016,2017,2018
 ```
 Note: the command with the argument `-t Fast` should only be run after the scanning step, below, is completed.
 
@@ -85,6 +85,7 @@ To make the input lists (.txt and .sh) of FastSim samples automatically:
 ```
 python makeScanInput.py -d Summer16v3Fast -r input/dict_scan_2016.py -w input/input_sets_scan_2016.txt -e batch/exportScan2016.sh -y 2016 -n 10
 python makeScanInput.py -d Fall17Fast -r input/dict_scan_2017.py -w input/input_sets_scan_2017.txt -e batch/exportScan2017.sh -y 2017 -n 10
+python makeScanInput.py -d Autumn18Fast -r input/dict_scan_2018.py -w input/input_sets_scan_2018.txt -e batch/exportScan2018.sh -y 2018 -n 10
 ```
 The last argument splits the scan input list into multiple blocks (each containing `n` ntuple files) for batch submission.  
 Note: as above, this script uses the python file lists in [TreeMaker/Production/python](https://github.com/TreeMaker/TreeMaker/tree/Run2/Production/python).
@@ -92,23 +93,23 @@ Note: as above, this script uses the python file lists in [TreeMaker/Production/
 To submit jobs to Condor:
 ```
 cd batch
-./SCsub.sh -y 2016,2017
+./SCsub.sh -y 2016,2017,2018
 ```
 
 After the jobs finish, the split output files should be combined (in batch mode due to the typically large number of hadd operations necessary):
 ```
 ./HSsub.sh -g "_block[0-9]*_MC2016" -S "MC2016_fast" -r
 ./HSsub.sh -g "_block[0-9]*_MC2017" -S "MC2017_fast" -r
+./HSsub.sh -g "_block[0-9]*_MC2018" -S "MC2018_fast" -r
 ```
 
 To make the input lists of model points automatically for skimming, plotting, and datacards, after the scan jobs are finished and combined:
 ```
 python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV17/scan/ -m MC2016 -s input/input_sets_skim_fast_2016.txt -c input/input_sets_DC_fast_2016.txt -e batch/exportSkimFast2016.sh
 python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV17/scan/ -m MC2017 -s input/input_sets_skim_fast_2017.txt -c input/input_sets_DC_fast_2017.txt -e batch/exportSkimFast2017.sh
-python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV17/scan/ -m MC2017 -y MC2018 -s input/input_sets_skim_fast_2018.txt -c input/input_sets_DC_fast_2018.txt -e batch/exportSkimFast2018.sh
-python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV17/scan/ -m MC2017 -y MC2018HEM -s input/input_sets_skim_fast_2018HEM.txt -c input/input_sets_DC_fast_2018HEM.txt -e batch/exportSkimFast2018HEM.sh
+python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV17/scan/ -m MC2018 -y MC2018 -s input/input_sets_skim_fast_2018.txt -c input/input_sets_DC_fast_2018.txt -e batch/exportSkimFast2018.sh
+python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV17/scan/ -m MC2018 -y MC2018HEM -s input/input_sets_skim_fast_2018HEM.txt -c input/input_sets_DC_fast_2018HEM.txt -e batch/exportSkimFast2018HEM.sh
 ```
-Currently, the 2017 FastSim scans and skims are reused for 2018, with separate entries for the run periods with or without the HEM problem.
 
 <a name="combined"></a>A separate script is available to create a "combined" model by adding together multiple signal models with different weights.
 This script creates input lists for plotting and datacards (the existing skims are re-used).

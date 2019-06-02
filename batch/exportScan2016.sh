@@ -204,6 +204,8 @@ T2bb_MC2016_block30 \
 T2bb_MC2016_block31 \
 T2bb_MC2016_block32 \
 T2bb_MC2016_block33 \
+T2bb_mSbot-1275to2225_dM-25to150_MC2016_block0 \
+T2bb_mSbot-1275to2225_dM-25to150_MC2016_block1 \
 T2bb_mSbot-1650to2600_MC2016_block0 \
 T2bb_mSbot-1650to2600_MC2016_block1 \
 T2bb_mSbot-1650to2600_MC2016_block2 \
