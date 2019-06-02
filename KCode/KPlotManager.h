@@ -522,6 +522,14 @@ class KPlotManager : public KManager {
 					for(unsigned r = 0; r < MyRatios.size(); ++r){
 						MyRatios[r]->Build();
 						MyRatios[r]->Draw(pad2);
+
+						//save histos in root file if requested
+						if(out_file){
+							out_file->cd();
+							string oname = p.first + "_" + MyRatios[r]->GetName();
+							MyRatios[r]->GetHisto()->SetName(oname.c_str());
+							MyRatios[r]->GetHisto()->Write(oname.c_str());
+						}
 					}
 					p.second->DrawLine();
 				}
