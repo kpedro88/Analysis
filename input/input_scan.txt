@@ -15,3 +15,4 @@ bool:hadd[1]
 INPUT
 input/input_sets_scan_2016.txt
 input/input_sets_scan_2017.txt
+input/input_sets_scan_2018.txt
