@@ -261,6 +261,15 @@ class KFiller_nisotrack : public KFiller {
 };
 REGISTER_FILLER(nisotrack);
 
+//rho (energy per area)
+class KFiller_rho : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void ListBranches() { branches = {"fixedGridRhoFastjetAll"}; }
+		virtual void Fill(KValue& value, double w) { value.Fill(looper->fixedGridRhoFastjetAll,w); }
+};
+REGISTER_FILLER(rho);
+
 //# good vertices
 class KFiller_nvertex : public KFiller {
 	public:

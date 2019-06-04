@@ -105,6 +105,56 @@ class KMCWeightSelector : public KSelector {
 					}
 				}
 			}
+
+			//update existing PU correction using data ratio
+			//only necessary because of 2017 wrong PU MC
+			puupdcorr = localOpt->Get("puupdcorr",false);
+			puupdunc = 0; localOpt->Get("puupdunc",puupdunc);
+			puupdhist = NULL;
+			puupdhistUp = NULL;
+			puupdhistDown = NULL;
+			if(puupdcorr){
+				string puname1; localOpt->Get("puname1",puname1);
+				string puname2; localOpt->Get("puname2",puname2);
+				HistoMap* hmtmp = puhistMap().Get(puname1+puname2);
+				if(puname1.empty() or puname2.empty()){
+					cout << "Input error: expected pileup weight file not specified!" << endl;
+				}
+				else if(hmtmp){
+					puupdhist = hmtmp->Get("puupdhist");
+					puupdhistUp = hmtmp->Get("puupdhistUp");
+					puupdhistDown = hmtmp->Get("puupdhistDown");
+				}
+				else {
+					TFile* pufile2 = TFile::Open(puname2.c_str(),"READ");
+					if(pufile2){
+						hmtmp = new HistoMap();
+						puupdhist = (TH1*)pufile2->Get("data_pu_central"); puupdhist->SetDirectory(0);
+						puupdhistUp = (TH1*)pufile2->Get("data_pu_up"); puupdhistUp->SetDirectory(0);
+						puupdhistDown = (TH1*)pufile2->Get("data_pu_down"); puupdhistDown->SetDirectory(0);
+						pufile2->Close();
+
+						TFile* pufile1 = TFile::Open(puname2.c_str(),"READ");
+						if(pufile1){
+							//correct puWeight branch (data1/mc) by data2/data1 to get data2/mc
+							puupdhist->Divide((TH1*)pufile1->Get("data_pu_central"));
+							puupdhistUp->Divide((TH1*)pufile1->Get("data_pu_up"));
+							puupdhistDown->Divide((TH1*)pufile1->Get("data_pu_down"));
+							pufile1->Close();
+
+							hmtmp->Add("puupdhist",puupdhist);
+							hmtmp->Add("puupdhistUp",puupdhistUp);
+							hmtmp->Add("puupdhistDown",puupdhistDown);
+						}
+						else {
+							cout << "Input error: could not open pileup weight file " << puname1 << "." << endl;
+						}
+					}
+					else {
+						cout << "Input error: could not open pileup weight file " << puname2 << "." << endl;
+					}
+				}
+			}
 			
 			//alternative PU option - acceptance uncertainty
 			puacccorr = localOpt->Get("puacccorr",false);
@@ -477,6 +527,11 @@ class KMCWeightSelector : public KSelector {
 				else if(puunc==-1) looper->fChain->SetBranchStatus("puSysDown",1);
 				else looper->fChain->SetBranchStatus("puWeight",1);
 			}
+			if(puupdcorr){
+				if(puupdunc==1) looper->fChain->SetBranchStatus("puSysUp",1);
+				else if(puupdunc==-1) looper->fChain->SetBranchStatus("puSysDown",1);
+				else looper->fChain->SetBranchStatus("puWeight",1);
+			}
 			if(isrcorr){
 				looper->fChain->SetBranchStatus("NJetsISR",1);
 			}
@@ -512,6 +567,9 @@ class KMCWeightSelector : public KSelector {
 				looper->fChain->SetBranchStatus("Muons_passIso",1);
 			}
 		}
+		double GetBinContentBounded(TH1* hist, double val){
+			return hist->GetBinContent(hist->GetXaxis()->FindBin(min(val,hist->GetBinLowEdge(hist->GetNbinsX()+1))));
+		}
 		double GetWeight(){
 			double w = 1.;
 			if(unweighted) return w;
@@ -520,15 +578,15 @@ class KMCWeightSelector : public KSelector {
 			
 			if(pucorr) {
 				//use TreeMaker weights if no histo provided
-				if(puunc==1){
-					w *= puhistUp ? puhistUp->GetBinContent(puhistUp->GetXaxis()->FindBin(min(looper->TrueNumInteractions,puhistUp->GetBinLowEdge(puhistUp->GetNbinsX()+1)))) : looper->puSysUp;
-				}
-				else if(puunc==-1){
-					w *= puhistDown ? puhistDown->GetBinContent(puhistDown->GetXaxis()->FindBin(min(looper->TrueNumInteractions,puhistDown->GetBinLowEdge(puhistDown->GetNbinsX()+1)))) : looper->puSysDown;
-				}
-				else {
-					w *= puhist ? puhist->GetBinContent(puhist->GetXaxis()->FindBin(min(looper->TrueNumInteractions,puhist->GetBinLowEdge(puhist->GetNbinsX()+1)))) : looper->puWeight;
-				}
+				if(puunc==1) w *= puhistUp ? GetBinContentBounded(puhistUp,looper->TrueNumInteractions) : looper->puSysUp;
+				else if(puunc==-1) w *= puhistDown ? GetBinContentBounded(puhistDown,looper->TrueNumInteractions) : looper->puSysDown;
+				else w *= puhist ? GetBinContentBounded(puhist,looper->TrueNumInteractions) : looper->puWeight;
+			}
+
+			if(puupdcorr){
+				if(puupdunc==1) w *= (puupdhistUp ? GetBinContentBounded(puupdhistUp,looper->TrueNumInteractions) : 1.0) * looper->puSysUp;
+				else if(puupdunc==-1) w *= (puupdhistDown ? GetBinContentBounded(puupdhistDown,looper->TrueNumInteractions) : 1.0) * looper->puSysDown;
+				else w *= (puupdhist ? GetBinContentBounded(puupdhist,looper->TrueNumInteractions) : 1.0) * looper->puWeight;
 			}
 			
 			if(puacccorr){
@@ -698,11 +756,12 @@ class KMCWeightSelector : public KSelector {
 		KNormTypeSelector* NormType;
 		bool internalNormType;
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, useKFactor, debugWeight, didDebugWeight;
-		bool pucorr, trigcorr, trigsystcorr, isrcorr, useisrflat, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr, hemvetocorr, lepcorr;
+		bool pucorr, puupdcorr, trigcorr, trigsystcorr, isrcorr, useisrflat, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr, hemvetocorr, lepcorr;
 		double jetidcorrval, isotrackcorrval, trigsystcorrval, lumicorrval, isrflat;
-		int puunc, pdfunc, isrunc, scaleunc, trigunc, trigyear, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc, prefireunc, hemvetounc, lepidunc, lepisounc, leptrkunc;
+		int puunc, puupdunc, pdfunc, isrunc, scaleunc, trigunc, trigyear, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc, prefireunc, hemvetounc, lepidunc, lepisounc, leptrkunc;
 		vector<int> mother;
 		TH1 *puhist, *puhistUp, *puhistDown;
+		TH1 *puupdhist, *puupdhistUp, *puupdhistDown;
 		vector<double> pdfnorms;
 		int nEventProc;
 		double xsection, norm, kfactor;

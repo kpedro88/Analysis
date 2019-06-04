@@ -1,0 +1,66 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+#root -l 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV17/tree_GJet_CleanVars",{"input/input_putest_2018_69p2mb.txt","input/input_nvtx_GJets_2018.txt"},{},1)'
+
+
+INPUT
+input/input_global.txt
+
+OPTION
+vstring:printformat[png]
+double:luminorm[59600]
+string:luminormunit[fbinv]
+bool:printyield[1]
+int:yieldprecision[2]
+bool:plotoverflow[1]
+vstring:disable_branches[*]
+int:npanel[1]
+vstring:denoms[mc]
+vstring:numers[EGamma]
+string:yieldref[EGamma]
+#bool:debugcut[1]
+bool:appendsel[0]
+double:ratiomin[0.0]
+double:ratiomax[2.0]
+bool:useTreeWeight[1]
+
+SELECTION
+seldata
+#	HLT	vs:HLTLines[HLT_PFHT350_PFMET100_JetIdCleaned_v]
+	METFilter	b:onlydata[1]
+	RA2Bin	vstring:RA2VarNames[MHT]	vfloat:RA2Var0Min[300]	vfloat:RA2Var0Max[9999]	vuint:RA2Var0Bins[0]
+	Histo
+selmc
+	MCWeightPU
+	seldata
+
+HISTO
+nvertex	i:xnum[101]	d:xmin[-0.5]	d:xmax[100.5]	s:xtitle[number of vertices]	s:ytitle[number of events]	b:yieldnorm[1]
+rho	i:xnum[81]	d:xmin[-0.5]	d:xmax[80.5]	s:xtitle[rho]	s:ytitle[number of events]	b:yieldnorm[1]
+
+SET
+hist	data	EGamma	c:color[kBlack]	vs:selections[seldata]
+	base	data	EGamma_2018A	s:filename[tree_EGamma_2018A.root]	b:data[1]
+	base	data	EGamma_2018B	s:filename[tree_EGamma_2018B.root]	b:data[1]
+	base	data	EGamma_2018C	s:filename[tree_EGamma_2018C.root]	b:data[1]
+	base	data	EGamma_2018D	s:filename[tree_EGamma_2018D.root]	b:data[1]
+stack	mc	mc	c:color[kWhite]	i:panel[1]	vs:selections[selmc]
+	hist	mc	gjets	s:legname[#gamma+jets]	c:color[kRed + 1]
+		base	mc	GJets_HT-100to200	s:filename[tree_GJets_HT-100to200_MC2018.root]
+		base	mc	GJets_HT-200to400	s:filename[tree_GJets_HT-200to400_MC2018.root]
+		base	mc	GJets_HT-400to600	s:filename[tree_GJets_HT-400to600_MC2018.root]
+		base	mc	GJets_HT-600toInf	s:filename[tree_GJets_HT-600toInf_MC2018.root]
+	hist	mc	QCD	s:legname[QCD]	c:color[kBlue + 1]
+		base	mc	QCD_HT-200to300	s:filename[tree_QCD_HT-200to300_MC2018.root]
+		base	mc	QCD_HT-300to500	s:filename[tree_QCD_HT-300to500_MC2018.root]
+		base	mc	QCD_HT-500to700	s:filename[tree_QCD_HT-500to700_MC2018.root]
+		base	mc	QCD_HT-700to1000	s:filename[tree_QCD_HT-700to1000_MC2018.root]
+		base	mc	QCD_HT-1000to1500	s:filename[tree_QCD_HT-1000to1500_MC2018.root]
+		base	mc	QCD_HT-1500to2000	s:filename[tree_QCD_HT-1500to2000_MC2018.root]
+		base	mc	QCD_HT-2000toInf	s:filename[tree_QCD_HT-2000toInf_MC2018.root]
