@@ -57,7 +57,7 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	else if(setname.find("MC2016")!=string::npos) selection = "input/input_selection_syst_2016.txt";
 	else throw runtime_error("Could not determine year for setname: "+setname);
 	
-	//process variaton types - comma-separated input, need to be run separately
+	//process variation types - comma-separated input, need to be run separately
 	vector<string> vars;
 	KParser::process(varTypes,',',vars);
 	
@@ -86,12 +86,16 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 
 	//do the full variations separately
 	//produce a selection for each variation on the fly, cloned from nominal
+	vector<string> leptonsigs = {"T1tttt","T2tt","T5qqqqVV"};
+	bool islepton = leptonsigs.end()!=find_if(leptonsigs.begin(),leptonsigs.end(),[&](const string& s){return setname.find(s)!=string::npos;});
 	for(auto& ivar : vars){
 		string selection_base = "nominal";
 		//change region
 		string region_ = region + "_"+ivar;
 		//hack for signal contamination
 		if(ivar=="SLe" or ivar=="SLm" or ivar=="SLe_genMHT" or ivar=="SLm_genMHT") {
+			//skip for non-lepton signals
+			if(!islepton) continue;
 			selection_base = "singlelep";
 			region_ = ivar;
 			//terrible hack
