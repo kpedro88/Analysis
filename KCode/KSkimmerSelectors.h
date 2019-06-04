@@ -41,6 +41,12 @@ using namespace std;
 void KRA2BinSelector::CheckDeps(){
 }
 void KRA2BinSelector::CheckBase(){
+	//check fastsim
+	if(base->GetLocalOpt()->Get("fastsim",false) and tightfast){
+		//veto fastsim events not in any signal bin
+		dotightfast = true;
+		canfail = true;
+	}
 }
 double KHisto::GetWeight(){
 	return 1.;

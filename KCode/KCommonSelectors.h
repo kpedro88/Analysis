@@ -1050,7 +1050,7 @@ class KRA2BinSelector : public KSelector {
 	public:
 		//constructor
 		KRA2BinSelector() : KSelector() { }
-		KRA2BinSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), RA2Exclusive(true), DoBTagSF(false), bqty(-1), debug(0), MCWeight(0) { 
+		KRA2BinSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), RA2Exclusive(true), DoBTagSF(false), bqty(-1), debug(0), MCWeight(0), tightfast(false), dotightfast(false) { 
 			//assemble member vars from user input
 			localOpt->Get("RA2VarNames",RA2VarNames);
 			
@@ -1095,6 +1095,7 @@ class KRA2BinSelector : public KSelector {
 			
 			//check other options
 			RA2Exclusive = localOpt->Get("RA2Exclusive",true);
+			tightfast = localOpt->Get("tightfast",false);
 			localOpt->Get("RA2debug",debug);
 			if(forceadd and not depfailed) canfail = false;
 		}
@@ -1166,7 +1167,8 @@ class KRA2BinSelector : public KSelector {
 				}
 				
 				//passthrough
-				return true;
+				if(!dotightfast) return true;
+				else return RA2binstmp.size()!=0;
 			}
 			else {
 				RA2bins = GetBinNumbers(RA2binVec);
@@ -1299,6 +1301,7 @@ class KRA2BinSelector : public KSelector {
 		KMCWeightSelector* MCWeight;
 		unsigned RA2binBranch;
 		vector<unsigned> RA2binsBranch;
+		bool tightfast, dotightfast;
 };
 REGISTER_SELECTOR(RA2Bin);
 
