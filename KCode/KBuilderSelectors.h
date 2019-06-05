@@ -134,7 +134,7 @@ class KMCWeightSelector : public KSelector {
 						puupdhistDown = (TH1*)pufile2->Get("data_pu_down"); puupdhistDown->SetDirectory(0);
 						pufile2->Close();
 
-						TFile* pufile1 = TFile::Open(puname2.c_str(),"READ");
+						TFile* pufile1 = TFile::Open(puname1.c_str(),"READ");
 						if(pufile1){
 							//correct puWeight branch (data1/mc) by data2/data1 to get data2/mc
 							puupdhist->Divide((TH1*)pufile1->Get("data_pu_central"));
@@ -528,6 +528,7 @@ class KMCWeightSelector : public KSelector {
 				else looper->fChain->SetBranchStatus("puWeight",1);
 			}
 			if(puupdcorr){
+				looper->fChain->SetBranchStatus("TrueNumInteractions",1);
 				if(puupdunc==1) looper->fChain->SetBranchStatus("puSysUp",1);
 				else if(puupdunc==-1) looper->fChain->SetBranchStatus("puSysDown",1);
 				else looper->fChain->SetBranchStatus("puWeight",1);
