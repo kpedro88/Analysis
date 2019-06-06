@@ -245,7 +245,6 @@ class KMCWeightSelector : public KSelector {
 			flatten = localOpt->Get("flatten",false);
 			if(flatten){
 				flatqty = noflatqty;
-				TH1* flathist = NULL;
 				string flatname; localOpt->Get("flatname",flatname);
 				TFile* flatfile = TFile::Open(flatname.c_str(),"READ");
 				if(flatfile){
@@ -253,8 +252,20 @@ class KMCWeightSelector : public KSelector {
 					string flatsuff;
 					if(!base->GetLocalOpt()->Get("flatsuff",flatsuff)) flatsuff = base->GetName();
 					string flatdist = sflatqty + "_" + flatsuff;
-					flathist = (TH1*)flatfile->Get(flatdist.c_str());
-					flattener.SetDist(flathist);
+					TH1* flathist = NULL;
+					flathist = (TH1*)flatfile->Get(flatdist.c_str()); flathist->SetDirectory(0);
+
+					//optional numer
+					string flatnumer; localOpt->Get("flatnumer",flatnumer);
+					TH1* flatnumerhist = NULL;
+					if(!flatnumer.empty()) {
+						string flatnumerdist = sflatqty + "_" + flatnumer;
+						flatnumerhist = (TH1*)flatfile->Get(flatnumerdist.c_str());
+						flatnumerhist->SetDirectory(0);
+					}
+
+					flatfile->Close();
+					flattener.SetDist(flathist,flatnumerhist);
 					
 					//get enum for flatqty
 					if(sflatqty=="leadjetAK8pt") flatqty = leadjetAK8pt;
