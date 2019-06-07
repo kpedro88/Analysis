@@ -5,7 +5,7 @@ string:trigeff[hPassMhtMet6packVsHTFromSingleEl_effRun2017]
 bool:trigsystcorr[1]
 vdouble:trigsystcorrvals[0.98,1.0,1.02]
 bool:pucorr[1]
-string:puname[corrections/PileupHistograms_0328_63mb_pm5.root]
+string:puname[corrections/PileupHistograms_2017_69mb_pm5.root]
 #flat for 2017
 bool:isrcorr[1]
 #double:isrflat[0.10]
