@@ -42,7 +42,7 @@ def printSigFigs(num,fig,maxdec):
         if set(result.replace('.',''))==set([0]): return "0.0"
         else: return result
 
-def findMinMax(fname,dir,exclude,cut,output):
+def findMinMax(fname,dir,exclude,include,cut,output):
     model = getModel(fname)
     if not model in output.keys():
         output[model] = {}
@@ -56,8 +56,10 @@ def findMinMax(fname,dir,exclude,cut,output):
     branches = [x.GetName() for x in list(tree.GetListOfBranches())]
     branches.append("total")
     # everything else is a systematic
-    for excl in exclude:
-        if excl in branches: branches.remove(excl)
+    if len(include)>0:
+		branches = [b for b in branches if b in include]
+    else:
+		branches = [b for b in branches if not b in exclude]
     quadsum = "sqrt("
     for branch in branches:
         qty = branch
@@ -90,6 +92,7 @@ if __name__ == "__main__":
     parser = OptionParser()
     parser.add_option("-d", "--dir", dest="dir", default="/store/user/pedrok/SUSY2015/Analysis/Datacards/Run2ProductionV12", help="directory (LFN) of systematics files (default = %default)")
     parser.add_option("-k", "--skip", dest="skip", default=[], type="string", action="callback", callback=list_callback, help="comma-separated list of models to skip (default = %default)")
+    parser.add_option("-n", "--include", dest="include", default=[], type="string", action="callback", callback=list_callback, help="comma-separated list of systematics to include in calculations (empty = all) (default = %default)")
     parser.add_option("-x", "--exclude", dest="exclude", default=["contam"], type="string", action="callback", callback=list_callback, help="comma-separated list of systematics to exclude from calculations (default = %default)")
     parser.add_option("-m", "--minimum", dest="minimum", default=0.01, help="minimum value to display, smaller values rounded to 0 (default = %default)")
     parser.add_option("-g", "--grep", dest="grep", default="", help="select only models matching this string (default = %default)")
@@ -105,8 +108,12 @@ if __name__ == "__main__":
     
     from ROOT import *
     
-    options.exclude.insert(0,"mLSP")
-    options.exclude.insert(0,"mMother")
+    if len(options.exclude)==1 and options.exclude[0]=='': options.exclude = []
+    if len(options.exclude)>0 and len(options.include)>0: parser.error("include and exclude can't be used together")
+
+    if len(options.include)==0:
+        options.exclude.insert(0,"mLSP")
+        options.exclude.insert(0,"mMother")
     output = {}
     models = []
     
@@ -116,7 +123,7 @@ if __name__ == "__main__":
         if model in options.skip: continue
         models.append(model)
     
-        findMinMax(file,options.dir,options.exclude,options.cut,output)
+        findMinMax(file,options.dir,options.exclude,options.include,options.cut,output)
 
     # transpose output (syst = rows, model = columns)
     output2 = {}
