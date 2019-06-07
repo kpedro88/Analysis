@@ -76,6 +76,8 @@ input/fast*/
 /getBkgYields.py
 /runSVJ.sh
 /runLimits.sh
+/makePuInputs.py
+/runPU.sh
 
 # linked by setupXML.sh
 /KMVA/pugi*.*
