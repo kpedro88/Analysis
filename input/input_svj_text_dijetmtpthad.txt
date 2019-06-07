@@ -1,3 +1,0 @@
-OPTION
-string+:printsuffix[_dijetmtpthad]
-vstring:extra_text[p_{T}(j_{1}) > 600 GeV]

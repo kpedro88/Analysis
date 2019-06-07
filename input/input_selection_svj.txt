@@ -43,21 +43,9 @@ dijetmt
 dijetlowmt
 	dijet
 	METMTRatio	d:min[0.10]	d:max[0.15]
-dijetmtpt
-	dijetmt
-	LeadJetPT	d:min[600]
 dijetmtdeta
 	dijetmt
 	DeltaEta	d:max[1.5]
-dijetmjj
-	dijet
-	MJJAK8	d:min[1000]	d:max[-1]
-dijetmthad
-	dijetmt
-	veto
-dijetmtpthad
-	dijetmtpt
-	veto
 dijetmtdetahad
 	dijetmtdeta
 	veto
@@ -75,13 +63,6 @@ dijetlowmtdetahad
 dijetlowmtdetahadmf
 	dijetlowmtdetahad
 	METFilter
-dijetmtdetahadmffull1
-	dijetmtdetahadmf
-	METMTRatio	s:name[METMTRatioFull]	d:min[0.25]
-	DeltaPhiMinAK8	d:max[0.75]
-theory
-	DijetAK4	i:njet[2]	b:id[0]	d:pt[100]	d:eta[2.4]
-	MET	d:min[200]
 dijetmtmutrig
 	dijetmt
 	MuonTrigger	d:pTmin[50]
