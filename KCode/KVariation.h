@@ -203,17 +203,26 @@ class KVariator : public KChecker {
 		KVariator(string name_, OptionMap* localOpt_) : KChecker(name_, localOpt_) {}
 		//destructor
 		virtual ~KVariator(){
-			for(auto& branch : branches){
+			for(auto& branch : linkbranches){
 				delete branch;
 			}
 		}
 		//functions
 		virtual void DoVariation() {}
 		virtual void UndoVariation() {}
+		//different behavior from usual checker
+		virtual void CheckBranches() {
+			ListBranches();
+			for(auto& branch: linkbranches){
+				branch->Enable(looper->fChain,1);
+				branch->Check(looper->fChain);
+			}
+			looper->EnableBranches(branches);
+		}
 		
 	protected:
 		//member variables
-		vector<KLinkedBranchBase*> branches; //in case used
+		vector<KLinkedBranchBase*> linkbranches; //in case used
 };
 typedef KFactory<KVariator,string,OptionMap*> KVariatorFactory;
 #define REGISTER_VARIATOR(a) REGISTER_MACRO2(KVariatorFactory,K##a##Variator,a)

@@ -30,9 +30,9 @@ class KCleanVariator : public KVariator {
 		{
 			//check options
 		}
-		virtual void CheckBranches(){
+		virtual void ListBranches(){
 			//set up linked branches for clean variation
-			branches = {
+			linkbranches = {
 				new KLinkedBranchI(KBranchI(&looper->BTags,"BTags"),KBranchI(&looper->BTagsclean,"BTagsclean")),
 				new KLinkedBranchI(KBranchI(&looper->BTagsDeepCSV,"BTagsDeepCSV"),KBranchI(&looper->BTagsDeepCSVclean,"BTagsDeepCSVclean")),
 				new KLinkedBranchD(KBranchD(&looper->DeltaPhi1,"DeltaPhi1"),KBranchD(&looper->DeltaPhi1clean,"DeltaPhi1clean")),
@@ -98,18 +98,12 @@ class KCleanVariator : public KVariator {
 				new KLinkedBranchI(KBranchI(&looper->NJets,"NJets"),KBranchI(&looper->NJetsclean,"NJetsclean")),
 				new KLinkedBranchI(KBranchI(&looper->NJetsISR,"NJetsISR"),KBranchI(&looper->NJetsISRclean,"NJetsISRclean"))
 			};
-			
-			for(auto& branch : branches){
-				//enable varied branches which might be disabled by default
-				branch->Enable(looper->fChain,1);
-				branch->Check(looper->fChain);
-			}
 		}
 		//functions
 		virtual void DoVariation() {
 			//special case: if Jetsclean is empty, no reclustering was done (nothing removed from event), don't bother varying
 			if(looper->Jetsclean->size()==0) return;
-			for(auto& branch : branches){
+			for(auto& branch : linkbranches){
 				//store original values
 				branch->Store();
 				//set to variation
@@ -120,7 +114,7 @@ class KCleanVariator : public KVariator {
 			//special case: if Jetsclean is empty, no reclustering was done (nothing removed from event), don't bother restoring
 			if(looper->Jetsclean->size()==0) return;
 			//restore original values
-			for(auto& branch : branches){
+			for(auto& branch : linkbranches){
 				branch->Restore();
 			}
 		}
@@ -148,9 +142,9 @@ class KJetVariator : public KVariator {
 		~KJetVariator() {
 			delete Jets;
 		}
-		virtual void CheckBranches(){
+		virtual void ListBranches(){
 			//set up linked branches for all variations
-			branches = {
+			linkbranches = {
 				//4-vector modified "by hand"
 				new KLinkedBranchVL(KBranchVL(&looper->Jets,"Jets"),KBranchVL(&Jets)),
 				//scalars get replaced
@@ -289,22 +283,16 @@ class KJetVariator : public KVariator {
 				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_zhDiscriminatorDeepDecorrel,"JetsAK8_zhDiscriminatorDeepDecorrel"),orderAK8),
 			};
 			
-			for(auto& branch : branches){
-				//enable varied branches which might be disabled by default
-				branch->Enable(looper->fChain,1);
-				branch->Check(looper->fChain);
-			}
-			
 			//used for calculations
-			vector<string> unc_branches = {
+			branches = {
 				"Jets_origIndex",
 				"Jets_jerFactor",
 				"JetsAK8_origIndex",
 				"JetsAK8_jerFactor",
 			};
 			if(vtype==JECup) {
-				unc_branches.insert(
-					unc_branches.end(), {
+				branches.insert(
+					branches.end(), {
 						"JetsJECup_origIndex",
 						"JetsJECup_jerFactor",
 						"Jets_jecUnc",
@@ -317,8 +305,8 @@ class KJetVariator : public KVariator {
 				);
 			}
 			else if(vtype==JECdown) {
-				unc_branches.insert(
-					unc_branches.end(), {
+				branches.insert(
+					branches.end(), {
 						"JetsJECdown_origIndex",
 						"JetsJECdown_jerFactor",
 						"Jets_jecUnc",
@@ -331,8 +319,8 @@ class KJetVariator : public KVariator {
 				);
 			}
 			else if(vtype==JERup) {
-				unc_branches.insert(
-					unc_branches.end(), {
+				branches.insert(
+					branches.end(), {
 						"JetsJERup_origIndex",
 						"Jets_jerFactorUp",
 						"JetsAK8JERup_origIndex",
@@ -343,8 +331,8 @@ class KJetVariator : public KVariator {
 				);
 			}
 			else if(vtype==JERdown) {
-				unc_branches.insert(
-					unc_branches.end(), {
+				branches.insert(
+					branches.end(), {
 						"JetsJERdown_origIndex",
 						"Jets_jerFactorDown",
 						"JetsAK8JERdown_origIndex",
@@ -354,15 +342,10 @@ class KJetVariator : public KVariator {
 					}
 				);
 			}
-			
-			for(auto& branch : unc_branches){
-				//enable unc branches which might be disabled by default
-				looper->fChain->SetBranchStatus(branch.c_str(),1);
-			}
 		}
 		//functions
 		virtual void DoVariation() {
-			for(auto& branch : branches){
+			for(auto& branch : linkbranches){
 				//store original values
 				branch->Store();
 			}
@@ -418,7 +401,7 @@ class KJetVariator : public KVariator {
 				//skipping Mmc for now
 			}
 
-			for(auto& branch : branches){
+			for(auto& branch : linkbranches){
 				//set to variation
 				branch->Vary();
 			}
@@ -453,7 +436,7 @@ class KJetVariator : public KVariator {
 		}
 		virtual void UndoVariation() {
 			//restore original values
-			for(auto& branch : branches){
+			for(auto& branch : linkbranches){
 				branch->Restore();
 			}
 		}
@@ -495,18 +478,14 @@ class KGenMHTVariator : public KVariator {
 		//constructor
 		KGenMHTVariator() : KVariator() { }
 		KGenMHTVariator(string name_, OptionMap* localOpt_) : KVariator(name_,localOpt_) { }
-		virtual void CheckBranches(){
-			branches = {
+		virtual void ListBranches(){
+			linkbranches = {
 				new KLinkedBranchD(KBranchD(&looper->MHT,"MHT"),KBranchD(&looper->GenMHT,"GenMHT")),
 				new KLinkedBranchD(KBranchD(&looper->HT,"HT"),KBranchD(&looper->GenHT,"GenHT"))
 			};
-			
-			for(auto& branch : branches){
-				branch->Check(looper->fChain);
-			}
 		}
 		virtual void DoVariation() {
-			for(auto& branch : branches){
+			for(auto& branch : linkbranches){
 				//store original values
 				branch->Store();
 				//set to gen vars
@@ -515,7 +494,7 @@ class KGenMHTVariator : public KVariator {
 		}
 		virtual void UndoVariation(){
 			//restore original values
-			for(auto& branch : branches){
+			for(auto& branch : linkbranches){
 				branch->Restore();
 			}
 		}		
@@ -534,9 +513,9 @@ class KGenJetVariator : public KVariator {
 		~KGenJetVariator() {
 			delete JetsAK8_ID;
 		}
-		virtual void CheckBranches(){
+		virtual void ListBranches(){
 			//set up linked branches for all variations
-			branches = {
+			linkbranches = {
 				//scalars get recalculated and replaced
 				new KLinkedBranchD(KBranchD(&looper->DeltaPhi1_AK8,"DeltaPhi1_AK8"),KBranchD(&DeltaPhi1_AK8)),
 				new KLinkedBranchD(KBranchD(&looper->DeltaPhi2_AK8,"DeltaPhi2_AK8"),KBranchD(&DeltaPhi2_AK8)),
@@ -565,15 +544,9 @@ class KGenJetVariator : public KVariator {
 				new KLinkedBranchD(KBranchD(&looper->MET,"MET"),KBranchD(&looper->GenMET)),
 				new KLinkedBranchD(KBranchD(&looper->METPhi,"METPhi"),KBranchD(&looper->GenMETPhi))
 			};
-
-			for(auto& branch : branches){
-				//enable varied branches which might be disabled by default
-				branch->Enable(looper->fChain,1);
-				branch->Check(looper->fChain);
-			}
 		}
 		virtual void DoVariation(){
-			for(auto& branch : branches){
+			for(auto& branch : linkbranches){
 				//store original values
 				branch->Store();
 			}
@@ -605,14 +578,14 @@ class KGenJetVariator : public KVariator {
 				//skipping Mmc for now
 			}
 
-			for(auto& branch : branches){
+			for(auto& branch : linkbranches){
 				//set to new vars
 				branch->Vary();
 			}
 		}
 		virtual void UndoVariation(){
 			//restore original values
-			for(auto& branch : branches){
+			for(auto& branch : linkbranches){
 				branch->Restore();
 			}
 		}
@@ -646,9 +619,9 @@ class KCentralAK8Variator : public KVariator {
 		//constructor
 		KCentralAK8Variator() : KVariator() { }
 		KCentralAK8Variator(string name_, OptionMap* localOpt_) : KVariator(name_,localOpt_) { }
-		virtual void CheckBranches(){
+		virtual void ListBranches(){
 			//set up linked branches for all variations
-			branches = {
+			linkbranches = {
 				//scalars get recalculated and replaced
 				new KLinkedBranchD(KBranchD(&looper->DeltaPhi1_AK8,"DeltaPhi1_AK8"),KBranchD(&DeltaPhi1_AK8)),
 				new KLinkedBranchD(KBranchD(&looper->DeltaPhi2_AK8,"DeltaPhi2_AK8"),KBranchD(&DeltaPhi2_AK8)),
@@ -694,16 +667,10 @@ class KCentralAK8Variator : public KVariator {
 				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_wDiscriminatorDeepDecorrel,"JetsAK8_wDiscriminatorDeepDecorrel"),order),
 				new KReorderedBranchVD(KBranchVD(&looper->JetsAK8_zDiscriminatorDeep,"JetsAK8_zDiscriminatorDeep"),order),
 			};
-
-			for(auto& branch : branches){
-				//enable varied branches which might be disabled by default
-				branch->Enable(looper->fChain,1);
-				branch->Check(looper->fChain);
-			}
 		}
 
 		virtual void DoVariation(){
-			for(auto& branch : branches){
+			for(auto& branch : linkbranches){
 				//store original values
 				branch->Store();
 			}
@@ -736,14 +703,14 @@ class KCentralAK8Variator : public KVariator {
 				//skipping Mmc for now
 			}
 
-			for(auto& branch : branches){
+			for(auto& branch : linkbranches){
 				//set to new vars
 				branch->Vary();
 			}
 		}
 		virtual void UndoVariation(){
 			//restore original values
-			for(auto& branch : branches){
+			for(auto& branch : linkbranches){
 				branch->Restore();
 			}
 		}
@@ -805,7 +772,14 @@ class KJetLeptonVariator : public KVariator {
 			delete Jets_muonEnergyFraction;
 		}
 		virtual void CheckBranches(){
-			branches = {
+			ListBranches();
+			//only check branch0 since branch1 does not come from tree
+			for(auto& branch : linkbranches){
+				branch->Check(looper->fChain,0);
+			}
+		}
+		virtual void ListBranches(){
+			linkbranches = {
 				new KLinkedBranchVL(KBranchVL(&looper->Jets,"Jets"),KBranchVL(&Jets)),
 				new KLinkedBranchVB(KBranchVB(&looper->Jets_HTMask,"Jets_HTMask"),KBranchVB(&Jets_HTMask)),
 				new KLinkedBranchVB(KBranchVB(&looper->Jets_MHTMask,"Jets_MHTMask"),KBranchVB(&Jets_MHTMask)),
@@ -823,14 +797,9 @@ class KJetLeptonVariator : public KVariator {
 				new KLinkedBranchD(KBranchD(&looper->DeltaPhi3,"DeltaPhi3"),KBranchD(&DeltaPhi3)),
 				new KLinkedBranchD(KBranchD(&looper->DeltaPhi4,"DeltaPhi4"),KBranchD(&DeltaPhi4))
 			};
-			
-			//only check branch0 since branch1 does not come from tree
-			for(auto& branch : branches){
-				branch->Check(looper->fChain,0);
-			}
 		}
 		virtual void DoVariation() {
-			for(auto& branch : branches){
+			for(auto& branch : linkbranches){
 				//store original values
 				branch->Store();
 			}
@@ -881,14 +850,14 @@ class KJetLeptonVariator : public KVariator {
 				else if(j==3) DeltaPhi4 = abs(KMath::DeltaPhi(Jets->at(j).Phi(),MHTPhi));
 			}
 			
-			for(auto& branch : branches){
+			for(auto& branch : linkbranches){
 				//set to new vars
 				branch->Vary();
 			}
 		}
 		virtual void UndoVariation(){
 			//restore original values
-			for(auto& branch : branches){
+			for(auto& branch : linkbranches){
 				branch->Restore();
 			}
 		}

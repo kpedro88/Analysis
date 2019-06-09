@@ -124,9 +124,7 @@ class KSelection {
 			}
 			if(variation) variation->SetBase(base_);
 			if(filter){
-				looper->fChain->SetBranchStatus("RunNum",1);
-				looper->fChain->SetBranchStatus("LumiBlockNum",1);
-				looper->fChain->SetBranchStatus("EvtNum",1);
+				looper->EnableBranches({"RunNum","LumiBlockNum","EvtNum"});
 			}
 		}
 		void DoVariation() { if(variation) variation->DoVariation(); }

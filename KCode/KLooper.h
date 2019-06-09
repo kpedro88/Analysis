@@ -18,6 +18,7 @@
 
 //STL headers
 #include <string>
+#include <vector>
 #include <exception>
 
 //forward declaration
@@ -179,6 +180,17 @@ class KLooper : public KOpener, public NtupleClass {
 		//virtual functions
 		virtual void Loop() {}
 		virtual void AddBase(KBase* base) {}
+		//helper functions
+		virtual void EnableBranches(const vector<string>& branches){
+			for(const auto& branch : branches){
+				fChain->SetBranchStatus(branch.c_str(),1);
+			}
+		}
+		virtual void DisableBranches(const vector<string>& branches){
+			for(const auto& branch : branches){
+				fChain->SetBranchStatus(branch.c_str(),0);
+			}
+		}
 		//static functions
 		static LooperMap& GetLooperMap(){
 			static LooperMap lmap;

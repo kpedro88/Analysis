@@ -62,14 +62,6 @@ class KFiller : public KChecker {
 	
 		//accessors
 		virtual void Fill(KValue& value, double weight) {}
-		//default mode for branch checking (useful if no special cases)
-		virtual void CheckBranches(){
-			ListBranches();
-			for(const auto& branch : branches){
-				looper->fChain->SetBranchStatus(branch.c_str(),1);
-			}
-		}
-		virtual void ListBranches() {} //derived classes use this to fill branch list
 		
 	protected:
 		//member variables

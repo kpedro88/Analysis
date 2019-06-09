@@ -27,11 +27,13 @@ class KFiller_RA2bin : public KFiller {
 			bool DoBTagSF = khtmp->MCWeight ? khtmp->MCWeight->btagcorr : false;
 			if(!DoBTagSF) BTagSF = NULL;
 		}
-		virtual void CheckBranches(){
+		virtual void ListBranches(){
 			if(RA2Bin && RA2Bin->debug){
-				looper->fChain->SetBranchStatus("RunNum",1);
-				looper->fChain->SetBranchStatus("LumiBlockNum",1);
-				looper->fChain->SetBranchStatus("EvtNum",1);
+				branches.insert(branches.end(),{
+					"RunNum",
+					"LumiBlockNum",
+					"EvtNum",
+				});
 			}
 		}
 		virtual void Fill(KValue& value, double w) {
@@ -106,9 +108,7 @@ class KFiller_nbjets : public KFiller {
 			bool DoBTagSF = khtmp->MCWeight ? khtmp->MCWeight->btagcorr : false;
 			if(!DoBTagSF) BTagSF = NULL;
 		}
-		virtual void CheckBranches(){
-			if(!BTagSF) looper->fChain->SetBranchStatus("BTagsDeepCSV",1);
-		}
+		virtual void ListBranches(){ branches = {"BTagsDeepCSV"}; }
 		virtual void Fill(KValue& value, double w) {
 			if(BTagSF){
 				for(unsigned b = 0; b < BTagSF->prob.size(); b++){

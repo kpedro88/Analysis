@@ -494,56 +494,58 @@ class KMCWeightSelector : public KSelector {
 				}
 			}
 		}
-		virtual void CheckBranches(){
+		virtual void ListBranches(){
 			//force enable branches needed for cuts/weights/etc.
-			looper->fChain->SetBranchStatus("Weight",1); //needed for negative weights even if useTreeWeight==false
+			branches.push_back("Weight"); //needed for negative weights even if useTreeWeight==false
 			if(internalNormType) NormType->CheckBranches();
 			if(pucorr){
-				looper->fChain->SetBranchStatus("TrueNumInteractions",1);
-				looper->fChain->SetBranchStatus("NVtx",1);
-				if(puunc==1) looper->fChain->SetBranchStatus("puSysUp",1);
-				else if(puunc==-1) looper->fChain->SetBranchStatus("puSysDown",1);
-				else looper->fChain->SetBranchStatus("puWeight",1);
+				branches.push_back("TrueNumInteractions");
+				branches.push_back("NVtx");
+				if(puunc==1) branches.push_back("puSysUp");
+				else if(puunc==-1) branches.push_back("puSysDown");
+				else branches.push_back("puWeight");
 			}
 			if(puupdcorr){
-				looper->fChain->SetBranchStatus("TrueNumInteractions",1);
-				if(puupdunc==1) looper->fChain->SetBranchStatus("puSysUp",1);
-				else if(puupdunc==-1) looper->fChain->SetBranchStatus("puSysDown",1);
-				else looper->fChain->SetBranchStatus("puWeight",1);
+				branches.push_back("TrueNumInteractions");
+				if(puupdunc==1) branches.push_back("puSysUp");
+				else if(puupdunc==-1) branches.push_back("puSysDown");
+				else branches.push_back("puWeight");
 			}
 			if(isrcorr){
-				looper->fChain->SetBranchStatus("NJetsISR",1);
+				branches.push_back("NJetsISR");
 			}
 			if(flatten){
-				if(flatqty>noflatqty and flatqty<=fourthjetAK8pt) looper->fChain->SetBranchStatus("JetsAK8",1);
+				if(flatqty>noflatqty and flatqty<=fourthjetAK8pt) branches.push_back("JetsAK8");
 			}
 			if(svbweight){
-				if(svbqty==MTAK8) looper->fChain->SetBranchStatus("MT_AK8",1);
+				if(svbqty==MTAK8) branches.push_back("MT_AK8");
 			}
 			if(pdfunc!=0){
-				looper->fChain->SetBranchStatus("PDFweights",1);
+				branches.push_back("PDFweights");
 			}
 			if(scaleunc!=0){
-				looper->fChain->SetBranchStatus("ScaleWeights",1);
+				branches.push_back("ScaleWeights");
 			}
 			if(prefirecorr){
-				if(prefireunc==0) looper->fChain->SetBranchStatus("NonPrefiringProb");
-				else if(prefireunc>0) looper->fChain->SetBranchStatus("NonPrefiringProbUp");
-				else if(prefireunc<0) looper->fChain->SetBranchStatus("NonPrefiringProbDown");
+				if(prefireunc==0) branches.push_back("NonPrefiringProb");
+				else if(prefireunc>0) branches.push_back("NonPrefiringProbUp");
+				else if(prefireunc<0) branches.push_back("NonPrefiringProbDown");
 			}
 			if(hemvetocorr){
-				if(hemvetounc<1) looper->fChain->SetBranchStatus("HEMDPhiVetoFilter",1);
+				if(hemvetounc<1) branches.push_back("HEMDPhiVetoFilter");
 			}
 			if(lepcorr){
-				looper->fChain->SetBranchStatus("GenElectrons",1);
-				looper->fChain->SetBranchStatus("GenMuons",1);
-				looper->fChain->SetBranchStatus("NElectrons",1);
-				looper->fChain->SetBranchStatus("Electrons",1);
-				looper->fChain->SetBranchStatus("Electrons_passIso",1);
-				looper->fChain->SetBranchStatus("NMuons",1);
-				looper->fChain->SetBranchStatus("Muons",1);
-				looper->fChain->SetBranchStatus("Muons_mediumID",1);
-				looper->fChain->SetBranchStatus("Muons_passIso",1);
+				branches.insert(branches.end(),{
+					"GenElectrons",
+					"GenMuons",
+					"NElectrons",
+					"Electrons",
+					"Electrons_passIso",
+					"NMuons",
+					"Muons",
+					"Muons_mediumID",
+					"Muons_passIso",
+				});
 			}
 		}
 		double GetBinContentBounded(TH1* hist, double val){
@@ -778,8 +780,8 @@ class KPTRangeSelector : public KSelector {
 			localOpt->Get("ptmin",ptmin);
 			localOpt->Get("ptmax",ptmax);
 		}
-		virtual void CheckBranches(){
-			looper->fChain->SetBranchStatus("JetsAK8",1);
+		virtual void ListBranches(){
+			branches.push_back("JetsAK8");
 		}
 		
 		//this selector doesn't add anything to tree
@@ -807,8 +809,8 @@ class KLeadJetPtSelector : public KSelector {
 			//check for option
 			localOpt->Get("pTmin",pTmin);
 		}
-		virtual void CheckBranches(){
-			looper->fChain->SetBranchStatus("Jets",1);
+		virtual void ListBranches(){
+			branches.push_back("Jets");
 		}
 		
 		//this selector doesn't add anything to tree
@@ -830,9 +832,11 @@ class KDoubleCountSelector : public KSelector {
 		//constructor
 		KDoubleCountSelector() : KSelector() { }
 		KDoubleCountSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
-		virtual void CheckBranches(){
-			looper->fChain->SetBranchStatus("RunNum",1);
-			looper->fChain->SetBranchStatus("EvtNum",1);
+		virtual void ListBranches(){
+			branches.insert(branches.end(),{
+				"RunNum",
+				"EvtNum",
+			});
 		}
 		
 		//used for non-dummy selectors
@@ -860,14 +864,16 @@ class KPhotonIDSelector : public KSelector {
 		KPhotonIDSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { 
 			canfail = false;
 		}
-		virtual void CheckBranches(){
-			looper->fChain->SetBranchStatus("Photons",1);
-			looper->fChain->SetBranchStatus("Photons_hadTowOverEM",1);
-			looper->fChain->SetBranchStatus("Photons_hasPixelSeed",1);
-			looper->fChain->SetBranchStatus("Photons_isEB",1);
-			looper->fChain->SetBranchStatus("Photons_pfChargedIsoRhoCorr",1);
-			looper->fChain->SetBranchStatus("Photons_pfGammaIsoRhoCorr",1);
-			looper->fChain->SetBranchStatus("Photons_pfNeutralIsoRhoCorr",1);
+		virtual void ListBranches(){
+			branches.insert(branches.end(),{
+				"Photons",
+				"Photons_hadTowOverEM",
+				"Photons_hasPixelSeed",
+				"Photons_isEB",
+				"Photons_pfChargedIsoRhoCorr",
+				"Photons_pfGammaIsoRhoCorr",
+				"Photons_pfNeutralIsoRhoCorr",
+			});
 		}
 		
 		//used for non-dummy selectors
@@ -898,7 +904,7 @@ REGISTER_SELECTOR(PhotonID);
 class KNVtxFilterSelector : public KSelector {
 	public:
 		using KSelector::KSelector;
-		virtual void CheckBranches(){ looper->fChain->SetBranchStatus("NVtx",1); }
+		virtual void ListBranches(){ branches.push_back("NVtx"); }
 		virtual bool Cut() { return looper->NVtx > 0; }
 };
 REGISTER_SELECTOR(NVtxFilter);
@@ -906,7 +912,7 @@ REGISTER_SELECTOR(NVtxFilter);
 class KeeBadScFilterSelector : public KSelector {
 	public:
 		using KSelector::KSelector;
-		virtual void CheckBranches(){ looper->fChain->SetBranchStatus("eeBadScFilter",1); }
+		virtual void ListBranches(){ branches.push_back("eeBadScFilter"); }
 		virtual bool Cut() { return looper->eeBadScFilter==1; }
 };
 REGISTER_SELECTOR(eeBadScFilter);
@@ -914,7 +920,7 @@ REGISTER_SELECTOR(eeBadScFilter);
 class KEcalDeadCellTriggerPrimitiveFilterSelector : public KSelector {
 	public:
 		using KSelector::KSelector;
-		virtual void CheckBranches(){ looper->fChain->SetBranchStatus("EcalDeadCellTriggerPrimitiveFilter",1); }
+		virtual void ListBranches(){ branches.push_back("EcalDeadCellTriggerPrimitiveFilter"); }
 		virtual bool Cut() { return looper->EcalDeadCellTriggerPrimitiveFilter==1; }
 };
 REGISTER_SELECTOR(EcalDeadCellTriggerPrimitiveFilter);
@@ -922,7 +928,7 @@ REGISTER_SELECTOR(EcalDeadCellTriggerPrimitiveFilter);
 class KHBHENoiseFilterSelector : public KSelector {
 	public:
 		using KSelector::KSelector;
-		virtual void CheckBranches(){ looper->fChain->SetBranchStatus("HBHENoiseFilter",1); }
+		virtual void ListBranches(){ branches.push_back("HBHENoiseFilter"); }
 		virtual bool Cut() { return looper->HBHENoiseFilter==1; }
 };
 REGISTER_SELECTOR(HBHENoiseFilter);
@@ -930,7 +936,7 @@ REGISTER_SELECTOR(HBHENoiseFilter);
 class KHBHEIsoNoiseFilterSelector : public KSelector {
 	public:
 		using KSelector::KSelector;
-		virtual void CheckBranches(){ looper->fChain->SetBranchStatus("HBHEIsoNoiseFilter",1); }
+		virtual void ListBranches(){ branches.push_back("HBHEIsoNoiseFilter"); }
 		virtual bool Cut() { return looper->HBHEIsoNoiseFilter==1; }
 };
 REGISTER_SELECTOR(HBHEIsoNoiseFilter);
@@ -938,7 +944,7 @@ REGISTER_SELECTOR(HBHEIsoNoiseFilter);
 class KglobalSuperTightHalo2016FilterSelector : public KSelector {
 	public:
 		using KSelector::KSelector;
-		virtual void CheckBranches(){ looper->fChain->SetBranchStatus("globalSuperTightHalo2016Filter",1); }
+		virtual void ListBranches(){ branches.push_back("globalSuperTightHalo2016Filter"); }
 		virtual bool Cut() { return looper->globalSuperTightHalo2016Filter==1; }
 };
 REGISTER_SELECTOR(globalSuperTightHalo2016Filter);
@@ -946,7 +952,7 @@ REGISTER_SELECTOR(globalSuperTightHalo2016Filter);
 class KBadChargedCandidateFilterSelector : public KSelector {
 	public:
 		using KSelector::KSelector;
-		virtual void CheckBranches(){ looper->fChain->SetBranchStatus("BadChargedCandidateFilter",1); }
+		virtual void ListBranches(){ branches.push_back("BadChargedCandidateFilter"); }
 		virtual bool Cut() { return looper->BadChargedCandidateFilter==1; }
 };
 REGISTER_SELECTOR(BadChargedCandidateFilter);
@@ -954,7 +960,7 @@ REGISTER_SELECTOR(BadChargedCandidateFilter);
 class KBadPFMuonFilterSelector : public KSelector {
 	public:
 		using KSelector::KSelector;
-		virtual void CheckBranches(){ looper->fChain->SetBranchStatus("BadPFMuonFilter",1); }
+		virtual void ListBranches(){ branches.push_back("BadPFMuonFilter"); }
 		virtual bool Cut() { return looper->BadPFMuonFilter==1; }
 };
 REGISTER_SELECTOR(BadPFMuonFilter);
@@ -970,8 +976,8 @@ class KJetEtaRegionSelector : public KSelector {
 			localOpt->Get("region",region);
 			canfail = false;
 		}
-		virtual void CheckBranches(){
-			looper->fChain->SetBranchStatus("Jets",1);
+		virtual void ListBranches(){
+			branches.push_back("Jets");
 		}
 		
 		//used for non-dummy selectors
@@ -1004,11 +1010,13 @@ class KHemisphereSelector : public KSelector {
 		KHemisphereSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { 
 			canfail = false;
 		}
-		virtual void CheckBranches(){
-			looper->fChain->SetBranchStatus("MHT_Phi",1);
-			looper->fChain->SetBranchStatus("Jets_HTMask",1);
-			looper->fChain->SetBranchStatus("Jets",1);
-			looper->fChain->SetBranchStatus("Jets_bDiscriminatorCSV",1);
+		virtual void ListBranches(){
+			branches.insert(branches.end(),{
+				"MHT_Phi",
+				"Jets_HTMask",
+				"Jets",
+				"Jets_bDiscriminatorCSV",
+			});
 		}
 		
 		//used for non-dummy selectors
@@ -1062,11 +1070,13 @@ class KBTagSFSelector : public KSelector {
 			MCWeight = sel->Get<KMCWeightSelector*>("MCWeight");
 			if(!MCWeight) depfailed = true;
 		}
-		virtual void CheckBranches(){
-			looper->fChain->SetBranchStatus("Jets_HTMask",1);
-			looper->fChain->SetBranchStatus("Jets",1);
-			looper->fChain->SetBranchStatus("Jets_hadronFlavor",1);
-			if(debug) looper->fChain->SetBranchStatus("BTagsDeepCSV",1);
+		virtual void ListBranches(){
+			branches.insert(branches.end(),{
+				"Jets_HTMask",
+				"Jets",
+				"Jets_hadronFlavor",
+			});
+			if(debug) branches.push_back("BTagsDeepCSV");
 		}
 		virtual void CheckBase(){
 			//don't even bother
@@ -1135,10 +1145,12 @@ class KGenLeptonVetoSelector : public KSelector {
 		//constructor
 		KGenLeptonVetoSelector() : KSelector() { }
 		KGenLeptonVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
-		virtual void CheckBranches(){
-			looper->fChain->SetBranchStatus("GenElectrons",1);
-			looper->fChain->SetBranchStatus("GenMuons",1);
-			looper->fChain->SetBranchStatus("GenTaus",1);
+		virtual void ListBranches(){
+			branches.insert(branches.end(),{
+				"GenElectrons",
+				"GenMuons",
+				"GenTaus",
+			});
 		}
 		
 		//this selector doesn't add anything to tree
@@ -1164,12 +1176,14 @@ class KDarkHadronSelector : public KSelector {
 			localOpt->Get("njet",njet);
 			useSubjets = localOpt->Get("useSubjets",false);
 		}
-		virtual void CheckBranches(){
-			looper->fChain->SetBranchStatus("JetsAK8",1);
-			if(useSubjets) looper->fChain->SetBranchStatus("JetsAK8_subjets",1);
-			looper->fChain->SetBranchStatus("GenParticles",1);
-			looper->fChain->SetBranchStatus("GenParticles_PdgId",1);
-			looper->fChain->SetBranchStatus("GenParticles_ParentId",1);
+		virtual void ListBranches(){
+			branches.insert(branches.end(),{
+				"JetsAK8",
+				"GenParticles",
+				"GenParticles_PdgId",
+				"GenParticles_ParentId",
+			});
+			if(useSubjets) branches.push_back("JetsAK8_subjets");
 		}
 		
 		//this selector doesn't add anything to tree
@@ -1243,14 +1257,16 @@ class KGenMatchSelector : public KSelector {
 		virtual void CheckBase(){
 			base->GetLocalOpt()->Get("sigversion",sigversion);
 		}
-		virtual void CheckBranches(){
-			looper->fChain->SetBranchStatus("JetsAK8",1);
-			looper->fChain->SetBranchStatus("GenJetsAK8",1);
-			looper->fChain->SetBranchStatus("GenParticles",1);
-			looper->fChain->SetBranchStatus("GenParticles_PdgId",1);
-			looper->fChain->SetBranchStatus("GenParticles_ParentId",1);
-			looper->fChain->SetBranchStatus("GenParticles_ParentIdx",1);
-			looper->fChain->SetBranchStatus("GenParticles_Status",1);
+		virtual void ListBranches(){
+			branches.insert(branches.end(),{
+				"JetsAK8",
+				"GenJetsAK8",
+				"GenParticles",
+				"GenParticles_PdgId",
+				"GenParticles_ParentId",
+				"GenParticles_ParentIdx",
+				"GenParticles_Status",
+			});
 		}
 		
 		//this selector doesn't add anything to tree
@@ -1343,11 +1359,13 @@ class KMTRegressionSelector : public KSelector {
 			JetMatch = sel->Get<KJetMatchSelector*>("JetMatch");
 			if(version==1 and !JetMatch) depfailed = true;			
 		}
-		virtual void CheckBranches(){
-			looper->fChain->SetBranchStatus("JetsAK8",1);
-			looper->fChain->SetBranchStatus("MET",1);
-			looper->fChain->SetBranchStatus("METPhi",1);
-			if(version==1) looper->fChain->SetBranchStatus("Jets_bJetTagDeepCSVBvsAll",1);
+		virtual void ListBranches(){
+			branches.insert(branches.end(),{
+				"JetsAK8",
+				"MET",
+				"METPhi",
+			});
+			if(version==1) branches.push_back("Jets_bJetTagDeepCSVBvsAll");
 		}
 		
 		//this selector doesn't add anything to tree
@@ -1389,7 +1407,7 @@ REGISTER_SELECTOR(MTRegression);
 //compute SVJ tags using BDT values
 class KSVJTagSelector : public KSelector {
 	public:
-		enum branches { bdt = 0, ubdt = 1, seltor = 2 };
+		enum svjbranches { bdt = 0, ubdt = 1, seltor = 2 };
 		//constructor
 		KSVJTagSelector() : KSelector() { }
 		KSVJTagSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), branch(""), cut(0.), BDT(NULL) { 
@@ -1402,8 +1420,8 @@ class KSVJTagSelector : public KSelector {
 			localOpt->Get("cut",cut);
 			canfail = false;
 		}
-		virtual void CheckBranches(){
-			if(!branch.empty()) looper->fChain->SetBranchStatus(("JetsAK8_"+branch).c_str(),1);
+		virtual void ListBranches(){
+			if(!branch.empty()) branches.push_back("JetsAK8_"+branch);
 		}
 		virtual void CheckDeps(){
 			if(ebranch==seltor){
@@ -1434,7 +1452,7 @@ class KSVJTagSelector : public KSelector {
 		double cut;
 		unsigned ntags;
 		vector<bool> JetsAK8_tagged;
-		branches ebranch;
+		svjbranches ebranch;
 		KBDTSelector* BDT;
 		int filter;
 };
@@ -1474,7 +1492,6 @@ REGISTER_SELECTOR(SVJFilter);
 //select number of SVJ tags
 class KNSVJSelector : public KSelector {
 	public:
-		enum branches { bdt = 0, ubdt = 1, seltor = 2 };
 		//constructor
 		KNSVJSelector() : KSelector() { }
 		KNSVJSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), source(""), num(0), SVJTag(NULL) { 
@@ -1541,7 +1558,7 @@ class KHistoSelector : public KSelector {
 			canfail = false;
 		}
 		
-		virtual void CheckBranches(){
+		virtual void ListBranches(){
 			for(auto& hit : base->GetKTable()){
 				hit.second->CheckBranches();
 			}

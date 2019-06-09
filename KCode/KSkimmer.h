@@ -30,14 +30,10 @@ class KSkimmer : public KLooper {
 			//check for branches to enable/disable
 			vector<string> disable_branches;
 			globalOpt->Get("disable_branches",disable_branches);
-			for(unsigned b = 0; b < disable_branches.size(); ++b){
-				fChain->SetBranchStatus(disable_branches[b].c_str(),0);
-			}
+			DisableBranches(disable_branches);
 			vector<string> enable_branches;
 			globalOpt->Get("enable_branches",enable_branches);
-			for(unsigned b = 0; b < enable_branches.size(); ++b){
-				fChain->SetBranchStatus(enable_branches[b].c_str(),1);
-			}
+			EnableBranches(enable_branches);
 			//make negative weight selector
 			NegativeWeight = KSelectorFactory::GetFactory().construct("NegativeWeight","NegativeWeight",NULL);
 		}

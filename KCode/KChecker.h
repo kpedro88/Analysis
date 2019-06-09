@@ -3,15 +3,16 @@
 
 //custom headers
 #include "KMap.h"
+#include "KLooper.h"
 
 //STL headers
 #include <string>
+#include <vector>
 
 using namespace std;
 
 //forward declarations
 class KBase;
-class KLooper;
 class KSelection;
 
 //-----------------------------------------------------------------
@@ -34,7 +35,11 @@ class KChecker {
 		//to check dependencies on other selectors
 		virtual void CheckDeps() {}
 		//to allow selectors to turn on branches they need
-		virtual void CheckBranches() {}
+		virtual void CheckBranches() {
+			ListBranches(); //fills branches vector
+			looper->EnableBranches(branches);
+		}
+		virtual void ListBranches() {}
 		//to check dependencies on the base (and the looper)
 		virtual void CheckBase() {}
 		
@@ -45,6 +50,7 @@ class KChecker {
 		KBase* base;
 		KLooper* looper;
 		KSelection* sel;
+		vector<string> branches;
 };
 
 #endif

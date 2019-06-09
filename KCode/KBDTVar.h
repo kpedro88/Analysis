@@ -23,16 +23,6 @@ class KBDTVar : public KChecker {
 		KBDTVar(string name_) : KChecker(name_,NULL) { }
 		
 		//functions
-		
-		//default mode for branch checking (useful if no special cases)
-		virtual void CheckBranches(){
-			ListBranches();
-			for(const auto& b : branches){
-				looper->fChain->SetBranchStatus(b.c_str(),1);
-			}
-		}
-		virtual void ListBranches() {} //derived classes use this to fill branch list
-		
 		virtual void SetBranch(TTree* tree){
 			tree->Branch(name.c_str(),&branch,(name+"/F").c_str());
 		}
@@ -54,7 +44,6 @@ class KBDTVar : public KChecker {
 		float branch;
 		bool use_kmva = false;
 		float* pbranch;
-		vector<string> branches;
 };
 typedef KFactory<KBDTVar,string> KBDTVarFactory;
 #define REGISTER_BDTVAR(a) REGISTER_MACRO2(KBDTVarFactory,KBDTVar_##a,a)
