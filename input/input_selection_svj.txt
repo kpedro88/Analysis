@@ -33,6 +33,12 @@ evtclean
 veto
 	MuonVeto
 	ElectronVeto
+vetoloose
+	MuonVeto	b:loose[1]
+	ElectronVeto
+deta
+	DeltaEta	d:max[1.5]
+	MTAK8	d:min[1500]
 dijet
 	common
 	evtclean
@@ -45,24 +51,39 @@ dijetlowmt
 	METMTRatio	d:min[0.10]	d:max[0.15]
 dijetmtdeta
 	dijetmt
-	DeltaEta	d:max[1.5]
+	deta
+dijetlowmtdeta
+	dijetlowmt
+	deta
 dijetmtdetahad
 	dijetmtdeta
 	veto
-	MTAK8	d:min[1500]
 	endcommon
 dijetmtdetahadmf
 	dijetmtdetahad
 	METFilter
 dijetlowmtdetahad
-	dijetlowmt
-	DeltaEta	d:max[1.5]
+	dijetlowmtdeta
 	veto
-	MTAK8	d:min[1500]
 	endcommon
 dijetlowmtdetahadmf
 	dijetlowmtdetahad
 	METFilter
+dijetmtdetahadloose
+	dijetmtdeta
+	vetoloose
+	endcommon
+dijetmtdetahadloosemf
+	dijetmtdetahadloose
+	METFilter
+dijetlowmtdetahadloose
+	dijetlowmtdeta
+	vetoloose
+	endcommon
+dijetlowmtdetahadloosemf
+	dijetlowmtdetahadloose
+	METFilter
+
 dijetmtmutrig
 	dijetmt
 	MuonTrigger	d:pTmin[50]

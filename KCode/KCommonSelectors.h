@@ -1348,19 +1348,32 @@ class KMuonVetoSelector : public KSelector {
 	public:
 		//constructor
 		KMuonVetoSelector() : KSelector() { }
-		KMuonVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		KMuonVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { 
+			//check option
+			loose = localOpt->Get("loose",false);
+		}
 		virtual void CheckBranches(){
-			looper->fChain->SetBranchStatus("NMuons",1);
+			if(loose) looper->fChain->SetBranchStatus("Muons_MiniIso");
+			else looper->fChain->SetBranchStatus("NMuons",1);
 		}
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return looper->NMuons==0;
+			if(loose) {
+				//loosen iso criteria (loose ID is ntuple baseline)
+				unsigned nmuons = 0;
+				for(auto m : *looper->Muons_MiniIso){
+					if(m < 0.4) ++nmuons;
+				}
+				return nmuons==0;
+			}
+			else return looper->NMuons==0;
 		}
 		
 		//member variables
+		bool loose;
 };
 REGISTER_SELECTOR(MuonVeto);
 
