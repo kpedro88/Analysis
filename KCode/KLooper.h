@@ -16,8 +16,14 @@
 #include <TChain.h>
 #include <TH1.h>
 
+//STL headers
+#include <string>
+#include <exception>
+
 //forward declaration
 class KBase;
+
+using namespace std;
 
 void NtupleClass::Loop() {}
 
@@ -25,12 +31,12 @@ void NtupleClass::Loop() {}
 class KOpenerName {
 	public:
 		//constructor
-		KOpenerName(OptionMap* localOpt, OptionMap* globalOpt) : name(""), filename(""), treedir(""), use_treedir(false), is_chain(false), failed_chain(false) {
+		KOpenerName(OptionMap* localOpt, OptionMap* globalOpt) : name(""), filename(""), treedir(""), use_treedir(false), is_chain(false) {
 			use_treedir = globalOpt->Get("treedir",treedir);
 			if(localOpt->Get("chain",false)){
 				is_chain = true;
 				if(!localOpt->Get("filenames",chain) || chain.GetFiles().size()==0){
-					failed_chain = true;
+					throw runtime_error("Missing filenames for chain");
 				}
 				if(use_treedir) name = treedir+"_";
 				name += chain.GetName();
@@ -48,7 +54,7 @@ class KOpenerName {
 		string treedir;
 		KChain chain;
 		bool use_treedir;
-		bool is_chain, failed_chain;
+		bool is_chain;
 };
 
 //file opening base class
@@ -69,10 +75,6 @@ class KOpener {
 			bool use_treedir = helper.use_treedir;
 			if(helper.is_chain){
 				KChain& chain = helper.chain;
-				if(helper.failed_chain){
-					cout << "Input error: filenames not specified for chain. Object " << chain.GetName() << " will not be initialized." << endl;
-					return;
-				}
 				const vector<string>& filenames = chain.GetFiles();
 				
 				//add filenames to chain
@@ -92,15 +94,18 @@ class KOpener {
 					for(unsigned f = 0; f < filenames.size(); f++){
 						filename = filenames[f];
 						if(use_treedir) filename = treedir + "/" + filename;
-						
-						TFile* ftmp = TFile::Open(filename.c_str());
+
+						//here we may want to construct a partial chain
+						TFile* ftmp = KOpen(filename,"READ",false);
 						if(!ftmp) {
 							cout << "Input error: file " << filename << " cannot be found or opened. Object " << name << " will not be fully initialized." << endl;
 							continue;
 						}
 						
 						static_cast<TChain*>(tree)->Add((filename+chainsuff).c_str());
-						TH1F* nEventHistTmp = (TH1F*)ftmp->Get("nEventProc");
+
+						//these aren't necessarily required
+						TH1F* nEventHistTmp = KGet<TH1F>(file,"nEventProc",false);
 						//sum up nEventProc histos
 						if(nEventHistTmp) {
 							if(nEventHist) nEventHist->Add(nEventHistTmp);
@@ -109,7 +114,7 @@ class KOpener {
 								nEventHist->SetDirectory(0);
 							}
 						}
-						TH1F* nEventNegHistTmp = (TH1F*)ftmp->Get("nEventNeg");
+						TH1F* nEventNegHistTmp = KGet<TH1F>(ftmp,"nEventNeg",false);
 						//sum up nEventNeg histos
 						if(nEventNegHistTmp) {
 							if(nEventNegHist) nEventNegHist->Add(nEventNegHistTmp);
@@ -121,29 +126,22 @@ class KOpener {
 						ftmp->Close();
 					}
 				}
-				if(tree->GetEntries()==0){
-					cout << "Input error: no files could be opened. Object " << name << " will not be initialized." << endl;
-					delete tree;
-					tree = NULL;
-					return;
-				}
+				if(tree->GetEntries()==0) throw runtime_error("no files could be opened. Object "+name+" will not be initialized.");
 			}
 			else{
 				//get directory from global
 				if(use_treedir) filename = treedir + "/" + filename;
 				//open file
-				file = TFile::Open(filename.c_str());
-				if(!file) {
-					cout << "Input error: file " << filename << " cannot be found or opened. Object will not be initialized." << endl;
-					return;
-				}
+				file = KOpen(filename);
+
 				//get tree
 				string treename = "tree";
 				localOpt->Get("treename",treename);
-				tree = (TTree*)file->Get(treename.c_str());
-				
-				nEventHist = (TH1F*)file->Get("nEventProc");
-				nEventNegHist = (TH1F*)file->Get("nEventNeg");
+				tree = KGet<TTree>(file,treename); //this might cause an issue for ext
+
+				//these aren't necessarily required
+				nEventHist = KGet<TH1F>(file,"nEventProc",false);
+				nEventNegHist = KGet<TH1F>(file,"nEventNeg",false);
 			}
 		}
 		//destructor

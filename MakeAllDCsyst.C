@@ -113,7 +113,7 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	system(cmd.c_str());
 	
 	//further processing
-	TFile* infile = TFile::Open(therootfile.c_str());
+	TFile* infile = KOpen(therootfile);
 	TH1F* nominal = NULL;
 	TH1F* genMHT = NULL;
 	vector<TH1F*> hcontam;
@@ -122,7 +122,7 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	TIter next(infile->GetListOfKeys());
 	while ((key = (TKey*)next())) {
 		string ntmp = key->GetName();
-		TH1F* htmp = (TH1F*)infile->Get(ntmp.c_str());
+		TH1F* htmp = KGet<TH1F>(infile,ntmp);
 		if(ntmp.find("nominal")!=string::npos) nominal = htmp;
 		else if(ntmp.find("SLe")!=string::npos or ntmp.find("SLm")!=string::npos) hcontam.push_back(htmp);
 		else if(ntmp.find("genMHT")!=string::npos) genMHT = htmp;
@@ -239,14 +239,14 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	tree->Fill();
 	//include year in file name
 	string thetrfile = "tree_syst_"+setnames[0]+"_"+setnames[3]+"_block"+setnames[1]+"-"+setnames[2]+"_fast.root";
-	TFile* trfile = TFile::Open(thetrfile.c_str(),"RECREATE");
+	TFile* trfile = KOpen(thetrfile,"RECREATE");
 	trfile->cd();
 	tree->Write();
 	trfile->Close();
 
 	//write processed syst histos
 	string thenewfile = outpre+"proc"+osuff+".root";
-	TFile* outfile = TFile::Open(thenewfile.c_str(),"RECREATE");
+	TFile* outfile = KOpen(thenewfile,"RECREATE");
 	outfile->cd();
 	nominal->Write();
 	for(auto icontam : hcontam) icontam->Write();

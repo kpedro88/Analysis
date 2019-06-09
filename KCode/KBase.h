@@ -264,58 +264,46 @@ class KBaseExt : public KBase {
 			//first check for global file, then local file
 			globalOpt->Get("extfilename",filename);
 			localOpt->Get("extfilename",filename);
-			if(!filename.empty()) file = TFile::Open(filename.c_str());
-			if(file){
-				//open file
+			if(filename.empty()) throw runtime_error("No extfilename specified for "+name);
+			file = KOpen(filename);
 
-				//check for importing histos automatically
-				bool ext_auto = localOpt->Get("ext_auto",false);
-				string hsuff;
-				if(localOpt->Get("exthisto_suff",hsuff)) ext_auto = true;
-				else hsuff = name;
-				string hextra; localOpt->Get("exthisto_extra",hextra);
-				//append extra suffix to default suffix
-				if(!hextra.empty()) hsuff += "_"+hextra;
+			//check for importing histos automatically
+			bool ext_auto = localOpt->Get("ext_auto",false);
+			string hsuff;
+			if(localOpt->Get("exthisto_suff",hsuff)) ext_auto = true;
+			else hsuff = name;
+			string hextra; localOpt->Get("exthisto_extra",hextra);
+			//append extra suffix to default suffix
+			if(!hextra.empty()) hsuff += "_"+hextra;
 
-				add_ext = true;
-				if(ext_auto){
-					TKey* key;
-					TIter next(file->GetListOfKeys());
-					while((key = (TKey*)next())) {
-						string ntmp = key->GetName();
-						//look for names in the format histo_suff(_extra)
-						if(ntmp.size() > hsuff.size() and ntmp.compare(ntmp.size()-hsuff.size(),hsuff.size(),hsuff)==0){
-							TH1* extmp = (TH1*)file->Get(ntmp.c_str());
-							if(extmp) AddHisto(ntmp.substr(0,ntmp.size()-hsuff.size()-1),extmp);
-							else {
-								cout << "Input error: could not open histo " << ntmp << " in file " << filename << "!" << endl;
-							}
-						}
+			add_ext = true;
+			if(ext_auto){
+				TKey* key;
+				TIter next(file->GetListOfKeys());
+				while((key = (TKey*)next())) {
+					string ntmp = key->GetName();
+					//look for names in the format histo_suff(_extra)
+					if(ntmp.size() > hsuff.size() and ntmp.compare(ntmp.size()-hsuff.size(),hsuff.size(),hsuff)==0){
+						auto extmp = KGet<TH1>(file,ntmp);
+						AddHisto(ntmp.substr(0,ntmp.size()-hsuff.size()-1),extmp);
 					}
 				}
-				else {
-					//check for specific histos to import
-					vector<string> exthisto_in;
-					vector<string> exthisto_out;
-					localOpt->Get("exthisto_in",exthisto_in);
-					localOpt->Get("exthisto_out",exthisto_out);
-					if(exthisto_in.size() != exthisto_out.size()){
-						cout << "Input error: vectors of external histo input and output names must have the same length. These external histos will not be used." << endl;
-						return;
-					}
-					else{
-						for(unsigned i = 0; i < exthisto_in.size(); i++){
-							TH1* extmp = (TH1*)file->Get(exthisto_in[i].c_str());
-							if(extmp) AddHisto(exthisto_out[i],extmp);
-							else {
-								cout << "Input error: could not open histo " << exthisto_in[i] << " in file " << filename << "!" << endl;
-							}
-						}
-					}
-				}
-				add_ext = false;
 			}
-			else throw runtime_error("Could not open file: "+filename);
+			else {
+				//check for specific histos to import
+				vector<string> exthisto_in;
+				vector<string> exthisto_out;
+				localOpt->Get("exthisto_in",exthisto_in);
+				localOpt->Get("exthisto_out",exthisto_out);
+				if(exthisto_in.size() != exthisto_out.size()){
+					throw runtime_error("vectors of external histo input and output names must have the same length (in "+name+")");
+				}
+				for(unsigned i = 0; i < exthisto_in.size(); i++){
+					auto extmp = KGet<TH1>(file,exthisto_in[i]);
+					AddHisto(exthisto_out[i],extmp);
+				}
+			}
+			add_ext = false;
 		}
 		
 		//change histo add mode

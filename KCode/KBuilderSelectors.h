@@ -81,8 +81,8 @@ class KMCWeightSelector : public KSelector {
 			if(pucorr){
 				string puname = ""; localOpt->Get("puname",puname);
 				HistoMap* hmtmp = puhistMap().Get(puname);
-				if(puname.size()==0){
-					cout << "Input error: no pileup weight file specified!" << endl;
+				if(puname.empty()){
+					throw runtime_error("no pileup weight file specified!");
 				}
 				else if(hmtmp){
 					puhist = hmtmp->Get("puhist");
@@ -91,18 +91,13 @@ class KMCWeightSelector : public KSelector {
 				}
 				else{
 					//store correction root files in map
-					TFile* pufile = TFile::Open(puname.c_str(),"READ");
-					if(pufile){
-						hmtmp = new HistoMap();
-						puhist = (TH1*)pufile->Get("pu_weights_central"); puhist->SetDirectory(0); hmtmp->Add("puhist",puhist);
-						puhistUp = (TH1*)pufile->Get("pu_weights_up"); puhistUp->SetDirectory(0); hmtmp->Add("puhistUp",puhistUp);
-						puhistDown = (TH1*)pufile->Get("pu_weights_down"); puhistDown->SetDirectory(0); hmtmp->Add("puhistDown",puhistDown);
-						puhistMap().Add(puname,hmtmp);
-						pufile->Close();
-					}
-					else {
-						cout << "Input error: could not open pileup weight file " << puname << "." << endl;
-					}
+					TFile* pufile = KOpen(puname);
+					hmtmp = new HistoMap();
+					puhist = KGet<TH1>(pufile,"pu_weights_central"); puhist->SetDirectory(0); hmtmp->Add("puhist",puhist);
+					puhistUp = KGet<TH1>(pufile,"pu_weights_up"); puhistUp->SetDirectory(0); hmtmp->Add("puhistUp",puhistUp);
+					puhistDown = KGet<TH1>(pufile,"pu_weights_down"); puhistDown->SetDirectory(0); hmtmp->Add("puhistDown",puhistDown);
+					puhistMap().Add(puname,hmtmp);
+					pufile->Close();
 				}
 			}
 
@@ -118,7 +113,7 @@ class KMCWeightSelector : public KSelector {
 				string puname2; localOpt->Get("puname2",puname2);
 				HistoMap* hmtmp = puhistMap().Get(puname1+puname2);
 				if(puname1.empty() or puname2.empty()){
-					cout << "Input error: expected pileup weight file not specified!" << endl;
+					throw runtime_error("expected pileup weight file not specified!");
 				}
 				else if(hmtmp){
 					puupdhist = hmtmp->Get("puupdhist");
@@ -126,33 +121,23 @@ class KMCWeightSelector : public KSelector {
 					puupdhistDown = hmtmp->Get("puupdhistDown");
 				}
 				else {
-					TFile* pufile2 = TFile::Open(puname2.c_str(),"READ");
-					if(pufile2){
-						hmtmp = new HistoMap();
-						puupdhist = (TH1*)pufile2->Get("data_pu_central"); puupdhist->SetDirectory(0);
-						puupdhistUp = (TH1*)pufile2->Get("data_pu_up"); puupdhistUp->SetDirectory(0);
-						puupdhistDown = (TH1*)pufile2->Get("data_pu_down"); puupdhistDown->SetDirectory(0);
-						pufile2->Close();
+					TFile* pufile2 = KOpen(puname2);
+					hmtmp = new HistoMap();
+					puupdhist = KGet<TH1>(pufile2,"data_pu_central"); puupdhist->SetDirectory(0);
+					puupdhistUp = KGet<TH1>(pufile2,"data_pu_up"); puupdhistUp->SetDirectory(0);
+					puupdhistDown = KGet<TH1>(pufile2,"data_pu_down"); puupdhistDown->SetDirectory(0);
+					pufile2->Close();
 
-						TFile* pufile1 = TFile::Open(puname1.c_str(),"READ");
-						if(pufile1){
-							//correct puWeight branch (data1/mc) by data2/data1 to get data2/mc
-							puupdhist->Divide((TH1*)pufile1->Get("data_pu_central"));
-							puupdhistUp->Divide((TH1*)pufile1->Get("data_pu_up"));
-							puupdhistDown->Divide((TH1*)pufile1->Get("data_pu_down"));
-							pufile1->Close();
+					TFile* pufile1 = KOpen(puname1);
+					//correct puWeight branch (data1/mc) by data2/data1 to get data2/mc
+					puupdhist->Divide(KGet<TH1>(pufile1,"data_pu_central"));
+					puupdhistUp->Divide(KGet<TH1>(pufile1,"data_pu_up"));
+					puupdhistDown->Divide(KGet<TH1>(pufile1,"data_pu_down"));
+					pufile1->Close();
 
-							hmtmp->Add("puupdhist",puupdhist);
-							hmtmp->Add("puupdhistUp",puupdhistUp);
-							hmtmp->Add("puupdhistDown",puupdhistDown);
-						}
-						else {
-							cout << "Input error: could not open pileup weight file " << puname1 << "." << endl;
-						}
-					}
-					else {
-						cout << "Input error: could not open pileup weight file " << puname2 << "." << endl;
-					}
+					hmtmp->Add("puupdhist",puupdhist);
+					hmtmp->Add("puupdhistUp",puupdhistUp);
+					hmtmp->Add("puupdhistDown",puupdhistDown);
 				}
 			}
 			
@@ -163,23 +148,18 @@ class KMCWeightSelector : public KSelector {
 				TH1* h_nvtx = NULL;
 				string nvtxname = ""; localOpt->Get("nvtxname",nvtxname);
 				TH1* htmp = nvtxhistMap().Get(nvtxname);
-				if(nvtxname.size()==0){
-					cout << "Input error: no nvtx distribution file specified!" << endl;
+				if(nvtxname.empty()){
+					throw runtime_error("no nvtx distribution file specified!");
 				}
 				else if(htmp){
 					h_nvtx = htmp;
 				}
 				else{
-					TFile* nvtxfile = TFile::Open(nvtxname.c_str(),"READ");
-					if(nvtxfile){
-						h_nvtx = (TH1*)nvtxfile->Get("nvertex_SingleElectron"); h_nvtx->SetDirectory(0); nvtxhistMap().Add(nvtxname,h_nvtx);
-						nvtxfile->Close();
-					}
-					else{
-						cout << "Input error: could not open nvtx distribution file " << nvtxname << "." << endl;
-					}
+					TFile* nvtxfile = KOpen(nvtxname);
+					h_nvtx = KGet<TH1>(nvtxfile,"nvertex_SingleElectron"); h_nvtx->SetDirectory(0); nvtxhistMap().Add(nvtxname,h_nvtx);
+					nvtxfile->Close();
 				}
-				puacc.SetInputs((TGraphErrors*)base->GetFile()->Get("pileupAccBand"),h_nvtx,localOpt->Get("debugpuacc",false));
+				puacc.SetInputs(KGet<TGraphErrors>(base->GetFile(),"pileupAccBand"),h_nvtx,localOpt->Get("debugpuacc",false));
 			}
 			
 			//trig corr options
@@ -211,8 +191,8 @@ class KMCWeightSelector : public KSelector {
 				TH1* isrhistDown = NULL;
 				string isrname = ""; localOpt->Get("isrname",isrname);
 				HistoMap* hmtmp = isrhistMap().Get(isrname);
-				if(isrname.size()==0){
-					cout << "Input error: no ISR weight file specified!" << endl;
+				if(isrname.empty()){
+					throw runtime_error("no ISR weight file specified!");
 				}
 				else if(hmtmp){
 					isrhist = hmtmp->Get("isrhist");
@@ -221,24 +201,19 @@ class KMCWeightSelector : public KSelector {
 				}
 				else{
 					//store correction files centrally
-					TFile* isrfile = TFile::Open(isrname.c_str(),"READ");
-					if(isrfile){
-						hmtmp = new HistoMap();
-						isrhist = (TH1*)isrfile->Get("isr_weights_central"); isrhist->SetDirectory(0); hmtmp->Add("isrhist",isrhist);
-						isrhistUp = (TH1*)isrfile->Get("isr_weights_up"); isrhistUp->SetDirectory(0); hmtmp->Add("isrhistUp",isrhistUp);
-						isrhistDown = (TH1*)isrfile->Get("isr_weights_down"); isrhistDown->SetDirectory(0); hmtmp->Add("isrhistDown",isrhistDown);
-						isrhistMap().Add(isrname,hmtmp);
-						isrfile->Close();
-					}
-					else {
-						cout << "Input error: could not open ISR weight file " << isrname << "." << endl;
-					}
+					TFile* isrfile = KOpen(isrname);
+					hmtmp = new HistoMap();
+					isrhist = KGet<TH1>(isrfile,"isr_weights_central"); isrhist->SetDirectory(0); hmtmp->Add("isrhist",isrhist);
+					isrhistUp = KGet<TH1>(isrfile,"isr_weights_up"); isrhistUp->SetDirectory(0); hmtmp->Add("isrhistUp",isrhistUp);
+					isrhistDown = KGet<TH1>(isrfile,"isr_weights_down"); isrhistDown->SetDirectory(0); hmtmp->Add("isrhistDown",isrhistDown);
+					isrhistMap().Add(isrname,hmtmp);
+					isrfile->Close();
 				}
 				TH1* isrtmp = NULL;
 				if(isrunc==1) isrtmp = isrhistUp;
 				else if(isrunc==-1) isrtmp = isrhistDown;
 				else isrtmp = isrhist;
-				isrcorror.SetWeights(isrtmp,(TH1*)base->GetFile()->Get("NJetsISR"));
+				isrcorror.SetWeights(isrtmp,KGet<TH1>(base->GetFile(),"NJetsISR"));
 			}
 			
 			//flattening options
@@ -246,38 +221,33 @@ class KMCWeightSelector : public KSelector {
 			if(flatten){
 				flatqty = noflatqty;
 				string flatname; localOpt->Get("flatname",flatname);
-				TFile* flatfile = TFile::Open(flatname.c_str(),"READ");
-				if(flatfile){
-					localOpt->Get("flatqty",sflatqty);
-					string flatsuff;
-					if(!base->GetLocalOpt()->Get("flatsuff",flatsuff)) flatsuff = base->GetName();
-					string flatdist = sflatqty + "_" + flatsuff;
-					TH1* flathist = NULL;
-					flathist = (TH1*)flatfile->Get(flatdist.c_str()); flathist->SetDirectory(0);
+				TFile* flatfile = KOpen(flatname);
 
-					//optional numer
-					string flatnumer; localOpt->Get("flatnumer",flatnumer);
-					TH1* flatnumerhist = NULL;
-					if(!flatnumer.empty()) {
-						string flatnumerdist = sflatqty + "_" + flatnumer;
-						flatnumerhist = (TH1*)flatfile->Get(flatnumerdist.c_str());
-						flatnumerhist->SetDirectory(0);
-					}
+				localOpt->Get("flatqty",sflatqty);
+				string flatsuff;
+				if(!base->GetLocalOpt()->Get("flatsuff",flatsuff)) flatsuff = base->GetName();
+				string flatdist = sflatqty + "_" + flatsuff;
+				TH1* flathist = KGet<TH1>(flatfile,flatdist); flathist->SetDirectory(0);
 
-					flatfile->Close();
-					flattener.SetDist(flathist,flatnumerhist);
+				//optional numer
+				string flatnumer; localOpt->Get("flatnumer",flatnumer);
+				TH1* flatnumerhist = NULL;
+				if(!flatnumer.empty()) {
+					string flatnumerdist = sflatqty + "_" + flatnumer;
+					flatnumerhist = KGet<TH1>(flatfile,flatnumerdist);
+					flatnumerhist->SetDirectory(0);
+				}
+
+				flatfile->Close();
+				flattener.SetDist(flathist,flatnumerhist);
 					
-					//get enum for flatqty
-					if(sflatqty=="leadjetAK8pt") flatqty = leadjetAK8pt;
-					else if(sflatqty=="subleadjetAK8pt") flatqty = subleadjetAK8pt;
-					else if(sflatqty=="bothjetAK8pt") flatqty = bothjetAK8pt;
-					else if(sflatqty=="thirdjetAK8pt") flatqty = thirdjetAK8pt;
-					else if(sflatqty=="fourthjetAK8pt") flatqty = fourthjetAK8pt;
-					else cout << "Input error: unknown flatqty " << sflatqty << endl;
-				}
-				else{
-					cout << "Input error: could not open flattening file " << flatname << endl;
-				}
+				//get enum for flatqty
+				if(sflatqty=="leadjetAK8pt") flatqty = leadjetAK8pt;
+				else if(sflatqty=="subleadjetAK8pt") flatqty = subleadjetAK8pt;
+				else if(sflatqty=="bothjetAK8pt") flatqty = bothjetAK8pt;
+				else if(sflatqty=="thirdjetAK8pt") flatqty = thirdjetAK8pt;
+				else if(sflatqty=="fourthjetAK8pt") flatqty = fourthjetAK8pt;
+				else throw runtime_error("unknown flatqty " + sflatqty);
 			}
 
 			//svb weighting options
@@ -288,15 +258,15 @@ class KMCWeightSelector : public KSelector {
 				string svbname; localOpt->Get("svbname",svbname);
 				string svbnumer; localOpt->Get("svbnumer",svbnumer);
 				string svbdenom; localOpt->Get("svbdenom",svbdenom);
-				TFile* svbfile = TFile::Open(svbname.c_str(),"READ");
+				TFile* svbfile = KOpen(svbname);
 				if(svbfile and !svbnumer.empty() and !svbdenom.empty()){
 					//get enum
 					string ssvbqty; localOpt->Get("svbqty",ssvbqty);
 					if(ssvbqty=="MTAK8") svbqty = MTAK8;
 
 					//use ratio object w/ built-in calculations
-					TH1F* numer = (TH1F*)svbfile->Get((ssvbqty+"_"+svbnumer).c_str());
-					TH1F* denom = (TH1F*)svbfile->Get((ssvbqty+"_"+svbdenom).c_str());
+					TH1F* numer = KGet<TH1F>(svbfile,ssvbqty+"_"+svbnumer);
+					TH1F* denom = KGet<TH1F>(svbfile,ssvbqty+"_"+svbdenom);
 					string svbcalc; localOpt->Get("svbcalc",svbcalc);
 					KSetRatio svbratio("svb",nullptr,nullptr);
 					svbratio.SetCalc(svbcalc);
@@ -312,7 +282,6 @@ class KMCWeightSelector : public KSelector {
 						svbnorm->Scale(1.0/svbnorm->Integral(0,svbnorm->GetNbinsX()+1));
 						hsvb->Multiply(svbnorm);
 					}
-
 				}
 			}
 
@@ -515,15 +484,13 @@ class KMCWeightSelector : public KSelector {
 			scaleunc = 0; localOpt->Get("scaleunc",scaleunc);
 			if(pdfunc!=0 || scaleunc!=0){
 				//get the normalizations for pdf/scale uncertainties
-				TH1F* h_norm = (TH1F*)base->GetFile()->Get("PDFNorm");
+				TH1F* h_norm = KGet<TH1F>(base->GetFile(),"PDFNorm");
 				pdfnorms = vector<double>(4,1.0);
 				//0: PDF up, 1: PDF down, 2: scale up, 3: scale down
-				if(h_norm){
-					double nominal = h_norm->GetBinContent(1);
-					for(unsigned n = 0; n < 4; ++n){
-						//(bin in histo = index + 2)
-						pdfnorms[n] = nominal/h_norm->GetBinContent(n+2);
-					}
+				double nominal = h_norm->GetBinContent(1);
+				for(unsigned n = 0; n < 4; ++n){
+					//(bin in histo = index + 2)
+					pdfnorms[n] = nominal/h_norm->GetBinContent(n+2);
 				}
 			}
 		}

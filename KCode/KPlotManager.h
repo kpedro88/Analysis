@@ -230,7 +230,7 @@ class KPlotManager : public KManager {
 			
 			//setup root output file if requested
 			string rootfilename = "";
-			if(globalOpt->Get<string>("rootfile",rootfilename) and rootfilename.size()>0) out_file = TFile::Open((rootfilename+".root").c_str(),"RECREATE");
+			if(globalOpt->Get<string>("rootfile",rootfilename) and rootfilename.size()>0) out_file = KOpen(rootfilename+".root","RECREATE");
 			
 			//check for intlumi
 			//if it has not been set by the user, get it from data

@@ -1680,22 +1680,21 @@ class KJetAK8TrainingSelector : public KSelector {
 			string qty = "bothjetAK8pt";
 			string flatsuff;
 			if(!base->GetLocalOpt()->Get("flatsuff",flatsuff)) flatsuff = base->GetName();
-			TFile* flatfile = TFile::Open(flatname.c_str(),"READ");
+			TFile* flatfile = KOpen(flatname);
 			string flatdist = qty + "_" + flatsuff;
-			TH1* flathist = (TH1*)flatfile->Get(flatdist.c_str());
-			if(flatten and flathist){
+			if(flatten){
+				TH1* flathist = KGet<TH1>(flatfile,flatdist);
 				flathist->SetDirectory(0);
 				for(const auto& numer : flatnumers){
 					string flatnumerdist = qty + "_" + numer;
-					TH1* flatnumerhist = (TH1*)flatfile->Get(flatnumerdist.c_str());
+					TH1* flatnumerhist = KGet<TH1>(flatfile,flatnumerdist);
 					if(flatnumerhist) flatnumerhist->SetDirectory(0);
 					flatteners.emplace_back();
 					flatteners.back().SetDist(flathist,flatnumerhist);
 				}
 				b_flatweights = vector<double>(flatbranches.size(),0);
 			}
-			else flatten = false;
-			if(flatfile) flatfile->Close();
+			flatfile->Close();
 			//get signal parameters
 			b_mZprime = 0.; base->GetLocalOpt()->Get("mZprime",b_mZprime);
 			b_mDark = 0.; base->GetLocalOpt()->Get("mDark",b_mDark);

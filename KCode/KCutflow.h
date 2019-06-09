@@ -3,6 +3,7 @@
 
 //custom headers
 #include "KMath.h"
+#include "KMap.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -15,6 +16,7 @@
 #include <string>
 #include <vector>
 #include <cstdlib>
+#include <exception>
 
 using namespace std;
 
@@ -25,7 +27,7 @@ class KCutflow {
 	
 		//constructors
 		KCutflow(string name_, string fname_) : name(name_), h_raw(NULL), h_abs(NULL), h_rel(NULL) {
-			TFile* file = TFile::Open(fname_.c_str());
+			TFile* file = KOpen(fname_);
 			GetFromFile(file);
 		}
 		KCutflow(string name_, TFile* file) : name(name_), h_raw(NULL), h_abs(NULL), h_rel(NULL) {
@@ -43,22 +45,12 @@ class KCutflow {
 		}
 		//constructor helper
 		void GetFromFile(TFile* file){
-			if(!file) {
-				cout << "Input error: null file pointer!" << endl;
-				return;
-			}
+			if(!file) throw runtime_error("null file pointer!");
 			
-			h_raw = (TH1F*)file->Get("cutflow");
-			if(!h_raw){
-				cout << "Input error: could not find cutflow histogram in file " << file->GetName() << endl;
-				return;
-			}
+			h_raw = KGet<TH1F>(file,"cutflow");
 			
-			TH1F* h_nevent = (TH1F*)file->Get("nEventProc");
-			if(!h_nevent){
-				cout << "Input error: could not find NEventProc histogram in file " << file->GetName() << endl;
-				return;
-			}
+			TH1F* h_nevent = KGet<TH1F>(file,"nEventProc");
+
 			nentries = h_nevent->GetBinContent(1);
 			nentriesE = h_nevent->GetBinError(1);
 			
