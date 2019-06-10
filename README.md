@@ -15,6 +15,7 @@ git clone git@github.com:kpedro88/Analysis
 cd Analysis
 ./setupScripts.sh
 ./setupTM.sh
+./setupXML.sh
 ```
 
 The script `setupScripts.sh` links useful tools kept in the `scripts` folder for easier use.
