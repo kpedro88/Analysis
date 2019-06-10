@@ -463,9 +463,9 @@ REGISTER_SET(KSetMCStack,stack,mc);
 class KSetRatio: public KSet {
 	public:
 		//enums for different ratio calculations
-		//DataMC = data/MC, PctDiff = (data - MC)/MC, Pull = (data - MC)/err, Q1 = S/sqrt(B), Q2=S/sqrt(S+B), Q3 = 2[sqrt(S+B) - sqrt(B)], Binom = pass/all
+		//DataMC = data/MC, PctDiff = (data - MC)/MC, Pull = (data - MC)/err, Q1 = S/sqrt(B), Q2=S/sqrt(S+B), Q3 = 2[sqrt(S+B) - sqrt(B)], Q4 = sqrt(2*[(S+B)*log(1+S/B)-S]), Binom = pass/all
 		//numer = data, sig; denom = MC, bkg
-		enum ratiocalc { DataMC=0, PctDiff=1, Pull=2, Q1=3, Q2=4, Q3=5, Binom=6 };
+		enum ratiocalc { DataMC=0, PctDiff=1, Pull=2, Q1=3, Q2=4, Q3=5, Q4=6, Binom=7 };
 		//constructor
 		KSetRatio() : KSet() {}
 		KSetRatio(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KSet(name_, localOpt_, globalOpt_), btmp(0), calc(DataMC), noErrBand(false) { 
@@ -491,6 +491,7 @@ class KSetRatio: public KSet {
 			else if(calcName=="Q1") calc = Q1;
 			else if(calcName=="Q2") calc = Q2;
 			else if(calcName=="Q3") calc = Q3;
+			else if(calcName=="Q4") calc = Q4;
 			else if(calcName=="Binom") calc = Binom;			
 		}
 		
@@ -604,6 +605,16 @@ class KSetRatio: public KSet {
 				for(int b = 0; b < nbins; b++){
 					//sqrt & diff
 					hrat->SetBinContent(b,2*(sqrt(hdata->GetBinContent(b)+hsim->GetBinContent(b))-sqrt(hsim->GetBinContent(b))));
+					//no errors
+					hrat->SetBinError(b,0.);
+				}
+				noErrBand = true;
+			}
+			else if(calc==Q4){ //sqrt(2*[(S+B)*log(1+S/B)-S])
+				for(int b = 0; b < nbins; b++){
+					//undefined if B=0
+					if(hsim->GetBinContent(b)==0.) hrat->SetBinContent(b,0.);
+					else hrat->SetBinContent(b,sqrt(2*((hdata->GetBinContent(b)+hsim->GetBinContent(b))*log(1+hdata->GetBinContent(b)/hsim->GetBinContent(b))-hdata->GetBinContent(b))));
 					//no errors
 					hrat->SetBinError(b,0.);
 				}
