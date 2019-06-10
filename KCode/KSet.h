@@ -254,7 +254,10 @@ class KSetMCStack : public KSet {
 	public:
 		//constructor
 		KSetMCStack() : KSet() {}
-		KSetMCStack(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KSet(name_, localOpt_, globalOpt_), shtmp(0) {}
+		KSetMCStack(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KSet(name_, localOpt_, globalOpt_), shtmp(0) {
+			//check option
+			savechildren = localOpt->Get("savechildren",true);
+		}
 		//destructor
 		virtual ~KSetMCStack() {}
 
@@ -280,7 +283,7 @@ class KSetMCStack : public KSet {
 		}
 
 		//polymorphic add function for stacks (does formatting)
-		TH1* AddHisto(string s, TH1* h, OptionMap* omap=NULL){
+		virtual TH1* AddHisto(string s, TH1* h, OptionMap* omap=NULL){
 			stmp = s;
 			shtmp = new THStack(stmp.c_str(),stmp.c_str());
 			MyStacks.Add(stmp,shtmp);
@@ -296,7 +299,7 @@ class KSetMCStack : public KSet {
 		
 		//polymorphic build for stacks
 		using KBase::Build;
-		void Build(){
+		virtual void Build(){
 			//first, all children build
 			for(unsigned c = 0; c < children.size(); c++){
 				children[c]->Build();
@@ -333,7 +336,7 @@ class KSetMCStack : public KSet {
 		}
 		//polymorphic GetHisto for stacks
 		using KBase::GetHisto;
-		TH1* GetHisto(string hname) {
+		virtual TH1* GetHisto(string hname) {
 			THStack* stk = MyStacks.Get(hname);
 			etmp = MyErrorBands.Get(hname); //it's okay for etmp to be null
 			efftmp = MyEffs.Get(hname); //will be calculated later if needed
@@ -349,8 +352,16 @@ class KSetMCStack : public KSet {
 			}
 			else return NULL; //do not reset if the histo does not exist
 		}
+		virtual void SaveHisto(string pname, TFile* file){
+			if(savechildren){
+				for(unsigned c = 0; c < children.size(); c++){
+					children[c]->SaveHisto(pname,file);
+				}				
+			}
+			else KBase::SaveHisto(pname,file);
+		}
 		//adds child histos to legend
-		void AddToLegend(KLegend* kleg) {
+		virtual void AddToLegend(KLegend* kleg) {
 			//sort vector of children according to current histo - BEFORE adding to legend
 			if(!globalOpt->Get("nosort",false)) sort(children.begin(),children.end(),KComp());	
 		
@@ -368,7 +379,7 @@ class KSetMCStack : public KSet {
 			//this assumes it has already been created previously... a little unsafe, but a pain in the ass otherwise
 		}
 		//draw function
-		void Draw(TPad* pad) {
+		virtual void Draw(TPad* pad) {
 			pad->cd();
 			if(htmp->GetDimension()==1){
 				shtmp->Draw(MyStyle->GetDrawOpt("same").c_str());
@@ -387,7 +398,7 @@ class KSetMCStack : public KSet {
 			}
 		}
 		//normalize all children histos
-		void Normalize(double nn, bool toYield=true){
+		virtual void Normalize(double nn, bool toYield=true){
 			double simyield = htmp->Integral(0,htmp->GetNbinsX()+1); //yield of summed histo
 			
 			//scale stack histos
@@ -410,7 +421,7 @@ class KSetMCStack : public KSet {
 			if(globalOpt->Get("errband",true)) BuildErrorBand();
 		}
 		//divide current histo by bin width, stack implementation
-		void BinDivide(){
+		virtual void BinDivide(){
 			//scale stack histos
 			TObjArray* stack_array = shtmp->GetStack();
 			for(int s = 0; s < stack_array->GetSize(); s++){
@@ -434,7 +445,7 @@ class KSetMCStack : public KSet {
 			}
 		}
 		//print yield from children
-		void PrintYield() { 
+		virtual void PrintYield() { 
 			KBase::PrintYield();
 			//reverse order so largest will print first
 			for(int c = children.size()-1; c >= 0; c--){
@@ -455,6 +466,7 @@ class KSetMCStack : public KSet {
 		//new stack-based member variables
 		THStack* shtmp;
 		StackMap MyStacks;
+		bool savechildren;
 };
 REGISTER_SET(KSetMCStack,stack,mc);
 

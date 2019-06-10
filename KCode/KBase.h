@@ -134,6 +134,12 @@ class KBase {
 			}
 			else return NULL; //do not reset if the histo does not exist
 		}
+		virtual void SaveHisto(string pname, TFile* file){
+			file->cd();
+			string oname = pname + "_" + name;
+			htmp->SetName(oname.c_str());
+			htmp->Write(oname.c_str());
+		}
 		virtual KHisto* GetKHisto(string hname){
 			if(GetHisto(hname)) return khtmp;
 			else return NULL;

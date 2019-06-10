@@ -87,6 +87,13 @@ class KRocEntry {
 		bool operator<(const KRocEntry& r){
 			return auc < r.auc;
 		}
+
+		void SaveGraph(string rname, TFile* file) const {
+			file->cd();
+			string oname = string(graph->GetName()) + "_" + rname;
+			graph->SetName(oname.c_str());
+			graph->Write(oname.c_str());
+		}
 		
 		//input variables
 		vector<double> effsig, effbkg;
@@ -504,10 +511,7 @@ class KPlotManager : public KManager {
 					
 					//save histos in root file if requested
 					if(out_file){
-						out_file->cd();
-						string oname = p.first + "_" + MySets[s]->GetName();
-						MySets[s]->GetHisto()->SetName(oname.c_str());
-						MySets[s]->GetHisto()->Write(oname.c_str());
+						MySets[s]->SaveHisto(p.first,out_file);
 					}
 				}
 				p.second->GetHisto()->Draw("sameaxis"); //draw again so axes on top
@@ -525,10 +529,7 @@ class KPlotManager : public KManager {
 
 						//save histos in root file if requested
 						if(out_file){
-							out_file->cd();
-							string oname = p.first + "_" + MyRatios[r]->GetName();
-							MyRatios[r]->GetHisto()->SetName(oname.c_str());
-							MyRatios[r]->GetHisto()->Write(oname.c_str());
+							MyRatios[r]->SaveHisto(p.first,out_file);
 						}
 					}
 					p.second->DrawLine();
@@ -621,10 +622,7 @@ class KPlotManager : public KManager {
 					theSet->Draw(pad1);
 					//save histo in root file if requested
 					if(out_file){
-						out_file->cd();
-						string oname = pm.first + "_" + theSet->GetName();
-						theSet->GetHisto()->SetName(oname.c_str());
-						theSet->GetHisto()->Write(oname.c_str());
+						theSet->SaveHisto(pm.first,out_file);
 					}
 					ptmp->GetHisto()->Draw("sameaxis"); //draw again so axes on top
 					ptmp->DrawText();
@@ -723,10 +721,7 @@ class KPlotManager : public KManager {
 						
 						//save graphs in root file if requested
 						if(out_file){
-							out_file->cd();
-							string oname = string(roc_tmp.graph->GetName()) + "_" + roc_name;
-							roc_tmp.graph->SetName(oname.c_str());
-							roc_tmp.graph->Write(oname.c_str());
+							roc_tmp.SaveGraph(roc_name,out_file);
 						}
 					}
 
