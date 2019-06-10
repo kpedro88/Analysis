@@ -635,6 +635,7 @@ class KSetRatio: public KSet {
 			}
 		}
 		//calculate ratio error band from denom
+		using KBase::BuildErrorBand;
 		TGraphAsymmErrors* BuildErrorBand(TH1* hdata, TH1* hsim){
 			//make sim error band
 			TGraphAsymmErrors* erat = new TGraphAsymmErrors(htmp->GetNbinsX()+2); //under- and overflow

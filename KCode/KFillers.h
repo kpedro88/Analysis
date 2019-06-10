@@ -65,7 +65,7 @@ class KFiller_RA2bin : public KFiller {
 						string bname = RA2Bin->GetBtagBinName();
 						float bmin = RA2Bin->GetBinMin(bname,RA2Bin->RA2binVec[b]);
 						float bmax = RA2Bin->GetBinMax(bname,RA2Bin->RA2binVec[b]);
-						for(int nb = (int)bmin+1; nb <= (int)bmax; ++nb){
+						for(unsigned nb = (unsigned)bmin+1; nb <= (unsigned)bmax; ++nb){
 							if(nb>=BTagSF->prob.size()) break;
 							sfsum += BTagSF->prob[nb];
 						}

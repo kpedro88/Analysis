@@ -48,7 +48,8 @@ template <class T>
 class KBranchPtrT : public KBranchT<T> {
 	public:
 		using KBranchT<T>::KBranchT;
-		void Copy(const KBranchPtrT<T>& other){
+		using KBranchT<T>::Copy;
+		virtual void Copy(const KBranchPtrT<T>& other){
 			*(*(this->value)) = *(*(other.value));
 		}
 };

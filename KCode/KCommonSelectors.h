@@ -370,7 +370,7 @@ class KDijetSelector : public KSelector {
 		}
 
 		//member variables
-		int njet;
+		unsigned njet;
 		bool simple, id;
 		double pt, eta;
 };
@@ -556,7 +556,7 @@ class KDijetAK4Selector : public KSelector {
 		}
 
 		//member variables
-		int njet;
+		unsigned njet;
 		bool id;
 		double pt, eta;
 };
@@ -1544,7 +1544,7 @@ class KBlindSelector : public KSelector {
 	public:
 		//constructor
 		KBlindSelector() : KSelector() { }
-		KBlindSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), firstUnblindRun(-1), lastUnblindRun(-1) { 
+		KBlindSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), firstUnblindRun(0), lastUnblindRun(0) { 
 			//check for option
 			localOpt->Get("firstUnblindRun",firstUnblindRun);
 			localOpt->Get("lastUnblindRun",lastUnblindRun);
@@ -1572,12 +1572,12 @@ class KBlindSelector : public KSelector {
 				}
 				return false;
 			}
-			return (firstUnblindRun==-1 or looper->RunNum >= firstUnblindRun) and (lastUnblindRun==-1 or looper->RunNum <= lastUnblindRun);
+			return (firstUnblindRun==0 or looper->RunNum >= firstUnblindRun) and (lastUnblindRun==0 or looper->RunNum <= lastUnblindRun);
 		}
 		
 		//member variables
-		int firstUnblindRun, lastUnblindRun;
-		vector<int> intervalUnblindRuns;
+		unsigned firstUnblindRun, lastUnblindRun;
+		vector<unsigned> intervalUnblindRuns;
 };
 REGISTER_SELECTOR(Blind);
 

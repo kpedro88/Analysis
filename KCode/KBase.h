@@ -309,7 +309,7 @@ class KBaseExt : public KBase {
 		//change histo add mode
 		void SetAddExt(bool ae) { add_ext = ae; }
 		//histo add so external histos won't get overwritten
-		TH1* AddHisto(string s, TH1* h){
+		virtual TH1* AddHisto(string s, TH1* h, OptionMap* omap=NULL){
 			//set current name
 			stmp = s;
 			

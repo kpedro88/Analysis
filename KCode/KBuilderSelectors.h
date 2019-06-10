@@ -795,7 +795,7 @@ class KPTRangeSelector : public KSelector {
 		}
 		
 		//member variables
-		int njet;
+		unsigned njet;
 		double ptmin, ptmax;
 };
 REGISTER_SELECTOR(PTRange);

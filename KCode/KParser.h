@@ -269,7 +269,7 @@ namespace KParser {
 			option->Set(opt.name,vtmp);
 		}
 		else {
-			O tmp;
+			O tmp{};
 			if(opt.append) {
 				option->Get(opt.name,tmp);
 				tmp += getOptionValue<O>(opt.value);
