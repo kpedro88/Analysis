@@ -1,6 +1,8 @@
 #ifndef ISRCORRECTOR_H
 #define ISRCORRECTOR_H
 
+#include "Helper.h"
+
 #include <TH1.h>
 #include <TLorentzVector.h>
 
@@ -37,11 +39,11 @@ class ISRCorrector {
 
 /*USAGE:
 //open skim file as skimfile
-TH1* h_njetsisr = (TH1*)skimfile->Get("NJetsISR");
+TH1* h_njetsisr = helper::Get<TH1>(skimfile,"NJetsISR");
 ISRCorrector isrcorr;
-TFile* isrfile = TFile::Open("corrections/ISRWeights.root","READ");
+TFile* isrfile = helper::Open("corrections/ISRWeights.root");
 //choose central, up, or down
-TH1* h_isr = (TH1*)isrfile->Get("isr_weights_central");
+TH1* h_isr = helper::Get<TH1>(isrfile,"isr_weights_central");
 isrcorr.SetWeights(h_isr,h_njetsisr);
 //in event loop
 double w_isr = isrcorr.GetCorrection(NJetsISR);

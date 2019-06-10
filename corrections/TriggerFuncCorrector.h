@@ -1,6 +1,8 @@
 #ifndef TRIGGERFUNCCORRECTOR_H
 #define TRIGGERFUNCCORRECTOR_H
 
+#include "Helper.h"
+
 #include "TFile.h"
 #include "TF1.h"
 #include "TFitResult.h"
@@ -28,9 +30,9 @@ class TriggerFuncCorrector {
 
 		//setup
 		void SetFunc(std::string fname, std::string funcname, std::string errname){
-			TFile* file = TFile::Open(fname.c_str());
-			func = (TF1*)file->Get(funcname.c_str());
-			err = (KFitResult*)file->Get(errname.c_str());
+			TFile* file = helper::Open(fname);
+			func = helper::Get<TF1>(file,funcname);
+			err = helper::Get<KFitResult>(file,errname);
 			//restore base function to compute error (discarded by serialization)
 			err->ResetModelFunction(func);
 //			file->Close();

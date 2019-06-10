@@ -2,6 +2,7 @@
 #define BTAGCORRECTOR_H
 
 //custom headers
+#include "../corrections/Helper.h"
 #include "BTagCalibrationStandalone.cc"
 
 //ROOT headers
@@ -13,6 +14,7 @@
 //STL headers
 #include <string>
 #include <vector>
+#include <exception>
 
 using namespace std;
 
@@ -30,26 +32,28 @@ class BTagCorrector {
 		void SetDebug(bool d) { debug = d; }
 		void SetFastSim(bool f) { fastsim = f; }
 		void SetEffs(TFile* file){
-			h_eff_b = (TH2F*)file->Get("h_eff_b");
-			h_eff_c = (TH2F*)file->Get("h_eff_c");
-			h_eff_udsg = (TH2F*)file->Get("h_eff_udsg");
+			if(!file) throw runtime_error("Null file in SetEffs");
+
+			h_eff_b = helper::Get<TH2F>(file,"h_eff_b");
+			h_eff_c = helper::Get<TH2F>(file,"h_eff_c");
+			h_eff_udsg = helper::Get<TH2F>(file,"h_eff_udsg");
 			
 			//if these are not found, check for their components
 			if(!h_eff_b){
-				TH2F* n_eff_b = (TH2F*)file->Get("n_eff_b");
-				TH2F* d_eff_b = (TH2F*)file->Get("d_eff_b");
+				TH2F* n_eff_b = helper::Get<TH2F>(file,"n_eff_b");
+				TH2F* d_eff_b = helper::Get<TH2F>(file,"d_eff_b");
 				h_eff_b = (TH2F*)n_eff_b->Clone("h_eff_b");
 				h_eff_b->Divide(d_eff_b);
 			}
 			if(!h_eff_c){
-				TH2F* n_eff_c = (TH2F*)file->Get("n_eff_c");
-				TH2F* d_eff_c = (TH2F*)file->Get("d_eff_c");
+				TH2F* n_eff_c = helper::Get<TH2F>(file,"n_eff_c");
+				TH2F* d_eff_c = helper::Get<TH2F>(file,"d_eff_c");
 				h_eff_c = (TH2F*)n_eff_c->Clone("h_eff_c");
 				h_eff_c->Divide(d_eff_c);
 			}
 			if(!h_eff_udsg){
-				TH2F* n_eff_udsg = (TH2F*)file->Get("n_eff_udsg");
-				TH2F* d_eff_udsg = (TH2F*)file->Get("d_eff_udsg");
+				TH2F* n_eff_udsg = helper::Get<TH2F>(file,"n_eff_udsg");
+				TH2F* d_eff_udsg = helper::Get<TH2F>(file,"d_eff_udsg");
 				h_eff_udsg = (TH2F*)n_eff_udsg->Clone("h_eff_udsg");
 				h_eff_udsg->Divide(d_eff_udsg);
 			}

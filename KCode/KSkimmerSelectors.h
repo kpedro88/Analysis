@@ -969,7 +969,7 @@ class KL1PrefiringWeightSelector : public KSelector {
 	public:
 		//constructor
 		KL1PrefiringWeightSelector() : KSelector() { }
-		KL1PrefiringWeightSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), systUnc(0.2), setup(false) {
+		KL1PrefiringWeightSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), systUnc(0.2) {
 			forceadd = true;
 			canfail = false;
 			//check for option
@@ -985,8 +985,7 @@ class KL1PrefiringWeightSelector : public KSelector {
 				string dataEra;
 				if(basename.find("2016")!=string::npos) dataEra = "2016BtoH";
 				else if(basename.find("2017")!=string::npos) dataEra = "2017BtoF";
-				setup = corrector.setup(fname,dataEra,useEMpt,systUnc);
-				if(!setup) cout << "Input error: could not set up L1ECALPrefiringWeightCorrector." << endl;
+				corrector.setup(fname,dataEra,useEMpt,systUnc);
 			}
 		}
 		virtual void SetBranches(){
@@ -997,12 +996,10 @@ class KL1PrefiringWeightSelector : public KSelector {
 		}
 		virtual bool Cut(){
 			prob = probup = probdn = 1.0;
-			if(setup){
-				const auto& probs = corrector.getWeights(*looper->Photons, *looper->Jets, *looper->Jets_neutralEmEnergyFraction, *looper->Jets_chargedEmEnergyFraction);
-				prob = probs[0];
-				probup = probs[1];
-				probdn = probs[2];
-			}
+			const auto& probs = corrector.getWeights(*looper->Photons, *looper->Jets, *looper->Jets_neutralEmEnergyFraction, *looper->Jets_chargedEmEnergyFraction);
+			prob = probs[0];
+			probup = probs[1];
+			probdn = probs[2];
 			return true;
 		}
 

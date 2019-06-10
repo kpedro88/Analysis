@@ -1,8 +1,10 @@
 #ifndef LEPTONCORRECTOR_H
 #define LEPTONCORRECTOR_H
 
+#include "Helper.h"
+
 #include "TFile.h"
-#include "TH2.h"
+#include "TH2F.h"
 #include "TAxis.h"
 #include "TLorentzVector.h"
 
@@ -44,10 +46,8 @@ class LeptonCorrector {
 		LeptonCorrector(LCtype ltype_, string fname_, string hname_, array<LCaxes,2> axes_, int unc_, double syst_=0., double minpt_=-1, double maxpt_=-1)
 			: hist(NULL), ltype(ltype_), unc(unc_), syst2(syst_*syst_), minpt(minpt_), maxpt(maxpt_)
 		{
-			TFile* file = TFile::Open(fname_.c_str());
-			if(!file) throw runtime_error("Could not open file: "+fname_);
-			hist = (TH2F*)file->Get(hname_.c_str());
-			if(!hist) throw runtime_error("Could not open hist: "+hname_+" in file: "+fname_);
+			TFile* file = helper::Open(fname_);
+			hist = helper::Get<TH2F>(file,hname_);
 			hist->SetDirectory(0);
 			file->Close();
 			

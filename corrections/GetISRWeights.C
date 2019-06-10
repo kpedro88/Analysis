@@ -1,5 +1,5 @@
 //custom headers
-#include "../KCode/KParser.h"
+#include "Helper.h"
 
 //ROOT headers
 #include <TFile.h>
@@ -43,7 +43,7 @@ void GetISRWeights(string fname="ISRWeights"){
 		while(getline(infile,line)){
 			vector<string> fields;
 			//tab-separated
-			KParser::process(line,'\t',fields);
+			helper::process(line,'\t',fields);
 			//convert input data to doubles
 			if(ctr==0) xbins = GetDoubles(fields);
 			else if(ctr==1) weights = GetDoubles(fields);
@@ -58,7 +58,7 @@ void GetISRWeights(string fname="ISRWeights"){
 	}
 	
 	//open output file
-	TFile* outfile = TFile::Open((fname+".root").c_str(),"RECREATE");
+	TFile* outfile = helper::Open(fname+".root","RECREATE");
 	outfile->cd();
 	
 	//make histos (central + variations)

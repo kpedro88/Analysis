@@ -1,6 +1,8 @@
 #ifndef TRIGGERCORRECTOR_H
 #define TRIGGERCORRECTOR_H
 
+#include "Helper.h"
+
 #include <TFile.h>
 #include <TEfficiency.h>
 
@@ -18,8 +20,8 @@ class TriggerCorrector {
 
 		//setup
 		void SetEff(std::string fname, std::string effname){
-			TFile* file = TFile::Open(fname.c_str());
-			eff = (TEfficiency*)file->Get(effname.c_str());
+			TFile* file = helper::Open(fname);
+			eff = helper::Get<TEfficiency>(file,effname);
 			eff->SetDirectory(0);
 			file->Close();
 		}

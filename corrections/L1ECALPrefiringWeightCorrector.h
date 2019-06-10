@@ -1,6 +1,8 @@
 #ifndef L1ECALPrefiringWeightCorrector_H
 #define L1ECALPrefiringWeightCorrector_H
 
+#include "Helper.h"
+
 #include <TFile.h>
 #include <TH2.h>
 #include <TLorentzVector.h>
@@ -19,30 +21,25 @@ class L1ECALPrefiringWeightCorrector {
 		//constructor
 		L1ECALPrefiringWeightCorrector() : useEMpt(false), systUnc(0.0), h_photon(NULL), h_jet(NULL) {}
 		
-		bool setup(string fname_, string dataEra_, bool useEMpt_, double systUnc_)
+		void setup(string fname_, string dataEra_, bool useEMpt_, double systUnc_)
 		{
 			useEMpt = useEMpt_;
 			systUnc = systUnc_;
 			
 			//get 2D histo maps from file
-			TFile* file = TFile::Open(fname_.c_str());
-			if(!file) return false;
+			TFile* file = helper::Open(fname_);
 			
 			string photonname = "L1prefiring_photonptvseta_"+ dataEra_;
-			h_photon = (TH2F*)file->Get(photonname.c_str());
-			if(!h_photon) return false;
+			h_photon = helper::Get<TH2F>(file,photonname);
 			h_photon->SetDirectory(0);
 			
 			string jetname = "L1prefiring_jet";
 			jetname += (useEMpt ? "empt" : "pt");
 			jetname += "vseta_" + dataEra_;
-			h_jet = (TH2F*)file->Get(jetname.c_str());
-			if(!h_jet) return false;
+			h_jet = helper::Get<TH2F>(file,jetname);
 			h_jet->SetDirectory(0);
 			
 			file->Close();
-			
-			return true;
 		}
 		
 		std::array<double,3> getWeights(const vector<TLorentzVector>& photons, const vector<TLorentzVector>& jets, const vector<double>& jets_neutralEmEnergyFraction, const vector<double>& jets_chargedEmEnergyFraction){

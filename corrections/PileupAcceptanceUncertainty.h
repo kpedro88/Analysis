@@ -1,6 +1,8 @@
 #ifndef PILEUPACCEPTANCEUNCERTAINTY_H
 #define PILEUPACCEPTANCEUNCERTAINTY_H
 
+#include "Helper.h"
+
 #include <TH1.h>
 #include <TGraphErrors.h>
 
@@ -58,10 +60,10 @@ class PileupAcceptanceUncertainty {
 
 /*USAGE:
 //open skim file as skimfile
-TGraphErrors *g_conf = (TGraphErrors*)skimfile->Get("pileupAccBand");
+TGraphErrors *g_conf = helper::Get<TGraphErrors>(skimfile,"pileupAccBand");
 PileupAcceptanceUncertainty puacc;
-TFile* nvtxfile = TFile::Open("corrections/NVtx_SLe_03Feb2017_35p9ifb.root","READ");
-TH1* h_nvtx = (TH1*)nvtxfile->Get("nvertex_SingleElectron");
+TFile* nvtxfile = helper::Open("corrections/NVtx_SLe_03Feb2017_35p9ifb.root");
+TH1* h_nvtx = helper::Get<TH1>(nvtxfile,"nvertex_SingleElectron");
 puacc.SetInputs(g_conf,h_nvtx);
 //in event loop, choose up or down
 double w_puacc = puacc.GetCorrection(1);
