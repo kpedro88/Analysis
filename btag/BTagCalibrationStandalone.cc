@@ -432,7 +432,7 @@ std::cerr << "ERROR in BTagCalibrationS: "
             << ost;
 throw std::exception();
     }
-    otherSysTypeReaders_[ost] = std::auto_ptr<BTagCalibrationReaderImplS>(
+    otherSysTypeReaders_[ost] = std::shared_ptr<BTagCalibrationReaderImplS>(
         new BTagCalibrationReaderImplS(op, ost)
     );
   }
