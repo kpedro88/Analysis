@@ -23,10 +23,10 @@ using namespace std;
 //make plot of points, fit, band
 void plotPileupAcc(string fname, vector<string> printformats={"png"}){
 	//get objects from skim file
-	TFile* file = TFile::Open(fname.c_str());
-	TGraphAsymmErrors* g_pts = (TGraphAsymmErrors*)file->Get("pileupAccPts");
-	TF1* g_fit = (TF1*)file->Get("pileupAccFit");
-	TGraphErrors* g_band = (TGraphErrors*)file->Get("pileupAccBand");
+	TFile* file = KOpen(fname);
+	TGraphAsymmErrors* g_pts = KGet<TGraphAsymmErrors>(file,"pileupAccPts");
+	TF1* g_fit = KGet<TF1>(file,"pileupAccFit");
+	TGraphErrors* g_band = KGet<TGraphErrors>(file,"pileupAccBand");
 	
 	//formatting
 	g_pts->SetLineColor(kBlack);

@@ -27,6 +27,7 @@
 #include <utility>
 
 #include "KCode/KPlot.h"
+#include "KCode/KMap.h"
 
 using namespace std;
 
@@ -118,16 +119,8 @@ void plotLimit(string sname, vector<pair<string,double>> vars, int nsigma=0){
 	
 	//extract info from hadded limit file
 	string fname = "limit_"+sname+".root";
-	TFile* file = TFile::Open(fname.c_str());
-	if(!file) {
-		cout << "Couldn't open " << fname << endl;
-		return;
-	}
-	TTree* limit = (TTree*)file->Get("limit");
-	if(!limit) {
-		cout << "Couldn't get limit tree from " << fname << endl;
-		return;
-	}
+	TFile* file = KOpen(fname);
+	TTree* limit = KGet<TTree>(file,"limit");
 
 	//figure out which is varied
 	stringstream scname;

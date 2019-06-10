@@ -147,12 +147,8 @@ void plotSyst2D(string indir,
 	for(const auto& model : models){
 		//get file/tree
 		string fname = indir+"/"+prefix+"_"+model+"_fast.root";
-		TFile* file = TFile::Open(fname.c_str());
-		if(!file) {
-			cout << "Error: syst tree for model " << model << " not found!" << endl;
-			continue;
-		}
-		TTree* tree = (TTree*)file->Get("tree");
+		TFile* file = KOpen(fname);
+		TTree* tree = KGet<TTree>(file,"tree");
 		tree->SetAlias("deltaM","mMother-mLSP");
 		cout << model << endl;
 		std::set<string> compared;

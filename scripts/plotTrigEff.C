@@ -46,8 +46,7 @@ void print(TCanvas* can, const string& oname, const vector<string>& pformats){
 
 //root -b -l -q 'plotTrigEff.C+("test/hist_trig_2016.root","SingleMuon","2016","trigDenom",{"trigNumerJet","trigNumerHT","trigNumerJetHT"},{"MTAK8","ht","leadjetAK8pt","met","subleadjetAK8pt"})'
 void plotTrigEff(string filename, string region, string year, string denom, vector<string> numers, vector<string> quantities, bool fit=false, bool showhist=false, int rebin=0, string cutname="", vector<string> pformats={"png"}){
-	TFile* file = TFile::Open(filename.c_str());
-	if(!file) return;
+	TFile* file = KOpen(filename);
 
 	//qty names for legend
 	map<string,string> qtitles{
@@ -132,7 +131,7 @@ void plotTrigEff(string filename, string region, string year, string denom, vect
 
 	TFile* resfile = NULL;
 	string resfilename = prefix+"_"+region+"_"+year+"_"+cutname;
-	if(fit) resfile = TFile::Open((resfilename+".root").c_str(),"RECREATE");
+	if(fit) resfile = KOpen(resfilename+".root","RECREATE");
 
 	//get denom
 	if(!cutname.empty()) denom += cutname;
@@ -141,7 +140,7 @@ void plotTrigEff(string filename, string region, string year, string denom, vect
 
 		//1D hist
 		if(qty.find("_")==string::npos){
-			TH1F* hdenom = (TH1F*)file->Get(hname.c_str());
+			TH1F* hdenom = KGet<TH1F>(file,hname);
 
 			vector<double> newbins;
 			if(rebin>0){
@@ -162,7 +161,7 @@ void plotTrigEff(string filename, string region, string year, string denom, vect
 				string ytitle = ytitles[numer].c_str();
 				if(!cutname.empty()) numer += cutname;
 				const auto& hname2 = histName(region,year,numer,qty);
-				TH1F* hnumer = (TH1F*)file->Get(hname2.c_str());
+				TH1F* hnumer = KGet<TH1F>(file,hname2);
 				if(rebin>0) hnumer = (TH1F*)hnumer->Rebin(newbins.size()-1,(hname2+"_rebin").c_str(),newbins.data());
 				TGraphAsymmErrors* btmp = new TGraphAsymmErrors(hnumer,hdenom);
 
@@ -321,13 +320,13 @@ void plotTrigEff(string filename, string region, string year, string denom, vect
 
 		//2D hist
 		else {
-			TH2F* hdenom = (TH2F*)file->Get(hname.c_str());
+			TH2F* hdenom = KGet<TH2F>(file,hname);
 
 			//compare to numers
 			for(auto numer: numers){
 			if(!cutname.empty()) numer += cutname;
 				const auto& hname2 = histName(region,year,numer,qty);
-				TH2F* hnumer = (TH2F*)file->Get(hname2.c_str());
+				TH2F* hnumer = KGet<TH2F>(file,hname2);
 				TH2F* heff = (TH2F*)hnumer->Clone();
 				heff->Divide(hnumer,hdenom);
 			
