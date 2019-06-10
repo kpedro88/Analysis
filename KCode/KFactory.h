@@ -49,6 +49,10 @@ class KFactory {
 			if(cit==MyConstructors.end()) throw runtime_error("Factory cannot construct unknown class "+name);
 			else return cit->second->construct(std::forward<Args>(args)...);
 		}
+		//check if known
+		bool has(string name) const {
+			return MyConstructors.find(name)!=MyConstructors.end();
+		}
 		
 	private:
 		//members

@@ -126,7 +126,7 @@ class KManager {
 		virtual void processHisto(string, int) {}
 		//wait to construct Xtions until we know which are desired and with which others they may be combined
 		//for now, just store the lines for each defined Xtion in a vector, and construct Xtors with them later
-		virtual void processXtion(string line, KMap<vector<KNamed*>>& allXtions, map<string,vector<KNamed*>>::iterator& curr, string pname, string cname){
+		void processXtion(string line, KMap<vector<KNamed*>>& allXtions, map<string,vector<KNamed*>>::iterator& curr, string pname, string cname){
 			if(line[0]=='\t'){ //Xtor
 				if(curr_sel==allXtions.GetTable().end()){
 					throw runtime_error("no "+pname+" for "+cname+":\n"+line+"\n"+"Check the indents.");
@@ -168,9 +168,8 @@ class KManager {
 			if(allSelections.Has(sel)){
 				KVariation* vntmp = 0;
 				if(unc.size()>0) {
-					if(!allVariations.Has(unc)) {
-						throw runtime_error("variation "+unc+" is not defined.");
-					}
+					if(!allVariations.Has(unc)) throw runtime_error("variation "+unc+" is not defined.");
+					if(KVariatorFactory::GetFactory().has(unc)) throw runtime_error("variation "+unc+" has same name as variator -> ambiguous");
 					vntmp = new KVariation(unc);
 					
 					//create variators for variation
@@ -182,6 +181,7 @@ class KManager {
 				}
 			
 				//create selection using full name (sel + unc)
+				if(KSelectorFactory::GetFactory().has(selection)) throw runtime_error("selection "+selection+" has same name as selector -> ambiguous");
 				KSelection* sntmp = new KSelection(selection,globalOpt);
 				if(vntmp) sntmp->SetVariation(vntmp);
 				

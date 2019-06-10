@@ -111,6 +111,8 @@ class KSelection {
 		OptionMap* GetGlobalOpt() { return globalOpt; }
 		void SetVariation(KVariation* varn) { variation = varn; }
 		void AddSelector(KSelector* sel_){
+			//safety check
+			if(selectors.Get(sel_->GetName())) throw runtime_error("Duplicate selector name "+sel_->GetName()+" in selection "+name);
 			selectorList.push_back(sel_);
 			selectors.Add(sel_->GetName(),sel_);
 			sel_->SetSelection(this);
