@@ -23,6 +23,7 @@
 #include <iomanip>
 #include <cmath>
 #include <algorithm>
+#include <cstdlib>
 
 using namespace std;
 
@@ -750,6 +751,8 @@ class KPlotManager : public KManager {
 				for(unsigned j = 0; j < printformat.size(); j++){
 					string otmp = oname;
 					string pformat = printformat[j];
+					bool epstopdf = pformat=="pdf";
+					if(epstopdf) pformat = "eps";
 					string suff = "";
 					if((!roc and globalOpt->Get("printsuffix",suff)) or (roc and globalOpt->Get("rocsuffix",suff))) otmp += "_" + suff;
 					if(globalOpt->Get("treesuffix",false)){
@@ -763,6 +766,7 @@ class KPlotManager : public KManager {
 					otmp += "." + pformat;
 					KParser::clean(otmp);
 					can->Print(otmp.c_str(),pformat.c_str());
+					if(epstopdf) system(("epstopdf "+otmp).c_str());
 				}
 			}
 		}
