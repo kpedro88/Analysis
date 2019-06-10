@@ -22,6 +22,7 @@
 #include <utility>
 #include <algorithm>
 #include <iterator>
+#include <exception>
 
 using namespace std;
 
@@ -61,7 +62,7 @@ class KManager {
 			
 			//infinite loop detection
 			if(inputs.find(inname)!=inputs.end()){
-				cout << "Input warning: infinite loop detected! File " << inname << " has already been parsed. Check your input files." << endl;
+				cout << "Warning: infinite loop detected! File " << inname << " has already been parsed. Check your input files." << endl;
 				//averts infinite loop, but parsing can continue
 				return true;
 			}
@@ -72,14 +73,14 @@ class KManager {
 				parsed_ &= ParseStream(infile);
 			}
 			else {
-				cout << "Input error: could not open input file \"" << inname << "\"." << endl;
+				throw runtime_error("could not open input file \""+inname+"\".");
 				parsed_ &= false;
 			}
 			return parsed_;
 		}
 		bool ParseDirect(vector<string>& input){
 			stringstream sinput;
-			copy(input.begin(), input.end(), ostream_iterator<string>(sinput, "\n")); sinput << "\n";
+			KParser::printvec(input,sinput,"\n"); sinput << "\n\n";
 			return ParseStream(sinput);
 		}
 		bool ParseStream(istream& instream){
@@ -128,8 +129,7 @@ class KManager {
 		virtual void processXtion(string line, KMap<vector<KNamed*>>& allXtions, map<string,vector<KNamed*>>::iterator& curr, string pname, string cname){
 			if(line[0]=='\t'){ //Xtor
 				if(curr_sel==allXtions.GetTable().end()){
-					cout << "Input error: no " << pname << " for " << cname << ":" << endl << line << endl << "Check the indents. This input will be skipped." << endl;
-					return;
+					throw runtime_error("no "+pname+" for "+cname+":\n"+line+"\n"+"Check the indents.");
 				}
 				//clean input
 				line.erase(0,1);
@@ -169,8 +169,7 @@ class KManager {
 				KVariation* vntmp = 0;
 				if(unc.size()>0) {
 					if(!allVariations.Has(unc)) {
-						cout << "Input error: variation " << unc << " is not defined. This request will be ignored." << endl;
-						return NULL;
+						throw runtime_error("variation "+unc+" is not defined.");
 					}
 					vntmp = new KVariation(unc);
 					
@@ -196,8 +195,7 @@ class KManager {
 				return sntmp;
 			}
 			else {
-				cout << "Input error: selection " << sel << " is not defined. This request will be ignored." << endl;
-				return NULL;
+				throw runtime_error("selection "+sel+" is not defined.");
 			}
 		}
 		//wait to construct styles until one is requested

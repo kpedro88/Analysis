@@ -1086,17 +1086,13 @@ class KRA2BinSelector : public KSelector {
 				localOpt->Get(pre.str()+"Min",min);
 				localOpt->Get(pre.str()+"Max",max);
 				if(min.size() != max.size()){
-					cout << "Input error: vector length mismatches in " << pre.str() << " min and max specification. RA2 binning will not be computed." << endl;
-					depfailed = true;
-					return;
+					throw runtime_error("vector length mismatches in "+pre.str()+" min and max specification. RA2 binning cannot be computed.");
 				}
 				
 				vector<unsigned> bins;
 				localOpt->Get(pre.str()+"Bins",bins);
 				if(q>0 && bins.size()!=all_bins[0].size()){
-					cout << "Input error: vector length mismatches in " << pre.str() << " bins specification. RA2 binning will not be computed." << endl;
-					depfailed = true;
-					return;	
+					throw runtime_error("vector length mismatches in "+pre.str()+" bins specification. RA2 binning cannot be computed.");
 				}
 				
 				//store member vars
@@ -1554,8 +1550,7 @@ class KBlindSelector : public KSelector {
 			localOpt->Get("lastUnblindRun",lastUnblindRun);
 			localOpt->Get("intervalUnblindRuns",intervalUnblindRuns);
 			if(intervalUnblindRuns.size()%2!=0){
-				cout << "Input error: intervalUnblindRuns must have an even number of entries. This input will be ignored." << endl;
-				intervalUnblindRuns.clear();
+				throw runtime_error("intervalUnblindRuns must have an even number of entries");
 			}
 		}
 		virtual void ListBranches(){

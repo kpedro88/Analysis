@@ -27,6 +27,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <exception>
 
 using namespace std;
 
@@ -350,8 +351,7 @@ class KPlot{
 			localOpt->Get("xcut_colors",xcut_colors);
 			bool use_xcut_colors = (xcuts.size()==xcut_colors.size());
 			if(!use_xcut_colors && xcut_colors.size()>0){
-				cout << "Input error: in histo " << name << ", vector lengths of xcuts and xcut_colors do not match!";
-				cout << " xcut_colors will be ignored." << endl;
+				throw runtime_error("in histo "+name+", vector lengths of xcuts and xcut_colors do not match!");
 			}
 			for(unsigned c = 0; c < xcuts.size(); c++){
 				TLine* tmp = new TLine(xcuts[c],y1,xcuts[c],y2);
@@ -370,8 +370,7 @@ class KPlot{
 			localOpt->Get("ycut_colors",ycut_colors);
 			bool use_ycut_colors = (ycuts.size()==ycut_colors.size());
 			if(!use_ycut_colors && ycut_colors.size()>0){
-				cout << "Input error: in histo " << name << ", vector lengths of ycuts and ycut_colors do not match!";
-				cout << " ycut_colors will be ignored." << endl;
+				throw runtime_error("in histo "+name+", vector lengths of ycuts and ycut_colors do not match!");
 			}
 			for(unsigned c = 0; c < ycuts.size(); c++){
 				TLine* tmp = new TLine(x1,ycuts[c],x2,ycuts[c]);

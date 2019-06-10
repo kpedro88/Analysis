@@ -2,6 +2,7 @@
 #define KBUILDERSELECTORS_H
 
 //custom headers
+#include "KParser.h"
 #include "KSelection.h"
 #include "KCommonSelectors.h"
 #include "KMath.h"
@@ -1092,11 +1093,6 @@ class KBTagSFSelector : public KSelector {
 			//get efficiency histograms
 			btagcorr.SetEffs(base->GetFile());
 			
-			if(!btagcorr.h_eff_b || !btagcorr.h_eff_c || !btagcorr.h_eff_udsg){
-				cout << "Input error: b-tag efficiency histograms missing!" << endl;
-				depfailed = true;
-			}
-			
 			//check fastsim stuff
 			bool fastsim = base->GetLocalOpt()->Get("fastsim",false);
 			if(fastsim){
@@ -1122,7 +1118,7 @@ class KBTagSFSelector : public KSelector {
 			if(debug>0) {
 				cout << "BTags = " << looper->BTagsDeepCSV << endl;
 				cout << "prob = ";
-				copy(prob.begin(),prob.end(),ostream_iterator<double>(cout," "));
+				KParser::printvec(prob,cout," ");
 				cout << endl;
 			}
 			return true;
@@ -1536,7 +1532,7 @@ double KHisto::GetWeightPerJet(unsigned index){
 			(MCWeight->flatqty==KMCWeightSelector::thirdjetAK8pt and index!=2) or
 			(MCWeight->flatqty==KMCWeightSelector::fourthjetAK8pt and index!=3) )
 		{
-			cout << "Input error: flattening qty is " << MCWeight->sflatqty << " but jet index is " << index << endl;
+			throw runtime_error("flattening qty is "+MCWeight->sflatqty+" but jet index is "+to_string(index));
 		}
 	}
 	//requiring svj tag for a jet

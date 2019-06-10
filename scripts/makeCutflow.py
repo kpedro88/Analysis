@@ -1,4 +1,4 @@
-import sys, os, stat
+import os, stat
 from optparse import OptionParser
 from collections import OrderedDict
 
@@ -19,8 +19,7 @@ parser.add_option("-q", "--squark", dest="squark", action='store_true', default=
 
 # check the signal models
 if len(options.signals)==0:
-    print "Input error: no signal models specified!"
-    sys.exit()
+    throw ValueError("no signal models specified!")
 # check the exclusive options    
 if options.uncompressed and options.compressed:
     parser.error("Can't use -u and -c together, pick one!")

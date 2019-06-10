@@ -18,6 +18,8 @@
 #include <cmath>
 #include <set>
 #include <array>
+#include <exception>
+#include <valarray>
 
 //forward declarations
 class KSelector;
@@ -158,6 +160,26 @@ std::ostream& operator<< (std::ostream& out, const KChain& ch) {
 }
 
 namespace KParser {
+	//print vector
+	template <class T, class O>
+	void printvec(const vector<T>& vec, O& out, const string& delim){
+		if(!vec.empty()){
+			//avoid trailing delim
+			copy(vec.begin(),vec.end()-1,ostream_iterator<T>(out,delim.c_str()));
+			//last element
+			out << vec.back();
+		}
+	}
+	//print valarray
+	template <class T, class O>
+	void printarr(const valarray<T>& vec, O& out, const string& delim){
+		if(vec.size()==0){
+			//avoid trailing delim
+			copy(begin(vec),end(vec)-1,ostream_iterator<T>(out,delim.c_str()));
+			//last element
+			out << *(end(vec)-1);
+		}
+	}
 	//forward declaration
 	void processOption(string line, OptionMap* option);
 	//generalization for processing a line
@@ -327,10 +349,7 @@ namespace KParser {
 		//(v)type({sep})(+):name[value]
 		KParserOption opt(line);
 		if(!opt.valid) {
-			cout << "Improperly formatted option:" << endl;
-			cout << line << endl;
-			cout << "This option will not be added." << endl;
-			return;
+			throw runtime_error("Improperly formatted option:\n"+line);
 		}
 		
 		//currently anticipated option types: full/abbrev.
@@ -340,8 +359,7 @@ namespace KParser {
 
 		//can only append to vectors or strings
 		if(opt.append and !opt.isvector and opt.type!="string" and opt.type!="s"){
-			cout << "Cannot append to option type " << opt.type << "; skipping " << opt.name << endl;
-			return;
+			throw runtime_error(opt.name+" is invalid; cannot append to option type "+opt.type);
 		}
 		
 		//match strings to types
@@ -355,7 +373,7 @@ namespace KParser {
 		else if(opt.type=="chain" || opt.type=="ch") addOption<KChain>(option,opt);
 		else if(opt.type=="input" || opt.type=="in") addOptionInput(option,opt);
 		else {
-			cout << "Unknown option type: " << line << endl;
+			throw runtime_error("Unknown option type: "+line);
 		}
 	}
 	template <size_t N>
@@ -386,7 +404,7 @@ KChain KChain::MakeChain(vector<string> fields_){
 	for(auto& field : ch.fields) ch.name += field;
 	
 	if(ch.fields.size()!=4) {
-		cout << "Input error: chain type needs 4 fields (filepre, filemin, filemax, filesuff), given " << ch.fields.size() << ". The chain " << ch.name << " will not be initialized." << endl;
+		throw runtime_error("chain type needs 4 fields (filepre, filemin, filemax, filesuff), given "+to_string(ch.fields.size())+". The chain "+ch.name+" cannot be initialized.");
 	}
 	
 	//chain has: filepre, filemin, filemax, filesuff
@@ -396,7 +414,7 @@ KChain KChain::MakeChain(vector<string> fields_){
 	string filesuff = KParser::getOptionValue<string>(ch.fields[3]);
 	
 	if(filemin>filemax){
-		cout << "Input error: chain specified incorrectly with filemin > filemax. The chain " << ch.name << " will not be initialized." << endl;
+		throw runtime_error("chain specified incorrectly with filemin > filemax. The chain "+ch.name+" cannot be initialized.");
 	}
 	
 	//loop over ranges (inclusive)

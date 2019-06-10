@@ -945,9 +945,9 @@ class KPileupAccSelector : public KSelector {
 			auto result = make_pair(sqrt((derivs*errsDown).sum()),sqrt((derivs*errsUp).sum()));
 			if(debug){
 				cout << scientific;
-				cout << "derivs = "; copy(begin(derivs), end(derivs), ostream_iterator<double>(cout,", ")); cout << endl;
-				cout << "errsDown = "; copy(begin(errsDown), end(errsDown), ostream_iterator<double>(cout,", ")); cout << endl;
-				cout << "errsUp = "; copy(begin(errsUp), end(errsUp), ostream_iterator<double>(cout,", ")); cout << endl;
+				cout << "derivs = "; KParser::printarr(derivs,cout,", "); cout << endl;
+				cout << "errsDown = "; KParser::printarr(errsDown,cout,", "); cout << endl;
+				cout << "errsUp = "; KParser::printarr(errsUp,cout,", "); cout << endl;
 				cout << fixed;
 			}
 			return result;
@@ -1088,7 +1088,7 @@ class KSyncSelector : public KSelector {
 			if(depname.size()>0){
 				prevSel = sel->Get<KSyncSelector*>(depname);
 				if(!prevSel){
-					cout << "Input error: dependency " << depname << " failed in " << name << "!" << endl;
+					throw runtime_error("dependency "+depname+" failed in "+name+"!");
 					depfailed = true;
 				}
 			}

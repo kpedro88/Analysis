@@ -139,14 +139,12 @@ class KPlotManager : public KManager {
 			if(tmp){
 				//check corner cases for indent
 				if(indent==0 && tmp->fields[0]=="base"){
-					cout << "Input error: base must have a parent set for plotting! This input will be ignored." << endl;
-					return;
+					throw runtime_error("base must have a parent set for plotting!");
 				}
 				else if(indent>0){
 					map<int,KNamedBase*>::iterator it = curr_sets.find(indent-1);
 					if(it == curr_sets.end()){
-						cout << "Input error: no parent can be identified for the set " << tmp->fields[2] << "! There may be too many indents, or the parent was not input properly. This input will be ignored." << endl;
-						return;
+						throw runtime_error("no parent can be identified for the set "+tmp->fields[2]+"! There may be too many indents, or the parent was not input properly.");
 					}
 				}
 				
@@ -355,7 +353,8 @@ class KPlotManager : public KManager {
 				if(omap->Get("ratio",true) && !ratio_allowed){ //ratios turned on by default
 					omap->Set("ratio",false); //disable ratios if components not available
 					if(!globalOpt->Get("roc",false)){
-						cout << "Input error: ratio requested for histo " << ntmp->fields[0] << ", but ";
+						//sometimes this is deliberate
+						cout << "Warning: ratio requested for histo " << ntmp->fields[0] << ", but ";
 						if(!numers.empty() && !denoms.empty() && numers.size()!=denoms.size()){
 							cout << "numer size is " << numers.size() << " and denom size is " << denoms.size() << " -> inconsistency!";
 						}
@@ -386,8 +385,7 @@ class KPlotManager : public KManager {
 					}
 					if(ptmp->Initialize(hptmp)) MyPlots.Add(ntmp->fields[0],ptmp);
 					else {
-						cout << "Input error: unable to build histo " << ntmp->fields[0] << ". Check binning options." << endl;
-						delete ptmp;
+						throw runtime_error("unable to build histo "+ntmp->fields[0]+". Check binning options.");
 					}
 				}
 				else if(dim==2){
@@ -413,15 +411,13 @@ class KPlotManager : public KManager {
 							p2map->Add(theSet->GetName(),ptmp);
 						}
 						else {
-							cout << "Input error: unable to build 2D histo " << ntmp->fields[0] << " for set " << theSet->GetName() << ". Check binning options." << endl;
-							delete ptmp;
+							throw runtime_error("unable to build 2D histo "+ntmp->fields[0]+" for set "+theSet->GetName()+". Check binning options.");
 						}
 					}
 					
 					if(p2map->GetTable().begin() != p2map->GetTable().end()) MyPlots2D.Add(ntmp->fields[0],p2map);
 					else {
-						cout << "Input error: unable to build any 2D histos " << ntmp->fields[0] << ". Check binning options." << endl;
-						delete p2map;
+						throw runtime_error("unable to build any 2D histos "+ntmp->fields[0]+". Check binning options.");
 					}
 				}
 			}
@@ -490,7 +486,7 @@ class KPlotManager : public KManager {
 				}
 				if(globalOpt->Get("printyield",false)) cout << endl;
 				if(p.second->GetLocalOpt()->Get("yieldnorm",false) && !yieldref){
-					cout << "Input error: normalization to yield requested for " << p.first << ", but yieldref not set. Normalization will not be performed." << endl;
+					throw runtime_error("normalization to yield requested for "+p.first+", but yieldref not set. Normalization cannot be performed.");
 				}
 				
 				//build legend
@@ -552,7 +548,7 @@ class KPlotManager : public KManager {
 					yield = yieldref->GetYield();
 				}
 				else if(p2map->GetTable().begin()->second->GetLocalOpt()->Get("yieldnorm",false) && !yieldref){
-					cout << "Input error: normalization to yield requested for " << pm.first << ", but yieldref not set. Normalization will not be performed." << endl;
+					throw runtime_error("normalization to yield requested for "+pm.first+", but yieldref not set. Normalization cannot be performed.");
 				}
 				
 				double zmin = 1e100;
@@ -646,12 +642,11 @@ class KPlotManager : public KManager {
 		//where the ROC happens
 		void DrawROC(){
 			if(roc_sig.size()==0 || roc_bkg.size()==0){
-				cout << "Input error: ROC curves requested, but ";
-				if(roc_sig.size()==0 && roc_bkg.size()==0) cout << "roc_sig and roc_bkg";
-				else if(roc_sig.size()==0) cout << "roc_sig";
-				else if(roc_sig.size()==0) cout << "roc_bkg";
-				cout << " not set. ROC curves will not be drawn." << endl;
-				return;
+				string missing;
+				if(roc_sig.size()==0 && roc_bkg.size()==0) missing = "roc_sig and roc_bkg";
+				else if(roc_sig.size()==0) missing = "roc_sig";
+				else if(roc_sig.size()==0) missing = "roc_bkg";
+				throw runtime_error("ROC curves requested, but "+missing+" not set. ROC curves will not be drawn.");
 			}
 			
 			//check settings

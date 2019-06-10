@@ -2,6 +2,7 @@
 #define KSKIMMANAGER_H
 
 //custom headers
+#include "KParser.h"
 #include "KManager.h"
 #include "KSet.h"
 #include "KSkimmer.h"
@@ -20,6 +21,7 @@
 #include <iomanip>
 #include <cmath>
 #include <utility>
+#include <exception>
 
 using namespace std;
 
@@ -38,7 +40,9 @@ class KSkimManager : public KManager {
 			//safety checks
 			if(!parsed) return;
 			if(!MyBase){
-				cout << "Input error: set " << setname << " was not found in " << input_ << "!" << endl;
+				stringstream ss;
+				KParser::printvec(input_,ss,",");
+				throw runtime_error("set "+setname+" was not found in "+ss.str()+"!");
 				parsed = false;
 				return;
 			}
@@ -64,8 +68,7 @@ class KSkimManager : public KManager {
 			vector<string> fields;
 			KParser::process(seltypes,',',fields);
 			if(fields.size()==0) {
-				cout << "Input error: no selection types requested! No trees will be created." << endl;
-				return;
+				throw runtime_error("no selection types requested! No trees can be created.");
 			}
 			
 			//construct requested selections

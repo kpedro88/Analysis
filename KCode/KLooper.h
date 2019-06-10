@@ -99,7 +99,7 @@ class KOpener {
 						//here we may want to construct a partial chain
 						TFile* ftmp = KOpen(filename,"READ",false);
 						if(!ftmp) {
-							cout << "Input error: file " << filename << " cannot be found or opened. Object " << name << " will not be fully initialized." << endl;
+							cout << "Warning: file " << filename << " cannot be found or opened. Object " << name << " will not be fully initialized." << endl;
 							continue;
 						}
 						

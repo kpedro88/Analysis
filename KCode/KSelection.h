@@ -297,8 +297,6 @@ namespace KParser {
 		
 		KSelector* srtmp = KSelectorFactory::GetFactory().construct(sname,sname,omap);
 		
-		if(!srtmp) cout << "Input error: unknown selector " << sname << ". This selector will be skipped." << endl;
-		
 		return srtmp;
 	}
 }

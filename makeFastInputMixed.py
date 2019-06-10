@@ -1,4 +1,4 @@
-import sys, os, stat
+import os, stat
 from optparse import OptionParser
 from makeFastCommon import *
 
@@ -19,14 +19,12 @@ parser.add_option("-x", "--suffix", dest="suffix", default="Mixed", help="suffix
 
 # check the signal models
 if len(options.signals)==0:
-    print "Input error: no signal models specified!"
-    sys.exit()
+    raise ValueError("no signal models specified!")
 if options.weights is None:
     print "Using equal weight for all signal models"
     options.weights = [1/float(len(options.signals)) for x in options.signals]
 elif len(options.weights)!=len(options.signals):
-    print "Input error: length of signal names != length of signal weights"
-    sys.exit()
+    raise ValueError("length of signal names != length of signal weights")
 else:
     #normalize weights
     sumwt = sum(options.weights)

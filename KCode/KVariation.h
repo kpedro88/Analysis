@@ -282,8 +282,6 @@ namespace KParser {
 		
 		KVariator* vtmp = KVariatorFactory::GetFactory().construct(vname,vname,omap);
 		
-		if(!vtmp) cout << "Input error: unknown variator " << vname << ". This variator will be skipped." << endl;
-
 		return vtmp;
 	}
 }

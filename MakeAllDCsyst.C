@@ -24,8 +24,8 @@ string changeHistoName(string name, string suff){
 	KParser::process(name,'_',snames);
 	snames.back() = suff;
 	stringstream ssname;
-	copy(snames.begin(),snames.end(),ostream_iterator<string>(ssname,"_"));
-	string sname = ssname.str(); sname.pop_back(); //remove trailing _
+	KParser::printvec(snames,ssname,"_");
+	string sname = ssname.str();
 	return sname;
 }
 
@@ -107,9 +107,9 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	
 	//hadd
 	stringstream slist;
-	copy(rootfiles.begin(),rootfiles.end(),ostream_iterator<string>(slist,".root "));
+	KParser::printvec(rootfiles,slist,".root ");
 	string therootfile = outpre+region+osuff+".root";
-	string cmd = "hadd -f "+therootfile+" "+slist.str();
+	string cmd = "hadd -f "+therootfile+" "+slist.str()+".root"; //add trailing delim
 	system(cmd.c_str());
 	
 	//further processing

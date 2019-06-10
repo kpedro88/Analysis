@@ -2,6 +2,7 @@
 #define KSCANMANAGER_H
 
 //custom headers
+#include "KParser.h"
 #include "KManager.h"
 #include "KSet.h"
 #include "KScanner.h"
@@ -18,6 +19,7 @@
 #include <iomanip>
 #include <cmath>
 #include <utility>
+#include <exception>
 
 using namespace std;
 
@@ -36,7 +38,9 @@ class KScanManager : public KManager {
 			//safety checks
 			if(!parsed) return;
 			if(!MyBase){
-				cout << "Input error: set " << setname << " was not found in " << input_ << "!" << endl;
+				stringstream ss;
+				KParser::printvec(input_,ss,",");
+				throw runtime_error("set "+setname+" was not found in "+ss.str()+"!");
 				parsed = false;
 				return;
 			}

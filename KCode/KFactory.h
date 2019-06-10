@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <utility>
+#include <exception>
 
 using namespace std;
 
@@ -45,7 +46,7 @@ class KFactory {
 		//construct derived types
 		T* construct(string name, Args... args){
 			auto cit = MyConstructors.find(name);
-			if(cit==MyConstructors.end()) return NULL;
+			if(cit==MyConstructors.end()) throw runtime_error("Factory cannot construct unknown class "+name);
 			else return cit->second->construct(std::forward<Args>(args)...);
 		}
 		

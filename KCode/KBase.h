@@ -394,10 +394,6 @@ namespace KParser {
 		//create object
 		KBase* tmp = KBaseFactory::GetFactory().construct(type+subtype,name,omap,globalOpt);
 		
-		if(!tmp){
-			cout << "Input error: set type \"" << type << " " << subtype << "\" is not recognized. This input will be ignored." << endl;
-		}
-		
 		return tmp;
 	}
 	KBase* processBase(string line, OptionMap* globalOpt){

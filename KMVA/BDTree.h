@@ -66,14 +66,6 @@ class BDTree {
 
 				//start parsing from the root
 				parseTree(btree.child("Node"),trees_[nt]);
-/*
-				std::cout << "vindex_ = "; std::copy(trees_[nt].nodes_.index_.begin(),trees_[nt].nodes_.index_.end(),std::ostream_iterator<unsigned>(std::cout,",")); std::cout << std::endl;
-				std::cout << "vcut_ = "; std::copy(trees_[nt].nodes_.cut_.begin(),trees_[nt].nodes_.cut_.end(),std::ostream_iterator<double>(std::cout,",")); std::cout << std::endl;
-				std::cout << "vleft_ = "; std::copy(trees_[nt].nodes_.left_.begin(),trees_[nt].nodes_.left_.end(),std::ostream_iterator<int>(std::cout,",")); std::cout << std::endl;
-				std::cout << "vright_ = "; std::copy(trees_[nt].nodes_.right_.begin(),trees_[nt].nodes_.right_.end(),std::ostream_iterator<int>(std::cout,",")); std::cout << std::endl;
-				std::cout << "vres_ = "; std::copy(trees_[nt].vres_.begin(),trees_[nt].vres_.end(),std::ostream_iterator<double>(std::cout,",")); std::cout << std::endl;
-				std::cout << std::endl;
-*/
 				++nt;
 			}
 		}

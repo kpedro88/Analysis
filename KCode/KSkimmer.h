@@ -17,6 +17,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <exception>
 
 using namespace std;
 
@@ -43,8 +44,7 @@ class KSkimmer : public KLooper {
 		virtual void Loop(){
 			NegativeWeight->SetBase(MyBase);
 			if (fChain == 0) {
-				cout << "Error: fChain is null!" << endl;
-				return;
+				throw runtime_error("fChain is null!");
 			}
 
 			//loop over ntuple tree

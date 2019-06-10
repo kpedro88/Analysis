@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <iterator>
 #include <utility>
+#include <exception>
 
 #include "KCode/KPlot.h"
 #include "KCode/KMap.h"
@@ -134,8 +135,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, int nsigma=0){
 	string cname = scname.str();
 	
 	if(var.empty()) {
-		cout << "No varied parameter specified" << endl;
-		return;
+		throw runtime_error("No varied parameter specified");
 	}
 	
 	//setup plotting options

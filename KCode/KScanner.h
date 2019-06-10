@@ -23,6 +23,7 @@
 #include <utility>
 #include <cstdlib>
 #include <cmath>
+#include <exception>
 
 using namespace std;
 
@@ -44,8 +45,7 @@ class KScanner : public KLooper {
 		//functions
 		virtual void Loop(){
 			if (fChain == 0) {
-				cout << "Error: fChain is null!" << endl;
-				return;
+				throw runtime_error("fChain is null!");
 			}
 
 			//loop over ntuple tree

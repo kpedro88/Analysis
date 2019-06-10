@@ -12,6 +12,7 @@
 #include <sstream>
 #include <iostream>
 #include <cmath>
+#include <exception>
 
 using namespace std;
 
@@ -54,7 +55,7 @@ void GetISRWeights(string fname="ISRWeights"){
 		}
 	}
 	else {
-		cout << "Input error: could not open input file " << fname+".txt" << endl;
+		throw runtime_error("could not open input file "+fname+".txt");
 	}
 	
 	//open output file
