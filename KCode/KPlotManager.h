@@ -246,23 +246,15 @@ class KPlotManager : public KManager {
 			//get special status options
 			vector<string> s_numers, s_denoms;
 			string s_yieldref = ""; //names for special sets
-			globalOpt->Get("numers",s_numers);
-			globalOpt->Get("denoms",s_denoms);
+			bool wants_numers = globalOpt->Get("numers",s_numers) and !s_numers.empty();
+			bool wants_denoms = globalOpt->Get("denoms",s_denoms) and !s_denoms.empty();
 			globalOpt->Get("yieldref",s_yieldref);
-			string s_numer, s_denom; //backward compatibility
-			s_numer = s_denom = "";
-			globalOpt->Get("numer",s_numer);
-			globalOpt->Get("denom",s_denom);
 			vector<string> s_roc_sig, s_roc_bkg; //vectors of names of roc sets
 			globalOpt->Get("roc_sig",s_roc_sig);
 			globalOpt->Get("roc_bkg",s_roc_bkg);
 			
 			//check for special status sets
 			for(unsigned s = 0; s < MySets.size(); s++){
-				//backward compatibility
-				if(s_numers.size()==0 && s_numer.size()>0 && numers.size()==0 && MySets[s]->GetName()==s_numer) numers.push_back(MySets[s]);
-				if(s_denoms.size()==0 && s_denom.size()>0 && denoms.size()==0 && MySets[s]->GetName()==s_denom) denoms.push_back(MySets[s]);
-				
 				//only find each ratio set once
 				for(unsigned r = 0; r < s_numers.size(); r++){
 					if(MySets[s]->GetName()==s_numers[r]){
@@ -296,6 +288,18 @@ class KPlotManager : public KManager {
 						break;
 					}
 				}
+			}
+
+			//check for missing
+			if(wants_numers and !s_numers.empty()){
+				stringstream ss;
+				KParser::printvec(s_numers,ss,",");
+				throw runtime_error("Numer sets requested but not found: "+ss.str());
+			}
+			if(wants_denoms and !s_denoms.empty()){
+				stringstream ss;
+				KParser::printvec(s_denoms,ss,",");
+				throw runtime_error("Denom sets requested but not found: "+ss.str());
 			}
 			
 			//numer:denom ratio cases: 1:1, 1:x, x:1
