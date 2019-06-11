@@ -106,7 +106,7 @@ class KOpener {
 						static_cast<TChain*>(tree)->Add((filename+chainsuff).c_str());
 
 						//these aren't necessarily required
-						TH1F* nEventHistTmp = KGet<TH1F>(file,"nEventProc",false);
+						TH1F* nEventHistTmp = KGet<TH1F>(ftmp,"nEventProc",false);
 						//sum up nEventProc histos
 						if(nEventHistTmp) {
 							if(nEventHist) nEventHist->Add(nEventHistTmp);
