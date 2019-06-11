@@ -1525,7 +1525,6 @@ double KHisto::GetWeightPerJet(unsigned index){
 	double w = 1.0;
 	//range of flatqty for AK8 jet pt
 	if(MCWeight and MCWeight->flatten and MCWeight->flatqty>KMCWeightSelector::noflatqty and MCWeight->flatqty<=KMCWeightSelector::fourthjetAK8pt) {
-		w *= MCWeight->flattener.GetWeight(looper->JetsAK8->at(index).Pt());
 		if( (MCWeight->flatqty==KMCWeightSelector::leadjetAK8pt and index!=0) or
 			(MCWeight->flatqty==KMCWeightSelector::subleadjetAK8pt and index!=1) or
 			(MCWeight->flatqty==KMCWeightSelector::bothjetAK8pt and (index!=0 and index!=1)) or
@@ -1534,6 +1533,7 @@ double KHisto::GetWeightPerJet(unsigned index){
 		{
 			throw runtime_error("flattening qty is "+MCWeight->sflatqty+" but jet index is "+to_string(index));
 		}
+		w *= MCWeight->flattener.GetWeight(looper->JetsAK8->at(index).Pt());
 	}
 	//requiring svj tag for a jet
 	if(SVJFilter and SVJFilter->filter!=0 and !SVJFilter->FailedDependency()){

@@ -52,7 +52,7 @@ if [[ $FLATTEN -eq 1 ]]; then
 fi
 
 for SET in ${SETS[@]}; do
-	SETFILE=../input/input_svj_hp_${SETS}.txt
+	SETFILE=../input/input_svj_hp_${SET}.txt
 	for ((i=0; i < $(cat $SETFILE | wc -l); i+=2)); do
 		LINE1=$(sed -n -e $((i+1))p ${SETFILE})
 		LINE2=$(sed -n -e $((i+2))p ${SETFILE})
