@@ -75,11 +75,12 @@ class KMCWeightSelector : public KSelector {
 			
 			//PU options
 			pucorr = localOpt->Get("pucorr",false);
+			putree = localOpt->Get("putree",false); //option to use puWeight from tree
 			puunc = 0; localOpt->Get("puunc",puunc);
 			puhist = NULL;
 			puhistUp = NULL;
 			puhistDown = NULL;
-			if(pucorr){
+			if(pucorr and !putree){
 				string puname = ""; localOpt->Get("puname",puname);
 				HistoMap* hmtmp = puhistMap().Get(puname);
 				if(puname.empty()){
@@ -501,10 +502,11 @@ class KMCWeightSelector : public KSelector {
 			if(internalNormType) NormType->CheckBranches();
 			if(pucorr){
 				branches.push_back("TrueNumInteractions");
-				branches.push_back("NVtx");
-				if(puunc==1) branches.push_back("puSysUp");
-				else if(puunc==-1) branches.push_back("puSysDown");
-				else branches.push_back("puWeight");
+				if(putree){
+					if(puunc==1) branches.push_back("puSysUp");
+					else if(puunc==-1) branches.push_back("puSysDown");
+					else branches.push_back("puWeight");
+				}
 			}
 			if(puupdcorr){
 				branches.push_back("TrueNumInteractions");
@@ -738,7 +740,7 @@ class KMCWeightSelector : public KSelector {
 		KNormTypeSelector* NormType;
 		bool internalNormType;
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, useKFactor, debugWeight, didDebugWeight;
-		bool pucorr, puupdcorr, trigcorr, trigsystcorr, isrcorr, useisrflat, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr, hemvetocorr, lepcorr;
+		bool pucorr, putree, puupdcorr, trigcorr, trigsystcorr, isrcorr, useisrflat, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr, hemvetocorr, lepcorr;
 		double jetidcorrval, isotrackcorrval, trigsystcorrval, lumicorrval, isrflat;
 		int puunc, puupdunc, pdfunc, isrunc, scaleunc, trigunc, trigyear, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc, prefireunc, hemvetounc, lepidunc, lepisounc, leptrkunc;
 		vector<int> mother;

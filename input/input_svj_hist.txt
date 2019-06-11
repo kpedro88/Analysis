@@ -32,5 +32,5 @@ bool:debugloop[1]
 
 SELECTION
 sim
-	MCWeight
+	MCWeight	b:pucorr[1]	b:putree[1]
 	Histo
