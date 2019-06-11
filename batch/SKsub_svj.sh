@@ -5,7 +5,7 @@ source exportProd.sh
 JOBDIR=jobs
 JOBTYPE=skim
 INPUT=input/input_selection_svj.txt
-SELTYPE=dijetmtdetahadmf,dijetmtdetahad
+SELTYPE=dijetmtdetahadloose,dijetmtdetahadloosemf,dijetlowmtdetahadloose,dijetlowmtdetahadloosemf
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}
 OUTDIR=tree
 STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims
@@ -49,7 +49,7 @@ for TYPE in ${TYPES[@]}; do
 			# remove first char, prepend condor stuff
 			SLIST="Process in ${SLIST:1}"
 		elif [[ $TYPE == "SVJ" ]]; then
-			TMPSELTYPE=$TMPSELTYPE,dijetmtdetahadmf_JECup,dijetmtdetahadmf_JECdown,dijetmtdetahadmf_JERup,dijetmtdetahadmf_JERdown
+			TMPSELTYPE=$TMPSELTYPE,dijetmtdetahadloosemf_JECup,dijetmtdetahadloosemf_JECdown,dijetmtdetahadloosemf_JERup,dijetmtdetahadloosemf_JERdown
 		fi
 
 		$DRYRUN ./SKtemp.sh ${JOBDIR} ${INPUT} ${SNAME} "${SLIST}" ${TMPSELTYPE} ${INDIR} ${OUTDIR} ${STORE} ${JOBTYPE}
