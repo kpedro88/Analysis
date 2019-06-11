@@ -400,4 +400,12 @@ class KBDTVar_procweight : public KBDTVar {
 };
 REGISTER_BDTVAR(procweight);
 
+class KBDTVar_puweight : public KBDTVar {
+	public:
+		using KBDTVar::KBDTVar;
+		virtual void ListBranches() { branches = {"puWeight"}; }
+		virtual void Fill_(unsigned j) { branch = looper->puWeight; }
+};
+REGISTER_BDTVAR(puweight);
+
 #endif
