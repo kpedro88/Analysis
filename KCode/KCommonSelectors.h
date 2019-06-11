@@ -23,14 +23,14 @@ using namespace std;
 
 //---------------------------------------------------------------
 //handle norm types for MC
-enum class NormTypes { None=0, ttbarLowHTLowMET=1, ttbarLowHTHighMET=2, ttbarLowHThad=3, ttbarHighHT=4, wjetsLowHT=5, wjetsHighHT=6 };
+enum class NormTypes { None=0, ttbarLowHT=1, ttbarLowHTLowMET=2, ttbarLowHTHighMET=3, ttbarLowHThad=4, ttbarHighHT=5, wjetsLowHT=6, wjetsHighHT=7 };
 class KNormTypeSelector : public KSelector {
 	public:
 		//constructor
 		KNormTypeSelector() : KSelector() { }
 		KNormTypeSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
 		virtual void ListBranches(){
-			if(NTenum==NormTypes::ttbarLowHTLowMET || NTenum==NormTypes::ttbarLowHTHighMET || NTenum==NormTypes::ttbarLowHThad || NTenum==NormTypes::ttbarHighHT || NTenum==NormTypes::wjetsLowHT || NTenum==NormTypes::wjetsHighHT){
+			if(NTenum==NormTypes::ttbarLowHT || NTenum==NormTypes::ttbarLowHTLowMET || NTenum==NormTypes::ttbarLowHTHighMET || NTenum==NormTypes::ttbarLowHThad || NTenum==NormTypes::ttbarHighHT || NTenum==NormTypes::wjetsLowHT || NTenum==NormTypes::wjetsHighHT){
 				branches.push_back("madHT");
 			}
 			if(NTenum==NormTypes::ttbarLowHTLowMET || NTenum==NormTypes::ttbarLowHTHighMET){
@@ -49,7 +49,8 @@ class KNormTypeSelector : public KSelector {
 		}
 		//convert normtype from string to enum for quicker compares
 		void GetNormTypeEnum(){
-			if(nt=="ttbarLowHTLowMET") NTenum = NormTypes::ttbarLowHTLowMET;
+			if(nt=="ttbarLowHT") NTenum = NormTypes::ttbarLowHT;
+			else if(nt=="ttbarLowHTLowMET") NTenum = NormTypes::ttbarLowHTLowMET;
 			else if(nt=="ttbarLowHTHighMET") NTenum = NormTypes::ttbarLowHTHighMET;
 			else if(nt=="ttbarLowHThad") NTenum = NormTypes::ttbarLowHThad;
 			else if(nt=="ttbarHighHT") NTenum = NormTypes::ttbarHighHT;
@@ -62,7 +63,8 @@ class KNormTypeSelector : public KSelector {
 			bool goodEvent = true;
 			
 			//check normalization type here
-			if(NTenum==NormTypes::ttbarLowHTLowMET) { goodEvent &= looper->madHT < 600 and looper->GenMET < 150; }
+			if(NTenum==NormTypes::ttbarLowHT) { goodEvent &= looper->madHT < 600; }
+			else if(NTenum==NormTypes::ttbarLowHTLowMET) { goodEvent &= looper->madHT < 600 and looper->GenMET < 150; }
 			else if(NTenum==NormTypes::ttbarLowHTHighMET) { goodEvent &= looper->madHT < 600 and looper->GenMET >= 150; }
 			else if(NTenum==NormTypes::ttbarLowHThad) { goodEvent &= looper->madHT < 600 && looper->GenElectrons->size()==0 && looper->GenMuons->size()==0 && looper->GenTaus->size()==0; }
 			else if(NTenum==NormTypes::ttbarHighHT) { goodEvent &= looper->madHT >= 600; }

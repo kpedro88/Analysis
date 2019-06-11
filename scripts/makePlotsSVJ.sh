@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SEL=dijetmtdetahad
+SEL=dijetmtdetahadloosemf
 
 PLOTS_ALL=(
 0 \

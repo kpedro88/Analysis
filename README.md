@@ -214,9 +214,17 @@ cd batch
 
 To make histograms, and then plots and ROC curves (including flattening pT spectra):
 ```
-./makeHistosSVJ.sh -h 0
-./makeHistosSVJ.sh -h 1,2,3,4 -a
+cd batch
+./HPsub_svj_roc.sh -q jetpt -t sets_sig,sets_bkg_2016,sets_bkg_2017,sets_bkg_2018
+./haddEOS.sh ...
+cd ..
 ./makePlotsSVJ.sh
+```
+
+To make BDT training ntuples:
+```
+cd batch
+./SKsub_svj_train.sh -t SVJ,SVJQCD,SVJTTbar -y 2016,2017,2018
 ```
 
 To make cutflow plots:
