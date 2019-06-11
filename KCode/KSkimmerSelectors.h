@@ -1641,6 +1641,90 @@ class KIsoPionTrackSelector : public KSyncSelector {
 };
 REGISTER_SELECTOR(IsoPionTrack);
 
+//----------------------------------------------------
+//updates pileup weight branch
+class KPileupWeightSelector : public KSelector {
+	public:
+		//constructor
+		KPileupWeightSelector() : KSelector() { }
+		KPileupWeightSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
+			canfail = false;
+			localOpt->Get("year",year);
+		}
+		virtual void CheckBase(){
+			//check whether this should be enabled (only for MC of given year)
+			if(base->IsData() or base->GetName().find(year)==string::npos){
+				dummy = true;
+			}
+
+			if(dummy) return;
+			else cout << "Enabled PileupWeight update for " << year << endl;
+
+			//update existing PU correction using data ratio
+			//only necessary because of 2017 wrong PU MC
+			puupdcorr = localOpt->Get("puupdcorr",false);
+			puupdhist = NULL;
+			puupdhistUp = NULL;
+			puupdhistDown = NULL;
+			if(puupdcorr){
+				string puname1; localOpt->Get("puname1",puname1);
+				string puname2; localOpt->Get("puname2",puname2);
+				HistoMap* hmtmp = puhistMap().Get(puname1+puname2);
+				if(puname1.empty() or puname2.empty()){
+					throw runtime_error("expected pileup weight file not specified!");
+				}
+				else if(hmtmp){
+					puupdhist = hmtmp->Get("puupdhist");
+					puupdhistUp = hmtmp->Get("puupdhistUp");
+					puupdhistDown = hmtmp->Get("puupdhistDown");
+				}
+				else {
+					TFile* pufile2 = KOpen(puname2);
+					hmtmp = new HistoMap();
+					puupdhist = KGet<TH1>(pufile2,"data_pu_central"); puupdhist->SetDirectory(0);
+					puupdhistUp = KGet<TH1>(pufile2,"data_pu_up"); puupdhistUp->SetDirectory(0);
+					puupdhistDown = KGet<TH1>(pufile2,"data_pu_down"); puupdhistDown->SetDirectory(0);
+					pufile2->Close();
+
+					TFile* pufile1 = KOpen(puname1);
+					//correct puWeight branch (data1/mc) by data2/data1 to get data2/mc
+					puupdhist->Divide(KGet<TH1>(pufile1,"data_pu_central"));
+					puupdhistUp->Divide(KGet<TH1>(pufile1,"data_pu_up"));
+					puupdhistDown->Divide(KGet<TH1>(pufile1,"data_pu_down"));
+					pufile1->Close();
+
+					hmtmp->Add("puupdhist",puupdhist);
+					hmtmp->Add("puupdhistUp",puupdhistUp);
+					hmtmp->Add("puupdhistDown",puupdhistDown);
+				}
+			}
+		}
+		//static members - kept in functions for safety
+		static HistoMapMap& puhistMap(){
+			static HistoMapMap puhistMap_;
+			return puhistMap_;
+		}
+		double GetBinContentBounded(TH1* hist, double val){
+			return hist->GetBinContent(hist->GetXaxis()->FindBin(min(val,hist->GetBinLowEdge(hist->GetNbinsX()+1))));
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			if(puupdcorr){
+				looper->puSysUp = (puupdhistUp ? GetBinContentBounded(puupdhistUp,looper->TrueNumInteractions) : 1.0) * looper->puSysUp;
+				looper->puSysDown = (puupdhistDown ? GetBinContentBounded(puupdhistDown,looper->TrueNumInteractions) : 1.0) * looper->puSysDown;
+				looper->puWeight = (puupdhist ? GetBinContentBounded(puupdhist,looper->TrueNumInteractions) : 1.0) * looper->puWeight;
+			}
+			return true;
+		}
+		
+		//member variables
+		string year;
+		bool puupdcorr;
+		TH1 *puupdhist, *puupdhistUp, *puupdhistDown;
+};
+REGISTER_SELECTOR(PileupWeight);
+
 //-------------------------------------------------------------
 //generate per-jet training ntuples for tagging
 class KJetAK8TrainingSelector : public KSelector {
