@@ -136,7 +136,9 @@ class KBase {
 		}
 		virtual void SaveHisto(string pname, TFile* file){
 			file->cd();
-			string oname = pname + "_" + name;
+			string outname = name;
+			localOpt->Get("outname",outname);
+			string oname = pname + "_" + outname;
 			htmp->SetName(oname.c_str());
 			htmp->Write(oname.c_str());
 		}
