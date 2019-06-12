@@ -29,6 +29,7 @@ bool:appendsel[0]
 vstring:selections[sim]
 bool:useTreeWeight[1]
 bool:debugloop[1]
+bool:debugcut[1]
 
 SELECTION
 sim

@@ -13,6 +13,7 @@ CMSSWVER="$1"
 INDIR="$2"
 STORE="$3"
 JOBNAME="$4"
+PROCESS="$5"
 
 echo ""
 echo "parameter set:"
@@ -20,6 +21,7 @@ echo "CMSSWVER:   $CMSSWVER"
 echo "INDIR:      $INDIR"
 echo "STORE:      $STORE"
 echo "JOBNAME:    $JOBNAME"
+echo "PROCESS:    $PROCESS"
 
 source stageOut.sh
 tar -xzf ${CMSSWVER}.tar.gz
@@ -31,7 +33,7 @@ eval `scramv1 runtime -sh`
 cd src/Analysis
 
 #run macro
-MACRO=$(cat $_CONDOR_SCRATCH_DIR/macro_${JOBNAME}.txt)
+MACRO=$(cat $_CONDOR_SCRATCH_DIR/macro_${JOBNAME}_part${PROCESS}.txt)
 echo "run: root -b -q -l '$MACRO'"
 root -b -q -l "${MACRO}" 2>&1
 

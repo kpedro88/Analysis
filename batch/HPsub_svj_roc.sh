@@ -6,7 +6,8 @@ JOBDIR=jobs
 SEL=dijetmtdetahadloosemf
 QTY=event
 CHECKARGS=""
-SETS=()
+TYPES=()
+YEARS=()
 OUTDIR=hist
 FLATTEN=0
 MOREINPUTS=()
@@ -14,7 +15,7 @@ EXTRA=""
 DRYRUN=""
 
 #check arguments
-while getopts "ks:q:t:i:x:o:fd" opt; do
+while getopts "ks:q:t:y:i:x:o:fd" opt; do
 	case "$opt" in
 	k) CHECKARGS="${CHECKARGS} -k"
 	;;
@@ -22,7 +23,9 @@ while getopts "ks:q:t:i:x:o:fd" opt; do
 	;;
 	q) QTY=$OPTARG
 	;;
-	t) IFS="," read -a SETS <<< "$OPTARG"
+	t) IFS="," read -a TYPES <<< "$OPTARG"
+	;;
+	y) IFS="," read -a YEARS <<< "$OPTARG"
 	;;
 	i) IFS="," read -a MOREINPUTS <<< "$OPTARG"
 	;;
@@ -41,7 +44,7 @@ INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims/t
 STORE=$INDIR/$OUTDIR
 ./SKcheck.sh ${CHECKARGS}
 
-INPUTS='"input/input_svj_hist.txt","input/input_svj_rocs_'${QTY}'.txt"'
+INPUTS='"input/input_svj_hist.txt","input/input_svj_rocs_'${QTY}'.txt","input/input_svj_hp_sets.txt"'
 if [ -n "$MOREINPUTS" ]; then
 	for MOREINPUT in ${MOREINPUTS[@]}; do
 		INPUTS="$INPUTS"',"'$MOREINPUT'"'
@@ -51,21 +54,25 @@ if [[ $FLATTEN -eq 1 ]]; then
 	INPUTS="$INPUTS"',"input/input_svj_flatten_bothjet.txt"'
 fi
 
-for SET in ${SETS[@]}; do
-	SETFILE=../input/input_svj_hp_${SET}.txt
-	for ((i=0; i < $(cat $SETFILE | wc -l); i+=2)); do
-		LINE1=$(sed -n -e $((i+1))p ${SETFILE})
-		LINE2=$(sed -n -e $((i+2))p ${SETFILE})
-		SETNAME=$(echo "$LINE1" | cut -d$'\t' -f3)
-		JOBNAME=${OUTDIR}'_svj_'${SET}'_'${SEL}'_'${QTY}'_part'${i}
-		OUTPUT='"OPTION","string:rootfile['${JOBNAME}']"'
-		if [ -n "$EXTRA" ]; then
-			OUTPUT="$OUTPUT","$EXTRA"
-		fi
-		SETOPT='"SET","'${LINE1}'","'${LINE2}'"'
-	
-		echo 'KPlotDriver.C+("'"$INDIR"'",{'"$INPUTS"'},{'"$SETOPT"','"$OUTPUT"'})' > jobs/input/macro_${JOBNAME}.txt
+for TYPE in ${TYPES[@]}; do
+	for YEAR in ${YEARS[@]}; do
+		SNAME=Hist${TYPE}${YEAR}
+		source export${SNAME}.sh
+		# skip nonexistent ones
+		if [[ $? -ne 0 ]]; then continue; fi
 
-		$DRYRUN ./HPtemp.sh ${JOBDIR} ${INDIR} ${STORE} ${JOBNAME}
+		JOBNAME=${OUTDIR}'_svj_'${TYPE}${YEAR}'_'${SEL}'_'${QTY}
+		SLIST=${#SAMPLES[@]}
+		for ((i=0; i < ${#SAMPLES[@]}; i++)); do
+			SAMPLE=${SAMPLES[$i]}
+			SJOBNAME=${JOBNAME}'_part'${i}
+			OUTPUT='"OPTION","vstring:chosensets['${SAMPLE}']","string:rootfile['${SJOBNAME}']"'
+			if [ -n "$EXTRA" ]; then
+				OUTPUT="$OUTPUT","$EXTRA"
+			fi
+			echo 'KPlotDriver.C+("'"$INDIR"'",{'"$INPUTS"'},{'"$OUTPUT"'})' > jobs/input/macro_${SJOBNAME}.txt
+		done
+
+		$DRYRUN ./HPtemp.sh ${JOBDIR} ${INDIR} ${STORE} ${JOBNAME} "${SLIST}"
 	done
 done

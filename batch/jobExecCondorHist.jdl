@@ -5,17 +5,16 @@ request_disk = 1000000
 request_memory = 2000
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
-Transfer_Input_Files = ../jobExecCondor.sh, CMSSWVER.tar.gz, input/macro_JOBNAME.txt, ../stageOut.sh
-Output = hist_JOBNAME_$(Cluster).stdout
-Error = hist_JOBNAME_$(Cluster).stderr
-Log = hist_JOBNAME_$(Cluster).condor
+Transfer_Input_Files = ../jobExecCondor.sh, CMSSWVER.tar.gz, input/macro_JOBNAME_part$(Process).txt, ../stageOut.sh
+Output = hist_JOBNAME_$(Process)_$(Cluster).stdout
+Error = hist_JOBNAME_$(Process)_$(Cluster).stderr
+Log = hist_JOBNAME_$(Process)_$(Cluster).condor
 notification = Never
 x509userproxy = $ENV(X509_USER_PROXY)
-# use "new syntax" to handle nested quotes
-Arguments = CMSSWVER INDIR STORE JOBNAME
+Arguments = CMSSWVER INDIR STORE JOBNAME $(Process)
 on_exit_remove = (ExitBySignal == False) && (ExitCode == 0)
 on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
 on_exit_hold_reason = strcat("Job held by ON_EXIT_HOLD due to ",\
 	ifThenElse((ExitBySignal == True), "exit by signal", \
 				strcat("exit code ",ExitCode)), ".")
-Queue 1
+Queue NUMSAMP
