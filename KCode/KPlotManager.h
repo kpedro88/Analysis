@@ -174,10 +174,15 @@ class KPlotManager : public KManager {
 			globalOpt->Get("selections",gselection);
 			vector<string> lselection;
 			bool globalAppend = globalOpt->Get("appendsel",true);
+			//restrict to specified sets
+			vector<string> chosensets;
+			bool hasChosenSets = globalOpt->Get("chosensets",chosensets);
+			unordered_set<string> setChosen(chosensets.begin(),chosensets.end());
 			
 			//loop over top level set options
 			//to generate sets for each selection
 			for(auto& ntmp : MySetOptions){
+				if(hasChosenSets and setChosen.find(ntmp->fields[2])==setChosen.end()) continue;
 				bool hasLocalSel = ntmp->localOpt()->Get("selections",lselection);
 				//can avoid appending if only one selection specified for this set
 				bool localAppend = globalAppend || (hasLocalSel ? lselection.size()>1 : gselection.size()>1);
