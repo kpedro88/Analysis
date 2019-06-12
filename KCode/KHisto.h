@@ -66,7 +66,6 @@ class KFiller : public KChecker {
 	protected:
 		//member variables
 		KHisto* khtmp;
-		vector<string> branches;
 };
 typedef KFactory<KFiller,string,OptionMap*,KHisto*> KFillerFactory;
 #define REGISTER_FILLER(a) REGISTER_MACRO2(KFillerFactory,KFiller_##a,a)
