@@ -28,12 +28,18 @@ S-uBDT
 	Sfull
 	uBDTsel
 	plot
+pre-BDT
+	BDTsel
+	plot
+pre-uBDT
+	uBDTsel
+	plot
 flatplot
 	MCWeight	b:flatten[1]	s:flatname[corrections/svj_dijetmtdetahadmf_jetAK8.root]	s:flatqty[bothjetAK8pt]	s:flatnumer[SVJ_3000_20_0.3_peak_MC2017]
 	Histo
-pre-BDT
+preflat-BDT
 	BDTsel
 	flatplot
-pre-uBDT
+preflat-uBDT
 	uBDTsel
 	flatplot

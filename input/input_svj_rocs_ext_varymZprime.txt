@@ -1,10 +1,10 @@
 OPTION
 string+:printsuffix[_varymZprime]
-vstring:roc_sig[SVJ_1000_20_0.3_peak,SVJ_2000_20_0.3_peak,SVJ_3000_20_0.3_peak,SVJ_4000_20_0.3_peak]
+vstring:roc_sig[SVJ_2000_20_0.3_peak,SVJ_3000_20_0.3_peak,SVJ_4000_20_0.3_peak]
 
 SET
-hist	mc	SVJ_1000_20_0.3_peak	s:legname[SVJ_1000_20_0.3_peak]	c:color[kRed]	i:linestyle[7]	i:panel[0]
-	base	ext	SVJ_1000_20_0.3_peak_MC2017	b:ext_auto[1]
+#hist	mc	SVJ_1000_20_0.3_peak	s:legname[SVJ_1000_20_0.3_peak]	c:color[kRed]	i:linestyle[7]	i:panel[0]
+#	base	ext	SVJ_1000_20_0.3_peak_MC2017	b:ext_auto[1]
 hist	mc	SVJ_2000_20_0.3_peak	s:legname[SVJ_2000_20_0.3_peak]	c:color[kBlue]	i:linestyle[7]	i:panel[0]
 	base	ext	SVJ_2000_20_0.3_peak_MC2017	b:ext_auto[1]
 hist	mc	SVJ_3000_20_0.3_peak	s:legname[SVJ_3000_20_0.3_peak]	c:color[kCyan + 2]	i:linestyle[7]	i:panel[0]

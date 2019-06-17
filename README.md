@@ -215,7 +215,7 @@ cd batch
 To make histograms, and then plots and ROC curves (including flattening pT spectra):
 ```
 cd batch
-./HPsub_svj_roc.sh -q jetpt -t sets_sig,sets_bkg_2016,sets_bkg_2017,sets_bkg_2018
+./HPsub_svj_roc.sh -q jetpt -t SVJ,SVJBkg -y 2016,2017,2018
 ./haddEOS.sh ...
 cd ..
 ./makePlotsSVJ.sh

@@ -58,6 +58,9 @@ CMDS=(
 	'KPlotDriver.C+(".",{"input/input_svj_rocs_hist_'${SEL}'.txt","input/input_svj_rocs.txt","input/input_svj_rocs_bothjet_D29b.txt","input/input_svj_rocs_ext_bkg.txt","'${SIG}'","input/input_svj_flatten_bothjet.txt"},{},1)' \
 	'KPlotDriver.C+(".",{"input/input_svj_rocs_hist_'${SEL}'.txt","input/input_svj_rocs.txt","input/input_svj_rocs_bothjet_D30.txt","input/input_svj_rocs_ext_bkg.txt","'${SIG}'","input/input_svj_flatten_bothjet.txt"},{"OPTION","s:extfilename[test/hist_svj_dijetmtdetahadmf_bothjet_D30.root]"},1)' \
 	'KPlotDriver.C+(".",{"input/input_svj_rocs_hist_'${SEL}'.txt","input/input_svj_rocs.txt","input/input_svj_rocs_bothjet_D30.txt","input/input_svj_rocs_ext_bkg.txt","'${SIG}'","input/input_svj_flatten_bothjet.txt"},{"OPTION","s:extfilename[test/histb_svj_dijetmtdetahadmf_bothjet_D30.root]","s+:printsuffix[_SVJTag]","s+:rocsuffix[_SVJTag]"},1)' \
+	'KPlotDriver.C+(".",{"input/input_svj_rocs_hist_'${SEL}'.txt","input/input_svj_rocs.txt","input/input_svj_rocs_bothjet_E1a.txt","input/input_svj_rocs_ext_bkg.txt","'${SIG}'","input/input_svj_flatten_bothjet.txt"},{"OPTION","vs+:printformat[pdf]"},1)' \
+	'KPlotDriver.C+(".",{"input/input_svj_rocs_hist_'${SEL}'.txt","input/input_svj_rocs.txt","input/input_svj_rocs_bothjet_E1b.txt","input/input_svj_rocs_ext_bkg.txt","'${SIG}'","input/input_svj_flatten_bothjet.txt"},{"OPTION","vs+:printformat[pdf]"},1)' \
+	'KPlotDriver.C+(".",{"input/input_svj_rocs_hist_'${SEL}'.txt","input/input_svj_rocs.txt","input/input_svj_rocs_bothjet_E1c.txt","input/input_svj_rocs_ext_bkg.txt","'${SIG}'","input/input_svj_flatten_bothjet.txt"},{"OPTION","vs+:printformat[pdf]"},1)' \
 )
 
 	if [ -n "$LIST" ]; then
