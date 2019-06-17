@@ -31,9 +31,12 @@ using namespace std;
 class KRocEntry {
 	public:
 		//constructor
-		KRocEntry(vector<double> effsig_, vector<double> effbkg_, string name_, OptionMap* localOpt_, KMap<string>& allStyles_, bool roclogx_, bool roclogy_, bool showAUC_, int prcsn_) : 
-			effsig(effsig_), effbkg(effbkg_), name(name_), localOpt(localOpt_), graph(nullptr), style(nullptr), auc(0.0), panel(0), legname("") 
+		KRocEntry(vector<double> effsig_, vector<double> effbkg_, string name_, OptionMap* localOpt_, KMap<string>& allStyles_, bool roclogx_, bool roclogy_, bool showAUC_, bool minus1_, int prcsn_) : 
+			effsig(effsig_), effbkg(effbkg_), name(name_), localOpt(localOpt_), graph(nullptr), style(nullptr), auc(0.0), panel(0), legname("") , minus1(minus1_)
 		{
+			//option to use 1-eff(bkg)
+			if(minus1) for(auto& x: effbkg) x = 1. - x;
+
 			//check integral
 			auc = KMath::Integral(effsig,effbkg);
 			if(auc>0.5){
@@ -85,8 +88,8 @@ class KRocEntry {
 		}
 
 		//for sorting
-		bool operator<(const KRocEntry& r){
-			return auc < r.auc;
+		bool operator<(const KRocEntry& r) const {
+			return minus1 ? auc > r.auc : auc < r.auc;
 		}
 
 		void SaveGraph(string rname, TFile* file) const {
@@ -107,6 +110,7 @@ class KRocEntry {
 		int panel;
 		string legname;
 		double xmin, ymin;
+		bool minus1;
 };
 
 //------------------------------------------
@@ -661,6 +665,7 @@ class KPlotManager : public KManager {
 			bool roclogx = globalOpt->Get("roclogx",false);
 			bool roclogy = globalOpt->Get("roclogy",false);
 			bool showAUC = globalOpt->Get("showAUC",false);
+			bool rocminus1 = globalOpt->Get("rocminus1",false);
 			//draw curves for each sig vs each bkg
 			for(unsigned s = 0; s < roc_sig.size(); s++){
 				for(unsigned b = 0; b < roc_bkg.size(); b++){
@@ -682,7 +687,7 @@ class KPlotManager : public KManager {
 						//initialize roc entry
 						//get efficiencies as copies (in case of reversal)
 						//(cached results will be returned if the calculation was already done)
-						rocs.emplace_back(*(roc_sig[s]->GetEff()),*(roc_bkg[b]->GetEff()),p.first,p.second->GetLocalOpt(),allStyles,roclogx,roclogy,showAUC,prcsn);
+						rocs.emplace_back(*(roc_sig[s]->GetEff()),*(roc_bkg[b]->GetEff()),p.first,p.second->GetLocalOpt(),allStyles,roclogx,roclogy,showAUC,rocminus1,prcsn);
 						const auto& roc_tmp = rocs.back();
 						//check minima
 						if(roc_tmp.xmin < xmin) xmin = roc_tmp.xmin;
@@ -693,7 +698,7 @@ class KPlotManager : public KManager {
 					TH1F* h_base = new TH1F(roc_name.c_str(),"",10,xmin,1.);
 					h_base->GetYaxis()->SetRangeUser(ymin,1.);
 					h_base->GetXaxis()->SetTitle(("#varepsilon_{sig} (" + roc_sig[s]->GetLegName() + ")").c_str());
-					h_base->GetYaxis()->SetTitle(("#varepsilon_{bkg} (" + roc_bkg[b]->GetLegName() + ")").c_str());
+					h_base->GetYaxis()->SetTitle(((rocminus1 ? string("1 - ") : string(""))+"#varepsilon_{bkg} (" + roc_bkg[b]->GetLegName() + ")").c_str());
 					
 					//make plot
 					KPlot* p_roc = new KPlot(roc_name,NULL,globalOpt);
