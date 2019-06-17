@@ -1,0 +1,12 @@
+OPTION
+string+:rocsuffix[_bothjetE1c]
+vstring:disable_branches[*]
+string:extfilename[test/svj_dijetmtdetahadmf_bothjet_E1.root]
+bool:rocminus1[1]
+
+HISTO
+bothjetAK8fChHad	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{h^{#pm}}(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	c:color[kBlue]
+bothjetAK8fEle	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{e}(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	c:color[kMagenta + 2]
+bothjetAK8fNeuHad	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{h^{0}}(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	c:color[kYellow + 3]
+bothjetAK8fMu	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[f_{#mu}(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	c:color[kMagenta]
+bothjetAK8fPho	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{#gamma}(j_{1,2})]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	c:color[kPink - 9]
