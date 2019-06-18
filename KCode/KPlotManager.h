@@ -39,7 +39,7 @@ class KRocEntry {
 
 			//check integral
 			auc = KMath::Integral(effsig,effbkg);
-			if(auc>0.5){
+			if((minus1 and auc<0.5) or (!minus1 and auc>0.5)){
 				//reverse!
 				for(unsigned e = 0; e < effsig.size(); ++e){
 					effsig[e] = 1 - effsig[e];
