@@ -34,6 +34,10 @@ class KRocEntry {
 		KRocEntry(vector<double> effsig_, vector<double> effbkg_, string name_, OptionMap* localOpt_, KMap<string>& allStyles_, bool roclogx_, bool roclogy_, bool showAUC_, bool minus1_, int prcsn_) : 
 			effsig(effsig_), effbkg(effbkg_), name(name_), localOpt(localOpt_), graph(nullptr), style(nullptr), auc(0.0), panel(0), legname("") , minus1(minus1_)
 		{
+			//make sure curves start at 0 and end at 1
+			pad01(effsig);
+			pad01(effbkg);
+
 			//option to use 1-eff(bkg)
 			if(minus1) for(auto& x: effbkg) x = 1. - x;
 
@@ -87,6 +91,16 @@ class KRocEntry {
 			legname = sleg.str();
 		}
 
+		void pad01(vector<double>& effs) const {
+			if(effs.front() < effs.back()){
+				effs.insert(effs.begin(),0.);
+				effs.insert(effs.end(),1.);
+			}
+			else {
+				effs.insert(effs.begin(),1.);
+				effs.insert(effs.end(),0.);
+			}
+		}
 		//for sorting
 		bool operator<(const KRocEntry& r) const {
 			return minus1 ? auc > r.auc : auc < r.auc;
