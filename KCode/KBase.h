@@ -304,7 +304,7 @@ class KBaseExt : public KBase {
 				localOpt->Get("exthisto_in",exthisto_in);
 				localOpt->Get("exthisto_out",exthisto_out);
 				if(exthisto_in.size() != exthisto_out.size()){
-					throw runtime_error("vectors of external histo input and output names must have the same length (in "+name+")");
+					throw runtime_error("vectors of external histo input and output names have different lengths "+to_string(exthisto_in.size())+", "+to_string(exthisto_out.size())+" (in "+name+")");
 				}
 				for(unsigned i = 0; i < exthisto_in.size(); i++){
 					auto extmp = KGet<TH1>(file,exthisto_in[i]);
