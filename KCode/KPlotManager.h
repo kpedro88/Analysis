@@ -698,7 +698,7 @@ class KPlotManager : public KManager {
 					TH1F* h_base = new TH1F(roc_name.c_str(),"",10,xmin,1.);
 					h_base->GetYaxis()->SetRangeUser(ymin,1.);
 					h_base->GetXaxis()->SetTitle(("#varepsilon_{sig} (" + roc_sig[s]->GetLegName() + ")").c_str());
-					h_base->GetYaxis()->SetTitle(((rocminus1 ? string("1 - ") : string(""))+"#varepsilon_{bkg} (" + roc_bkg[b]->GetLegName() + ")").c_str());
+					h_base->GetYaxis()->SetTitle((string(rocminus1 ? "1 - " : "")+"#varepsilon_{bkg}"+ string(!roc_bkg[b]->GetLegName().empty() ? " (" + roc_bkg[b]->GetLegName() + ")" : "")).c_str());
 					
 					//make plot
 					KPlot* p_roc = new KPlot(roc_name,NULL,globalOpt);
