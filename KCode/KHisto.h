@@ -113,8 +113,8 @@ class KHisto : public KChecker {
 		KHisto(string name_, OptionMap* localOpt_, TH1* htmp_, KBase* base_) : KChecker(name_, localOpt_), htmp(htmp_), isSpecial(false), MCWeight(0) {
 			vector<string> vars;
 			if(!localOpt->Get("vars",vars)){
-				//split up histo variables from name (if not otherwise specified)
-				KParser::process(name,'_',vars);
+				//split up histo variables from original name (if not otherwise specified)
+				KParser::process(orig_name,'_',vars);
 			}
 			
 			//initialization - checkers
@@ -304,8 +304,10 @@ double KJetFiller::GetWeight(unsigned index){
 //add a blank histo for future building
 TH1* KBase::AddHisto(string s, TH1* h, OptionMap* omap){
 	//avoid re-adding
-	if(!GetHisto(s)){
-		stmp = s;
+	string histo_name = s;
+	if(omap) omap->Get("name",histo_name);
+	if(!GetHisto(histo_name)){
+		stmp = histo_name;
 		khtmp = NULL;
 		if(h){
 			htmp = (TH1*)h->Clone();
@@ -314,7 +316,7 @@ TH1* KBase::AddHisto(string s, TH1* h, OptionMap* omap){
 		else htmp = NULL;
 		//KHisto will generate special histo automatically (if h==NULL)
 		//but don't make KHisto if no omap provided
-		if(omap) khtmp = new KHisto(s,omap,htmp,this);
+		if(omap) khtmp = new KHisto(s,omap,htmp,this); //use orig s here to get histo fill vars
 		if(!htmp and khtmp) htmp = khtmp->GetHisto();
 		MyHistos.Add(stmp,htmp);
 		if(khtmp) MyKHistos.Add(stmp,khtmp);

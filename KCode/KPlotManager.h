@@ -371,11 +371,14 @@ class KPlotManager : public KManager {
 			for(unsigned p = 0; p < MyPlotOptions.size(); p++){
 				KNamed* ntmp = MyPlotOptions[p];
 				OptionMap* omap = ntmp->localOpt();
+				string histo_name = ntmp->fields[0];
+				//check name change
+				omap->Get("name",histo_name);
 				if(omap->Get("ratio",true) && !ratio_allowed){ //ratios turned on by default
 					omap->Set("ratio",false); //disable ratios if components not available
 					if(!globalOpt->Get("roc",false)){
 						//sometimes this is deliberate
-						cout << "Warning: ratio requested for histo " << ntmp->fields[0] << ", but ";
+						cout << "Warning: ratio requested for histo " << histo_name << ", but ";
 						if(!numers.empty() && !denoms.empty() && numers.size()!=denoms.size()){
 							cout << "numer size is " << numers.size() << " and denom size is " << denoms.size() << " -> inconsistency!";
 						}
@@ -389,24 +392,30 @@ class KPlotManager : public KManager {
 					}
 				}
 				//special histos are prebuilt
-				if(KHisto::IsSpecial(ntmp->fields[0])){
+				if(KHisto::IsSpecial(histo_name)){
 					for(unsigned s = 0; s < MySets.size(); s++){
-						MySets[s]->AddHisto(ntmp->fields[0],NULL,omap);
+						MySets[s]->AddHisto(histo_name,NULL,omap);
 					}
 				}
 				int dim = 0;
 				omap->Get("dimension",dim);
 				if(dim==1){
-					KPlot* ptmp = new KPlot(ntmp->fields[0],omap,globalOpt);
+					KPlot* ptmp = new KPlot(histo_name,omap,globalOpt);
 					TH1* hptmp = NULL;
-					TH1* hspecial = MySets[0]->GetHisto(ntmp->fields[0]);
+					TH1* hspecial = MySets[0]->GetHisto(histo_name);
 					if(hspecial) {
 						hptmp = (TH1*)(hspecial)->Clone();
 						hptmp->Reset();
 					}
-					if(ptmp->Initialize(hptmp)) MyPlots.Add(ntmp->fields[0],ptmp);
+					if(ptmp->Initialize(hptmp)){
+						MyPlots.Add(histo_name,ptmp);
+						//load histo into sets
+						for(unsigned s = 0; s < MySets.size(); s++){
+							MySets[s]->AddHisto(ntmp->fields[0],ptmp->GetHisto(),omap);
+						}
+					}
 					else {
-						throw runtime_error("unable to build histo "+ntmp->fields[0]+". Check binning options.");
+						throw runtime_error("unable to build histo "+histo_name+". Check binning options.");
 					}
 				}
 				else if(dim==2){
@@ -426,37 +435,30 @@ class KPlotManager : public KManager {
 						
 						//todo: consider special 2D histos here
 						omap->Set<string>(theSet->GetName()+"_legname",theSet->GetLegName());
-						KPlot* ptmp = new KPlot2D(ntmp->fields[0],theSet->GetName(),omap,globalOpt);
+						KPlot* ptmp = new KPlot2D(histo_name,theSet->GetName(),omap,globalOpt);
 						if(!rationame2D.empty()) ptmp->GetLocalOpt()->Set<string>(theSet->GetName()+"_name2D",rationame2D);
 						if(ptmp->Initialize()) {
 							p2map->Add(theSet->GetName(),ptmp);
 						}
 						else {
-							throw runtime_error("unable to build 2D histo "+ntmp->fields[0]+" for set "+theSet->GetName()+". Check binning options.");
+							throw runtime_error("unable to build 2D histo "+histo_name+" for set "+theSet->GetName()+". Check binning options.");
 						}
 					}
 					
-					if(p2map->GetTable().begin() != p2map->GetTable().end()) MyPlots2D.Add(ntmp->fields[0],p2map);
+					if(p2map->GetTable().begin() != p2map->GetTable().end()){
+						MyPlots2D.Add(histo_name,p2map);
+						//load histo into sets
+						for(unsigned s = 0; s < MySets.size(); s++){
+							KPlot* ptmp = p2map->Get(MySets[s]->GetName());
+							if(ptmp) MySets[s]->AddHisto(ntmp->fields[0],ptmp->GetHisto(),omap);
+						}
+					}
 					else {
-						throw runtime_error("unable to build any 2D histos "+ntmp->fields[0]+". Check binning options.");
+						throw runtime_error("unable to build any 2D histos "+histo_name+". Check binning options.");
 					}
 				}
 			}
 		
-			//load histos into sets
-			for(auto& p : MyPlots.GetTable()){
-				for(unsigned s = 0; s < MySets.size(); s++){
-					MySets[s]->AddHisto(p.first,p.second->GetHisto(),p.second->GetLocalOpt());
-				}
-			}
-			for(auto& pm : MyPlots2D.GetTable()){
-				PlotMap* p2map = pm.second;
-				for(unsigned s = 0; s < MySets.size(); s++){
-					KPlot* ptmp = p2map->Get(MySets[s]->GetName());
-					if(ptmp) MySets[s]->AddHisto(pm.first,ptmp->GetHisto(),ptmp->GetLocalOpt());
-				}
-			}
-			
 			//build everything
 			for(unsigned s = 0; s < MySets.size(); s++){
 				MySets[s]->Build();

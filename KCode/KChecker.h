@@ -21,8 +21,13 @@ class KSelection;
 class KChecker {
 	public:
 		//constructors
-		KChecker() : name(""), localOpt(new OptionMap()), base(0), looper(0), sel(0) {}
-		KChecker(string name_, OptionMap* localOpt_) : name(name_), localOpt(localOpt_ ? localOpt_ : new OptionMap()), base(0), looper(0), sel(0) {}
+		KChecker() : name(""), orig_name(""), localOpt(new OptionMap()), base(0), looper(0), sel(0) {}
+		KChecker(string name_, OptionMap* localOpt_)
+			: name(name_), orig_name(name_), localOpt(localOpt_ ? localOpt_ : new OptionMap()), base(0), looper(0), sel(0)
+		{
+			//possible to change name from default
+			localOpt->Get("name",name);
+		}
 		
 		//destructor
 		virtual ~KChecker() {}
@@ -45,7 +50,7 @@ class KChecker {
 		
 	protected:
 		//member variables
-		string name;
+		string name, orig_name;
 		OptionMap* localOpt;
 		KBase* base;
 		KLooper* looper;
