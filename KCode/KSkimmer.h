@@ -51,7 +51,9 @@ class KSkimmer : public KLooper {
 			nentries = fChain->GetEntries();
 			int maxevents = 0;
 			if(globalOpt->Get("maxevents",maxevents) && maxevents < nentries) nentries = maxevents;
-			//if(nentries>10000) nentries = 10000;
+			Long64_t jentry = 0;
+			unsigned firstevent = 0;
+			if(globalOpt->Get("firstevent",firstevent) && firstevent < nentries) jentry = firstevent;
 			
 			//create nEventProc if necessary
 			if(!nEventHist){
@@ -72,7 +74,7 @@ class KSkimmer : public KLooper {
 			Init(fChain);
 			
 			Long64_t nbytes = 0, nb = 0;
-			for (Long64_t jentry=0; jentry<nentries;jentry++) {
+			for (; jentry<nentries;jentry++) {
 				Long64_t ientry = LoadTree(jentry);
 				if (ientry < 0) break;
 				nb = fChain->GetEntry(jentry);   nbytes += nb;

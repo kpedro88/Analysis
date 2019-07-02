@@ -71,9 +71,12 @@ class KBuilder : public KLooper {
 			Long64_t nentries = fChain->GetEntries();
 			int maxevents = 0;
 			if(globalOpt->Get("maxevents",maxevents) && maxevents < nentries) nentries = maxevents;
+			Long64_t jentry = 0;
+			unsigned firstevent = 0;
+			if(globalOpt->Get("firstevent",firstevent) && firstevent < nentries) jentry = firstevent;
 			bool debugloop = globalOpt->Get("debugloop",false);
 			Long64_t nbytes = 0, nb = 0;
-			for (Long64_t jentry=0; jentry<nentries;jentry++) {
+			for (; jentry<nentries;jentry++) {
 				Long64_t ientry = LoadTree(jentry);
 				if (ientry < 0) break;
 				nb = fChain->GetEntry(jentry);   nbytes += nb;
