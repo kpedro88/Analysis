@@ -17,8 +17,7 @@ common
 	PDFNorm
 endcommon
 	JetMatch	b:forceadd[1]
-	BDT	s:name[BDT]	s:weights[KMVA/D29_TMVA_bdt_weights.xml]	s:type[BDTG]	b:positive[1]	b:forceadd[1]	s:branchname[bdtSVJtag]	vs:variables[girth,tau21,tau32,msd,axisminor,axismajor,ptD,ecfN2b1,ecfN3b1,ptdrlog,fChHad,fEle,fMu,fNeuHad,fPho,maxbvsall]	b:tmva[0]
-	BDT	s:name[uBDT]	s:weights[KMVA/D29_TMVA_ubdt_weights.xml]	s:type[BDTG]	b:positive[1]	b:forceadd[1]	s:branchname[ubdtSVJtag]	vs:variables[girth,tau21,tau32,msd,axisminor,axismajor,ptD,ecfN2b1,ecfN3b1,ptdrlog,fChHad,fEle,fMu,fNeuHad,fPho,maxbvsall]	b:tmva[0]
+	BDT	s:name[BDT]	s:weights[KMVA/E3_TMVA_bdt_weights.xml]	s:type[BDTG]	b:positive[1]	b:forceadd[1]	s:branchname[bdtSVJtag]	vs:variables[girth,tau21,tau32,msd,deltaphi,axisminor,axismajor,ptD,ecfN2b1,ecfN3b1,fChHad,fEle,fMu,fNeuHad,fPho]	b:tmva[0]
 	PileupWeight	s:name[PU2016]	s:year[MC2016]	b:puupdcorr[1]	s:puname1[corrections/PileupHistograms_0121_69p2mb_pm4p6.root]	s:puname2[corrections/PileupHistograms_2016_69mb_pm5.root]
 	PileupWeight	s:name[PU2017]	s:year[MC2017]	b:puupdcorr[1]	s:puname1[corrections/PileupHistograms_0328_63mb_pm5.root]	s:puname2[corrections/PileupHistograms_2017_69mb_pm5.root]
 	PileupWeight	s:name[PU2018]	s:year[MC2018]	b:puupdcorr[1]	s:puname1[corrections/PileupHistograms_0118_63mb_pm5.root]	s:puname2[corrections/PileupHistograms_2018_69mb_pm5.root]
@@ -86,9 +85,11 @@ dijetlowmtdetahadloose
 dijetlowmtdetahadloosemf
 	dijetlowmtdetahadloose
 	METFilter
-
 dijetmtmutrig
 	dijetmt
+	MuonTrigger	d:pTmin[50]
+dijetlowmtmutrig
+	dijetlowmt
 	MuonTrigger	d:pTmin[50]
 
 VARIATION
