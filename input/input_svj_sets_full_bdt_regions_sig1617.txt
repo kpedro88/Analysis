@@ -1,0 +1,13 @@
+OPTION
+vstring:numers[SVJ_3000_20_0.3_0.2_MC2016]
+vstring:denoms[SVJ_3000_20_0.3_0.2_MC2017]
+string:rationame[2016/2017]
+double:ratiomin[0.0]
+double:ratiomax[2.0]
+string:ratiocalc[DataMC]
+
+SET
+hist	mc	SVJ_3000_20_0.3_0.2_MC2016	s:legname[SVJ_3000_20_0.3_0.2 (2016)]	c:color[kRed]	i:linestyle[3]
+	base	mc	SVJ_3000_20_0.3_0.2_MC2016	s:filename[tree_SVJ_mZprime-3000_mDark-20_rinv-0.3_alpha-0.2_MC2016.root]	d:mZprime[3000]	d:mDark[20]	d:rinv[0.3]	d:alpha[0.2]
+hist	mc	SVJ_3000_20_0.3_0.2_MC2017	s:legname[SVJ_3000_20_0.3_0.2 (2017)]	c:color[kCyan + 2]	i:linestyle[3]
+	base	mc	SVJ_3000_20_0.3_0.2_MC2017	s:filename[tree_SVJ_mZprime-3000_mDark-20_rinv-0.3_alpha-0.2_MC2017.root]	d:mZprime[3000]	d:mDark[20]	d:rinv[0.3]	d:alpha[0.2]

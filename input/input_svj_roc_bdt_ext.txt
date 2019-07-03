@@ -31,10 +31,10 @@ sim
 
 #this is a really dirty hack to make one ROC plot w/ multiple bkgs (instead of multiple qtys)
 HISTO
-QCD	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[QCD]	s:ytitle[arbitrary units]	c:color[kMagenta + 2]
-ttbar	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[t#bar{t}]	s:ytitle[arbitrary units]	c:color[kGray + 1]
-wjets	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[W(l#nu)+jets]	s:ytitle[arbitrary units]	c:color[kGreen + 3]
-zinv	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[Z(#nu#nu)+jets]	s:ytitle[arbitrary units]	c:color[kYellow + 3]
+QCD	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[QCD]	s:ytitle[arbitrary units]	c:color[kBlue + 2]
+ttbar	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[t#bar{t}]	s:ytitle[arbitrary units]	c:color[kOrange - 2]
+wjets	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[W(l#nu)+jets]	s:ytitle[arbitrary units]	c:color[kOrange + 1]
+zinv	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[Z(#nu#nu)+jets]	s:ytitle[arbitrary units]	c:color[kViolet + 1]
 
 SET
 hist	mc	SVJ_3000_20_0.3_peak	c:color[kBlue]

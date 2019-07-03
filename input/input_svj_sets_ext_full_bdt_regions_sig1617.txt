@@ -1,0 +1,13 @@
+OPTION
+vstring:numers[SVJ_3000_20_0.3_0.2_MC2016]
+vstring:denoms[SVJ_3000_20_0.3_0.2_MC2017]
+string:rationame[2016/2017]
+double:ratiomin[0.0]
+double:ratiomax[2.0]
+string:ratiocalc[DataMC]
+
+SET
+hist	mc	SVJ_3000_20_0.3_0.2_MC2016	s:legname[SVJ_3000_20_0.3_0.2 (2016)]	c:color[kRed]	i:linestyle[3]
+	base	ext	SVJ_3000_20_0.3_0.2_MC2016	b:ext_auto[1]	s:extfilename[test/bothjetAK8bdt_dijetmtdetahadloosemf_sig_E3b16_BDT.root]
+hist	mc	SVJ_3000_20_0.3_0.2_MC2017	s:legname[SVJ_3000_20_0.3_0.2 (2017)]	c:color[kCyan + 2]	i:linestyle[3]
+	base	ext	SVJ_3000_20_0.3_0.2_MC2017	b:ext_auto[1]	s:extfilename[test/bothjetAK8bdt_dijetmtdetahadloosemf_sig_E3_BDT.root]
