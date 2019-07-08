@@ -4,9 +4,8 @@ source exportProd.sh
 
 JOBDIR=jobs
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims/tree_dijetmtmutrig
-STORE=$INDIR/hist
-OUTPUT=
-EXTRA=
+OUTDIR=hist
+STORE=$INDIR/$OUTDIR
 CHECKARGS=""
 YEARS=()
 DRYRUN=""
@@ -26,28 +25,23 @@ done
 ./SKcheck.sh ${CHECKARGS}
 
 for YEAR in ${YEARS[@]}; do
-	PERIODS=()
-	BASEYEAR=$YEAR
-	if [ "$YEAR" = "2016" ]; then
-		PERIODS=(B C D E F G H)
-	elif [ "$YEAR" = "2017" ]; then
-		PERIODS=(B C D E F)
-	elif [[ $YEAR = "2018"* ]]; then
-		PERIODS=(A B C D)
-		BASEYEAR=2018
-	fi
+	INPUTS='"input/input_svj_hist_data_'${YEAR}'.txt","input/input_svj_trig'${YEAR}'.txt","input/input_svj_trig_hist.txt","input/input_svj_hp_sets_trig.txt"'
 
-	INPUTS='"input/input_svj_hist_data_'${YEAR}'.txt","input/input_svj_trig'${YEAR}'.txt","input/input_svj_trig_hist.txt"'
+	SNAME=HistTrig${YEAR}
+	source export${SNAME}.sh
 
-	for PERIOD in ${PERIODS[@]}; do
-		OUTPUT='"OPTION","string:rootfile[hist_trig_'${YEAR}${PERIOD}']"'
-		# name all sets the same for each year in order to hadd
-		EXTRA='"SET","hist\tdata\tSingleMuon_'${YEAR}'","\tbase\tdata\tSingleMuon_'${YEAR}${PERIOD}'\ts:filename[tree_SingleMuon_'${BASEYEAR}${PERIOD}'.root]"'
-		JOBNAME="hist_trig_"${YEAR}${PERIOD}
+	# skip nonexistent ones
+	if [[ $? -ne 0 ]]; then continue; fi
 
-		echo 'KPlotDriver.C+("'"$INDIR"'",{'"$INPUTS"'},{'"$EXTRA"','"$OUTPUT"'})' > jobs/input/macro_${JOBNAME}.txt
-
-		$DRYRUN ./HPtemp.sh ${JOBDIR} ${INDIR} ${STORE} ${JOBNAME}
+	JOBNAME=${OUTDIR}'_svj_trig'${YEAR}
+	SLIST=${#SAMPLES[@]}
+	for ((i=0; i < ${#SAMPLES[@]}; i++)); do
+		SAMPLE=${SAMPLES[$i]}
+		SJOBNAME=${JOBNAME}'_part'${i}
+		OUTPUT='"OPTION","vstring:chosensets['${SAMPLE}']","string:rootfile['${SJOBNAME}']"'
+		echo 'KPlotDriver.C+("'"$INDIR"'",{'"$INPUTS"'},{'"$OUTPUT"'})' > jobs/input/macro_${SJOBNAME}.txt
 	done
+		
+	$DRYRUN ./HPtemp.sh ${JOBDIR} ${INDIR} ${STORE} ${JOBNAME} "${SLIST}"
 done
 
