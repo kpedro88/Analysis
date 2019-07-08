@@ -13,15 +13,18 @@ CHECKARGS=""
 TYPES=()
 YEARS=()
 DRYRUN=""
+SYST=true
 
 #check arguments
-while getopts "ky:t:d" opt; do
+while getopts "ky:t:sd" opt; do
 	case "$opt" in
 		k) CHECKARGS="${CHECKARGS} -k"
 		;;
 		y) IFS="," read -a YEARS <<< "$OPTARG"
 		;;
 		t) IFS="," read -a TYPES <<< "$OPTARG"
+		;;
+		s) SYST=""
 		;;
 		d) DRYRUN="echo"
 		;;
@@ -48,7 +51,7 @@ for TYPE in ${TYPES[@]}; do
 			done
 			# remove first char, prepend condor stuff
 			SLIST="Process in ${SLIST:1}"
-		elif [[ $TYPE == "SVJ" ]]; then
+		elif [[ $TYPE == "SVJ" ]] && [ -n "$SYST" ]; then
 			TMPSELTYPE=$TMPSELTYPE,dijetmtdetahadloosemf_JECup,dijetmtdetahadloosemf_JECdown,dijetmtdetahadloosemf_JERup,dijetmtdetahadloosemf_JERdown
 		fi
 
