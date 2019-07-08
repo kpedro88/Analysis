@@ -133,12 +133,22 @@ class KMuonSelector : public KSelector {
 		KMuonSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
 			//check for option
 			doMTcut = localOpt->Get("doMTcut",true);
+			loose = localOpt->Get("loose",false);
 		}
 		
 		//this selector doesn't add anything to tree
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
+			if(loose){
+				//loosen iso criteria (loose ID is ntuple baseline)
+				unsigned nmuons = 0;
+				for(auto m : *looper->Muons_MiniIso){
+					if(m < 0.4) ++nmuons;
+				}
+				return nmuons==1;
+			}
+
 			if(looper->NMuons!=1) return false;
 
 			if(doMTcut){
@@ -153,7 +163,7 @@ class KMuonSelector : public KSelector {
 		}
 		
 		//member variables
-		bool doMTcut;
+		bool doMTcut, loose;
 };
 REGISTER_SELECTOR(Muon);
 

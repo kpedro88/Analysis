@@ -38,6 +38,12 @@ veto
 vetoloose
 	MuonVeto	b:loose[1]
 	ElectronVeto
+mu
+	Muon	b:doMTcut[0]	b:loose[1]
+	ElectronVeto
+ele
+	MuonVeto
+	Electron	b:doMTcut[0]
 deta
 	DeltaEta	d:max[1.5]
 	MTAK8	d:min[1500]
@@ -85,6 +91,14 @@ dijetlowmtdetahadloose
 dijetlowmtdetahadloosemf
 	dijetlowmtdetahadloose
 	METFilter
+dijetmtdetamu
+	dijetmtdeta
+	mu
+	endcommon
+dijetmtdetaele
+	dijetmtdeta
+	ele
+	endcommon
 dijetmtmutrig
 	dijetmt
 	MuonTrigger	d:pTmin[50]
