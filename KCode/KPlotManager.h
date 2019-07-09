@@ -215,6 +215,13 @@ class KPlotManager : public KManager {
 			if(append) ntmp->fields[2] += "_"+selection;
 			
 			KBase* tmp = KParser::processBase(ntmp,globalOpt);
+			//append selection to outname
+			if(append){
+				string outname;
+				tmp->GetLocalOpt()->Get("outname",outname);
+				outname += "_"+selection;
+				tmp->GetLocalOpt()->Set("outname",outname);
+			}
 			
 			//set selection for base
 			if(ntmp->fields[0]=="base"){
