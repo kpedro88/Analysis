@@ -473,6 +473,148 @@ class KJetVariator : public KVariator {
 };
 REGISTER_VARIATOR(Jet);
 
+class KLepFracVariator : public KVariator {
+	public:
+		//constructor
+		KLepFracVariator() : KVariator() { }
+		KLepFracVariator(string name_, OptionMap* localOpt_) : KVariator(name_,localOpt_),
+			JetsAK8_chargedHadronEnergyFraction(new vector<double>),
+			JetsAK8_photonEnergyFraction(new vector<double>),
+			JetsAK8_muonEnergyFraction(new vector<double>),
+			JetsAK8_electronEnergyFraction(new vector<double>)
+		{
+			loose = localOpt->Get("loose",false);
+		}
+		~KLepFracVariator() {
+			delete JetsAK8_chargedHadronEnergyFraction;
+			delete JetsAK8_photonEnergyFraction;
+			delete JetsAK8_muonEnergyFraction;
+			delete JetsAK8_electronEnergyFraction;
+		}
+		virtual void ListBranches(){
+			linkbranches = {
+				new KLinkedBranchVD(KBranchVD(&looper->JetsAK8_chargedHadronEnergyFraction,"JetsAK8_chargedHadronEnergyFraction"),KBranchVD(&JetsAK8_chargedHadronEnergyFraction)),
+				new KLinkedBranchVD(KBranchVD(&looper->JetsAK8_photonEnergyFraction,"JetsAK8_photonEnergyFraction"),KBranchVD(&JetsAK8_photonEnergyFraction)),
+				new KLinkedBranchVD(KBranchVD(&looper->JetsAK8_muonEnergyFraction,"JetsAK8_muonEnergyFraction"),KBranchVD(&JetsAK8_muonEnergyFraction)),
+				new KLinkedBranchVD(KBranchVD(&looper->JetsAK8_electronEnergyFraction,"JetsAK8_electronEnergyFraction"),KBranchVD(&JetsAK8_electronEnergyFraction)),
+			};
+			//used for calculations
+			branches = {
+				"Muons",
+				"Muons_passIso",
+				"Muons_mediumID",
+				"Muons_miniIso",
+				"Electrons_passIso",
+				"JetsAK8",
+				"JetsAK8_jecFactor",
+				"JetsAK8_jerFactor"
+			};
+		}
+		virtual void CheckBranches() {
+			KVariator::CheckBranches();
+			//check JER status (not present for data)
+			auto jer_branch = KBranchVD(&looper->JetsAK8_jerFactor,"JetsAK8_jerFactor");
+			jer_branch.Check(looper->fChain);
+			has_jer = jer_branch.status;
+		}
+		virtual void DoVariation() {
+			for(auto& branch : linkbranches){
+				//store original values
+				branch->Store();
+			}
+
+			//clear temp branches
+			clear();
+
+			//copy values
+			*JetsAK8_chargedHadronEnergyFraction = *looper->JetsAK8_chargedHadronEnergyFraction;
+			*JetsAK8_photonEnergyFraction = *looper->JetsAK8_photonEnergyFraction;
+			*JetsAK8_muonEnergyFraction = *looper->JetsAK8_muonEnergyFraction;
+			*JetsAK8_electronEnergyFraction = *looper->JetsAK8_electronEnergyFraction;
+
+			//find leptons
+			vector<bool> Muons_mask(looper->Muons->size(),false);
+			if(loose){
+				for(unsigned m = 0; m < looper->Muons->size(); ++m){
+					if(looper->Muons_MiniIso->at(m) < 0.4) Muons_mask[m] = true;
+				}
+			}
+			else {
+				Muons_mask = KMath::vector_and(*looper->Muons_passIso,*looper->Muons_mediumID);
+			}
+			vector<bool> Electrons_mask = *looper->Electrons_passIso;
+
+			//fix energy fractions as though found leptons were lost
+			//match reco lepton to jet, take fraction (using raw jet p4), subtract from relevant lep frac, add half to chHad and half to photon
+			for(unsigned j = 0; j < looper->JetsAK8->size(); ++j){
+				const auto& jet = looper->JetsAK8->at(j);
+
+				//use raw jet (uncorrected, unsmeared) for energy fraction denominator
+				double rawEnergy = jet.E();
+				rawEnergy /= looper->JetsAK8_jecFactor->at(j);
+				if(has_jer) rawEnergy /= looper->JetsAK8_jerFactor->at(j);
+
+				//find highest-pt lepton w/ dR < 0.8
+				double match_pt = 0;
+				int match_muon = -1;
+				int match_electron = -1;
+				matchLep(*looper->Muons,Muons_mask,jet,match_muon,match_pt);
+				matchLep(*looper->Electrons,Electrons_mask,jet,match_electron,match_pt);
+				//an electron will only match if it is higher pt than any matched muon
+				if(match_electron>=0) match_muon = -1;
+
+				//modify fractions
+				fixFracs(match_muon,*looper->Muons,JetsAK8_muonEnergyFraction,rawEnergy,j);
+				fixFracs(match_electron,*looper->Electrons,JetsAK8_electronEnergyFraction,rawEnergy,j);
+			}				
+
+			for(auto& branch : linkbranches){
+				//set to fixed vars
+				branch->Vary();
+			}
+		}
+		virtual void UndoVariation(){
+			//restore original values
+			for(auto& branch : linkbranches){
+				branch->Restore();
+			}
+		}
+		//helpers
+		void matchLep(const vector<TLorentzVector>& leptons, const vector<bool>& mask, const TLorentzVector& jet, int& match_index, double& match_pt){
+			for(unsigned l = 0; l < leptons.size(); ++l){
+				if(!mask[l]) continue;
+				const auto& lepton = leptons[l];
+				if(lepton.Pt() > match_pt and lepton.DeltaR(jet)<0.8){
+					match_pt = lepton.Pt();
+					match_index = l;
+				}
+			}			
+		}
+		void fixFracs(int match_index, const vector<TLorentzVector>& leptons, vector<double>* leptonFraction, double rawEnergy, unsigned jet_index){
+			if(match_index<0) return;
+
+			const auto& lepton = leptons[match_index];
+			//calculate frac w/ appropriate bound
+			double matched_frac = min(lepton.E()/rawEnergy,leptonFraction->at(jet_index));
+			//subtract from lepton frac
+			leptonFraction->at(jet_index) -= matched_frac;
+			//add half to chHad and half to photon
+			JetsAK8_chargedHadronEnergyFraction->at(jet_index) += 0.5*matched_frac;
+			JetsAK8_photonEnergyFraction->at(jet_index) += 0.5*matched_frac;
+		}
+		void clear(){
+			JetsAK8_chargedHadronEnergyFraction->clear();
+			JetsAK8_photonEnergyFraction->clear();
+			JetsAK8_muonEnergyFraction->clear();
+			JetsAK8_electronEnergyFraction->clear();
+		}
+
+		//member variables
+		bool loose, has_jer;
+		vector<double> *JetsAK8_chargedHadronEnergyFraction, *JetsAK8_photonEnergyFraction, *JetsAK8_muonEnergyFraction, *JetsAK8_electronEnergyFraction;
+};
+REGISTER_VARIATOR(LepFrac);
+
 class KGenMHTVariator : public KVariator {
 	public:
 		//constructor
@@ -497,7 +639,7 @@ class KGenMHTVariator : public KVariator {
 			for(auto& branch : linkbranches){
 				branch->Restore();
 			}
-		}		
+		}
 };
 REGISTER_VARIATOR(GenMHT);
 

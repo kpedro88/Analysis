@@ -117,6 +117,8 @@ JERup
 	Jet	s:vartype[JERup]
 JERdown
 	Jet	s:vartype[JERdown]
+fixedFracs
+	LepFrac	b:loose[1]
 
 INPUT
 input/input_sets_skim_svj_bkg_2016.txt
