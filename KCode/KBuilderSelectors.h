@@ -1517,6 +1517,45 @@ class KNSVJSelector : public KSelector {
 };
 REGISTER_SELECTOR(NSVJ);
 
+//----------------------------------------------------
+//filter jets based on lepton fractions for per-jet histos
+class KLepFracFilterSelector : public KSelector {
+	public:
+		//constructor
+		KLepFracFilterSelector() : KSelector() { }
+		KLepFracFilterSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), filter(0), cut(0.2) { 
+			//check for option
+			//1 selects tagged, -1 selects anti-tagged
+			localOpt->Get("filter",filter);
+			localOpt->Get("cut",cut);
+			canfail = false;
+		}
+		virtual void ListBranches(){
+			branches.insert(branches.end(),{
+				"JetsAK8_muonEnergyFraction",
+				"JetsAK8_electronEnergyFraction",
+			});
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			JetsAK8_passCut.clear();
+			JetsAK8_passCut.reserve(looper->JetsAK8_muonEnergyFraction->size());
+			for(unsigned j = 0; j < looper->JetsAK8_muonEnergyFraction->size(); ++j){
+				JetsAK8_passCut.push_back(looper->JetsAK8_muonEnergyFraction->at(j)<cut and looper->JetsAK8_electronEnergyFraction->at(j)<cut);
+			}
+			return true;
+		}
+		
+		//member variables
+		int filter;
+		double cut;
+		vector<bool> JetsAK8_passCut;
+};
+REGISTER_SELECTOR(LepFracFilter);
+
 //avoid unwanted dependency
 double KHisto::GetWeight(){
 	double w = 1.0;
@@ -1541,6 +1580,11 @@ double KHisto::GetWeightPerJet(unsigned index){
 	if(SVJFilter and SVJFilter->filter!=0 and !SVJFilter->FailedDependency()){
 		w *= (SVJFilter->filter==1 and SVJFilter->SVJTag->JetsAK8_tagged[index]) or
 			 (SVJFilter->filter==-1 and !SVJFilter->SVJTag->JetsAK8_tagged[index]);
+	}
+	//requiring lep frac cut for a jet
+	if(LepFracFilter and LepFracFilter->filter!=0){
+		w *= (LepFracFilter->filter==1 and LepFracFilter->JetsAK8_passCut[index]) or
+			 (LepFracFilter->filter==-1 and !LepFracFilter->JetsAK8_passCut[index]);
 	}
 	return w;
 }
