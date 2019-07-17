@@ -219,8 +219,10 @@ class KPlotManager : public KManager {
 			if(append){
 				string outname;
 				tmp->GetLocalOpt()->Get("outname",outname);
-				outname += "_"+selection;
-				tmp->GetLocalOpt()->Set("outname",outname);
+				if(!outname.empty()){
+					outname += "_"+selection;
+					tmp->GetLocalOpt()->Set("outname",outname);
+				}
 			}
 			
 			//set selection for base
