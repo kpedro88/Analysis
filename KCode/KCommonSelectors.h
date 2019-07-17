@@ -835,9 +835,10 @@ class KDeltaEtaSelector : public KSelector {
 	public:
 		//constructor
 		KDeltaEtaSelector() : KSelector() { }
-		KDeltaEtaSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), max(1.1) { 
+		KDeltaEtaSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), max(1.1), min(-1) { 
 			//check for option
 			localOpt->Get("max",max);
+			localOpt->Get("min",min);
 		}
 		virtual void ListBranches(){
 			branches.push_back("JetsAK8");
@@ -847,11 +848,12 @@ class KDeltaEtaSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return abs(looper->JetsAK8->at(0).Eta()-looper->JetsAK8->at(1).Eta()) < max;
+			double deta = abs(looper->JetsAK8->at(0).Eta()-looper->JetsAK8->at(1).Eta());
+			return (min<0 or deta > min) and (max<0 or deta < max);
 		}
 		
 		//member variables
-		double max;
+		double max, min;
 };
 REGISTER_SELECTOR(DeltaEta);
 

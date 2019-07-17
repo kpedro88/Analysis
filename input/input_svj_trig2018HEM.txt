@@ -1,6 +1,6 @@
 OPTION
 vstring:disable_branches[*]
-vstring:selections[trigDenom,trigNumerJetHT,trigDenomDeta,trigNumerJetHTDeta,trigDenomDetaHLTmatch,trigNumerJetHTDetaHLTmatch]
+vstring:selections[trigDenom,trigNumerJetHT,trigDenomDeta,trigNumerJetHTDeta,trigDenomDetaHLTmatch,trigNumerJetHTDetaHLTmatch,trigDenomHighDetaHLTmatch,trigNumerJetHTHighDetaHLTmatch]
 
 SELECTION
 trigDenom
@@ -39,6 +39,21 @@ trigNumerJetHTDetaHLTmatch
 	HEMOptVeto
 	MuonHLT	d:minDR[0.2]
 	DeltaEta	d:max[1.5]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	Histo
+trigDenomHighDetaHLTmatch
+	Blind	i:firstUnblindRun[319077]
+	HEMOptVeto
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:min[1.5]	d:max[2.5]
+	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
+	Histo
+trigNumerJetHTHighDetaHLTmatch
+	Blind	i:firstUnblindRun[319077]
+	HEMOptVeto
+	MuonHLT	d:minDR[0.2]
+	DeltaEta	d:min[1.5]	d:max[2.5]
 	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
 	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
 	Histo

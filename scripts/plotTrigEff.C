@@ -72,6 +72,7 @@ void plotTrigEff(string filename, string region, string year, string denom, vect
 		{"Deta15","#Delta#eta(j_{1},j_{2}) < 1.5"},
 		{"Deta","#Delta#eta(j_{1},j_{2}) < 1.5"},
 		{"DetaHLTmatch","#Delta#eta(j_{1},j_{2}) < 1.5, HLT match"},
+		{"HighDetaHLTmatch","1.5 < #Delta#eta(j_{1},j_{2}) < 2.5, HLT match"},
 		{"Deta2","#Delta#eta(j_{1},j_{2}) < 2.0"},
 		{"HT2016","H_{T} > 1100 GeV"},
 		{"HT2017","H_{T} > 1500 GeV"},
@@ -170,8 +171,10 @@ void plotTrigEff(string filename, string region, string year, string denom, vect
 				if(fit){
 					double xmin = 0;
 					double xmax = hnumer->GetXaxis()->GetXmax()*0.75;
-					fn = new TF1("trigErf","0.5*[0]*(1+TMath::Erf((x-[1])/[2]))",xmin,xmax);
-					double params[] = {0.99,xmin+(xmin-xmax)/4.,sqrt2*50.};
+					fn = new TF1("trigErf","0.5*[0]*(1+TMath::Erf((x-abs([1]))/[2]))",xmin,xmax);
+					double denom1 = 4.;
+					if(cutname=="HighDetaHLTMatch") denom1 = 2.;
+					double params[] = {0.99,xmin+(xmin-xmax)/denom1,sqrt2*50.};
 					fn->SetParameters(params);
 					fn->SetLineColor(kRed);
 					fn->SetLineWidth(2);
@@ -213,7 +216,7 @@ void plotTrigEff(string filename, string region, string year, string denom, vect
 				if(!cutname.empty()) kleg->AddEntry(btmp,ctitles[cutname],"pel");
 				TGraphErrors* g_conf = NULL;
 				if(fn){
-					double mu = fn->GetParameter(1);
+					double mu = abs(fn->GetParameter(1));
 					double sigma = fn->GetParameter(2)/sqrt2;
 					double plateau = mu+3*sigma;
 					double p98 = mu+2.05*sigma;
