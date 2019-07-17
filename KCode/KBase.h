@@ -280,7 +280,9 @@ class KBaseExt : public KBase {
 			string hsuff;
 			if(localOpt->Get("exthisto_suff",hsuff)) ext_auto = true;
 			else hsuff = name;
-			string hextra; localOpt->Get("exthisto_extra",hextra);
+			string hextra;
+			globalOpt->Get("exthisto_extra",hextra);
+			localOpt->Get("exthisto_extra",hextra);
 			//append extra suffix to default suffix
 			if(!hextra.empty()) hsuff += "_"+hextra;
 
