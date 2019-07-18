@@ -2,6 +2,12 @@ import os
 from collections import OrderedDict
 from optparse import OptionParser
 
+# make status messages useful
+def fprint(msg):
+    import sys
+    print(msg)
+    sys.stdout.flush()
+
 def alpha_val(val):
     result = 0
     if val=="peak": result = -2
@@ -57,18 +63,18 @@ for iregion,region in enumerate(options.regions):
                 ("rinv", float(parse[4])),
                 ("alpha", alpha_val(parse[5])),
             ])
-            sigs_yields[short_name] = sigs[short_name].Integral(0,sigs[short_name].GetNbinsX()+1)
+            sigs_yields[short_name] = sigs[short_name].Integral(1,sigs[short_name].GetNbinsX())
         elif n=="data_obs":
             data_obs = f.Get(n)
             data_obs.SetName(short_name)
         else:
             bkgs[short_name] = f.Get(n)
             bkgs[short_name].SetName(short_name)
-            bkgs_yields[short_name] = bkgs[short_name].Integral(0,bkgs[short_name].GetNbinsX()+1)
+            bkgs_yields[short_name] = bkgs[short_name].Integral(1,bkgs[short_name].GetNbinsX())
 
     # make data_obs if not present
     if data_obs is None:
-        print "Making data_obs from bkgs..."
+        fprint("Making data_obs from bkgs...")
         for bkg, h_bkg in bkgs.iteritems():
             if data_obs is None:
                 data_obs = h_bkg.Clone("data_obs")
@@ -125,7 +131,7 @@ for iregion,region in enumerate(options.regions):
                 sigs_setargs[sig].append(p+"="+str(v))
                 sigs_trkargs[sig].append(p)
             dcfile.write("---------------\n")
-            print "wrote "+dcfname
+            fprint("wrote "+dcfname)
 
 for sig,datacards in sigs_datacards.iteritems():
     setargs = sigs_setargs[sig]
@@ -133,13 +139,13 @@ for sig,datacards in sigs_datacards.iteritems():
     dcfname = "datacard_"+sig+".txt"
     # combine cards
     command = "combineCards.py "+" ".join(datacards)+" > "+dcfname
-    print command
+    fprint(command)
     os.system(command)
     # run combine
-    print "Calculating limit..."
+    fprint("Calculating limit...")
     # no systematics (option -S 0)
     command = "combine -M Asymptotic -S 0 --setParameters "+','.join(setargs)+" --freezeParameters "+','.join(trkargs)+" --trackParameters "+','.join(trkargs)+" --keyword-value sig="+sig+" "+dcfname+" > /dev/null"
-    print command
+    fprint(command)
     os.system(command)
     
     outfiles.append("higgsCombineTest.Asymptotic.mH120.sig"+sig+".root")
@@ -147,6 +153,6 @@ for sig,datacards in sigs_datacards.iteritems():
 #combine outfiles
 outname = "limit_"+options.outdir+".root"
 command = "hadd -f "+outname+''.join(" "+ofn for ofn in outfiles)
-print command
+fprint(command)
 os.system(command)
 os.system("mv "+outname+" ../")

@@ -277,4 +277,6 @@ void plotLimit(string sname, vector<pair<string,double>> vars, int nsigma=0){
 	
 	//print image
 	can->Print((plot->GetName()+".png").c_str(),"png");
+	can->Print((plot->GetName()+".eps").c_str(),"eps");
+	system(("epstopdf "+plot->GetName()+".eps").c_str());
 }
