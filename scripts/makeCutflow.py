@@ -1,6 +1,10 @@
 import os, stat
 from optparse import OptionParser
 from collections import OrderedDict
+
+# avoid relative import
+import sys
+sys.path = [os.getcwd()] + sys.path
 from makeFastCommon import *
 
 def sig_callback(option, opt, value, parser):
@@ -20,7 +24,7 @@ parser.add_option("-q", "--squark", dest="squark", action='store_true', default=
 
 # check the signal models
 if len(options.signals)==0:
-    throw ValueError("no signal models specified!")
+    raise ValueError("no signal models specified!")
 # check the exclusive options    
 if options.uncompressed and options.compressed:
     parser.error("Can't use -u and -c together, pick one!")
@@ -104,7 +108,7 @@ wfile = open(options.outname,'w')
 
 # caption
 mothername = ""
-caption = "%\\caption{Absolute cumulative efficiencies in \% for each step of the event selection process, listed for "
+caption = "\\caption{Absolute cumulative efficiencies in \% for each step of the event selection process, listed for "
 caption += num2words[len(options.signals)]
 caption += " representative "
 if options.gluino:

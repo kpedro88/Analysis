@@ -4,7 +4,7 @@ selections = OrderedDict([
     ("NJet"                 , "\\njets     & \geq2"),
     ("HT"                   , "\\HT        & >300\GeV"),
     ("MHT"                  , "\\MHT       & >300\GeV"),
-    ("MHTHTRatio"           , "\\MHT/\\HT  & \leq1"),
+    ("MHTHTRatio"           , "\\MHT/\\HT   & \leq1"),
     ("MuonVeto"             , "\\nmuons    & =0"),
     ("IsoMuonTrackVeto"     , "\\nisomuons & =0"),
     ("ElectronVeto"         , "\\neles     & =0"),

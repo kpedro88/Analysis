@@ -1,4 +1,5 @@
 #include "KCode/KCutflow.h"
+#include "KCode/KMap.h"
 
 #include <vector>
 #include <string>
@@ -18,11 +19,11 @@ void CutflowSum(string dir="", string sample="", vector<pair<string,double>> yea
 	for(const auto& yearweight : yearweights){
 		auto year = yearweight.first;
 		auto weight = yearweight.second;
-		TFile* file = TFile::Open((dir+"/tree_"+sample+"_MC"+year+"_fast.root").c_str());
+		TFile* file = KOpen(dir+"/tree_"+sample+"_MC"+year+"_fast.root");
 		
 		//get and scale histos
-		auto nEventTmp = (TH1F*)file->Get("nEventProc");
-		auto cutflowTmp = (TH1F*)file->Get("cutflow");
+		auto nEventTmp = KGet<TH1F>(file,"nEventProc");
+		auto cutflowTmp = KGet<TH1F>(file,"cutflow");
 		weight /= nEventTmp->GetBinContent(1);
 		nEventTmp->Scale(weight);
 		cutflowTmp->Scale(weight);
