@@ -72,7 +72,7 @@ void plotTrigEff(string filename, string region, string year, string denom, vect
 		{"Deta15","#Delta#eta(j_{1},j_{2}) < 1.5"},
 		{"Deta","#Delta#eta(j_{1},j_{2}) < 1.5"},
 		{"DetaHLTmatch","#Delta#eta(j_{1},j_{2}) < 1.5, HLT match"},
-		{"HighDetaHLTmatch","1.5 < #Delta#eta(j_{1},j_{2}) < 2.5, HLT match"},
+		{"HighDetaHLTmatch","1.5 < #Delta#eta(j_{1},j_{2}) < 2.2, HLT match"},
 		{"Deta2","#Delta#eta(j_{1},j_{2}) < 2.0"},
 		{"HT2016","H_{T} > 1100 GeV"},
 		{"HT2017","H_{T} > 1500 GeV"},

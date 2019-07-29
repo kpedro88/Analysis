@@ -32,12 +32,12 @@ trigNumerJetHTDetaHLTmatch
 	Histo
 trigDenomHighDetaHLTmatch
 	MuonHLT	d:minDR[0.2]
-	DeltaEta	d:min[1.5]	d:max[2.5]
+	DeltaEta	d:min[1.5]	d:max[2.2]
 	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
 	Histo
 trigNumerJetHTHighDetaHLTmatch
 	MuonHLT	d:minDR[0.2]
-	DeltaEta	d:min[1.5]	d:max[2.5]
+	DeltaEta	d:min[1.5]	d:max[2.2]
 	HLT	s:name[HLTmu]	vs:HLTLines[HLT_Mu50_v]
 	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
 	Histo
