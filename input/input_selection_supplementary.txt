@@ -32,14 +32,14 @@ dphi
 	DeltaPhiJ	s:name[DeltaPhiJ4]	d:DeltaPhi[0.3]	i:jet[4]
 ra2bin
 	RA2Bin	in:options[input/input_RA2bin_options.txt]	b:forceadd[1]	b:tightfast[1]
-evtclean
+evtclean1
 	METRatio
 	MuonJet
 	HTRatio	b:tight[1]	b:HTDPhi[1]
 	LowNeutralJet
 	FakeJet
 	HEMDPhiVeto	b:checkhem[1]
-evtclean2
+evtclean
 	EventCleaning
 signal
 	common

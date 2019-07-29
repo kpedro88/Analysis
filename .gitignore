@@ -78,6 +78,7 @@ input/fast*/
 /runLimits.sh
 /makePuInputs.py
 /runPU.sh
+/CutflowSum.C
 
 # linked by setupXML.sh
 /KMVA/pugi*.*

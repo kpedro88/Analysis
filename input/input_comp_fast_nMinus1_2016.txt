@@ -1,0 +1,10 @@
+OPTION
+double:luminorm[35900]
+string:luminormunit[fbinv]
+vstring:selections[corr]
+
+SELECTION
+corr
+	MCWeight	in:options[input/input_MCWeight_options_2016.txt]	b:trigcorr[0]
+	BTagSF	s:calib[btag/DeepCSV_Moriond17_B_H_mod.csv]	s:calibfast[btag/deepcsv_13TEV_16SL_18_3_2019.csv]
+	Histo

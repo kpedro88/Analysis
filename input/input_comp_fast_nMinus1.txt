@@ -12,22 +12,24 @@ INPUT
 input/input_global.txt
 
 OPTION
-double:luminorm[35862.351]
+double:luminorm[137000]
 string:luminormunit[fbinv]
 #string:lumi_text[(13 TeV)]
 string:prelim_text[Simulation Supplementary]
-vstring:extra_text[arXiv:1704.07781]
+vstring:extra_text[arXiv:####.#####]
 int:npanel[1]
 vstring:disable_branches[*]
 string:printsuffix[fast_Nminus1]
 double:sizeLeg[16.0]
 double:sizeSymb[7.5]
-vstring:selections[corr]
-vstring:printformat[png,eps]
+vstring:printformat[png,pdf]
+string:extfilename[test/supp_histos.root]
+bool:useTreeXsec[1]
+#bool:debugWeight[1]
+bool:debugcut[1]
+vstring:selections[mc]
 
 SELECTION
-corr
-	MCWeight	in:options[input/input_MCWeight_options.txt]	b:trigcorr[0]	b:puacccorr[0]
-	METFilter	b:onlydata[1]
-	BTagSF	vs:calibs[btag/DeepCSV_Moriond17_B_H_mod.csv,btag/DeepCSV_94XSF_V3_B_F_mod.csv,btag/DeepCSV_94XSF_V3_B_F_mod.csv]
+mc
+	MCWeight
 	Histo

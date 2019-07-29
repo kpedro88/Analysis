@@ -1,0 +1,19 @@
+OPTION
+string:printsuffix[qq_uncompressed]
+
+SET
+hist	mc	T2bb_650_1_fast	s:legname[pp #rightarrow #tilde{b}#tilde{b}, #tilde{b} #rightarrow b ^{}#tilde{#chi}^{0}_{1} (^{}m_{#tilde{b}} = 650 GeV, ^{}m_{^{}#tilde{#chi}^{0}_{1}} = 1 GeV)]	c:color[kRed]	b:errband[1]	b:errbandleg[0]
+	base	ext	T2bb_650_1_MC2016_fast	b:ext_auto[1]
+	base	ext	T2bb_650_1_MC2017_fast	b:ext_auto[1]
+	base	ext	T2bb_650_1_MC2018_fast	b:ext_auto[1]
+	base	ext	T2bb_650_1_MC2018HEM_fast	b:ext_auto[1]
+hist	mc	T2tt_700_50_fast	s:legname[pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow t ^{}#tilde{#chi}^{0}_{1} (^{}m_{#tilde{t}} = 700 GeV, ^{}m_{^{}#tilde{#chi}^{0}_{1}} = 50 GeV)]	c:color[kBlue]	b:errband[1]	b:errbandleg[0]
+	base	ext	T2tt_700_50_MC2016_fast	b:ext_auto[1]
+	base	ext	T2tt_700_50_MC2017_fast	b:ext_auto[1]
+	base	ext	T2tt_700_50_MC2018_fast	b:ext_auto[1]
+	base	ext	T2tt_700_50_MC2018HEM_fast	b:ext_auto[1]
+hist	mc	T2qq_1000_100_fast	s:legname[pp #rightarrow #tilde{q}#tilde{q}, #tilde{q} #rightarrow q ^{}#tilde{#chi}^{0}_{1} (^{}m_{#tilde{q}} = 1000 GeV, ^{}m_{^{}#tilde{#chi}^{0}_{1}} = 100 GeV)]	c:color[kMagenta + 1]	b:errband[1]	b:errbandleg[0]
+	base	ext	T2qq_1000_100_MC2016_fast	b:ext_auto[1]
+	base	ext	T2qq_1000_100_MC2017_fast	b:ext_auto[1]
+	base	ext	T2qq_1000_100_MC2018_fast	b:ext_auto[1]
+	base	ext	T2qq_1000_100_MC2018HEM_fast	b:ext_auto[1]

@@ -1,0 +1,9 @@
+SET
+hist	mc	T1bbbb_1500_100_MC2016_fast
+	base	mc	T1bbbb_1500_100_MC2016_fast	s:filename[tree_T1bbbb_1500_100_MC2016_fast.root]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]
+hist	mc	T1tttt_1500_100_MC2016_fast
+	base	mc	T1tttt_1500_100_MC2016_fast	s:filename[tree_T1tttt_1500_100_MC2016_fast.root]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]
+hist	mc	T1qqqq_1400_100_MC2016_fast
+	base	mc	T1qqqq_1400_100_MC2016_fast	s:filename[tree_T1qqqq_1400_100_MC2016_fast.root]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]
+hist	mc	T5qqqqVV_1400_100_MC2016_fast
+	base	mc	T5qqqqVV_1400_100_MC2016_fast	s:filename[tree_T5qqqqVV_1400_100_MC2016_fast.root]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]
