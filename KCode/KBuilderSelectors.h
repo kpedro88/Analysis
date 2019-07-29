@@ -66,6 +66,7 @@ class KMCWeightSelector : public KSelector {
 			}
 			unweighted = base->GetLocalOpt()->Get("unweighted",false);
 			useTreeWeight = base->GetGlobalOpt()->Get("useTreeWeight",false);
+			useTreeXsec = base->GetGlobalOpt()->Get("useTreeXsec",false);
 			useKFactor = base->GetLocalOpt()->Get("kfactor",kfactor);
 			nEventProc = 0; got_nEventProc = base->GetLocalOpt()->Get("nEventProc",nEventProc);
 			xsection = 0; got_xsection = base->GetLocalOpt()->Get("xsection",xsection);
@@ -499,6 +500,7 @@ class KMCWeightSelector : public KSelector {
 		virtual void ListBranches(){
 			//force enable branches needed for cuts/weights/etc.
 			branches.push_back("Weight"); //needed for negative weights even if useTreeWeight==false
+			if(useTreeXsec) branches.push_back("CrossSection");
 			if(internalNormType) NormType->CheckBranches();
 			if(pucorr){
 				branches.push_back("TrueNumInteractions");
@@ -689,7 +691,9 @@ class KMCWeightSelector : public KSelector {
 			
 			//now do scaling: norm*xsection/nevents
 			if(useTreeWeight && !fastsim) w *= looper->Weight;
-			else if(got_nEventProc && nEventProc>0 && got_xsection){
+			else if(got_nEventProc && nEventProc>0 && (got_xsection or useTreeXsec)){
+				if(useTreeXsec and !got_xsection) xsection = looper->CrossSection;
+
 				w *= xsection/nEventProc;
 				//account for negative weight events
 				if(looper->Weight<0) w *= -1;
@@ -739,7 +743,7 @@ class KMCWeightSelector : public KSelector {
 		//member variables
 		KNormTypeSelector* NormType;
 		bool internalNormType;
-		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, useKFactor, debugWeight, didDebugWeight;
+		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, useTreeXsec, useKFactor, debugWeight, didDebugWeight;
 		bool pucorr, putree, puupdcorr, trigcorr, trigsystcorr, isrcorr, useisrflat, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr, hemvetocorr, lepcorr;
 		double jetidcorrval, isotrackcorrval, trigsystcorrval, lumicorrval, isrflat;
 		int puunc, puupdunc, pdfunc, isrunc, scaleunc, trigunc, trigyear, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc, prefireunc, hemvetounc, lepidunc, lepisounc, leptrkunc;

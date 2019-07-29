@@ -148,11 +148,9 @@ class KBaseMC : public KBase {
 		//constructors
 		KBaseMC() : KBase() { 
 			localOpt->Set<string>("normtype","MC");
-			localOpt->Set<double>("xsection",0.0);
 		}
 		KBaseMC(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KBase(name_, localOpt_, globalOpt_) {
 			if(!localOpt->Has("normtype")) localOpt->Set<string>("normtype","MC");
-			if(!localOpt->Has("xsection")) localOpt->Set<double>("xsection",0.0);
 			SetLooper();
 		}
 		virtual KLooper* MakeLooper() { return new KBuilder(this); }
