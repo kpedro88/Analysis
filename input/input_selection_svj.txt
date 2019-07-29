@@ -48,8 +48,8 @@ deta
 	DeltaEta	d:max[1.5]
 	MTAK8	d:min[1500]
 highdeta
-	DeltaEta	d:min[1.5]	d:max[2.5]
-	MTAK8	d:min[2000]
+	DeltaEta	d:min[1.5]	d:max[2.2]
+	MTAK8	d:min[1850]
 dijet
 	common
 	evtclean
@@ -111,6 +111,11 @@ dijetlowmtmutrig
 dijetmthighdetahadloose
 	dijetmt
 	highdeta
+	vetoloose
+	endcommon
+dijetmtmaxdetahadloose
+	dijetmt
+	DeltaEta	d:min[1.5]	d:max[-1]
 	vetoloose
 	endcommon
 
