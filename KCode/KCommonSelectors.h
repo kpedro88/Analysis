@@ -1640,7 +1640,7 @@ class KFilterSelector : public KSelector {
 	public:
 		//constructor
 		KFilterSelector() : KSelector() { }
-		KFilterSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), result(false), disable(false) {
+		KFilterSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), result(false) {
 			//check for option
 			tag = localOpt->Get("tag",false);
 			if(tag) {
@@ -1654,16 +1654,13 @@ class KFilterSelector : public KSelector {
 		}
 		virtual void GetResult() { }
 		virtual bool Cut(){
-			if(disable) result = true;
-			else GetResult();
-
-			return (tag or result);
+			GetResult();
+			return result;
 		}
 
 		//members
 		bool tag;
 		bool result;
-		bool disable;
 		string branchname;
 };
 
@@ -1682,7 +1679,7 @@ class KJetIDSelector : public KFilterSelector {
 		virtual void CheckBase(){
 			//disable JetID for fastsim
 			if(base->GetLocalOpt()->Get("fastsim",false)) {
-				disable = true;
+				dummy = true;
 			}
 		}
 		virtual void GetResult() {
@@ -1764,7 +1761,7 @@ class KFakeJetSelector : public KFilterSelector {
 		virtual void CheckBase(){
 			//only enable for fastsim
 			if(!base->GetLocalOpt()->Get("fastsim",false)) {
-				disable = true;
+				dummy = true;
 			}
 		}
 		virtual void GetResult() {
@@ -1912,6 +1909,12 @@ class KHEMVetoSelector : public KFilterSelector {
 				"Jets",
 			});
 		}
+		virtual void CheckBase(){
+			//disable for non-HEM samples if requested
+			if(localOpt->Get("checkhem",false) and base->GetName().find("2018HEM")==string::npos){
+				dummy = true;
+			}
+		}
 		bool InHEMRegion(const TLorentzVector& tlv, double ptcut){
 			return tlv.Pt()>ptcut and -3 < tlv.Eta() and tlv.Eta() < -1.4 and -1.57 < tlv.Phi() and tlv.Phi() < -0.87;
 		}
@@ -1953,6 +1956,12 @@ class KHEMOptVetoSelector : public KFilterSelector {
 				"Electrons_passIso",
 				"Jets",
 			});
+		}
+		virtual void CheckBase(){
+			//disable for non-HEM samples if requested
+			if(localOpt->Get("checkhem",false) and base->GetName().find("2018HEM")==string::npos){
+				dummy = true;
+			}
 		}
 		bool InHEMRegion(const TLorentzVector& tlv, double ptcut){
 			return tlv.Pt()>ptcut and -3.05 < tlv.Eta() and tlv.Eta() < -1.35 and -1.62 < tlv.Phi() and tlv.Phi() < -0.82;
@@ -1997,6 +2006,12 @@ class KHEMDPhiVetoSelector : public KFilterSelector {
 				"MHTPhi",
 			});
 		}
+		virtual void CheckBase(){
+			//disable for non-HEM samples if requested
+			if(localOpt->Get("checkhem",false) and base->GetName().find("2018HEM")==string::npos){
+				dummy = true;
+			}
+		}
 		bool InHEMRegion(const TLorentzVector& tlv, double ptcut){
 			return tlv.Pt()>ptcut and -3 < tlv.Eta() and tlv.Eta() < -1.4 and -1.57 < tlv.Phi() and tlv.Phi() < -0.87;
 		}
@@ -2024,6 +2039,61 @@ class KHEMDPhiVetoSelector : public KFilterSelector {
 		double minpt;
 };
 REGISTER_SELECTOR(HEMDPhiVeto);
+
+//---------------------------------------------------------------
+//calculates and applies extra filters (all at once)
+class KEventCleaningSelector : public KSelector {
+	public:
+		//constructor
+		KEventCleaningSelector() : KSelector() { }
+		KEventCleaningSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
+			vector<string> filter_names = {
+				"METRatio",
+				"MuonJet",
+				"HTRatio",
+				"LowNeutralJet",
+				"FakeJet",
+				"HEMDPhiVeto",
+			};
+			for(const auto& filter : filter_names){
+				OptionMap* filterOpt = new OptionMap();
+				if(filter=="HTRatio"){
+					filterOpt->Set<bool>("tight",1);
+					filterOpt->Set<bool>("HTDPhi",1);
+				}
+				else if(filter=="HEMDPhiVeto"){
+					filterOpt->Set<bool>("checkhem",1);
+				}
+				filters.push_back(KSelectorFactory::GetFactory().construct(filter,filter,filterOpt));
+			}
+		}
+		virtual void ListBranches(){
+			for(const auto& filter : filters){
+				filter->ListBranches();
+			}
+		}
+		virtual void CheckBase(){
+			for(const auto& filter : filters){
+				filter->SetBase(base);
+				filter->CheckBase();
+			}
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			bool result = true;
+			for(const auto& filter : filters){
+				//use select in case dummy
+				result &= filter->Select();
+			}
+
+			return result;
+		}
+		
+		//member variables
+		vector<KSelector*> filters;
+};
+REGISTER_SELECTOR(EventCleaning);
 
 //---------------------------------------------------------
 //selects events based on DeltaPhi values (jets w/ |eta|<5)

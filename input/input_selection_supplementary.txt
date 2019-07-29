@@ -9,26 +9,38 @@ OPTION
 int:yieldprecision[2]
 bool:doClone[1]
 #bool:quickchain[1]
-vstring:disable_branches[*clean*,*JECdown*,*JECup*,*JERdown*,*JERup*,*Clean*]
+vstring:disable_branches[*clean*,*Clean*]
+#*JECdown*,*JECup*,*JERdown*,*JERup*
 
 SELECTION
 common
-	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]
+	BTagEfficiency	vd:xbins[20,30,40,50,60,70,80,100,120,160,210,260,320,400,500,600,800,99999]	vd:ybins[0.0,0.8,1.6,2.4]	vd:wps[0.6321,0.4941,0.4184]
 	NJetsISR	vd:xbins[0,1,2,3,4,5,6,7]
 	PDFNorm
 veto
+	MHTHTRatio
 	MuonVeto
 	IsoMuonTrackVeto
 	ElectronVeto
 	IsoElectronTrackVeto
 	IsoPionTrackVeto
+	Photon	s:name[PhotonVeto]	b:veto[1]
 dphi
 	DeltaPhiJ	s:name[DeltaPhiJ1]	d:DeltaPhi[0.5]	i:jet[1]
 	DeltaPhiJ	s:name[DeltaPhiJ2]	d:DeltaPhi[0.5]	i:jet[2]
 	DeltaPhiJ	s:name[DeltaPhiJ3]	d:DeltaPhi[0.3]	i:jet[3]
 	DeltaPhiJ	s:name[DeltaPhiJ4]	d:DeltaPhi[0.3]	i:jet[4]
+ra2bin
+	RA2Bin	in:options[input/input_RA2bin_options.txt]	b:forceadd[1]	b:tightfast[1]
 evtclean
-	EventCleaning	b:forceadd[1]	b:JetID[1]	b:METRatio[1]	b:MuonJet[1]	b:FakeJet[1]	b:HTRatio[1]
+	METRatio
+	MuonJet
+	HTRatio	b:tight[1]	b:HTDPhi[1]
+	LowNeutralJet
+	FakeJet
+	HEMDPhiVeto	b:checkhem[1]
+evtclean2
+	EventCleaning
 signal
 	common
 	NJet	i:njet[2]
@@ -37,6 +49,7 @@ signal
 	veto
 	dphi
 	evtclean
+	ra2bin
 signalMinusNJet
 	common
 #	NJet	i:njet[2]
@@ -45,6 +58,7 @@ signalMinusNJet
 	veto
 	dphi
 	evtclean
+	ra2bin
 signalMinusHT
 	common
 	NJet	i:njet[2]
@@ -53,6 +67,7 @@ signalMinusHT
 	veto
 	dphi
 	evtclean
+	ra2bin
 signalMinusMHT
 	common
 	NJet	i:njet[2]
@@ -61,33 +76,7 @@ signalMinusMHT
 	veto
 	dphi
 	evtclean
-signalHighPU
-	common
-	NVtx	i:num[20]
-	NJet	i:njet[2]
-	HT	d:min[300]
-	MHT	d:min[300]
-	veto
-	dphi
-	evtclean
-signalLowPU
-	common
-	NVtx	i:num[20]	b:invert[1]
-	NJet	i:njet[2]
-	HT	d:min[300]
-	MHT	d:min[300]
-	veto
-	dphi
-	evtclean
-signalAllPU
-	common
-	NVtx	i:num[0]
-	NJet	i:njet[2]
-	HT	d:min[300]
-	MHT	d:min[300]
-	veto
-	dphi
-	evtclean
+	ra2bin
 
 VARIATION
 CleanVars
@@ -104,7 +93,15 @@ genMHT
 	GenMHT
 
 INPUT
-input/input_sets_skim.txt
-input/input_sets_skim_signal.txt
-input/input_sets_skim_data.txt
-input/input_sets_skim_fast.txt
+input/input_sets_skim_mc_2016.txt
+input/input_sets_skim_mc_2017.txt
+input/input_sets_skim_mc_2018.txt
+input/input_sets_skim_signal_2016.txt
+input/input_sets_skim_signal_2017.txt
+input/input_sets_skim_data_2016.txt
+input/input_sets_skim_data_2017.txt
+input/input_sets_skim_data_2018.txt
+input/input_sets_skim_fast_2016.txt
+input/input_sets_skim_fast_2017.txt
+input/input_sets_skim_fast_2018.txt
+input/input_sets_skim_fast_2018HEM.txt
