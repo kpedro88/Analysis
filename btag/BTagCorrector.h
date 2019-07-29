@@ -34,9 +34,9 @@ class BTagCorrector {
 		void SetEffs(TFile* file){
 			if(!file) throw runtime_error("Null file in SetEffs");
 
-			h_eff_b = helper::Get<TH2F>(file,"h_eff_b");
-			h_eff_c = helper::Get<TH2F>(file,"h_eff_c");
-			h_eff_udsg = helper::Get<TH2F>(file,"h_eff_udsg");
+			h_eff_b = helper::Get<TH2F>(file,"h_eff_b",false);
+			h_eff_c = helper::Get<TH2F>(file,"h_eff_c",false);
+			h_eff_udsg = helper::Get<TH2F>(file,"h_eff_udsg",false);
 			
 			//if these are not found, check for their components
 			if(!h_eff_b){
