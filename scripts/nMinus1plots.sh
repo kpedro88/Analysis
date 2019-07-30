@@ -26,10 +26,10 @@ qq_uncompressed \
 qq_compressed \
 )
 FIGNUMS=(
-001 \
-002 \
-003 \
-004 \
+011 \
+012 \
+013 \
+014 \
 )
 
 YEARS=(
@@ -64,13 +64,17 @@ if [ -n "$ROOTFILE" ]; then
 		done
 	done
 	# hadd together for easier plotting
-	hadd -f test/supp_histos.root $OUTNAMES
+	hadd -f test/supp_histos.root $OUTNAMES && rm $OUTNAMES
 fi
 
 if [ -n "$PLOTFILE" ]; then
 	for ((j=0; j < ${#SIGNALS[@]}; j++)); do
 		for ((i=0; i < ${#HISTOS[@]}; i++)); do
-			root -b -l -q 'KPlotDriver.C+(".",{"input/input_comp_fast_nMinus1.txt","input/input_histo_'${HISTOS[$i]}'.txt","input/input_fast_'${SIGNALS[$j]}'_ext.txt"},{"OPTION","string:rootfile[CMS-SUS-19-006_Figure-aux_'${FIGNUMS[$j]}-${FIGLETS[$i]}']"},1)'
+			OUTNAME='CMS-SUS-19-006_Figure-aux_'${FIGNUMS[$j]}-${FIGLETS[$i]}
+			root -b -l -q 'KPlotDriver.C+(".",{"input/input_comp_fast_nMinus1.txt","input/input_histo_'${HISTOS[$i]}'.txt","input/input_fast_'${SIGNALS[$j]}'_ext.txt"},{"OPTION","string:rootfile['${OUTNAME}']"},1)'
+			for FORMAT in png pdf; do
+				mv ${HISTOS[$i]}_${SIGNALS[$j]}_..${FORMAT} ${OUTNAME}.${FORMAT}
+			done
 		done
 	done
 fi

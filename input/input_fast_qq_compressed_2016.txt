@@ -1,7 +1,7 @@
 SET
-hist	mc	T2bb_500_300_MC2016_fast
-	base	mc	T2bb_500_300_MC2016_fast	s:filename[tree_T2bb_500_300_MC2016_fast.root]	b:signal[1]	b:fastsim[1]	vi:mother[1000005]
-hist	mc	T2tt_300_200_MC2016_fast
-	base	mc	T2tt_300_200_MC2016_fast	s:filename[tree_T2tt_300_200_MC2016_fast.root]	b:signal[1]	b:fastsim[1]	vi:mother[1000006]
-hist	mc	T2qq_700_400_MC2016_fast
-	base	mc	T2qq_700_400_MC2016_fast	s:filename[tree_T2qq_700_400_MC2016_fast.root]	b:signal[1]	b:fastsim[1]	vi:mother[1000001,1000002,1000003,1000004,2000001,2000002,2000003,2000004]
+hist	mc	T2bb_600_450_MC2016_fast
+	base	mc	T2bb_600_450_MC2016_fast	s:filename[tree_T2bb_600_450_MC2016_fast.root]	b:signal[1]	b:fastsim[1]	vi:mother[1000005]
+hist	mc	T2tt_600_400_MC2016_fast
+	base	mc	T2tt_600_400_MC2016_fast	s:filename[tree_T2tt_600_400_MC2016_fast.root]	b:signal[1]	b:fastsim[1]	vi:mother[1000006]
+hist	mc	T2qq_1000_800_MC2016_fast
+	base	mc	T2qq_1000_800_MC2016_fast	s:filename[tree_T2qq_1000_800_MC2016_fast.root]	b:signal[1]	b:fastsim[1]	vi:mother[1000001,1000002,1000003,1000004,2000001,2000002,2000003,2000004]
