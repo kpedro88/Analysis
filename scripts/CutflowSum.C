@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 #include <exception>
+#include <iostream>
+#include <iomanip>
 
 using namespace std;
 
@@ -38,6 +40,7 @@ void CutflowSum(string dir="", string sample="", vector<pair<string,double>> yea
 		}
 	}
 	
+	cout << fixed << setprecision(prcsn);
 	KCutflow k("print",cutflowRaw,nEventHist);
 	k.PrintEfficiency(printerrors);
 }

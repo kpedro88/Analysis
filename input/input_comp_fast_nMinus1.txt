@@ -28,6 +28,7 @@ bool:useTreeXsec[1]
 #bool:debugWeight[1]
 bool:debugcut[1]
 vstring:selections[mc]
+bool:appendsel[0]
 
 SELECTION
 mc

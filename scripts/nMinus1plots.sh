@@ -64,7 +64,7 @@ if [ -n "$ROOTFILE" ]; then
 		done
 	done
 	# hadd together for easier plotting
-	hadd test/supp_histos.root $OUTNAMES
+	hadd -f test/supp_histos.root $OUTNAMES
 fi
 
 if [ -n "$PLOTFILE" ]; then
