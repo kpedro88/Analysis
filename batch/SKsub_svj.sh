@@ -5,7 +5,7 @@ source exportProd.sh
 JOBDIR=jobs
 JOBTYPE=skim
 INPUT=input/input_selection_svj.txt
-SELTYPE=dijetmtdetahadloose,dijetmtdetahadloosemf,dijetlowmtdetahadloose,dijetlowmtdetahadloosemf
+SELTYPE=dijetmtdetahadloose,dijetmtdetahadloosemf,dijetlowmtdetahadloose,dijetlowmtdetahadloosemf,dijetmtdetamu,dijetmtdetaele,dijetmthighdetahadloose
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}
 OUTDIR=tree
 STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims
@@ -13,7 +13,7 @@ CHECKARGS=""
 TYPES=()
 YEARS=()
 DRYRUN=""
-SYST=true
+SYST=""
 
 #check arguments
 while getopts "ky:t:sd" opt; do
@@ -24,7 +24,7 @@ while getopts "ky:t:sd" opt; do
 		;;
 		t) IFS="," read -a TYPES <<< "$OPTARG"
 		;;
-		s) SYST=""
+		s) SYST=true
 		;;
 		d) DRYRUN="echo"
 		;;

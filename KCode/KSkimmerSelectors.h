@@ -1709,6 +1709,13 @@ class KPileupWeightSelector : public KSelector {
 				}
 			}
 		}
+		virtual void SetBranches(){
+			if(dummy) return;
+
+			tree->Branch("puWeightNew",&puWeightNew,"puWeightNew/D");
+			tree->Branch("puSysUpNew",&puSysUpNew,"puSysUpNew/D");
+			tree->Branch("puSysDownNew",&puSysDownNew,"puSysDownNew/D");
+		}
 		//static members - kept in functions for safety
 		static HistoMapMap& puhistMap(){
 			static HistoMapMap puhistMap_;
@@ -1721,9 +1728,9 @@ class KPileupWeightSelector : public KSelector {
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			if(puupdcorr){
-				looper->puSysUp = (puupdhistUp ? GetBinContentBounded(puupdhistUp,looper->TrueNumInteractions) : 1.0) * looper->puSysUp;
-				looper->puSysDown = (puupdhistDown ? GetBinContentBounded(puupdhistDown,looper->TrueNumInteractions) : 1.0) * looper->puSysDown;
-				looper->puWeight = (puupdhist ? GetBinContentBounded(puupdhist,looper->TrueNumInteractions) : 1.0) * looper->puWeight;
+				puSysUpNew = (puupdhistUp ? GetBinContentBounded(puupdhistUp,looper->TrueNumInteractions) : 1.0) * looper->puSysUp;
+				puSysDownNew = (puupdhistDown ? GetBinContentBounded(puupdhistDown,looper->TrueNumInteractions) : 1.0) * looper->puSysDown;
+				puWeightNew = (puupdhist ? GetBinContentBounded(puupdhist,looper->TrueNumInteractions) : 1.0) * looper->puWeight;
 			}
 			return true;
 		}
@@ -1732,6 +1739,7 @@ class KPileupWeightSelector : public KSelector {
 		string year;
 		bool puupdcorr;
 		TH1 *puupdhist, *puupdhistUp, *puupdhistDown;
+		double puWeightNew, puSysUpNew, puSysDownNew;
 };
 REGISTER_SELECTOR(PileupWeight);
 

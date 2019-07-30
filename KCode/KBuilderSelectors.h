@@ -505,9 +505,9 @@ class KMCWeightSelector : public KSelector {
 			if(pucorr){
 				branches.push_back("TrueNumInteractions");
 				if(putree){
-					if(puunc==1) branches.push_back("puSysUp");
-					else if(puunc==-1) branches.push_back("puSysDown");
-					else branches.push_back("puWeight");
+					if(puunc==1) branches.push_back(looper->fChain->GetBranch("puSysUpNew") ? "puSysUpNew" : "puSysUp");
+					else if(puunc==-1) branches.push_back(looper->fChain->GetBranch("puSysDownNew") ? "puSysDownNew" : "puSysDown");
+					else branches.push_back(looper->fChain->GetBranch("puWeightNew") ? "puWeightNew" : "puWeight");
 				}
 			}
 			if(puupdcorr){
