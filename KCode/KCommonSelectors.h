@@ -1655,7 +1655,7 @@ class KFilterSelector : public KSelector {
 		virtual void GetResult() { }
 		virtual bool Cut(){
 			GetResult();
-			return result;
+			return (tag or result);
 		}
 
 		//members
