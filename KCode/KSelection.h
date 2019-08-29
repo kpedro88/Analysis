@@ -100,7 +100,7 @@ class KSelection {
 			//must always have option map
 			if(globalOpt==0) globalOpt = new OptionMap();
 			globalOpt->Get("selectevents",eventlist);
-			if(eventlist.size()>0) filter = new EventListFilter(eventlist);
+			if(eventlist.size()>0) filter = new EventListFilter({eventlist});
 		}
 		//destructor
 		virtual ~KSelection() {

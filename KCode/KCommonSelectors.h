@@ -1430,7 +1430,7 @@ class KMETFilterSelector : public KSelector {
 		KMETFilterSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
 			localOpt->Get("filterfiles",filterfiles);
 			for(unsigned f = 0; f < filterfiles.size(); ++f){
-				filters.push_back(new EventListFilter(filterfiles[f]));
+				filters.push_back(new EventListFilter({filterfiles[f]}));
 			}
 			onlydata = localOpt->Get("onlydata",false);
 		}
@@ -1594,7 +1594,7 @@ class KEcalNoiseComparisonSelector : public KSelector {
 		KEcalNoiseComparisonSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
 			//check option
 			localOpt->Get("filterfile",filterfile);
-			filter = new EventListFilter(filterfile);
+			filter = new EventListFilter({filterfile});
 			counters = {0,0,0};
 		}
 		virtual void ListBranches(){
