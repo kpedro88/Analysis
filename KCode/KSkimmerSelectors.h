@@ -1063,7 +1063,7 @@ class KCSCFilterSelector : public KSelector {
 				if(inputfile.size()>0){
 					string gunzip_cmd = "gunzip -c "+inputfile+".gz > "+inputfile;
 					system(gunzip_cmd.c_str());
-					filter = EventListFilter(inputfile);
+					filter = EventListFilter({inputfile});
 				}
 			}
 		}
