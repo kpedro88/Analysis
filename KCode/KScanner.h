@@ -24,13 +24,12 @@
 #include <cstdlib>
 #include <cmath>
 #include <exception>
+#include <algorithm>
 
 using namespace std;
 
 class KScanner : public KLooper {
 	public :
-		typedef pair<double,double> massPoint;
-	
 		//constructor
 		KScanner(KBase* MyBase_) :
 			KLooper(MyBase_->GetLocalOpt(),MyBase_->GetGlobalOpt()), MyBase(MyBase_), globalOpt(MyBase_->GetGlobalOpt()), nentries(0), outpre(""), outsuff("")
@@ -39,6 +38,7 @@ class KScanner : public KLooper {
 			globalOpt->Get("outpre",outpre);
 			globalOpt->Get("outsuff",outsuff);
 			splitT1ttbb = globalOpt->Get("splitT1ttbb",false);
+			splitSVJ = globalOpt->Get("splitSVJ",false);
 		}
 		//destructor
 		virtual ~KScanner() {}
@@ -67,7 +67,7 @@ class KScanner : public KLooper {
 			}
 			
 			KSelection* currSel = NULL;
-			massPoint currPoint = make_pair(0.0,0.0);
+			vector<double> currPoint;
 			unsigned blocknum = 0;
 			MyBase->GetLocalOpt()->Get("block",blocknum);
 			Long64_t nbytes = 0, nb = 0;
@@ -100,7 +100,8 @@ class KScanner : public KLooper {
 				}
 				
 				//check this event's mass point
-				massPoint thePoint = make_pair(SusyMotherMass,SusyLSPMass);
+				//use old variables for SUSY because not all ntuples may have SignalParameters vector filled yet
+				vector<double> thePoint = splitSVJ ? *SignalParameters : vector<double>({SusyMotherMass,SusyLSPMass});
 					
 				//if current, fill the corresponding tree
 				if(currPoint == thePoint){
@@ -123,11 +124,11 @@ class KScanner : public KLooper {
 						mp->second += 1;
 					}
 					else {
-						partMap.insert(make_pair(thePoint,partnum+1));
+						partMap.emplace(thePoint,partnum+1);
 					}
 					
 					//make the name
-					string oname = makeName(thePoint.first,thePoint.second,blocknum,partnum)+outsuff;
+					string oname = makeName(thePoint,blocknum,partnum)+outsuff;
 					
 					//make the selection and tree, fill it
 					currSel = new KSelection(oname,globalOpt);
@@ -149,13 +150,18 @@ class KScanner : public KLooper {
 			
 			//final steps
 			//loop over map
-			cout << string(17+2+14,'-') << endl;
-			cout << "Mother mass [GeV]" << "  " << "LSP mass [GeV]" << endl;
-			for(auto& mp : partMap){
+			vector<string> headers = splitSVJ ? vector<string>({"mZprime [GeV]","mDark [GeV]","rinv","alpha"}) : vector<string>({"Mother mass [GeV]","LSP mass [GeV]"});
+			//get total length and concatenate header
+			unsigned header_length = 2*headers.size(); //spaces
+			string header;
+			for_each(headers.begin(),headers.end(),[&](const string& s){ header_length += s.size(); header += s + "  "; });
+			cout << string(header_length,'-') << endl;
+			cout << header << endl;
+			for(const auto& mp : partMap){
 				//print all the mass points in this file
-				cout << right << setw(17) << mp.first.first;
-				cout << "  ";
-				cout << right << setw(14) << mp.first.second;
+				for(unsigned p = 0; p < mp.first.size(); ++p){
+					cout << right << setw(headers[p].size()) << mp.first[p] << "  ";
+				}
 				cout << endl;
 			}
 			
@@ -164,31 +170,37 @@ class KScanner : public KLooper {
 				for(auto& mp : partMap){
 					stringstream ssys;
 					//just mv if only one part
-					if(mp.second==1) ssys << "mv " << makeName(mp.first.first,mp.first.second,blocknum,0)+outsuff << ".root " << makeName(mp.first.first,mp.first.second,blocknum)+outsuff << ".root";
-					else ssys << "batch/haddHelper.sh " << makeName(mp.first.first,mp.first.second,blocknum) << " " << mp.second - 1 << " " << outsuff;
+					if(mp.second==1) ssys << "mv " << makeName(mp.first,blocknum,0)+outsuff << ".root " << makeName(mp.first,blocknum)+outsuff << ".root";
+					else ssys << "batch/haddHelper.sh " << makeName(mp.first,blocknum) << " " << mp.second - 1 << " " << outsuff;
 					cout << ssys.str() << endl;
 					system(ssys.str().c_str());
 				}
 			}
 		}
-		string makeName(double mass1, double mass2, unsigned block){
+		string makeName(const vector<double>& params, unsigned block){
+			const map<int,string> alpha_vals{
+				{-2,"peak"},
+				{-1,"high"},
+				{-3,"low"},
+			};
 			stringstream oss;
-			oss << outpre << "_" << "mMother-" << mass1 << "_mLSP-" << mass2 << "_block" << block;
+			if(splitSVJ) oss << outpre << "_" << "mZprime-" << params[0] << "_mDark-" << params[1] << "_rinv-" << params[2] << "_alpha-" << alpha_vals.at(int(params[3])) << "_block" << block;
+			else oss << outpre << "_" << "mMother-" << params[0] << "_mLSP-" << params[1] << "_block" << block;
 			return oss.str();
 		}
-		string makeName(double mass1, double mass2, unsigned block, unsigned part){
+		string makeName(const vector<double>& params, unsigned block, unsigned part){
 			stringstream oss;
-			oss << makeName(mass1,mass2,block) << "_part" << part;
+			oss << makeName(params,block) << "_part" << part;
 			return oss.str();
 		}
 		
 		//member variables
 		KBase* MyBase;
-		map<massPoint,unsigned> partMap;
+		map<vector<double>,unsigned> partMap;
 		OptionMap* globalOpt;
 		Long64_t nentries;
 		string outpre, outsuff;
-		bool splitT1ttbb;
+		bool splitT1ttbb, splitSVJ;
 };
 
 //-------------------------------------------
