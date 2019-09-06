@@ -12,7 +12,8 @@ def xsec_parse(xfile):
 
 def msplit(line):
     split = line.split('-')
-    if len(split)==2: return int(split[1])
+    if len(split)==2:
+        return split[1] if split[1].isalpha() else int(split[1])
     else: return -1
 
 # define options
@@ -24,6 +25,7 @@ parser.add_option("-y", "--year", dest="year", default="", help="year name for o
 parser.add_option("-s", "--skim", dest="skim", default="input/input_sets_skim_fast.txt", help="skim output file to write")
 parser.add_option("-c", "--card", dest="card", default="input/input_sets_DC_fast.txt", help="datacard output file to write")
 parser.add_option("-e", "--export", dest="export", default="batch/exportFast.sh", help="export file to write")
+parser.add_option("-p", "--params", dest="params", default=2, help="number of signal params")
 (options, args) = parser.parse_args()
 
 # parse skip list
@@ -60,19 +62,23 @@ for file in files:
             break
     if skip: continue
     # parse filename: model, mMother-X, mLSP-Y, MC####, fast.root
+    #             or: model, mZprime-X, mDark-Y, rinv-Z, alpha-W, MC####, scan.root
+    splitnum = options.params + 2
     fsplit = file.split('_')
-    model = '_'.join(fsplit[0:-4])
-    mMother = msplit(fsplit[-4])
-    mLSP = msplit(fsplit[-3])
-    year = options.year if len(options.year)>0 else fsplit[-2]
-    fyear = fsplit[-2]
+    model = '_'.join(fsplit[0:-splitnum])
+    params = []
+    while splitnum>2:
+        params.append(msplit(fsplit[-splitnum]))
+        splitnum -= 1
+    year = options.year if len(options.year)>0 else fsplit[-splitnum+2]
+    fyear = fsplit[-splitnum+2]
     mother_ID = []
     # get cross section
-    this_xsec, mother_ID = get_xsec(model,mMother)
+    this_xsec, mother_ID = get_xsec(model,params[0])
     # make short name
-    short_name = model + "_" + str(mMother) + "_" + str(mLSP) + "_" + year + "_" + "fast"
+    short_name = model + "_" + "_".join(params) + "_" + year + "_" + "fast"
     # make dc input file name (maybe different from short name)
-    fname = model + "_" + str(mMother) + "_" + str(mLSP) + "_" + fyear + "_" + "fast"
+    fname = model + "_" + "_".join(params) + "_" + fyear + "_" + "fast"
     # make set list for skimming
     wline = "base" + "\t" + "skim" + "\t" + short_name + "\t" + "s:filename[" + file + "]" + "\t" + "b:fastsim[1]" + "\t" + "vi:mother[" + str(','.join(str(m) for m in mother_ID)) + "]" + "\t" + "b:data[0]" + "\n"
     wfile.write(wline)

@@ -19,6 +19,9 @@ def makeLineDCBase(name, fname, xsec, mother):
 
 def get_xsec(model,mMother):
     # get cross section
+    if model.find("SVJ")!=1:
+        this_xsec = xsecs["SVJ"][mMother] if mMother in xsecs["SVJ"].keys() else 1
+        mother_ID = [4900023]
     if model.find("T2tt")!=-1:
         this_xsec = xsecs["T2"][mMother] if mMother in xsecs["T2"].keys() else 1
         mother_ID = [1000006]
@@ -40,6 +43,7 @@ xsec_list = [("input/dict_xsec_T1_NNLO.txt","T1"), # taken from https://twiki.ce
              ("input/dict_xsec_T2_NNLO.txt","T2"), # taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVstopsbottom
              ("input/dict_xsec_T2qq_NNLO.txt","T2qq"), # taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVsquarkantisquark
              ("input/dict_xsec_TChiHH.txt","TChiHH"), # taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVhino
+             ("input/dict_xsec_mZprime.txt","SVJ"), # taken from https://github.com/nhanvtran/dijets/blob/ee5b0de0f3958590d36f84ccf0266a4ce3415e52/limits/dijet.py#L301-L340
             ]
 
 xsecs = {}
