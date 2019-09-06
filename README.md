@@ -212,6 +212,23 @@ cd batch
 ./hadd_skims.sh -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/Skims -n 1 -r
 ```
 
+To make the list of scanning input files:
+```
+python makeScanInput.py -i SVJ -d Summer16v3 -r input/dict_scan_svj_2016.py -w input/input_sets_scan_svj_2016.txt -e batch/exportScanSVJ2016.sh -y 2016 -n 10
+python makeScanInput.py -i SVJ -d Fall17 -r input/dict_scan_svj_2017.py -w input/input_sets_scan_svj_2017.txt -e batch/exportScanSVJ2017.sh -y 2017 -n 10
+python makeScanInput.py -i SVJ -d Autumn18 -r input/dict_scan_svj_2018.py -w input/input_sets_scan_svj_2018.txt -e batch/exportScanSVJ2018.sh -y 2018 -n 10
+```
+
+To submit scan jobs to Condor:
+```
+cd batch
+./SCsub_svj.sh -y 2016,2017,2018
+(wait for jobs to finish)
+./HSsub.sh -d root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan -g "_block[0-9]*_MC2016" -S "MC2016_scan" -r
+./HSsub.sh -d root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan -g "_block[0-9]*_MC2017" -S "MC2017_scan" -r
+./HSsub.sh -d root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan -g "_block[0-9]*_MC2018" -S "MC2018_scan" -r
+```
+
 To make histograms, and then plots and ROC curves (including flattening pT spectra):
 ```
 cd batch

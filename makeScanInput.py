@@ -10,6 +10,7 @@ parser.add_option("-r", "--read", dest="read", default="input/dict_scan.py", hel
 parser.add_option("-w", "--write", dest="write", default="input/input_sets_scan.txt", help="output file to write")
 parser.add_option("-e", "--export", dest="export", default="batch/exportScan.sh", help="export file to write")
 parser.add_option("-y", "--year", dest="year", default="", help="year (for MC suffix)")
+parser.add_option("-i", "--identifier", dest="id", default="SMS", help="identifier for desired files")
 (options, args) = parser.parse_args()
 
 # find the python files
@@ -34,7 +35,7 @@ yearsuff = "_MC"+options.year if len(options.year)>0 else ""
 fdict = {}
 for file in files:
     # skip unwanted things (including non-SMS)
-    if file[-3:]=="pyc" or file[0:8]=="__init__" or file[0:3]!="SMS": continue
+    if file[-3:]=="pyc" or file[0:8]=="__init__" or (len(options.id)>0 and not file.startswith(options.id)): continue
     # add directory, remove "_cff.py"
     full_name = options.dir + "." + file[0:-7]
     # remove "_Tune..."
@@ -44,7 +45,8 @@ for file in files:
         if "Tune" in fpart: break
         short_name += fpart + '_'
     # remove SMS-
-    short_name = short_name.replace("SMS-","")[:-1]+yearsuff
+    if options.id=="SMS": short_name = short_name.replace("SMS-","")
+    short_name = short_name[:-1]+yearsuff
     if short_name not in fdict: fdict[short_name] = [full_name]
     else: fdict[short_name].append(full_name)
 
