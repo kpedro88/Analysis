@@ -13,7 +13,7 @@ def xsec_parse(xfile):
 def msplit(line):
     split = line.split('-')
     if len(split)==2:
-        return split[1] if split[1].isalpha() else int(split[1])
+        return split[1] if split[1].isalpha() else int(split[1]) if not "." in split[1] else float(split[1])
     else: return -1
 
 # define options
@@ -26,6 +26,7 @@ parser.add_option("-s", "--skim", dest="skim", default="input/input_sets_skim_fa
 parser.add_option("-c", "--card", dest="card", default="input/input_sets_DC_fast.txt", help="datacard output file to write")
 parser.add_option("-e", "--export", dest="export", default="batch/exportFast.sh", help="export file to write")
 parser.add_option("-p", "--params", dest="params", default=2, help="number of signal params")
+parser.add_option("-f", "--full", dest="full", default=False, action="store_true", help="fullsim (rather than fastsim)")
 (options, args) = parser.parse_args()
 
 # parse skip list
@@ -63,28 +64,29 @@ for file in files:
     if skip: continue
     # parse filename: model, mMother-X, mLSP-Y, MC####, fast.root
     #             or: model, mZprime-X, mDark-Y, rinv-Z, alpha-W, MC####, scan.root
-    splitnum = options.params + 2
+    splitnum = int(options.params) + 2
     fsplit = file.split('_')
     model = '_'.join(fsplit[0:-splitnum])
     params = []
     while splitnum>2:
         params.append(msplit(fsplit[-splitnum]))
         splitnum -= 1
-    year = options.year if len(options.year)>0 else fsplit[-splitnum+2]
-    fyear = fsplit[-splitnum+2]
+    year = options.year if len(options.year)>0 else fsplit[-splitnum]
+    fyear = fsplit[-splitnum]
     mother_ID = []
     # get cross section
     this_xsec, mother_ID = get_xsec(model,params[0])
     # make short name
-    short_name = model + "_" + "_".join(params) + "_" + year + "_" + "fast"
+    param_string = "_".join([str(p) for p in params])
+    short_name = model + "_" + param_string + "_" + year + ("" if options.full else "_" + "fast")
     # make dc input file name (maybe different from short name)
-    fname = model + "_" + "_".join(params) + "_" + fyear + "_" + "fast"
+    fname = model + "_" + param_string + "_" + fyear + ("" if options.full else "_" + "fast")
     # make set list for skimming
-    wline = "base" + "\t" + "skim" + "\t" + short_name + "\t" + "s:filename[" + file + "]" + "\t" + "b:fastsim[1]" + "\t" + "vi:mother[" + str(','.join(str(m) for m in mother_ID)) + "]" + "\t" + "b:data[0]" + "\n"
+    wline = "base" + "\t" + "skim" + "\t" + short_name + "\t" + "s:filename[" + file + "]" + ("" if options.full else "\t" + "b:fastsim[1]") + "\t" + "vi:mother[" + ','.join([str(m) for m in mother_ID]) + "]" + "\t" + "b:data[0]" + "\n"
     wfile.write(wline)
     # make set list for datacards with xsecs
     dline = makeLineDCHist(short_name)
-    dline += makeLineDCBase(short_name,fname,this_xsec,mother_ID)
+    dline += makeLineDCBase(short_name,fname,this_xsec,mother_ID,options.full)
     dfile.write(dline)
     # make per-set list
     with open("input/fast/input_set_DC_"+short_name+".txt",'w') as ofile:

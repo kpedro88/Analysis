@@ -62,7 +62,7 @@ for TYPE in ${TYPES[@]}; do
 			TMPSELTYPE=$TMPSELTYPE,dijetmtdetahadloosemf_JECup,dijetmtdetahadloosemf_JECdown,dijetmtdetahadloosemf_JERup,dijetmtdetahadloosemf_JERdown
 		fi
 
-		$DRYRUN ./SKtemp.sh ${JOBDIR} ${INPUT} ${SNAME} "${SLIST}" ${TMPSELTYPE} ${INDIR} ${OUTDIR} ${STORE} ${JOBTYPE}
+		$DRYRUN ./SKtemp.sh ${JOBDIR} ${INPUT} ${SNAME} "${SLIST}" ${TMPSELTYPE} ${TMPINDIR} ${OUTDIR} ${TMPSTORE} ${JOBTYPE}
 	done
 done
 

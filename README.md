@@ -231,11 +231,11 @@ cd batch
 
 To make the input lists and skim the signal scans:
 ```
-python makeFastInput.py -p 4 -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan/ -m MC2016 -s input/input_sets_skim_svj_scan_2016.txt -c input/input_sets_DC_svj_scan_2016.txt -e batch/exportSkimSVJScan2016.sh
-python makeFastInput.py -p 4 -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan/ -m MC2017 -s input/input_sets_skim_svj_scan_2017.txt -c input/input_sets_DC_svj_scan_2017.txt -e batch/exportSkimSVJScan2017.sh
-python makeFastInput.py -p 4 -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan/ -m MC2018 -s input/input_sets_skim_svj_scan_2018.txt -c input/input_sets_DC_svj_scan_2018.txt -e batch/exportSkimSVJScan2018.sh
+python makeFastInput.py -f -p 4 -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan/ -m MC2016 -s input/input_sets_skim_svj_scan_2016.txt -c input/input_sets_DC_svj_scan_2016.txt -e batch/exportSkimSVJScan2016.sh
+python makeFastInput.py -f -p 4 -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan/ -m MC2017 -s input/input_sets_skim_svj_scan_2017.txt -c input/input_sets_DC_svj_scan_2017.txt -e batch/exportSkimSVJScan2017.sh
+python makeFastInput.py -f -p 4 -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan/ -m MC2018 -s input/input_sets_skim_svj_scan_2018.txt -c input/input_sets_DC_svj_scan_2018.txt -e batch/exportSkimSVJScan2018.sh
 cd batch
-./SKsub_svj.sh -t SVJScan -y 2016,2017,2018
+./SKsub_svj.sh -s -t SVJScan -y 2016,2017,2018
 ```
 
 To make histograms, and then plots and ROC curves (including flattening pT spectra):
