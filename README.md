@@ -224,9 +224,9 @@ To submit scan jobs to Condor:
 cd batch
 ./SCsub_svj.sh -y 2016,2017,2018
 (wait for jobs to finish)
-./HSsub.sh -d root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan -g "_block[0-9]*_MC2016" -S "MC2016_scan" -r
-./HSsub.sh -d root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan -g "_block[0-9]*_MC2017" -S "MC2017_scan" -r
-./HSsub.sh -d root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan -g "_block[0-9]*_MC2018" -S "MC2018_scan" -r
+./HSsub.sh -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan -g "_block[0-9]*_MC2016" -S "MC2016_scan" -r
+./HSsub.sh -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan -g "_block[0-9]*_MC2017" -S "MC2017_scan" -r
+./HSsub.sh -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan -g "_block[0-9]*_MC2018" -S "MC2018_scan" -r
 ```
 
 To make the input lists and skim the signal scans:

@@ -39,8 +39,12 @@ eval `scramv1 runtime -sh`
 cd src/Analysis
 
 #run macro
-echo "run: root -b -q -l 'KScanDriver.C+(\"$SAMPLE\",\"$INDIR\",{\"$INPUT\"},{})' 2>&1"
-root -b -q -l 'KScanDriver.C+("'$SAMPLE'","'$INDIR'",{"'$INPUT'"},{})' 2>&1
+EXTRAOPT=""
+if [[ $SAMPLE == "SVJ"* ]]; then
+	EXTRAOPT='"OPTION","b:splitSVJ[1]"'
+fi
+echo "run: root -b -q -l 'KScanDriver.C+(\"$SAMPLE\",\"$INDIR\",{\"$INPUT\"},{$EXTRAOPT})' 2>&1"
+root -b -q -l 'KScanDriver.C+("'$SAMPLE'","'$INDIR'",{"'$INPUT'"},{'$EXTRAOPT'})' 2>&1
 
 ROOTEXIT=$?
 

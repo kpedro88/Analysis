@@ -16,3 +16,4 @@ INPUT
 input/input_sets_scan_2016.txt
 input/input_sets_scan_2017.txt
 input/input_sets_scan_2018.txt
+input/input_sets_scan_svj_2018.txt

@@ -37,8 +37,9 @@ class KScanner : public KLooper {
 			//get options
 			globalOpt->Get("outpre",outpre);
 			globalOpt->Get("outsuff",outsuff);
-			splitT1ttbb = globalOpt->Get("splitT1ttbb",false);
-			splitSVJ = globalOpt->Get("splitSVJ",false);
+			//wait to check these
+			splitT1ttbb = false;
+			splitSVJ = false;
 		}
 		//destructor
 		virtual ~KScanner() {}
@@ -52,6 +53,9 @@ class KScanner : public KLooper {
 			nentries = fChain->GetEntries();
 			int maxevents = 0;
 			if(globalOpt->Get("maxevents",maxevents) && maxevents < nentries) nentries = maxevents;
+
+			splitT1ttbb = globalOpt->Get("splitT1ttbb",false);
+			splitSVJ = globalOpt->Get("splitSVJ",false);
 			
 			vector<KSelection*> allSels;
 			vector<string> namesT1ttbb = {"T1bbtt","T1tbtb","T1tbbb","T1tbtt"};
