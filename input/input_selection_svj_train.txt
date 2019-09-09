@@ -88,3 +88,4 @@ base	skim	TTJets_HT2500toInf_MC2018	s:filename[tree_TTJets_HT-2500toInf_MC2018.r
 
 INPUT
 input/input_svj_sets_sig.txt
+input/input_svj_sets_sig_scan.txt

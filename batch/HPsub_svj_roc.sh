@@ -13,9 +13,10 @@ FLATTEN=0
 MOREINPUTS=()
 EXTRA=""
 DRYRUN=""
+SUBDIR="Skims"
 
 #check arguments
-while getopts "ks:q:t:y:i:x:o:fd" opt; do
+while getopts "ks:q:t:y:i:x:o:fdc" opt; do
 	case "$opt" in
 	k) CHECKARGS="${CHECKARGS} -k"
 	;;
@@ -37,14 +38,19 @@ while getopts "ks:q:t:y:i:x:o:fd" opt; do
 	;;
 	d) DRYRUN="echo"
 	;;
+	c) SUBDIR="Skims/scan"
+	;;
 	esac
 done
 
-INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims/tree_${SEL}
+INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/${SUBDIR}/tree_${SEL}
 STORE=$INDIR/$OUTDIR
 ./SKcheck.sh ${CHECKARGS}
 
 INPUTS='"input/input_svj_hist.txt","input/input_svj_rocs_'${QTY}'.txt","input/input_svj_hp_sets.txt"'
+if [[ $SUBDIR == *"scan" ]]; then
+	INPUTS="$INPUTS"',"input/input_svj_hp_sets_sig_scan.txt"'
+fi
 if [ -n "$MOREINPUTS" ]; then
 	for MOREINPUT in ${MOREINPUTS[@]}; do
 		INPUTS="$INPUTS"',"'$MOREINPUT'"'

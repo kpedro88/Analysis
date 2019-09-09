@@ -1,5 +1,5 @@
-import os
-from argparse import ArgumentParser
+import os, sys
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from collections import OrderedDict
 
 def parse(sample):
@@ -12,15 +12,32 @@ def parse(sample):
 
     return params
 
+def parse_short(sample):
+    params = {}
+    samplesplit = sample.split("_")
+    params["mZprime"] = samplesplit[2]
+    params["mDark"] = samplesplit[3]
+    params["rinv"] = samplesplit[4]
+    params["alpha"] = samplesplit[5]
+    return params
+
 # define options
-parser = ArgumentParser()
-parser.add_argument("-d", "--dir", dest="dir", default="/store/user/lpcsusyhad/SVJ2017/Run2ProductionV16/Skims/tree_dijetmtdetahadmf/", help="location of root files (LFN)")
+parser = ArgumentParser(add_help=False, formatter_class=ArgumentDefaultsHelpFormatter)
+parser.add_argument("--help", dest="help", default=False, action="store_true", help="show this help message and exit")
+parser.add_argument("-d", "--dir", dest="dir", default="/store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/Skims/tree_dijetmtdetahadloosemf/", help="location of root files (LFN)")
+parser.add_argument("-h", "--hist", dest="hist", default="input/input_svj_hp_sets_sig.txt", help="hist output file to write")
+parser.add_argument("-s", "--skim", dest="skim", default="input/input_svj_sets_sig.txt", help="skim output file to write")
+parser.add_argument("-o", "--option", dest="option", default="input/input_svj_train_options.txt", help="option output file to write")
 args = parser.parse_args()
+
+if args.help:
+    parser.print_help()
+    sys.exit(0)
 
 # find the root files
 files = filter(None,os.popen("xrdfs root://cmseos.fnal.gov/ ls "+args.dir).read().split('\n'))
 # basename
-files = [ f.split("/")[-1] for f in files]
+files = [f.split("/")[-1] for f in files]
 files = [x for x in files if "SVJ" in x]
 
 # style
@@ -45,19 +62,21 @@ params_default = OrderedDict([
 ])
 
 # open files
-dfile = open("input/input_svj_hp_sets_sig.txt",'w')
-sfile = open("input/input_svj_sets_sig.txt",'w')
+dfile = open(args.hist,'w')
+dfile.write("SET\n")
+sfile = open(args.skim,'w')
 sfile.write("SET\n")
-ifile = open("input/input_svj_train_options.txt",'w')
+ifile = open(args.option,'w')
 numers = []
 branches = []
 for sample in files:
     # parse filename: tree_SVJ_mZprime-1000_mDark-20_rinv-0.3_alpha-peak_MC2017.root
-    params = parse(sample)
+    #             or: tree_SVJ_1000_20_0.3_peak_MC2018.root
+    params = parse(sample) if "-" in sample else parse_short(sample)
     name = sample.replace("tree_","").replace(".root","")
     # make short name
     sname = "SVJ"+"_"+str(params["mZprime"])+"_"+str(params["mDark"])+"_"+str(params["rinv"])+"_"+str(params["alpha"])
-    year = "MC2017" if "MC2017" in sample else "MC2016"
+    year = "MC2017" if "MC2017" in sample else "MC2018" if "MC2018" in sample else "MC2016"
     # make flat branch name
     found_nondefault = False
     for p in params_default:
