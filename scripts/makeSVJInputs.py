@@ -1,6 +1,8 @@
 import os, sys
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from collections import OrderedDict
+sys.path.insert(0,os.getcwd())
+from makeFastCommon import *
 
 def parse(sample):
     params = {}
@@ -28,6 +30,7 @@ parser.add_argument("-d", "--dir", dest="dir", default="/store/user/lpcsusyhad/S
 parser.add_argument("-h", "--hist", dest="hist", default="input/input_svj_hp_sets_sig.txt", help="hist output file to write")
 parser.add_argument("-s", "--skim", dest="skim", default="input/input_svj_sets_sig.txt", help="skim output file to write")
 parser.add_argument("-o", "--option", dest="option", default="input/input_svj_train_options.txt", help="option output file to write")
+parser.add_argument("-c", "--scan", dest="scan", default=False, action="store_true", help="enable special options for scans")
 args = parser.parse_args()
 
 if args.help:
@@ -96,6 +99,8 @@ for sample in files:
     dline1 = "\t".join(["hist", "mc", sname+"_"+year, "s:legname["+sname+"]","c:color["+colors[cc]+"]","i:linestyle["+str(styles[cs])+"]"])
     alphaval = alphavals[params["alpha"]] if params["alpha"] in alphavals else params["alpha"]
     plines = ["d:mZprime["+str(params["mZprime"])+"]","d:mDark["+str(params["mDark"])+"]","d:rinv["+str(params["rinv"])+"]","d:alpha["+str(alphaval)+"]"]
+    if args.scan:
+        plines.append("d:xsection["+str(get_xsec("SVJ",int(params["mZprime"]))[0])+"]")
     dline2 = "\t".join(["", "base", "mc", sname+"_"+year, "s:filename["+sample+"]"] + plines)
     dfile.write(dline1+"\n")
     dfile.write(dline2+"\n")

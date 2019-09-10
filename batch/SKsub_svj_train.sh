@@ -6,16 +6,15 @@ JOBDIR=jobs
 JOBTYPE=trainskim
 INPUT=input/input_selection_svj_train.txt
 SELTYPE=dijetmtdetahadloosemf-train-flatsig
-INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims/tree_dijetmtdetahadloosemf
 OUTDIR=tree
-STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims
 CHECKARGS=""
 TYPES=()
 YEARS=()
 DRYRUN=""
+SUBDIR="Skims"
 
 #check arguments
-while getopts "ky:t:d" opt; do
+while getopts "ky:t:dc" opt; do
 	case "$opt" in
 		k) CHECKARGS="${CHECKARGS} -k"
 		;;
@@ -25,8 +24,13 @@ while getopts "ky:t:d" opt; do
 		;;
 		d) DRYRUN="echo"
 		;;
+		c) SUBDIR="Skims/scan"
+		;;
 	esac
 done
+
+INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/${SUBDIR}/tree_dijetmtdetahadloosemf
+STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/${SUBDIR}
 
 ./SKcheck.sh ${CHECKARGS}
 
