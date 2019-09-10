@@ -1,5 +1,3 @@
 SELECTION
 BDTsel
 	BDT012
-uBDTsel
-	uBDT012

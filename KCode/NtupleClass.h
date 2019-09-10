@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Thu May  2 11:08:30 2019 by ROOT version 6.06/01
+// Tue Sep 10 14:19:13 2019 by ROOT version 6.06/01
 // from TTree PreSelection/PreSelection
-// from TTree tree/all observables, dijetmtdetahadmf
+// from TTree tree/all observables, dijetmtdetahadloosemf
 // from TTree tree/all observables, signal
 // found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV17/Autumn18.TTJets_TuneCP5_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
 //////////////////////////////////////////////////////////
@@ -492,7 +492,9 @@ public :
    UInt_t          RA2bin;
    vector<double>  *JetsAK8_bdtSVJtag;
    vector<unsigned int> *RA2bins;
-   vector<double>  *JetsAK8_ubdtSVJtag;
+   Double_t        puWeightNew;
+   Double_t        puSysUpNew;
+   Double_t        puSysDownNew;
 
    // List of branches
    TBranch        *b_RunNum;   //!
@@ -962,7 +964,9 @@ public :
    TBranch        *b_RA2binBranch;   //!
    TBranch        *b_JetsAK8_bdtSVJtag;   //!
    TBranch        *b_RA2bins;   //!
-   TBranch        *b_JetsAK8_ubdtSVJtag;   //!
+   TBranch        *b_puWeightNew;   //!
+   TBranch        *b_puSysUpNew;   //!
+   TBranch        *b_puSysDownNew;   //!
 
    NtupleClass(TTree *tree=0);
    virtual ~NtupleClass();
@@ -1302,7 +1306,6 @@ void NtupleClass::Init(TTree *tree)
    RA2bins = 0;
    JetsAK8_maxBvsAll = 0;
    JetsAK8_bdtSVJtag = 0;
-   JetsAK8_ubdtSVJtag = 0;
    // Set branch addresses and branch pointers
    if (!tree) return;
    fChain = tree;
@@ -1776,7 +1779,9 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("RA2bin", &RA2bin, &b_RA2binBranch);
    fChain->SetBranchAddress("JetsAK8_bdtSVJtag", &JetsAK8_bdtSVJtag, &b_JetsAK8_bdtSVJtag);
    fChain->SetBranchAddress("RA2bins", &RA2bins, &b_RA2bins);
-   fChain->SetBranchAddress("JetsAK8_ubdtSVJtag", &JetsAK8_ubdtSVJtag, &b_JetsAK8_ubdtSVJtag);
+   fChain->SetBranchAddress("puWeightNew", &puWeightNew, &b_puWeightNew);
+   fChain->SetBranchAddress("puSysUpNew", &puSysUpNew, &b_puSysUpNew);
+   fChain->SetBranchAddress("puSysDownNew", &puSysDownNew, &b_puSysDownNew);
    Notify();
 }
 

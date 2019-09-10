@@ -403,8 +403,8 @@ REGISTER_BDTVAR(procweight);
 class KBDTVar_puweight : public KBDTVar {
 	public:
 		using KBDTVar::KBDTVar;
-		virtual void ListBranches() { branches = {"puWeight"}; }
-		virtual void Fill_(unsigned j) { branch = looper->puWeight; }
+		virtual void ListBranches() { branches = {"puWeightNew"}; }
+		virtual void Fill_(unsigned j) { branch = looper->puWeightNew; }
 };
 REGISTER_BDTVAR(puweight);
 

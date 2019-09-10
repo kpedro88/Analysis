@@ -35,25 +35,19 @@ MODES_ALL=(
 )
 MODES=()
 INDIR=/uscmst1b_scratch/lpc1/3DayLifetime/pedrok/bdt
-BDTFILES=(bdt ubdt)
-BDTNAMES=(BDT uBDT)
-BDTSELS="B-BDT,S-BDT,B-uBDT,S-uBDT"
+BDTFILES=(bdt)
+BDTNAMES=(BDT)
+BDTSELS="B-BDT,S-BDT"
 SELBASE="bdtnew"
 
 #check arguments
-while getopts "C:m:bo" opt; do
+while getopts "C:m:o" opt; do
 	case "$opt" in
 		C) IFS="," read -a CONFIGS <<< "$OPTARG"
 		;;
 		m) if [ "$OPTARG" = all ]; then MODES=(${MODES_ALL[@]}); else IFS="," read -a MODES <<< "$OPTARG"; fi
 		;;
-		b)
-			BDTFILES=(bdt)
-			BDTNAMES=(BDT)
-			BDTSELS="B-BDT,S-BDT"
-		;;
-		o)
-			SELBASE="bdt"
+		o) SELBASE="bdt"
 		;;
 	esac
 done

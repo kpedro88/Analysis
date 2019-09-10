@@ -2,6 +2,3 @@ SELECTION
 BDTsel
 	BDT012
 	NSVJ	s:source[SVJTag]	i:num[2]
-uBDTsel
-	uBDT012
-	NSVJ	s:source[SVJTag]	i:num[2]

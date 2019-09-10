@@ -5,6 +5,3 @@ SELECTION
 BDT012
 	BDT	s:name[BDT]	s:weights[test/D30_TMVA_bdt_weights.xml]	s:type[BDTG]	b:positive[1]	vs:variables[girth,tau21,tau32,msd,deltaphi,axisminor,axismajor,ptD,ecfN2b1,ecfN3b1,ptdrlog,fChHad,fEle,fMu,fNeuHad,fPho,maxbvsall]	b:tmva[0]
 	SVJTag	s:branch[]	d:cut[0.34]
-uBDT012
-	BDT	s:name[BDT]	s:weights[test/D30_TMVA_ubdt_weights.xml]	s:type[BDTG]	b:positive[1]	vs:variables[girth,tau21,tau32,msd,deltaphi,axisminor,axismajor,ptD,ecfN2b1,ecfN3b1,ptdrlog,fChHad,fEle,fMu,fNeuHad,fPho,maxbvsall]	b:tmva[0]
-	SVJTag	s:branch[]	d:cut[0.50]

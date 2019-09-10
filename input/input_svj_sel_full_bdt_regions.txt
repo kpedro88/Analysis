@@ -1,5 +1,5 @@
 OPTION
-vstring:selections[B-BDT,S-BDT,B-uBDT,S-uBDT]
+vstring:selections[B-BDT,S-BDT]
 string+:printsuffix[_fullbdtregions]
 
 SELECTION
@@ -20,26 +20,12 @@ S-BDT
 	Sfull
 	BDTsel
 	plot
-B-uBDT
-	Bfull
-	uBDTsel
-	plot
-S-uBDT
-	Sfull
-	uBDTsel
-	plot
 pre-BDT
 	BDTsel
-	plot
-pre-uBDT
-	uBDTsel
 	plot
 flatplot
 	MCWeight	b:flatten[1]	s:flatname[corrections/svj_dijetmtdetahadmf_jetAK8.root]	s:flatqty[bothjetAK8pt]	s:flatnumer[SVJ_3000_20_0.3_peak_MC2017]
 	Histo
 preflat-BDT
 	BDTsel
-	flatplot
-preflat-uBDT
-	uBDTsel
 	flatplot

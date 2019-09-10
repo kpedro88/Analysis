@@ -15,8 +15,3 @@ simb
 	BDTsel
 	JetMatch
 	Histo	
-simu
-	simw
-	uBDTsel
-	JetMatch
-	Histo	

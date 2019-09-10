@@ -14,7 +14,7 @@ def parseLog(fname,bkgs):
 if __name__=="__main__":
     configs = sys.argv[1].split(',')
     suff = sys.argv[2]
-    for MVA in ["BDT","uBDT"]:
+    for MVA in ["BDT"]:
 #        with open("bkg_yields_"+MVA+"_D3X_maxbvsall.log",'w') as outfile:
         with open("bkg_yields_"+MVA+"_"+suff+".log",'w') as outfile:
             bkgs = OrderedDict([

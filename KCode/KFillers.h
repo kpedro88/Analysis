@@ -1609,15 +1609,6 @@ class KJetFiller_AK8bdtSVJtag : public KJetFiller {
 };
 REGISTER_JETFILLER(AK8bdtSVJtag);
 
-//pre-existing ubdt output
-class KJetFiller_AK8ubdtSVJtag : public KJetFiller {
-	public:
-		using KJetFiller::KJetFiller;
-		virtual void ListBranches() { branches = {"JetsAK8_ubdtSVJtag"}; }
-		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_ubdtSVJtag->size()>index) value.Fill(looper->JetsAK8_ubdtSVJtag->at(index),w); }
-};
-REGISTER_JETFILLER(AK8ubdtSVJtag);
-
 class KJetFiller_AK8fChEM : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;

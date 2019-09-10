@@ -505,9 +505,10 @@ class KMCWeightSelector : public KSelector {
 			if(pucorr){
 				branches.push_back("TrueNumInteractions");
 				if(putree){
-					if(puunc==1) branches.push_back(looper->fChain->GetBranch("puSysUpNew") ? "puSysUpNew" : "puSysUp");
-					else if(puunc==-1) branches.push_back(looper->fChain->GetBranch("puSysDownNew") ? "puSysDownNew" : "puSysDown");
-					else branches.push_back(looper->fChain->GetBranch("puWeightNew") ? "puWeightNew" : "puWeight");
+					punew = puunc==1 ? looper->fChain->GetBranch("puSysUpNew") : puunc==-1 ? looper->fChain->GetBranch("puSysDownNew") : looper->fChain->GetBranch("puWeightNew");
+					if(puunc==1) branches.push_back(punew ? "puSysUpNew" : "puSysUp");
+					else if(puunc==-1) branches.push_back(punew ? "puSysDownNew" : "puSysDown");
+					else branches.push_back(punew ? "puWeightNew" : "puWeight");
 				}
 			}
 			if(puupdcorr){
@@ -564,9 +565,9 @@ class KMCWeightSelector : public KSelector {
 			
 			if(pucorr) {
 				//use TreeMaker weights if no histo provided
-				if(puunc==1) w *= puhistUp ? GetBinContentBounded(puhistUp,looper->TrueNumInteractions) : looper->puSysUp;
-				else if(puunc==-1) w *= puhistDown ? GetBinContentBounded(puhistDown,looper->TrueNumInteractions) : looper->puSysDown;
-				else w *= puhist ? GetBinContentBounded(puhist,looper->TrueNumInteractions) : looper->puWeight;
+				if(puunc==1) w *= puhistUp ? GetBinContentBounded(puhistUp,looper->TrueNumInteractions) : punew ? looper->puSysUpNew : looper->puSysUp;
+				else if(puunc==-1) w *= puhistDown ? GetBinContentBounded(puhistDown,looper->TrueNumInteractions) : punew ? looper->puSysDownNew : looper->puSysDown;
+				else w *= puhist ? GetBinContentBounded(puhist,looper->TrueNumInteractions) : punew ? looper->puWeightNew : looper->puWeight;
 			}
 
 			if(puupdcorr){
@@ -744,7 +745,7 @@ class KMCWeightSelector : public KSelector {
 		KNormTypeSelector* NormType;
 		bool internalNormType;
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, useTreeXsec, useKFactor, debugWeight, didDebugWeight;
-		bool pucorr, putree, puupdcorr, trigcorr, trigsystcorr, isrcorr, useisrflat, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr, hemvetocorr, lepcorr;
+		bool pucorr, putree, punew, puupdcorr, trigcorr, trigsystcorr, isrcorr, useisrflat, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr, hemvetocorr, lepcorr;
 		double jetidcorrval, isotrackcorrval, trigsystcorrval, lumicorrval, isrflat;
 		int puunc, puupdunc, pdfunc, isrunc, scaleunc, trigunc, trigyear, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc, prefireunc, hemvetounc, lepidunc, lepisounc, leptrkunc;
 		vector<int> mother;
@@ -1409,14 +1410,13 @@ REGISTER_SELECTOR(MTRegression);
 //compute SVJ tags using BDT values
 class KSVJTagSelector : public KSelector {
 	public:
-		enum svjbranches { bdt = 0, ubdt = 1, seltor = 2 };
+		enum svjbranches { bdt = 0, seltor = 2 };
 		//constructor
 		KSVJTagSelector() : KSelector() { }
 		KSVJTagSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), branch(""), cut(0.), BDT(NULL) { 
 			//check for option
 			localOpt->Get("branch",branch);
-			if(branch=="ubdtSVJtag") ebranch = ubdt;
-			else if(branch=="bdtSVJtag") ebranch = bdt;
+			if(branch=="bdtSVJtag") ebranch = bdt;
 			else if(branch.empty()) ebranch = seltor;
 			else throw runtime_error("Unknown bdt branch: "+branch);
 			localOpt->Get("cut",cut);
@@ -1439,7 +1439,7 @@ class KSVJTagSelector : public KSelector {
 			//reset
 			ntags = 0;
 			JetsAK8_tagged.clear();
-			const auto& SVJTag = ebranch==seltor ? BDT->JetsAK8_bdt : ebranch==bdt ? *looper->JetsAK8_bdtSVJtag : *looper->JetsAK8_ubdtSVJtag;
+			const auto& SVJTag = ebranch==seltor ? BDT->JetsAK8_bdt : *looper->JetsAK8_bdtSVJtag;
 			JetsAK8_tagged.reserve(SVJTag.size());
 			for(unsigned j = 0; j < SVJTag.size(); ++j){
 				JetsAK8_tagged.push_back(SVJTag[j] > cut);
