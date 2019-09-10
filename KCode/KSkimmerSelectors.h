@@ -1749,7 +1749,7 @@ class KJetAK8TrainingSelector : public KSelector {
 	public:
 		//constructor
 		KJetAK8TrainingSelector() : KSelector() {}
-		KJetAK8TrainingSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
+		KJetAK8TrainingSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), weight(0.) {
 			//check for option
 			vector<string> branchnames;
 			localOpt->Get("branches",branchnames);
@@ -1799,6 +1799,12 @@ class KJetAK8TrainingSelector : public KSelector {
 			b_mDark = 0.; base->GetLocalOpt()->Get("mDark",b_mDark);
 			b_rinv = 0.; base->GetLocalOpt()->Get("rinv",b_rinv);
 			b_alpha = 0.; base->GetLocalOpt()->Get("alpha",b_alpha);
+			//check for manual weight
+			if(base->GetLocalOpt()->Has("xsection")){
+				double xsection = 0.; base->GetLocalOpt()->Get("xsection",xsection);
+				int nEventProc = 0; base->GetLocalOpt()->Get("nEventProc",nEventProc);
+				weight = xsection/nEventProc;
+			}
 		}
 
 		virtual void SetBranches(){
@@ -1822,6 +1828,9 @@ class KJetAK8TrainingSelector : public KSelector {
 
 		//used for non-dummy selectors
 		virtual bool Cut(){
+			//check if weight should be overridden
+			if(weight>0.) looper->Weight = weight;
+
 			for(unsigned j = 0; j < min(looper->JetsAK8->size(),3ul); ++j){
 				//temporary protection for crazy values
 				double pt = looper->JetsAK8->at(j).Pt();
@@ -1850,6 +1859,7 @@ class KJetAK8TrainingSelector : public KSelector {
 		//extra branches
 		double b_mZprime, b_mDark, b_rinv, b_alpha;
 		vector<double> b_flatweights;
+		double weight;
 };
 REGISTER_SELECTOR(JetAK8Training);
 
