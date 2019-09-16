@@ -302,9 +302,10 @@ class KPlot{
 			globalOpt->Get<double>("luminorm",intlumi);
 			string luminormunit = "fbinv";
 			globalOpt->Get<string>("luminormunit",luminormunit);
+			int lumiprec = 1; globalOpt->Get("lumiprec",lumiprec);
 			stringstream fbname_;
-			if(luminormunit=="fbinv") fbname_ << fixed << setprecision(1) << intlumi/1000 << " fb^{-1} (13 TeV)";
-			else if(luminormunit=="pbinv") fbname_ << fixed << setprecision(1) << intlumi << " pb^{-1} (13 TeV)";
+			if(luminormunit=="fbinv") fbname_ << fixed << setprecision(lumiprec) << intlumi/1000 << " fb^{-1} (13 TeV)";
+			else if(luminormunit=="pbinv") fbname_ << fixed << setprecision(lumiprec) << intlumi << " pb^{-1} (13 TeV)";
 			string fbname = fbname_.str();
 			globalOpt->Get("lumi_text",fbname);
 			TLatex width_test_lumi(0,0,fbname.c_str());
