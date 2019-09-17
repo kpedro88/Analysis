@@ -1,6 +1,9 @@
 #include "KCode/KCutflow.h"
 #include "KCode/KMap.h"
 
+#include <TFile.h>
+#include <TH1.h>
+
 #include <vector>
 #include <string>
 #include <exception>
@@ -9,7 +12,13 @@
 
 using namespace std;
 
-void CutflowSum(string dir="", string sample="", vector<pair<string,double>> yearweights={}, bool printerrors=false, int prcsn=2){
+struct Sample {
+	Sample(string name_, double xsec_, double lumi_) : name(name_), xsec(xsec_), lumi(lumi_) {}
+	string name;
+	double xsec, lumi;
+};
+
+void CutflowSum(string dir="", vector<Sample> samples={}, bool printerrors=false, int prcsn=2){
 	if(dir.empty()){
 		cout << "Recompiled CutflowSum, exiting." << endl;
 		return;
@@ -18,15 +27,13 @@ void CutflowSum(string dir="", string sample="", vector<pair<string,double>> yea
 	TH1F* nEventHist = NULL;
 	TH1F* cutflowRaw = NULL;
 	
-	for(const auto& yearweight : yearweights){
-		auto year = yearweight.first;
-		auto weight = yearweight.second;
-		TFile* file = KOpen(dir+"/tree_"+sample+"_MC"+year+"_fast.root");
+	for(const auto& sample : samples){
+		TFile* file = KOpen(dir+"/tree_"+sample.name+".root");
 		
 		//get and scale histos
 		auto nEventTmp = KGet<TH1F>(file,"nEventProc");
 		auto cutflowTmp = KGet<TH1F>(file,"cutflow");
-		weight /= nEventTmp->GetBinContent(1);
+		double weight = sample.lumi * sample.xsec / nEventTmp->GetBinContent(1);
 		nEventTmp->Scale(weight);
 		cutflowTmp->Scale(weight);
 		
