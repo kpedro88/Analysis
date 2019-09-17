@@ -1,0 +1,7 @@
+OPTION
+string+:printsuffix[_dijethadloose_Nminus2]
+string:lumi_text[(13 TeV)]
+
+SET
+hist	mc	QCD	s:legname[QCD]	c:color[kBlack]
+	base	ext	QCD	s:extfilename[test/svj_unskimmed_deta.root]	b:ext_auto[1]

@@ -1,0 +1,12 @@
+OPTION
+vstring:disable_branches[*]
+vstring:selections[dijet]
+
+SELECTION
+dijet
+	Dijet	i:njet[2]	b:id[1]	d:eta[2.4]	d:pt[200]
+	MTAK8	d:min[1500]
+	MuonVeto	b:loose[1]
+	ElectronVeto
+	MCWeight
+	Histo
