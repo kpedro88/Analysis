@@ -1,4 +1,4 @@
-import os, stat
+import os, stat, sys
 from optparse import OptionParser
 from collections import OrderedDict
 
@@ -70,7 +70,7 @@ for signal in options.signals:
 
     mother_ID = []
     # get cross section
-    this_xsec, mother_ID = get_xsec(model,mMother)
+    this_xsec, mother_ID = get_xsec(model,int(mMother))
 
     mothername = "\\PSg"
     mothername2 = "\\PSg\\PSg"
@@ -88,12 +88,12 @@ for signal in options.signals:
     outDict["header3"] += " & " + "\\multicolumn{2}{r}{$m_{\\PSGczDo}="+mLSP+"\\GeV$}"
     
     # add up years
-    yearweights = []
+    samples = []
     for year in lumis:
-        yearweights.append('{"'+str(year)+'",'+str(lumis[year]*this_xsec)+'}')
+        samples.append('{"'+signal+'_MC'+year+'_fast",'+str(this_xsec)+','+str(lumis[year])+'}')
 
     # process cutflow lines (summed over years)
-    cmd = "root -b -l -q 'CutflowSum.C("+'"'+options.dir+'","'+signal+'",{'+','.join(yearweights)+'},1,1)'+"'"
+    cmd = "root -b -l -q 'CutflowSum.C("+'"'+options.dir+'",{'+','.join(samples)+'},1,1)'+"'"
     cutflow = filter(None,os.popen(cmd).read().split('\n'))
     started = False
     for line in cutflow:
