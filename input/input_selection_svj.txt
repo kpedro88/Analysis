@@ -32,6 +32,14 @@ evtclean
 	LowNeutralJet	b:tag[1]
 	LowNeutralJet	s:name[LowNeutralJetTight]	b:tight[1]	b:tag[1]
 	HEMOptVeto	b:tag[1]
+phitag
+	PhiSpikeVeto	s:name[PhiSpikeVeto16]	s:yearmc[MC2016]	s:yeardata[JetHT_2016]	s:spikelist[corrections/phispikes16.txt]	b:tag[1]
+	PhiSpikeVeto	s:name[PhiSpikeVeto17]	s:yearmc[MC2017]	s:yeardata[JetHT_2017]	s:spikelist[corrections/phispikes17.txt]	b:tag[1]
+	PhiSpikeVeto	s:name[PhiSpikeVeto18]	s:yearmc[MC2018]	s:yeardata[JetHT_2018]	s:spikelist[corrections/phispikes18.txt]	b:tag[1]
+phiveto
+	PhiSpikeVeto	s:name[PhiSpikeVeto16]	s:yearmc[MC2016]	s:yeardata[JetHT_2016]	s:spikelist[corrections/phispikes16.txt]	b:tag[0]
+	PhiSpikeVeto	s:name[PhiSpikeVeto17]	s:yearmc[MC2017]	s:yeardata[JetHT_2017]	s:spikelist[corrections/phispikes17.txt]	b:tag[0]
+	PhiSpikeVeto	s:name[PhiSpikeVeto18]	s:yearmc[MC2018]	s:yeardata[JetHT_2018]	s:spikelist[corrections/phispikes18.txt]	b:tag[0]
 veto
 	MuonVeto
 	ElectronVeto
@@ -83,10 +91,19 @@ dijetlowmtdetahadmf
 dijetmtdetahadloose
 	dijetmtdeta
 	vetoloose
+	phitag
 	endcommon
 dijetmtdetahadloosemf
 	dijetmtdetahadloose
 	METFilter
+dijetmtdetahadloosefull
+	NormType
+	dijetmtdeta
+	vetoloose
+	METFilter	b:ecaldeadcell[0]
+	phiveto
+	DeltaPhiMinAK8	d:max[0.8]
+	endcommon
 dijetlowmtdetahadloose
 	dijetlowmtdeta
 	vetoloose
@@ -112,6 +129,16 @@ dijetmthighdetahadloose
 	dijetmt
 	highdeta
 	vetoloose
+	phitag
+	endcommon
+dijetmthighdetahadloosefull
+	NormType
+	dijetmt
+	highdeta
+	vetoloose
+	METFilter	b:ecaldeadcell[0]
+	phiveto
+	DeltaPhiMinAK8	d:max[0.8]
 	endcommon
 dijetmtmaxdetahadloose
 	dijetmt

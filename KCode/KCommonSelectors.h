@@ -2,6 +2,7 @@
 #define KCOMMONSELECTORS_H
 
 //custom headers
+#include "KParser.h"
 #include "KSelection.h"
 #include "KBDTVar.h"
 #include "../KMVA/BDTree.h"
@@ -18,6 +19,8 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <utility>
+#include <fstream>
 
 using namespace std;
 
@@ -1433,6 +1436,7 @@ class KMETFilterSelector : public KSelector {
 				filters.push_back(new EventListFilter({filterfiles[f]}));
 			}
 			onlydata = localOpt->Get("onlydata",false);
+			ecaldeadcell = localOpt->Get("ecaldeadcell",true);
 		}
 		virtual void ListBranches(){
 			branches.insert(branches.end(),{
@@ -1470,7 +1474,7 @@ class KMETFilterSelector : public KSelector {
 			bool TightHaloFilter = looper->globalSuperTightHalo2016Filter==1;
 			bool HBHENoiseFilter = looper->HBHENoiseFilter==1;
 			bool HBHEIsoNoiseFilter = looper->HBHEIsoNoiseFilter==1;
-			bool EcalDeadCellTriggerPrimitiveFilter = looper->EcalDeadCellTriggerPrimitiveFilter==1;
+			bool EcalDeadCellTriggerPrimitiveFilter = !ecaldeadcell or looper->EcalDeadCellTriggerPrimitiveFilter==1;
 			bool eeBadScFilter = looper->eeBadScFilter==1;
 			bool BadChargedCandidateFilter = looper->BadChargedCandidateFilter;
 			bool BadPFMuonFilter = looper->BadPFMuonFilter;
@@ -1484,7 +1488,7 @@ class KMETFilterSelector : public KSelector {
 		}
 		
 		//member variables
-		bool onlydata;
+		bool onlydata, ecaldeadcell;
 		vector<string> filterfiles;
 		vector<EventListFilter*> filters;
 };
@@ -2039,6 +2043,75 @@ class KHEMDPhiVetoSelector : public KFilterSelector {
 		double minpt;
 };
 REGISTER_SELECTOR(HEMDPhiVeto);
+
+//-------------------------------------------------------------
+//vetos events with dead ECAL cells
+//(these events appear as spikes in 2nd jet eta-phi plane)
+class KPhiSpikeVetoSelector : public KFilterSelector {
+	public:
+		//constructor
+		KPhiSpikeVetoSelector() : KFilterSelector() { }
+		KPhiSpikeVetoSelector(string name_, OptionMap* localOpt_) : KFilterSelector(name_,localOpt_), dim(0.028816), rad(.35) {
+			branchname = "PhiSpikeVeto";
+			localOpt->Get("dim",dim);
+			localOpt->Get("rad",rad);
+			dimrad = dim*rad;
+
+			//years to check in set names
+			localOpt->Get("yearmc",yearmc);
+			localOpt->Get("yeardata",yeardata);
+			
+			//read eta phi map
+			string inputFile; localOpt->Get("spikelist",inputFile);
+			ifstream infile(inputFile.c_str());
+			if(infile.is_open()){
+				string line;
+				while(getline(infile,line)){
+					vector<string> fields;
+					KParser::process(line,'\t',fields);
+					eta_phi_list.emplace_back(
+						KParser::getOptionValue<double>(fields[0]),
+						KParser::getOptionValue<double>(fields[1])
+					);
+				}
+			}
+			else throw runtime_error("missing phi spike list: "+inputFile);
+		}
+		virtual void ListBranches(){
+			branches.insert(branches.end(),{
+				"Jets",
+			});
+		}
+		virtual void CheckBase(){
+			//check whether this should be enabled (only for MC or data of given year)
+			bool isdata = base->IsData();
+			const auto& basename = base->GetName();
+			if((isdata and basename.find(yeardata)==string::npos) or (!isdata and basename.find(yearmc)==string::npos)){
+				dummy = true;
+			}
+		}
+		virtual void SetBranches(){
+			if(dummy) return;
+			KFilterSelector::SetBranches();
+		}
+		bool InSpike(const TLorentzVector& tlv){
+			double tlv_eta = tlv.Eta();
+			double tlv_phi = tlv.Phi();
+			for(const auto& spike : eta_phi_list){
+				if(pow(spike.first-tlv_eta,2) + pow(spike.second-tlv_phi,2) < dimrad) return true;
+			}
+			return false;
+		}
+		virtual void GetResult() {
+			result = !InSpike(looper->Jets->at(1));
+		}
+
+		//member variables
+		double dim, rad, dimrad;
+		string yearmc, yeardata;
+		vector<pair<double,double>> eta_phi_list;
+};
+REGISTER_SELECTOR(PhiSpikeVeto);
 
 //---------------------------------------------------------------
 //calculates and applies extra filters (all at once)

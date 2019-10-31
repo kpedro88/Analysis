@@ -2,11 +2,34 @@ import sys, os, stat
 from optparse import OptionParser
 import imp
 
+def getNormType(short_name):
+    if "_MC20" in short_name:
+        short_name = '_'.join(short_name.split('_')[:-1])
+    normtypes = {
+        "TTJets": "ttbarLowHThad",
+        "TTJets_DiLept": "ttbarLowHTLowMET",
+        "TTJets_DiLept_genMET150": "ttbarLowHTHighMET",
+        "TTJets_DiLept_genMET80": "ttbarLowHTHighMET",
+        "TTJets_SingleLeptFromT": "ttbarLowHTLowMET",
+        "TTJets_SingleLeptFromTbar": "ttbarLowHTLowMET",
+        "TTJets_SingleLeptFromT_genMET150": "ttbarLowHTHighMET",
+        "TTJets_SingleLeptFromTbar_genMET150": "ttbarLowHTHighMET",
+        "TTJets_SingleLeptFromT_genMET80": "ttbarLowHTHighMET",
+        "TTJets_SingleLeptFromTbar_genMET80": "ttbarLowHTHighMET",
+        "TTJets_HT600to800": "ttbarHighHT",
+        "TTJets_HT800to1200": "ttbarHighHT",
+        "TTJets_HT1200to2500": "ttbarHighHT",
+        "TTJets_HT2500toInf": "ttbarHighHT",
+    }
+    if short_name in normtypes: return normtypes[short_name]
+    else: return ""
+
 def makeSkimLine(short_name,full_names,file_mins,file_maxs,mothers,btype="skim",block=-1,data=False):
     the_name = short_name + ("_block"+str(block) if block >= 0 else "")
+    nt = getNormType(short_name)
     line = "base" + "\t" + btype + "\t" + the_name + ("\t" + "u:block[" + str(block) + "]" if block >= 0 else "") + "\t" + "b:chain[1]" + "\t"
     line += "ch:filenames[" + str(','.join(full_names[i]+"_,"+str(file_mins[i])+","+str(file_maxs[i])+","+"_RA2AnalysisTree.root" for i, x in enumerate(full_names))) + "]" + "\t" 
-    line += "s:chainsuff[/TreeMaker2/PreSelection]" + ("\t"+"vi:mother["+str(','.join(str(m) for m in mothers))+"]" if len(mothers) > 0 else "") + ("\t"+"b:data[1]" if data else "\t"+"b:data[0]") + "\n"
+    line += "s:chainsuff[/TreeMaker2/PreSelection]" + ("\t"+"vi:mother["+str(','.join(str(m) for m in mothers))+"]" if len(mothers) > 0 else "") + ("\t"+"b:data[1]" if data else "\t"+"b:data[0]") + ("\t"+"s:normtype["+nt+"]" if len(nt)>0 else "") + "\n"
     expline = the_name + " \\\n"
     return (line,expline)
 

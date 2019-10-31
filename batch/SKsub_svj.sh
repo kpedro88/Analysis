@@ -5,7 +5,9 @@ source exportProd.sh
 JOBDIR=jobs
 JOBTYPE=skim
 INPUT=input/input_selection_svj.txt
-SELTYPE=dijetmtdetahadloose,dijetmtdetahadloosemf,dijetlowmtdetahadloose,dijetlowmtdetahadloosemf,dijetmtdetamu,dijetmtdetaele,dijetmthighdetahadloose
+SELTYPE=dijetmtdetahadloose,dijetmtdetahadloosefull,dijetmthighdetahadloose,dijetmthighdetahadloosefull
+# old skims: dijetmtdetahadloosemf,dijetlowmtdetahadloose,dijetlowmtdetahadloosemf,dijetmtdetamu,dijetmtdetaele
+# old syst skims: dijetmtdetahadloosemf_JECup,dijetmtdetahadloosemf_JECdown,dijetmtdetahadloosemf_JERup,dijetmtdetahadloosemf_JERdown
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}
 OUTDIR=tree
 STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims
@@ -59,7 +61,7 @@ for TYPE in ${TYPES[@]}; do
 			# remove first char, prepend condor stuff
 			SLIST="Process in ${SLIST:1}"
 		elif ( [[ $TYPE == "SVJ" ]] || [[ $TYPE == "SVJScan" ]] ) && [ -n "$SYST" ]; then
-			TMPSELTYPE=$TMPSELTYPE,dijetmtdetahadloosemf_JECup,dijetmtdetahadloosemf_JECdown,dijetmtdetahadloosemf_JERup,dijetmtdetahadloosemf_JERdown
+			TMPSELTYPE=$TMPSELTYPE,dijetmtdetahadloosefull_JECup,dijetmtdetahadloosefull_JECdown,dijetmtdetahadloosefull_JERup,dijetmtdetahadloosefull_JERdown
 		fi
 
 		$DRYRUN ./SKtemp.sh ${JOBDIR} ${INPUT} ${SNAME} "${SLIST}" ${TMPSELTYPE} ${TMPINDIR} ${OUTDIR} ${TMPSTORE} ${JOBTYPE}
