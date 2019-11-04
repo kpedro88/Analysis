@@ -79,6 +79,8 @@ input/fast*/
 /makePuInputs.py
 /runPU.sh
 /CutflowSum.C
+/selections_svj.py
+/makeCutflowSVJ.py
 
 # linked by setupXML.sh
 /KMVA/pugi*.*
