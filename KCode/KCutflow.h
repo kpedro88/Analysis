@@ -39,7 +39,7 @@ class KCutflow {
 			CalcEfficiency();
 		}
 		//get nevent info directly
-		KCutflow(string name_, TH1F* h_tmp, int nentries_, double nentriesE_=0) : name(name_), h_raw(h_tmp), nentries(nentries_), nentriesE(nentriesE_), h_abs(NULL), h_rel(NULL) { 
+		KCutflow(string name_, TH1F* h_tmp, long long nentries_, double nentriesE_=0) : name(name_), h_raw(h_tmp), nentries(nentries_), nentriesE(nentriesE_), h_abs(NULL), h_rel(NULL) { 
 			//initialize derived histos
 			CalcEfficiency();
 		}
@@ -80,8 +80,8 @@ class KCutflow {
 			
 			//fill histos
 			for(int c = 1; c <= h_raw->GetNbinsX(); c++){
-				int counter = (int)h_raw->GetBinContent(c);
-				int prev_counter = c==1 ? nentries : (int)h_raw->GetBinContent(c-1);
+				long long counter = (long long)h_raw->GetBinContent(c);
+				long long prev_counter = c==1 ? nentries : (long long)h_raw->GetBinContent(c-1);
 				
 				h_abs->GetXaxis()->SetBinLabel(c,h_raw->GetXaxis()->GetBinLabel(c));
 				h_abs->SetBinContent(c,((double)counter/(double)nentries)*100);
@@ -133,7 +133,7 @@ class KCutflow {
 			//print selectors
 			for(int c = 1; c <= h_raw->GetNbinsX(); ++c){
 				cout << left << setw(widths[0]) << h_raw->GetXaxis()->GetBinLabel(c);
-				int raw = (int)h_raw->GetBinContent(c); double rawE = h_raw->GetBinError(c);
+				long long raw = (long long)h_raw->GetBinContent(c); double rawE = h_raw->GetBinError(c);
 				double abs = h_abs->GetBinContent(c); double absE = h_abs->GetBinError(c);
 				double rel = h_rel->GetBinContent(c); double relE = h_rel->GetBinError(c);				
 				if(printerrors){
@@ -169,7 +169,7 @@ class KCutflow {
 		//members
 		string name, title;
 		TH1F *h_raw, *h_abs, *h_rel;
-		int nentries;
+		long long nentries;
 		double nentriesE;
 		vector<unsigned> widths;
 };
