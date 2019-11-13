@@ -6,28 +6,23 @@
 #include <cstdlib>
 #include <iostream>
 
-#define nRegions 7
-
 using namespace std;
 
 //run in batch mode:
 //root -b -l -q MakeAllDC.C+
-void MakeAllDC(string indir="root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/"){
-	if(indir[indir.size()-1] != '/') indir = indir + "/";
-	string inpre = "tree_";
-	string outdir = "datacards/";
-	string outpre = "RA2bin_";
-	string input[nRegions] = {"input/input_RA2bin_DC.txt","input/input_RA2bin_DC.txt","input/input_RA2bin_DC.txt","input/input_RA2bin_DC.txt","input/input_RA2bin-SP_DC.txt","input/input_RA2bin_DC.txt","input/input_RA2bin_DC.txt"};
-	string regions[nRegions] = {"signal","LDP","SLe","SLm","GJet_CleanVars","DYe_CleanVars","DYm_CleanVars"};
-	
-	for(unsigned i = 0; i < nRegions; ++i){
-		cout << regions[i] << endl;
-		KPlotDriver(indir+inpre+regions[i],{input[i]},{"OPTION","string:rootfile["+outdir+outpre+regions[i]+"]"});
+void MakeAllDC(string indir="", string region="", string input="input/input_RA2bin_DC_data.txt", string setlist="input/input_sets_DC_data.txt", string outdir="datacards/data/"){
+	if(indir.size()==0 || region.size()==0){
+		cout << "Recompiled MakeAllDC, exiting." << endl;
+		return;
 	}
 	
-	//add up SL regions
-	system(("hadd -f "+outdir+outpre+"SL.root "+outdir+outpre+"SLe.root "+outdir+outpre+"SLm.root").c_str());
+	if(indir[indir.size()-1] != '/') indir = indir + "/";
+	string inpre = "tree_";
+	string outpre = "RA2bin_";
 	
-	//add up DY regions
-	system(("hadd -f "+outdir+outpre+"DY_CleanVars.root "+outdir+outpre+"DYe_CleanVars.root "+outdir+outpre+"DYm_CleanVars.root").c_str());
+	//check for directory
+	system(("mkdir -p "+outdir).c_str());
+	
+	cout << region << endl;
+	KPlotDriver(indir+inpre+region,{input,setlist},{"OPTION","string:rootfile["+outdir+outpre+region+"]"});
 }

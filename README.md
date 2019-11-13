@@ -130,17 +130,9 @@ Omitting the last argument will display the plot without saving it.
 
 ## Datacard creation
 
-To save the individual histograms for each signal and background process to a ROOT file, for the creation of datacards for limit setting:
-```
-root -b -l -q 'MakeAllDC.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV17")'
-```
-These macros use modified input files that split up each background process (rather than stacking them together, as done for plotting).
-The W+jets and ttbar processes are added together in the input file. The macro adds together the two single-lepton control region files
-after they are generated.
-
 To save the histogram for data to a ROOT file for datacard creation:
 ```
-root -b -l -q 'MakeAllDCdata.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV17","signal")'
+root -b -l -q 'MakeAllDC.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV17","signal")'
 ```
 
 ### Signal systematics
