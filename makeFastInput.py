@@ -88,10 +88,6 @@ for file in files:
     dline = makeLineDCHist(short_name)
     dline += makeLineDCBase(short_name,fname,this_xsec,mother_ID,options.full)
     dfile.write(dline)
-    # make per-set list
-    with open("input/fast/input_set_DC_"+short_name+".txt",'w') as ofile:
-        ofile.write("SET\n")
-        ofile.write(dline)
     # make script to export array of sample names
     sline = short_name + " \\\n"
     sfile.write(sline)

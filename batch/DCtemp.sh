@@ -6,12 +6,13 @@ SYSTS="$3"
 VARS="$4"
 STORE="$5"
 SNAME="$6"
-NUMSAMP="$7"
+DCCONFIG="$7"
+NUMSAMP="$8"
 
 JDLNAME=jobExecCondor_MakeAllDCsyst_${SNAME}.jdl
 
 echo ""
-echo ">> `/bin/date` Submitting condor job(s) in $JDLNAME with params : $1 $2 $3 $4 $5 $6"
+echo ">> `/bin/date` Submitting condor job(s) in $JDLNAME with params : $1 $2 $3 $4 $5 $6 $7 $8"
 
 mkdir -p ${JOBDIR}
 
@@ -22,6 +23,7 @@ cat ./jobExecCondorDC.jdl \
 | sed -e s/VARS/"${VARS}"/ \
 | sed -e s~STORE~"${STORE}"~ \
 | sed -e s/SNAME/"${SNAME}"/ \
+| sed -e s~DCCONFIG~"${DCCONFIG}"~ \
 | sed -e s/NUMSAMP/"${NUMSAMP}"/ \
 > ${JOBDIR}/${JDLNAME}
 

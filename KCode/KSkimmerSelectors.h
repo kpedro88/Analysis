@@ -48,6 +48,7 @@ void KRA2BinSelector::CheckBase(){
 		canfail = true;
 	}
 }
+unsigned KRA2BinSelector::GetNSVJ(){ return 0; }
 double KHisto::GetWeight(){
 	return 1.;
 }
@@ -56,6 +57,7 @@ double KHisto::GetWeightPerJet(unsigned index){
 }
 //dummy classes
 class KMCWeightSelector : public KSelector {};
+class KSVJTagSelector : public KSelector {};
 class KSVJFilterSelector : public KSelector {};
 class KLepFracFilterSelector : public KSelector {};
 

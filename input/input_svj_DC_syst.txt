@@ -10,14 +10,10 @@ INPUT
 input/input_global.txt
 
 OPTION
-int:yieldprecision[8]
-double:sizeLeg[22]
-double:canvasW[1200]
-double:marginB[300]
-double:NdivX[518]
+int:yieldprecision[4]
 vstring:disable_branches[*]
 bool:closefiles[1]
 bool:debugcut[1]
 
-HISTO
-RA2bin	i:xnum[174]	d:xmin[0.5]	d:xmax[174.5]	s:xtitle[RA2 bin [^{}n_{j},^{}n_{b},^{}H_{T}^{miss},^{}H_{T}]]	s:ytitle[number of events]	b:ratio[0]	b:xbinlabel[1]
+HISTO2D
+MTAK8_RA2bin	i:xnum[45]	d:xmin[1500]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	i:ynum[6]	d:ymin[0.5]	d:ymax[6.5]	s:ytitle[R_{T}, N_{SVJ} bin]	s:ztitle[number of events]	b:ratio[0]	b:xbinlabel[1]

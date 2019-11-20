@@ -1,0 +1,12 @@
+bool:trigfncorr[1]
+string:trigfnfile[corrections/trigEffFit_SingleMuon_2018_DetaHLTmatch.root]
+string:trigfneff[fit_MTAK8]
+string:trigfnerr[err_MTAK8]
+bool:pucorr[1]
+# use the new value stored from puupdcorr procedure
+bool:putree[1]
+bool:lumicorr[1]
+vdouble:lumicorrvals[0.975,1.0,1.025]
+bool:trigsystcorr[1]
+vdouble:trigsystcorrvals[0.98,1.0,1.02]
+

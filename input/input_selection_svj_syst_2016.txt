@@ -1,0 +1,41 @@
+OPTION
+double:luminorm[35900]
+
+SELECTION
+common
+	SVJTag	s:branch[bdtSVJtag]	d:cut[0.55]
+	RA2Bin	in:options[input/input_svj_bin_options.txt]
+	Histo
+nominal
+	MCWeight	in:options[input/input_svj_MCWeight_options_2016.txt]
+	common
+trigfnuncUp
+	MCWeight	in:options[input/input_svj_MCWeight_options_2016.txt]	int:trigfnunc[1]
+	common
+trigfnuncDown
+	MCWeight	in:options[input/input_svj_MCWeight_options_2016.txt]	int:trigfnunc[-1]
+	common
+trigsystuncUp
+	MCWeight	in:options[input/input_svj_MCWeight_options_2016.txt]	int:trigsystunc[1]
+	common
+trigsystuncDown
+	MCWeight	in:options[input/input_svj_MCWeight_options_2016.txt]	int:trigsystunc[-1]
+	common
+lumiuncUp
+	MCWeight	in:options[input/input_svj_MCWeight_options_2016.txt]	int:lumiunc[1]
+	common
+lumiuncDown
+	MCWeight	in:options[input/input_svj_MCWeight_options_2016.txt]	int:lumiunc[-1]
+	common
+puuncUp
+	MCWeight	in:options[input/input_svj_MCWeight_options_2016.txt]	int:puunc[1]
+	common
+puuncDown
+	MCWeight	in:options[input/input_svj_MCWeight_options_2016.txt]	int:puunc[-1]
+	common
+pdfalluncUp
+	MCWeight	in:options[input/input_svj_MCWeight_options_2016.txt]	int:pdfallunc[1]
+	common
+pdfalluncDown
+	MCWeight	in:options[input/input_svj_MCWeight_options_2016.txt]	int:pdfallunc[-1]
+	common

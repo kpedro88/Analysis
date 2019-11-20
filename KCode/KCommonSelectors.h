@@ -1073,6 +1073,7 @@ REGISTER_SELECTOR(EventShape);
 
 //forward declaration
 class KMCWeightSelector;
+class KSVJTagSelector;
 //---------------------------------------------------------------
 //class to store and apply RA2 binning
 class KRA2BinSelector : public KSelector {
@@ -1082,6 +1083,8 @@ class KRA2BinSelector : public KSelector {
 		KRA2BinSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), RA2Exclusive(true), DoBTagSF(false), bqty(-1), debug(0), MCWeight(0), tightfast(false), dotightfast(false) { 
 			//assemble member vars from user input
 			localOpt->Get("RA2VarNames",RA2VarNames);
+			//in case branch names are not equal to var names
+			localOpt->Get("RA2BranchNames",RA2BranchNames);
 			
 			for(unsigned q = 0; q < RA2VarNames.size(); ++q){
 				if(RA2VarNames[q]=="BTags" or RA2VarNames[q]=="BTagsDeepCSV") bqty = q;
@@ -1156,8 +1159,9 @@ class KRA2BinSelector : public KSelector {
 		//implemented in KBuilderSelectors or KSkimmerSelectors to avoid dependencies
 		virtual void CheckDeps();
 		virtual void CheckBase();
+		unsigned GetNSVJ();
 		virtual void ListBranches(){
-			branches.insert(branches.end(),RA2VarNames.begin(),RA2VarNames.end());
+			branches.insert(branches.end(),RA2BranchNames.begin(),RA2BranchNames.end());
 		}
 		virtual void SetBranches(){
 			if(!tree) return;
@@ -1271,7 +1275,8 @@ class KRA2BinSelector : public KSelector {
 			else if(RA2VarNames[qty]=="HT") val.push_back(looper->HT);
 			else if(RA2VarNames[qty]=="GenMHT") val.push_back(looper->GenMHT);
 			else if(RA2VarNames[qty]=="GenHT") val.push_back(looper->GenHT);
-			//else if(RA2VarNames[qty]=="ak1p2Jets_sumJetMass") val.push_back(looper->ak1p2Jets_sumJetMass);
+			else if(RA2VarNames[qty]=="RT") val.push_back(looper->MT_AK8 > 0 ? looper->MET/looper->MT_AK8 : 0.0);
+			else if(RA2VarNames[qty]=="NSVJ") val.push_back(GetNSVJ());
 			else {}			
 			
 			vector<unsigned> bins;
@@ -1318,10 +1323,11 @@ class KRA2BinSelector : public KSelector {
 		vector<unsigned> RA2bins;
 		vector<vector<unsigned> > RA2binVec;
 		map<vector<unsigned>, unsigned> IDtoBinNumber;
-		vector<string> RA2VarNames;
+		vector<string> RA2VarNames, RA2BranchNames;
 		vector<vector<float> > RA2VarMin, RA2VarMax;
 		vector<string> labels;
 		KMCWeightSelector* MCWeight;
+		KSVJTagSelector* SVJTag;
 		unsigned RA2binBranch;
 		vector<unsigned> RA2binsBranch;
 		bool tightfast, dotightfast;

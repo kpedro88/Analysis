@@ -7,6 +7,7 @@
 #include <TKey.h>
 
 //STL headers
+#include <map>
 #include <vector>
 #include <string>
 #include <cstdlib>
@@ -15,11 +16,93 @@
 #include <algorithm>
 #include <iterator>
 #include <exception>
+#include <utility>
 
 using namespace std;
 
+//modes
+enum class Mode {
+	RA2full, RA2fast, RA2data, SVJsig, SVJscan, SVJdata, SVJbkg
+};
+
+class ModeInfo {
+	public:
+		ModeInfo(const string& setname, OptionMap* localOpt){
+			getMode(localOpt);
+			//selection and potentially setlist are set here
+			//but will be overwritten if specified explicitly in config options
+			string selmap; localOpt->Get("selmap",selmap);
+			getSelYear(setname, selmap, localOpt);
+			//fill members from map
+			vector<pair<string,string*>> members{
+				{"inpre",&inpre},
+				{"region",&region},
+				{"outpre",&outpre},
+				{"outdir",&outdir},
+				{"input",&input},
+				{"setlist",&setlist},
+				{"osuff",&osuff},
+				{"selection",&selection},
+			};
+			for(const auto& member : members){
+				bool has = localOpt->Get(member.first,*member.second);
+				if(!has) throw runtime_error("Missing ModeInfo property: "+member.first);
+			}
+			//fix osuff
+			if(!osuff.empty()) osuff += setname;
+		}
+
+		//members
+		Mode mode;
+		string inpre, region, outpre, outdir, input, setlist, osuff, selection;
+
+	private:
+		//constructor helpers
+		void getMode(OptionMap* localOpt){
+			KMap<Mode> modemap;
+			modemap.GetTable() = {
+				{"RA2full",Mode::RA2full},
+				{"RA2fast",Mode::RA2fast},
+				{"RA2data",Mode::RA2data},
+				{"SVJsig",Mode::SVJsig},
+				{"SVJscan",Mode::SVJscan},
+				{"SVJdata",Mode::SVJdata},
+				{"SVJbkg",Mode::SVJbkg},
+			};
+			string smode; localOpt->Get("mode",smode);
+			if(!modemap.Has(smode)) throw runtime_error("Unknown mode: "+smode);
+			mode = modemap.Get(smode);
+		}
+		void getSelYear(const string& setname, const string& selmap, OptionMap* localOpt){
+			//fill 2D vector from option map
+			vector<string> selmap_vecs; localOpt->Get(selmap,selmap_vecs);
+			vector<vector<string>> selmaps; selmaps.reserve(selmap_vecs.size());
+			for(const auto& vec : selmap_vecs){
+				selmaps.push_back(vector<string>());
+				localOpt->Get(vec,selmaps.back());
+			}
+			//search
+			bool found = false;
+			for(const auto& selline : selmaps){
+				if(setname.find(selline[0])!=string::npos){
+					found = true;
+					if(!localOpt->Has("selection")) localOpt->Set("selection",selline[1]);
+					if(selline.size()>2 and !localOpt->Has("setlist")) localOpt->Set("selection",selline[2]);
+					break;
+				}
+			}
+			if(!found) throw runtime_error("Could not determine year for setname: "+setname);
+		}
+};
+
+ModeInfo parseMode(const string& fname, const string& setname){
+	OptionMap* localOpt = new OptionMap();
+	KParser::processOption("in:options["+fname+"]",localOpt);
+	return ModeInfo(setname,localOpt);
+}
+
 //helper
-string changeHistoName(string name, string suff){
+string changeHistoName(const string& name, const string& suff){
 	vector<string> snames;
 	KParser::process(name,'_',snames);
 	snames.back() = suff;
@@ -31,57 +114,34 @@ string changeHistoName(string name, string suff){
 
 //recompile:
 //root -b -l -q MakeAllDCsyst.C++
-void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV11", string systTypes="nominal,scaleuncUp,scaleuncDown,isruncUp,isruncDown,triguncUp,triguncDown,trigsystuncUp,trigsystuncDown,btagSFuncUp,btagSFuncDown,mistagSFuncUp,mistagSFuncDown,isotrackuncUp,isotrackuncDown,lumiuncUp,lumiuncDown,prefireuncUp,prefireuncDown", string varTypes="JECup,JECdown,JERup,JERdown"){
+void MakeAllDCsyst(string config="", string setname="", string indir="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV11", string systTypes="nominal", string varTypes=""){
 	gErrorIgnoreLevel = kBreak;
 	
-	if(mode==-1){
+	if(config.empty()){
 		cout << "Recompiled MakeAllDCsyst, exiting." << endl;
 		return;
 	}
-	
-	if(indir[indir.size()-1] != '/') indir = indir + "/";
-	string inpre = "tree_";
-	string region = "signal";
-	string outpre = "RA2bin_";
-	string outdir = "";
-	string input = "input/input_RA2bin_DC_syst.txt";
-	//string inputQCD = "input/input_RA2bin_DC_QCD.txt";
-	string setlist = "";
-	string osuff = "";
-	string selection = "";
 
-	//find selection by year
-	if(setname.find("MC2018HEM")!=string::npos) selection = "input/input_selection_syst_2018HEM.txt";
-	else if(setname.find("MC2018")!=string::npos) selection = "input/input_selection_syst_2018.txt";
-	else if(setname.find("MC2017")!=string::npos) selection = "input/input_selection_syst_2017.txt";
-	else if(setname.find("MC2016")!=string::npos) selection = "input/input_selection_syst_2016.txt";
-	else throw runtime_error("Could not determine year for setname: "+setname);
-	
+	if(indir[indir.size()-1] != '/') indir = indir + "/";
+
+	ModeInfo info = parseMode(config,setname);
+
+	//handle batch case with no vars
+	if(varTypes=="none") varTypes = "";
 	//process variation types - comma-separated input, need to be run separately
 	vector<string> vars;
 	KParser::process(varTypes,',',vars);
 	
-	if(mode==1){
-		outdir = "datacards/fast/";
-		setlist = "input/fast/input_set_DC_"+setname+".txt";
-		osuff = "_"+setname;
-	}
-	else {
-		outdir = "datacards/syst/";
-		setlist = "input/input_set_DC_"+setname+".txt";
-		osuff = "_"+setname;
-	}
-	
 	//check for directory
-	if(outdir.size()>0) system(("mkdir -p "+outdir).c_str());
+	if(info.outdir.size()>0) system(("mkdir -p "+info.outdir).c_str());
 	
 	//keep a list of root files
 	vector<string> rootfiles;
 	
 	//do the simple systematics all at once
 	if(!systTypes.empty()){
-		rootfiles.push_back(outdir+outpre+region+osuff);
-		KPlotDriver(indir+inpre+region,{input,setlist},{"INPUT",selection,"OPTION","string:rootfile["+rootfiles.back()+"]","vstring:selections["+systTypes+"]"});
+		rootfiles.push_back(info.outdir+info.outpre+info.region+info.osuff);
+		KPlotDriver(indir+info.inpre+info.region,{info.input,info.setlist},{"INPUT",info.selection,"OPTION","vstring:chosensets["+setname+"]","string:rootfile["+rootfiles.back()+"]","vstring:selections["+systTypes+"]"});
 	}
 
 	//do the full variations separately
@@ -91,7 +151,7 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	for(auto& ivar : vars){
 		string selection_base = "nominal";
 		//change region
-		string region_ = region + "_"+ivar;
+		string region_ = info.region + "_"+ivar;
 		//hack for signal contamination
 		if(ivar=="SLe" or ivar=="SLm" or ivar=="SLe_genMHT" or ivar=="SLm_genMHT") {
 			//skip for non-lepton signals
@@ -101,16 +161,25 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 			//terrible hack
 			if(ivar.size()>3) ivar[3] = '-';
 		}
-		rootfiles.push_back(outdir+outpre+region_+osuff);
-		KPlotDriver(indir+inpre+region_,{input,setlist},{"INPUT",selection,"OPTION","string:rootfile["+rootfiles.back()+"]","vstring:selections["+ivar+"]","SELECTION",ivar,"\t"+selection_base});
+		rootfiles.push_back(info.outdir+info.outpre+region_+info.osuff);
+		KPlotDriver(indir+info.inpre+region_,{info.input,info.setlist},{"INPUT",info.selection,"OPTION","vstring:chosensets["+setname+"]","string:rootfile["+rootfiles.back()+"]","vstring:selections["+ivar+"]","SELECTION",ivar,"\t"+selection_base});
 	}
 	
-	//hadd
+	//hadd and put file in pwd (for stageout)
 	stringstream slist;
 	KParser::printvec(rootfiles,slist,".root ");
-	string therootfile = outpre+region+osuff+".root";
+	string therootfile = info.outpre+info.region+info.osuff+".root";
 	string cmd = "hadd -f "+therootfile+" "+slist.str()+".root"; //add trailing delim
 	system(cmd.c_str());
+
+	if(systTypes=="nominal" and vars.empty()){ //for data/bkg case without systs
+		cout << "Systematics not requested." << endl;
+		return;
+	}
+	if(systTypes.find("nominal")==string::npos){ //for signal case when checking specific syst
+		cout << "Nominal histogram not found, will not make relative systematics." << endl;
+		return;		
+	}
 	
 	//further processing
 	TFile* infile = KOpen(therootfile);
@@ -128,22 +197,39 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 		else if(ntmp.find("genMHT")!=string::npos) genMHT = htmp;
 		else hsyst.push_back(htmp);
 	}
-	
-	if(!nominal){
-		cout << "Nominal histogram not found, will not make relative systematics." << endl;
-		return;
-	}
-	
+
 	//todo: factorize the operations below
 	
 	//setup systematics analysis tree (to study changes in yield)
 	vector<string> setnames;
 	KParser::process(setname,'_',setnames);
 	TTree* tree = new TTree("tree","systematics");
-	int mMother = KParser::getOptionValue<int>(setnames[1]);
-	int mLSP = KParser::getOptionValue<int>(setnames[2]);
-	tree->Branch("mMother",&mMother,"mMother/I");
-	tree->Branch("mLSP",&mLSP,"mLSP/I");
+	int mParent = KParser::getOptionValue<int>(setnames[1]);
+	int mChild = KParser::getOptionValue<int>(setnames[2]);
+	double rinv;
+	int alpha;
+	string thetrfile;
+	if(info.mode==Mode::RA2full or info.mode==Mode::RA2fast){
+		tree->Branch("mMother",&mParent,"mMother/I");
+		tree->Branch("mLSP",&mChild,"mLSP/I");
+		//include year in file name
+		thetrfile = "tree_syst_"+setnames[0]+"_"+setnames[3]+"_block"+setnames[1]+"-"+setnames[2]+"_fast.root";
+	}
+	else if(info.mode==Mode::SVJsig or info.mode==Mode::SVJscan){
+		rinv = KParser::getOptionValue<double>(setnames[3]);
+		map<string,double> alpha_vals{
+			{"peak",-2},
+			{"high",-1},
+			{"low",-3},
+		};
+		alpha = alpha_vals[setnames[4]];
+		tree->Branch("mZprime",&mParent,"mZprime/I");
+		tree->Branch("mDark",&mChild,"mDark/I");
+		tree->Branch("rinv",&rinv,"rinv/D");
+		tree->Branch("alpha",&alpha,"alpha/I");
+		//include year in file name
+		thetrfile = "tree_syst_"+setnames[0]+"_"+setnames[5]+"_block"+setnames[1]+"-"+setnames[2]+"-"+setnames[3]+"-"+setnames[4]+"_fast.root";
+	}
 	//map to keep track of maximum pct diffs
 	KMap<double> pctDiffMap;
 	double nominal_yield = nominal->Integral(0,nominal->GetNbinsX()+1);
@@ -237,15 +323,13 @@ void MakeAllDCsyst(int mode=-1, string setname="", string indir="root://cmseos.f
 	
 	//fill and write tree w/ hadd-able filename
 	tree->Fill();
-	//include year in file name
-	string thetrfile = "tree_syst_"+setnames[0]+"_"+setnames[3]+"_block"+setnames[1]+"-"+setnames[2]+"_fast.root";
 	TFile* trfile = KOpen(thetrfile,"RECREATE");
 	trfile->cd();
 	tree->Write();
 	trfile->Close();
 
 	//write processed syst histos
-	string thenewfile = outpre+"proc"+osuff+".root";
+	string thenewfile = info.outpre+"proc"+info.osuff+".root";
 	TFile* outfile = KOpen(thenewfile,"RECREATE");
 	outfile->cd();
 	nominal->Write();

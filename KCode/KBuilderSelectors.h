@@ -12,6 +12,7 @@
 #include "../corrections/TriggerEfficiencySextet.cpp"
 #include "../corrections/ISRCorrector.h"
 #include "../corrections/TriggerCorrector.h"
+#include "../corrections/TriggerFuncCorrector.h"
 #include "../corrections/LeptonCorrector.h"
 #include "../corrections/PileupAcceptanceUncertainty.h"
 #include "../corrections/Flattener.h"
@@ -29,6 +30,8 @@
 #include <map>
 #include <set>
 #include <array>
+#include <tuple>
+#include <functional>
 
 using namespace std;
 
@@ -181,6 +184,14 @@ class KMCWeightSelector : public KSelector {
 			if(localOpt->Get("trigsystcorrvals",trigsystcorrvals) && trigsystcorrvals.size()==3){
 				//vector has down, central, up
 				trigsystcorrval = trigsystunc==0 ? trigsystcorrvals[1] : ( trigsystunc==1 ? trigsystcorrvals[2] : trigsystcorrvals[0] );
+			}
+			trigfncorr = localOpt->Get("trigfncorr",false);
+			trigfnunc = 0; localOpt->Get("trigfnunc",trigfnunc);
+			if(trigfncorr){
+				string trigfnfile; localOpt->Get("trigfnfile",trigfnfile);
+				string trigfneff; localOpt->Get("trigfneff",trigfneff);
+				string trigfnerr; localOpt->Get("trigfnerr",trigfnerr);
+				trigfncorror.SetFunc(trigfnfile,trigfneff,trigfnerr);
 			}
 			
 			//ISR corr options
@@ -496,6 +507,15 @@ class KMCWeightSelector : public KSelector {
 					pdfnorms[n] = nominal/h_norm->GetBinContent(n+2);
 				}
 			}
+			pdfallunc = 0; localOpt->Get("pdfallunc",pdfallunc);
+			if(pdfallunc!=0){
+				TH1F* h_norm = KGet<TH1F>(base->GetFile(),"PDFAllNorm");
+				int nEventProc = h_norm->GetBinContent(1);
+				pdfallnorms = vector<double>(h_norm->GetNbinsX()-1,0.);
+				for(unsigned n = 2; n <= h_norm->GetNbinsX(); ++n){
+					pdfallnorms[n-2] = double(nEventProc)/h_norm->GetBinContent(n);
+				}
+			}
 		}
 		virtual void ListBranches(){
 			//force enable branches needed for cuts/weights/etc.
@@ -526,11 +546,14 @@ class KMCWeightSelector : public KSelector {
 			if(svbweight){
 				if(svbqty==MTAK8) branches.push_back("MT_AK8");
 			}
-			if(pdfunc!=0){
+			if(pdfunc!=0 or pdfallunc!=0){
 				branches.push_back("PDFweights");
 			}
 			if(scaleunc!=0){
 				branches.push_back("ScaleWeights");
+			}
+			if(trigfncorr){
+				branches.push_back("MT_AK8");
 			}
 			if(prefirecorr){
 				if(prefireunc==0) branches.push_back("NonPrefiringProb");
@@ -593,6 +616,10 @@ class KMCWeightSelector : public KSelector {
 					w *= trigcorror.GetCorrection(looper->HT,trigunc);
 				}
 			}
+
+			if(trigfncorr){
+				w *= trigfncorror.GetCorrection(looper->MT_AK8,trigfnunc);
+			}
 			
 			if(trigsystcorr){
 				w *= trigsystcorrval;
@@ -610,7 +637,7 @@ class KMCWeightSelector : public KSelector {
 				if(pdfunc==1) w *= *(TMath::LocMax(looper->PDFweights->begin(),looper->PDFweights->end()))*pdfnorms[0];
 				else if(pdfunc==-1) w *= *(TMath::LocMin(looper->PDFweights->begin(),looper->PDFweights->end()))*pdfnorms[1];
 			}
-			
+
 			if(scaleunc!=0){
 				vector<double> ScaleWeightsMod = *looper->ScaleWeights;
 				//remove unwanted variations
@@ -622,6 +649,14 @@ class KMCWeightSelector : public KSelector {
 				else if(scaleunc==-1) w *= *(TMath::LocMin(ScaleWeightsMod.begin(),ScaleWeightsMod.end()))*pdfnorms[3];
 			}
 			
+			if(pdfallunc!=0){
+				auto PDFweightsNorm = *looper->PDFweights;
+				std::transform(looper->PDFweights->begin(),looper->PDFweights->end(),pdfallnorms.begin(),PDFweightsNorm.begin(),multiplies<double>());
+				double mean, rms;
+				tie(mean,rms) = KMath::MeanRMS(PDFweightsNorm.begin(),PDFweightsNorm.end());
+				w *= (pdfallunc>0 ? mean+rms : mean-rms);
+			}
+
 			//correct for expected FullSim PFJetID efficiency
 			if(jetidcorr){
 				w *= jetidcorrval;
@@ -745,17 +780,18 @@ class KMCWeightSelector : public KSelector {
 		KNormTypeSelector* NormType;
 		bool internalNormType;
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, useTreeXsec, useKFactor, debugWeight, didDebugWeight;
-		bool pucorr, putree, punew, puupdcorr, trigcorr, trigsystcorr, isrcorr, useisrflat, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr, hemvetocorr, lepcorr;
+		bool pucorr, putree, punew, puupdcorr, trigcorr, trigsystcorr, trigfncorr, isrcorr, useisrflat, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr, hemvetocorr, lepcorr;
 		double jetidcorrval, isotrackcorrval, trigsystcorrval, lumicorrval, isrflat;
-		int puunc, puupdunc, pdfunc, isrunc, scaleunc, trigunc, trigyear, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc, prefireunc, hemvetounc, lepidunc, lepisounc, leptrkunc;
+		int puunc, puupdunc, pdfunc, pdfallunc, isrunc, scaleunc, trigunc, trigyear, trigfnunc, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc, prefireunc, hemvetounc, lepidunc, lepisounc, leptrkunc;
 		vector<int> mother;
 		TH1 *puhist, *puhistUp, *puhistDown;
 		TH1 *puupdhist, *puupdhistUp, *puupdhistDown;
-		vector<double> pdfnorms;
+		vector<double> pdfnorms, pdfallnorms;
 		int nEventProc;
 		double xsection, norm, kfactor;
 		ISRCorrector isrcorror;
 		TriggerCorrector trigcorror;
+		TriggerFuncCorrector trigfncorror;
 		vector<LeptonCorrector> elcorrors, mucorrors;
 		PileupAcceptanceUncertainty puacc;
 		Flattener flattener;
@@ -765,16 +801,6 @@ class KMCWeightSelector : public KSelector {
 		TH1* hsvb;
 };
 REGISTER_SELECTOR(MCWeight);
-
-//avoid unwanted dependency
-void KRA2BinSelector::CheckDeps(){
-	CheckLabels();
-	//check other options
-	MCWeight = sel->Get<KMCWeightSelector*>("MCWeight");
-}
-void KRA2BinSelector::CheckBase(){
-	DoBTagSF = MCWeight ? MCWeight->btagcorr : false;
-}
 
 //----------------------------------------------------
 //selects events based on specified jet pT range
@@ -1441,7 +1467,7 @@ class KSVJTagSelector : public KSelector {
 			JetsAK8_tagged.clear();
 			const auto& SVJTag = ebranch==seltor ? BDT->JetsAK8_bdt : *looper->JetsAK8_bdtSVJtag;
 			JetsAK8_tagged.reserve(SVJTag.size());
-			for(unsigned j = 0; j < SVJTag.size(); ++j){
+			for(unsigned j = 0; j < min(SVJTag.size(),2ul); ++j){
 				JetsAK8_tagged.push_back(SVJTag[j] > cut);
 				if(JetsAK8_tagged.back()) ++ntags;
 			}
@@ -1456,7 +1482,6 @@ class KSVJTagSelector : public KSelector {
 		vector<bool> JetsAK8_tagged;
 		svjbranches ebranch;
 		KBDTSelector* BDT;
-		int filter;
 };
 REGISTER_SELECTOR(SVJTag);
 
@@ -1559,6 +1584,18 @@ class KLepFracFilterSelector : public KSelector {
 		vector<bool> JetsAK8_passCut;
 };
 REGISTER_SELECTOR(LepFracFilter);
+
+//avoid unwanted dependency
+void KRA2BinSelector::CheckDeps(){
+	CheckLabels();
+	//check other options
+	MCWeight = sel->Get<KMCWeightSelector*>("MCWeight");
+	SVJTag = sel->Get<KSVJTagSelector*>("SVJTag");
+}
+void KRA2BinSelector::CheckBase(){
+	DoBTagSF = MCWeight ? MCWeight->btagcorr : false;
+}
+unsigned KRA2BinSelector::GetNSVJ(){ return SVJTag ? SVJTag->ntags : 0; }
 
 //avoid unwanted dependency
 double KHisto::GetWeight(){

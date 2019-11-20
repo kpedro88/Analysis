@@ -14,6 +14,7 @@
 #include <cmath>
 #include <algorithm>
 #include <functional>
+#include <utility>
 
 using namespace std;
 
@@ -80,6 +81,38 @@ namespace KMath {
 		v3.resize(v1.size());
 		transform(v1.begin(),v1.end(),v2.begin(),v3.begin(),logical_and<bool>());
 		return v3;
+	}
+	//copied from TMath::RMS, but also gives mean
+	template <typename Iterator>
+	pair<double,double> MeanRMS(Iterator first, Iterator last){
+		double n = 0;
+		double tot = 0;
+		double mean = TMath::Mean(first,last);
+		while(first!=last){
+			double x = double(*first);
+			tot += (x - mean)*(x - mean);
+			++first;
+			++n;
+		}
+		double rms = (n > 1) ? TMath::Sqrt(tot/(n-1)) : 0.0;
+		return make_pair(mean,rms);
+	}
+	template <typename Iterator, typename WeightIterator>
+	pair<double,double> MeanRMS(Iterator first, Iterator last, WeightIterator w){
+		double tot = 0.;
+		double sumw = 0.;
+		double sumw2 = 0.;
+		double mean = TMath::Mean(first,last,w);
+		while(first!=last){
+			double x = double(*first);
+			sumw += *w;
+			sumw2 += (*w) * (*w);
+			tot += (*w) * (x - mean)*(x - mean);
+			++first;
+			++w;
+		}
+		double rms = TMath::Sqrt(tot* sumw/(sumw*sumw - sumw2));
+		return make_pair(mean,rms);
 	}
 }
 

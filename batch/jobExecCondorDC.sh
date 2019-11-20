@@ -15,7 +15,8 @@ SYSTS=$3
 VARS=$4
 STORE=$5
 SNAME=$6
-PROCESS=$7
+DCCONFIG=$7
+PROCESS=$8
 
 echo ""
 echo "parameter set:"
@@ -24,7 +25,8 @@ echo "INDIR:      $INDIR"
 echo "SYSTS:      $SYSTS"
 echo "VARS:       $VARS"
 echo "STORE:      $STORE"
-echo "SNAME:      $SNAMEE"
+echo "SNAME:      $SNAME"
+echo "DCCONFIG:   $DCCONFIG"
 echo "PROCESS:    $PROCESS"
 
 #get sample
@@ -41,8 +43,8 @@ eval `scramv1 runtime -sh`
 cd src/Analysis
 
 #run macro
-echo "run: root -b -q -l 'MakeAllDCsyst.C+(1,"'"'$SAMPLE'","'$INDIR'","'$SYSTS'","'$VARS'"'")' 2>&1"
-root -b -q -l 'MakeAllDCsyst.C+(1,"'$SAMPLE'","'$INDIR'","'$SYSTS'","'$VARS'")' 2>&1
+echo "run: root -b -q -l 'MakeAllDCsyst.C+("'"'$DCCONFIG'","'$SAMPLE'","'$INDIR'","'$SYSTS'","'$VARS'"'")' 2>&1"
+root -b -q -l 'MakeAllDCsyst.C+("'$DCCONFIG'","'$SAMPLE'","'$INDIR'","'$SYSTS'","'$VARS'")' 2>&1
 
 ROOTEXIT=$?
 

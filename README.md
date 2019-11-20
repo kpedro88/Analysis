@@ -73,7 +73,7 @@ root -b -l -q 'KCutflowDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/
 ```
 Additional arguments can be added to enable printing statistical errors and to change the number of significant figures printed.
 
-### Scanning
+## Scanning
 
 The SUSY FastSim signal samples contain multiple model points per file. Before skimming, these samples should be scanned to separate each model point into a separate file.
 
@@ -132,26 +132,28 @@ Omitting the last argument will display the plot without saving it.
 
 To save the histogram for data to a ROOT file for datacard creation:
 ```
-root -b -l -q 'MakeAllDC.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV17","signal")'
+root -b -l -q 'MakeAllDCsyst.C+("input/input_DC_config_RA2data.txt","data_2016","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV17")'
+```
+
+To save the individual histograms for a FullSim signal process to a ROOT file for the signal region:
+```
+root -b -l -q 'MakeAllDCsyst.C+("input/input_DC_config_RA2full.txt","T1tttt_1500_100","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV17")'
+```
+
+To check specific systematics or variations, there are extra arguments. E.g., to check the ISR uncertainty and JEC variations:
+```
+root -b -l -q 'MakeAllDCsyst.C+("input/input_DC_config_RA2full.txt","T1tttt_1500_100","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV17","nominal,isruncUp,isruncDown","JECup,JECdown")'
+```
+
+Because of the large number of samples (especially the FastSim signal samples), batch mode should be used to run over them:
+```
+cd batch
+./DCsub.sh -t Data -y Run2
+./DCsub.sh -t Signal -y 2016,2017
+./DCsub.sh -t Fast -y 2016,2017,2018,2018HEM
 ```
 
 ### Signal systematics
-
-To save the individual histograms for a FullSim signal process to a ROOT file for each different variation of systematic uncertainty:
-```
-root -b -l -q 'MakeAllDCsyst.C+(0,"T1tttt_1500_100","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV17")'
-```
-
-To check specific systematics or variations, there are extra arguments. E.g., to check only the ISR uncertainty and no variations:
-```
-root -b -l -q 'MakeAllDCsyst.C+(0,"T1tttt_1500_100","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV17","isruncUp,isruncDown","")'
-```
-
-Because of the large number of model points in the FastSim signal samples, batch mode should be used to run over them:
-```
-cd batch
-./DCsub.sh -y 2016,2017,2018,2018HEM
-```
 
 This driver produces two files for each mass point of each model:
 one containing the nominal signal region histogram and all variations,
@@ -185,8 +187,7 @@ Currently available uncertainties:
 * L1 prefiring correction
 * HEM veto
 
-### Semi-visible jet commands
-
+## Semi-visible jet commands
 
 To remake the list of input files for semi-visible jet samples:
 ```
@@ -225,9 +226,10 @@ To make the input lists and skim the signal scans:
 ```
 python makeFastInput.py -f -p 4 -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan/ -m MC2016 -s input/input_sets_skim_svj_scan_2016.txt -c input/input_sets_DC_svj_scan_2016.txt -e batch/exportSkimSVJScan2016.sh
 python makeFastInput.py -f -p 4 -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan/ -m MC2017 -s input/input_sets_skim_svj_scan_2017.txt -c input/input_sets_DC_svj_scan_2017.txt -e batch/exportSkimSVJScan2017.sh
-python makeFastInput.py -f -p 4 -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan/ -m MC2018 -s input/input_sets_skim_svj_scan_2018.txt -c input/input_sets_DC_svj_scan_2018.txt -e batch/exportSkimSVJScan2018.sh
+python makeFastInput.py -f -p 4 -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan/ -m MC2018 -y MC2018PRE -s input/input_sets_skim_svj_scan_2018PRE.txt -c input/input_sets_DC_svj_scan_2018PRE.txt -e batch/exportSkimSVJScan2018PRE.sh
+python makeFastInput.py -f -p 4 -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan/ -m MC2018 -y MC2018POST -s input/input_sets_skim_svj_scan_2018POST.txt -c input/input_sets_DC_svj_scan_2018POST.txt -e batch/exportSkimSVJScan2018POST.sh
 cd batch
-./SKsub_svj.sh -s -t SVJScan -y 2016,2017,2018
+./SKsub_svj.sh -s -t SVJScan -y 2016,2017,2018PRE
 ```
 
 To make histograms, and then plots and ROC curves (including flattening pT spectra):
@@ -253,3 +255,12 @@ root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ
 root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/Skims/tree_dijethad",{"input/input_svj_cutflow_had.txt","input/input_svj_cutflow_sets_wjets.txt"},{},1)'
 root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/Skims/tree_dijethad",{"input/input_svj_cutflow_had.txt","input/input_svj_cutflow_sets_zinv.txt"},{},1)'
 ```
+
+To create histograms for datacards:
+```
+cd batch
+./DCsub_svj.sh -t SVJData,SVJBkg -y Run2
+./DCsub_svj.sh -t SVJ -y 2016,2017,2018PRE,2018POST
+./DCsub_svj.sh -t SVJScan -y 2016,2017,2018PRE,2018POST
+```
+
