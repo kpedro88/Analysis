@@ -19,7 +19,7 @@ def makeLineDCBase(name, fname, xsec, mother, full):
 
 def get_xsec(model,mMother):
     # get cross section
-    if model.find("SVJ")!=1:
+    if model.find("SVJ")!=-1:
         this_xsec = xsecs["SVJ"][mMother] if mMother in xsecs["SVJ"].keys() else 1
         mother_ID = [4900023]
     elif model.find("T2tt")!=-1:
