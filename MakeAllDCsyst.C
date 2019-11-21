@@ -101,15 +101,233 @@ ModeInfo parseMode(const string& fname, const string& setname){
 	return ModeInfo(setname,localOpt);
 }
 
-//helper
-string changeHistoName(const string& name, const string& suff){
-	vector<string> snames;
-	KParser::process(name,'_',snames);
-	snames.back() = suff;
-	stringstream ssname;
-	KParser::printvec(snames,ssname,"_");
-	string sname = ssname.str();
-	return sname;
+//helper - handles TH1 or TH2 cases
+template <class T>
+class KSystProcessor {
+	public:
+		//constructor that finds members from file
+		KSystProcessor(const string& setname_, const string& therootfile_) : setname(setname_), therootfile(therootfile_) {
+			TFile* infile = KOpen(therootfile_);
+			TKey *key;
+			TIter next(infile->GetListOfKeys());
+			while ((key = (TKey*)next())) {
+				string ntmp = key->GetName();
+				T* htmp = KGet<T>(infile,ntmp);
+				if(ntmp.find("nominal")!=string::npos) nominal = htmp;
+				else if(ntmp.find("SLe")!=string::npos or ntmp.find("SLm")!=string::npos) hcontam.push_back(htmp);
+				else if(ntmp.find("genMHT")!=string::npos) genMHT = htmp;
+				else hsyst.push_back(htmp);
+			}
+		}
+	
+		void process(ModeInfo info){
+			//todo: factorize the operations below
+			
+			//setup systematics analysis tree (to study changes in yield)
+			vector<string> setnames;
+			KParser::process(setname,'_',setnames);
+			TTree* tree = new TTree("tree","systematics");
+			int mParent = KParser::getOptionValue<int>(setnames[1]);
+			int mChild = KParser::getOptionValue<int>(setnames[2]);
+			double rinv;
+			int alpha;
+			string thetrfile;
+			if(info.mode==Mode::RA2full or info.mode==Mode::RA2fast){
+				tree->Branch("mMother",&mParent,"mMother/I");
+				tree->Branch("mLSP",&mChild,"mLSP/I");
+				//include year in file name
+				thetrfile = "tree_syst_"+setnames[0]+"_"+setnames[3]+"_block"+setnames[1]+"-"+setnames[2]+"_fast.root";
+			}
+			else if(info.mode==Mode::SVJsig or info.mode==Mode::SVJscan){
+				rinv = KParser::getOptionValue<double>(setnames[3]);
+				map<string,double> alpha_vals{
+					{"peak",-2},
+					{"high",-1},
+					{"low",-3},
+				};
+				alpha = alpha_vals[setnames[4]];
+				tree->Branch("mZprime",&mParent,"mZprime/I");
+				tree->Branch("mDark",&mChild,"mDark/I");
+				tree->Branch("rinv",&rinv,"rinv/D");
+				tree->Branch("alpha",&alpha,"alpha/I");
+				//include year in file name
+				thetrfile = "tree_syst_"+setnames[0]+"_"+setnames[5]+"_block"+setnames[1]+"-"+setnames[2]+"-"+setnames[3]+"-"+setnames[4]+"_fast.root";
+			}
+			//map to keep track of maximum pct diffs
+			KMap<double> pctDiffMap;
+			double nominal_yield = Integral(nominal);
+			
+			//divide, bound, set labels (prepended w/ "signal_")
+			for(auto isyst : hsyst){
+				vector<string> inames;
+				KParser::process(isyst->GetName(),'_',inames);
+				string treename;
+				bool up = (inames.back().find("up")!=string::npos or inames.back().find("Up")!=string::npos);
+				if(up) treename = inames.back().substr(0,inames.back().size()-2);
+				else treename = inames.back().substr(0,inames.back().size()-4); //down
+				//check yield (keep max diff in case of up and down)
+				double iyield = Integral(isyst);
+				double pctdiff = fabs(1.-iyield/nominal_yield)*100;
+				if(!pctDiffMap.Has(treename) or pctDiffMap.Get(treename) < pctdiff){
+					pctDiffMap.Add(treename,pctdiff);
+				}
+				string binname = "signal_"+treename;
+				DivideBound(isyst,binname);
+			}
+
+			//add signal contamination (not a pct diff)
+			double cyield = 0.;
+			for(auto icontam : hcontam){
+				string ntmp = icontam->GetName();
+				if(ntmp.find("genMHT")!=string::npos) continue;
+				cyield += Integral(icontam);
+			}
+			if(!hcontam.empty()) pctDiffMap.Add("contam",(cyield/nominal_yield)*100);
+			
+			//make stat error
+			string sname = changeHistoName(nominal->GetName(),"MCStatErr");
+			double stat_yield = 0;
+			auto ssyst = MakeStat(sname, stat_yield);
+			hsyst.push_back(ssyst);
+			pctDiffMap.Add("MCStatErr",fabs(1-stat_yield/nominal_yield)*100);
+			
+			//genMHT correction and unc for fastsim
+			if(genMHT){
+				MakeGenMHT(pctDiffMap,nominal_yield);
+			}
+			
+			//add branches to syst tree
+			for(auto& systpair : pctDiffMap.GetTable()){
+				tree->Branch(systpair.first.c_str(),&systpair.second,(systpair.first+"/D").c_str());
+			}
+			
+			//fill and write tree w/ hadd-able filename
+			tree->Fill();
+			TFile* trfile = KOpen(thetrfile,"RECREATE");
+			trfile->cd();
+			tree->Write();
+			trfile->Close();
+
+			//write processed syst histos
+			if(info.mode==Mode::RA2full or info.mode==Mode::RA2fast){
+				string thenewfile = info.outpre+"proc"+info.osuff+".root";
+				TFile* outfile = KOpen(thenewfile,"RECREATE");
+				outfile->cd();
+				nominal->Write();
+				for(auto icontam : hcontam) icontam->Write();
+				for(auto isyst : hsyst) isyst->Write();
+				outfile->Close();
+			}
+		}
+		//helper functions
+		string changeHistoName(const string& name, const string& suff){
+			vector<string> snames;
+			KParser::process(name,'_',snames);
+			snames.back() = suff;
+			stringstream ssname;
+			KParser::printvec(snames,ssname,"_");
+			string sname = ssname.str();
+			return sname;
+		}
+		void DivideBound_impl(T* hist, unsigned b){
+			//divide
+			double unc = 1.0;
+			double denom = nominal->GetBinContent(b);
+			//if central value is zero, treat syst as a shift
+			if(denom==0.) denom = 1.0;
+			unc = hist->GetBinContent(b)/denom;
+			//zero check
+			if(unc==0.) unc = 1.0;
+			//bound
+			unc = min(max(unc,0.01),1.99);
+			//set
+			hist->SetBinContent(b,unc);
+		}
+		void MakeStat_impl(T* hist, unsigned b, double& stat_yield){
+			stat_yield += hist->GetBinError(b)+hist->GetBinContent(b);
+			//divide
+			hist->SetBinContent(b,
+				hist->GetBinContent(b)>0. ? 1.0+hist->GetBinError(b)/hist->GetBinContent(b) : 1.0+hist->GetBinError(b)
+			);
+		}
+		//functions to be specialized
+		double Integral(T* hist);
+		void DivideBound(T* hist, const string& binname);
+		T* MakeStat(const string& sname, double& yield);
+		void MakeGenMHT(KMap<double>& pctDiffMap, double nominal_yield);
+	
+		//members
+		string setname, therootfile;
+		T* nominal = NULL;
+		T* genMHT = NULL;
+		vector<T*> hcontam;
+		vector<T*> hsyst;
+};
+
+template<> double KSystProcessor<TH1F>::Integral(TH1F* hist){ return hist->Integral(0,hist->GetNbinsX()+1); }
+template<> double KSystProcessor<TH2F>::Integral(TH2F* hist){ return hist->Integral(0,hist->GetNbinsX()+1,0,hist->GetNbinsY()+1); }
+
+template<> void KSystProcessor<TH1F>::DivideBound(TH1F* hist, const string& binname){
+	for(unsigned b = 1; b <= hist->GetNbinsX(); ++b){
+		DivideBound_impl(hist,b);
+		hist->GetXaxis()->SetBinLabel(b,binname.c_str());
+	}
+}
+template<> void KSystProcessor<TH2F>::DivideBound(TH2F* hist, const string& binname){
+	for(unsigned bx = 1; bx <= hist->GetNbinsX(); ++bx){
+		for(unsigned by = 1; by <= hist->GetNbinsY(); ++by){
+			unsigned b = hist->GetBin(bx,by);
+			DivideBound_impl(hist,b);
+			//no labels
+		}
+	}
+}
+
+template<> TH1F* KSystProcessor<TH1F>::MakeStat(const string& sname, double& stat_yield){
+	TH1F* hist = (TH1F*)nominal->Clone(sname.c_str());
+	for(unsigned b = 1; b <= hist->GetNbinsX(); ++b){
+		MakeStat_impl(hist,b,stat_yield);
+		string slabel = "signal_MCStatErr_";
+		slabel += hist->GetXaxis()->GetBinLabel(b);
+		hist->GetXaxis()->SetBinLabel(b,slabel.c_str());
+	}
+	return hist;
+}
+template<> TH2F* KSystProcessor<TH2F>::MakeStat(const string& sname, double& stat_yield){
+	TH2F* hist = (TH2F*)nominal->Clone(sname.c_str());
+	for(unsigned bx = 1; bx <= hist->GetNbinsX(); ++bx){
+		for(unsigned by = 1; by <= hist->GetNbinsY(); ++by){
+			unsigned b = hist->GetBin(bx,by);
+			MakeStat_impl(hist,b,stat_yield);
+			//no labels
+		}
+	}
+	return hist;
+}
+
+template<> void KSystProcessor<TH1F>::MakeGenMHT(KMap<double>& pctDiffMap, double nominal_yield){
+	//keep original nominal histogram
+	string nname = changeHistoName(nominal->GetName(),"nominalOrig");
+	TH1F* nominalOrig = (TH1F*)nominal->Clone(nname.c_str());
+	string gname = changeHistoName(nominal->GetName(),"MHTSyst");
+	TH1F* gsyst = (TH1F*)nominal->Clone(gname.c_str());
+	double g_yield = 0;
+	
+	//modify nominal as average of nominal and genMHT & compute syst as difference
+	for(unsigned b = 1; b <= nominal->GetNbinsX(); ++b){
+		gsyst->SetBinContent(b, 1.0+abs(nominal->GetBinContent(b) - genMHT->GetBinContent(b))/2.0);
+		gsyst->GetXaxis()->SetBinLabel(b,"signal_MHTSyst");
+		nominal->SetBinContent(b, (nominal->GetBinContent(b) + genMHT->GetBinContent(b))/2.0);
+		g_yield += (gsyst->GetBinContent(b)-1.0)+nominal->GetBinContent(b);
+	}
+	
+	hsyst.push_back(gsyst);
+	hsyst.push_back(nominalOrig);
+	hsyst.push_back(genMHT);
+	pctDiffMap.Add("MHTSyst",fabs(1-g_yield/nominal_yield)*100);
+}
+template<> void KSystProcessor<TH2F>::MakeGenMHT(KMap<double>& pctDiffMap, double nominal_yield){
+	//not implemented
 }
 
 //recompile:
@@ -182,161 +400,12 @@ void MakeAllDCsyst(string config="", string setname="", string indir="root://cms
 	}
 	
 	//further processing
-	TFile* infile = KOpen(therootfile);
-	TH1F* nominal = NULL;
-	TH1F* genMHT = NULL;
-	vector<TH1F*> hcontam;
-	vector<TH1F*> hsyst;
-	TKey *key;
-	TIter next(infile->GetListOfKeys());
-	while ((key = (TKey*)next())) {
-		string ntmp = key->GetName();
-		TH1F* htmp = KGet<TH1F>(infile,ntmp);
-		if(ntmp.find("nominal")!=string::npos) nominal = htmp;
-		else if(ntmp.find("SLe")!=string::npos or ntmp.find("SLm")!=string::npos) hcontam.push_back(htmp);
-		else if(ntmp.find("genMHT")!=string::npos) genMHT = htmp;
-		else hsyst.push_back(htmp);
-	}
-
-	//todo: factorize the operations below
-	
-	//setup systematics analysis tree (to study changes in yield)
-	vector<string> setnames;
-	KParser::process(setname,'_',setnames);
-	TTree* tree = new TTree("tree","systematics");
-	int mParent = KParser::getOptionValue<int>(setnames[1]);
-	int mChild = KParser::getOptionValue<int>(setnames[2]);
-	double rinv;
-	int alpha;
-	string thetrfile;
 	if(info.mode==Mode::RA2full or info.mode==Mode::RA2fast){
-		tree->Branch("mMother",&mParent,"mMother/I");
-		tree->Branch("mLSP",&mChild,"mLSP/I");
-		//include year in file name
-		thetrfile = "tree_syst_"+setnames[0]+"_"+setnames[3]+"_block"+setnames[1]+"-"+setnames[2]+"_fast.root";
+		KSystProcessor<TH1F> proc(setname,therootfile);
+		proc.process(info);		
 	}
 	else if(info.mode==Mode::SVJsig or info.mode==Mode::SVJscan){
-		rinv = KParser::getOptionValue<double>(setnames[3]);
-		map<string,double> alpha_vals{
-			{"peak",-2},
-			{"high",-1},
-			{"low",-3},
-		};
-		alpha = alpha_vals[setnames[4]];
-		tree->Branch("mZprime",&mParent,"mZprime/I");
-		tree->Branch("mDark",&mChild,"mDark/I");
-		tree->Branch("rinv",&rinv,"rinv/D");
-		tree->Branch("alpha",&alpha,"alpha/I");
-		//include year in file name
-		thetrfile = "tree_syst_"+setnames[0]+"_"+setnames[5]+"_block"+setnames[1]+"-"+setnames[2]+"-"+setnames[3]+"-"+setnames[4]+"_fast.root";
-	}
-	//map to keep track of maximum pct diffs
-	KMap<double> pctDiffMap;
-	double nominal_yield = nominal->Integral(0,nominal->GetNbinsX()+1);
-	
-	//divide, bound, set labels (prepended w/ "signal_")
-	for(auto isyst : hsyst){
-		vector<string> inames;
-		KParser::process(isyst->GetName(),'_',inames);
-		string binname;
-		bool up = (inames.back().find("up")!=string::npos or inames.back().find("Up")!=string::npos);
-		if(up) binname = inames.back().substr(0,inames.back().size()-2);
-		else binname = inames.back().substr(0,inames.back().size()-4); //down
-		string treename = binname;
-		binname = "signal_"+binname;
-		//check yield (keep max diff in case of up and down)
-		double iyield = isyst->Integral(0,isyst->GetNbinsX()+1);
-		double pctdiff = fabs(1.-iyield/nominal_yield)*100;
-		if(!pctDiffMap.Has(treename) or pctDiffMap.Get(treename) < pctdiff){
-			pctDiffMap.Add(treename,pctdiff);
-		}
-		for(unsigned b = 1; b <= isyst->GetNbinsX(); ++b){
-			//divide
-			double unc = 1.0;
-			double denom = nominal->GetBinContent(b);
-			//if central value is zero, treat syst as a shift
-			if(denom==0.) denom = 1.0;
-			unc = isyst->GetBinContent(b)/denom;
-			//zero check
-			if(unc==0.) unc = 1.0;
-			//bound
-			unc = min(max(unc,0.01),1.99);
-			//set
-			isyst->SetBinContent(b,unc);
-			isyst->GetXaxis()->SetBinLabel(b,binname.c_str());
-		}
-	}
-
-	//add signal contamination (not a pct diff)
-	double cyield = 0.;
-	for(auto icontam : hcontam){
-		string ntmp = icontam->GetName();
-		if(ntmp.find("genMHT")!=string::npos) continue;
-		cyield += icontam->Integral(0,icontam->GetNbinsX()+1);
-	}
-	if(!hcontam.empty()) pctDiffMap.Add("contam",(cyield/nominal_yield)*100);
-	
-	//make stat error
-	string sname = changeHistoName(nominal->GetName(),"MCStatErr");
-	TH1F* ssyst = (TH1F*)nominal->Clone(sname.c_str());
-	double stat_yield = 0;
-	for(unsigned b = 1; b <= ssyst->GetNbinsX(); ++b){
-		//label
-		string slabel = "signal_MCStatErr_";
-		slabel += ssyst->GetXaxis()->GetBinLabel(b);
-		ssyst->GetXaxis()->SetBinLabel(b,slabel.c_str());
-		stat_yield += ssyst->GetBinError(b)+ssyst->GetBinContent(b);
-		//divide
-		ssyst->SetBinContent(b,
-			ssyst->GetBinContent(b)>0. ? 1.0+ssyst->GetBinError(b)/ssyst->GetBinContent(b) : 1.0+ssyst->GetBinError(b)
-		);
-	}
-	hsyst.push_back(ssyst);
-	pctDiffMap.Add("MCStatErr",fabs(1-stat_yield/nominal_yield)*100);
-	
-	//genMHT correction and unc for fastsim
-	if(genMHT){
-		//keep original nominal histogram
-		string nname = changeHistoName(nominal->GetName(),"nominalOrig");
-		TH1F* nominalOrig = (TH1F*)nominal->Clone(nname.c_str());
-		string gname = changeHistoName(nominal->GetName(),"MHTSyst");
-		TH1F* gsyst = (TH1F*)nominal->Clone(gname.c_str());
-		double g_yield = 0;
-		
-		//modify nominal as average of nominal and genMHT & compute syst as difference
-		for(unsigned b = 1; b <= nominal->GetNbinsX(); ++b){
-			gsyst->SetBinContent(b, 1.0+abs(nominal->GetBinContent(b) - genMHT->GetBinContent(b))/2.0);
-			gsyst->GetXaxis()->SetBinLabel(b,"signal_MHTSyst");
-			nominal->SetBinContent(b, (nominal->GetBinContent(b) + genMHT->GetBinContent(b))/2.0);
-			g_yield += (gsyst->GetBinContent(b)-1.0)+nominal->GetBinContent(b);
-		}
-		
-		hsyst.push_back(gsyst);
-		hsyst.push_back(nominalOrig);
-		hsyst.push_back(genMHT);
-		pctDiffMap.Add("MHTSyst",fabs(1-g_yield/nominal_yield)*100);
-	}
-	
-	//add branches to syst tree
-	for(auto& systpair : pctDiffMap.GetTable()){
-		tree->Branch(systpair.first.c_str(),&systpair.second,(systpair.first+"/D").c_str());
-	}
-	
-	//fill and write tree w/ hadd-able filename
-	tree->Fill();
-	TFile* trfile = KOpen(thetrfile,"RECREATE");
-	trfile->cd();
-	tree->Write();
-	trfile->Close();
-
-	//write processed syst histos
-	if(info.mode==Mode::RA2full or info.mode==Mode::RA2fast){
-		string thenewfile = info.outpre+"proc"+info.osuff+".root";
-		TFile* outfile = KOpen(thenewfile,"RECREATE");
-		outfile->cd();
-		nominal->Write();
-		for(auto icontam : hcontam) icontam->Write();
-		for(auto isyst : hsyst) isyst->Write();
-		outfile->Close();
+		KSystProcessor<TH2F> proc(setname,therootfile);
+		proc.process(info);
 	}
 }
