@@ -15,7 +15,6 @@ MACROS=(
 KSkimDriver \
 KScanDriver \
 KPlotDriver \
-MakeAllDC \
 MakeAllDCsyst \
 KCutflowDriver \
 )

@@ -274,7 +274,7 @@ void MakeAllDCsyst(string config="", string setname="", string indir="root://cms
 		if(ntmp.find("genMHT")!=string::npos) continue;
 		cyield += icontam->Integral(0,icontam->GetNbinsX()+1);
 	}
-	pctDiffMap.Add("contam",(cyield/nominal_yield)*100);
+	if(!hcontam.empty()) pctDiffMap.Add("contam",(cyield/nominal_yield)*100);
 	
 	//make stat error
 	string sname = changeHistoName(nominal->GetName(),"MCStatErr");
@@ -287,8 +287,9 @@ void MakeAllDCsyst(string config="", string setname="", string indir="root://cms
 		ssyst->GetXaxis()->SetBinLabel(b,slabel.c_str());
 		stat_yield += ssyst->GetBinError(b)+ssyst->GetBinContent(b);
 		//divide
-		if(ssyst->GetBinContent(b)>0.) ssyst->SetBinContent(b, 1.0+ssyst->GetBinError(b)/ssyst->GetBinContent(b));
-		else ssyst->SetBinContent(b, 1.0+ssyst->GetBinError(b));
+		ssyst->SetBinContent(b,
+			ssyst->GetBinContent(b)>0. ? 1.0+ssyst->GetBinError(b)/ssyst->GetBinContent(b) : 1.0+ssyst->GetBinError(b)
+		);
 	}
 	hsyst.push_back(ssyst);
 	pctDiffMap.Add("MCStatErr",fabs(1-stat_yield/nominal_yield)*100);
@@ -329,11 +330,13 @@ void MakeAllDCsyst(string config="", string setname="", string indir="root://cms
 	trfile->Close();
 
 	//write processed syst histos
-	string thenewfile = info.outpre+"proc"+info.osuff+".root";
-	TFile* outfile = KOpen(thenewfile,"RECREATE");
-	outfile->cd();
-	nominal->Write();
-	for(auto icontam : hcontam) icontam->Write();
-	for(auto isyst : hsyst) isyst->Write();
-	outfile->Close();
+	if(info.mode==Mode::RA2full or info.mode==Mode::RA2fast){
+		string thenewfile = info.outpre+"proc"+info.osuff+".root";
+		TFile* outfile = KOpen(thenewfile,"RECREATE");
+		outfile->cd();
+		nominal->Write();
+		for(auto icontam : hcontam) icontam->Write();
+		for(auto isyst : hsyst) isyst->Write();
+		outfile->Close();
+	}
 }

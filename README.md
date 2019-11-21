@@ -264,3 +264,14 @@ cd batch
 ./DCsub_svj.sh -t SVJScan -y 2016,2017,2018PRE,2018POST
 ```
 
+Post-processing:
+```
+```
+
+Signal systematics studies:
+```
+cd batch
+./HSsub.sh -c block,part,fast -d /store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v1 -k -n 1 -r
+cd ..
+
+```
