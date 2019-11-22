@@ -271,7 +271,7 @@ Post-processing:
 Signal systematics studies:
 ```
 cd batch
-./HSsub.sh -c block,part,fast -d /store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v1 -k -n 1 -r
+./HSsub.sh -c block,part,priv -d /store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v1 -k -n 1 -r
 cd ..
-
+python summarizeSyst.py -d /store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v1 -c "mDark==30.&&rinv==0.3&&alpha==-2."
 ```

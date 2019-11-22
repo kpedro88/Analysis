@@ -112,8 +112,7 @@ if __name__ == "__main__":
     if len(options.exclude)>0 and len(options.include)>0: parser.error("include and exclude can't be used together")
 
     if len(options.include)==0:
-        options.exclude.insert(0,"mLSP")
-        options.exclude.insert(0,"mMother")
+        options.exclude = ["mMother","mLSP","mZprime","mDark","rinv","alpha"] + options.exclude
     output = {}
     models = []
     

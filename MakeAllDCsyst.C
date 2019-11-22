@@ -42,6 +42,7 @@ class ModeInfo {
 				{"input",&input},
 				{"setlist",&setlist},
 				{"osuff",&osuff},
+				{"systsuff",&systsuff},
 				{"selection",&selection},
 			};
 			for(const auto& member : members){
@@ -54,7 +55,7 @@ class ModeInfo {
 
 		//members
 		Mode mode;
-		string inpre, region, outpre, outdir, input, setlist, osuff, selection;
+		string inpre, region, outpre, outdir, input, setlist, osuff, systsuff, selection;
 
 	private:
 		//constructor helpers
@@ -136,7 +137,7 @@ class KSystProcessor {
 				tree->Branch("mMother",&mParent,"mMother/I");
 				tree->Branch("mLSP",&mChild,"mLSP/I");
 				//include year in file name
-				thetrfile = "tree_syst_"+setnames[0]+"_"+setnames[3]+"_block"+setnames[1]+"-"+setnames[2]+"_fast.root";
+				thetrfile = "tree_syst_"+setnames[0]+"_"+setnames[3]+"_block"+setnames[1]+"-"+setnames[2]+"_"+info.systsuff+".root";
 			}
 			else if(info.mode==Mode::SVJsig or info.mode==Mode::SVJscan){
 				rinv = KParser::getOptionValue<double>(setnames[3]);
@@ -151,7 +152,7 @@ class KSystProcessor {
 				tree->Branch("rinv",&rinv,"rinv/D");
 				tree->Branch("alpha",&alpha,"alpha/I");
 				//include year in file name
-				thetrfile = "tree_syst_"+setnames[0]+"_"+setnames[5]+"_block"+setnames[1]+"-"+setnames[2]+"-"+setnames[3]+"-"+setnames[4]+"_fast.root";
+				thetrfile = "tree_syst_"+setnames[0]+"_"+setnames[5]+"_block"+setnames[1]+"-"+setnames[2]+"-"+setnames[3]+"-"+setnames[4]+"_"+info.systsuff+".root";
 			}
 			//map to keep track of maximum pct diffs
 			KMap<double> pctDiffMap;
