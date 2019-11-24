@@ -81,6 +81,7 @@ input/fast*/
 /CutflowSum.C
 /selections_svj.py
 /makeCutflowSVJ.py
+/processDatacardsSVJ.py
 
 # linked by setupXML.sh
 /KMVA/pugi*.*

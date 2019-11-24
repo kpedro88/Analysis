@@ -266,6 +266,10 @@ cd batch
 
 Post-processing:
 ```
+cd batch
+./haddEOS.sh -d /store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v1 -i MTAK8_dijetmtdetahadloosefull -g '.*201' -k -r
+cd ..
+python processDatacardsSVJ.py
 ```
 
 Signal systematics studies:
