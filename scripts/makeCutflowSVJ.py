@@ -19,9 +19,9 @@ parser.add_option("-e", "--no-error", dest="error", default=True, action="store_
 namesDict = getattr(__import__(options.names,fromlist=["selections"]),"selections")
 
 lumis = OrderedDict([
-    ("2016", 35900),
-    ("2017", 41500),
-    ("2018", 59600),
+    ("2016", 35920),
+    ("2017", 41530),
+    ("2018", 59740),
 ])
 
 outDict = OrderedDict([])

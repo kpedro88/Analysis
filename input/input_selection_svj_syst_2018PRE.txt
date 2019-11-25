@@ -1,5 +1,5 @@
 OPTION
-double:luminorm[21000]
+double:luminorm[21090]
 
 SELECTION
 common
