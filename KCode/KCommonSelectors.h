@@ -2053,9 +2053,11 @@ REGISTER_SELECTOR(HEMDPhiVeto);
 //-------------------------------------------------------------
 //vetos events with dead ECAL cells
 //(these events appear as spikes in 2nd jet eta-phi plane)
+//also vetos some spikes in 1st jet eta-phi
 class KPhiSpikeVetoSelector : public KFilterSelector {
 	public:
 		//constructor
+		typedef vector<pair<double,double>> SpikeList;
 		KPhiSpikeVetoSelector() : KFilterSelector() { }
 		KPhiSpikeVetoSelector(string name_, OptionMap* localOpt_) : KFilterSelector(name_,localOpt_), dim(0.028816), rad(.35) {
 			branchname = "PhiSpikeVeto";
@@ -2067,9 +2069,16 @@ class KPhiSpikeVetoSelector : public KFilterSelector {
 			localOpt->Get("yearmc",yearmc);
 			localOpt->Get("yeardata",yeardata);
 			
-			//read eta phi map
-			string inputFile; localOpt->Get("spikelist",inputFile);
-			ifstream infile(inputFile.c_str());
+			//read lead jet eta phi map
+			string inputFile; localOpt->Get("leadspikelist",inputFile);
+			readSpikeList(inputFile,eta_phi_list1);
+
+			//read sublead jet eta phi map
+			string inputFile2; localOpt->Get("spikelist",inputFile2);
+			readSpikeList(inputFile2,eta_phi_list2);
+		}
+		virtual void readSpikeList(string fname, SpikeList& eta_phi_list){
+			ifstream infile(fname.c_str());
 			if(infile.is_open()){
 				string line;
 				while(getline(infile,line)){
@@ -2081,7 +2090,7 @@ class KPhiSpikeVetoSelector : public KFilterSelector {
 					);
 				}
 			}
-			else throw runtime_error("missing phi spike list: "+inputFile);
+			else throw runtime_error("missing phi spike list: "+fname);
 		}
 		virtual void ListBranches(){
 			branches.insert(branches.end(),{
@@ -2100,7 +2109,7 @@ class KPhiSpikeVetoSelector : public KFilterSelector {
 			if(dummy) return;
 			KFilterSelector::SetBranches();
 		}
-		bool InSpike(const TLorentzVector& tlv){
+		bool InSpike(const TLorentzVector& tlv, const SpikeList& eta_phi_list) const {
 			double tlv_eta = tlv.Eta();
 			double tlv_phi = tlv.Phi();
 			for(const auto& spike : eta_phi_list){
@@ -2109,13 +2118,13 @@ class KPhiSpikeVetoSelector : public KFilterSelector {
 			return false;
 		}
 		virtual void GetResult() {
-			result = !InSpike(looper->Jets->at(1));
+			result = !InSpike(looper->Jets->at(0),eta_phi_list1) and !InSpike(looper->Jets->at(1),eta_phi_list2);
 		}
 
 		//member variables
 		double dim, rad, dimrad;
 		string yearmc, yeardata;
-		vector<pair<double,double>> eta_phi_list;
+		SpikeList eta_phi_list1, eta_phi_list2;
 };
 REGISTER_SELECTOR(PhiSpikeVeto);
 
