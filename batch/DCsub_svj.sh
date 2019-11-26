@@ -3,7 +3,7 @@
 source exportProd.sh
 
 JOBDIR=jobs
-STORE=root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/${RUN2PRODV}_v1
+STORE=root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/${RUN2PRODV}_v2
 CHECKARGS=""
 YEARS=()
 TYPES=()
@@ -29,8 +29,10 @@ for TYPE in ${TYPES[@]}; do
 	PREFIX=DC
 	if [ "$TYPE" = SVJScan ]; then
 		INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims/scan
-		PREFIX=Skim
 		DCCONFIG=input/input_DC_config_SVJscan.txt
+		if [ "$YEAR" != Run2 ]; then
+			PREFIX=Skim
+		fi
 	elif [ "$TYPE" = SVJ ]; then
 		INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims
 		DCCONFIG=input/input_DC_config_SVJsig.txt
@@ -59,6 +61,6 @@ for TYPE in ${TYPES[@]}; do
 		# skip nonexistent ones
 		if [[ $? -ne 0 ]]; then continue; fi
 
-		$DRYRUN ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} ${VARS} ${STORE} ${SNAME} ${DCCONFIG} ${#SAMPLES[@]}
+		$DRYRUN ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} ${VARS} ${STORE} ${SNAME} ${DCCONFIG} ${#SAMPLES[@]} ${TYPE} ${YEAR}
 	done
 done

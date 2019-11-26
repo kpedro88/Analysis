@@ -11,7 +11,7 @@ Error = MakeAllDCsyst_SNAME_$(Process)_$(Cluster).stderr
 Log = MakeAllDCsyst_SNAME_$(Process)_$(Cluster).condor
 notification = Never
 x509userproxy = $ENV(X509_USER_PROXY)
-Arguments = CMSSWVER INDIR SYSTS VARS STORE SNAME DCCONFIG $(Process)
+Arguments = CMSSWVER INDIR SYSTS VARS STORE SNAME DCCONFIG $(Process) TYPE YEAR
 on_exit_remove = (ExitBySignal == False) && (ExitCode == 0)
 on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
 on_exit_hold_reason = strcat("Job held by ON_EXIT_HOLD due to ",\

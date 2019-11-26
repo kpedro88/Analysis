@@ -229,6 +229,7 @@ python makeFastInput.py -f -p 4 -d /store/user/lpcsusyhad/SVJ2017/Run2Production
 python makeFastInput.py -f -p 4 -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan/ -m MC2018 -s input/input_sets_skim_svj_scan_2018.txt -c input/input_sets_DC_svj_scan_2018.txt -e batch/exportSkimSVJScan2018.sh
 python makeFastInput.py -f -p 4 -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan/ -m MC2018 -y MC2018PRE -s input/input_sets_skim_svj_scan_2018PRE.txt -c input/input_sets_DC_svj_scan_2018PRE.txt -e batch/exportSkimSVJScan2018PRE.sh
 python makeFastInput.py -f -p 4 -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan/ -m MC2018 -y MC2018POST -s input/input_sets_skim_svj_scan_2018POST.txt -c input/input_sets_DC_svj_scan_2018POST.txt -e batch/exportSkimSVJScan2018POST.sh
+./batch/makeExportDCSVJScan.sh
 cd batch
 ./SKsub_svj.sh -s -t SVJScan -y 2016,2017,2018PRE
 ```
@@ -260,23 +261,21 @@ root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ
 To create histograms for datacards:
 ```
 cd batch
-./DCsub_svj.sh -t SVJData,SVJBkg -y Run2
-./DCsub_svj.sh -t SVJ -y 2016,2017,2018PRE,2018POST
-./DCsub_svj.sh -t SVJScan -y 2016,2017,2018PRE,2018POST
+./DCsub_svj.sh -t SVJData,SVJBkg,SVJ,SVJScan -y Run2
 ```
 
 Post-processing:
 ```
+python processDatacardsSVJ.py -o test/datacards_bkg_data.root -i root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v2/ -f `eos root://cmseos.fnal.gov ls /store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v2/ | grep MTAK8_dijetmtdetahadloosefull_ | grep -v SVJ`
+xrdcp test/datacards_bkg_data.root root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v2/
 cd batch
-./haddEOS.sh -d /store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v1 -i MTAK8_dijetmtdetahadloosefull -g '.*201' -k -r
-cd ..
-python processDatacardsSVJ.py
+./haddEOS.sh -d /store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v2 -i datacard -g _ -k -r
 ```
 
 Signal systematics studies:
 ```
 cd batch
-./HSsub.sh -c block,part,priv -d /store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v1 -k -n 1 -r
+./HSsub.sh -c block,part,priv -d /store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v2 -k -n 1 -r
 cd ..
-python summarizeSyst.py -d /store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v1 -c "mDark==30.&&rinv==0.3&&alpha==-2."
+python summarizeSyst.py -d /store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v2 -c "mDark==30.&&rinv==0.3&&alpha==-2."
 ```

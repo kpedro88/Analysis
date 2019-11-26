@@ -79,6 +79,6 @@ for TYPE in ${TYPES[@]}; do
 
 		source export${SNAME}.sh
 
-		$DRYRUN ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} ${VARS} ${STORE} ${SNAME} ${DCCONFIG} ${#SAMPLES[@]}
+		$DRYRUN ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} ${VARS} ${STORE} ${SNAME} ${DCCONFIG} ${#SAMPLES[@]} ${TYPE} ${YEAR}
 	done
 done

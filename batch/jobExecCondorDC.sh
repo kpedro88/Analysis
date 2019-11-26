@@ -17,6 +17,8 @@ STORE=$5
 SNAME=$6
 DCCONFIG=$7
 PROCESS=$8
+TYPE=$9
+YEAR=${10}
 
 echo ""
 echo "parameter set:"
@@ -28,6 +30,8 @@ echo "STORE:      $STORE"
 echo "SNAME:      $SNAME"
 echo "DCCONFIG:   $DCCONFIG"
 echo "PROCESS:    $PROCESS"
+echo "TYPE:       $TYPE"
+echo "YEAR:       $YEAR"
 
 #get sample
 source export${SNAME}.sh
@@ -42,16 +46,33 @@ source /cvmfs/cms.cern.ch/cmsset_default.sh
 eval `scramv1 runtime -sh`
 cd src/Analysis
 
-#run macro
-echo "run: root -b -q -l 'MakeAllDCsyst.C+("'"'$DCCONFIG'","'$SAMPLE'","'$INDIR'","'$SYSTS'","'$VARS'"'")' 2>&1"
-root -b -q -l 'MakeAllDCsyst.C+("'$DCCONFIG'","'$SAMPLE'","'$INDIR'","'$SYSTS'","'$VARS'")' 2>&1
+# option to run over all years in series for SVJ
+NEWSAMPLES=()
+POSTPROCESS=""
+if [[ ( "$TYPE" = SVJ || "$TYPE" = SVJScan ) && "$YEAR" = Run2 ]]; then
+	NEWSAMPLES=(${SAMPLE}_MC2016 ${SAMPLE}_MC2017 ${SAMPLE}_MC2018PRE ${SAMPLE}_MC2018POST)
+	POSTPROCESS=true
+else
+	NEWSAMPLES=(${SAMPLE})
+fi
 
-ROOTEXIT=$?
+for NEWSAMPLE in ${NEWSAMPLES[@]}; do
+	# run macro
+	echo "run: root -b -q -l 'MakeAllDCsyst.C+("'"'$DCCONFIG'","'$NEWSAMPLE'","'$INDIR'","'$SYSTS'","'$VARS'"'")' 2>&1"
+	root -b -q -l 'MakeAllDCsyst.C+("'$DCCONFIG'","'$NEWSAMPLE'","'$INDIR'","'$SYSTS'","'$VARS'")' 2>&1
 
-if [[ $ROOTEXIT -ne 0 ]]; then
-  rm *.root
-  echo "exit code $ROOTEXIT, skipping xrdcp"
-  exit $ROOTEXIT
+	ROOTEXIT=$?
+
+	if [[ $ROOTEXIT -ne 0 ]]; then
+		rm *.root
+		echo "exit code $ROOTEXIT for $NEWSAMPLE, skipping xrdcp"
+		exit $ROOTEXIT
+	fi
+done
+
+# postprocessing for SVJ
+if [ -n "$POSTPROCESS" ]; then
+	python processDatacardsSVJ.py -o datacard_${SAMPLE}.root -f MTAK8_dijetmtdetahadloosefull_${SAMPLE}_*.root
 fi
 
 # copy output to eos

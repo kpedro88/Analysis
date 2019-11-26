@@ -1,5 +1,6 @@
 import sys
 from collections import OrderedDict
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from ROOT import *
 
 # make status messages useful
@@ -41,7 +42,7 @@ def convertName(outname,dirname):
     return newname+newname2
 
 class Sample(object):
-    def __init__(self, name, file=None, names=None):
+    def __init__(self, name, names_hists=None):
         # basic constructor
         self.name = name
         self.years = OrderedDict()
@@ -49,19 +50,17 @@ class Sample(object):
         # stores added TH2s
         self.output = []
 
-        if file is None and names is None: return
+        if names_hists is None: return
         
         # full constructor
-        names2 = [n for n in names if self.name in n]
+        names2 = [n for n in names_hists if self.name in n]
         for year in usort([get_year(n) for n in names2]):
             self.years[year] = OrderedDict()
         for n in names2:
             year = get_year(n)
             syst = get_syst(n)
             # store the histogram
-            htmp = file.Get(n)
-            htmp.SetDirectory(0)
-            self.years[year][syst] = htmp
+            self.years[year][syst] = names_hists[n]
         # keep separate list of all systs
         self.systs = usort([get_syst(n) for n in names2])
     def hadd(self, hists, outname):
@@ -112,108 +111,124 @@ class SplitDir(object):
                 hist.SetName(outname)
             hist.Write(outname)
 
-# these should be CLI eventually
-prefix = "MTAK8_RA2bin"
-data = ["data"]
-bkgs = ["QCD","TT","WJets","ZJets"]
-file = "root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v1/MTAK8_dijetmtdetahadloosefull.root"
-outfile = "test/datacards_Run2ProductionV17_v1.root"
+if __name__=="__main__":
+    parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
+    parser.add_argument("-p", "--prefix", dest="prefix", type=str, default="MTAK8_RA2bin", help="prefix for histogram names")
+    parser.add_argument("-d", "--data", dest="data", type=str, default=["data"], nargs="*", help="list of names for data category")
+    parser.add_argument("-b", "--bkgs", dest="bkgs", type=str, default=["QCD","TT","WJets","ZJets"], nargs="*", help="list of names for bkg category")
+    parser.add_argument("-i", "--dir", dest="dir", type=str, default="", help="directory for input files")
+    parser.add_argument("-f", "--files", dest="files", type=str, nargs="+", help="list of input files", required=True)
+    parser.add_argument("-o", "--out", dest="out", type=str, help="output file name", required=True)
+    args = parser.parse_args()
+    
+    # categories
+    samples = OrderedDict([
+        ("data",[]),
+        ("bkg",[]),
+        ("sig",[]),
+    ])
 
-f = TFile.Open(file)
-names = [k.GetName() for k in f.GetListOfKeys() if k.GetName().startswith(prefix)]
+    from ROOT import *
 
-# get list of unique sample names
-unique_names = usort([get_sample(n,prefix) for n in names])
-# categories
-samples = OrderedDict([
-    ("data",[]),
-    ("bkg",[]),
-    ("sig",[]),
-])
+    names_hists = {}
+    for file in args.files:
+        if len(args.dir)>0: file = args.dir+"/"+file
+        f = TFile.Open(file)
+        names = [k.GetName() for k in f.GetListOfKeys() if k.GetName().startswith(args.prefix)]
+        for name in names:
+            htmp = f.Get(name)
+            htmp.SetDirectory(0)        
+            names_hists[name] = htmp
+        f.Close()
 
-for name in unique_names:
-    tmp = Sample(name,f,names)
-    if name in data:
-        samples["data"].append(tmp)
-    elif name in bkgs:
-        samples["bkg"].append(tmp)
-    else:
-        samples["sig"].append(tmp)
+    # get list of unique sample names
+    unique_names = usort([get_sample(n,args.prefix) for n in names_hists])
 
-f.Close()
+    for name in unique_names:
+        tmp = Sample(name,names_hists)
+        if name in args.data:
+            samples["data"].append(tmp)
+        elif name in args.bkgs:
+            samples["bkg"].append(tmp)
+        else:
+            samples["sig"].append(tmp)
 
-# add up nominals for data, bkg
-samples["data"][0].hadd_nominal("data_obs")
-fprint("Added data")
-for bkg in samples["bkg"]:
-    bkg.hadd_nominal(bkg.name)
-    fprint("Added "+bkg.name)
+    # add up nominals for data, bkg
+    if len(samples["data"])>0:
+        samples["data"][0].hadd_nominal("data_obs")
+        fprint("Added data")
 
-# make tot for bkg
-bname = "Bkg"
-btmp = Sample(bname)
-btmp.hadd([h for s in samples["bkg"] for h in s.output],bname)
-samples["bkg"].append(btmp)
-fprint("Added "+bname)
+    # add up nominals for bkg
+    if len(samples["bkg"])>0:
+        for bkg in samples["bkg"]:
+            bkg.hadd_nominal(bkg.name)
+            fprint("Added "+bkg.name)
 
-for sig in samples["sig"]:
-    # add up nominals for sig
-    sig.hadd_nominal(sig.name)
-    # add up uncorrelated systs for sig
-    for syst in sig.systs:
-        sig.hadd_syst(syst)
-    fprint("Added "+sig.name)
+        # make tot for bkg
+        bname = "Bkg"
+        btmp = Sample(bname)
+        btmp.hadd([h for s in samples["bkg"] for h in s.output],bname)
+        samples["bkg"].append(btmp)
+        fprint("Added "+bname)
 
-outf = TFile.Open(outfile,"RECREATE")
-# split into TH1s and dirs (including cut-based using multiple bin projection)
-dirs = [
-    SplitDir("lowSVJ0_2018",1),
-    SplitDir("lowSVJ1_2018",2),
-    SplitDir("lowSVJ2_2018",3),
-    SplitDir("highSVJ0_2018",4),
-    SplitDir("highSVJ1_2018",5),
-    SplitDir("highSVJ2_2018",6),
-    # aggregate into cut-based
-    SplitDir("lowCut_2018",1,3),
-    SplitDir("highCut_2018",4,6),
-]
-for dir in dirs:
-    dir.setup(outf)
-    for cat in samples:
-        for samp in samples[cat]:
-            for h in samp.output:
-                dir.split(h)
-    fprint("Splitting done for "+dir.name)
-
-    # make signal stat histos for this dir
-    dir_samples = []
     for sig in samples["sig"]:
-        stmp = Sample(sig.name+"_mcstat")
-        for year in sig.years:
-            stmp.years[year] = OrderedDict()
-            # split first to get correct bin numbers
-            htmp = dir.split(sig.years[year]["nominal"],False)
-            stmp.years[year]["nominal"] = htmp
-            stmp.systs.append("nominal")
-            # generate stat variations for this year
-            for b in range(1,htmp.GetNbinsX()+1):
-                nameUp = "bin"+str(b)+"Up"
-                htmpUp = htmp.Clone(htmp.GetName()+"_"+nameUp)
-                htmpUp.SetBinContent(b,htmpUp.GetBinContent(b)+htmpUp.GetBinError(b))
-                stmp.years[year][nameUp] = htmpUp
-                nameDown = "bin"+str(b)+"Down"
-                htmpDown = htmp.Clone(htmp.GetName()+"_"+nameDown)
-                htmpDown.SetBinContent(b,htmpDown.GetBinContent(b)-htmpDown.GetBinError(b))
-                stmp.years[year][nameDown] = htmpDown
-                stmp.systs.extend([nameUp,nameDown])
-        # add up uncorrelated
-        stmp.systs = usort(stmp.systs)
-        for syst in stmp.systs:
-            stmp.hadd_syst(syst)
-        # since these are already split, they can just be appended to the dir
-        dir_samples.extend(stmp.output)
-        fprint("Added "+stmp.name+" ("+dir.name+")")
+        # add up nominals for sig
+        sig.hadd_nominal(sig.name)
+        # add up uncorrelated systs for sig
+        for syst in sig.systs:
+            sig.hadd_syst(syst)
+        fprint("Added "+sig.name)
 
-    # write out content of dir (handles names)
-    dir.output.extend(dir_samples)
-    dir.write()
+    outf = TFile.Open(args.out,"RECREATE")
+    # split into TH1s and dirs (including cut-based using multiple bin projection)
+    dirs = [
+        SplitDir("lowSVJ0_2018",1),
+        SplitDir("lowSVJ1_2018",2),
+        SplitDir("lowSVJ2_2018",3),
+        SplitDir("highSVJ0_2018",4),
+        SplitDir("highSVJ1_2018",5),
+        SplitDir("highSVJ2_2018",6),
+        # aggregate into cut-based
+        SplitDir("lowCut_2018",1,3),
+        SplitDir("highCut_2018",4,6),
+    ]
+    for dir in dirs:
+        dir.setup(outf)
+        for cat in samples:
+            for samp in samples[cat]:
+                for h in samp.output:
+                    dir.split(h)
+        fprint("Splitting done for "+dir.name)
+
+        # make signal stat histos for this dir
+        dir_samples = []
+        for sig in samples["sig"]:
+            stmp = Sample(sig.name+"_mcstat")
+            for year in sig.years:
+                stmp.years[year] = OrderedDict()
+                # split first to get correct bin numbers
+                htmp = dir.split(sig.years[year]["nominal"],False)
+                stmp.years[year]["nominal"] = htmp
+                stmp.systs.append("nominal")
+                # generate stat variations for this year
+                for b in range(1,htmp.GetNbinsX()+1):
+                    nameUp = "bin"+str(b)+"Up"
+                    htmpUp = htmp.Clone(htmp.GetName()+"_"+nameUp)
+                    htmpUp.SetBinContent(b,htmpUp.GetBinContent(b)+htmpUp.GetBinError(b))
+                    stmp.years[year][nameUp] = htmpUp
+                    nameDown = "bin"+str(b)+"Down"
+                    htmpDown = htmp.Clone(htmp.GetName()+"_"+nameDown)
+                    htmpDown.SetBinContent(b,htmpDown.GetBinContent(b)-htmpDown.GetBinError(b))
+                    stmp.years[year][nameDown] = htmpDown
+                    stmp.systs.extend([nameUp,nameDown])
+            # add up uncorrelated
+            stmp.systs = usort(stmp.systs)
+            for syst in stmp.systs:
+                stmp.hadd_syst(syst)
+            # since these are already split, they can just be appended to the dir
+            dir_samples.extend(stmp.output)
+            fprint("Added "+stmp.name+" ("+dir.name+")")
+
+        # write out content of dir (handles names)
+        dir.output.extend(dir_samples)
+        dir.write()
