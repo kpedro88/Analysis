@@ -82,6 +82,7 @@ input/fast*/
 /selections_svj.py
 /makeCutflowSVJ.py
 /processDatacardsSVJ.py
+/finalizeDatacardsSVJ.sh
 
 # linked by setupXML.sh
 /KMVA/pugi*.*

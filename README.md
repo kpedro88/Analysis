@@ -266,10 +266,7 @@ cd batch
 
 Post-processing:
 ```
-python processDatacardsSVJ.py -o test/datacards_bkg_data.root -i root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v2/ -f `eos root://cmseos.fnal.gov ls /store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v2/ | grep MTAK8_dijetmtdetahadloosefull_ | grep -v SVJ`
-xrdcp test/datacards_bkg_data.root root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v2/
-cd batch
-./haddEOS.sh -d /store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v2 -i datacard -g _ -k -r
+./finalizeDatacardsSVJ.sh /store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v2/
 ```
 
 Signal systematics studies:
