@@ -39,6 +39,9 @@ def convertName(outname,dirname):
         # systematics formatting: systUp_2016 -> MC2016systUp
         else:
             newname2 += "MC"+namesplit[6]+namesplit[5]
+        # capitalization check
+        if newname2[-2:]=="up": newname2 = newname2[:-2] + "Up"
+        elif newname2[-4:]=="down": newname2 = newname2[:-4] + "Down"
     return newname+newname2
 
 class Sample(object):
