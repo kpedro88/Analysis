@@ -200,7 +200,8 @@ python makeSkimInput.py -r input/dict_skim_svj_2017.py -w input/input_sets_skim_
 To submit jobs to Condor:
 ```
 cd batch
-./SKsub_svj.sh -t SVJ,SVJBkg,Data -y 2016,2017,2018
+./SKsub_svj.sh -t SVJ -y 2017 -s
+./SKsub_svj.sh -t SVJBkg,Data -y 2016,2017,2018
 (wait for jobs to finish)
 ./hadd_skims.sh -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/Skims -n 1 -r
 ```
