@@ -288,6 +288,15 @@ class KFiller_numint : public KFiller {
 };
 REGISTER_FILLER(numint);
 
+//PFMet/CaloMET
+class KFiller_pfcalometratio : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void ListBranches() { branches = {"PFCaloMETRatio"}; }
+		virtual void Fill(KValue& value, double w) { value.Fill(looper->PFCaloMETRatio,w); }
+};
+REGISTER_FILLER(pfcalometratio);
+
 //madgraph HT
 class KFiller_madht : public KFiller {
 	public:
