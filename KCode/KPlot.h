@@ -629,6 +629,40 @@ class KPlot2D: public KPlot {
 				isInit = false;
 				return;
 			}
+
+			//get vars for labels
+			if(!localOpt->Get("vars",vars)){
+				//split up histo variables from name (if not otherwise specified)
+				KParser::process(name,'_',vars);
+			}
+			
+			//assign bin labels if requested
+			//we might want to relabel an existing histo
+			if(localOpt->Get("xbinlabel",false)){
+				vector<string> labels;
+				//check both option maps
+				bool has_labels = localOpt->Get("xlabels",labels) || globalOpt->Get(vars[0]+"_labels",labels);
+				if(has_labels){
+					histo->LabelsOption("v","X");
+					for(unsigned b = 0; b < labels.size(); b++){
+						histo->GetXaxis()->SetBinLabel(b+1,labels[b].c_str());
+					}
+					histo->GetXaxis()->SetNoAlphanumeric(); //todo: make optional?
+				}
+			}
+			if(localOpt->Get("ybinlabel",false)){
+				vector<string> labels;
+				//check both option maps
+				bool has_labels = localOpt->Get("ylabels",labels) || globalOpt->Get(vars[1]+"_labels",labels);
+				if(has_labels){
+					histo->LabelsOption("h","Y");
+					for(unsigned b = 0; b < labels.size(); b++){
+						histo->GetYaxis()->SetBinLabel(b+1,labels[b].c_str());
+					}
+					histo->GetYaxis()->SetNoAlphanumeric(); //todo: make optional?
+				}
+			}
+
 			string xtitle, ytitle, ztitle;
 			localOpt->Get("xtitle",xtitle);
 			localOpt->Get("ytitle",ytitle);
