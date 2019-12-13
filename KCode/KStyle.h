@@ -44,12 +44,24 @@ class KStyle {
 		template <class T>
 		void Format(T* obj){
 			//set the style of a hist or graph
+			FormatLine(obj);
+			FormatMarker(obj);
+			FormatFill(obj);
+		}
+		template <class T>
+		void FormatLine(T* obj){
 			obj->SetLineColor(linecolor);
 			obj->SetLineWidth(linewidth);
 			obj->SetLineStyle(linestyle);
+		}
+		template <class T>
+		void FormatMarker(T* obj){
 			obj->SetMarkerColor(markercolor);
 			obj->SetMarkerSize(markersize);
 			obj->SetMarkerStyle(markerstyle);
+		}
+		template <class T>
+		void FormatFill(T* obj){
 			obj->SetFillColor(fillcolor);
 			obj->SetFillStyle(fillstyle);
 		}

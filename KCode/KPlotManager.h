@@ -13,6 +13,7 @@
 
 //ROOT headers
 #include <TROOT.h>
+#include <TMarker.h>
 
 //STL headers
 #include <string>
@@ -31,15 +32,45 @@ using namespace std;
 class KRocEntry {
 	public:
 		//constructor
-		KRocEntry(vector<double> effsig_, vector<double> effbkg_, string name_, OptionMap* localOpt_, KMap<string>& allStyles_, bool roclogx_, bool roclogy_, bool showAUC_, bool minus1_, int prcsn_) : 
-			effsig(effsig_), effbkg(effbkg_), name(name_), localOpt(localOpt_), graph(nullptr), style(nullptr), auc(0.0), panel(0), legname("") , minus1(minus1_)
+		KRocEntry(KBase* sig_, KBase* bkg_, string name_, OptionMap* localOpt_, OptionMap* globalOpt_, KMap<string>& allStyles_) :
+			sig(sig_), bkg(bkg_), name(name_), localOpt(localOpt_), globalOpt(globalOpt_), graph(nullptr), marker_wp(nullptr), style(nullptr), auc(0.0), panel(0), legname("")
 		{
+			//get global options
+			bool roclogx = globalOpt->Get("roclogx",false);
+			bool roclogy = globalOpt->Get("roclogy",false);
+			bool showAUC = globalOpt->Get("showAUC",false);
+			minus1 = globalOpt->Get("rocminus1",false);
+			bool debugwp = globalOpt->Get("debugrocwp",false);
+			int prcsn = 0; globalOpt->Get("yieldprecision",prcsn);
+
+			//select current histogram in sets
+			sig->GetHisto(name);
+			bkg->GetHisto(name);
+
+			//get efficiencies as copies
+			auto effsig = *(sig->GetEff());
+			auto effbkg = *(bkg->GetEff());
+
+			//check for WP (before any eff transformations)
+			double wp, wp_x, wp_y; bool has_wp = localOpt->Get("wp",wp);
+			if(has_wp){
+				//find x and y values for wp
+				auto htmp = sig->GetHisto();
+				int wp_bin = htmp->FindBin(wp);
+				wp_x = effsig[wp_bin];
+				wp_y = effbkg[wp_bin];
+			}
+			//todo: allow multiple WPs, option to draw lines from wp to x & y axes, add to legend?
+
 			//make sure curves start at 0 and end at 1
 			pad01(effsig);
 			pad01(effbkg);
 
 			//option to use 1-eff(bkg)
-			if(minus1) for(auto& x: effbkg) x = 1. - x;
+			if(minus1) {
+				for(auto& y: effbkg) y = 1. - y;
+				if(has_wp) wp_y = 1. - wp_y;
+			}
 
 			//check integral
 			auc = KMath::Integral(effsig,effbkg);
@@ -49,19 +80,20 @@ class KRocEntry {
 					effsig[e] = 1 - effsig[e];
 					effbkg[e] = 1 - effbkg[e];
 				}
+				if(has_wp) { wp_x = 1 - wp_x; wp_y = 1 - wp_y; }
 				auc = KMath::Integral(effsig,effbkg);
 			}
-			
+
 			//check minima
 			xmin = 1e100;
 			ymin = 1e100;
-			if(roclogx_) {
+			if(roclogx) {
 				for(unsigned e = 0; e < effsig.size(); ++e){
 					if(effsig[e]<xmin and effsig[e]>0.) xmin = effsig[e];
 				}
 			}
 			else xmin = 0.;
-			if(roclogy_) {
+			if(roclogy) {
 				for(unsigned e = 0; e < effbkg.size(); ++e){
 					if(effbkg[e]<ymin and effbkg[e]>0.) ymin = effbkg[e];
 				}
@@ -80,14 +112,21 @@ class KRocEntry {
 				style = new KStyle(ntmp->fields[0],ntmp->localOpt(),localOpt);
 			}
 			style->Format(graph);
-			
+
+			//marker & printout after transformations
+			if(has_wp){
+				if(debugwp) cout << name << " @ WP = " << wp << ": sig = " << wp_x << ", " << (minus1 ? "1 - " : "") << "bkg = " << wp_y << endl;
+				marker_wp = new TMarker(wp_x,wp_y,20);
+				style->FormatMarker(marker_wp);
+			}
+
 			//legend info: histo x-name (+ auc, optionally), panel
 			localOpt->Get("panel",panel);
 			string xtitle; localOpt->Get("xtitle",xtitle);
 			stringstream sleg;
-			sleg << fixed << setprecision(prcsn_);
+			sleg << fixed << setprecision(prcsn);
 			sleg << xtitle;
-			if(showAUC_) sleg << " (" << auc << ")";
+			if(showAUC) sleg << " (" << auc << ")";
 			legname = sleg.str();
 		}
 
@@ -106,6 +145,15 @@ class KRocEntry {
 			return minus1 ? auc > r.auc : auc < r.auc;
 		}
 
+		void AddToLegend(KLegend* kleg) const {
+			kleg->AddEntry(graph,legname,style->GetLegOpt(),panel);
+		}
+
+		void Draw() const {
+			graph->Draw(style->GetDrawOpt("same").c_str()); //should this be "c" instead for smooth curve?
+			if(marker_wp and globalOpt->Get("drawrocwp",false)) marker_wp->Draw("same");
+		}
+
 		void SaveGraph(string rname, TFile* file) const {
 			file->cd();
 			string oname = string(graph->GetName()) + "_" + rname;
@@ -114,11 +162,13 @@ class KRocEntry {
 		}
 		
 		//input variables
-		vector<double> effsig, effbkg;
+		KBase *sig, *bkg;
 		string name;
 		OptionMap *localOpt;
+		OptionMap *globalOpt;
 		//member variables
 		TGraph* graph;
+		TMarker* marker_wp;
 		KStyle* style;
 		double auc;
 		int panel;
@@ -687,13 +737,12 @@ class KPlotManager : public KManager {
 			//check settings
 			bool roclogx = globalOpt->Get("roclogx",false);
 			bool roclogy = globalOpt->Get("roclogy",false);
-			bool showAUC = globalOpt->Get("showAUC",false);
 			bool rocminus1 = globalOpt->Get("rocminus1",false);
 			//draw curves for each sig vs each bkg
 			for(unsigned s = 0; s < roc_sig.size(); s++){
 				for(unsigned b = 0; b < roc_bkg.size(); b++){
 					//specific qtys not included in roc_name right now
-					//anything desired should be specified in printsuffix option
+					//anything desired should be specified in rocsuffix option
 					string roc_name = "roc_" + roc_sig[s]->GetName() + "_vs_" + roc_bkg[b]->GetName();
 					if(globalOpt->Get("debugroc",false)) cout << roc_name << endl;
 
@@ -710,7 +759,7 @@ class KPlotManager : public KManager {
 						//initialize roc entry
 						//get efficiencies as copies (in case of reversal)
 						//(cached results will be returned if the calculation was already done)
-						rocs.emplace_back(*(roc_sig[s]->GetEff()),*(roc_bkg[b]->GetEff()),p.first,p.second->GetLocalOpt(),allStyles,roclogx,roclogy,showAUC,rocminus1,prcsn);
+						rocs.emplace_back(roc_sig[s],roc_bkg[b],p.first,p.second->GetLocalOpt(),globalOpt,allStyles);
 						const auto& roc_tmp = rocs.back();
 						//check minima
 						if(roc_tmp.xmin < xmin) xmin = roc_tmp.xmin;
@@ -743,7 +792,7 @@ class KPlotManager : public KManager {
 
 					for(const auto& roc_tmp : rocs){
 						//add to legend in order
-						kleg->AddEntry(roc_tmp.graph,roc_tmp.legname,roc_tmp.style->GetLegOpt(),roc_tmp.panel);
+						roc_tmp.AddToLegend(kleg);
 					}
 
 					//draw blank histo for axes
@@ -751,8 +800,8 @@ class KPlotManager : public KManager {
 					//draw sets
 					pad1->cd();
 					for(const auto& roc_tmp : rocs){
-						roc_tmp.graph->Draw(roc_tmp.style->GetDrawOpt("same").c_str()); //should this be "c" instead for smooth curve?
-						
+						roc_tmp.Draw();
+
 						//save graphs in root file if requested
 						if(out_file){
 							roc_tmp.SaveGraph(roc_name,out_file);
