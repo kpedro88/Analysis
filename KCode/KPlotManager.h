@@ -547,6 +547,9 @@ class KPlotManager : public KManager {
 			}
 			
 			//draw each plot - normalization, legend, ratio
+			int rebin = 0; globalOpt->Get("rebin",rebin); //todo: allow per-histo rebin option
+			bool printyield = globalOpt->Get("printyield",false);
+			bool unitnorm = globalOpt->Get("unitnorm",false);
 			for(auto& p : MyPlots.GetTable()){
 				//get drawing objects from KPlot
 				TCanvas* can = p.second->GetCanvas();
@@ -570,16 +573,19 @@ class KPlotManager : public KManager {
 				//and add to legend
 				double yield = 0;
 				if(yieldref) yield = yieldref->GetYield();
-				if(globalOpt->Get("printyield",false)) cout << p.first << " yield:" << endl;
+				if(printyield) cout << p.first << " yield:" << endl;
+				bool yieldnorm = p.second->GetLocalOpt()->Get("yieldnorm",false);
+				bool bindivide = p.second->GetLocalOpt()->Get("bindivide",false);
 				for(unsigned s = 0; s < MySets.size(); s++){
-					if(yieldref && p.second->GetLocalOpt()->Get("yieldnorm",false) && yield>0 && MySets[s] != yieldref) MySets[s]->Normalize(yield);
-					if(globalOpt->Get("printyield",false)) MySets[s]->PrintYield();
-					if(globalOpt->Get("unitnorm",false)) MySets[s]->Normalize(1,true);
-					if(p.second->GetLocalOpt()->Get("bindivide",false)) MySets[s]->BinDivide();
+					if(yieldref && yieldnorm && yield>0 && MySets[s] != yieldref) MySets[s]->Normalize(yield);
+					if(printyield) MySets[s]->PrintYield();
+					if(rebin) MySets[s]->Rebin(rebin);
+					if(unitnorm) MySets[s]->Normalize(1,true);
+					if(bindivide) MySets[s]->BinDivide();
 					MySets[s]->AddToLegend(kleg);
 				}
-				if(globalOpt->Get("printyield",false)) cout << endl;
-				if(p.second->GetLocalOpt()->Get("yieldnorm",false) && !yieldref){
+				if(printyield) cout << endl;
+				if(yieldnorm && !yieldref){
 					throw runtime_error("normalization to yield requested for "+p.first+", but yieldref not set. Normalization cannot be performed.");
 				}
 				
@@ -632,10 +638,11 @@ class KPlotManager : public KManager {
 					MySets[s]->GetHisto(pm.first);
 				}
 				double yield = 0;
-				if(p2map->GetTable().begin()->second->GetLocalOpt()->Get("yieldnorm",false) && yieldref){
+				bool yieldnorm = p2map->GetTable().begin()->second->GetLocalOpt()->Get("yieldnorm",false);
+				if(yieldnorm && yieldref){
 					yield = yieldref->GetYield();
 				}
-				else if(p2map->GetTable().begin()->second->GetLocalOpt()->Get("yieldnorm",false) && !yieldref){
+				else if(yieldnorm && !yieldref){
 					throw runtime_error("normalization to yield requested for "+pm.first+", but yieldref not set. Normalization cannot be performed.");
 				}
 				
@@ -645,14 +652,15 @@ class KPlotManager : public KManager {
 				//BEFORE printing yields
 				//then print yield if enabled
 				//BEFORE division by bin width if requested
-				if(globalOpt->Get("printyield",false)) cout << pm.first << " yield:" << endl;
+				if(printyield) cout << pm.first << " yield:" << endl;
 				for(unsigned s = 0; s < MySets.size(); s++){
 					KBase* theSet = MySets[s];
 					KPlot* ptmp = p2map->Get(theSet->GetName());
 					
 					if(yield>0 && theSet != yieldref) theSet->Normalize(yield);
-					if(globalOpt->Get("printyield",false)) theSet->PrintYield();
-					if(globalOpt->Get("unitnorm",false)) theSet->Normalize(1,true);
+					if(printyield) theSet->PrintYield();
+					if(rebin) theSet->Rebin(rebin);
+					if(unitnorm) theSet->Normalize(1,true);
 					if(ptmp->GetLocalOpt()->Get("bindivide",false)) theSet->BinDivide();
 					
 					//check z-axis limits after all potential normalizations are done
@@ -662,7 +670,7 @@ class KPlotManager : public KManager {
 					ztmp = theSet->GetHisto()->GetMaximum();
 					if(ztmp > zmax) zmax = ztmp;
 				}
-				if(globalOpt->Get("printyield",false)) cout << endl;
+				if(printyield) cout << endl;
 				
 				//one plot for each set
 				for(unsigned s = 0; s < MySets.size()+MyRatios.size(); s++){
