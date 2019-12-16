@@ -16,7 +16,7 @@ DRYRUN=""
 SUBDIR="Skims"
 
 #check arguments
-while getopts "ks:q:t:y:i:x:o:fdc" opt; do
+while getopts "ks:q:t:y:i:x:o:f:dc" opt; do
 	case "$opt" in
 	k) CHECKARGS="${CHECKARGS} -k"
 	;;
@@ -34,7 +34,7 @@ while getopts "ks:q:t:y:i:x:o:fdc" opt; do
 	;;
 	o) OUTDIR=$OPTARG
 	;;
-	f) FLATTEN=1
+	f) FLATTEN=$OPTARG
 	;;
 	d) DRYRUN="echo"
 	;;
@@ -58,6 +58,8 @@ if [ -n "$MOREINPUTS" ]; then
 fi
 if [[ $FLATTEN -eq 1 ]]; then
 	INPUTS="$INPUTS"',"input/input_svj_flatten_bothjet.txt"'
+elif [[ $FLATTEN -eq 1 ]]; then
+	INPUTS="$INPUTS"',"input/input_svj_flatten_bothjet_Z30.txt"'
 fi
 
 for TYPE in ${TYPES[@]}; do

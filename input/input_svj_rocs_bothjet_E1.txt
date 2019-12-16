@@ -1,7 +1,7 @@
 OPTION
 string+:rocsuffix[_bothjetE1]
 vstring:disable_branches[*]
-string:extfilename[test/svj_dijetmtdetahadloosemf_bothjet_E1.root]
+string:extfilename[test/svj_dijetmtdetahadloosemf_bothjet_E1_Z30.root]
 bool:rocminus1[1]
 
 HISTO
