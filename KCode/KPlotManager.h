@@ -344,7 +344,10 @@ class KPlotManager : public KManager {
 			globalOpt->Get("roc_bkg",s_roc_bkg);
 			
 			//check for special status sets
+			vector<string> s_names; s_names.reserve(MySets.size());
 			for(unsigned s = 0; s < MySets.size(); s++){
+				s_names.push_back(MySets[s]->GetName());
+
 				//only find each ratio set once
 				for(unsigned r = 0; r < s_numers.size(); r++){
 					if(MySets[s]->GetName()==s_numers[r]){
@@ -381,15 +384,23 @@ class KPlotManager : public KManager {
 			}
 
 			//check for missing
+			stringstream ss_numer, ss_denom;
+			string s_missing;
 			if(wants_numers and !s_numers.empty()){
 				stringstream ss;
 				KParser::printvec(s_numers,ss,",");
-				throw runtime_error("Numer sets requested but not found: "+ss.str());
+				s_missing += "Numer sets requested but not found: "+ss.str();
 			}
 			if(wants_denoms and !s_denoms.empty()){
 				stringstream ss;
 				KParser::printvec(s_denoms,ss,",");
-				throw runtime_error("Denom sets requested but not found: "+ss.str());
+				if(!s_missing.empty()) s_missing += "\n";
+				s_missing += "Denom sets requested but not found: "+ss.str();
+			}
+			if(!s_missing.empty()){
+				stringstream sss;
+				KParser::printvec(s_names,sss,",");
+				throw runtime_error(s_missing+"\nAvailable: "+sss.str());
 			}
 			
 			//numer:denom ratio cases: 1:1, 1:x, x:1
