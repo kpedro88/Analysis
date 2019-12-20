@@ -73,22 +73,29 @@ class Sample(object):
         self.output.append(htmp)
     def hadd_nominal(self, outname):
         self.hadd([syst["nominal"] for year,syst in self.years.iteritems()], outname)
-    def hadd_syst(self, syst):
+    def hadd_syst(self, syst, correl=false):
         if syst=="nominal": return
-        # make each year variation (adding nominal histos from other years)
-        done_years = []
-        for year1 in self.years:
-            if syst not in self.years[year1]:
-                fprint("Warning: syst "+syst+" not present for year "+year1)
+        if correl:
+            # add up for all years
             hlist = []
-            # 2018PRE and 2018POST systs should be considered together as 2018
-            subyear = year1[:4]
-            if subyear in done_years: continue
-            for year2 in self.years:
-                if subyear==year2[:4]: hlist.append(self.years[year2][syst])
-                else: hlist.append(self.years[year2]["nominal"])
-            self.hadd(hlist,self.name+"_"+syst+"_"+subyear)
-            done_years.append(subyear)
+            for year in self.years:
+                hlist.append(self.years[year][syst])
+                self.hadd(hlist,self.name+"_"+syst+"_"+"Run2")
+        else:
+            # make each year variation (adding nominal histos from other years)
+            done_years = []
+            for year1 in self.years:
+                if syst not in self.years[year1]:
+                    fprint("Warning: syst "+syst+" not present for year "+year1)
+                hlist = []
+                # 2018PRE and 2018POST systs should be considered together as 2018
+                subyear = year1[:4]
+                if subyear in done_years: continue
+                for year2 in self.years:
+                    if subyear==year2[:4]: hlist.append(self.years[year2][syst])
+                    else: hlist.append(self.years[year2]["nominal"])
+                self.hadd(hlist,self.name+"_"+syst+"_"+subyear)
+                done_years.append(subyear)
 
 class SplitDir(object):
     def __init__(self, name, min, max=None):
@@ -129,6 +136,12 @@ if __name__=="__main__":
         ("data",[]),
         ("bkg",[]),
         ("sig",[]),
+    ])
+
+    # hardcoded list of correlated systematics
+    correl_systs = set([
+        "JESup",
+        "JESdown",
     ])
 
     from ROOT import *
@@ -179,7 +192,7 @@ if __name__=="__main__":
         sig.hadd_nominal(sig.name)
         # add up uncorrelated systs for sig
         for syst in sig.systs:
-            sig.hadd_syst(syst)
+            sig.hadd_syst(syst, syst in correl_systs)
         fprint("Added "+sig.name)
 
     outf = TFile.Open(args.out,"RECREATE")
