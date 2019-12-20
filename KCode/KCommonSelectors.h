@@ -136,7 +136,7 @@ class KJetMatchSelector : public KSelector {
 			for(unsigned jj = 0; jj < njet_; ++jj){
 				vector<double> discrs; discrs.reserve(JetIndices[jj].size());
 				for(auto j : JetIndices[jj]) discrs.push_back(looper->Jets_bJetTagDeepCSVBvsAll->at(j));
-				JetsAK8_maxBvsAll[jj] = *(TMath::LocMax(discrs.begin(),discrs.end()));
+				if(!discrs.empty()) JetsAK8_maxBvsAll[jj] = *(TMath::LocMax(discrs.begin(),discrs.end()));
 			}
 
 			return true;

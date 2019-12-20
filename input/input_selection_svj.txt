@@ -157,6 +157,10 @@ JERup
 	Jet	s:vartype[JERup]
 JERdown
 	Jet	s:vartype[JERdown]
+JESup
+	Jet	s:vartype[JESup]	d:AK8factor[1.04]	d:AK4factor[1.03]	i:njets[2]
+JESdown
+	Jet	s:vartype[JESdown]	d:AK8factor[.96]	d:AK4factor[.97]	i:njets[2]
 fixedFracs
 	LepFrac	b:loose[1]
 

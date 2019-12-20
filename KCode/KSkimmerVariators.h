@@ -126,7 +126,7 @@ REGISTER_VARIATOR(Clean);
 //for: jet systematics (JECs, JERs)
 class KJetVariator : public KVariator {
 	public:
-		enum vartypes { NoVar=0, JECup=1, JECdown=2, JERup=3, JERdown=4 };
+		enum vartypes { NoVar=0, JECup=1, JECdown=2, JERup=3, JERdown=4, JESup=5, JESdown=6 };
 		//constructor
 		KJetVariator() : KVariator() { }
 		KJetVariator(string name_, OptionMap* localOpt_) : KVariator(name_,localOpt_), vtype(NoVar), Jets(new vector<TLorentzVector>), JetsAK8(new vector<TLorentzVector>)
@@ -138,6 +138,15 @@ class KJetVariator : public KVariator {
 			else if(vname=="JECdown") vtype = JECdown;
 			else if(vname=="JERup") vtype = JERup;
 			else if(vname=="JERdown") vtype = JERdown;
+			else if(vname=="JESup") vtype = JESup;
+			else if(vname=="JESdown") vtype = JESdown;
+
+			//check JES-specific options
+			if(vtype==JESup or vtype==JESdown){
+				localOpt->Get("AK8factor",AK8factor);
+				localOpt->Get("AK4factor",AK4factor);
+				localOpt->Get("njets",njets);
+			}
 		}
 		~KJetVariator() {
 			delete Jets;
@@ -147,7 +156,7 @@ class KJetVariator : public KVariator {
 			linkbranches = {
 				//4-vector modified "by hand"
 				new KLinkedBranchVL(KBranchVL(&looper->Jets,"Jets"),KBranchVL(&Jets)),
-				//scalars get replaced
+				//scalars get replaced (todo: implement JES recalculation for these)
 				new KLinkedBranchI(KBranchI(&looper->BTagsDeepCSV,"BTagsDeepCSV"),vtype==JECup?KBranchI(&looper->BTagsDeepCSVJECup,"BTagsDeepCSVJECup"):vtype==JECdown?KBranchI(&looper->BTagsDeepCSVJECdown,"BTagsDeepCSVJECdown"):vtype==JERup?KBranchI(&looper->BTagsDeepCSVJERup,"BTagsDeepCSVJERup"):vtype==JERdown?KBranchI(&looper->BTagsDeepCSVJERdown,"BTagsDeepCSVJERdown"):KBranchI(NULL,"")),
 				new KLinkedBranchI(KBranchI(&looper->BTags,"BTags"),vtype==JECup?KBranchI(&looper->BTagsJECup,"BTagsJECup"):vtype==JECdown?KBranchI(&looper->BTagsJECdown,"BTagsJECdown"):vtype==JERup?KBranchI(&looper->BTagsJERup,"BTagsJERup"):vtype==JERdown?KBranchI(&looper->BTagsJERdown,"BTagsJERdown"):KBranchI(NULL,"")),
 				new KLinkedBranchD(KBranchD(&looper->DeltaPhi1,"DeltaPhi1"),vtype==JECup?KBranchD(&looper->DeltaPhi1JECup,"DeltaPhi1JECup"):vtype==JECdown?KBranchD(&looper->DeltaPhi1JECdown,"DeltaPhi1JECdown"):vtype==JERup?KBranchD(&looper->DeltaPhi1JERup,"DeltaPhi1JERup"):vtype==JERdown?KBranchD(&looper->DeltaPhi1JERdown,"DeltaPhi1JERdown"):KBranchD(NULL,"")),
@@ -351,34 +360,46 @@ class KJetVariator : public KVariator {
 			}
 
 			clear();
-			
-			//recompute 4-vector w/ desired unc
-			const auto& Jets_origIndex = *looper->Jets_origIndex;
-			const auto& Jets_jerFactor = *looper->Jets_jerFactor;
+
 			const auto& Jets_orig = *looper->Jets;
-
-			//get branches depending on which uncertainty type is chosen
-			const auto& JetsUnc_origIndex = vtype==JECup?*looper->JetsJECup_origIndex:vtype==JECdown?*looper->JetsJECdown_origIndex:vtype==JERup?*looper->JetsJERup_origIndex:vtype==JERdown?*looper->JetsJERdown_origIndex:*looper->Jets_origIndex; //last one is a dummy value
-			const auto& JetsUnc_jerFactor = vtype==JECup?*looper->JetsJECup_jerFactor:vtype==JECdown?*looper->JetsJECdown_jerFactor:*looper->Jets_jerFactor; //last one is a dummy value
-			const auto& Jets_unc = vtype==JECup?*looper->Jets_jecUnc:vtype==JECdown?*looper->Jets_jecUnc:vtype==JERup?*looper->Jets_jerFactorUp:vtype==JERdown?*looper->Jets_jerFactorDown:*looper->Jets_jecFactor; //last one is a dummy value
-
-			RecomputeJets(Jets_origIndex, Jets_jerFactor, Jets_orig, JetsUnc_origIndex, JetsUnc_jerFactor, Jets_unc, Jets, order);
-
-			//now the same for AK8
-			const auto& JetsAK8_origIndex = *looper->JetsAK8_origIndex;
-			const auto& JetsAK8_jerFactor = *looper->JetsAK8_jerFactor;
 			const auto& JetsAK8_orig = *looper->JetsAK8;
+			if(vtype==JESup or vtype==JESdown){
+				TLorentzVector METVec; METVec.SetPtEtaPhiE(looper->MET,0,looper->METPhi,looper->MET);
 
-			//get branches depending on which uncertainty type is chosen
-			const auto& JetsAK8Unc_origIndex = vtype==JECup?*looper->JetsAK8JECup_origIndex:vtype==JECdown?*looper->JetsAK8JECdown_origIndex:vtype==JERup?*looper->JetsAK8JERup_origIndex:vtype==JERdown?*looper->JetsAK8JERdown_origIndex:*looper->JetsAK8_origIndex; //last one is a dummy value
-			const auto& JetsAK8Unc_jerFactor = vtype==JECup?*looper->JetsAK8JECup_jerFactor:vtype==JECdown?*looper->JetsAK8JECdown_jerFactor:*looper->JetsAK8_jerFactor; //last one is a dummy value
-			const auto& JetsAK8_unc = vtype==JECup?*looper->JetsAK8_jecUnc:vtype==JECdown?*looper->JetsAK8_jecUnc:vtype==JERup?*looper->JetsAK8_jerFactorUp:vtype==JERdown?*looper->JetsAK8_jerFactorDown:*looper->JetsAK8_jecFactor; //last one is a dummy value
+				ScaleJetsMET(Jets_orig, AK4factor, njets, Jets, order, METVec, true);
+				//only modify MET based on AK4 jets
+				ScaleJetsMET(JetsAK8_orig, AK8factor, njets, JetsAK8, orderAK8, METVec);
 
-			RecomputeJets(JetsAK8_origIndex, JetsAK8_jerFactor, JetsAK8_orig, JetsAK8Unc_origIndex, JetsAK8Unc_jerFactor, JetsAK8_unc, JetsAK8, orderAK8);
+				MET = METVec.Pt();
+				METPhi = METVec.Phi();
+			}
+			else {
+				//recompute 4-vector w/ desired unc
+				const auto& Jets_origIndex = *looper->Jets_origIndex;
+				const auto& Jets_jerFactor = *looper->Jets_jerFactor;
 
-			//vary MET coherently			
-			MET = vtype==JECup?looper->METUp->at(1):vtype==JECdown?looper->METDown->at(1):vtype==JERup?looper->METUp->at(0):vtype==JERdown?looper->METDown->at(0):looper->MET;
-			METPhi = vtype==JECup?looper->METPhiUp->at(1):vtype==JECdown?looper->METPhiDown->at(1):vtype==JERup?looper->METPhiUp->at(0):vtype==JERdown?looper->METPhiDown->at(0):looper->METPhi;
+				//get branches depending on which uncertainty type is chosen
+				const auto& JetsUnc_origIndex = vtype==JECup?*looper->JetsJECup_origIndex:vtype==JECdown?*looper->JetsJECdown_origIndex:vtype==JERup?*looper->JetsJERup_origIndex:vtype==JERdown?*looper->JetsJERdown_origIndex:*looper->Jets_origIndex; //last one is a dummy value
+				const auto& JetsUnc_jerFactor = vtype==JECup?*looper->JetsJECup_jerFactor:vtype==JECdown?*looper->JetsJECdown_jerFactor:*looper->Jets_jerFactor; //last one is a dummy value
+				const auto& Jets_unc = vtype==JECup?*looper->Jets_jecUnc:vtype==JECdown?*looper->Jets_jecUnc:vtype==JERup?*looper->Jets_jerFactorUp:vtype==JERdown?*looper->Jets_jerFactorDown:*looper->Jets_jecFactor; //last one is a dummy value
+
+				RecomputeJets(Jets_origIndex, Jets_jerFactor, Jets_orig, JetsUnc_origIndex, JetsUnc_jerFactor, Jets_unc, Jets, order);
+
+				//now the same for AK8
+				const auto& JetsAK8_origIndex = *looper->JetsAK8_origIndex;
+				const auto& JetsAK8_jerFactor = *looper->JetsAK8_jerFactor;
+
+				//get branches depending on which uncertainty type is chosen
+				const auto& JetsAK8Unc_origIndex = vtype==JECup?*looper->JetsAK8JECup_origIndex:vtype==JECdown?*looper->JetsAK8JECdown_origIndex:vtype==JERup?*looper->JetsAK8JERup_origIndex:vtype==JERdown?*looper->JetsAK8JERdown_origIndex:*looper->JetsAK8_origIndex; //last one is a dummy value
+				const auto& JetsAK8Unc_jerFactor = vtype==JECup?*looper->JetsAK8JECup_jerFactor:vtype==JECdown?*looper->JetsAK8JECdown_jerFactor:*looper->JetsAK8_jerFactor; //last one is a dummy value
+				const auto& JetsAK8_unc = vtype==JECup?*looper->JetsAK8_jecUnc:vtype==JECdown?*looper->JetsAK8_jecUnc:vtype==JERup?*looper->JetsAK8_jerFactorUp:vtype==JERdown?*looper->JetsAK8_jerFactorDown:*looper->JetsAK8_jecFactor; //last one is a dummy value
+
+				RecomputeJets(JetsAK8_origIndex, JetsAK8_jerFactor, JetsAK8_orig, JetsAK8Unc_origIndex, JetsAK8Unc_jerFactor, JetsAK8_unc, JetsAK8, orderAK8);
+
+				//vary MET coherently			
+				MET = vtype==JECup?looper->METUp->at(1):vtype==JECdown?looper->METDown->at(1):vtype==JERup?looper->METUp->at(0):vtype==JERdown?looper->METDown->at(0):looper->MET;
+				METPhi = vtype==JECup?looper->METPhiUp->at(1):vtype==JECdown?looper->METPhiDown->at(1):vtype==JERup?looper->METPhiUp->at(0):vtype==JERdown?looper->METPhiDown->at(0):looper->METPhi;
+			}
 
 			//recompute scalars by hand
 			TLorentzVector vjj;
@@ -405,6 +426,33 @@ class KJetVariator : public KVariator {
 				//set to variation
 				branch->Vary();
 			}
+		}
+		virtual void ScaleJetsMET(const vector<TLorentzVector>& Jets_orig, double factor, int n,
+								  vector<TLorentzVector>* theJets, vector<unsigned>& theOrder, TLorentzVector& theMET, bool doMET=false)
+		{
+			theJets->reserve(Jets_orig.size());
+			theOrder.reserve(Jets_orig.size());
+			TLorentzVector v_old, v_new;
+			if(n<0) n = Jets_orig.size();
+			for(unsigned j = 0; j < Jets_orig.size(); ++j){
+				if(j<n){
+					theJets->push_back(Jets_orig[j]*factor);
+					v_old += Jets_orig[j];
+					v_new += theJets->back();
+				}
+				else theJets->push_back(Jets_orig[j]);
+			}
+
+			//get sorted indices
+			theOrder = vector<unsigned>(theJets->size());
+			iota(theOrder.begin(),theOrder.end(),0);
+			sort(theOrder.begin(),theOrder.end(), [&](unsigned i, unsigned j){ return theJets->at(i).Pt() > theJets->at(j).Pt(); });
+
+			//apply sort to jets
+			KMath::apply_permutation_in_place(*theJets, theOrder);
+
+			//propagate to MET
+			if(doMET) theMET = theMET + v_old - v_new;
 		}
 		virtual void RecomputeJets(const vector<int>& Jets_origIndex, const vector<double>& Jets_jerFactor, const vector<TLorentzVector>& Jets_orig,
 								   const vector<int>& JetsUnc_origIndex, const vector<double>& JetsUnc_jerFactor, const vector<double>& Jets_unc,
@@ -460,6 +508,8 @@ class KJetVariator : public KVariator {
 		
 		//member variables
 		vartypes vtype;
+		double AK8factor, AK4factor;
+		int njets;
 		vector<unsigned> order, orderAK8;
 		vector<TLorentzVector> *Jets, *JetsAK8;
 		double DeltaPhi1_AK8;

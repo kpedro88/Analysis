@@ -114,6 +114,23 @@ namespace KMath {
 		double rms = TMath::Sqrt(tot* sumw/(sumw*sumw - sumw2));
 		return make_pair(mean,rms);
 	}
+	//to apply an existing sort to a collection
+	template <typename Vec>
+	void apply_permutation_in_place(Vec& vec, const vector<unsigned>& order){
+		vector<bool> done(vec.size());
+		for(unsigned i = 0; i < vec.size(); ++i){
+			if(done[i]) continue;
+			done[i] = true;
+			unsigned prev_j = i;
+			unsigned j = order[i];
+			while(i != j){
+				swap(vec[prev_j],vec[j]);
+				done[j] = true;
+				prev_j = j;
+				j = order[j];
+			}
+		}
+	}
 }
 
 #endif
