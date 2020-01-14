@@ -1,0 +1,15 @@
+OPTION
+bool:roc[0]
+vstring:disable_branches[*]
+vstring:selections[simg]
+
+SELECTION
+simg
+	MCWeight
+	DarkHadronMET
+	Histo
+
+HISTO
+MThypAK8	i:xnum[100]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{T} (^{}m_{#slash{E}_{T}} = ^{}m_{sd}(j_{1})) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+MTdarkAK8	i:xnum[100]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{T} (^{}m_{#slash{E}_{T}} = dark mass)) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+MTAK8	i:xnum[100]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]

@@ -32,6 +32,7 @@
 #include <array>
 #include <tuple>
 #include <functional>
+#include <unordered_set>
 
 using namespace std;
 
@@ -1271,6 +1272,75 @@ class KDarkHadronSelector : public KSelector {
 		vector<double> rinv;
 };
 REGISTER_SELECTOR(DarkHadron);
+
+//---------------------------------------------------------------
+//get gen-level MET quantities from dark hadrons
+class KDarkHadronMETSelector : public KSelector {
+	public:
+		//constructor
+		KDarkHadronMETSelector() : KSelector() { }
+		KDarkHadronMETSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), njet(2) {
+			canfail = false;
+			//check options
+			localOpt->Get("njet",njet);
+		}
+		virtual void ListBranches(){
+			branches.insert(branches.end(),{
+				"JetsAK8",
+				"GenParticles",
+				"GenParticles_PdgId",
+				"GenParticles_ParentIdx",
+			});
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			unsigned njet_ = min(njet,(unsigned)looper->JetsAK8->size());
+			//clear
+			JetsAK8_dark.clear(); JetsAK8_dark.reserve(njet_);
+			DarkMass = 0.; DarkPt = 0.;
+
+			//make list of stable dark hadrons
+			unordered_set<int> dark_indices;
+			for(unsigned g = 0; g < looper->GenParticles->size(); ++g){
+				int pdgid = abs(looper->GenParticles_PdgId->at(g));
+				//check only DM particles
+				if(pdgid != 51 and pdgid != 52 and pdgid != 53) continue;
+				//store parent index
+				dark_indices.insert(looper->GenParticles_ParentIdx->at(g));
+			}
+
+			//associate to jets
+			TLorentzVector vall;
+			for(unsigned j = 0; j < njet_; ++j){
+				TLorentzVector vgen;
+				for(auto g : dark_indices){
+					if(g<0) continue;
+					int pdgid = abs(looper->GenParticles_PdgId->at(g));
+					if(abs(pdgid-4900000)>1000) continue;
+					double mindR = 0.8;
+					double dR = KMath::DeltaR(looper->JetsAK8->at(j).Phi(),looper->JetsAK8->at(j).Eta(),
+											  looper->GenParticles->at(g).Phi(),looper->GenParticles->at(g).Eta());
+					if(dR<mindR){
+						vgen += looper->GenParticles->at(g);
+					}
+				}
+				JetsAK8_dark.push_back(vgen);
+				vall += vgen;
+			}
+			DarkMass = vall.M();
+			DarkPt = vall.Pt();
+			return true;
+		}
+		
+		//member variables
+		unsigned njet;
+		vector<TLorentzVector> JetsAK8_dark;
+		double DarkMass, DarkPt;
+};
+REGISTER_SELECTOR(DarkHadronMET);
 
 //---------------------------------------------------------------
 //associate gen-level info with reco jets

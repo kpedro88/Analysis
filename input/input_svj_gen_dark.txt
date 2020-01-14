@@ -1,0 +1,40 @@
+OPTION
+bool:roc[0]
+vstring:disable_branches[*]
+vstring:selections[simg]
+
+SELECTION
+simg
+	MCWeight
+	DarkHadronMET
+	Histo
+
+HISTO
+bothjetAK8darkmass	i:xnum[50]	d:xmin[0]	d:xmax[400]	s:xtitle[dark mass (j_{1,2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+leadjetAK8darkmass	i:xnum[50]	d:xmin[0]	d:xmax[400]	s:xtitle[dark mass (j_{1}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+subleadjetAK8darkmass	i:xnum[50]	d:xmin[0]	d:xmax[400]	s:xtitle[dark mass (j_{2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+leadjetAK8darkpt	i:xnum[50]	d:xmin[0]	d:xmax[1000]	s:xtitle[dark p_{T} (j_{1}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+subleadjetAK8darkpt	i:xnum[50]	d:xmin[0]	d:xmax[1000]	s:xtitle[dark p_{T} (j_{2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+darkmass	i:xnum[50]	d:xmin[0]	d:xmax[400]	s:xtitle[dark mass [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+darkpt	i:xnum[50]	d:xmin[0]	d:xmax[1000]	s:xtitle[dark p_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+msdAvgAK8	i:xnum[50]	d:xmin[0]	d:xmax[500]	s:xtitle[#LTm_{sd}#GT [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+leadjetAK8msd	i:xnum[50]	d:xmin[0]	d:xmax[500]	s:xtitle[m_{sd}(j_{1}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+subleadjetAK8msd	i:xnum[50]	d:xmin[0]	d:xmax[500]	s:xtitle[m_{sd}(j_{2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+MThypAK8	i:xnum[100]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{T} (^{}m_{#slash{E}_{T}} = ^{}m_{sd}(j_{1})) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+MTdarkAK8	i:xnum[100]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{T} (^{}m_{#slash{E}_{T}} = dark mass)) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+MTAK8	i:xnum[100]	d:xmin[0]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+
+HISTO2D
+leadjetAK8darkmass_subleadjetAK8darkmass	i:xnum[50]	d:xmin[0]	d:xmax[400]	s:xtitle[dark mass (j_{1}) [GeV]]	i:ynum[50]	d:ymin[0]	d:ymax[400]	s:ytitle[dark mass (j_{2}) [GeV]]	s:ztitle[arbitrary units]	b:ratio[0]	b:logz[1]
+leadjetAK8darkmass_leadjetAK8darkpt	i:xnum[50]	d:xmin[0]	d:xmax[400]	s:xtitle[dark mass (j_{1}) [GeV]]	i:ynum[50]	d:ymin[0]	d:ymax[1000]	s:ytitle[dark p_{T} (j_{1}) [GeV]]	s:ztitle[arbitrary units]	b:ratio[0]	b:logz[1]
+subleadjetAK8darkmass_subleadjetAK8darkpt	i:xnum[50]	d:xmin[0]	d:xmax[400]	s:xtitle[dark mass (j_{2}) [GeV]]	i:ynum[50]	d:ymin[0]	d:ymax[1000]	s:ytitle[dark p_{T} (j_{2}) [GeV]]	s:ztitle[arbitrary units]	b:ratio[0]	b:logz[1]
+bothjetAK8darkmass_bothjetAK8msd	i:xnum[50]	d:xmin[0]	d:xmax[400]	s:xtitle[dark mass (j_{1,2}) [GeV]]	i:ynum[50]	d:ymin[0]	d:ymax[500]	s:ytitle[m_{sd}(j_{1,2}) [GeV]]	s:ztitle[arbitrary units]	b:ratio[0]	b:logz[1]
+leadjetAK8darkmass_leadjetAK8msd	i:xnum[50]	d:xmin[0]	d:xmax[400]	s:xtitle[dark mass (j_{1}) [GeV]]	i:ynum[50]	d:ymin[0]	d:ymax[500]	s:ytitle[m_{sd}(j_{1}) [GeV]]	s:ztitle[arbitrary units]	b:ratio[0]	b:logz[1]
+subleadjetAK8darkmass_subleadjetAK8msd	i:xnum[50]	d:xmin[0]	d:xmax[400]	s:xtitle[dark mass (j_{2}) [GeV]]	i:ynum[50]	d:ymin[0]	d:ymax[500]	s:ytitle[m_{sd}(j_{2}) [GeV]]	s:ztitle[arbitrary units]	b:ratio[0]	b:logz[1]
+darkmass_met	i:xnum[50]	d:xmin[0]	d:xmax[400]	s:xtitle[dark mass [GeV]]	i:ynum[50]	d:ymin[0]	d:ymax[1500]	s:ytitle[#slash{E}_{T} [GeV]]	s:ztitle[arbitrary units]	b:ratio[0]	b:logz[1]
+darkpt_met	i:xnum[50]	d:xmin[0]	d:xmax[1000]	s:xtitle[dark p_{T} [GeV]]	i:ynum[50]	d:ymin[0]	d:ymax[1500]	s:ytitle[#slash{E}_{T} [GeV]]	s:ztitle[arbitrary units]	b:ratio[0]	b:logz[1]
+darkmass_darkpt	i:xnum[50]	d:xmin[0]	d:xmax[400]	s:xtitle[dark mass [GeV]]	i:ynum[50]	d:ymin[0]	d:ymax[1000]	s:ytitle[dark p_{T} [GeV]]	s:ztitle[arbitrary units]	b:ratio[0]	b:logz[1]
+darkmass_msdAvgAK8	i:xnum[50]	d:xmin[0]	d:xmax[400]	s:xtitle[dark mass [GeV]]	i:ynum[50]	d:ymin[0]	d:ymax[500]	s:ytitle[#LTm_{sd}#GT [GeV]]	s:ztitle[arbitrary units]	b:ratio[0]	b:logz[1]
+darkmass_leadjetAK8msd	i:xnum[50]	d:xmin[0]	d:xmax[400]	s:xtitle[dark mass [GeV]]	i:ynum[50]	d:ymin[0]	d:ymax[500]	s:ytitle[m_{sd}(j_{1}) [GeV]]	s:ztitle[arbitrary units]	b:ratio[0]	b:logz[1]
+darkmass_subleadjetAK8msd	i:xnum[50]	d:xmin[0]	d:xmax[400]	s:xtitle[dark mass [GeV]]	i:ynum[50]	d:ymin[0]	d:ymax[500]	s:ytitle[m_{sd}(j_{2}) [GeV]]	s:ztitle[arbitrary units]	b:ratio[0]	b:logz[1]
+darkmass_MJJAK8	i:xnum[50]	d:xmin[0]	d:xmax[400]	s:xtitle[dark mass [GeV]]	i:ynum[100]	d:ymin[0]	d:ymax[6000]	s:ytitle[M_{jj} [GeV]]	s:ztitle[arbitrary units]	b:ratio[0]	b:logz[1]

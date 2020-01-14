@@ -636,6 +636,42 @@ class KFiller_MTSDAK8 : public KFiller {
 };
 REGISTER_FILLER(MTSDAK8);
 
+//transverse mass w/ MET mass hypothesis
+class KFiller_MThypAK8 : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void ListBranches() { branches = {"JetsAK8","JetsAK8_softDropMass","MET","METPhi"}; }	
+		virtual void Fill(KValue& value, double w) {
+			TLorentzVector vjj;
+			for(unsigned j = 0; j < min(2ul,looper->JetsAK8->size()); ++j){
+				vjj += looper->JetsAK8->at(j);
+			}
+			double MT = KMath::TransverseMass(vjj.Px(),vjj.Py(),vjj.M(),looper->MET*cos(looper->METPhi),looper->MET*sin(looper->METPhi),looper->JetsAK8_softDropMass->at(0));
+			value.Fill(MT,w);
+		}
+};
+REGISTER_FILLER(MThypAK8);
+
+//transverse mass w/ gen MET mass from dark hadrons
+class KFiller_MTdarkAK8 : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void CheckDeps(){ DarkHadronMET = sel->Get<KDarkHadronMETSelector*>("DarkHadronMET"); }
+		virtual void ListBranches() { branches = {"JetsAK8","MET","METPhi"}; }	
+		virtual void Fill(KValue& value, double w) {
+			if(!DarkHadronMET) return;
+			TLorentzVector vjj;
+			for(unsigned j = 0; j < min(2ul,looper->JetsAK8->size()); ++j){
+				vjj += looper->JetsAK8->at(j);
+			}
+			double MT = KMath::TransverseMass(vjj.Px(),vjj.Py(),vjj.M(),looper->MET*cos(looper->METPhi),looper->MET*sin(looper->METPhi),DarkHadronMET->DarkMass);
+			value.Fill(MT,w);
+		}
+		//member variables
+		KDarkHadronMETSelector* DarkHadronMET = NULL;
+};
+REGISTER_FILLER(MTdarkAK8);
+
 //dijet+truth mass
 class KFiller_MmcAK8 : public KFiller {
 	public:
@@ -770,6 +806,17 @@ class KFiller_msdAsymAK8 : public KFiller {
 		}
 };
 REGISTER_FILLER(msdAsymAK8);
+
+//AK8 dijet m_sd average
+class KFiller_msdAvgAK8 : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_softDropMass"}; }
+		virtual void Fill(KValue& value, double w) {
+			if(looper->JetsAK8_softDropMass->size()>1) value.Fill(0.5*(looper->JetsAK8_softDropMass->at(0)+looper->JetsAK8_softDropMass->at(1)),w);
+		}
+};
+REGISTER_FILLER(msdAvgAK8);
 
 //HT from AK8 jets
 class KFiller_htAK8 : public KFiller {
@@ -936,6 +983,28 @@ class KFiller_hemjetpt : public KFiller {
 		}
 };
 REGISTER_FILLER(hemjetpt);
+
+//ratio of jet mults
+class KFiller_multratio : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_multiplicity"}; }
+		virtual void Fill(KValue& value, double w) {
+			if(looper->JetsAK8_multiplicity->size()>1) value.Fill(float(looper->JetsAK8_multiplicity->at(0))/float(looper->JetsAK8_multiplicity->at(1)),w);
+		}
+};
+REGISTER_FILLER(multratio);
+
+//ratio of jet nconst
+class KFiller_nconstratio : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_chargedMultiplicity","Jets_neutralMultiplicity"}; }
+		virtual void Fill(KValue& value, double w) {
+			if(looper->JetsAK8_chargedMultiplicity->size()>1) value.Fill(float(looper->JetsAK8_chargedMultiplicity->at(0)+looper->Jets_neutralMultiplicity->at(0))/float(looper->JetsAK8_chargedMultiplicity->at(1)+looper->Jets_neutralMultiplicity->at(1)),w);
+		}
+};
+REGISTER_FILLER(nconstratio);
 
 //-----------------------------------------------------------------------------
 //event shape quantities (from AK4 jets)
@@ -1590,6 +1659,15 @@ class KJetFiller_AK8msd : public KJetFiller {
 };
 REGISTER_JETFILLER(AK8msd);
 
+//full # constituents ("mult" has QG quality cuts)
+class KJetFiller_AK8nconst : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_chargedMultiplicity","Jets_neutralMultiplicity"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_chargedMultiplicity->size()>index) value.Fill(looper->JetsAK8_chargedMultiplicity->at(index)+looper->Jets_neutralMultiplicity->at(index),w); }
+};
+REGISTER_JETFILLER(AK8nconst);
+
 class KJetFiller_AK8nsubjet : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
@@ -1841,6 +1919,52 @@ class KJetFiller_AK8rinv : public KJetFillerDarkHadron {
 		virtual void FillPerJet_(KValue& value, double w, unsigned index) { if(DarkHadron->rinv.size()>index) value.Fill(DarkHadron->rinv[index],w); }
 };
 REGISTER_JETFILLER(AK8rinv);
+
+//-----------------------------------------------------------------------------
+//per-jet quantities based on invisible dark hadron gen info
+class KJetFillerDarkHadronMET : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void CheckDeps(){ DarkHadronMET = sel->Get<KDarkHadronMETSelector*>("DarkHadronMET"); }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(DarkHadronMET) FillPerJet_(value,w,index); }
+		virtual void FillPerJet_(KValue& value, double w, unsigned index) {}
+		//member variables
+		KDarkHadronMETSelector* DarkHadronMET = NULL;
+};
+
+class KJetFiller_AK8darkmass : public KJetFillerDarkHadronMET {
+	public:
+		using KJetFillerDarkHadronMET::KJetFillerDarkHadronMET;
+		virtual void FillPerJet_(KValue& value, double w, unsigned index) { if(DarkHadronMET->JetsAK8_dark.size()>index) value.Fill(DarkHadronMET->JetsAK8_dark[index].M(),w); }
+};
+REGISTER_JETFILLER(AK8darkmass);
+
+class KJetFiller_AK8darkpt : public KJetFillerDarkHadronMET {
+	public:
+		using KJetFillerDarkHadronMET::KJetFillerDarkHadronMET;
+		virtual void FillPerJet_(KValue& value, double w, unsigned index) { if(DarkHadronMET->JetsAK8_dark.size()>index) value.Fill(DarkHadronMET->JetsAK8_dark[index].Pt(),w); }
+};
+REGISTER_JETFILLER(AK8darkpt);
+
+class KFiller_darkmass : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void CheckDeps(){ DarkHadronMET = sel->Get<KDarkHadronMETSelector*>("DarkHadronMET"); }
+		virtual void Fill(KValue& value, double w) { if(DarkHadronMET) value.Fill(DarkHadronMET->DarkMass,w); }
+		//member variables
+		KDarkHadronMETSelector* DarkHadronMET = NULL;
+};
+REGISTER_FILLER(darkmass);
+
+class KFiller_darkpt : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void CheckDeps(){ DarkHadronMET = sel->Get<KDarkHadronMETSelector*>("DarkHadronMET"); }
+		virtual void Fill(KValue& value, double w) { if(DarkHadronMET) value.Fill(DarkHadronMET->DarkPt,w); }
+		//member variables
+		KDarkHadronMETSelector* DarkHadronMET = NULL;
+};
+REGISTER_FILLER(darkpt);
 
 //-----------------------------------------------------------------------------
 
