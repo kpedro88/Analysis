@@ -31,8 +31,8 @@ TFile* KOpen(string fname, string mode="READ", bool dothrow=true){
 	}
 	return file;
 }
-template <class T>
-T* KGet(TFile* file, string getname, bool dothrow=true){
+template <class T, class F=TFile>
+T* KGet(F* file, string getname, bool dothrow=true){
 	T* obj = static_cast<T*>(file->Get(getname.c_str()));
 	if(!obj and dothrow){
 		throw runtime_error("Could not get "+getname+" from file "+file->GetName());

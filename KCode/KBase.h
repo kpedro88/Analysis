@@ -289,16 +289,21 @@ class KBaseExt : public KBase {
 			localOpt->Get("exthisto_extra",hextra);
 			//append extra suffix to default suffix
 			if(!hextra.empty()) hsuff += "_"+hextra;
+			string dextra;
+			globalOpt->Get("exthisto_dir",dextra);
+			localOpt->Get("exthisto_dir",dextra);
+			TDirectory* dir = NULL;
+			if(!dextra.empty()) dir = KGet<TDirectory>(file,dextra);
 
 			add_ext = true;
 			if(ext_auto){
 				TKey* key;
-				TIter next(file->GetListOfKeys());
+				TIter next(dir ? dir->GetListOfKeys() : file->GetListOfKeys());
 				while((key = (TKey*)next())) {
 					string ntmp = key->GetName();
 					//look for names in the format histo_suff(_extra)
 					if(ntmp.size() > hsuff.size() and ntmp.compare(ntmp.size()-hsuff.size(),hsuff.size(),hsuff)==0){
-						auto extmp = KGet<TH1>(file,ntmp);
+						auto extmp = dir ? KGet<TH1,TDirectory>(dir,ntmp) : KGet<TH1>(file,ntmp);
 						AddHisto(ntmp.substr(0,ntmp.size()-hsuff.size()-1),extmp);
 					}
 				}
@@ -313,7 +318,7 @@ class KBaseExt : public KBase {
 					throw runtime_error("vectors of external histo input and output names have different lengths "+to_string(exthisto_in.size())+", "+to_string(exthisto_out.size())+" (in "+name+")");
 				}
 				for(unsigned i = 0; i < exthisto_in.size(); i++){
-					auto extmp = KGet<TH1>(file,exthisto_in[i]);
+					auto extmp = dir ? KGet<TH1,TDirectory>(dir,exthisto_in[i]) : KGet<TH1>(file,exthisto_in[i]);
 					AddHisto(exthisto_out[i],extmp);
 				}
 			}
