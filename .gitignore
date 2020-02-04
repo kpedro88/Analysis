@@ -84,6 +84,7 @@ input/fast*/
 /processDatacardsSVJ.py
 /finalizeDatacardsSVJ.sh
 /datacardPlots.sh
+/compareLimits.C
 
 # linked by setupXML.sh
 /KMVA/pugi*.*

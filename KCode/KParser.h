@@ -329,6 +329,9 @@ namespace KParser {
 				KParser::processOption(line,option);
 			}
 		}
+		else {
+			throw runtime_error("could not open input file \""+val+"\".");
+		}
 	}
 	void addOptionInput(OptionMap* option, const KParserOption& opt){
 		//name is not used
@@ -383,6 +386,32 @@ namespace KParser {
 		process(line,'\t',fields);
 		KNamedN<N>* tmp = new KNamedN<N>(fields);
 		return tmp;
+	}
+	//for use in standalone macros: just provides vector of KNamed
+	vector<KNamed*> processStandalone(string fname){
+		vector<KNamed*> results;
+		string line;
+		ifstream infile(fname.c_str());
+		if(infile.is_open()){
+			while(getline(infile,line)){
+				//skip commented lines
+				if(line[0]=='#') continue;
+				//skip blank lines
+				if(line.size()<2) continue;
+				
+				//check for carriage returns (not allowed)
+				if(line.back()=='\r') {
+					line.pop_back();
+				}
+				
+				//process line
+				results.push_back(KParser::processNamed<1>(line));
+			}
+		}
+		else {
+			throw runtime_error("could not open input file \""+fname+"\".");
+		}
+		return results;
 	}
 	KSelector* processSelector(KNamed* tmp);
 	KVariator* processVariator(KNamed* tmp);
