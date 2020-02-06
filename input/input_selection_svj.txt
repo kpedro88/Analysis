@@ -145,6 +145,24 @@ dijetmtmaxdetahadloose
 	DeltaEta	d:min[1.5]	d:max[-1]
 	vetoloose
 	endcommon
+dijetlowmtdetahadloosefull
+	NormType
+	dijetlowmt
+	deta
+	vetoloose
+	METFilter	b:ecaldeadcell[0]
+	phiveto
+	DeltaPhiMinAK8	d:max[0.8]
+	endcommon
+dijetlowmthighdetahadloosefull
+	NormType
+	dijetlowmt
+	highdeta
+	vetoloose
+	METFilter	b:ecaldeadcell[0]
+	phiveto
+	DeltaPhiMinAK8	d:max[0.8]
+	endcommon
 
 VARIATION
 central
