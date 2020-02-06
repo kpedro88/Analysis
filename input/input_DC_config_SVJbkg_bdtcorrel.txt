@@ -1,0 +1,3 @@
+input:options[input/input_DC_config_SVJbkg.txt]
+string:input[input/input_svj_DC_bdtcorrel.txt]
+string:outpre[bdtSVJtag_]

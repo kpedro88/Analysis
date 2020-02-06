@@ -1,0 +1,34 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+INPUT
+input/input_global.txt
+
+OPTION
+int:yieldprecision[4]
+vstring:disable_branches[*]
+bool:closefiles[1]
+bool:debugcut[1]
+string:lumi_text[(13 TeV)]
+string:prelim_text[Simulation]
+bool:unitnorm[1]
+string:extfilename[test/bdtcorrel_bkg.root]
+
+HISTO2D
+leadjetAK8bdtSVJtag_subleadjetAK8bdtSVJtag	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[BDT discriminator (j_{1})]	i:ynum[50]	d:ymin[0]	d:ymax[1]	s:ytitle[BDT discriminator (j_{2})]	s:ztitle[arbitrary units]	b:ratio[0]	vd:xcuts[0.55]	vd:ycuts[0.55]
+
+SET
+hist	mc	QCD	s:legname[QCD]	c:color[kBlue + 2]	i:panel[1]
+	base	ext	QCD	vs:exthisto_in[QCD]	vs:exthisto_out[leadjetAK8bdtSVJtag_subleadjetAK8bdtSVJtag]
+hist	mc	ttbar	s:legname[t#bar{t}]	c:color[kOrange - 2]	i:panel[1]
+	base	ext	TT	vs:exthisto_in[TT]	vs:exthisto_out[leadjetAK8bdtSVJtag_subleadjetAK8bdtSVJtag]
+hist	mc	wjets	s:legname[W(l#nu)+jets]	c:color[kOrange + 1]	i:panel[1]
+	base	ext	WJets	vs:exthisto_in[WJets]	vs:exthisto_out[leadjetAK8bdtSVJtag_subleadjetAK8bdtSVJtag]
+hist	mc	zinv	s:legname[Z(#nu#nu)+jets]	c:color[kViolet + 1]	i:panel[1]
+	base	ext	ZJets	vs:exthisto_in[ZJets]	vs:exthisto_out[leadjetAK8bdtSVJtag_subleadjetAK8bdtSVJtag]
+
