@@ -19,6 +19,7 @@ DCCONFIG=$7
 PROCESS=$8
 TYPE=$9
 YEAR=${10}
+REGION=${11}
 
 echo ""
 echo "parameter set:"
@@ -32,6 +33,7 @@ echo "DCCONFIG:   $DCCONFIG"
 echo "PROCESS:    $PROCESS"
 echo "TYPE:       $TYPE"
 echo "YEAR:       $YEAR"
+echo "REGION:     $REGION"
 
 #get sample
 source export${SNAME}.sh
@@ -59,7 +61,7 @@ fi
 for NEWSAMPLE in ${NEWSAMPLES[@]}; do
 	# run macro
 	echo "run: root -b -q -l 'MakeAllDCsyst.C+("'"'$DCCONFIG'","'$NEWSAMPLE'","'$INDIR'","'$SYSTS'","'$VARS'"'")' 2>&1"
-	root -b -q -l 'MakeAllDCsyst.C+("'$DCCONFIG'","'$NEWSAMPLE'","'$INDIR'","'$SYSTS'","'$VARS'")' 2>&1
+	root -b -q -l 'MakeAllDCsyst.C+("'$DCCONFIG'","'$NEWSAMPLE'","'$REGION'","'$INDIR'","'$SYSTS'","'$VARS'")' 2>&1
 
 	ROOTEXIT=$?
 

@@ -333,7 +333,7 @@ template<> void KSystProcessor<TH2F>::MakeGenMHT(KMap<double>& pctDiffMap, doubl
 
 //recompile:
 //root -b -l -q MakeAllDCsyst.C++
-void MakeAllDCsyst(string config="", string setname="", string indir="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV11", string systTypes="nominal", string varTypes=""){
+void MakeAllDCsyst(string config="", string setname="", string region="", string indir="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV11", string systTypes="nominal", string varTypes=""){
 	gErrorIgnoreLevel = kBreak;
 	
 	if(config.empty()){
@@ -344,6 +344,9 @@ void MakeAllDCsyst(string config="", string setname="", string indir="root://cms
 	if(indir[indir.size()-1] != '/') indir = indir + "/";
 
 	ModeInfo info = parseMode(config,setname);
+	//handle batch case w/ default region taken from config file
+	if(region=="default") region = "";
+	if(!region.empty()) info.region = region;
 
 	//handle batch case with no vars
 	if(varTypes=="none") varTypes = "";

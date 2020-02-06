@@ -5,6 +5,7 @@ source exportProd.sh
 JOBDIR=jobs
 STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Datacards/${RUN2PRODV}_v1
 VARS=JECup,JECdown,JERup,JERdown,SLe,SLm
+REGION=default
 CHECKARGS=""
 SUFFIX=""
 YEARS=()
@@ -79,6 +80,6 @@ for TYPE in ${TYPES[@]}; do
 
 		source export${SNAME}.sh
 
-		$DRYRUN ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} ${VARS} ${STORE} ${SNAME} ${DCCONFIG} ${#SAMPLES[@]} ${TYPE} ${YEAR}
+		$DRYRUN ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} ${VARS} ${STORE} ${SNAME} ${DCCONFIG} ${#SAMPLES[@]} ${TYPE} ${YEAR} ${REGION}
 	done
 done

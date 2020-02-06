@@ -4,6 +4,7 @@ source exportProd.sh
 
 JOBDIR=jobs
 STORE=root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/${RUN2PRODV}_v2
+REGION=default
 CHECKARGS=""
 YEARS=()
 TYPES=()
@@ -61,6 +62,6 @@ for TYPE in ${TYPES[@]}; do
 		# skip nonexistent ones
 		if [[ $? -ne 0 ]]; then continue; fi
 
-		$DRYRUN ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} ${VARS} ${STORE} ${SNAME} ${DCCONFIG} ${#SAMPLES[@]} ${TYPE} ${YEAR}
+		$DRYRUN ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} ${VARS} ${STORE} ${SNAME} ${DCCONFIG} ${#SAMPLES[@]} ${TYPE} ${YEAR} ${REGION}
 	done
 done
