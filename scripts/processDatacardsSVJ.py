@@ -1,7 +1,6 @@
 import sys
 from collections import OrderedDict
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
-from ROOT import *
 
 # make status messages useful
 def fprint(msg):
@@ -73,7 +72,7 @@ class Sample(object):
         self.output.append(htmp)
     def hadd_nominal(self, outname):
         self.hadd([syst["nominal"] for year,syst in self.years.iteritems()], outname)
-    def hadd_syst(self, syst, correl=false):
+    def hadd_syst(self, syst, correl=False):
         if syst=="nominal": return
         if correl:
             # add up for all years
@@ -129,6 +128,7 @@ if __name__=="__main__":
     parser.add_argument("-i", "--dir", dest="dir", type=str, default="", help="directory for input files")
     parser.add_argument("-f", "--files", dest="files", type=str, nargs="+", help="list of input files", required=True)
     parser.add_argument("-o", "--out", dest="out", type=str, help="output file name", required=True)
+    parser.add_argument("-n", "--no-split", dest="no_split", default=False, action="store_true", help="disable split into dirs for regions")
     args = parser.parse_args()
     
     # categories
@@ -196,6 +196,16 @@ if __name__=="__main__":
         fprint("Added "+sig.name)
 
     outf = TFile.Open(args.out,"RECREATE")
+
+    # alternative option, just save combined histos
+    if args.no_split:
+        outf.cd()
+        for cat in samples:
+            for samp in samples[cat]:
+                for h in samp.output:
+                    h.Write()
+        sys.exit(0)
+
     # split into TH1s and dirs (including cut-based using multiple bin projection)
     dirs = [
         SplitDir("lowSVJ0_2018",1),

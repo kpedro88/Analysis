@@ -3,15 +3,17 @@
 source exportProd.sh
 
 JOBDIR=jobs
-STORE=root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/${RUN2PRODV}_v2
 REGION=default
 CHECKARGS=""
 YEARS=()
 TYPES=()
 DRYRUN=""
+VERSION=${RUN2PRODV}_v2
+CONFIG=""
+NOSYST=""
 
 #check arguments
-while getopts "ky:t:d" opt; do
+while getopts "ky:t:c:v:r:sd" opt; do
 	case "$opt" in
 		k) CHECKARGS="${CHECKARGS} -k"
 		;;
@@ -19,11 +21,20 @@ while getopts "ky:t:d" opt; do
 		;;
 		t) IFS="," read -a TYPES <<< "$OPTARG"
 		;;
+		c) CONFIG=$OPTARG
+		;;
+		v) VERSION=$OPTARG
+		;;
+		r) REGION=$OPTARG
+		;;
+		s) NOSYST=true
+		;;
 		d) DRYRUN="echo"
 		;;
 	esac
 done
 
+STORE=root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/${VERSION}
 ./SKcheck.sh ${CHECKARGS}
 
 for TYPE in ${TYPES[@]}; do
@@ -48,7 +59,11 @@ for TYPE in ${TYPES[@]}; do
 		exit 1
 	fi
 
-	if [ "$TYPE" = SVJ ] || [ "$TYPE" = SVJScan ]; then
+	if [ -n "$CONFIG" ]; then
+		DCCONFIG=$CONFIG
+	fi
+
+	if [[ -z "$NOSYST" && ("$TYPE" = SVJ  ||  "$TYPE" = SVJScan) ]]; then
 		SYSTS=nominal,trigfnuncUp,trigfnuncDown,puuncUp,puuncDown,pdfalluncUp,pdfalluncDown
 		VARS=JECup,JECdown,JERup,JERdown
 	else
