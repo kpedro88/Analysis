@@ -873,7 +873,7 @@ class KPlotManager : public KManager {
 		}
 		void CloseFiles(){
 			if(globalOpt->Get("closefiles",false)){
-				out_file->Close();
+				if(out_file) out_file->Close();
 				for(unsigned s = 0; s < MySets.size(); s++){
 					MySets[s]->CloseFile();
 				}
