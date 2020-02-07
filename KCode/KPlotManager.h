@@ -52,7 +52,7 @@ class KRocEntry {
 			auto effbkg = *(bkg->GetEff());
 
 			//check for WP (before any eff transformations)
-			double wp, wp_x, wp_y; bool has_wp = localOpt->Get("wp",wp);
+			double wp, wp_x = 0, wp_y = 0; bool has_wp = localOpt->Get("wp",wp);
 			if(has_wp){
 				//find x and y values for wp
 				auto htmp = sig->GetHisto();

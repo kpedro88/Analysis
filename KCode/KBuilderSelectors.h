@@ -513,7 +513,7 @@ class KMCWeightSelector : public KSelector {
 				TH1F* h_norm = KGet<TH1F>(base->GetFile(),"PDFAllNorm");
 				int nEventProc = h_norm->GetBinContent(1);
 				pdfallnorms = vector<double>(h_norm->GetNbinsX()-1,0.);
-				for(unsigned n = 2; n <= h_norm->GetNbinsX(); ++n){
+				for(int n = 2; n <= h_norm->GetNbinsX(); ++n){
 					pdfallnorms[n-2] = double(nEventProc)/h_norm->GetBinContent(n);
 				}
 			}

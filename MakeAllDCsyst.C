@@ -269,15 +269,15 @@ template<> double KSystProcessor<TH1F>::Integral(TH1F* hist){ return hist->Integ
 template<> double KSystProcessor<TH2F>::Integral(TH2F* hist){ return hist->Integral(0,hist->GetNbinsX()+1,0,hist->GetNbinsY()+1); }
 
 template<> void KSystProcessor<TH1F>::DivideBound(TH1F* hist, const string& binname){
-	for(unsigned b = 1; b <= hist->GetNbinsX(); ++b){
+	for(int b = 1; b <= hist->GetNbinsX(); ++b){
 		DivideBound_impl(hist,b);
 		hist->GetXaxis()->SetBinLabel(b,binname.c_str());
 	}
 }
 template<> void KSystProcessor<TH2F>::DivideBound(TH2F* hist, const string& binname){
-	for(unsigned bx = 1; bx <= hist->GetNbinsX(); ++bx){
-		for(unsigned by = 1; by <= hist->GetNbinsY(); ++by){
-			unsigned b = hist->GetBin(bx,by);
+	for(int bx = 1; bx <= hist->GetNbinsX(); ++bx){
+		for(int by = 1; by <= hist->GetNbinsY(); ++by){
+			int b = hist->GetBin(bx,by);
 			DivideBound_impl(hist,b);
 			//no labels
 		}
@@ -286,7 +286,7 @@ template<> void KSystProcessor<TH2F>::DivideBound(TH2F* hist, const string& binn
 
 template<> TH1F* KSystProcessor<TH1F>::MakeStat(const string& sname, double& stat_yield){
 	TH1F* hist = (TH1F*)nominal->Clone(sname.c_str());
-	for(unsigned b = 1; b <= hist->GetNbinsX(); ++b){
+	for(int b = 1; b <= hist->GetNbinsX(); ++b){
 		MakeStat_impl(hist,b,stat_yield);
 		string slabel = "signal_MCStatErr_";
 		slabel += hist->GetXaxis()->GetBinLabel(b);
@@ -296,9 +296,9 @@ template<> TH1F* KSystProcessor<TH1F>::MakeStat(const string& sname, double& sta
 }
 template<> TH2F* KSystProcessor<TH2F>::MakeStat(const string& sname, double& stat_yield){
 	TH2F* hist = (TH2F*)nominal->Clone(sname.c_str());
-	for(unsigned bx = 1; bx <= hist->GetNbinsX(); ++bx){
-		for(unsigned by = 1; by <= hist->GetNbinsY(); ++by){
-			unsigned b = hist->GetBin(bx,by);
+	for(int bx = 1; bx <= hist->GetNbinsX(); ++bx){
+		for(int by = 1; by <= hist->GetNbinsY(); ++by){
+			int b = hist->GetBin(bx,by);
 			MakeStat_impl(hist,b,stat_yield);
 			//no labels
 		}
@@ -315,7 +315,7 @@ template<> void KSystProcessor<TH1F>::MakeGenMHT(KMap<double>& pctDiffMap, doubl
 	double g_yield = 0;
 	
 	//modify nominal as average of nominal and genMHT & compute syst as difference
-	for(unsigned b = 1; b <= nominal->GetNbinsX(); ++b){
+	for(int b = 1; b <= nominal->GetNbinsX(); ++b){
 		gsyst->SetBinContent(b, 1.0+abs(nominal->GetBinContent(b) - genMHT->GetBinContent(b))/2.0);
 		gsyst->GetXaxis()->SetBinLabel(b,"signal_MHTSyst");
 		nominal->SetBinContent(b, (nominal->GetBinContent(b) + genMHT->GetBinContent(b))/2.0);
