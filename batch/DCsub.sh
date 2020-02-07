@@ -3,7 +3,8 @@
 source exportProd.sh
 
 JOBDIR=jobs
-STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Datacards/${RUN2PRODV}_v1
+VERSION=${RUN2PRODV}_v1
+STORE=root://cmseos.fnal.gov//store/user/pedrok/SUSY2015/Analysis/Datacards/${VERSION}
 VARS=JECup,JECdown,JERup,JERdown,SLe,SLm
 REGION=default
 CHECKARGS=""
@@ -80,6 +81,9 @@ for TYPE in ${TYPES[@]}; do
 
 		source export${SNAME}.sh
 
-		$DRYRUN ./DCtemp.sh ${JOBDIR} ${INDIR} ${SYSTS} ${VARS} ${STORE} ${SNAME} ${DCCONFIG} ${#SAMPLES[@]} ${TYPE} ${YEAR} ${REGION}
+		JOBNAME=DC_ra2_${VERSION}_${REGION}_${TYPE}_${YEAR}
+		echo 'MakeAllDCsyst.C+("NEWSAMPLE","'${INDIR}'",{"'${DCCONFIG}'"},{},"'${REGION}'","'${SYSTS}'","'${VARS}'")' > jobs/input/macro_${JOBNAME}.txt
+
+		$DRYRUN ./DCtemp.sh ${JOBDIR} ${STORE} ${JOBNAME} ${SNAME} ${#SAMPLES[@]} ${TYPE} ${YEAR}          
 	done
 done

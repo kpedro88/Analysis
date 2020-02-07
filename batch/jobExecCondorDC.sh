@@ -10,32 +10,24 @@ echo "System release " `cat /etc/redhat-release` #And the system release
 echo "CMSSW on Condor"
 
 CMSSWVER=$1
-INDIR=$2
-SYSTS=$3
-VARS=$4
-STORE=$5
-SNAME=$6
-DCCONFIG=$7
-PROCESS=$8
-TYPE=$9
-YEAR=${10}
-REGION=${11}
+STORE=$2
+JOBNAME=$3
+SNAME=$4
+PROCESS=$5
+TYPE=$6
+YEAR=$7
 
 echo ""
 echo "parameter set:"
 echo "CMSSWVER:   $CMSSWVER"
-echo "INDIR:      $INDIR"
-echo "SYSTS:      $SYSTS"
-echo "VARS:       $VARS"
 echo "STORE:      $STORE"
+echo "JOBNAME:    $JOBNAME"
 echo "SNAME:      $SNAME"
-echo "DCCONFIG:   $DCCONFIG"
 echo "PROCESS:    $PROCESS"
 echo "TYPE:       $TYPE"
 echo "YEAR:       $YEAR"
-echo "REGION:     $REGION"
 
-#get sample
+# get sample
 source export${SNAME}.sh
 SAMPLE=${SAMPLES[$PROCESS]}
 
@@ -60,8 +52,9 @@ fi
 
 for NEWSAMPLE in ${NEWSAMPLES[@]}; do
 	# run macro
-	echo "run: root -b -q -l 'MakeAllDCsyst.C+("'"'$NEWSAMPLE'","'$INDIR'",{"'$DCCONFIG'"},{},"'$REGION'","'$SYSTS'","'$VARS'"'")' 2>&1"
-	root -b -q -l 'MakeAllDCsyst.C+("'$NEWSAMPLE'","'$INDIR'",{"'$DCCONFIG'"},{},"'$REGION'","'$SYSTS'","'$VARS'")' 2>&1
+	MACRO=$(cat $_CONDOR_SCRATCH_DIR/macro_${JOBNAME}.txt | sed 's/NEWSAMPLE/'$NEWSAMPLE'/')
+	echo "run: root -b -q -l '$MACRO'"
+	root -b -q -l "${MACRO}" 2>&1
 
 	ROOTEXIT=$?
 

@@ -1,36 +1,28 @@
 #!/bin/bash
 
 JOBDIR="$1"
-INDIR="$2"
-SYSTS="$3"
-VARS="$4"
-STORE="$5"
-SNAME="$6"
-DCCONFIG="$7"
-NUMSAMP="$8"
-TYPE="$9"
-YEAR="${10}"
-REGION="${11}"
+STORE="$2"
+JOBNAME="$3"
+SNAME="$4"
+NUMSAMP="$5"
+TYPE="$6"
+YEAR="$7"
 
-JDLNAME=jobExecCondor_MakeAllDCsyst_${SNAME}.jdl
+JDLNAME=jobExecCondorDC_${JOBNAME}.jdl
 
 echo ""
-echo ">> `/bin/date` Submitting condor job(s) in $JDLNAME with params : $1 $2 $3 $4 $5 $6 $7 $8 $9 ${10} ${11}"
+echo ">> `/bin/date` Submitting condor job(s) in $JDLNAME with params : $1 $2 $3 $4 $5 $6 $7"
 
 mkdir -p ${JOBDIR}
 
 cat ./jobExecCondorDC.jdl \
 | sed -e s/CMSSWVER/"${CMSSW_VERSION}"/ \
-| sed -e s~INDIR~"${INDIR}"~ \
-| sed -e s/SYSTS/"${SYSTS}"/ \
-| sed -e s/VARS/"${VARS}"/ \
 | sed -e s~STORE~"${STORE}"~ \
+| sed -e s/JOBNAME/"${JOBNAME}"/ \
 | sed -e s/SNAME/"${SNAME}"/ \
-| sed -e s~DCCONFIG~"${DCCONFIG}"~ \
 | sed -e s/NUMSAMP/"${NUMSAMP}"/ \
 | sed -e s/TYPE/"${TYPE}"/ \
 | sed -e s/YEAR/"${YEAR}"/ \
-| sed -e s/REGION/"${REGION}"/ \
 > ${JOBDIR}/${JDLNAME}
 
 cd ${JOBDIR}
