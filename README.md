@@ -132,17 +132,17 @@ Omitting the last argument will display the plot without saving it.
 
 To save the histogram for data to a ROOT file for datacard creation:
 ```
-root -b -l -q 'MakeAllDCsyst.C+("input/input_DC_config_RA2data.txt","data_2016","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV17")'
+root -b -l -q 'MakeAllDCsyst.C+("input/input_DC_config_RA2data.txt","data_2016","","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV17")'
 ```
 
 To save the individual histograms for a FullSim signal process to a ROOT file for the signal region:
 ```
-root -b -l -q 'MakeAllDCsyst.C+("input/input_DC_config_RA2full.txt","T1tttt_1500_100","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV17")'
+root -b -l -q 'MakeAllDCsyst.C+("input/input_DC_config_RA2full.txt","T1tttt_1500_100","","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV17")'
 ```
 
 To check specific systematics or variations, there are extra arguments. E.g., to check the ISR uncertainty and JEC variations:
 ```
-root -b -l -q 'MakeAllDCsyst.C+("input/input_DC_config_RA2full.txt","T1tttt_1500_100","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV17","nominal,isruncUp,isruncDown","JECup,JECdown")'
+root -b -l -q 'MakeAllDCsyst.C+("input/input_DC_config_RA2full.txt","T1tttt_1500_100","","root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV17","nominal,isruncUp,isruncDown","JECup,JECdown")'
 ```
 
 Because of the large number of samples (especially the FastSim signal samples), batch mode should be used to run over them:
