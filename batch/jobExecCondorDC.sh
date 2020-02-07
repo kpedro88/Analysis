@@ -60,8 +60,8 @@ fi
 
 for NEWSAMPLE in ${NEWSAMPLES[@]}; do
 	# run macro
-	echo "run: root -b -q -l 'MakeAllDCsyst.C+("'"'$DCCONFIG'","'$NEWSAMPLE'","'$REGION'","'$INDIR'","'$SYSTS'","'$VARS'"'")' 2>&1"
-	root -b -q -l 'MakeAllDCsyst.C+("'$DCCONFIG'","'$NEWSAMPLE'","'$REGION'","'$INDIR'","'$SYSTS'","'$VARS'")' 2>&1
+	echo "run: root -b -q -l 'MakeAllDCsyst.C+("'"'$NEWSAMPLE'","'$INDIR'",{"'$DCCONFIG'"},{},"'$REGION'","'$SYSTS'","'$VARS'"'")' 2>&1"
+	root -b -q -l 'MakeAllDCsyst.C+("'$NEWSAMPLE'","'$INDIR'",{"'$DCCONFIG'"},{},"'$REGION'","'$SYSTS'","'$VARS'")' 2>&1
 
 	ROOTEXIT=$?
 

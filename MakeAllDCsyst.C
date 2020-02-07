@@ -97,9 +97,14 @@ class ModeInfo {
 		}
 };
 
-ModeInfo parseMode(const string& fname, const string& setname){
+ModeInfo parseMode(const vector<string>& fnames, const vector<string>& extras, const string& setname){
 	OptionMap* localOpt = new OptionMap();
-	KParser::processOption("in:options["+fname+"]",localOpt);
+	for(const auto& fname : fnames){
+		KParser::processOption("in:options["+fname+"]",localOpt);
+	}
+	for(const auto& extra : extras){
+		KParser::processOption(extra,localOpt);
+	}
 	return ModeInfo(setname,localOpt);
 }
 
@@ -334,17 +339,17 @@ template<> void KSystProcessor<TH2F>::MakeGenMHT(KMap<double>& pctDiffMap, doubl
 
 //recompile:
 //root -b -l -q MakeAllDCsyst.C++
-void MakeAllDCsyst(string config="", string setname="", string region="", string indir="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV11", string systTypes="nominal", string varTypes=""){
+void MakeAllDCsyst(string setname="", string indir="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV11", vector<string> input = {}, vector<string> extras = {}, string region="", string systTypes="nominal", string varTypes=""){
 	gErrorIgnoreLevel = kBreak;
 	
-	if(config.empty()){
+	if(setname.empty()){
 		cout << "Recompiled MakeAllDCsyst, exiting." << endl;
 		return;
 	}
 
 	if(indir[indir.size()-1] != '/') indir = indir + "/";
 
-	ModeInfo info = parseMode(config,setname);
+	ModeInfo info = parseMode(input,extras,setname);
 	//handle batch case w/ default region taken from config file
 	if(region=="default") region = "";
 	if(!region.empty()) info.region = region;
