@@ -60,7 +60,7 @@ fi
 
 for NEWSAMPLE in ${NEWSAMPLES[@]}; do
 	# run macro
-	echo "run: root -b -q -l 'MakeAllDCsyst.C+("'"'$DCCONFIG'","'$NEWSAMPLE'","'$INDIR'","'$SYSTS'","'$VARS'"'")' 2>&1"
+	echo "run: root -b -q -l 'MakeAllDCsyst.C+("'"'$DCCONFIG'","'$NEWSAMPLE'","'$REGION'","'$INDIR'","'$SYSTS'","'$VARS'"'")' 2>&1"
 	root -b -q -l 'MakeAllDCsyst.C+("'$DCCONFIG'","'$NEWSAMPLE'","'$REGION'","'$INDIR'","'$SYSTS'","'$VARS'")' 2>&1
 
 	ROOTEXIT=$?
@@ -74,7 +74,7 @@ done
 
 # postprocessing for SVJ
 if [ -n "$POSTPROCESS" ]; then
-	python processDatacardsSVJ.py -o datacard_${SAMPLE}.root -f MTAK8_dijetmtdetahadloosefull_${SAMPLE}_*.root
+	python processDatacardsSVJ.py -o datacard_${SAMPLE}.root -f MTAK8_${REGION}_${SAMPLE}_*.root
 fi
 
 # copy output to eos
