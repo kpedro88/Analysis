@@ -1,8 +1,5 @@
-INPUT
-input/input_selection_data_common.txt
-
 SELECTION
 nominal
-	ra2common
+	filter
 	ExtraFilter	b:ecalnoise[1]
-	ra2bin
+	base

@@ -2,6 +2,4 @@ SELECTION
 nominal
 	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
 	Blind	i:lastUnblindRun[319076]
-	SVJTag	s:branch[bdtSVJtag]	d:cut[0.55]
-	RA2Bin	in:options[input/input_svj_bin_options.txt]
-	Histo
+	base

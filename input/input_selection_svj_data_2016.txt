@@ -1,6 +1,4 @@
 SELECTION
 nominal
 	HLT	vs:HLTLines[HLT_AK8PFJet450_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT800_v,HLT_PFHT900_v,HLT_PFJet450_v]
-	SVJTag	s:branch[bdtSVJtag]	d:cut[0.55]
-	RA2Bin	in:options[input/input_svj_bin_options.txt]
-	Histo
+	base

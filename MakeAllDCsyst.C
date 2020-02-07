@@ -43,6 +43,7 @@ class ModeInfo {
 				{"setlist",&setlist},
 				{"osuff",&osuff},
 				{"systsuff",&systsuff},
+				{"selbase",&selbase},
 				{"selection",&selection},
 			};
 			for(const auto& member : members){
@@ -55,7 +56,7 @@ class ModeInfo {
 
 		//members
 		Mode mode;
-		string inpre, region, outpre, outdir, input, setlist, osuff, systsuff, selection;
+		string inpre, region, outpre, outdir, input, setlist, osuff, systsuff, selbase, selection;
 
 	private:
 		//constructor helpers
@@ -363,7 +364,7 @@ void MakeAllDCsyst(string config="", string setname="", string region="", string
 	//do the simple systematics all at once
 	if(!systTypes.empty()){
 		rootfiles.push_back(info.outdir+info.outpre+info.region+info.osuff);
-		KPlotDriver(indir+info.inpre+info.region,{info.input,info.setlist},{"INPUT",info.selection,"OPTION","vstring:chosensets["+setname+"]","string:rootfile["+rootfiles.back()+"]","vstring:selections["+systTypes+"]"});
+		KPlotDriver(indir+info.inpre+info.region,{info.input,info.setlist},{"INPUT",info.selbase,info.selection,"OPTION","vstring:chosensets["+setname+"]","string:rootfile["+rootfiles.back()+"]","vstring:selections["+systTypes+"]"});
 	}
 
 	//do the full variations separately
@@ -384,7 +385,7 @@ void MakeAllDCsyst(string config="", string setname="", string region="", string
 			if(ivar.size()>3) ivar[3] = '-';
 		}
 		rootfiles.push_back(info.outdir+info.outpre+region_+info.osuff);
-		KPlotDriver(indir+info.inpre+region_,{info.input,info.setlist},{"INPUT",info.selection,"OPTION","vstring:chosensets["+setname+"]","string:rootfile["+rootfiles.back()+"]","vstring:selections["+ivar+"]","SELECTION",ivar,"\t"+selection_base});
+		KPlotDriver(indir+info.inpre+region_,{info.input,info.setlist},{"INPUT",info.selbase,info.selection,"OPTION","vstring:chosensets["+setname+"]","string:rootfile["+rootfiles.back()+"]","vstring:selections["+ivar+"]","SELECTION",ivar,"\t"+selection_base});
 	}
 	
 	//hadd and put file in pwd (for stageout)

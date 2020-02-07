@@ -1,0 +1,6 @@
+SELECTION
+base
+	SVJTag	s:branch[bdtSVJtag]	d:cut[0.55]
+	RA2Bin	in:options[input/input_svj_bin_options.txt]
+	Histo
+

@@ -3,9 +3,7 @@ double:luminorm[21090]
 
 SELECTION
 common
-	SVJTag	s:branch[bdtSVJtag]	d:cut[0.55]
-	RA2Bin	in:options[input/input_svj_bin_options.txt]
-	Histo
+	base
 nominal
 	MCWeight	in:options[input/input_svj_MCWeight_options_2018.txt]
 	common

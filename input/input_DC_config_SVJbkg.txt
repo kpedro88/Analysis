@@ -1,5 +1,6 @@
-input:options[input/input_DC_config_selmaps.txt]
+input:options[input/input_DC_config_selmaps_SVJ.txt]
 string:mode[SVJbkg]
+string:selbase[input/input_selection_svj_syst_base.txt]
 string:selmap[selmapSVJ]
 string:inpre[tree_]
 string:region[dijetmtdetahadloosefull]

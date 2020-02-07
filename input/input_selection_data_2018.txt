@@ -1,9 +1,6 @@
-INPUT
-input/input_selection_data_common.txt
-
 SELECTION
 nominal
-	ra2common
+	filter
 	Blind	i:lastUnblindRun[319076]
 	ExtraFilter
-	ra2bin
+	base

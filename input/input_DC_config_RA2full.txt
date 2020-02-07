@@ -1,5 +1,6 @@
-input:options[input/input_DC_config_selmaps.txt]
+input:options[input/input_DC_config_selmaps_RA2.txt]
 string:mode[RA2full]
+string:selbase[input/input_selection_syst_base.txt]
 string:selmap[selmapRA2]
 string:inpre[tree_]
 string:region[signal]

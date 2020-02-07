@@ -1,0 +1,7 @@
+SELECTION
+filter
+	METFilter
+	ExtraFilter
+base
+	RA2Bin	in:options[input/input_RA2bin_options.txt]	b:RA2Exclusive[0]
+	Histo
