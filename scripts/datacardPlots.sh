@@ -1,8 +1,14 @@
 #!/bin/bash
 
-EXTFILE=$1
-if [ -z "$EXTFILE" ]; then
-	EXTFILE=root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v2/datacard.root
+EXTDIR=$1
+if [ -z "$EXTDIR" ]; then
+	EXTDIR=Run2ProductionV17_v2
+fi
+EXTFILE=root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/${EXTDIR}/datacard.root
+
+HISTO=input/input_svj_mt_hist_full.txt
+if [[ "$EXTDIR" == *"highdeta"* ]]; then
+	HISTO=input/input_svj_mt_hist_highdeta.txt
 fi
 
 REGIONS=(
@@ -29,6 +35,6 @@ RNAMES=(
 for ((i=0; i < ${#REGIONS[@]}; i++)); do
 	REGION=${REGIONS[$i]}
 	RNAME=${RNAMES[$i]}
-	root -b -l -q 'KPlotDriver.C+("Run2ProductionV17_v2",{"input/input_svj_stack_dijetmtdetahad_2017.txt","input/input_svj_mt_full_bdt_regions.txt","input/input_svj_ext_full_datacard_regions.txt"},{"OPTION","s:extfilename['${EXTFILE}']","s:exthisto_dir['${REGION}'_2018]","s+:printsuffix[_'${REGION}']","vs:extra_text['"${RNAME}"']","vs+:printformat[pdf]"},1)'
+	root -b -l -q 'KPlotDriver.C+("'$EXTDIR'",{"input/input_svj_stack_dijetmtdetahad_2017.txt","input/input_svj_full_bdt_regions.txt","'$HISTO'","input/input_svj_ext_full_datacard_regions.txt"},{"OPTION","s:extfilename['${EXTFILE}']","s:exthisto_dir['${REGION}'_2018]","s+:printsuffix[_'${REGION}']","vs:extra_text['"${RNAME}"']","vs+:printformat[pdf]"},1)'
 done
 
