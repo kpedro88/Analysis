@@ -11,9 +11,10 @@ DRYRUN=""
 VERSION=${RUN2PRODV}_v2
 CONFIG=""
 NOSYST=""
+EXTRAS=""
 
 #check arguments
-while getopts "ky:t:c:v:r:sd" opt; do
+while getopts "ky:t:c:v:r:e:sd" opt; do
 	case "$opt" in
 		k) CHECKARGS="${CHECKARGS} -k"
 		;;
@@ -26,6 +27,8 @@ while getopts "ky:t:c:v:r:sd" opt; do
 		v) VERSION=$OPTARG
 		;;
 		r) REGION=$OPTARG
+		;;
+		e) EXTRAS="$OPTARG"
 		;;
 		s) NOSYST=true
 		;;
@@ -78,7 +81,7 @@ for TYPE in ${TYPES[@]}; do
 		if [[ $? -ne 0 ]]; then continue; fi
 
 		JOBNAME=DC_svj_${VERSION}_${REGION}_${TYPE}_${YEAR}
-		echo 'MakeAllDCsyst.C+("NEWSAMPLE","'${INDIR}'",{"'${DCCONFIG}'"},{},"'${REGION}'","'${SYSTS}'","'${VARS}'")' > jobs/input/macro_${JOBNAME}.txt
+		echo 'MakeAllDCsyst.C+("NEWSAMPLE","'${INDIR}'",{"'${DCCONFIG}'"},{'"$EXTRAS"'},"'${REGION}'","'${SYSTS}'","'${VARS}'")' > jobs/input/macro_${JOBNAME}.txt
 
 		$DRYRUN ./DCtemp.sh ${JOBDIR} ${STORE} ${JOBNAME} ${SNAME} ${#SAMPLES[@]} ${TYPE} ${YEAR}
 	done
