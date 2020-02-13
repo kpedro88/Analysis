@@ -33,5 +33,7 @@ for ((i=0; i < ${#REGIONS[@]}; i++)); do
 	REGION=${REGIONS[$i]}
 	RNAME=${RNAMES[$i]}
 	root -b -l -q 'KPlotDriver.C+("'$EXTDIR'",{"input/input_svj_stack_dijetmtdetahad_2017.txt","input/input_svj_full_bdt_regions.txt","'$HISTO'","input/input_svj_ext_full_datacard_regions.txt"},{"OPTION","s:extfilename['${EXTFILE}']","s:exthisto_dir['${REGION}'_2018]","s+:printsuffix[_'${REGION}']","vs:extra_text['"${RNAME}"']","vs+:printformat[pdf]"},1)'
+	echo "WINDOW: $EXTDIR $REGION"
+	python getWindowYield.py -f $EXTFILE -d ${REGION}_2018 -s SVJ_mZprime3000_mDark20_rinv03_alphapeak -b Bkg
 done
 

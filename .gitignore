@@ -85,6 +85,7 @@ input/fast*/
 /finalizeDatacardsSVJ.sh
 /datacardPlots.sh
 /compareLimits.C
+/getWindowYield.py
 
 # linked by setupXML.sh
 /KMVA/pugi*.*
