@@ -7,9 +7,6 @@ fi
 EXTFILE=root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/${EXTDIR}/datacard.root
 
 HISTO=input/input_svj_mt_hist_full.txt
-if [[ "$EXTDIR" == *"highdeta"* ]]; then
-	HISTO=input/input_svj_mt_hist_highdeta.txt
-fi
 
 REGIONS=(
 highCut \

@@ -16,4 +16,4 @@ bool:closefiles[1]
 bool:debugcut[1]
 
 HISTO2D
-MTAK8_RA2bin	i:xnum[45]	d:xmin[1500]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	i:ynum[6]	d:ymin[0.5]	d:ymax[6.5]	s:ytitle[R_{T}, N_{SVJ} bin]	s:ztitle[number of events]	b:ratio[0]	b:ybinlabel[1]
+MTAK8_RA2bin	i:xnum[90]	d:xmin[1500]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	i:ynum[6]	d:ymin[0.5]	d:ymax[6.5]	s:ytitle[R_{T}, N_{SVJ} bin]	s:ztitle[number of events]	b:ratio[0]	b:ybinlabel[1]
