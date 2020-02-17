@@ -188,7 +188,12 @@ class KSetData: public KSet {
 		//draw function
 		void Draw(TPad* pad) {
 			pad->cd();
-			if(obj->htmp->GetDimension()==1) obj->htmp->Draw(MyStyle->GetDrawOpt("same").c_str());
+			if(obj->htmp->GetDimension()==1) {
+				obj->htmp->Draw(MyStyle->GetDrawOpt("same").c_str());
+				for(auto fit : obj->ftmp){
+					fit->Draw(pad);
+				}
+			}
 			else if(obj->htmp->GetDimension()==2) obj->htmp->Draw("colz same");
 		}
 		using KBase::SetStyle;
@@ -238,6 +243,9 @@ class KSetMC: public KSet {
 				obj->htmp->Draw(MyStyle->GetDrawOpt("same").c_str());
 				//disabled by default
 				if(localOpt->Get("errband",false)) obj->etmp->Draw(MyStyle->GetDrawOptErr("same").c_str());
+				for(auto fit : obj->ftmp){
+					fit->Draw(pad);
+				}
 			}
 			else if(obj->htmp->GetDimension()==2) obj->htmp->Draw("colz same");
 		}
@@ -400,6 +408,10 @@ class KSetMCStack : public KSet {
 					TH1* hoverlay = (TH1*)obj->htmp->Clone();
 					MyStyle->Format(hoverlay);
 					hoverlay->Draw(MyStyle->GetDrawOpt("same").c_str());
+				}
+
+				for(auto fit : obj->ftmp){
+					fit->Draw(pad);
 				}
 			}
 			else if(obj->htmp->GetDimension()==2){
@@ -689,11 +701,14 @@ class KSetRatio: public KSet {
 			if(obj->htmp->GetDimension()==1) {
 				if(obj->btmp){
 					obj->btmp->Draw("PZ same");
-					return;
 				}
-				
-				if(globalOpt->Get("errband",true) and !noErrBand) obj->etmp->Draw(MyStyle->GetDrawOptErr("same").c_str());
-				obj->htmp->Draw(MyStyle->GetDrawOpt("same").c_str());
+				else {
+					if(globalOpt->Get("errband",true) and !noErrBand) obj->etmp->Draw(MyStyle->GetDrawOptErr("same").c_str());
+					obj->htmp->Draw(MyStyle->GetDrawOpt("same").c_str());
+				}
+				for(auto fit : obj->ftmp){
+					fit->Draw(pad);
+				}
 			}
 			else if(obj->htmp->GetDimension()==2){
 				obj->htmp->Draw("colz same");

@@ -8,6 +8,7 @@
 #include <TF1.h>
 #include <TFitResultPtr.h>
 #include <TH1.h>
+#include <TPad.h>
 
 #include <string>
 #include <iomanip>
@@ -80,6 +81,9 @@ class KFit {
 			sleg << "; chi^{2} / n_{dof} = " << fn->GetChisquare() << " / " << fn->GetNDF();
 			string option = style->GetLegOpt();
 			kleg->AddEntry(fn,sleg.str(),option,panel);
+		}
+		void Draw(TPad* pad){
+			fn->Draw(style->GetDrawOpt("same").c_str());
 		}
 
 	protected:
