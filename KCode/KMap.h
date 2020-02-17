@@ -245,9 +245,6 @@ class OptionMap : public KMap<KOpt*> {
 class KPlot;
 class KHisto;
 typedef KMap<TH1*> HistoMap;
-typedef KMap<KHisto*> KHistoMap;
-typedef KMap<THStack*> StackMap;
-typedef KMap<TGraphAsymmErrors*> ErrorMap;
 typedef KMap<KPlot*> PlotMap;
 typedef KMap<OptionMap*> OptionMapMap;
 typedef KMap<PlotMap*> PlotMapMap;
