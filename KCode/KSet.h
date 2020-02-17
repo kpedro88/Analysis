@@ -180,6 +180,10 @@ class KSetData: public KSet {
 				option += "l";
 			}
 			kleg->AddEntry(obj->htmp,GetLegName(),option,panel_tmp,extra_text);
+			//check for fits
+			for(auto fit : obj->ftmp){
+				fit->AddToLegend(kleg,panel_tmp);
+			}
 		}
 		//draw function
 		void Draw(TPad* pad) {
@@ -221,6 +225,10 @@ class KSetMC: public KSet {
 				//this assumes it has already been created previously... a little unsafe, but a pain in the ass otherwise
 				option = MyStyle->GetLegOptErr();
 				kleg->AddEntry(obj->etmp,"uncertainty",option,panel_tmp);
+			}
+			//check for fits
+			for(auto fit : obj->ftmp){
+				fit->AddToLegend(kleg,panel_tmp);
 			}
 		}
 		//draw function
@@ -372,8 +380,12 @@ class KSetMCStack : public KSet {
 			if(localOpt->Get("errband",true)) {
 				string option = MyStyle->GetLegOptErr();
 				kleg->AddEntry(obj->etmp,"uncertainty",option,panel_tmp);
+				//this assumes it has already been created previously... a little unsafe, but a pain in the ass otherwise
 			}
-			//this assumes it has already been created previously... a little unsafe, but a pain in the ass otherwise
+			//check for fits
+			for(auto fit : obj->ftmp){
+				fit->AddToLegend(kleg,panel_tmp);
+			}
 		}
 		//draw function
 		virtual void Draw(TPad* pad) {

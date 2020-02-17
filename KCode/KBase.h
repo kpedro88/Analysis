@@ -130,6 +130,29 @@ class KBase {
 		KSelection* GetSelection() { return MySelection; }
 		//implemented in KHisto.h
 		virtual TH1* AddHisto(string s, TH1* h, OptionMap* omap=NULL);
+		//sets up fits for current histo (should only be called on top-level sets)
+		virtual void AddFits(string s, OptionMap* omap, OptionMapMap& fitopts) {
+			vector<string> fits; omap->Get("fits",fits);
+			if(fits.empty()) return;
+
+			if(stmp==s or GetHisto(s)){
+				for(const auto& fit: fits){
+					auto fopt = fitopts.Get(fit);
+					if(!fopt) throw runtime_error("No options provided for fit "+fit+" for histo "+s);
+					auto kfit = new KFit(fit+"_"+s+"_"+name,fopt);
+					kfit->SetStyle(localOpt);
+					//set range to this histo
+					kfit->SetRange(obj->htmp->GetXaxis()->GetXmin(),obj->htmp->GetXaxis()->GetXmax());
+					obj->ftmp.push_back(kfit);
+				}
+			}
+		}
+		//perform any fits to current histo
+		virtual void DoFits() {
+			for(const auto& fit : obj->ftmp){
+				fit->DoFit(obj->htmp);
+			}
+		}
 		//gets current histo
 		virtual TH1* GetHisto(){ return obj->htmp; }
 		//gets current histo name
@@ -151,6 +174,11 @@ class KBase {
 			string oname = pname + "_" + outname;
 			obj->htmp->SetName(oname.c_str());
 			obj->htmp->Write(oname.c_str());
+			if(globalOpt->Get("savefits",false)){
+				for(auto fit : obj->ftmp){
+					fit->GetFn()->Write();
+				}
+			}
 		}
 		virtual KHisto* GetKHisto(string hname){
 			if(GetHisto(hname)) return obj->khtmp;

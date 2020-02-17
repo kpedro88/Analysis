@@ -540,6 +540,7 @@ class KPlotManager : public KManager {
 			for(auto& p : MyPlots.GetTable()){
 				for(unsigned s = 0; s < MySets.size(); s++){
 					MySets[s]->AddHisto(p.first,p.second->GetHisto(),p.second->GetLocalOpt());
+					MySets[s]->AddFits(p.first,p.second->GetLocalOpt(),MyFitOptions);
 				}
 			}
 			for(auto& pm : MyPlots2D.GetTable()){
@@ -590,6 +591,7 @@ class KPlotManager : public KManager {
 				//BEFORE division by bin width if requested
 				//then pass current histogram to legend
 				//AFTER bindivide if requested
+				//then perform any fits
 				//and add to legend
 				double yield = 0;
 				if(yieldref) yield = yieldref->GetYield();
@@ -602,6 +604,7 @@ class KPlotManager : public KManager {
 					if(rebin) MySets[s]->Rebin(rebin);
 					if(unitnorm) MySets[s]->Normalize(1,true);
 					if(bindivide) MySets[s]->BinDivide();
+					MySets[s]->DoFits();
 					MySets[s]->AddToLegend(kleg);
 				}
 				if(printyield) cout << endl;
