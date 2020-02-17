@@ -309,27 +309,25 @@ TH1* KBase::AddHisto(string s, TH1* h, OptionMap* omap){
 	//avoid re-adding
 	if(!GetHisto(s)){
 		stmp = s;
-		khtmp = NULL;
+		obj = new KObject();
 		if(h){
-			htmp = (TH1*)h->Clone();
-			htmp->Sumw2();					
+			obj->htmp = (TH1*)h->Clone();
+			obj->htmp->Sumw2();					
 		}
-		else htmp = NULL;
 		//KHisto will generate special histo automatically (if h==NULL)
 		//but don't make KHisto if no omap provided
-		if(omap) khtmp = new KHisto(s,omap,htmp,this);
-		if(!htmp and khtmp) htmp = khtmp->GetHisto();
-		MyHistos.Add(stmp,htmp);
-		if(khtmp) MyKHistos.Add(stmp,khtmp);
+		if(omap) obj->khtmp = new KHisto(s,omap,obj->htmp,this);
+		if(!obj->htmp and obj->khtmp) obj->htmp = obj->khtmp->GetHisto();
+		MyObjects.Add(stmp,obj);
 	}
-	return htmp;
+	return obj->htmp;
 }
 //in case of normalization to yield or other scaling
 void KBase::Normalize(double nn, bool toYield){
-	if(khtmp and khtmp->IsSpecial()) return;
-	if(htmp->InheritsFrom(TProfile::Class())) return;
-	double simyield = htmp->GetDimension()==2 ? ((TH2*)htmp)->Integral(0,htmp->GetNbinsX()+1,0,htmp->GetNbinsY()+1) : htmp->Integral(0,htmp->GetNbinsX()+1);
-	if(toYield) htmp->Scale(nn/simyield);
-	else htmp->Scale(nn);
+	if(obj->khtmp and obj->khtmp->IsSpecial()) return;
+	if(obj->htmp->InheritsFrom(TProfile::Class())) return;
+	double simyield = obj->htmp->GetDimension()==2 ? ((TH2*)obj->htmp)->Integral(0,obj->htmp->GetNbinsX()+1,0,obj->htmp->GetNbinsY()+1) : obj->htmp->Integral(0,obj->htmp->GetNbinsX()+1);
+	if(toYield) obj->htmp->Scale(nn/simyield);
+	else obj->htmp->Scale(nn);
 }
 #endif

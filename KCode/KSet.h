@@ -57,9 +57,9 @@ class KSet : public KBase {
 			if(!h) KBase::AddHisto(s,h,omap);
 			
 			//formatting			
-			MyStyle->Format(htmp);
+			MyStyle->Format(obj->htmp);
 			
-			return htmp;
+			return obj->htmp;
 		}
 		//default build for sets
 		using KBase::Build;
@@ -69,18 +69,18 @@ class KSet : public KBase {
 				children[c]->Build();
 			}
 			//then loop to add up histos (only resetting current histo for children once)
-			for(auto& sit : MyHistos.GetTable()){
+			for(auto& sit : MyObjects.GetTable()){
 				GetHisto(sit.first); //this will propagate to children
-				if(khtmp and khtmp->IsSpecial()) continue; //don't hadd special histos
+				if(obj->khtmp and obj->khtmp->IsSpecial()) continue; //don't hadd special histos
 				for(unsigned c = 0; c < children.size(); c++){ //include option to subtract histos, off by default
-					htmp->Add(children[c]->GetHisto(), children[c]->GetLocalOpt()->Get("subtract",false) ? -1 : 1);				
+					obj->htmp->Add(children[c]->GetHisto(), children[c]->GetLocalOpt()->Get("subtract",false) ? -1 : 1);				
 				}
 
 				//build error band, disabled by default
 				if(localOpt->Get("errband",false)) {
 					BuildErrorBand();
 					//style
-					MyStyle->FormatErr(etmp);
+					MyStyle->FormatErr(obj->etmp);
 				}
 			}
 		}
@@ -105,18 +105,16 @@ class KSet : public KBase {
 		//resetting current histo propagates to children for consistency
 		using KBase::GetHisto;
 		virtual TH1* GetHisto(string hname){
-			TH1* hist = MyHistos.Get(hname);
-			etmp = MyErrorBands.Get(hname); //it's okay for etmp to be null
-			efftmp = MyEffs.Get(hname); //will be calculated later if needed
-			if(hist) {
+			KObject* otmp = MyObjects.Get(hname);
+			if(otmp and otmp->htmp) {
 				stmp = hname;
-				htmp = hist;
+				obj = otmp;
 				for(unsigned c = 0; c < children.size(); c++){
 					children[c]->GetHisto(hname); //ignore returned pointer
 				}
-				return htmp;
+				return obj->htmp;
 			}
-			else return NULL; //do not reset if the histo does not exist
+			else return nullptr; //do not reset if the histo does not exist
 		}
 		virtual void CloseFile(){
 			for(unsigned c = 0; c < children.size(); c++){
@@ -134,7 +132,7 @@ class KSet : public KBase {
 		}
 		//in case of normalization to yield or other scaling
 		virtual void Normalize(double nn, bool toYield=true){
-			if(khtmp and khtmp->IsSpecial()) return;
+			if(obj->khtmp and obj->khtmp->IsSpecial()) return;
 			//first, normalize all children
 			for(unsigned c = 0; c < children.size(); c++){
 				children[c]->Normalize(nn,toYield);
@@ -178,16 +176,16 @@ class KSetData: public KSet {
 			string option = MyStyle->GetLegOpt();
 			//only draw horizontal line if horizontal error bar is enabled
 			//note: this setting only works in ROOT 5.34.11+
-			if(option.find("e")!=string::npos && (globalOpt->Get("horizerrbars",false) || htmp->GetXaxis()->IsVariableBinSize())){
+			if(option.find("e")!=string::npos && (globalOpt->Get("horizerrbars",false) || obj->htmp->GetXaxis()->IsVariableBinSize())){
 				option += "l";
 			}
-			kleg->AddEntry(htmp,GetLegName(),option,panel_tmp,extra_text);
+			kleg->AddEntry(obj->htmp,GetLegName(),option,panel_tmp,extra_text);
 		}
 		//draw function
 		void Draw(TPad* pad) {
 			pad->cd();
-			if(htmp->GetDimension()==1) htmp->Draw(MyStyle->GetDrawOpt("same").c_str());
-			else if(htmp->GetDimension()==2) htmp->Draw("colz same");
+			if(obj->htmp->GetDimension()==1) obj->htmp->Draw(MyStyle->GetDrawOpt("same").c_str());
+			else if(obj->htmp->GetDimension()==2) obj->htmp->Draw("colz same");
 		}
 		using KBase::SetStyle;
 		virtual void SetStyle(KMap<string>& allStyles, string styleName="") {
@@ -216,24 +214,24 @@ class KSetMC: public KSet {
 			vector<string> extra_text;
 			localOpt->Get("extra_text",extra_text);
 			string option = MyStyle->GetLegOpt();
-			kleg->AddEntry(htmp,GetLegName(),option,panel_tmp,extra_text);
+			kleg->AddEntry(obj->htmp,GetLegName(),option,panel_tmp,extra_text);
 			
 			//check if error band needs to be added
 			if(localOpt->Get("errband",false) && localOpt->Get("errbandleg",true)) {
 				//this assumes it has already been created previously... a little unsafe, but a pain in the ass otherwise
 				option = MyStyle->GetLegOptErr();
-				kleg->AddEntry(etmp,"uncertainty",option,panel_tmp);
+				kleg->AddEntry(obj->etmp,"uncertainty",option,panel_tmp);
 			}
 		}
 		//draw function
 		void Draw(TPad* pad) {
 			pad->cd();
-			if(htmp->GetDimension()==1) {
-				htmp->Draw(MyStyle->GetDrawOpt("same").c_str());
+			if(obj->htmp->GetDimension()==1) {
+				obj->htmp->Draw(MyStyle->GetDrawOpt("same").c_str());
 				//disabled by default
-				if(localOpt->Get("errband",false)) etmp->Draw(MyStyle->GetDrawOptErr("same").c_str());
+				if(localOpt->Get("errband",false)) obj->etmp->Draw(MyStyle->GetDrawOptErr("same").c_str());
 			}
-			else if(htmp->GetDimension()==2) htmp->Draw("colz same");
+			else if(obj->htmp->GetDimension()==2) obj->htmp->Draw("colz same");
 		}
 		using KBase::SetStyle;
 		virtual void SetStyle(KMap<string>& allStyles, string styleName="") {
@@ -254,7 +252,7 @@ class KSetMCStack : public KSet {
 	public:
 		//constructor
 		KSetMCStack() : KSet() {}
-		KSetMCStack(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KSet(name_, localOpt_, globalOpt_), shtmp(0) {
+		KSetMCStack(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KSet(name_, localOpt_, globalOpt_) {
 			//check option
 			savechildren = localOpt->Get("savechildren",true);
 		}
@@ -285,8 +283,9 @@ class KSetMCStack : public KSet {
 		//polymorphic add function for stacks (does formatting)
 		virtual TH1* AddHisto(string s, TH1* h, OptionMap* omap=NULL){
 			stmp = s;
-			shtmp = new THStack(stmp.c_str(),stmp.c_str());
-			MyStacks.Add(stmp,shtmp);
+			obj = new KObject();
+			obj->shtmp = new THStack(stmp.c_str(),stmp.c_str());
+			MyObjects.Add(stmp,obj);
 			
 			//add to children
 			for(unsigned c = 0; c < children.size(); c++){
@@ -294,7 +293,7 @@ class KSetMCStack : public KSet {
 				//formatting of children for stack already fixed
 			}
 			
-			return NULL; //no histo yet, pointless return value
+			return nullptr; //no histo yet, pointless return value
 		}
 		
 		//polymorphic build for stacks
@@ -306,7 +305,7 @@ class KSetMCStack : public KSet {
 			}
 			
 			//then loop to add up histos (only resetting current histo for children once)
-			for(auto& sit : MyStacks.GetTable()){
+			for(auto& sit : MyObjects.GetTable()){
 				GetHisto(sit.first); //this will propagate to children
 				
 				//sort vector of children according to current histo - BEFORE adding to stack
@@ -318,39 +317,37 @@ class KSetMCStack : public KSet {
 				int c_sigstack = -1;
 				for(unsigned c = 0; c < children.size(); c++){
 					if(do_sigstack && children[c]->GetName()==sigstack) c_sigstack = c; //do not add stacked signal yet, just store index
-					else shtmp->Add(children[c]->GetHisto());
+					else obj->shtmp->Add(children[c]->GetHisto());
 				}
 				
 				//fill in htmp now that shtmp is built
-				htmp = (TH1*)shtmp->GetStack()->Last();
+				obj->htmp = (TH1*)obj->shtmp->GetStack()->Last();
 				//build error band, enabled by default for stack
 				if(localOpt->Get("errband",true)) {
 					BuildErrorBand();
 					//style
-					MyStyle->FormatErr(etmp);
+					MyStyle->FormatErr(obj->etmp);
 				}
 				
 				//add stacked signal histo after calculating error band
-				if(c_sigstack > -1) shtmp->Add(children[c_sigstack]->GetHisto());				
+				if(c_sigstack > -1) obj->shtmp->Add(children[c_sigstack]->GetHisto());				
 			}
 		}
 		//polymorphic GetHisto for stacks
 		using KBase::GetHisto;
 		virtual TH1* GetHisto(string hname) {
-			THStack* stk = MyStacks.Get(hname);
-			etmp = MyErrorBands.Get(hname); //it's okay for etmp to be null
-			efftmp = MyEffs.Get(hname); //will be calculated later if needed
-			if(stk) {
+			KObject* otmp = MyObjects.Get(hname);
+			if(otmp and otmp->shtmp) {
 				stmp = hname;
-				shtmp = stk;
-				if(shtmp->GetStack()) htmp = (TH1*)shtmp->GetStack()->Last();
-				else htmp = NULL; //might have a THStack but no GetStack during the histo building process
+				obj = otmp;
+				if(obj->shtmp->GetStack()) obj->htmp = (TH1*)obj->shtmp->GetStack()->Last();
+				else obj->htmp = NULL; //might have a THStack but no GetStack during the histo building process
 				for(unsigned c = 0; c < children.size(); c++){
 					children[c]->GetHisto(hname); //ignore returned pointer
 				}
-				return htmp;
+				return obj->htmp;
 			}
-			else return NULL; //do not reset if the histo does not exist
+			else return nullptr; //do not reset if the histo does not exist
 		}
 		virtual void SaveHisto(string pname, TFile* file){
 			if(savechildren){
@@ -374,35 +371,35 @@ class KSetMCStack : public KSet {
 			localOpt->Get("panel",panel_tmp);
 			if(localOpt->Get("errband",true)) {
 				string option = MyStyle->GetLegOptErr();
-				kleg->AddEntry(etmp,"uncertainty",option,panel_tmp);
+				kleg->AddEntry(obj->etmp,"uncertainty",option,panel_tmp);
 			}
 			//this assumes it has already been created previously... a little unsafe, but a pain in the ass otherwise
 		}
 		//draw function
 		virtual void Draw(TPad* pad) {
 			pad->cd();
-			if(htmp->GetDimension()==1){
-				shtmp->Draw(MyStyle->GetDrawOpt("same").c_str());
+			if(obj->htmp->GetDimension()==1){
+				obj->shtmp->Draw(MyStyle->GetDrawOpt("same").c_str());
 				
 				//error band enabled by default for stack
-				if(localOpt->Get("errband",true)) etmp->Draw(MyStyle->GetDrawOptErr("same").c_str());
+				if(localOpt->Get("errband",true)) obj->etmp->Draw(MyStyle->GetDrawOptErr("same").c_str());
 				
-				if(globalOpt->Get("bgline",false)&&htmp){
-					TH1* hoverlay = (TH1*)htmp->Clone();
+				if(globalOpt->Get("bgline",false) and obj->htmp){
+					TH1* hoverlay = (TH1*)obj->htmp->Clone();
 					MyStyle->Format(hoverlay);
 					hoverlay->Draw(MyStyle->GetDrawOpt("same").c_str());
 				}
 			}
-			else if(htmp->GetDimension()==2){
-				htmp->Draw("colz same");
+			else if(obj->htmp->GetDimension()==2){
+				obj->htmp->Draw("colz same");
 			}
 		}
 		//normalize all children histos
 		virtual void Normalize(double nn, bool toYield=true){
-			double simyield = htmp->Integral(0,htmp->GetNbinsX()+1); //yield of summed histo
+			double simyield = obj->htmp->Integral(0,obj->htmp->GetNbinsX()+1); //yield of summed histo
 			
 			//scale stack histos
-			TObjArray* stack_array = shtmp->GetStack();
+			TObjArray* stack_array = obj->shtmp->GetStack();
 			for(int s = 0; s < stack_array->GetSize(); s++){
 				TH1* hist = (TH1*)stack_array->At(s);
 				if(hist){
@@ -423,10 +420,10 @@ class KSetMCStack : public KSet {
 		//divide current histo by bin width, stack implementation
 		virtual void BinDivide(){
 			//scale stack histos
-			TObjArray* stack_array = shtmp->GetStack();
+			TObjArray* stack_array = obj->shtmp->GetStack();
 			for(int s = 0; s < stack_array->GetSize(); s++){
 				TH1* hist = (TH1*)stack_array->At(s);
-				for(int b = 1; b <= htmp->GetNbinsX(); b++){
+				for(int b = 1; b <= obj->htmp->GetNbinsX(); b++){
 					hist->SetBinContent(b,hist->GetBinContent(b)/hist->GetBinWidth(b));
 					hist->SetBinError(b,hist->GetBinError(b)/hist->GetBinWidth(b));
 				}
@@ -441,7 +438,7 @@ class KSetMCStack : public KSet {
 			if(globalOpt->Get("errband",true)) {
 				BuildErrorBand();
 				//style
-				MyStyle->FormatErr(etmp);
+				MyStyle->FormatErr(obj->etmp);
 			}
 		}
 		//print yield from children
@@ -464,8 +461,6 @@ class KSetMCStack : public KSet {
 		
 	protected:
 		//new stack-based member variables
-		THStack* shtmp;
-		StackMap MyStacks;
 		bool savechildren;
 };
 REGISTER_SET(KSetMCStack,stack,mc);
@@ -480,7 +475,7 @@ class KSetRatio: public KSet {
 		enum ratiocalc { DataMC=0, PctDiff=1, Pull=2, Q1=3, Q2=4, Q3=5, Q4=6, Binom=7 };
 		//constructor
 		KSetRatio() : KSet() {}
-		KSetRatio(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KSet(name_, localOpt_, globalOpt_), btmp(0), calc(DataMC), noErrBand(false) { 
+		KSetRatio(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KSet(name_, localOpt_, globalOpt_), calc(DataMC), noErrBand(false) { 
 			children.resize(2);
 			string calcName = "";
 			globalOpt->Get("ratiocalc",calcName);
@@ -520,6 +515,8 @@ class KSetRatio: public KSet {
 		//in case of standalone use
 		void Build(string histoname, TH1* h0, TH1* h1, TH1* htemp=NULL){
 			stmp = histoname;
+			obj = new KObject();
+
 			TH1* hdata = h0;
 			TH1* hsim = h1;
 			TH1* hsim0 = (TH1*)hsim->Clone();
@@ -557,17 +554,16 @@ class KSetRatio: public KSet {
 				}
 			}
 			else if(calc==Binom){ //binomial error case
-				btmp = new TGraphAsymmErrors(hdata,hsim);
-				MyBinoms.Add(stmp,btmp);
+				obj->btmp = new TGraphAsymmErrors(hdata,hsim);
 
 				//remove x errors
-				for(int b = 0; b < btmp->GetN(); b++){
-					btmp->SetPointEXlow(b,0);
-					btmp->SetPointEXhigh(b,0);
+				for(int b = 0; b < obj->btmp->GetN(); b++){
+					obj->btmp->SetPointEXlow(b,0);
+					obj->btmp->SetPointEXhigh(b,0);
 				}
 				
 				//formatting
-				if(MyStyle) MyStyle->Format(btmp);
+				if(MyStyle) MyStyle->Format(obj->btmp);
 			}
 			else if(calc==Pull){ //(data-mc)/err
 				//todo: add option to allow removal of either data or mc errors
@@ -635,26 +631,26 @@ class KSetRatio: public KSet {
 			
 			//formatting
 			if(MyStyle) MyStyle->Format(hrat);
-			
-			htmp = hrat;
-			MyHistos.Add(stmp,htmp);
+
+			obj->htmp = hrat;
+			MyObjects.Add(stmp,obj);
 			
 			//error band enabled by default for 1D histo
-			if(globalOpt->Get("errband",true) && htmp->GetDimension()==1) {
+			if(globalOpt->Get("errband",true) && obj->htmp->GetDimension()==1) {
 				BuildErrorBand(h0,h1);
 				//style
-				if(MyStyle) MyStyle->FormatErr(etmp);
+				if(MyStyle) MyStyle->FormatErr(obj->etmp);
 			}
 		}
 		//calculate ratio error band from denom
 		using KBase::BuildErrorBand;
 		TGraphAsymmErrors* BuildErrorBand(TH1* hdata, TH1* hsim){
 			//make sim error band
-			TGraphAsymmErrors* erat = new TGraphAsymmErrors(htmp->GetNbinsX()+2); //under- and overflow
+			TGraphAsymmErrors* erat = new TGraphAsymmErrors(obj->htmp->GetNbinsX()+2); //under- and overflow
 			for(int b = 0; b < erat->GetN(); b++){
-				if(htmp->GetBinContent(b)>0){
-					erat->SetPoint(b,htmp->GetBinCenter(b),1); //hypothesis: numer/denom = 1
-					double width = htmp->GetBinWidth(b);
+				if(obj->htmp->GetBinContent(b)>0){
+					erat->SetPoint(b,obj->htmp->GetBinCenter(b),1); //hypothesis: numer/denom = 1
+					double width = obj->htmp->GetBinWidth(b);
 					erat->SetPointEXlow(b, width/2.);
 					erat->SetPointEXhigh(b, width/2.);
 					//y widths use error propagation for f = data/mc : sigma_f = sigma_mc*data/mc^2
@@ -671,8 +667,7 @@ class KSetRatio: public KSet {
 				}
 			}
 			
-			MyErrorBands.Add(stmp,erat);
-			etmp = erat;
+			obj->etmp = erat;
 			return erat;
 		}
 		
@@ -680,17 +675,17 @@ class KSetRatio: public KSet {
 		void Draw(TPad* pad) {
 			pad->cd();
 			//error band enabled by default
-			if(htmp->GetDimension()==1) {
-				if(btmp){
-					btmp->Draw("PZ same");
+			if(obj->htmp->GetDimension()==1) {
+				if(obj->btmp){
+					obj->btmp->Draw("PZ same");
 					return;
 				}
 				
-				if(globalOpt->Get("errband",true) and !noErrBand) etmp->Draw(MyStyle->GetDrawOptErr("same").c_str());
-				htmp->Draw(MyStyle->GetDrawOpt("same").c_str());
+				if(globalOpt->Get("errband",true) and !noErrBand) obj->etmp->Draw(MyStyle->GetDrawOptErr("same").c_str());
+				obj->htmp->Draw(MyStyle->GetDrawOpt("same").c_str());
 			}
-			else if(htmp->GetDimension()==2){
-				htmp->Draw("colz same");
+			else if(obj->htmp->GetDimension()==2){
+				obj->htmp->Draw("colz same");
 			}
 		}
 		using KBase::SetStyle;
@@ -700,8 +695,6 @@ class KSetRatio: public KSet {
 		
 	protected:
 		//new member variables for binomial case
-		TGraphAsymmErrors* btmp;
-		ErrorMap MyBinoms;
 		ratiocalc calc;
 		bool noErrBand;
 };

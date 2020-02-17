@@ -3,6 +3,7 @@
 
 //custom headers
 #include "KMap.h"
+#include "KFit.h"
 #include "KFactory.h"
 #include "KLooper.h"
 #include "KLegend.h"
@@ -35,6 +36,19 @@ using namespace std;
 //forward declaration
 class KSelection;
 
+//contains various linked objects used for sets
+class KObject {
+	public:
+		TH1* htmp = nullptr;
+		KHisto* khtmp = nullptr;
+		THStack* shtmp = nullptr;
+		TGraphAsymmErrors* etmp = nullptr;
+		TGraphAsymmErrors* btmp = nullptr;
+		vector<double>* efftmp = nullptr;
+		vector<KFit*> ftmp;
+};
+typedef KMap<KObject*> ObjectMap;
+
 //------------------------------------------------------------------------------------------------------------------
 //base class: virtual methods and info for bases, other base/set classes inherit from it
 class KBase {
@@ -43,7 +57,7 @@ class KBase {
 		KBase() :
 			name(""), parent(0), localOpt(new OptionMap()), globalOpt(new OptionMap()), 
 			file(0), tree(0), nEventHist(0), nEventNegHist(0), MyCutflow(0),
-			MyLooper(0), MySelection(0), stmp(""), htmp(0), khtmp(0), etmp(0), isBuilt(false), MyStyle(0)
+			MyLooper(0), MySelection(0), stmp(""), obj(0), isBuilt(false), MyStyle(0)
 		{
 			//enable histo errors
 			TH1::SetDefaultSumw2(kTRUE);
@@ -51,7 +65,7 @@ class KBase {
 		KBase(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : 
 			name(name_), parent(0), localOpt(localOpt_ ? localOpt_ : new OptionMap()), globalOpt(globalOpt_ ? globalOpt_ : new OptionMap()), 
 			file(0), tree(0), nEventHist(0), nEventNegHist(0), MyCutflow(0), 
-			MyLooper(0), MySelection(0), stmp(""), htmp(0), khtmp(0), etmp(0), isBuilt(false), MyStyle(0)
+			MyLooper(0), MySelection(0), stmp(""), obj(0), isBuilt(false), MyStyle(0)
 		{
 			debugroc = globalOpt->Get("debugroc",false);
 		}
@@ -83,24 +97,23 @@ class KBase {
 		//functions for histo creation
 		virtual TGraphAsymmErrors* BuildErrorBand(){
 			//make sim error band
-			TGraphAsymmErrors* esim = new TGraphAsymmErrors(htmp->GetNbinsX()+2); //under- and overflow
+			TGraphAsymmErrors* esim = new TGraphAsymmErrors(obj->htmp->GetNbinsX()+2); //under- and overflow
 			for(int b = 0; b < esim->GetN(); b++){
-				if(htmp->GetBinContent(b)>0){
-					esim->SetPoint(b,htmp->GetBinCenter(b),htmp->GetBinContent(b)); //set to y value of sim
-					double width = htmp->GetBinWidth(b);
+				if(obj->htmp->GetBinContent(b)>0){
+					esim->SetPoint(b,obj->htmp->GetBinCenter(b),obj->htmp->GetBinContent(b)); //set to y value of sim
+					double width = obj->htmp->GetBinWidth(b);
 					esim->SetPointEXlow(b, width/2.);
 					esim->SetPointEXhigh(b, width/2.);
-					esim->SetPointEYlow(b, htmp->GetBinError(b));
-					esim->SetPointEYhigh(b, htmp->GetBinError(b));
+					esim->SetPointEYlow(b, obj->htmp->GetBinError(b));
+					esim->SetPointEYhigh(b, obj->htmp->GetBinError(b));
 				}
 			}
 			esim->SetFillColor(kGray+1);
 			//esim->SetFillStyle(3013);
 			//esim->SetFillStyle(3001);
 			esim->SetFillStyle(3005);
-			
-			MyErrorBands.Add(stmp,esim);
-			etmp = esim;
+
+			obj->etmp = esim;
 			return esim;
 		}
 		
@@ -118,56 +131,51 @@ class KBase {
 		//implemented in KHisto.h
 		virtual TH1* AddHisto(string s, TH1* h, OptionMap* omap=NULL);
 		//gets current histo
-		virtual TH1* GetHisto(){ return htmp; }
+		virtual TH1* GetHisto(){ return obj->htmp; }
 		//gets current histo name
 		virtual string GetHistoName() { return stmp; }
 		//resets current name and histo
 		virtual TH1* GetHisto(string hname) {
-			TH1* hist = MyHistos.Get(hname);
-			etmp = MyErrorBands.Get(hname); //it's okay for etmp to be null
-			efftmp = MyEffs.Get(hname); //will be calculated later if needed
-			if(hist) {
+			KObject* otmp = MyObjects.Get(hname);
+			if(otmp) {
 				stmp = hname;
-				htmp = hist;
-				khtmp = MyKHistos.Get(hname);
-				return htmp;
+				obj = otmp;
+				return obj->htmp;
 			}
-			else return NULL; //do not reset if the histo does not exist
+			else return nullptr; //do not reset if the histo does not exist
 		}
 		virtual void SaveHisto(string pname, TFile* file){
 			file->cd();
 			string outname = name;
 			localOpt->Get("outname",outname);
 			string oname = pname + "_" + outname;
-			htmp->SetName(oname.c_str());
-			htmp->Write(oname.c_str());
+			obj->htmp->SetName(oname.c_str());
+			obj->htmp->Write(oname.c_str());
 		}
 		virtual KHisto* GetKHisto(string hname){
-			if(GetHisto(hname)) return khtmp;
-			else return NULL;
+			if(GetHisto(hname)) return obj->khtmp;
+			else return nullptr;
 		}
-		virtual KHisto* GetKHisto(){ return khtmp; }
+		virtual KHisto* GetKHisto(){ return obj->khtmp; }
 		//returns efficiency for cut on current histo qty
 		//does calculation and stores result if necessary
 		virtual vector<double>* GetEff(){
-			if(efftmp) return efftmp;
+			if(obj->efftmp) return obj->efftmp;
 			
 			//calculate efficiencies
 			//normal: yield(i,nbins)/yield(0,nbins)
-			efftmp = new vector<double>(htmp->GetNbinsX()+1);
-			double ydenom = htmp->Integral(0,htmp->GetNbinsX()+1);
+			obj->efftmp = new vector<double>(obj->htmp->GetNbinsX()+1);
+			double ydenom = obj->htmp->Integral(0,obj->htmp->GetNbinsX()+1);
 			if(debugroc) cout << name << " " << stmp << ":";
-			for(int b = 0; b < htmp->GetNbinsX()+1; b++){
-				efftmp->at(b) = htmp->Integral(b,htmp->GetNbinsX()+1)/ydenom;
-				if(debugroc) cout << " " << efftmp->at(b);
+			for(int b = 0; b < obj->htmp->GetNbinsX()+1; b++){
+				obj->efftmp->at(b) = obj->htmp->Integral(b,obj->htmp->GetNbinsX()+1)/ydenom;
+				if(debugroc) cout << " " << obj->efftmp->at(b);
 			}
 			if(debugroc) cout << endl;
-			
-			MyEffs.Add(stmp,efftmp);
-			return efftmp;
+
+			return obj->efftmp;
 		}
-		virtual map<string,TH1*>& GetTable() { return MyHistos.GetTable(); }
-		virtual map<string,KHisto*>& GetKTable() { return MyKHistos.GetTable(); }
+		virtual map<string,KObject*>& GetTable() { return MyObjects.GetTable(); }
 		KBase* GetParent() { return parent; }
 		void SetParent(KBase* p) {
 			parent = p;
@@ -179,21 +187,21 @@ class KBase {
 		void SetGlobalOpt(OptionMap* opt) { globalOpt = opt; if(globalOpt==0) globalOpt = new OptionMap(); } //must always have an option map
 		virtual void PrintYield() {
 			double err = 0;
-			double hint = htmp->IntegralAndError(0,htmp->GetNbinsX()+1,err);
+			double hint = obj->htmp->IntegralAndError(0,obj->htmp->GetNbinsX()+1,err);
 			cout << name << ": " << hint << " +/- " << err << endl;
 		}
-		virtual double GetYield() { return htmp->Integral(0,htmp->GetNbinsX()+1); }
+		virtual double GetYield() { return obj->htmp->Integral(0,obj->htmp->GetNbinsX()+1); }
 		TFile* GetFile() { return file; }
 		virtual void CloseFile() { if(file) file->Close(); }
 		//rebin current hiso
 		virtual void Rebin(int rebin){
-			htmp->Rebin(rebin);
+			obj->htmp->Rebin(rebin);
 		}
 		//divide current histo by bin width, default implementation
 		virtual void BinDivide(){
-			for(int b = 1; b <= htmp->GetNbinsX(); b++){
-				htmp->SetBinContent(b,htmp->GetBinContent(b)/htmp->GetBinWidth(b));
-				htmp->SetBinError(b,htmp->GetBinError(b)/htmp->GetBinWidth(b));
+			for(int b = 1; b <= obj->htmp->GetNbinsX(); b++){
+				obj->htmp->SetBinContent(b,obj->htmp->GetBinContent(b)/obj->htmp->GetBinWidth(b));
+				obj->htmp->SetBinError(b,obj->htmp->GetBinError(b)/obj->htmp->GetBinWidth(b));
 			}
 		}
 		//implemented in KHisto.h
@@ -246,15 +254,9 @@ class KBase {
 		KCutflow* MyCutflow;
 		KLooper* MyLooper;
 		KSelection* MySelection;
-		HistoMap MyHistos;
-		KHistoMap MyKHistos;
-		ErrorMap MyErrorBands;
-		KMap<vector<double>*> MyEffs;
+		ObjectMap MyObjects;
 		string stmp;
-		TH1* htmp;
-		KHisto* khtmp;
-		TGraphAsymmErrors* etmp;
-		vector<double>* efftmp;
+		KObject* obj;
 		bool isBuilt;
 		bool debugroc;
 		KStyle* MyStyle;
@@ -333,17 +335,18 @@ class KBaseExt : public KBase {
 			stmp = s;
 			
 			if(!add_ext){ //if the histo being added is not from ext, check to see if it is already added
-				TH1* hist = MyHistos.Get(s);
-				if(hist){ //if it is already added, just use it, do not overwrite it
-					htmp = hist;
-					return hist;
+				KObject* otmp = MyObjects.Get(s);
+				if(otmp and otmp->htmp){ //if it is already added, just use it, do not overwrite it
+					obj = otmp;
+					return obj->htmp;
 				}
 			}
 			
 			//otherwise, set current histo the usual way
-			htmp = (TH1*)h->Clone();
-			MyHistos.Add(stmp,htmp);
-			return htmp;
+			obj = new KObject();
+			obj->htmp = (TH1*)h->Clone();
+			MyObjects.Add(stmp,obj);
+			return obj->htmp;
 		}
 		
 		//external histos do not need to build

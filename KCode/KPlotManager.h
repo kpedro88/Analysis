@@ -315,7 +315,7 @@ class KPlotManager : public KManager {
 			KNamed* tmp = KParser::processNamed<1>(line);
 
 			//store local fit options for later use
-			MyFitOptions.emplace(tmp->name,tmp->localOpt());
+			MyFitOptions.Add(tmp->fields[0],tmp->localOpt());
 		}
 		//where the magic happens
 		void DrawPlots(){

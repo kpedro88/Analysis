@@ -1712,21 +1712,21 @@ class KHistoSelector : public KSelector {
 		}
 		
 		virtual void ListBranches(){
-			for(auto& hit : base->GetKTable()){
-				hit.second->CheckBranches();
+			for(auto& hit : base->GetTable()){
+				if(hit.second->khtmp) hit.second->khtmp->CheckBranches();
 			}
 		}
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			for(auto& hit : base->GetKTable()){
-				hit.second->Fill();
+			for(auto& hit : base->GetTable()){
+				if(hit.second->khtmp) hit.second->khtmp->Fill();
 			}
 
 			return true;
 		}
 		virtual void Finalize(TFile* file){
-			for(auto& hit : base->GetKTable()){
-				hit.second->Finalize();
+			for(auto& hit : base->GetTable()){
+				if(hit.second->khtmp) hit.second->khtmp->Finalize();
 			}
 		}
 };
