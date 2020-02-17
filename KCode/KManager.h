@@ -106,6 +106,7 @@ class KManager {
 				else if(line.compare(0,10,"VARIATION")==0) { intype = "VARIATION"; continue; }
 				else if(line.compare(0,9,"SELECTION")==0) { intype = "SELECTION"; continue; }
 				else if(line.compare(0,5,"STYLE")==0) { intype = "STYLE"; continue; }
+				else if(line.compare(0,3,"FIT")==0) { intype = "FIT"; continue; }
 				//another input file to parse on next line
 				else if(line.compare(0,5,"INPUT")==0) { intype = "INPUT"; continue; }
 				
@@ -117,6 +118,7 @@ class KManager {
 				else if(intype=="VARIATION") processVariation(line);
 				else if(intype=="SELECTION") processSelection(line);
 				else if(intype=="STYLE") processStyle(line);
+				else if(intype=="FIT") processFit(line);
 				else if(intype=="INPUT") parsed_ &= ParseFile(line);
 			}
 			return parsed_;
@@ -124,6 +126,7 @@ class KManager {
 		//virtual input processing functions
 		virtual void processSet(string) {}
 		virtual void processHisto(string, int) {}
+		virtual void processFit(string) {}
 		//wait to construct Xtions until we know which are desired and with which others they may be combined
 		//for now, just store the lines for each defined Xtion in a vector, and construct Xtors with them later
 		void processXtion(string line, KMap<vector<KNamed*>>& allXtions, map<string,vector<KNamed*>>::iterator& curr, string pname, string cname){

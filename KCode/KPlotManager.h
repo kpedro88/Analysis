@@ -310,11 +310,20 @@ class KPlotManager : public KManager {
 			
 			//store local plot options for later use
 			MyPlotOptions.push_back(tmp);
-		}		
+		}
+		void processFit(string line){
+			KNamed* tmp = KParser::processNamed<1>(line);
+
+			//store local fit options for later use
+			MyFitOptions.emplace(tmp->name,tmp->localOpt());
+		}
 		//where the magic happens
 		void DrawPlots(){
 			//do everything
 			if(!parsed) return;
+
+			//put fit options into global
+			globalOpt->Set("fits",&MyFitOptions);
 			
 			//setup root output file if requested
 			string rootfilename = "";
@@ -885,6 +894,7 @@ class KPlotManager : public KManager {
 		PlotMap MyPlots;
 		PlotMapMap MyPlots2D;
 		vector<KNamed*> MyPlotOptions;
+		OptionMapMap MyFitOptions;
 		vector<KNamedBase*> MySetOptions;
 		vector<KBase*> MySets;
 		vector<KSetRatio*> MyRatios;
