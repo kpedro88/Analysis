@@ -632,11 +632,13 @@ class KPlotManager : public KManager {
 				//ratio (enabled by default, auto-disabled above if components not set)
 				if(p.second->GetLocalOpt()->Get("ratio",true)){
 					TPad* pad2 = p.second->GetPad2();
+					KLegend* rleg = p.second->GetLegendRatio();
 
 					p.second->DrawRatio();
 					
 					for(unsigned r = 0; r < MyRatios.size(); ++r){
 						MyRatios[r]->Build();
+						MyRatios[r]->AddToLegend(rleg);
 						MyRatios[r]->Draw(pad2);
 
 						//save histos in root file if requested
@@ -644,6 +646,8 @@ class KPlotManager : public KManager {
 							MyRatios[r]->SaveHisto(p.first,out_file);
 						}
 					}
+					//build legend: find best quadrant, no resizing
+					rleg->Build(KLegend::hdefault, KLegend::vdefault);
 					p.second->DrawLine();
 				}
 				

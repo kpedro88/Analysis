@@ -174,6 +174,25 @@ class KLegend{
 		virtual ~KLegend() {}
 		
 		//functions
+		void CheckQuadrants(vector<unsigned>& quadrants, const vector<double>& bounds, int n, double* x, double* y){
+			double x0 = bounds[0], x1 = bounds[1], x2 = bounds[2];
+			double y0 = bounds[3], y1 = bounds[4], y2 = bounds[5];
+			for(int i = 0; i < n; ++i){
+				Horz hdir = hdefault;
+				Vert vdir = vdefault;
+				//ignore off-scale points
+				if(x0 < x[i] and x[i] < x1) hdir = left;
+				else if(x1 < x[i] and x[i] < x2) hdir = right;
+				if(y0 < y[i] and y[i] < y1) vdir = bottom;
+				else if(y1 < y[i] and y[i] < y2) vdir = top;
+
+				//assign to quadrant
+				if(hdir==left and vdir==top) ++quadrants[0];
+				else if(hdir==right and vdir==top) ++quadrants[1];
+				else if(hdir==right and vdir==bottom) ++quadrants[2];
+				else if(hdir==left and vdir==bottom) ++quadrants[3];
+			}
+		}
 		pair<Horz,Vert> BuildG(){
 			//first attempt at "best" placement of legend around graphs:
 			//find # of points in each quadrant
@@ -185,32 +204,29 @@ class KLegend{
 			vector<unsigned> quadrants(4,0);
 			
 			//get display bounds; assumption: axis histo has already been drawn so user coords are known
-			double x0 = pad->GetLogx() ? pow(10,pad->GetUxmin()) : pad->GetUxmin();
-			double x2 = pad->GetLogx() ? pow(10,pad->GetUxmax()) : pad->GetUxmax();
-			double x1 = pad->GetLogx() ? pow(10,(pad->GetUxmin()+pad->GetUxmax())/2) : (x0+x2)/2; //midpoint
-			double y0 = pad->GetLogy() ? pow(10,pad->GetUymin()) : pad->GetUymin();
-			double y2 = pad->GetLogy() ? pow(10,pad->GetUymax()) : pad->GetUymax();
-			double y1 = pad->GetLogy() ? pow(10,(pad->GetUymin()+pad->GetUymax())/2) : (y0+y2)/2; //midpoint
-			
+			vector<double> bounds(6,0);
+			bounds[0] = pad->GetLogx() ? pow(10,pad->GetUxmin()) : pad->GetUxmin(); //x0
+			bounds[2] = pad->GetLogx() ? pow(10,pad->GetUxmax()) : pad->GetUxmax(); //x2
+			bounds[1] = pad->GetLogx() ? pow(10,(pad->GetUxmin()+pad->GetUxmax())/2) : (bounds[0]+bounds[2])/2; //x1 midpoint
+			bounds[3] = pad->GetLogy() ? pow(10,pad->GetUymin()) : pad->GetUymin(); //y0
+			bounds[5] = pad->GetLogy() ? pow(10,pad->GetUymax()) : pad->GetUymax(); //y2
+			bounds[4] = pad->GetLogy() ? pow(10,(pad->GetUymin()+pad->GetUymax())/2) : (bounds[3]+bounds[5])/2; //y1 midpoint
+
 			for(const auto graph : graphs){
 				double* x = graph->GetX();
 				double* y = graph->GetY();
 				int n = graph->GetN();
-				for(int i = 0; i < n; ++i){
-					Horz hdir = hdefault;
-					Vert vdir = vdefault;
-					//ignore off-scale points
-					if(x0 < x[i] and x[i] < x1) hdir = left;
-					else if(x1 < x[i] and x[i] < x2) hdir = right;
-					if(y0 < y[i] and y[i] < y1) vdir = bottom;
-					else if(y1 < y[i] and y[i] < y2) vdir = top;
-					
-					//assign to quadrant
-					if(hdir==left and vdir==top) ++quadrants[0];
-					else if(hdir==right and vdir==top) ++quadrants[1];
-					else if(hdir==right and vdir==bottom) ++quadrants[2];
-					else if(hdir==left and vdir==bottom) ++quadrants[3];
+				CheckQuadrants(quadrants, bounds, n, x, y);
+			}
+
+			//also check histograms!
+			for(const auto hist : hists){
+				vector<double> x, y;
+				for(int b = 1; b <= hist->GetNbinsX(); ++b){
+					x.push_back(hist->GetBinCenter(b));
+					y.push_back(hist->GetBinContent(b));
 				}
+				CheckQuadrants(quadrants, bounds, hist->GetNbinsX(), x.data(), y.data());
 			}
 			
 			//find the least populated quadrant
@@ -225,8 +241,8 @@ class KLegend{
 			
 			if(debug){
 				cout << scientific;
-				cout << "x: " << x0 << " " << x1 << " " << x2 << endl;
-				cout << "y: " << y0 << " " << y1 << " " << y2 << endl;
+				cout << "x: " << bounds[0] << " " << bounds[1] << " " << bounds[2] << endl;
+				cout << "y: " << bounds[3] << " " << bounds[4] << " " << bounds[5] << endl;
 				cout << "q: " << quadrants[0] << " " << quadrants[1] << " " << quadrants[2] << " " << quadrants[3] << endl;
 				cout << "b: " << bestq << endl;
 				cout << fixed;
@@ -495,6 +511,7 @@ class KLegend{
 		
 		//accessors
 		void AddHist(TH1* h) { hists.push_back(h); }
+		void AddGraph(TGraph* g) { graphs.push_back(g); }
 		TLegend* GetLegend() { return leg; }
 		bool UseRange() { return userange; }
 		pair<double,double> GetRange(){ return make_pair(ymin,ymax); }

@@ -39,7 +39,7 @@ class KPlot{
 		//constructor
 		KPlot() : 
 			name(""), localOpt(0), globalOpt(0), histo(0), ratio(0), exec(0), isInit(false), 
-			can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0),
+			can(0), pad1(0), pad2(0), leg(0), rleg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0),
 			pad1size(0), pad1W(0), pad1H(0), pad2size(0), pad2W(0), pad2H(0)
 		{
 			//must always have local & global option maps
@@ -51,7 +51,7 @@ class KPlot{
 		//universal size values set in initialization list
 		KPlot(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : 
 			name(name_), localOpt(localOpt_), globalOpt(globalOpt_), histo(0), ratio(0), exec(0), isInit(false),
-			can(0), pad1(0), pad2(0), leg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0),
+			can(0), pad1(0), pad2(0), leg(0), rleg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0),
 			pad1size(0), pad1W(0), pad1H(0), pad2size(0), pad2W(0), pad2H(0)
 		{
 			//must always have local & global option maps
@@ -115,7 +115,6 @@ class KPlot{
 			ratiolinewidth = 2; globalOpt->Get("ratiolinewidth",ratiolinewidth);
 			ratiolinestyle = 2; globalOpt->Get("ratiolinestyle",ratiolinestyle);
 			ratiolinecolor = kRed; globalOpt->Get("ratiolinecolor",ratiolinecolor);
-			//todo: add option to make it a fit?
 		}
 		virtual void CreateHist(){
 			//construct histogram		
@@ -262,6 +261,7 @@ class KPlot{
 			
 			//create legend
 			leg = new KLegend(pad1,localOpt,globalOpt);
+			if(pad2 and globalOpt->Get("ratioleg",false)) rleg = new KLegend(pad2,localOpt,globalOpt);
 			
 			return isInit;
 		}
@@ -409,7 +409,8 @@ class KPlot{
 				xcut_ratio_lines.push_back(tmp);
 			}
 			
-			if(line) line->Draw("same");
+			if(line and globalOpt->Get("ratioline",true)) line->Draw("same");
+			if(rleg) rleg->Draw();
 		}
 
 		//helpers
@@ -507,6 +508,8 @@ class KPlot{
 		TPad* GetPad2() { return pad2; }
 		KLegend* GetLegend() { return leg; }
 		void SetLegend(KLegend* leg_) { leg = leg_; }
+		KLegend* GetLegendRatio() { return rleg; }
+		void SetLegendRatio(KLegend* leg_) { rleg = leg_; }
 		TPaveText* GetCMSText() { return paveCMS; }
 		TPaveText* GetExtraText() { return paveExtra; }
 		TPaveText* GetLumiText() { return paveLumi; }
@@ -526,6 +529,7 @@ class KPlot{
 		TCanvas *can;
 		TPad *pad1, *pad2;
 		KLegend* leg;
+		KLegend* rleg;
 		TPaveText* paveCMS;
 		TPaveText* paveExtra;
 		TPaveText* paveLumi;

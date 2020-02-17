@@ -51,23 +51,24 @@ class KFit {
 		}
 
 		//accessors
-		void SetStyle(OptionMap* defaultOpt){
+		void SetStyle(const KStyle& orig){
 			if(style) delete style;
-			style = new KStyle(name, defaultOpt, localOpt);
+			style = new KStyle(orig);
+			style->SetLocalOpt(localOpt);
 			style->Format(fn);
 		}
 		void SetRange(double xmin, double xmax) { fn->SetRange(xmin, xmax); }
 		TF1* GetFn() { return fn; }
 		const string& GetOpts() { return opts; }
 		//fit and/or normalize (if requested)
-		void DoFit(TH1* htmp) {
-			if(normpar >= 0) {
-				fn->FixParameter(0,htmp->Integral(-1,-1));
-			}
-
+		template <typename T>
+		void DoFit(T* htmp) {
+			Normalize(htmp);
 			//if all pars are fixed, this just sets chi2 and ndf
 			ptr = htmp->Fit(fn,opts.c_str());
 		}
+		template <typename T>
+		void Normalize(T* htmp) {}
 		//todo: add option to plot fit error band?
 		void AddToLegend(KLegend* kleg, int panel=0){
 			stringstream sleg;
@@ -93,5 +94,13 @@ class KFit {
 		int normpar = -1;
 		int prcsn = 2;
 };
+
+//only normalize to histos
+template <>
+void KFit::Normalize<TH1>(TH1* htmp) {
+	if(normpar >= 0) {
+		fn->FixParameter(0,htmp->Integral(-1,-1));
+	}
+}
 
 #endif

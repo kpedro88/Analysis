@@ -131,8 +131,8 @@ class KBase {
 		//implemented in KHisto.h
 		virtual TH1* AddHisto(string s, TH1* h, OptionMap* omap=NULL);
 		//sets up fits for current histo (should only be called on top-level sets)
-		virtual void AddFits(string s, OptionMap* omap, OptionMapMap& fitopts) {
-			vector<string> fits; omap->Get("fits",fits);
+		virtual void AddFits(string s, OptionMap* omap, OptionMapMap& fitopts, string fitopt="fits") {
+			vector<string> fits; omap->Get(fitopt,fits);
 			if(fits.empty()) return;
 
 			if(stmp==s or GetHisto(s)){
@@ -140,7 +140,8 @@ class KBase {
 					auto fopt = fitopts.Get(fit);
 					if(!fopt) throw runtime_error("No options provided for fit "+fit+" for histo "+s);
 					auto kfit = new KFit(fit+"_"+s+"_"+name,fopt);
-					kfit->SetStyle(localOpt);
+					//copy set style, then override w/ fit options
+					kfit->SetStyle(*MyStyle);
 					//set range to this histo
 					kfit->SetRange(obj->htmp->GetXaxis()->GetXmin(),obj->htmp->GetXaxis()->GetXmax());
 					obj->ftmp.push_back(kfit);
@@ -150,7 +151,10 @@ class KBase {
 		//perform any fits to current histo
 		virtual void DoFits() {
 			for(const auto& fit : obj->ftmp){
-				fit->DoFit(obj->htmp);
+				if(obj->htmp->GetDimension()==1){
+					if(obj->btmp) fit->DoFit(obj->btmp);
+					else fit->DoFit(obj->htmp);
+				}
 			}
 		}
 		//gets current histo

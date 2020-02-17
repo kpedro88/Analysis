@@ -518,11 +518,10 @@ class KSetRatio: public KSet {
 		//only builds from the current histo of numer and denom
 		//(since some histos might not want ratios, and also has to wait for possible norm to yield)
 		using KBase::Build;
-		void Build(){
-			Build(children[0]->GetHistoName(),children[0]->GetHisto(),children[1]->GetHisto());
-		}
-		void Build(TH1* htemp){
-			Build(children[0]->GetHistoName(),children[0]->GetHisto(),children[1]->GetHisto(),htemp);			
+		void Build(OptionMap* omap, OptionMapMap& fitopts, TH1* htemp=NULL){
+			Build(children[0]->GetHistoName(),children[0]->GetHisto(),children[1]->GetHisto(),htemp);
+			AddFits(stmp,omap,fitopts,"ratiofits");
+			DoFits();
 		}
 		//in case of standalone use
 		void Build(string histoname, TH1* h0, TH1* h1, TH1* htemp=NULL){
@@ -682,7 +681,7 @@ class KSetRatio: public KSet {
 			obj->etmp = erat;
 			return erat;
 		}
-		
+
 		//draw function
 		void Draw(TPad* pad) {
 			pad->cd();
@@ -704,9 +703,18 @@ class KSetRatio: public KSet {
 		virtual void SetStyle(KMap<string>& allStyles, string styleName="") {
 			KBase::SetStyle(allStyles,"data");
 		}
-		
+		virtual void AddToLegend(KLegend* kleg) {
+			//for legend placement
+			if(obj->btmp) kleg->AddGraph(obj->btmp);
+			else kleg->AddHist(obj->htmp);
+			//todo: add ratio w/ marker, error band?
+			for(auto fit : obj->ftmp){
+				//how to assign panel?
+				fit->AddToLegend(kleg,0);
+			}
+		}
 	protected:
-		//new member variables for binomial case
+		//new member variables
 		ratiocalc calc;
 		bool noErrBand;
 };
