@@ -719,6 +719,7 @@ class KSetRatio: public KSet {
 			KBase::SetStyle(allStyles,"data");
 		}
 		virtual void AddToLegend(KLegend* kleg) {
+			if(!kleg) return;
 			//for legend placement
 			if(obj->btmp) kleg->AddGraph(obj->btmp);
 			else kleg->AddHist(obj->htmp);

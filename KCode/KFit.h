@@ -78,7 +78,7 @@ class KFit {
 			for(int i = 0; i < fn->GetNpar(); ++i){
 				sleg << ", p_{" << i << "} = " << fn->GetParameter(i);
 			}
-			sleg << "; chi^{2} / n_{dof} = " << fn->GetChisquare() << " / " << fn->GetNDF();
+			sleg << "; #chi^{2} / n_{dof} = " << fn->GetChisquare() << " / " << fn->GetNDF();
 			string option = style->GetLegOpt();
 			kleg->AddEntry(fn,sleg.str(),option,panel);
 		}

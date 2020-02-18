@@ -637,7 +637,7 @@ class KPlotManager : public KManager {
 					p.second->DrawRatio();
 					
 					for(unsigned r = 0; r < MyRatios.size(); ++r){
-						MyRatios[r]->Build();
+						MyRatios[r]->Build(p.second->GetLocalOpt(),MyFitOptions);
 						MyRatios[r]->AddToLegend(rleg);
 						MyRatios[r]->Draw(pad2);
 
