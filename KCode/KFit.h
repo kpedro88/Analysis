@@ -52,6 +52,7 @@ class KFit {
 			localOpt->Get("normpar",normpar);
 			//precision for printing pars and chi2
 			localOpt->Get("precision",prcsn);
+			precfixed = localOpt->Get("precfixed",true);
 		}
 
 		//accessors
@@ -79,7 +80,8 @@ class KFit {
 		//todo: add option to plot fit error band?
 		void AddToLegend(KLegend* kleg, int panel=0){
 			stringstream sleg;
-			sleg << fixed << setprecision(prcsn);
+			if(precfixed) sleg << fixed;
+			sleg << setprecision(prcsn);
 			sleg << legname;
 			for(int i = 0; i < fn->GetNpar(); ++i){
 				sleg << ", p_{" << i << "} = " << fn->GetParameter(i);
@@ -104,6 +106,7 @@ class KFit {
 		string opts;
 		int normpar = -1;
 		int prcsn = 2;
+		bool precfixed = true;
 };
 
 //only normalize to histos
