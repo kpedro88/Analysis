@@ -212,14 +212,17 @@ class KLegend{
 			bounds[5] = pad->GetLogy() ? pow(10,pad->GetUymax()) : pad->GetUymax(); //y2
 			bounds[4] = pad->GetLogy() ? pow(10,(pad->GetUymin()+pad->GetUymax())/2) : (bounds[3]+bounds[5])/2; //y1 midpoint
 
+			int ngraphpts = 0;
 			for(const auto graph : graphs){
 				double* x = graph->GetX();
 				double* y = graph->GetY();
 				int n = graph->GetN();
 				CheckQuadrants(quadrants, bounds, n, x, y);
+				ngraphpts += n;
 			}
 
 			//also check histograms!
+			int nhistpts = 0;
 			for(const auto hist : hists){
 				vector<double> x, y;
 				for(int b = 1; b <= hist->GetNbinsX(); ++b){
@@ -227,6 +230,7 @@ class KLegend{
 					y.push_back(hist->GetBinContent(b));
 				}
 				CheckQuadrants(quadrants, bounds, hist->GetNbinsX(), x.data(), y.data());
+				nhistpts += x.size();
 			}
 			
 			//find the least populated quadrant
@@ -241,6 +245,8 @@ class KLegend{
 			
 			if(debug){
 				cout << scientific;
+				cout << "g: " << graphs.size() << " w/ " << ngraphpts << " total points" << endl;
+				cout << "h: " << hists.size() << " w/ " << nhistpts << " total points" << endl;
 				cout << "x: " << bounds[0] << " " << bounds[1] << " " << bounds[2] << endl;
 				cout << "y: " << bounds[3] << " " << bounds[4] << " " << bounds[5] << endl;
 				cout << "q: " << quadrants[0] << " " << quadrants[1] << " " << quadrants[2] << " " << quadrants[3] << endl;

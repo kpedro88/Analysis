@@ -634,11 +634,18 @@ class KPlotManager : public KManager {
 					TPad* pad2 = p.second->GetPad2();
 					KLegend* rleg = p.second->GetLegendRatio();
 
-					p.second->DrawRatio();
-					
+					//add to legend before updating pad
 					for(unsigned r = 0; r < MyRatios.size(); ++r){
 						MyRatios[r]->Build(p.second->GetLocalOpt(),MyFitOptions);
 						MyRatios[r]->AddToLegend(rleg);
+					}
+
+					p.second->DrawRatio();
+					
+					//build legend: find best quadrant, no resizing
+					rleg->Build(KLegend::hdefault, KLegend::vdefault);
+
+					for(unsigned r = 0; r < MyRatios.size(); ++r){
 						MyRatios[r]->Draw(pad2);
 
 						//save histos in root file if requested
@@ -646,8 +653,7 @@ class KPlotManager : public KManager {
 							MyRatios[r]->SaveHisto(p.first,out_file);
 						}
 					}
-					//build legend: find best quadrant, no resizing
-					rleg->Build(KLegend::hdefault, KLegend::vdefault);
+					p.second->GetRatio()->Draw("sameaxis"); //draw again so axes on top
 					p.second->DrawLine();
 				}
 				

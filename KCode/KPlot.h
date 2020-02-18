@@ -391,6 +391,7 @@ class KPlot{
 		void DrawRatio(){
 			pad2->cd();
 			ratio->Draw("hist");
+			pad2->Update();
 			exec->Draw();
 		}
 		void DrawLine(){
