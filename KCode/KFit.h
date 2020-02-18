@@ -103,7 +103,7 @@ class KFit {
 template <>
 void KFit::Normalize<TH1>(TH1* htmp) {
 	if(normpar >= 0) {
-		fn->FixParameter(0,htmp->Integral(-1,-1));
+		fn->FixParameter(normpar,htmp->Integral(-1,-1));
 	}
 }
 
