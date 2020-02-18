@@ -494,9 +494,9 @@ REGISTER_SET(KSetMCStack,stack,mc);
 class KSetRatio: public KSet {
 	public:
 		//enums for different ratio calculations
-		//DataMC = data/MC, PctDiff = (data - MC)/MC, Pull = (data - MC)/err, Q1 = S/sqrt(B), Q2=S/sqrt(S+B), Q3 = 2[sqrt(S+B) - sqrt(B)], Q4 = sqrt(2*[(S+B)*log(1+S/B)-S]), Binom = pass/all
+		//DataMC = data/MC, TF = data/MC but keep both errors, PctDiff = (data - MC)/MC, Pull = (data - MC)/err, Q1 = S/sqrt(B), Q2=S/sqrt(S+B), Q3 = 2[sqrt(S+B) - sqrt(B)], Q4 = sqrt(2*[(S+B)*log(1+S/B)-S]), Binom = pass/all
 		//numer = data, sig; denom = MC, bkg
-		enum ratiocalc { DataMC=0, PctDiff=1, Pull=2, Q1=3, Q2=4, Q3=5, Q4=6, Binom=7 };
+		enum ratiocalc { DataMC=0, PctDiff=1, Pull=2, Q1=3, Q2=4, Q3=5, Q4=6, Binom=7, TF=8 };
 		//constructor
 		KSetRatio() : KSet() {}
 		KSetRatio(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KSet(name_, localOpt_, globalOpt_), calc(DataMC), noErrBand(false) { 
@@ -517,6 +517,7 @@ class KSetRatio: public KSet {
 		}
 		void SetCalc(string calcName){
 			if(calcName=="DataMC") calc = DataMC;
+			else if(calcName=="TF") calc = TF;
 			else if(calcName=="PctDiff") calc = PctDiff;
 			else if(calcName=="Pull") calc = Pull;
 			else if(calcName=="Q1") calc = Q1;
@@ -575,6 +576,10 @@ class KSetRatio: public KSet {
 						if(std::isnan(hrat->GetBinContent(b)) or hrat->GetBinError(b)<=0) hrat->SetBinContent(b,-1000); //hack so empty cells are not painted
 					}
 				}
+			}
+			else if(calc==TF){ //data/mc but keep all errors, no band
+				hrat->Divide(hdata,hsim0);
+				noErrBand = true;
 			}
 			else if(calc==Binom){ //binomial error case
 				obj->btmp = new TGraphAsymmErrors(hdata,hsim);
