@@ -1,6 +1,6 @@
 vstring:RA2BranchNames[MT_AK8,MET]
 vstring:RA2VarNames[RT,NSVJ]
-vfloat:RA2Var0Min[0.10]
+vfloat:RA2Var0Min[0.125]
 vfloat:RA2Var0Max[0.15]
 vfloat:RA2Var1Min[-1,0,1]
 vfloat:RA2Var1Max[0,1,2]
