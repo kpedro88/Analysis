@@ -27,6 +27,9 @@ class KFit {
 			string fnname; localOpt->Get("fn",fnname);
 			//supports constructors of type: 2 - Expression using variable x with parameters
 			fn = new TF1(name.c_str(),fnname.c_str());
+			double xmin, xmax;
+			setrange = localOpt->Get("xmin",xmin) and localOpt->Get("xmax",xmax);
+			if(setrange) fn->SetRange(xmin,xmax);
 			vector<double> pars; localOpt->Get("pars",pars);
 			//safety check
 			if(pars.size()!=fn->GetNpar()) throw runtime_error("Inconsistent size of pars ("+to_string(pars.size())+") vs. fit ("+to_string(fn->GetNpar())+")");
@@ -58,7 +61,10 @@ class KFit {
 			style->SetLocalOpt(localOpt);
 			style->Format(fn);
 		}
-		void SetRange(double xmin, double xmax) { fn->SetRange(xmin, xmax); }
+		void SetRange(double xmin, double xmax) {
+			//skip this if range already set by input
+			if(!setrange) fn->SetRange(xmin, xmax);
+		}
 		TF1* GetFn() { return fn; }
 		const string& GetOpts() { return opts; }
 		//fit and/or normalize (if requested)
@@ -92,6 +98,7 @@ class KFit {
 		TF1* fn = nullptr;
 		TFitResultPtr ptr;
 		KStyle* style = nullptr;
+		bool setrange = false;
 		bool freeze = false;
 		string legname;
 		string opts;
