@@ -643,7 +643,7 @@ class KPlotManager : public KManager {
 					p.second->DrawRatio();
 					
 					//build legend: find best quadrant, no resizing
-					rleg->Build(KLegend::hdefault, KLegend::vdefault);
+					if(rleg) rleg->Build(KLegend::hdefault, KLegend::vdefault);
 
 					for(unsigned r = 0; r < MyRatios.size(); ++r){
 						MyRatios[r]->Draw(pad2);
