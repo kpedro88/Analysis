@@ -86,6 +86,8 @@ input/fast*/
 /datacardPlots.sh
 /compareLimits.C
 /getWindowYield.py
+/makeTF.py
+/makeTFs.sh
 
 # linked by setupXML.sh
 /KMVA/pugi*.*
