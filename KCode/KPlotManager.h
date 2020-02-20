@@ -317,6 +317,18 @@ class KPlotManager : public KManager {
 			//store local fit options for later use
 			MyFitOptions.Add(tmp->fields[0],tmp->localOpt());
 		}
+		void makeRatio(KBase* numer, KBase* denom, KBase* style_source=nullptr){
+			KSetRatio* rtmp = new KSetRatio("ratio__"+numer->GetName()+"__"+denom->GetName(),NULL,globalOpt);
+			rtmp->AddNumerator(numer);
+			rtmp->AddDenominator(denom);
+			//style from source, but pe drawopt
+			if(style_source){
+				rtmp->GetLocalOpt()->Set<string>("drawopt","pe");
+				rtmp->SetStyle(style_source->GetStyle());
+			}
+			else rtmp->SetStyle(allStyles); //default style
+			MyRatios.push_back(rtmp);
+		}
 		//where the magic happens
 		void DrawPlots(){
 			//do everything
@@ -417,44 +429,21 @@ class KPlotManager : public KManager {
 			if(ratio_allowed){
 				//add children to ratio
 				if(numers.size()==1 && denoms.size()==1){
-					KSetRatio* rtmp = new KSetRatio("ratio",NULL,globalOpt);
-					rtmp->AddNumerator(numers[0]);
-					rtmp->AddDenominator(denoms[0]);
-					//default style
-					rtmp->SetStyle(allStyles);
-					MyRatios.push_back(rtmp);
+					makeRatio(numers[0],denoms[0]);
 				}
 				else if(numers.size()==1 && denoms.size()>1){
 					for(unsigned r = 0; r < denoms.size(); r++){
-						KSetRatio* rtmp = new KSetRatio("ratio__"+numers[0]->GetName()+"__"+denoms[r]->GetName(),NULL,globalOpt);
-						rtmp->AddNumerator(numers[0]);
-						rtmp->AddDenominator(denoms[r]);
-						//denom style, but pe drawopt
-						rtmp->GetLocalOpt()->Set<string>("drawopt","pe");
-						rtmp->SetStyle(denoms[r]->GetStyle());
-						MyRatios.push_back(rtmp);
+						makeRatio(numers[0],denoms[r],denoms[r]);
 					}
 				}
 				else if(numers.size()>1 && denoms.size()==1){
 					for(unsigned r = 0; r < numers.size(); r++){
-						KSetRatio* rtmp = new KSetRatio("ratio__"+numers[r]->GetName()+"__"+denoms[0]->GetName(),NULL,globalOpt);
-						rtmp->AddNumerator(numers[r]);
-						rtmp->AddDenominator(denoms[0]);
-						//numer style, but pe drawopt
-						rtmp->GetLocalOpt()->Set<string>("drawopt","pe");
-						rtmp->SetStyle(numers[r]->GetStyle());
-						MyRatios.push_back(rtmp);
+						makeRatio(numers[r],denoms[0],numers[r]);
 					}
 				}
 				else if(!numers.empty() && numers.size()==denoms.size()){
 					for(unsigned r = 0; r < numers.size(); r++){
-						KSetRatio* rtmp = new KSetRatio("ratio__"+numers[r]->GetName()+"__"+denoms[r]->GetName(),NULL,globalOpt);
-						rtmp->AddNumerator(numers[r]);
-						rtmp->AddDenominator(denoms[r]);
-						//numer style, but pe drawopt
-						rtmp->GetLocalOpt()->Set<string>("drawopt","pe");
-						rtmp->SetStyle(denoms[r]->GetStyle());
-						MyRatios.push_back(rtmp);
+						makeRatio(numers[r],denoms[r],denoms[r]);
 					}
 				}
 			}
