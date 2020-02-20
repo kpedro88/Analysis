@@ -20,6 +20,7 @@ parser.add_option("-u", "--uncompressed", dest="uncompressed", action='store_tru
 parser.add_option("-c", "--compressed", dest="compressed", action='store_true', default=False, help="specify compressed signals")
 parser.add_option("-g", "--gluino", dest="gluino", action='store_true', default=False, help="specify gluino signals")
 parser.add_option("-q", "--squark", dest="squark", action='store_true', default=False, help="specify squark signals")
+parser.add_option("-v", "--verbose", dest="verbose", action='store_true', default=False, help="verbose printouts")
 (options, args) = parser.parse_args()
 
 # check the signal models
@@ -94,6 +95,7 @@ for signal in options.signals:
 
     # process cutflow lines (summed over years)
     cmd = "root -b -l -q 'CutflowSum.C("+'"'+options.dir+'",{'+','.join(samples)+'},1,1)'+"'"
+    if options.verbose: print cmd
     cutflow = filter(None,os.popen(cmd).read().split('\n'))
     started = False
     for line in cutflow:
