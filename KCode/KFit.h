@@ -68,6 +68,7 @@ class KFit {
 		}
 		TF1* GetFn() { return fn; }
 		const string& GetOpts() { return opts; }
+		KStyle* GetStyle() { return style; }
 		//fit and/or normalize (if requested)
 		template <typename T>
 		void DoFit(T* htmp) {

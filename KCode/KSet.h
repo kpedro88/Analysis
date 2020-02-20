@@ -496,7 +496,7 @@ class KSetRatio: public KSet {
 		//enums for different ratio calculations
 		//DataMC = data/MC, TF = data/MC but keep both errors, PctDiff = (data - MC)/MC, Pull = (data - MC)/err, Q1 = S/sqrt(B), Q2=S/sqrt(S+B), Q3 = 2[sqrt(S+B) - sqrt(B)], Q4 = sqrt(2*[(S+B)*log(1+S/B)-S]), Binom = pass/all
 		//numer = data, sig; denom = MC, bkg
-		enum ratiocalc { DataMC=0, PctDiff=1, Pull=2, Q1=3, Q2=4, Q3=5, Q4=6, Binom=7, TF=8 };
+		enum ratiocalc { DataMC=0, PctDiff=1, Pull=2, Q1=3, Q2=4, Q3=5, Q4=6, Binom=7, TF=8, Res=9, RelRes=10 };
 		//constructor
 		KSetRatio() : KSet() {}
 		KSetRatio(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KSet(name_, localOpt_, globalOpt_), calc(DataMC), noErrBand(false) { 
@@ -524,7 +524,9 @@ class KSetRatio: public KSet {
 			else if(calcName=="Q2") calc = Q2;
 			else if(calcName=="Q3") calc = Q3;
 			else if(calcName=="Q4") calc = Q4;
-			else if(calcName=="Binom") calc = Binom;			
+			else if(calcName=="Binom") calc = Binom;
+			else if(calcName=="Res") calc = Res;
+			else if(calcName=="RelRes") calc = RelRes;
 		}
 		
 		//ratio class acts a little differently:
@@ -546,8 +548,12 @@ class KSetRatio: public KSet {
 			TH1* hsim0 = (TH1*)hsim->Clone();
 			//in case displaying with different number of bins than original histo
 			TH1* hrat = (htemp ? (TH1*)htemp->Clone() : (TH1*)h0->Clone());
-			
+
 			int nbins = hrat->GetNbinsX()+1;
+			//comparing a set to itself: must be residuals from fit
+			if(children[0]==children[1]){
+				if(calc!=Res and calc!=RelRes) calc = Res;
+			}
 			//only pull,data/MC supported for 2D
 			//todo: add others
 			if(hrat->GetDimension()==2) {
@@ -656,6 +662,21 @@ class KSetRatio: public KSet {
 				}
 				noErrBand = true;
 			}
+			else if(calc==Res or calc==RelRes){
+				const auto& basefits = children[0]->GetFits();
+				for(auto fit : basefits){
+					TH1* rtmp = (TH1*)hrat->Clone();
+					//subtract function
+					rtmp->Add(fit->GetFn(),-1);
+					//divide by function if relative
+					if(calc==RelRes) rtmp->Divide(fit->GetFn());
+					//formatting
+					fit->GetStyle()->Format(rtmp);
+					//store
+					obj->rtmp.push_back(rtmp);
+				}
+				noErrBand = true;
+			}
 			
 			//formatting
 			if(MyStyle) MyStyle->Format(hrat);
@@ -704,7 +725,12 @@ class KSetRatio: public KSet {
 			pad->cd();
 			//error band enabled by default
 			if(obj->htmp->GetDimension()==1) {
-				if(obj->btmp){
+				if(!obj->rtmp.empty()){
+					for(auto res : obj->rtmp){
+						res->Draw(MyStyle->GetDrawOpt("same").c_str());
+					}
+				}
+				else if(obj->btmp){
 					obj->btmp->Draw("PZ same");
 				}
 				else {
@@ -726,7 +752,12 @@ class KSetRatio: public KSet {
 		virtual void AddToLegend(KLegend* kleg) {
 			if(!kleg) return;
 			//for legend placement
-			if(obj->btmp) kleg->AddGraph(obj->btmp);
+			if(!obj->rtmp.empty()) {
+				for(auto res : obj->rtmp){
+					kleg->AddHist(res);
+				}
+			}
+			else if(obj->btmp) kleg->AddGraph(obj->btmp);
 			else kleg->AddHist(obj->htmp);
 			//todo: add ratio w/ marker, error band?
 			for(auto fit : obj->ftmp){

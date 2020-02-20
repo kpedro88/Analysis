@@ -46,6 +46,7 @@ class KObject {
 		TGraphAsymmErrors* btmp = nullptr;
 		vector<double>* efftmp = nullptr;
 		vector<KFit*> ftmp;
+		vector<TH1*> rtmp;
 };
 typedef KMap<KObject*> ObjectMap;
 
@@ -161,6 +162,8 @@ class KBase {
 		virtual TH1* GetHisto(){ return obj->htmp; }
 		//gets current histo name
 		virtual string GetHistoName() { return stmp; }
+		//gets fits associated w/ current histo
+		virtual vector<KFit*> GetFits() { return obj->ftmp; }
 		//resets current name and histo
 		virtual TH1* GetHisto(string hname) {
 			KObject* otmp = MyObjects.Get(hname);
