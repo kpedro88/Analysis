@@ -135,9 +135,16 @@ class KBase {
 		virtual void AddFits(string s, OptionMap* omap, OptionMapMap& fitopts, string fitopt="fits") {
 			vector<string> fits; omap->Get(fitopt,fits);
 			if(fits.empty()) return;
+			//cases: 1) no localfits specified, just use fits from histo, 2) empty localfits specified -> don't fit, 3) subset specified, fit just that subset
+			//use intersection of histo fits and localfits because localfits may not be strict subset of histo fits
+			//different histos can have different fits, each set only provides one list of localfits
+			vector<string> localfits;
+			if(localOpt->Get("fits",localfits) and localfits.empty()) return;
+			set<string> localfitset(localfits.begin(),localfits.end());
 
 			if(stmp==s or GetHisto(s)){
 				for(const auto& fit: fits){
+					if(!localfitset.empty() and localfitset.find(fit)==localfitset.end()) continue;
 					auto fopt = fitopts.Get(fit);
 					if(!fopt) throw runtime_error("No options provided for fit "+fit+" for histo "+s);
 					auto kfit = new KFit(fit+"_"+s+"_"+name,fopt);
