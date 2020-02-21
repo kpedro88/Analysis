@@ -37,6 +37,7 @@ class KFit {
 			//options for TH1::Fit()
 			localOpt->Get("opts",opts);
 			opts += "N";
+			legname = name;
 			localOpt->Get("legname",legname);
 			//freeze specific or all parameters (freeze all = don't fit at all)
 			vector<int> fixpars; localOpt->Get("fixpars",fixpars);
@@ -69,6 +70,7 @@ class KFit {
 		TF1* GetFn() { return fn; }
 		const string& GetOpts() { return opts; }
 		KStyle* GetStyle() { return style; }
+		string GetName() { return name; }
 		//fit and/or normalize (if requested)
 		template <typename T>
 		void DoFit(T* htmp) {

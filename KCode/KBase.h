@@ -186,10 +186,20 @@ class KBase {
 			string outname = name;
 			localOpt->Get("outname",outname);
 			string oname = pname + "_" + outname;
-			obj->htmp->SetName(oname.c_str());
-			obj->htmp->Write(oname.c_str());
+			if(!obj->rtmp.empty()){
+				//to save residuals from ratio
+				for(auto res : obj->rtmp){
+					//name is already assigned as res_[fit]_[hist]_[set]
+					res->Write();
+				}
+			}
+			else {
+				obj->htmp->SetName(oname.c_str());
+				obj->htmp->Write();
+			}
 			if(globalOpt->Get("savefits",false)){
 				for(auto fit : obj->ftmp){
+					//fit name is already assigned as [fit]_[hist]_[set]
 					fit->GetFn()->Write();
 				}
 			}

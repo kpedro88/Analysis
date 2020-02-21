@@ -665,7 +665,7 @@ class KSetRatio: public KSet {
 			else if(calc==Res or calc==RelRes){
 				const auto& basefits = children[0]->GetFits();
 				for(auto fit : basefits){
-					TH1* rtmp = (TH1*)hrat->Clone();
+					TH1* rtmp = (TH1*)hrat->Clone(("residual_"+fit->GetName()).c_str());
 					//subtract function
 					rtmp->Add(fit->GetFn(),-1);
 					//divide by function if relative

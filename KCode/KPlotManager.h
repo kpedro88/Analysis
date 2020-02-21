@@ -318,7 +318,8 @@ class KPlotManager : public KManager {
 			MyFitOptions.Add(tmp->fields[0],tmp->localOpt());
 		}
 		void makeRatio(KBase* numer, KBase* denom, KBase* style_source=nullptr){
-			KSetRatio* rtmp = new KSetRatio("ratio__"+numer->GetName()+"__"+denom->GetName(),NULL,globalOpt);
+			string nametmp = numer==denom ? "residual__"+numer->GetName() : "ratio__"+numer->GetName()+"__"+denom->GetName();
+			KSetRatio* rtmp = new KSetRatio(nametmp,NULL,globalOpt);
 			rtmp->AddNumerator(numer);
 			rtmp->AddDenominator(denom);
 			//style from source, but pe drawopt
