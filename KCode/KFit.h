@@ -54,6 +54,7 @@ class KFit {
 			//precision for printing pars and chi2
 			localOpt->Get("precision",prcsn);
 			precfixed = localOpt->Get("precfixed",true);
+			printerr = localOpt->Get("printerr",false);
 		}
 
 		//accessors
@@ -85,13 +86,26 @@ class KFit {
 			stringstream sleg;
 			if(precfixed) sleg << fixed;
 			sleg << setprecision(prcsn);
-			sleg << legname;
+			sleg << legname << ", #chi^{2} / n_{dof} = " << fn->GetChisquare() << " / " << fn->GetNDF();
+			string ssleg = sleg.str();
+			vector<string> extra_text;
+			//print params 2 at a time to avoid overflow
+			int ctr = 0; sleg.str("");
 			for(int i = 0; i < fn->GetNpar(); ++i){
-				sleg << ", p_{" << i << "} = " << fn->GetParameter(i) << " #pm " << fn->GetParError(i);
+				sleg << "p_{" << i << "} = " << fn->GetParameter(i);
+				if(printerr) sleg << " #pm " << fn->GetParError(i);
+				if(ctr==1 or i==fn->GetNpar()-1){
+					extra_text.push_back(sleg.str());
+					sleg.str("");
+					ctr = 0;
+				}
+				else {
+					sleg << ", ";
+					++ctr;
+				}
 			}
-			sleg << "; #chi^{2} / n_{dof} = " << fn->GetChisquare() << " / " << fn->GetNDF();
 			string option = style->GetLegOpt();
-			kleg->AddEntry(fn,sleg.str(),option,panel);
+			kleg->AddEntry(fn,ssleg,option,panel,extra_text);
 		}
 		void Draw(TPad* pad){
 			fn->Draw(style->GetDrawOpt("same").c_str());
@@ -110,6 +124,7 @@ class KFit {
 		int normpar = -1;
 		int prcsn = 2;
 		bool precfixed = true;
+		bool printerr = false;
 };
 
 //only normalize to histos
