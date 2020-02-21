@@ -85,7 +85,7 @@ class KFit {
 			sleg << setprecision(prcsn);
 			sleg << legname;
 			for(int i = 0; i < fn->GetNpar(); ++i){
-				sleg << ", p_{" << i << "} = " << fn->GetParameter(i);
+				sleg << ", p_{" << i << "} = " << fn->GetParameter(i) << " #pm " << fn->GetParError(i);
 			}
 			sleg << "; #chi^{2} / n_{dof} = " << fn->GetChisquare() << " / " << fn->GetNDF();
 			string option = style->GetLegOpt();
