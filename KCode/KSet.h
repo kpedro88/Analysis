@@ -504,6 +504,8 @@ class KSetRatio: public KSet {
 			string calcName = "";
 			globalOpt->Get("ratiocalc",calcName);
 			SetCalc(calcName);
+			//auto disable ratio fits on residuals
+			if(calc==Res or calc==RelRes) localOpt->Set<vector<string>>("ratiofits",{});
 		}
 		//destructor
 		virtual ~KSetRatio() {}

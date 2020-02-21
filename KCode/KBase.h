@@ -139,7 +139,7 @@ class KBase {
 			//use intersection of histo fits and localfits because localfits may not be strict subset of histo fits
 			//different histos can have different fits, each set only provides one list of localfits
 			vector<string> localfits;
-			if(localOpt->Get("fits",localfits) and localfits.empty()) return;
+			if(localOpt->Get(fitopt,localfits) and localfits.empty()) return;
 			set<string> localfitset(localfits.begin(),localfits.end());
 
 			if(stmp==s or GetHisto(s)){
