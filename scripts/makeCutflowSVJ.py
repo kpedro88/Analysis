@@ -14,6 +14,7 @@ parser.add_option("-n", "--names", dest="names", type='string', default="selecti
 parser.add_option("-t", "--type", dest="type", type='choice', default="abs", choices=['abs','rel','raw','rawrel'], help="type of cutflow (abs, rel, raw, rawrel)")
 parser.add_option("-p", "--prec", dest="prec", type='int', default=1, help="numerical precision of output")
 parser.add_option("-e", "--no-error", dest="error", default=True, action="store_false", help="don't display statistical errors")
+parser.add_option("-v", "--verbose", dest="verbose", default=False, action="store_true", help="verbose output")
 (options, args) = parser.parse_args()
 
 namesDict = getattr(__import__(options.names,fromlist=["selections"]),"selections")
@@ -82,6 +83,13 @@ procs = OrderedDict([
         ('ZJetsToNuNu_HT-1200to2500', 0.3546459),
         ('ZJetsToNuNu_HT-2500toInf', 0.00854235),
     ]),
+#    ('single top',[
+#        ('ST_s-channel', 3.34),
+#        ('ST_t-channel_antitop', 80.95),
+#        ('ST_t-channel_top', 136.02),
+#        ('ST_tW_antitop', 19.4674),
+#        ('ST_tW_top', 35.6),
+#    ]),
     ('$\\PZprime \\to \\Pqdark\\Paqdark$',[
         ('SVJ_mZprime-3000_mDark-20_rinv-0.3_alpha-peak', .0155),
     ])
@@ -106,10 +114,13 @@ for procname,proc in procs.iteritems():
                 continue
             if "SVJ" in p[0]:
                 year = "2017"
+            if "ST_t-channel" in p[0] and year=="2018":
+                year = "2017"
             samples.append('{"'+p[0]+'_MC'+year+'",'+str(p[1])+','+str(lumi)+'}')
 
     # process cutflow lines (summed over years)
     cmd = "root -b -l -q 'CutflowSum.C("+'"'+options.dir+'",{'+','.join(samples)+'},1,'+str(options.prec)+')'+"'"
+    if options.verbose: print(cmd)
     cutflow = filter(None,os.popen(cmd).read().split('\n'))
     started = False
     first = 0
