@@ -1,7 +1,8 @@
 FIT
 pol0	s:fn[pol0]	s:legname[pol0]	vd:pars[1]	s:opts[Q]	i:linestyle[7]	i:linewidth[2]	i:precision[3]	b:precfixed[0]	s:legopt[l]	c:linecolor[kRed]
 pol1	s:fn[pol1]	s:legname[pol1]	vd:pars[1,0]	s:opts[Q]	i:linestyle[7]	i:linewidth[2]	i:precision[3]	b:precfixed[0]	s:legopt[l]	c:linecolor[kMagenta]
-thry	s:fn[[0]*(1-x/13000)^([1]+[2]*log(x/13000))]	s:legname[theory]	vd:pars[1000,-10,-50]	s:opts[]	i:linestyle[7]	i:linewidth[2]	i:precision[3]	b:precfixed[0]	s:legopt[l]	c:linecolor[kMagenta + 2]
+thry	s:fn[[0]*(1-x/13000)^([1]+[2]*log(x/13000))]	s:legname[theory]	vd:pars[1000,-10,-50]	s:opts[]	i:linestyle[7]	i:linewidth[2]	i:precision[3]	b:precfixed[0]	s:legopt[l]	c:linecolor[kMagenta + 2]	c:markercolor[kMagenta + 2]	i:splitleg[2]
+thryn	s:fn[[0]*(1-x/13000)^([1]+[2]*log(x/13000)+[3]/log(x/13000))]	s:legname[theory new]	vd:pars[1000,-10,-50,10]	s:opts[]	i:linestyle[7]	i:linewidth[2]	i:precision[3]	b:precfixed[0]	s:legopt[l]	c:linecolor[kPink - 9]	c:markercolor[kPink - 9]	i:splitleg[2]
 
 HISTO
-MTAK8	i:xnum[90]	d:xmin[1500]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	vs:ratiofits[pol0,pol1]	vs:fits[thry]
+MTAK8	i:xnum[90]	d:xmin[1500]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	vs:ratiofits[pol0,pol1]	vs:fits[thry,thryn]
