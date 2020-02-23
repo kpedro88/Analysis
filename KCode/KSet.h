@@ -182,7 +182,7 @@ class KSetData: public KSet {
 			kleg->AddEntry(obj->htmp,GetLegName(),option,panel_tmp,extra_text);
 			//check for fits
 			for(auto fit : obj->ftmp){
-				fit->AddToLegend(kleg,panel_tmp);
+				fit->AddToLegend(kleg,panel_tmp,true);
 			}
 		}
 		//draw function
@@ -233,7 +233,7 @@ class KSetMC: public KSet {
 			}
 			//check for fits
 			for(auto fit : obj->ftmp){
-				fit->AddToLegend(kleg,panel_tmp);
+				fit->AddToLegend(kleg,panel_tmp,true);
 			}
 		}
 		//draw function
@@ -392,7 +392,7 @@ class KSetMCStack : public KSet {
 			}
 			//check for fits
 			for(auto fit : obj->ftmp){
-				fit->AddToLegend(kleg,panel_tmp);
+				fit->AddToLegend(kleg,panel_tmp,true);
 			}
 		}
 		//draw function

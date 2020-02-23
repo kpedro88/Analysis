@@ -39,6 +39,7 @@ class KFit {
 			opts += "N";
 			legname = name;
 			localOpt->Get("legname",legname);
+			localOpt->Get("splitleg",splitleg);
 			//freeze specific or all parameters (freeze all = don't fit at all)
 			vector<int> fixpars; localOpt->Get("fixpars",fixpars);
 			bool freeze = localOpt->Get("freeze",false);
@@ -82,7 +83,7 @@ class KFit {
 		template <typename T>
 		void Normalize(T* htmp) {}
 		//todo: add option to plot fit error band?
-		void AddToLegend(KLegend* kleg, int panel=0){
+		void AddToLegend(KLegend* kleg, int panel=0, bool assoc=false){
 			stringstream sleg;
 			if(precfixed) sleg << fixed;
 			sleg << setprecision(prcsn);
@@ -94,7 +95,7 @@ class KFit {
 			for(int i = 0; i < fn->GetNpar(); ++i){
 				sleg << "p_{" << i << "} = " << fn->GetParameter(i);
 				if(printerr) sleg << " #pm " << fn->GetParError(i);
-				if(ctr==1 or i==fn->GetNpar()-1){
+				if(ctr==splitleg-1 or i==fn->GetNpar()-1){
 					extra_text.push_back(sleg.str());
 					sleg.str("");
 					ctr = 0;
@@ -105,7 +106,7 @@ class KFit {
 				}
 			}
 			string option = style->GetLegOpt();
-			kleg->AddEntry(fn,ssleg,option,panel,extra_text);
+			kleg->AddEntry(fn,ssleg,option,panel,extra_text,assoc);
 		}
 		void Draw(TPad* pad){
 			fn->Draw(style->GetDrawOpt("same").c_str());
@@ -121,6 +122,7 @@ class KFit {
 		bool freeze = false;
 		string legname;
 		string opts;
+		int splitleg = 2;
 		int normpar = -1;
 		int prcsn = 2;
 		bool precfixed = true;
