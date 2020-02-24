@@ -1,0 +1,13 @@
+SET
+hist	mc	highCutSR	s:legname[high-R_{T} (SR)]	c:color[kBlack]
+	base	ext	highCutSR	s:extfilename[test/tfs_abcd_highCutCR,vlowCutCR,vlowCutSR,highCutSR.root]	b:ext_auto[1]
+hist	mc	lowCutSR	s:legname[low-R_{T} (SR)]	c:color[kBlack]
+	base	ext	lowCutSR	s:extfilename[test/tfs_abcd_lowCutCR,vlowCutCR,vlowCutSR,lowCutSR.root]	b:ext_auto[1]
+hist	mc	highCutSR_vlowCutSR	s:legname[high-R_{T} (pred vlow)]	c:color[kBlue]
+	base	ext	highCutCR	s:extfilename[test/applytfs_abcd_highCutCR,vlowCutCR,vlowCutSR,highCutSR.root]	vs:exthisto_in[pred_MTAK8_vlowCutSR]	vs:exthisto_out[MTAK8]
+hist	mc	lowCutSR_vlowCutSR	s:legname[low-R_{T} (pred vlow)]	c:color[kBlue]
+	base	ext	lowCutCR	s:extfilename[test/applytfs_abcd_lowCutCR,vlowCutCR,vlowCutSR,lowCutSR.root]	vs:exthisto_in[pred_MTAK8_vlowCutSR]	vs:exthisto_out[MTAK8]
+hist	mc	highCutSR_v2lowCutSR	s:legname[high-R_{T} (pred v2low)]	c:color[kBlue]
+	base	ext	highCutCR	s:extfilename[test/applytfs_abcd_highCutCR,v2lowCutCR,v2lowCutSR,highCutSR.root]	vs:exthisto_in[pred_MTAK8_v2lowCutSR]	vs:exthisto_out[MTAK8]
+hist	mc	lowCutSR_v2lowCutSR	s:legname[low-R_{T} (pred v2low)]	c:color[kBlue]
+	base	ext	lowCutCR	s:extfilename[test/applytfs_abcd_lowCutCR,v2lowCutCR,v2lowCutSR,lowCutSR.root]	vs:exthisto_in[pred_MTAK8_v2lowCutSR]	vs:exthisto_out[MTAK8]

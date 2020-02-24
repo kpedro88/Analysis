@@ -1,0 +1,11 @@
+OPTION
+vstring:disable_branches[*]
+bool:useTreeWeight[1]
+bool:debugloop[1]
+bool:debugcut[1]
+double:ymin_min[5e-2]
+double:luminorm[137200]
+double:sizeLeg[24]
+string:rationame[true/pred]
+double:ratiomin[0.5]
+double:ratiomax[1.5]

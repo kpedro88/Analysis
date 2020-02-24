@@ -88,6 +88,8 @@ input/fast*/
 /getWindowYield.py
 /makeTF.py
 /makeTFs.sh
+/makeABCD.sh
+/makeToys.py
 
 # linked by setupXML.sh
 /KMVA/pugi*.*
