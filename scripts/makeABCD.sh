@@ -32,11 +32,16 @@ for SETS in ${SETLIST[@]}; do
 	SETARR=()
 	IFS="," read -a SETARR <<< "$SETS"
 	HIST=input/input_svj_mt_hist_tf_fit.txt
-	EXTRA="d:ratiomax[0.25]"
 	POLY="pol1"
 
-	if [[ "$SETS" == lowCut* ]]; then
+	if [[ "$SETS" == *vlowCutSR,highCutSR ]]; then
+		EXTRA="d:ratiomax[0.25]"
+	elif [[ "$SETS" == *v2lowCutSR,highCutSR ]]; then
+		EXTRA="d:ratiomax[1.0]"
+	elif [[ "$SETS" == *vlowCutSR,lowCutSR ]]; then
 		EXTRA="d:ratiomax[1.2]"
+	elif [[ "$SETS" == *v2lowCutSR,lowCutSR ]]; then
+		EXTRA="d:ratiomax[1.75]"
 	fi
 
 	runall >& log_makeABCD_${SETS}.log &

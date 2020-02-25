@@ -24,6 +24,10 @@ SETFILE=input/input_svj_ext_full_bkg.txt
 if [ -n "$TOYS" ]; then
 	SETFILE=input/input_svj_ext_full_bkg_toys.txt
 fi
+POLY=$2
+if [ -z "$POLY" ]; then
+	POLY="pol0"
+fi
 
 SETLIST=(
 highCutSR,highCutCR \
@@ -43,11 +47,9 @@ for SETS in ${SETLIST[@]}; do
 	IFS="," read -a SETARR <<< "$SETS"
 	HIST=input/input_svj_mt_hist_tf_fit.txt
 	EXTRA="d:ratiomax[7]"
-	POLY="pol0"
-	EXTRAP="-e thryn_MTAK8_${SETARR[1]}"
+	EXTRAP="-e thry_MTAK8_${SETARR[1]}"
 	if [[ "$SETS" == *"SVJ0" ]]; then
 		EXTRA="d:ratiomax[0.05]"
-		POLY="pol1"
 		EXTRAP=""
 	fi
 
