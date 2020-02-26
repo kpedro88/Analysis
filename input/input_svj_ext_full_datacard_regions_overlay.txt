@@ -1,0 +1,11 @@
+SET
+hist	mc	bkg	s:legname[Total bkg]	c:color[kBlack]
+	base	ext	bkg	vs:exthisto_in[Bkg]	vs:exthisto_out[MTAK8]
+hist	mc	QCD	s:legname[QCD]	c:color[kBlue + 2]
+	base	ext	QCD	vs:exthisto_in[QCD]	vs:exthisto_out[MTAK8]
+hist	mc	ttbar	s:legname[t#bar{t}]	c:color[kOrange - 2]
+	base	ext	TT	vs:exthisto_in[TT]	vs:exthisto_out[MTAK8]
+hist	mc	wjets	s:legname[W(l#nu)+jets]	c:color[kOrange + 1]
+	base	ext	WJets	vs:exthisto_in[WJets]	vs:exthisto_out[MTAK8]
+hist	mc	zinv	s:legname[Z(#nu#nu)+jets]	c:color[kViolet + 1]
+	base	ext	ZJets	vs:exthisto_in[ZJets]	vs:exthisto_out[MTAK8]
