@@ -115,12 +115,12 @@ def fit_iter(p0,p1,q0,q1,draw=False,fitopt="NQ"):
     fsecond = r.TF1("fsecond","[0]*(1-x)^[1]",xmin,xmax); ngc(fsecond)
     fit_histo_status(hsub,fsecond,fitopt+"R")
 
-    fdouble = r.TF1("fdouble","[0]*(1-x)^[1]+[2]*(1-x)^[3]",xmin,xmax); ngc(fdouble)
-    fdouble.SetParameter(0,ffirst.GetParameter(0))
-    fdouble.SetParameter(1,ffirst.GetParameter(1))
-    fdouble.SetParameter(2,fsecond.GetParameter(0))
-    fdouble.SetParameter(3,fsecond.GetParameter(1))
-    fit_histo_status(hsum,fdouble,fitopt+"R")
+    fthird = r.TF1("fthird","[0]*(1-x)^[1]+[2]*(1-x)^[3]",xmin,xmax); ngc(fthird)
+    fthird.SetParameter(0,ffirst.GetParameter(0))
+    fthird.SetParameter(1,ffirst.GetParameter(1))
+    fthird.SetParameter(2,fsecond.GetParameter(0))
+    fthird.SetParameter(3,fsecond.GetParameter(1))
+    fit_histo_status(hsum,fthird,fitopt+"R")
 
     if draw:
         hsub.SetLineColor(r.kMagenta+2)
@@ -133,9 +133,9 @@ def fit_iter(p0,p1,q0,q1,draw=False,fitopt="NQ"):
         fsecond.SetLineStyle(7)
         fsecond.SetLineWidth(2)
 
-        fdouble.SetLineColor(r.kGreen+3)
-        fdouble.SetLineStyle(7)
-        fdouble.SetLineWidth(2)
+        fthird.SetLineColor(r.kGreen+3)
+        fthird.SetLineStyle(7)
+        fthird.SetLineWidth(2)
 
         can = r.TCanvas(); ngc(can)
         can.cd()
@@ -159,7 +159,7 @@ def fit_iter(p0,p1,q0,q1,draw=False,fitopt="NQ"):
         legout.SetTextFont(42)
         fit_legend(ffirst,"f_{first}",legout)
         fit_legend(fsecond,"f_{second}",legout)
-        fit_legend(fdouble,"f_{double}",legout)
+        fit_legend(fthird,"f_{third}",legout)
 
         hsum.Draw("hist")
         f1.Draw("same")
@@ -167,7 +167,7 @@ def fit_iter(p0,p1,q0,q1,draw=False,fitopt="NQ"):
         ffirst.Draw("same")
         hsub.Draw("same")
         fsecond.Draw("same")
-        fdouble.Draw("same")
+        fthird.Draw("same")
         legin.Draw()
         legout.Draw()
         
@@ -182,7 +182,7 @@ def fit_iter(p0,p1,q0,q1,draw=False,fitopt="NQ"):
         can2.cd()
         hrat.Draw("hist")
         rfirst = get_residual(hsum,ffirst,can2)
-        rdouble = get_residual(hsum,fdouble,can2)
+        rthird = get_residual(hsum,fthird,can2)
         can2.Print("res_iter_"+','.join([str(x) for x in [p0,p1,q0,q1]])+".png","png")
         
     return ffirst.GetChisquare()/ffirst.GetNDF(), fsecond.GetChisquare()/fsecond.GetNDF()
