@@ -6,17 +6,21 @@ runall() {
 	root -b -l -q 'KPlotDriver.C+(".",{"input/input_svj_stack_dijetmtdetahad_2017.txt","input/input_svj_mt_tf_fit.txt","input/input_svj_mt_hist_tf_fit.txt","'${SETFILE}'"},{"OPTION","'$EXTRA'","vs:chosensets['${SETARR[0]},${SETARR[1]}']","vs:numers['${SETARR[0]}']","vs:denoms['${SETARR[1]}']","s+:printsuffix[_'${SETARR[0]},${SETARR[1]}']","i:npanel[2]","b:balance_panels[1]","vs+:printformat[pdf]"},1)'
 	root -b -l -q 'KPlotDriver.C+(".",{"input/input_svj_stack_dijetmtdetahad_2017.txt","input/input_svj_mt_tf_fit.txt","input/input_svj_mt_hist_tf_fit.txt","'${SETFILE}'"},{"OPTION","'$EXTRA'","vs:chosensets['${SETARR[3]},${SETARR[2]}']","vs:numers['${SETARR[3]}']","vs:denoms['${SETARR[2]}']","s+:printsuffix[_'${SETARR[3]},${SETARR[2]}']","i:npanel[2]","b:balance_panels[1]","vs+:printformat[pdf]"},1)'
 	root -b -l -q 'KPlotDriver.C+(".",{"input/input_svj_stack_dijetmtdetahad_2017.txt","input/input_svj_mt_tf_fit.txt","input/input_svj_mt_hist_tf_fit.txt","'${SETFILE}'"},{"OPTION","'$EXTRA'","vs:chosensets['${SETS}']","vs:numers['${SETARR[0]}']","vs:denoms['${SETARR[1]}']","s+:printsuffix[_'${SETS}']","i:npanel[2]","b:balance_panels[1]","vs+:printformat[pdf]","s:rootfile[test/tfs_abcd_'${SETS}']"},0)'
+	# make separate root file for R
+	root -b -l -q 'KPlotDriver.C+(".",{"input/input_svj_stack_dijetmtdetahad_2017.txt","input/input_svj_mt_tf_fit.txt","input/input_svj_mt_hist_tf_fit.txt","'${MCSETFILE}'"},{"OPTION","'$EXTRA'","vs:chosensets['${SETS}']","vs:numers['${SETARR[0]}']","vs:denoms['${SETARR[1]}']","s+:printsuffix[_'${SETS}']","i:npanel[2]","b:balance_panels[1]","vs+:printformat[pdf]","s:rootfile[test/tfs_mc_abcd_'${SETS}']"},0)'
 #	for SET in ${SETARR[@]}; do
 #		root -b -l -q 'KPlotDriver.C+(".",{"input/input_svj_stack_dijetmtdetahad_2017.txt","input/input_svj_mt_tf_fit.txt","input/input_svj_mt_hist_tf_fit.txt","'${SETFILE}'"},{"OPTION","'$EXTRA'","vs:chosensets['${SET}']","vs:numers['${SET}']","vs:denoms['${SET}']","s+:printsuffix[_'${SET}'_res]","vs+:printformat[pdf]","s:ratiocalc[RelRes]","d:ratiomin[-0.5]","d:ratiomax[0.5]","s:rationame[residual (f-h)/f]"},1)'
 #	done
-	python applyTF.py -i test/tfs_abcd_${SETS}.root -h MTAK8_${SETARR[2]} -f ${POLY}_MTAK8_ratio__${SETARR[0]}__${SETARR[1]}
+	python applyTF.py -i test/tfs_abcd_${SETS}.root -h MTAK8_${SETARR[2]} -f ${POLY}_MTAK8_ratio__${SETARR[0]}__${SETARR[1]} -p MTAK8_ -s ${SETS} -r test/tfs_mc_abcd_${SETS}.root
 	root -b -l -q 'KPlotDriver.C+(".",{"input/input_svj_stack_dijetmtdetahad_2017.txt","input/input_svj_mt_tf_closure.txt","input/input_svj_mt_hist_full.txt","input/input_svj_ext_full_bkg_closure_abcd.txt"},{"OPTION","vs:chosensets['${SETARR[3]},${SETARR[3]}_${SETARR[2]}']","vs:numers['${SETARR[3]}']","vs:denoms['${SETARR[3]}_${SETARR[2]}']","s+:printsuffix[_'${SETS}'_closure]","vs+:printformat[pdf]"},1)'
 }
 
 TOYS=$1
-SETFILE=input/input_svj_ext_full_bkg.txt
+MCSETFILE=input/input_svj_ext_full_bkg.txt
 if [ -n "$TOYS" ]; then
 	SETFILE=input/input_svj_ext_full_bkg_toys.txt
+else
+	SETFILE=$MCSETFILE
 fi
 
 SETLIST=(
