@@ -32,8 +32,8 @@ SAMPLE=${SAMPLES[$PROCESS]}
 source stageOut.sh
 tar -xzf ${CMSSWVER}.tar.gz
 cd ${CMSSWVER}
-scram b ProjectRename
 source /cvmfs/cms.cern.ch/cmsset_default.sh
+scram b ProjectRename
 # cmsenv
 eval `scramv1 runtime -sh`
 cd src/Analysis

@@ -232,7 +232,7 @@ python makeFastInput.py -f -p 4 -d /store/user/lpcsusyhad/SVJ2017/Run2Production
 python makeFastInput.py -f -p 4 -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan/ -m MC2018 -y MC2018POST -s input/input_sets_skim_svj_scan_2018POST.txt -c input/input_sets_DC_svj_scan_2018POST.txt -e batch/exportSkimSVJScan2018POST.sh
 ./batch/makeExportDCSVJScan.sh
 cd batch
-./SKsub_svj.sh -s -t SVJScan -y 2016,2017,2018PRE
+./SKsub_svj.sh -s -t SVJScan -y 2016,2017,2018
 ```
 
 To make histograms, and then plots and ROC curves (including flattening pT spectra):

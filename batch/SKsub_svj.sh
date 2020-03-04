@@ -5,8 +5,9 @@ source exportProd.sh
 JOBDIR=jobs
 JOBTYPE=skim
 INPUT=input/input_selection_svj.txt
+SELTYPE=dijetmtdetahadloosefull
 #SELTYPE=dijetmtdetahadloose,dijetmtdetahadloosefull,dijetmthighdetahadloose,dijetmthighdetahadloosefull
-SELTYPE=dijetlowmtdetahadloosefull,dijetlowmthighdetahadloosefull
+#SELTYPE=dijetlowmtdetahadloosefull,dijetlowmthighdetahadloosefull
 # old skims: dijetmtdetahadloosemf,dijetlowmtdetahadloose,dijetlowmtdetahadloosemf,dijetmtdetamu,dijetmtdetaele
 # old syst skims: dijetmtdetahadloosemf_JECup,dijetmtdetahadloosemf_JECdown,dijetmtdetahadloosemf_JERup,dijetmtdetahadloosemf_JERdown
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}
