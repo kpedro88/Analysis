@@ -1,0 +1,27 @@
+OPTION
+vstring:disable_branches[*]
+bool:useTreeWeight[1]
+bool:debugloop[1]
+bool:debugcut[1]
+#double:ymin_min[5e-2]
+vstring:numers[SVJ_2016,SVJ_2017,SVJ_2018]
+vstring:denoms[SVJ_private]
+string:rationame[central/private]
+vstring:extra_text[SVJ_3100_20_0.3_peak]
+bool:unitnorm[1]
+string:lumi_text[(13 TeV)]
+string:printsuffix[_private_vs_central]
+
+INPUT
+input/input_svj_mt_hist_full.txt
+
+SET
+hist	mc	SVJ_private	s:legname[private (2017)]	c:color[kBlack]
+	base	mc	SVJ_private	s:filename[tree_dijetmtdetahadloosefull/tree_SVJ_mZprime-3100_mDark-20_rinv-0.3_alpha-peak_MC2017.root]
+hist	mc	SVJ_2016	s:legname[central (2016)]	c:color[kBlue]
+	base	mc	SVJ_2016	s:filename[scan/tree_dijetmtdetahadloosefull/tree_SVJ_3100_20_0.3_peak_MC2016.root]
+hist	mc	SVJ_2017	s:legname[central (2017)]	c:color[kMagenta]
+	base	mc	SVJ_2017	s:filename[scan/tree_dijetmtdetahadloosefull/tree_SVJ_3100_20_0.3_peak_MC2017.root]
+hist	mc	SVJ_2018	s:legname[central (2018)]	c:color[kRed]
+	base	mc	SVJ_2018	s:filename[scan/tree_dijetmtdetahadloosefull/tree_SVJ_3100_20_0.3_peak_MC2018.root]
+
