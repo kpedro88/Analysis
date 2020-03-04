@@ -14,8 +14,4 @@ SVJ_Zprime_Scan_MC2016_block9 \
 SVJ_Zprime_Scan_MC2016_block10 \
 SVJ_Zprime_Scan_MC2016_block11 \
 SVJ_Zprime_Scan_MC2016_block12 \
-SVJ_Zprime_Scan_MC2016_block13 \
-SVJ_Zprime_Scan_MC2016_block14 \
-SVJ_Zprime_Scan_MC2016_block15 \
-SVJ_Zprime_Scan_MC2016_block16 \
 )

@@ -23,4 +23,5 @@ SVJ_Zprime_Scan_MC2018_block18 \
 SVJ_Zprime_Scan_MC2018_block19 \
 SVJ_Zprime_Scan_MC2018_block20 \
 SVJ_Zprime_Scan_MC2018_block21 \
+SVJ_Zprime_Scan_MC2018_block22 \
 )

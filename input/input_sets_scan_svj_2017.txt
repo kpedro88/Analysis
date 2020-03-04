@@ -20,5 +20,5 @@ base	scan	SVJ_Zprime_Scan_MC2017_block14	u:block[14]	b:chain[1]	ch:filenames[Fal
 base	scan	SVJ_Zprime_Scan_MC2017_block15	u:block[15]	b:chain[1]	ch:filenames[Fall17.SVJ_Zprime_Scan_TuneCP2_13TeV_pythia8_,150,159,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
 base	scan	SVJ_Zprime_Scan_MC2017_block16	u:block[16]	b:chain[1]	ch:filenames[Fall17.SVJ_Zprime_Scan_TuneCP2_13TeV_pythia8_,160,169,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
 base	scan	SVJ_Zprime_Scan_MC2017_block17	u:block[17]	b:chain[1]	ch:filenames[Fall17.SVJ_Zprime_Scan_TuneCP2_13TeV_pythia8_,170,179,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
-base	scan	SVJ_Zprime_Scan_MC2017_block18	u:block[18]	b:chain[1]	ch:filenames[Fall17.SVJ_Zprime_Scan_TuneCP2_13TeV_pythia8_,180,189,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
+base	scan	SVJ_Zprime_Scan_MC2017_block18	u:block[18]	b:chain[1]	ch:filenames[Fall17.SVJ_Zprime_Scan_TuneCP2_13TeV_pythia8_,180,183,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
 base	scan	SVJ_mZprime-3000_mDark-20_rinv-0p3_alpha-peak_MC2017	b:chain[1]	ch:filenames[Fall17.SVJ_mZprime-3000_mDark-20_rinv-0p3_alpha-peak_TuneCP2_13TeV_pythia8_,0,8,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
