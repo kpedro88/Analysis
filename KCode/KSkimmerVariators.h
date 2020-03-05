@@ -435,7 +435,7 @@ class KJetVariator : public KVariator {
 			TLorentzVector v_old, v_new;
 			if(n<0) n = Jets_orig.size();
 			for(unsigned j = 0; j < Jets_orig.size(); ++j){
-				if(j<n){
+				if(j<unsigned(n)){
 					theJets->push_back(Jets_orig[j]*factor);
 					v_old += Jets_orig[j];
 					v_new += theJets->back();

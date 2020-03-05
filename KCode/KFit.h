@@ -32,7 +32,7 @@ class KFit {
 			if(setrange) fn->SetRange(xmin,xmax);
 			vector<double> pars; localOpt->Get("pars",pars);
 			//safety check
-			if(pars.size()!=fn->GetNpar()) throw runtime_error("Inconsistent size of pars ("+to_string(pars.size())+") vs. fit ("+to_string(fn->GetNpar())+")");
+			if(pars.size()!=unsigned(fn->GetNpar())) throw runtime_error("Inconsistent size of pars ("+to_string(pars.size())+") vs. fit ("+to_string(fn->GetNpar())+")");
 			fn->SetParameters(pars.data());
 			//options for TH1::Fit()
 			localOpt->Get("opts",opts);
