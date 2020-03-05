@@ -40,7 +40,7 @@ string histName(string region, string year, string sel, string qty){
 void print(TCanvas* can, const string& oname, const vector<string>& pformats){
 	for(const auto& pformat : pformats){
 		can->Print((oname+"."+pformat).c_str(),pformat.c_str());
-		if(pformat=="eps") system(("epstopdf "+oname+".eps").c_str());
+		if(pformat=="eps") system(("epstopdf "+oname+".eps && rm "+oname+".eps").c_str());
 	}
 }
 
