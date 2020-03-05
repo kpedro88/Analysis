@@ -57,7 +57,9 @@ deta
 	MTAK8	d:min[1500]
 highdeta
 	DeltaEta	d:min[1.5]	d:max[2.2]
-	MTAK8	d:min[1850]
+# temporarily removed to test MC
+#	MTAK8	d:min[1850]
+	MTAK8	d:min[1500]
 dijet
 	common
 	evtclean

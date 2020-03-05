@@ -5,7 +5,8 @@ source exportProd.sh
 JOBDIR=jobs
 JOBTYPE=skim
 INPUT=input/input_selection_svj.txt
-SELTYPE=dijetmtdetahadloosefull
+SELTYPE=dijetmthighdetahadloosefull,dijetlowmthighdetahadloosefull
+#SELTYPE=dijetmtdetahadloosefull
 #SELTYPE=dijetmtdetahadloose,dijetmtdetahadloosefull,dijetmthighdetahadloose,dijetmthighdetahadloosefull
 #SELTYPE=dijetlowmtdetahadloosefull,dijetlowmthighdetahadloosefull
 # old skims: dijetmtdetahadloosemf,dijetlowmtdetahadloose,dijetlowmtdetahadloosemf,dijetmtdetamu,dijetmtdetaele
