@@ -5,15 +5,16 @@ runall() {
 	for SET in ${SETARR[@]}; do
 		root -b -l -q 'KPlotDriver.C+(".",{"input/input_svj_stack_dijetmtdetahad_2017.txt","input/input_svj_mt_tf_fit.txt","input/input_svj_mt_hist_tf_fit.txt","'${SETFILE}'"},{"OPTION","'$EXTRA'","vs:chosensets['${SET}']","vs:numers['${SET}']","vs:denoms['${SET}']","s+:printsuffix[_'${SET}'_res]","vs+:printformat[pdf]","s:ratiocalc[RelRes]","d:ratiomin[-0.5]","d:ratiomax[0.5]","s:rationame[residual (f-h)/f]"},1)'
 	done
-	python applyTF.py -i test/tfs_${SETS}.root -h MTAK8_${SETARR[1]} -f ${POLY}_MTAK8_ratio__${SETARR[0]}__${SETARR[1]}
-	root -b -l -q 'KPlotDriver.C+(".",{"input/input_svj_stack_dijetmtdetahad_2017.txt","input/input_svj_mt_tf_closure.txt","input/input_svj_mt_hist_full.txt","input/input_svj_ext_full_bkg_closure.txt"},{"OPTION","vs:chosensets['${SETS}']","vs:numers['${SETARR[0]}']","vs:denoms['${SETARR[1]}']","s+:printsuffix[_'${SETS}'_closure]","vs+:printformat[pdf]"},1)'
+	RNAME=MTAK8_ratio__${SETARR[0]}__${SETARR[1]}
+	python applyTF.py -i test/tfs_${SETS}.root -h MTAK8_${SETARR[1]} -f pol0_${RNAME} pol1_${RNAME} soft_${RNAME}
+	root -b -l -q 'KPlotDriver.C+(".",{"input/input_svj_stack_dijetmtdetahad_2017.txt","input/input_svj_mt_tf_closure.txt","input/input_svj_mt_hist_full.txt","input/input_svj_ext_full_bkg_closure.txt"},{"OPTION","vs:chosensets['${SETARR[0]},${SETARR[1]}pol0,${SETARR[1]}pol1,${SETARR[1]}soft']","vs:numers['${SETARR[0]}']","vs:denoms['${SETARR[1]}pol0,${SETARR[1]}pol1,${SETARR[1]}soft']","s+:printsuffix[_'${SETS}'_closure]","vs+:printformat[pdf]"},1)'
 	# make TF w/ extrap too
 	if [ -n "$EXTRAP" ]; then
-		python applyTF.py -i test/tfs_${SETS}.root -o test/applytfs_extrap_${SETS}.root -h MTAK8_${SETARR[1]} -f ${POLY}_MTAK8_ratio__${SETARR[0]}__${SETARR[1]} $EXTRAP
+		python applyTF.py -i test/tfs_${SETS}.root -o test/applytfs_extrap_${SETS}.root -h MTAK8_${SETARR[1]} -f pol0_${RNAME} pol1_${RNAME} soft_${RNAME} $EXTRAP
 		# reuse ext file
 		mv test/applytfs_${SETS}.root test/applytfs_${SETS}.root.bak
 		mv test/applytfs_extrap_${SETS}.root test/applytfs_${SETS}.root
-		root -b -l -q 'KPlotDriver.C+(".",{"input/input_svj_stack_dijetmtdetahad_2017.txt","input/input_svj_mt_tf_closure.txt","input/input_svj_mt_hist_full.txt","input/input_svj_ext_full_bkg_closure.txt"},{"OPTION","vs:chosensets['${SETS}']","vs:numers['${SETARR[0]}']","vs:denoms['${SETARR[1]}']","s+:printsuffix[_'${SETS}'_extrap_closure]","vs+:printformat[pdf]"},1)'
+		root -b -l -q 'KPlotDriver.C+(".",{"input/input_svj_stack_dijetmtdetahad_2017.txt","input/input_svj_mt_tf_closure.txt","input/input_svj_mt_hist_full.txt","input/input_svj_ext_full_bkg_closure.txt"},{"OPTION","vs:chosensets['${SETARR[0]},${SETARR[1]}pol0,${SETARR[1]}pol1,${SETARR[1]}soft']","vs:numers['${SETARR[0]}']","vs:denoms['${SETARR[1]}pol0,${SETARR[1]}pol1,${SETARR[1]}soft']","s+:printsuffix[_'${SETS}'_extrap_closure]","vs+:printformat[pdf]"},1)'
 		mv test/applytfs_${SETS}.root test/applytfs_extrap_${SETS}.root
 		mv test/applytfs_${SETS}.root.bak test/applytfs_${SETS}.root
 	fi
@@ -23,10 +24,6 @@ TOYS=$1
 SETFILE=input/input_svj_ext_full_bkg.txt
 if [ -n "$TOYS" ]; then
 	SETFILE=input/input_svj_ext_full_bkg_toys.txt
-fi
-POLY=$2
-if [ -z "$POLY" ]; then
-	POLY="pol0"
 fi
 
 SETLIST=(

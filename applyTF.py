@@ -1,7 +1,7 @@
 import sys
 from argparse import ArgumentParser, SUPPRESS
 
-def applyTF(iname,hname,fname,ename="",snames="",prename="",rname="",oname=""):
+def applyTF(iname,hname,fname,ofile,ename="",snames="",prename="",rname=""):
     from ROOT import TFile, TH1, TF1
     file = TFile.Open(iname)
     hist = file.Get(hname)
@@ -15,7 +15,7 @@ def applyTF(iname,hname,fname,ename="",snames="",prename="",rname="",oname=""):
 
     sets = []
     if len(snames)>0:
-		rfile = TFile.Open(rname)
+        rfile = TFile.Open(rname)
         sets = snames.split(',')
         hsets = []
         for set in sets:
@@ -30,12 +30,9 @@ def applyTF(iname,hname,fname,ename="",snames="",prename="",rname="",oname=""):
         hsets[3].Fit(pol1,"N")
         hist.Multiply(pol1)
 
-    if len(oname)==0:
-        oname = iname.replace("tfs","applytfs")
-    ofile = TFile.Open(oname,"RECREATE")
     ofile.cd()
-    cr = fname.split("/")[0]
-    tname = "pred_"+hname
+    ftitle = fname.split("_")[0]
+    tname = "pred_"+hname+"_"+ftitle
     hist.Write(tname)
     print(tname)
 
@@ -44,7 +41,7 @@ if __name__=="__main__":
     parser.add_argument("-i","--input",type=str,required=True,help="input file name")
     parser.add_argument("-o","--output",type=str,default="",help="output file name")
     parser.add_argument("-h","--hist",type=str,required=True,help="histogram name")
-    parser.add_argument("-f","--fit",type=str,required=True,help="fit function name")
+    parser.add_argument("-f","--fit",type=str,nargs='+',help="fit function name(s)")
     parser.add_argument("-e","--extrap",type=str,default="",help="extrap function name")
     parser.add_argument("-s","--sets",type=str,default="",help="comma-separated list of sets (B,D,C,A) for correl")
     parser.add_argument("-p","--prefix",type=str,default="",help="prefix for correl")
@@ -54,4 +51,10 @@ if __name__=="__main__":
 
     sys.argv = []
 
-    applyTF(args.input,args.hist,args.fit,args.extrap,args.sets,args.prefix,args.rfile,args.output)
+    from ROOT import TFile
+    if len(args.output)==0:
+        args.output = args.input.replace("tfs","applytfs")
+    ofile = TFile.Open(args.output,"RECREATE")
+
+    for fname in args.fit:
+        applyTF(args.input,args.hist,fname,ofile,args.extrap,args.sets,args.prefix,args.rfile)
