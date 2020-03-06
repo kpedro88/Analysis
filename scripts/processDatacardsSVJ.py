@@ -44,13 +44,14 @@ def convertName(outname,dirname):
     return newname+newname2
 
 class Sample(object):
-    def __init__(self, name, names_hists=None):
+    def __init__(self, name, names_hists=None, nominal="nominal"):
         # basic constructor
         self.name = name
         self.years = OrderedDict()
         self.systs = []
         # stores added TH2s
         self.output = []
+        self.nominal = nominal
 
         if names_hists is None: return
         
@@ -71,9 +72,9 @@ class Sample(object):
             htmp.Add(h)
         self.output.append(htmp)
     def hadd_nominal(self, outname):
-        self.hadd([syst["nominal"] for year,syst in self.years.iteritems()], outname)
+        self.hadd([syst[self.nominal] for year,syst in self.years.iteritems()], outname)
     def hadd_syst(self, syst, correl=False):
-        if syst=="nominal": return
+        if syst==self.nominal: return
         if correl:
             # add up for all years
             hlist = []
@@ -92,7 +93,7 @@ class Sample(object):
                 if subyear in done_years: continue
                 for year2 in self.years:
                     if subyear==year2[:4]: hlist.append(self.years[year2][syst])
-                    else: hlist.append(self.years[year2]["nominal"])
+                    else: hlist.append(self.years[year2][self.nominal])
                 self.hadd(hlist,self.name+"_"+syst+"_"+subyear)
                 done_years.append(subyear)
 
@@ -129,6 +130,7 @@ if __name__=="__main__":
     parser.add_argument("-f", "--files", dest="files", type=str, nargs="+", help="list of input files", required=True)
     parser.add_argument("-o", "--out", dest="out", type=str, help="output file name", required=True)
     parser.add_argument("-n", "--no-split", dest="no_split", default=False, action="store_true", help="disable split into dirs for regions")
+    parser.add_argument("-m", "--nominal", dest="nominal", default="nominal", type=str, help="name of nominal selection")
     args = parser.parse_args()
     
     # categories
@@ -161,7 +163,7 @@ if __name__=="__main__":
     unique_names = usort([get_sample(n,args.prefix) for n in names_hists])
 
     for name in unique_names:
-        tmp = Sample(name,names_hists)
+        tmp = Sample(name,names_hists,args.nominal)
         if name in args.data:
             samples["data"].append(tmp)
         elif name in args.bkgs:
@@ -182,7 +184,7 @@ if __name__=="__main__":
 
         # make tot for bkg
         bname = "Bkg"
-        btmp = Sample(bname)
+        btmp = Sample(bname,nominal=args.nominal)
         btmp.hadd([h for s in samples["bkg"] for h in s.output],bname)
         samples["bkg"].append(btmp)
         fprint("Added "+bname)
@@ -229,13 +231,13 @@ if __name__=="__main__":
         # make signal stat histos for this dir
         dir_samples = []
         for sig in samples["sig"]:
-            stmp = Sample(sig.name+"_mcstat")
+            stmp = Sample(sig.name+"_mcstat",nominal=args.nominal)
             for year in sig.years:
                 stmp.years[year] = OrderedDict()
                 # split first to get correct bin numbers
-                htmp = dir.split(sig.years[year]["nominal"],False)
-                stmp.years[year]["nominal"] = htmp
-                stmp.systs.append("nominal")
+                htmp = dir.split(sig.years[year][args.nominal],False)
+                stmp.years[year][args.nominal] = htmp
+                stmp.systs.append(args.nominal)
                 # generate stat variations for this year
                 for b in range(1,htmp.GetNbinsX()+1):
                     nameUp = "bin"+str(b)+"Up"

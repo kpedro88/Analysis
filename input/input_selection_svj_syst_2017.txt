@@ -7,6 +7,18 @@ common
 nominal
 	MCWeight	in:options[input/input_svj_MCWeight_options_2017.txt]
 	common
+nominalNoTrig
+	MCWeight	in:options[input/input_svj_MCWeight_options_2017.txt]	b:trigfncorr[0]
+	common
+nominalHighDeta
+	MCWeight	in:options[input/input_svj_MCWeight_options_2017.txt]	s:trigfnfile[corrections/trigEffFit_SingleMuon_2017_HighDetaHLTmatch.root]
+	common
+nominalLowRT
+	MCWeight	in:options[input/input_svj_MCWeight_options_2017.txt]	s:trigfnfile[corrections/trigEffFit_SingleMuon_2017_LowRTDetaHLTmatch.root]
+	common
+nominalLowRTHighDeta
+	MCWeight	in:options[input/input_svj_MCWeight_options_2017.txt]	s:trigfnfile[corrections/trigEffFit_SingleMuon_2017_LowRTHighDetaHLTmatch.root]
+	common
 trigfnuncUp
 	MCWeight	in:options[input/input_svj_MCWeight_options_2017.txt]	int:trigfnunc[1]
 	common

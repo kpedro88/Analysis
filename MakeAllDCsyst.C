@@ -400,11 +400,13 @@ void MakeAllDCsyst(string setname="", string indir="root://cmseos.fnal.gov//stor
 	string cmd = "hadd -f "+therootfile+" "+slist.str()+".root"; //add trailing delim
 	system(cmd.c_str());
 
-	if(systTypes=="nominal" and vars.empty()){ //for data/bkg case without systs
+	vector<string> systs;
+	KParser::process(systTypes,',',systs);
+	if(systs.size()==1 and vars.empty()){ //for data/bkg case without systs
 		cout << "Systematics not requested." << endl;
 		return;
 	}
-	if(systTypes.find("nominal")==string::npos){ //for signal case when checking specific syst
+	if(find(systs.begin(),systs.end(),"nominal")==systs.end()){ //for signal case when checking specific syst
 		cout << "Nominal histogram not found, will not make relative systematics." << endl;
 		return;		
 	}

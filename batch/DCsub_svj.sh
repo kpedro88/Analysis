@@ -12,9 +12,10 @@ VERSION=${RUN2PRODV}_v2
 CONFIG=""
 NOSYST=""
 EXTRAS=""
+NOMINAL=nominal
 
 #check arguments
-while getopts "ky:t:c:v:r:e:sd" opt; do
+while getopts "ky:t:c:v:r:e:n:sd" opt; do
 	case "$opt" in
 		k) CHECKARGS="${CHECKARGS} -k"
 		;;
@@ -32,12 +33,15 @@ while getopts "ky:t:c:v:r:e:sd" opt; do
 		;;
 		s) NOSYST=true
 		;;
+		n) NOMINAL=$OPTARG
+		;;
 		d) DRYRUN="echo"
 		;;
 	esac
 done
 
 STORE=root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/${VERSION}
+SAFEVERSION=$(echo $VERSION | sed 's~/~_~')
 ./SKcheck.sh ${CHECKARGS}
 
 for TYPE in ${TYPES[@]}; do
@@ -67,10 +71,10 @@ for TYPE in ${TYPES[@]}; do
 	fi
 
 	if [[ -z "$NOSYST" && ("$TYPE" = SVJ  ||  "$TYPE" = SVJScan) ]]; then
-		SYSTS=nominal,trigfnuncUp,trigfnuncDown,puuncUp,puuncDown,pdfalluncUp,pdfalluncDown
+		SYSTS=${NOMINAL},trigfnuncUp,trigfnuncDown,puuncUp,puuncDown,pdfalluncUp,pdfalluncDown
 		VARS=JECup,JECdown,JERup,JERdown
 	else
-		SYSTS=nominal
+		SYSTS=${NOMINAL}
 		VARS=none
 	fi
 
@@ -80,7 +84,7 @@ for TYPE in ${TYPES[@]}; do
 		# skip nonexistent ones
 		if [[ $? -ne 0 ]]; then continue; fi
 
-		JOBNAME=DC_svj_${VERSION}_${REGION}_${TYPE}_${YEAR}
+		JOBNAME=DC_svj_${SAFEVERSION}_${REGION}_${TYPE}_${YEAR}
 		echo 'MakeAllDCsyst.C+("NEWSAMPLE","'${INDIR}'",{"'${DCCONFIG}'"},{'"$EXTRAS"'},"'${REGION}'","'${SYSTS}'","'${VARS}'")' > jobs/input/macro_${JOBNAME}.txt
 
 		$DRYRUN ./DCtemp.sh ${JOBDIR} ${STORE} ${JOBNAME} ${SNAME} ${#SAMPLES[@]} ${TYPE} ${YEAR}
