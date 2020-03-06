@@ -92,6 +92,7 @@ input/fast*/
 /makeToys.py
 /test_fit_sum.py
 /test_fit_sum_bkg.py
+/applyTF.py
 
 # linked by setupXML.sh
 /KMVA/pugi*.*
