@@ -1,9 +1,11 @@
 import sys
 from argparse import ArgumentParser, SUPPRESS
 
-def applyTF(iname,hname,fname,ofile,ename="",snames="",prename="",rname=""):
+def applyTF(iname,hname,tname,fname,ofile,ename="",snames="",prename="",rname=""):
     from ROOT import TFile, TH1, TF1
     file = TFile.Open(iname)
+    hist_orig = file.Get(tname)
+    hist_orig.SetDirectory(0)
     hist = file.Get(hname)
     hist.SetDirectory(0)
     fn = file.Get(fname)
@@ -34,6 +36,7 @@ def applyTF(iname,hname,fname,ofile,ename="",snames="",prename="",rname=""):
     ftitle = fname.split("_")[0]
     tname = "pred_"+hname+"_"+ftitle
     hist.Write(tname)
+    hist_orig.Write() # keep orig in same file for easier closure test
     print(tname)
 
 if __name__=="__main__":
@@ -41,6 +44,7 @@ if __name__=="__main__":
     parser.add_argument("-i","--input",type=str,required=True,help="input file name")
     parser.add_argument("-o","--output",type=str,default="",help="output file name")
     parser.add_argument("-h","--hist",type=str,required=True,help="histogram name")
+    parser.add_argument("-t","--true",type=str,required=True,help="true histogram name")
     parser.add_argument("-f","--fit",type=str,nargs='+',help="fit function name(s)")
     parser.add_argument("-e","--extrap",type=str,default="",help="extrap function name")
     parser.add_argument("-s","--sets",type=str,default="",help="comma-separated list of sets (B,D,C,A) for correl")
@@ -57,4 +61,4 @@ if __name__=="__main__":
     ofile = TFile.Open(args.output,"RECREATE")
 
     for fname in args.fit:
-        applyTF(args.input,args.hist,fname,ofile,args.extrap,args.sets,args.prefix,args.rfile)
+        applyTF(args.input,args.hist,args.true,fname,ofile,args.extrap,args.sets,args.prefix,args.rfile)
