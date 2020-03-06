@@ -93,6 +93,7 @@ input/fast*/
 /test_fit_sum.py
 /test_fit_sum_bkg.py
 /applyTF.py
+/getTrigCorrVals.C
 
 # linked by setupXML.sh
 /KMVA/pugi*.*
