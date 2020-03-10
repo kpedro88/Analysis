@@ -1,0 +1,5 @@
+INPUT
+input/input_svj_stack_dijetmtdetahad_2017.txt
+
+OPTION
+string:prelim_text[Work-in-progress]

@@ -94,6 +94,7 @@ input/fast*/
 /test_fit_sum_bkg.py
 /applyTF.py
 /getTrigCorrVals.C
+/doubleRatio.C
 
 # linked by setupXML.sh
 /KMVA/pugi*.*

@@ -2,3 +2,12 @@ SELECTION
 nominal
 	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
 	base
+nominalNoTrig
+	nominal
+nominalHighDeta
+	nominal
+nominalLowRT
+	nominal
+nominalLowRTHighDeta
+	nominal
+

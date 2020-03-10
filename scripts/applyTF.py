@@ -1,14 +1,18 @@
 import sys
 from argparse import ArgumentParser, SUPPRESS
 
-def applyTF(iname,hname,tname,fname,ofile,ename="",snames="",prename="",rname=""):
+def applyTF(iname,hname,tname,fname,ofile,ename="",snames="",prename="",rname="",ffname=""):
     from ROOT import TFile, TH1, TF1
     file = TFile.Open(iname)
     hist_orig = file.Get(tname)
     hist_orig.SetDirectory(0)
     hist = file.Get(hname)
     hist.SetDirectory(0)
-    fn = file.Get(fname)
+    if len(ffname)>0:
+        ffile = TFile.Open(ffname)
+        fn = ffile.Get(fname)
+    else:
+        fn = file.Get(fname)
     if len(ename)>0:
         efn = file.Get(ename)
         for b in range(1,hist.GetNbinsX()+1):
@@ -46,6 +50,7 @@ if __name__=="__main__":
     parser.add_argument("-h","--hist",type=str,required=True,help="histogram name")
     parser.add_argument("-t","--true",type=str,required=True,help="true histogram name")
     parser.add_argument("-f","--fit",type=str,nargs='+',help="fit function name(s)")
+    parser.add_argument("-F","--fitfile",type=str,default="",help="separate file name for fit function(s)")
     parser.add_argument("-e","--extrap",type=str,default="",help="extrap function name")
     parser.add_argument("-s","--sets",type=str,default="",help="comma-separated list of sets (B,D,C,A) for correl")
     parser.add_argument("-p","--prefix",type=str,default="",help="prefix for correl")
@@ -61,4 +66,4 @@ if __name__=="__main__":
     ofile = TFile.Open(args.output,"RECREATE")
 
     for fname in args.fit:
-        applyTF(args.input,args.hist,args.true,fname,ofile,args.extrap,args.sets,args.prefix,args.rfile)
+        applyTF(args.input,args.hist,args.true,fname,ofile,args.extrap,args.sets,args.prefix,args.rfile,args.fitfile)

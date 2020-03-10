@@ -4,3 +4,12 @@ nominal
 	Blind	i:firstUnblindRun[319077]
 	HEMOptVeto
 	base
+nominalNoTrig
+	nominal
+nominalHighDeta
+	nominal
+nominalLowRT
+	nominal
+nominalLowRTHighDeta
+	nominal
+
