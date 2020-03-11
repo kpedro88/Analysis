@@ -109,6 +109,7 @@ dijetmtdetahadloosefull
 dijetlowmtdetahadloose
 	dijetlowmtdeta
 	vetoloose
+	phitag
 	endcommon
 dijetlowmtdetahadloosemf
 	dijetlowmtdetahadloose
@@ -155,6 +156,12 @@ dijetlowmtdetahadloosefull
 	METFilter	b:ecaldeadcell[0]
 	phiveto
 	DeltaPhiMinAK8	d:max[0.8]
+	endcommon
+dijetlowmthighdetahadloose
+	dijetlowmt
+	highdeta
+	vetoloose
+	phitag
 	endcommon
 dijetlowmthighdetahadloosefull
 	NormType
