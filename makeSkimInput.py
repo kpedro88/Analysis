@@ -8,10 +8,10 @@ def getNormType(short_name):
     normtypes = {
         "TTJets": "ttbarLowHThad",
         "TTJets_DiLept": "ttbarLowHTLowMET",
-        "TTJets_DiLept_genMET150": "ttbarLowHTHighMET",
-        "TTJets_DiLept_genMET80": "ttbarLowHTHighMET",
         "TTJets_SingleLeptFromT": "ttbarLowHTLowMET",
         "TTJets_SingleLeptFromTbar": "ttbarLowHTLowMET",
+        "TTJets_DiLept_genMET150": "ttbarLowHTHighMET",
+        "TTJets_DiLept_genMET80": "ttbarLowHTHighMET",
         "TTJets_SingleLeptFromT_genMET150": "ttbarLowHTHighMET",
         "TTJets_SingleLeptFromTbar_genMET150": "ttbarLowHTHighMET",
         "TTJets_SingleLeptFromT_genMET80": "ttbarLowHTHighMET",
@@ -20,6 +20,16 @@ def getNormType(short_name):
         "TTJets_HT800to1200": "ttbarHighHT",
         "TTJets_HT1200to2500": "ttbarHighHT",
         "TTJets_HT2500toInf": "ttbarHighHT",
+        "TTJets_DiLept_genMET-150": "ttbarLowHTHighMET",
+        "TTJets_DiLept_genMET-80": "ttbarLowHTHighMET",
+        "TTJets_SingleLeptFromT_genMET-150": "ttbarLowHTHighMET",
+        "TTJets_SingleLeptFromTbar_genMET-150": "ttbarLowHTHighMET",
+        "TTJets_SingleLeptFromT_genMET-80": "ttbarLowHTHighMET",
+        "TTJets_SingleLeptFromTbar_genMET-80": "ttbarLowHTHighMET",
+        "TTJets_HT-600to800": "ttbarHighHT",
+        "TTJets_HT-800to1200": "ttbarHighHT",
+        "TTJets_HT-1200to2500": "ttbarHighHT",
+        "TTJets_HT-2500toInf": "ttbarHighHT",
     }
     if short_name in normtypes: return normtypes[short_name]
     else: return ""
