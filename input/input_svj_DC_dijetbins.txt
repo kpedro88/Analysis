@@ -1,0 +1,19 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+INPUT
+input/input_global.txt
+
+OPTION
+int:yieldprecision[4]
+vstring:disable_branches[*]
+bool:closefiles[1]
+bool:debugcut[1]
+
+HISTO2D
+MTAK8_RA2bin	vd:xbins[1500,1530,1607,1687,1770,1856,1945,2037,2132,2231,2332,2438,2546,2659,2775,2895,3019,3147,3279,3416,3558,3704,3854,4010,4171,4337,4509,4686,4869,5058,5253,5455,5663,5877,6099,6328,6564,6808,7060,7320,7589,7866,8152]	s:xtitle[M_{T} [GeV]]	i:ynum[6]	d:ymin[0.5]	d:ymax[6.5]	s:ytitle[R_{T}, N_{SVJ} bin]	s:ztitle[events / GeV]	b:ratio[0]	b:ybinlabel[1]	b:xbindivide[1]
