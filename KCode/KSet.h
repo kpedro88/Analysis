@@ -122,12 +122,12 @@ class KSet : public KBase {
 			}
 		}
 		//divide current histo by bin width, set implementation
-		virtual void BinDivide(){
-			KBase::BinDivide();
+		virtual void BinDivide(bool do_x, bool do_y, TH1* htmp=nullptr){
+			KBase::BinDivide(do_x,do_y);
 		
 			//scale children for consistency
 			for(unsigned c = 0; c < children.size(); c++){
-				children[c]->BinDivide();
+				children[c]->BinDivide(do_x,do_y);
 			}
 		}
 		//in case of normalization to yield or other scaling
@@ -442,20 +442,17 @@ class KSetMCStack : public KSet {
 			if(globalOpt->Get("errband",true)) BuildErrorBand();
 		}
 		//divide current histo by bin width, stack implementation
-		virtual void BinDivide(){
+		virtual void BinDivide(bool do_x, bool do_y, TH1* htmp=nullptr){
 			//scale stack histos
 			TObjArray* stack_array = obj->shtmp->GetStack();
 			for(int s = 0; s < stack_array->GetSize(); s++){
 				TH1* hist = (TH1*)stack_array->At(s);
-				for(int b = 1; b <= obj->htmp->GetNbinsX(); b++){
-					hist->SetBinContent(b,hist->GetBinContent(b)/hist->GetBinWidth(b));
-					hist->SetBinError(b,hist->GetBinError(b)/hist->GetBinWidth(b));
-				}
+				BinDivide(do_x,do_y,hist);
 			}
 		
 			//scale children for consistency
 			for(unsigned c = 0; c < children.size(); c++){
-				children[c]->BinDivide();
+				children[c]->BinDivide(do_x,do_y);
 			}
 			
 			//rebuild error band (enabled by default)

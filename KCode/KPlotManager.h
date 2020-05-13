@@ -587,13 +587,14 @@ class KPlotManager : public KManager {
 				if(yieldref) yield = yieldref->GetYield();
 				if(printyield) cout << p.first << " yield:" << endl;
 				bool yieldnorm = p.second->GetLocalOpt()->Get("yieldnorm",false);
-				bool bindivide = p.second->GetLocalOpt()->Get("bindivide",false);
+				bool xbindivide = p.second->GetLocalOpt()->Get("xbindivide",false);
+				bool ybindivide = p.second->GetLocalOpt()->Get("ybindivide",false);
 				for(unsigned s = 0; s < MySets.size(); s++){
 					if(yieldref && yieldnorm && yield>0 && MySets[s] != yieldref) MySets[s]->Normalize(yield);
 					if(printyield) MySets[s]->PrintYield();
 					if(rebin) MySets[s]->Rebin(rebin);
 					if(unitnorm) MySets[s]->Normalize(1,true);
-					if(bindivide) MySets[s]->BinDivide();
+					if(xbindivide or ybindivide) MySets[s]->BinDivide(xbindivide,ybindivide);
 					MySets[s]->DoFits();
 					MySets[s]->AddToLegend(kleg);
 				}
@@ -684,7 +685,9 @@ class KPlotManager : public KManager {
 					if(printyield) theSet->PrintYield();
 					if(rebin) theSet->Rebin(rebin);
 					if(unitnorm) theSet->Normalize(1,true);
-					if(ptmp->GetLocalOpt()->Get("bindivide",false)) theSet->BinDivide();
+					bool xbindivide = ptmp->GetLocalOpt()->Get("xbindivide",false);
+					bool ybindivide = ptmp->GetLocalOpt()->Get("ybindivide",false);
+					if(xbindivide or ybindivide) theSet->BinDivide(xbindivide,ybindivide);
 					
 					//check z-axis limits after all potential normalizations are done
 					double ztmp = theSet->GetHisto()->GetMinimum();

@@ -250,10 +250,22 @@ class KBase {
 			obj->htmp->Rebin(rebin);
 		}
 		//divide current histo by bin width, default implementation
-		virtual void BinDivide(){
-			for(int b = 1; b <= obj->htmp->GetNbinsX(); b++){
-				obj->htmp->SetBinContent(b,obj->htmp->GetBinContent(b)/obj->htmp->GetBinWidth(b));
-				obj->htmp->SetBinError(b,obj->htmp->GetBinError(b)/obj->htmp->GetBinWidth(b));
+		virtual void BinDivide(bool do_x, bool do_y, TH1* htmp=nullptr){
+			if(!htmp) htmp = obj->htmp;
+			//in TH1 case, GetNbinsY() == 1
+			for(int by = 1; by <= htmp->GetNbinsY(); ++by){
+				for(int bx = 1; bx <= htmp->GetNbinsX(); bx++){
+					//access bin contents/errors w/ global bin number, widths w/ axis-specific bin number
+					int b = htmp->GetBin(bx,by);
+					if(do_x){
+						htmp->SetBinContent(b,htmp->GetBinContent(b)/htmp->GetXaxis()->GetBinWidth(bx));
+						htmp->SetBinError(b,htmp->GetBinError(b)/htmp->GetXaxis()->GetBinWidth(bx));
+					}
+					if(do_y){
+						htmp->SetBinContent(b,htmp->GetBinContent(b)/htmp->GetYaxis()->GetBinWidth(b));
+						htmp->SetBinError(b,htmp->GetBinError(b)/htmp->GetYaxis()->GetBinWidth(b));
+					}
+				}
 			}
 		}
 		//implemented in KHisto.h
