@@ -34,6 +34,8 @@ SETFILE=input/input_svj_ext_full_bkg.txt
 DATAFNAME=""
 if [[ "$SOURCE" == "toys" ]]; then
 	SETFILE=input/input_svj_ext_full_bkg_toys.txt
+elif [[ "$SOURCE" == "trigtoys" ]]; then
+	SETFILE=input/input_svj_ext_full_bkg_trigtoys.txt
 elif [[ "$SOURCE" == "notrig" ]]; then
 	SETFILE=input/input_svj_ext_full_bkg_notrig.txt
 	STOPEARLY=true
@@ -65,6 +67,7 @@ for SETS in ${SETLIST[@]}; do
 	BDT=""
 	# only look at data in vlow regions
 	if [[ "$SETS" == "v"* ]]; then
+#	if [[ "$SETS" == *"Cut"* ]]; then
 		DATAFILE=$DATAFNAME
 	fi
 	if [[ "$SETS" == *"SVJ0" ]]; then
