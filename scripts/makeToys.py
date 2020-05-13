@@ -1,7 +1,7 @@
 import sys
 from ROOT import TFile,TH1,TRandom3
 
-eosdir = "root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards"
+eosdir = "root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig"
 
 def makeToy(ofile,fname,region,hname):
     file = TFile.Open(eosdir+"/"+fname)
@@ -30,7 +30,7 @@ def makeToy(ofile,fname,region,hname):
     print(oname)
 
 if __name__=="__main__":
-    ofile = TFile.Open("test/toys.root","RECREATE")
+    ofile = TFile.Open("test/trigtoys.root","RECREATE")
     gRandom = TRandom3(1234)
     # cut-based
     makeToy(ofile,"sigfull/datacard.root","highCut_2018","Bkg")
@@ -41,6 +41,8 @@ if __name__=="__main__":
     makeToy(ofile,"lowrthighdeta/datacard.root","lowCut_2018","Bkg")
     makeToy(ofile,"lowrt2/datacard.root","lowCut_2018","Bkg")
     makeToy(ofile,"lowrt2highdeta/datacard.root","lowCut_2018","Bkg")
+    makeToy(ofile,"lowrt3/datacard.root","lowCut_2018","Bkg")
+    makeToy(ofile,"lowrt3highdeta/datacard.root","lowCut_2018","Bkg")
     # bdt-based
     makeToy(ofile,"sigfull/datacard.root","highSVJ0_2018","Bkg")
     makeToy(ofile,"sigfull/datacard.root","lowSVJ0_2018","Bkg")
@@ -50,3 +52,5 @@ if __name__=="__main__":
     makeToy(ofile,"lowrt/datacard.root","lowSVJ2_2018","Bkg")
     makeToy(ofile,"lowrt2/datacard.root","lowSVJ0_2018","Bkg")
     makeToy(ofile,"lowrt2/datacard.root","lowSVJ2_2018","Bkg")
+    makeToy(ofile,"lowrt3/datacard.root","lowSVJ0_2018","Bkg")
+    makeToy(ofile,"lowrt3/datacard.root","lowSVJ2_2018","Bkg")
