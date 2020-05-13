@@ -12,8 +12,9 @@ bool:unitnorm[1]
 string:lumi_text[(13 TeV)]
 string:printsuffix[_private_vs_central]
 
-INPUT
-input/input_svj_mt_hist_full.txt
+HISTO
+MTAK8	i:xnum[90]	d:xmin[1500]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	c:color[kMagenta]
+bothjetAK8bdtSVJtag	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[BDT discriminator]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]
 
 SET
 hist	mc	SVJ_private	s:legname[private (2017)]	c:color[kBlack]
