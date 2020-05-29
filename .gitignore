@@ -95,6 +95,7 @@ input/fast*/
 /applyTF.py
 /getTrigCorrVals.C
 /doubleRatio.C
+/finalBinning.py
 
 # linked by setupXML.sh
 /KMVA/pugi*.*
