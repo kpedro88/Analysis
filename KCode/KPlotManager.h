@@ -586,11 +586,11 @@ class KPlotManager : public KManager {
 				double yield = 0;
 				if(yieldref) yield = yieldref->GetYield();
 				if(printyield) cout << p.first << " yield:" << endl;
-				bool yieldnorm = p.second->GetLocalOpt()->Get("yieldnorm",false);
+				bool yieldnorm = globalOpt->Get("yieldnorm",false) or p.second->GetLocalOpt()->Get("yieldnorm",false);
 				bool xbindivide = p.second->GetLocalOpt()->Get("xbindivide",false);
 				bool ybindivide = p.second->GetLocalOpt()->Get("ybindivide",false);
 				for(unsigned s = 0; s < MySets.size(); s++){
-					if(yieldref && yieldnorm && yield>0 && MySets[s] != yieldref) MySets[s]->Normalize(yield);
+					if(yieldref && yieldnorm && yield>0 && MySets[s] != yieldref && MySets[s]->GetLocalOpt()->Get("yieldnorm",true)) MySets[s]->Normalize(yield);
 					if(printyield) MySets[s]->PrintYield();
 					if(rebin) MySets[s]->Rebin(rebin);
 					if(unitnorm) MySets[s]->Normalize(1,true);

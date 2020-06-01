@@ -72,8 +72,29 @@ class KSet : public KBase {
 			for(auto& sit : MyObjects.GetTable()){
 				GetHisto(sit.first); //this will propagate to children
 				if(obj->khtmp and obj->khtmp->IsSpecial()) continue; //don't hadd special histos
-				for(unsigned c = 0; c < children.size(); c++){ //include option to subtract histos, off by default
-					obj->htmp->Add(children[c]->GetHisto(), children[c]->GetLocalOpt()->Get("subtract",false) ? -1 : 1);				
+
+				TH1* htmp = nullptr;
+				bool all_ext = true;
+				for(auto& child: children){ //include option to subtract histos, off by default
+					if(htmp==nullptr){
+						htmp = (TH1*)child->GetHisto()->Clone();
+						htmp->Reset("ICESM");
+					}
+					all_ext &= child->IsExt();
+					htmp->Add(child->GetHisto(), child->GetLocalOpt()->Get("subtract",false) ? -1 : 1);				
+				}
+				//special case to allow external histos to have different binning
+				if(all_ext){
+					if(htmp->GetXaxis()->GetXmin()==obj->htmp->GetXaxis()->GetXmin() and htmp->GetXaxis()->GetXmax()==obj->htmp->GetXaxis()->GetXmax()){
+						obj->htmp = htmp;
+						MyStyle->Format(obj->htmp);
+					}
+					else {
+						throw runtime_error("Build error: inconsistent ranges in base histo ("+to_string(obj->htmp->GetXaxis()->GetXmin())+","+to_string(obj->htmp->GetXaxis()->GetXmax())+" and child histo ("+to_string(htmp->GetXaxis()->GetXmin())+","+to_string(htmp->GetXaxis()->GetXmax())+")");
+					}
+				}
+				else {
+					obj->htmp->Add(htmp);
 				}
 
 				//build error band, disabled by default

@@ -296,6 +296,7 @@ class KBase {
 		virtual KStyle* GetStyle() { return MyStyle; }
 		virtual bool IsData() { return localOpt->Get("data",false); }
 		virtual bool IsMC() { return !localOpt->Get("data",true); }
+		virtual bool IsExt() { return false; }
 		virtual void SetBuilt() { isBuilt = true; }
 		
 		//other virtual functions (unimplemented at this level)
@@ -416,7 +417,9 @@ class KBaseExt : public KBase {
 		//external histos do not need to build
 		using KBase::Build;
 		virtual void Build() {}
-		
+
+		virtual bool IsExt() { return true; }
+
 	private:
 		//member variables
 		bool add_ext;

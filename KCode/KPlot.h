@@ -179,6 +179,8 @@ class KPlot{
 			string xtitle, ytitle;
 			if(localOpt->Get("xtitle",xtitle)) histo->GetXaxis()->SetTitle(xtitle.c_str());
 			if(localOpt->Get("ytitle",ytitle)) histo->GetYaxis()->SetTitle(ytitle.c_str());
+			//allow global override of y title
+			if(globalOpt->Get("ytitle",ytitle)) histo->GetYaxis()->SetTitle(ytitle.c_str());
 			
 			//plotting with ratio enabled by default
 			if(localOpt->Get("ratio",true)) {
