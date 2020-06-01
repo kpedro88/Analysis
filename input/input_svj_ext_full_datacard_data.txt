@@ -1,0 +1,3 @@
+SET
+hist	data	data	i:panel[1]
+	base	ext	data	vs:exthisto_in[data_obs]	vs:exthisto_out[MTAK8]

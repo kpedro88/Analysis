@@ -1,4 +1,5 @@
 import sys
+from numpy import array
 from collections import OrderedDict
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 
@@ -98,14 +99,25 @@ class Sample(object):
                 done_years.append(subyear)
 
 class SplitDir(object):
-    def __init__(self, name, min, max=None):
+    def __init__(self, name, min, max=None, bins=None):
         self.name = name
         self.min = min
         self.max = max if max is not None else min
         self.output = []
+        self.bins = bins
     def split(self, hist, store=True):
         htemp = hist.ProjectionX(hist.GetName(),self.min,self.max)
         htempF = DtoF(htemp)
+
+        # rebin and divide by bin width (if variable)
+        if bins is not None:
+            htempF = htempF.Rebin(len(self.bins)-1,htempF.GetName(),array(self.bins))
+            if htempF.GetXaxis().IsVariableBinSize():
+                for b in range(htempF.GetNbinsX()):
+                    bin = b+1
+                    htempF.SetBinContent(bin,htempF.GetBinContent(bin)/htempF.GetXaxis().GetBinWidth(bin))
+                    htempF.SetBinError(bin,htempF.GetBinError(bin)/htempF.GetXaxis().GetBinWidth(bin))
+
         if store: self.output.append(htempF)
         else: return htempF
     def setup(self, file):
@@ -131,8 +143,47 @@ if __name__=="__main__":
     parser.add_argument("-o", "--out", dest="out", type=str, help="output file name", required=True)
     parser.add_argument("-n", "--no-split", dest="no_split", default=False, action="store_true", help="disable split into dirs for regions")
     parser.add_argument("-m", "--nominal", dest="nominal", default="nominal", type=str, help="name of nominal selection")
+    parser.add_argument("-r", "--rebin", dest="rebin", default=-1, type=float, help="rebin using bins for n*sigma (if >=0)")
+    parser.add_argument("-s", "--no-stat", dest="no_stat", default=False, action="store_true", help="disable signal stat histos")
     args = parser.parse_args()
-    
+
+    # bins
+    # todo: make finalBinning importable and generate on the fly?
+    bins = {
+        "highCut": {
+            0.0: [1500.0, 1550.0, 1600.0, 1650.0, 1700.0, 1750.0, 1800.0, 1850.0, 1900.0, 1950.0, 2000.0, 2050.0, 2100.0, 2150.0, 2200.0, 2250.0, 2300.0, 2350.0, 2400.0, 2450.0, 2500.0, 2550.0, 2600.0, 2650.0, 2700.0, 2750.0, 2800.0, 2850.0, 2900.0, 2950.0, 3000.0, 3050.0, 3100.0, 3150.0, 3200.0, 3250.0, 3300.0, 3400.0, 3500.0, 3600.0, 3750.0, 3950.0, 4300.0, 5900.0, 8000.0],
+            0.5: [1500.0, 1550.0, 1600.0, 1650.0, 1700.0, 1750.0, 1800.0, 1850.0, 1900.0, 1950.0, 2000.0, 2050.0, 2100.0, 2150.0, 2200.0, 2250.0, 2300.0, 2350.0, 2400.0, 2450.0, 2500.0, 2550.0, 2600.0, 2650.0, 2700.0, 2750.0, 2800.0, 2850.0, 2900.0, 2950.0, 3000.0, 3050.0, 3100.0, 3150.0, 3250.0, 3350.0, 3450.0, 3600.0, 3800.0, 4100.0, 4900.0, 8000.0],
+            1.0: [1500.0, 1550.0, 1600.0, 1650.0, 1700.0, 1750.0, 1800.0, 1850.0, 1900.0, 1950.0, 2000.0, 2050.0, 2100.0, 2150.0, 2200.0, 2250.0, 2300.0, 2350.0, 2400.0, 2450.0, 2500.0, 2550.0, 2600.0, 2650.0, 2700.0, 2750.0, 2800.0, 2850.0, 2900.0, 2950.0, 3000.0, 3050.0, 3100.0, 3150.0, 3250.0, 3350.0, 3450.0, 3600.0, 3800.0, 4150.0, 8000.0],
+            1.5: [1500.0, 1550.0, 1600.0, 1650.0, 1700.0, 1750.0, 1800.0, 1850.0, 1900.0, 1950.0, 2000.0, 2050.0, 2100.0, 2150.0, 2200.0, 2250.0, 2300.0, 2350.0, 2400.0, 2450.0, 2500.0, 2550.0, 2600.0, 2650.0, 2700.0, 2750.0, 2800.0, 2850.0, 2900.0, 2950.0, 3000.0, 3050.0, 3100.0, 3200.0, 3300.0, 3400.0, 3550.0, 3750.0, 4100.0, 8000.0],
+            2.0: [1500.0, 1550.0, 1600.0, 1650.0, 1700.0, 1750.0, 1800.0, 1850.0, 1900.0, 1950.0, 2000.0, 2050.0, 2100.0, 2150.0, 2200.0, 2250.0, 2300.0, 2350.0, 2400.0, 2450.0, 2500.0, 2550.0, 2600.0, 2650.0, 2700.0, 2750.0, 2800.0, 2850.0, 2900.0, 2950.0, 3000.0, 3100.0, 3200.0, 3300.0, 3400.0, 3550.0, 3800.0, 4300.0, 8000.0],
+        },
+        "lowCut": {
+            0.0: [1500.0, 1550.0, 1600.0, 1650.0, 1700.0, 1750.0, 1800.0, 1850.0, 1900.0, 1950.0, 2000.0, 2050.0, 2100.0, 2150.0, 2200.0, 2250.0, 2300.0, 2350.0, 2400.0, 2450.0, 2500.0, 2550.0, 2600.0, 2650.0, 2700.0, 2750.0, 2800.0, 2850.0, 2900.0, 2950.0, 3000.0, 3050.0, 3100.0, 3150.0, 3200.0, 3250.0, 3300.0, 3350.0, 3400.0, 3450.0, 3500.0, 3550.0, 3600.0, 3650.0, 3700.0, 3750.0, 3800.0, 3850.0, 3900.0, 3950.0, 4050.0, 4150.0, 4250.0, 4400.0, 4550.0, 4800.0, 5250.0, 8000.0],
+            0.5: [1500.0, 1550.0, 1600.0, 1650.0, 1700.0, 1750.0, 1800.0, 1850.0, 1900.0, 1950.0, 2000.0, 2050.0, 2100.0, 2150.0, 2200.0, 2250.0, 2300.0, 2350.0, 2400.0, 2450.0, 2500.0, 2550.0, 2600.0, 2650.0, 2700.0, 2750.0, 2800.0, 2850.0, 2900.0, 2950.0, 3000.0, 3050.0, 3100.0, 3150.0, 3200.0, 3250.0, 3300.0, 3350.0, 3400.0, 3450.0, 3500.0, 3550.0, 3600.0, 3650.0, 3700.0, 3750.0, 3800.0, 3850.0, 3900.0, 4000.0, 4100.0, 4200.0, 4350.0, 4550.0, 4850.0, 5700.0, 8000.0],
+            1.0: [1500.0, 1550.0, 1600.0, 1650.0, 1700.0, 1750.0, 1800.0, 1850.0, 1900.0, 1950.0, 2000.0, 2050.0, 2100.0, 2150.0, 2200.0, 2250.0, 2300.0, 2350.0, 2400.0, 2450.0, 2500.0, 2550.0, 2600.0, 2650.0, 2700.0, 2750.0, 2800.0, 2850.0, 2900.0, 2950.0, 3000.0, 3050.0, 3100.0, 3150.0, 3200.0, 3250.0, 3300.0, 3350.0, 3400.0, 3450.0, 3500.0, 3550.0, 3600.0, 3650.0, 3700.0, 3750.0, 3800.0, 3900.0, 4000.0, 4100.0, 4250.0, 4450.0, 4750.0, 5450.0, 8000.0],
+            1.5: [1500.0, 1550.0, 1600.0, 1650.0, 1700.0, 1750.0, 1800.0, 1850.0, 1900.0, 1950.0, 2000.0, 2050.0, 2100.0, 2150.0, 2200.0, 2250.0, 2300.0, 2350.0, 2400.0, 2450.0, 2500.0, 2550.0, 2600.0, 2650.0, 2700.0, 2750.0, 2800.0, 2850.0, 2900.0, 2950.0, 3000.0, 3050.0, 3100.0, 3150.0, 3200.0, 3250.0, 3300.0, 3350.0, 3400.0, 3450.0, 3500.0, 3550.0, 3600.0, 3650.0, 3700.0, 3750.0, 3850.0, 3950.0, 4050.0, 4200.0, 4400.0, 4700.0, 5450.0, 8000.0],
+            2.0: [1500.0, 1550.0, 1600.0, 1650.0, 1700.0, 1750.0, 1800.0, 1850.0, 1900.0, 1950.0, 2000.0, 2050.0, 2100.0, 2150.0, 2200.0, 2250.0, 2300.0, 2350.0, 2400.0, 2450.0, 2500.0, 2550.0, 2600.0, 2650.0, 2700.0, 2750.0, 2800.0, 2850.0, 2900.0, 2950.0, 3000.0, 3050.0, 3100.0, 3150.0, 3200.0, 3250.0, 3300.0, 3350.0, 3400.0, 3450.0, 3500.0, 3550.0, 3600.0, 3650.0, 3700.0, 3800.0, 3900.0, 4000.0, 4150.0, 4350.0, 4650.0, 5450.0, 8000.0],
+        },
+        "highSVJ2": {
+            0.0: [1500.0, 1550.0, 1600.0, 1650.0, 1700.0, 1750.0, 1850.0, 1950.0, 2050.0, 2200.0, 2550.0, 8000.0],
+            0.5: [1500.0, 1550.0, 1600.0, 1650.0, 1700.0, 1800.0, 1900.0, 2050.0, 2250.0, 2900.0, 8000.0],
+            1.0: [1500.0, 1550.0, 1600.0, 1650.0, 1700.0, 1800.0, 1900.0, 2050.0, 2300.0, 8000.0],
+            1.5: [1500.0, 1550.0, 1600.0, 1650.0, 1750.0, 1850.0, 2000.0, 2250.0, 8000.0],
+            2.0: [1500.0, 1550.0, 1600.0, 1650.0, 1750.0, 1850.0, 2000.0, 2300.0, 8000.0],
+        },
+        "lowSVJ2": {
+            0.0: [1500.0, 1550.0, 1600.0, 1650.0, 1700.0, 1750.0, 1800.0, 1850.0, 1900.0, 1950.0, 2000.0, 2050.0, 2100.0, 2150.0, 2200.0, 2250.0, 2300.0, 2350.0, 2450.0, 2550.0, 2700.0, 3000.0, 8000.0],
+            0.5: [1500.0, 1550.0, 1600.0, 1650.0, 1700.0, 1750.0, 1800.0, 1850.0, 1900.0, 1950.0, 2000.0, 2050.0, 2100.0, 2150.0, 2200.0, 2250.0, 2300.0, 2400.0, 2500.0, 2650.0, 2950.0, 8000.0],
+            1.0: [1500.0, 1550.0, 1600.0, 1650.0, 1700.0, 1750.0, 1800.0, 1850.0, 1900.0, 1950.0, 2000.0, 2050.0, 2100.0, 2150.0, 2200.0, 2300.0, 2400.0, 2500.0, 2700.0, 3200.0, 8000.0],
+            1.5: [1500.0, 1550.0, 1600.0, 1650.0, 1700.0, 1750.0, 1800.0, 1850.0, 1900.0, 1950.0, 2000.0, 2050.0, 2100.0, 2150.0, 2200.0, 2300.0, 2400.0, 2550.0, 2850.0, 8000.0],
+            2.0: [1500.0, 1550.0, 1600.0, 1650.0, 1700.0, 1750.0, 1800.0, 1850.0, 1900.0, 1950.0, 2000.0, 2050.0, 2100.0, 2150.0, 2250.0, 2350.0, 2500.0, 2750.0, 8000.0],
+        },
+    }
+
+    missing_bins = [k for k,v in bins.iteritems() if args.rebin not in v]
+    if args.rebin>=0 and len(missing_bins)>0:
+        parser.error("Bins not available for {} for sigma = {}".format(','.join(missing_bins),args.rebin))
+
     # categories
     samples = OrderedDict([
         ("data",[]),
@@ -208,17 +259,20 @@ if __name__=="__main__":
                     h.Write()
         sys.exit(0)
 
+    # use high-X bins for low-X regions
+    bins_bdt = bins["highSVJ2"][args.rebin] if args.rebin>=0 else None
+    bins_cut = bins["highCut"][args.rebin] if args.rebin>=0 else None
     # split into TH1s and dirs (including cut-based using multiple bin projection)
     dirs = [
-        SplitDir("lowSVJ0_2018",1),
-        SplitDir("lowSVJ1_2018",2),
-        SplitDir("lowSVJ2_2018",3),
-        SplitDir("highSVJ0_2018",4),
-        SplitDir("highSVJ1_2018",5),
-        SplitDir("highSVJ2_2018",6),
+        SplitDir("lowSVJ0_2018",1,bins=bins_bdt),
+        SplitDir("lowSVJ1_2018",2,bins=bins_bdt),
+        SplitDir("lowSVJ2_2018",3,bins=bins_bdt),
+        SplitDir("highSVJ0_2018",4,bins=bins_bdt),
+        SplitDir("highSVJ1_2018",5,bins=bins_bdt),
+        SplitDir("highSVJ2_2018",6,bins=bins_bdt),
         # aggregate into cut-based
-        SplitDir("lowCut_2018",1,3),
-        SplitDir("highCut_2018",4,6),
+        SplitDir("lowCut_2018",1,3,bins=bins_cut),
+        SplitDir("highCut_2018",4,6,bins=bins_cut),
     ]
     for dir in dirs:
         dir.setup(outf)
@@ -228,35 +282,37 @@ if __name__=="__main__":
                     dir.split(h)
         fprint("Splitting done for "+dir.name)
 
-        # make signal stat histos for this dir
-        dir_samples = []
-        for sig in samples["sig"]:
-            stmp = Sample(sig.name+"_mcstat",nominal=args.nominal)
-            for year in sig.years:
-                stmp.years[year] = OrderedDict()
-                # split first to get correct bin numbers
-                htmp = dir.split(sig.years[year][args.nominal],False)
-                stmp.years[year][args.nominal] = htmp
-                stmp.systs.append(args.nominal)
-                # generate stat variations for this year
-                for b in range(1,htmp.GetNbinsX()+1):
-                    nameUp = "bin"+str(b)+"Up"
-                    htmpUp = htmp.Clone(htmp.GetName()+"_"+nameUp)
-                    htmpUp.SetBinContent(b,htmpUp.GetBinContent(b)+htmpUp.GetBinError(b))
-                    stmp.years[year][nameUp] = htmpUp
-                    nameDown = "bin"+str(b)+"Down"
-                    htmpDown = htmp.Clone(htmp.GetName()+"_"+nameDown)
-                    htmpDown.SetBinContent(b,htmpDown.GetBinContent(b)-htmpDown.GetBinError(b))
-                    stmp.years[year][nameDown] = htmpDown
-                    stmp.systs.extend([nameUp,nameDown])
-            # add up uncorrelated
-            stmp.systs = usort(stmp.systs)
-            for syst in stmp.systs:
-                stmp.hadd_syst(syst)
-            # since these are already split, they can just be appended to the dir
-            dir_samples.extend(stmp.output)
-            fprint("Added "+stmp.name+" ("+dir.name+")")
+        if not args.no_stat:
+            # make signal stat histos for this dir
+            dir_samples = []
+            for sig in samples["sig"]:
+                stmp = Sample(sig.name+"_mcstat",nominal=args.nominal)
+                for year in sig.years:
+                    stmp.years[year] = OrderedDict()
+                    # split first to get correct bin numbers
+                    htmp = dir.split(sig.years[year][args.nominal],False)
+                    stmp.years[year][args.nominal] = htmp
+                    stmp.systs.append(args.nominal)
+                    # generate stat variations for this year
+                    for b in range(1,htmp.GetNbinsX()+1):
+                        nameUp = "bin"+str(b)+"Up"
+                        htmpUp = htmp.Clone(htmp.GetName()+"_"+nameUp)
+                        htmpUp.SetBinContent(b,htmpUp.GetBinContent(b)+htmpUp.GetBinError(b))
+                        stmp.years[year][nameUp] = htmpUp
+                        nameDown = "bin"+str(b)+"Down"
+                        htmpDown = htmp.Clone(htmp.GetName()+"_"+nameDown)
+                        htmpDown.SetBinContent(b,htmpDown.GetBinContent(b)-htmpDown.GetBinError(b))
+                        stmp.years[year][nameDown] = htmpDown
+                        stmp.systs.extend([nameUp,nameDown])
+                # add up uncorrelated
+                stmp.systs = usort(stmp.systs)
+                for syst in stmp.systs:
+                    stmp.hadd_syst(syst)
+                # since these are already split, they can just be appended to the dir
+                dir_samples.extend(stmp.output)
+                fprint("Added "+stmp.name+" ("+dir.name+")")
 
-        # write out content of dir (handles names)
-        dir.output.extend(dir_samples)
+            # write out content of dir (handles names)
+            dir.output.extend(dir_samples)
+
         dir.write()

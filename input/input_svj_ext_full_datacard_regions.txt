@@ -1,9 +1,9 @@
 SET
-hist	mc	SVJ_2000_20_0.3_peak	s:legname[SVJ_2000_20_0.3_peak]	c:color[kBlue]	i:linestyle[7]	i:panel[0]
+hist	mc	SVJ_2000_20_0.3_peak	s:legname[SVJ_2000_20_0.3_peak]	c:color[kBlue]	i:linestyle[7]	i:panel[0]	b:yieldnorm[0]
 	base	ext	SVJ_2000_20_0.3_peak_MC2017	vs:exthisto_in[SVJ_mZprime2000_mDark20_rinv03_alphapeak]	vs:exthisto_out[MTAK8]
-hist	mc	SVJ_3000_20_0.3_peak	s:legname[SVJ_3000_20_0.3_peak]	c:color[kCyan + 2]	i:linestyle[7]	i:panel[0]
+hist	mc	SVJ_3000_20_0.3_peak	s:legname[SVJ_3000_20_0.3_peak]	c:color[kCyan + 2]	i:linestyle[7]	i:panel[0]	b:yieldnorm[0]
 	base	ext	SVJ_3000_20_0.3_peak_MC2017	vs:exthisto_in[SVJ_mZprime3000_mDark20_rinv03_alphapeak]	vs:exthisto_out[MTAK8]
-hist	mc	SVJ_4000_20_0.3_peak	s:legname[SVJ_4000_20_0.3_peak]	c:color[kMagenta]	i:linestyle[7]	i:panel[0]
+hist	mc	SVJ_4000_20_0.3_peak	s:legname[SVJ_4000_20_0.3_peak]	c:color[kMagenta]	i:linestyle[7]	i:panel[0]	b:yieldnorm[0]
 	base	ext	SVJ_4000_20_0.3_peak_MC2017	vs:exthisto_in[SVJ_mZprime4000_mDark20_rinv03_alphapeak]	vs:exthisto_out[MTAK8]
 stack	mc	bkg	i:panel[1]
 	hist	mc	QCD	s:legname[QCD]	c:color[kBlue + 2]	i:panel[1]
