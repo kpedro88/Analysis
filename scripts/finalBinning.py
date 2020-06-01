@@ -150,10 +150,15 @@ for region,ax in zip(regions.keys(),axs):
     fig.savefig("finalbins_"+region+"_min"+str(args.bin_min)+"_sigma"+','.join([str(sigma) for sigma in args.sigma])+".png",**{"dpi":100})
 
 # print results
+for region in regions:
+    print '"{}": {{'.format(region)
+    for sigma in regions[region]:
+        print '    {}: {},'.format(sigma,regions[region][sigma][0])
+    print '},'
+print ""
 for sigma in args.sigma:
     print "sigma = {}, bin_min = {:.2f}".format(sigma,getMin(args.bin_min,sigma))
-    for prop in [0,1]:
-        print ""
-        for region in regions:
-            print region+": "+str(regions[region][sigma][prop])
+    print ""
+    for region in regions:
+        print region+": "+str(regions[region][sigma][1])
     print ""
