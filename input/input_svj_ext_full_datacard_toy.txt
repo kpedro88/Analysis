@@ -1,0 +1,3 @@
+SET
+hist	data	data	i:panel[1]	s:legname[toy data]
+	base	ext	data	vs:exthisto_in[Bkg_toy]	vs:exthisto_out[MTAK8]

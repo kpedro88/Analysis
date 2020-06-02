@@ -44,22 +44,30 @@ def getHist(eosdir,fname,region,hname,hnorm=None):
 
     return hist
 
-def makeToy(hist):
+def makeToy(hist,prev_neg=False):
+    hist2 = hist
+    if prev_neg:
+        # prevent negative bins (gives nan in GetRandom())
+        hist2 = hist.Clone(hist.GetName()+"2")
+        for b in range(0,hist2.GetNbinsX()+2):
+            if hist2.GetBinContent(b)<0: hist2.SetBinContent(b,0)
+
     # generate toy data
-    yield_orig = hist.Integral(0,hist.GetNbinsX()+1)
-    hist_rand = hist.Clone()
+    yield_orig = hist2.Integral(0,hist2.GetNbinsX()+1)
+    hist_rand = hist2.Clone(hist2.GetName()+"_rand")
     hist_rand.SetDirectory(0)
     hist_rand.Reset("ICESM")
 
     # randomize total yield
     yield_rand = int(gRandom.Poisson(yield_orig))
     for n in range(0,yield_rand):
-        x = hist.GetRandom()
+        x = hist2.GetRandom()
         hist_rand.Fill(x)
 
     return hist_rand
 
 def testToys(hist,histrebin,newbins,ntoys,bin_min):
+    if ntoys==0: return 0.
     # make toys
     below_min = 0
     for ntoy in range(ntoys):
@@ -191,7 +199,7 @@ def main(argv=None):
     # define options
     parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument("-d", "--dir", dest="dir", type=str, default="root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig2x/sigfull", help="eos dir w/ datacard.root")
-    parser.add_argument("-n", "--ntoys", dest="ntoys", type=int, default=5, help="number of toys")
+    parser.add_argument("-n", "--ntoys", dest="ntoys", type=int, default=0, help="number of toys")
     parser.add_argument("-m", "--min", dest="bin_min", type=int, default=10, help="min # events per bin")
     parser.add_argument("-s", "--sigma", dest="sigma", type=float, default=[], nargs='+', help="list of number of sigmas")
     parser.add_argument("-f", "--final", dest="final", action="store_true", default=False, help="use final binning (apply high to low)")

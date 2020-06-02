@@ -8,11 +8,12 @@ YIELD=""
 HISTO=input/input_svj_mt_hist_full.txt
 SUFF=""
 MINPLOTS=""
+TOY=""
 SETDATA=
 WINDOW=true
 NEWBINS=
 
-while getopts "d:f:s:onymwb" opt; do
+while getopts "d:f:s:onymwbt" opt; do
 	case "$opt" in
 		d) EXTDIR=$OPTARG
 		;;
@@ -32,6 +33,8 @@ while getopts "d:f:s:onymwb" opt; do
 		;;
 		b) NEWBINS=true
 		;;
+		t) TOY=true
+		;;
 	esac
 done
 
@@ -49,6 +52,9 @@ fi
 if [ -n "$YIELD" ]; then
 	EXTRA=',"b:yieldnorm[1]","s:yieldref[data]"'
 	SETDATA='"input/input_svj_ext_full_datacard_data.txt",'
+fi
+if [ -n "$TOY" ]; then
+	SETDATA='"input/input_svj_ext_full_datacard_toy.txt",'
 fi
 if [ -n "$NEWBINS" ]; then
 	EXTRA="$EXTRA"',"s:ytitle[events / GeV]","d:ymin_min[1e-6]"'

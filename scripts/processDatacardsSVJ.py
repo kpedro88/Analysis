@@ -107,21 +107,41 @@ class SplitDir(object):
         self.max = max if max is not None else min
         self.output = []
         self.bins = bins
-    def split(self, hist, store=True):
-        htemp = hist.ProjectionX(hist.GetName(),self.min,self.max)
-        htempF = DtoF(htemp)
-
+    def rebin(self, hist):
         # rebin and divide by bin width (if variable)
         if bins is not None:
-            htempF = htempF.Rebin(len(self.bins)-1,htempF.GetName(),array(self.bins))
-            if len(set([htempF.GetBinWidth(b+1) for b in range(htempF.GetNbinsX())]))>1:
-                for b in range(htempF.GetNbinsX()):
+            hist = hist.Rebin(len(self.bins)-1,hist.GetName(),array(self.bins))
+            if len(set([hist.GetBinWidth(b+1) for b in range(hist.GetNbinsX())]))>1:
+                for b in range(hist.GetNbinsX()):
                     bin = b+1
-                    htempF.SetBinContent(bin,htempF.GetBinContent(bin)/htempF.GetXaxis().GetBinWidth(bin))
-                    htempF.SetBinError(bin,htempF.GetBinError(bin)/htempF.GetXaxis().GetBinWidth(bin))
+                    hist.SetBinContent(bin,hist.GetBinContent(bin)/hist.GetXaxis().GetBinWidth(bin))
+                    hist.SetBinError(bin,hist.GetBinError(bin)/hist.GetXaxis().GetBinWidth(bin))
+        return hist
+    def split(self, hist, store=True, toy=False, norm=0):
+        htemp = hist.ProjectionX(hist.GetName(),self.min,self.max)
+        htempF = DtoF(htemp)
+        # keep original norm (rebin may divide by bin width)
+        this_norm = htempF.Integral(0,htempF.GetNbinsX()+1)
 
-        if store: self.output.append(htempF)
-        else: return htempF
+        # make toy before rebinning
+        # only make a toy if it will be stored
+        htempT = None
+        if store and toy:
+            htempN = htempF
+            if norm>0:
+                htempN = htempF.Clone(htempF.GetName()+"_norm")
+                htempN.Scale(norm/this_norm)
+            htempT = finalBinning.makeToy(htempN,prev_neg=True)
+            htempT.SetName(hist.GetName()+"_toy")
+
+        hists = [htempF]
+        if htempT is not None: hists.append(htempT)
+
+        for ih in range(len(hists)):
+            hists[ih] = self.rebin(hists[ih])
+            if store: self.output.append(hists[ih])
+
+        return hists[0],this_norm
     def setup(self, file):
         file.cd()
         self.dir = file.mkdir(self.name)
@@ -140,6 +160,7 @@ if __name__=="__main__":
     parser.add_argument("-p", "--prefix", dest="prefix", type=str, default="MTAK8_RA2bin", help="prefix for histogram names")
     parser.add_argument("-d", "--data", dest="data", type=str, default=["data"], nargs="*", help="list of names for data category")
     parser.add_argument("-b", "--bkgs", dest="bkgs", type=str, default=["QCD","TT","WJets","ZJets"], nargs="*", help="list of names for bkg category")
+    parser.add_argument("-t", "--toy", dest="toy", default=False, action="store_true", help="make toy data from bkg")
     parser.add_argument("-i", "--dir", dest="dir", type=str, default="", help="directory for input files")
     parser.add_argument("-f", "--files", dest="files", type=str, nargs="+", help="list of input files", required=True)
     parser.add_argument("-o", "--out", dest="out", type=str, help="output file name", required=True)
@@ -245,10 +266,13 @@ if __name__=="__main__":
     ]
     for dir in dirs:
         dir.setup(outf)
+        data_norm = 0
         for cat in samples:
             for samp in samples[cat]:
                 for h in samp.output:
-                    dir.split(h)
+                    do_toy = args.toy and cat=="bkg" and samp.name=="Bkg"
+                    htmp, norm = dir.split(h,toy=do_toy,norm=data_norm)
+                    if cat=="data": data_norm = norm
         fprint("Splitting done for "+dir.name)
 
         if not args.no_stat:
@@ -259,7 +283,7 @@ if __name__=="__main__":
                 for year in sig.years:
                     stmp.years[year] = OrderedDict()
                     # split first to get correct bin numbers
-                    htmp = dir.split(sig.years[year][args.nominal],False)
+                    htmp, _ = dir.split(sig.years[year][args.nominal],False)
                     stmp.years[year][args.nominal] = htmp
                     stmp.systs.append(args.nominal)
                     # generate stat variations for this year
