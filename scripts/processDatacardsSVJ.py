@@ -1,4 +1,5 @@
 import sys
+import shlex
 from numpy import array
 from collections import OrderedDict
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
@@ -113,7 +114,7 @@ class SplitDir(object):
         # rebin and divide by bin width (if variable)
         if bins is not None:
             htempF = htempF.Rebin(len(self.bins)-1,htempF.GetName(),array(self.bins))
-            if htempF.GetXaxis().IsVariableBinSize():
+            if len(set([htempF.GetBinWidth(b+1) for b in range(htempF.GetNbinsX())]))>1:
                 for b in range(htempF.GetNbinsX()):
                     bin = b+1
                     htempF.SetBinContent(bin,htempF.GetBinContent(bin)/htempF.GetXaxis().GetBinWidth(bin))
@@ -144,13 +145,13 @@ if __name__=="__main__":
     parser.add_argument("-o", "--out", dest="out", type=str, help="output file name", required=True)
     parser.add_argument("-n", "--no-split", dest="no_split", default=False, action="store_true", help="disable split into dirs for regions")
     parser.add_argument("-m", "--nominal", dest="nominal", default="nominal", type=str, help="name of nominal selection")
-    parser.add_argument("-r", "--rebin", dest="rebin", default=-1, type=float, help="rebin using bins for n*sigma (if >=0)")
+    parser.add_argument("-r", "--rebin", dest="rebin", type=shlex.split, help="rebin options for finalBinning")
     parser.add_argument("-s", "--no-stat", dest="no_stat", default=False, action="store_true", help="disable signal stat histos")
     args = parser.parse_args()
 
     # bins
-    # todo: make finalBinning importable and generate on the fly?
-    bins = finalBinning.main(argv=["-s",str(args.rebin)])
+    should_rebin = args.rebin is not None and len(args.rebin)>0
+    bins = finalBinning.main(argv=args.rebin) if should_rebin else None
 
     # categories
     samples = OrderedDict([
@@ -228,8 +229,8 @@ if __name__=="__main__":
         sys.exit(0)
 
     # use high-X bins for low-X regions
-    bins_bdt = bins["highSVJ2"][args.rebin][0] if args.rebin>=0 else None
-    bins_cut = bins["highCut"][args.rebin][0] if args.rebin>=0 else None
+    bins_bdt = bins["highSVJ2"].values()[0][0] if should_rebin else None
+    bins_cut = bins["highCut"].values()[0][0] if should_rebin else None
     # split into TH1s and dirs (including cut-based using multiple bin projection)
     dirs = [
         SplitDir("lowSVJ0_2018",1,bins=bins_bdt),

@@ -59,6 +59,23 @@ def makeToy(hist):
 
     return hist_rand
 
+def testToys(hist,histrebin,newbins,ntoys,bin_min):
+    # make toys
+    below_min = 0
+    for ntoy in range(ntoys):
+        htoy = makeToy(hist)
+        # set new binning
+        htoy = htoy.Rebin(len(newbins)-1,hist.GetName()+"_rebin",np.array(newbins))
+
+        # check for bins below min (exclude last bin)
+        for b in range(htoy.GetNbinsX()-1):
+            bin = b+1
+            # only consider bins w/ expectation > bin_min
+            if histrebin.GetBinContent(bin) >= bin_min and htoy.GetBinContent(bin) < bin_min: below_min += 1
+
+    # result
+    return float(below_min)/float(len(newbins)*ntoys)
+
 def finalBinning(args):
     regions = OrderedDict([
         ("highCut",OrderedDict()),
@@ -71,6 +88,14 @@ def finalBinning(args):
     fig, axs = plt.subplots(nrows=len(regions))
     for region,ax in zip(regions.keys(),axs):
         hist = getHist(args.dir,"datacard.root",region+"_2018","Bkg","data_obs")
+
+        # alternative constant case
+        if args.constant > 0:
+            histrebin = hist.Rebin(args.constant)
+            newbins = [histrebin.GetBinLowEdge(b+1) for b in range(histrebin.GetNbinsX()+1)]
+            regions[region][0] = [newbins[:],0]
+            regions[region][0][1] = testToys(hist,histrebin,newbins,args.ntoys,args.bin_min)
+            continue
 
         # loop over sigmas
         fig, axs = plt.subplots(nrows=len(args.sigma))
@@ -97,10 +122,19 @@ def finalBinning(args):
                 bin = b+1
                 sum += hist.GetBinContent(bin)
                 binhi = hist.GetBinLowEdge(bin+1)
-                if (sum>bin_min and (binhi-binlo)>=minbinsize) or (args.max_width>0 and (binhi-binlo)>=args.max_width) or bin==hist.GetNbinsX():
-                    newbins.append(hist.GetBinLowEdge(bin+1))
-                    if firstnewbin==0 and newbins[-1]-newbins[-2]>oldbinsize: firstnewbin = len(newbins)-2
-                    minbinsize = binhi-binlo
+
+                # conditions
+                size_and_count = sum>bin_min and (binhi-binlo)>=minbinsize
+                is_max_width = args.max_width>0 and (binhi-binlo)>=args.max_width
+                is_max_ratio = args.max_ratio>0 and (binhi-binlo)/minbinsize>=args.max_ratio
+                is_last_bin = bin==hist.GetNbinsX()
+                is_too_small = is_last_bin and args.tolerance>0 and (binhi-binlo)<=minbinsize*args.tolerance
+
+                if size_and_count or is_max_width or is_max_ratio or is_last_bin:
+                    if is_too_small: newbins[-1] = binhi
+                    else: newbins.append(binhi)
+                    minbinsize = newbins[-1] - newbins[-2]
+                    if firstnewbin==0 and minbinsize>oldbinsize: firstnewbin = len(newbins)-2
                     binlo = binhi
                     binhi = 0
                     sum = 0
@@ -120,26 +154,21 @@ def finalBinning(args):
             # store new binning
             regions[region][sigma] = [newbins[:],0]
 
-            # make toys
-            below_min = 0
-            for ntoy in range(args.ntoys):
-                htoy = makeToy(hist)
-                # set new binning
-                htoy = htoy.Rebin(len(newbins)-1,hist.GetName()+"_rebin",np.array(newbins))
+            # apply new binning
+            histrebin = hist.Rebin(len(newbins)-1,hist.GetName()+"_rebin",np.array(newbins))
 
-                # check for bins below min (exclude last bin)
-                for b in range(htoy.GetNbinsX()-1):
-                    bin = b+1
-                    if htoy.GetBinContent(bin) < args.bin_min: below_min += 1
-
-            # store result
-            regions[region][sigma][1] = float(below_min)/float(len(newbins)*args.ntoys)
+            # store result of toy tests
+            regions[region][sigma][1] = testToys(hist,histrebin,newbins,args.ntoys,args.bin_min)
 
         # Push the top of the top axes outside the figure because we only show the bottom spine.
         fig.subplots_adjust(left=0.05, right=0.95, bottom=0.15, top=1.05)
         nmaxw = ""
         if args.max_width>0: nmaxw = "_maxw"+str(args.max_width)
-        if args.doprint: fig.savefig("finalbins_"+region+"_min"+str(args.bin_min)+"_sigma"+','.join([str(sigma) for sigma in args.sigma])+nmaxw+".png",**{"dpi":100})
+        nmaxr = ""
+        if args.max_ratio>0: nmaxr = "_maxr"+str(args.max_ratio)
+        ntol = ""
+        if args.tolerance>0: ntol = "_tol"+str(args.tolerance)
+        if args.doprint: fig.savefig("finalbins_"+region+"_min"+str(args.bin_min)+"_sigma"+','.join([str(sigma) for sigma in args.sigma])+nmaxw+nmaxr+ntol+".png",**{"dpi":100})
 
     # print results
     if args.doprint:
@@ -151,10 +180,9 @@ def finalBinning(args):
         print ""
         for sigma in args.sigma:
             print "sigma = {}, bin_min = {:.2f}".format(sigma,getMin(args.bin_min,sigma))
-            print ""
-            for region in regions:
-                print region+": "+str(regions[region][sigma][1])
-            print ""
+        print ""
+        for region in regions:
+            print region+" "+" ".join(str(regions[region][sigma][1]) for sigma in regions[region])
             
     return regions
 
@@ -168,6 +196,9 @@ def main(argv=None):
     parser.add_argument("-s", "--sigma", dest="sigma", type=float, default=[], nargs='+', help="list of number of sigmas")
     parser.add_argument("-f", "--final", dest="final", action="store_true", default=False, help="use final binning (apply high to low)")
     parser.add_argument("-w", "--max-width", dest="max_width", type=float, default=0., help="max bin width")
+    parser.add_argument("-r", "--max-ratio", dest="max_ratio", type=float, default=0., help="max bin width ratio")
+    parser.add_argument("-t", "--tolerance", dest="tolerance", type=float, default=0., help="merge last two bins if width(N) <= tol * width(N-1)")
+    parser.add_argument("-c", "--constant", dest="constant", type=int, default=0, help="rebin by a constant factor")
     parser.add_argument("-p", "--print", dest="doprint", action="store_true", default=False, help="print figures and text")
     args = parser.parse_args(args=argv)
 

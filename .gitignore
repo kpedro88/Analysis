@@ -96,6 +96,7 @@ input/fast*/
 /getTrigCorrVals.C
 /doubleRatio.C
 /finalBinning.py
+/finalizeDatacardsSVJbin.sh
 
 # linked by setupXML.sh
 /KMVA/pugi*.*
