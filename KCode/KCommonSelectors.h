@@ -1277,6 +1277,7 @@ class KRA2BinSelector : public KSelector {
 			else if(RA2VarNames[qty]=="GenHT") val.push_back(looper->GenHT);
 			else if(RA2VarNames[qty]=="RT") val.push_back(looper->MT_AK8 > 0 ? looper->MET/looper->MT_AK8 : 0.0);
 			else if(RA2VarNames[qty]=="NSVJ") val.push_back(GetNSVJ());
+			else if(RA2VarNames[qty]=="MTAK8") val.push_back(looper->MT_AK8);
 			else {}			
 			
 			vector<unsigned> bins;
