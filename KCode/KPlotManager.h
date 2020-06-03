@@ -662,7 +662,7 @@ class KPlotManager : public KManager {
 					MySets[s]->GetHisto(pm.first);
 				}
 				double yield = 0;
-				bool yieldnorm = p2map->GetTable().begin()->second->GetLocalOpt()->Get("yieldnorm",false);
+				bool yieldnorm = globalOpt->Get("yieldnorm",false) or p2map->GetTable().begin()->second->GetLocalOpt()->Get("yieldnorm",false);
 				if(yieldnorm && yieldref){
 					yield = yieldref->GetYield();
 				}
@@ -681,7 +681,7 @@ class KPlotManager : public KManager {
 					KBase* theSet = MySets[s];
 					KPlot* ptmp = p2map->Get(theSet->GetName());
 					
-					if(yield>0 && theSet != yieldref) theSet->Normalize(yield);
+					if(yield>0 and theSet != yieldref and theSet->GetLocalOpt()->Get("yieldnorm",true)) theSet->Normalize(yield);
 					if(printyield) theSet->PrintYield();
 					if(rebin) theSet->Rebin(rebin);
 					if(unitnorm) theSet->Normalize(1,true);
