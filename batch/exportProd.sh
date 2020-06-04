@@ -1,3 +1,3 @@
 #!/bin/bash
 
-export RUN2PRODV=Run2ProductionV17
+export RUN2PRODV=Run2ProductionV18
