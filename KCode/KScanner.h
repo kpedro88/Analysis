@@ -104,8 +104,7 @@ class KScanner : public KLooper {
 				}
 				
 				//check this event's mass point
-				//use old variables for SUSY because not all ntuples may have SignalParameters vector filled yet
-				vector<double> thePoint = splitSVJ ? *SignalParameters : vector<double>({SusyMotherMass,SusyLSPMass});
+				vector<double> thePoint = *SignalParameters;
 					
 				//if current, fill the corresponding tree
 				if(currPoint == thePoint){
