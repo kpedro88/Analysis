@@ -526,10 +526,9 @@ class KMCWeightSelector : public KSelector {
 			if(pucorr){
 				branches.push_back("TrueNumInteractions");
 				if(putree){
-					punew = puunc==1 ? looper->fChain->GetBranch("puSysUpNew") : puunc==-1 ? looper->fChain->GetBranch("puSysDownNew") : looper->fChain->GetBranch("puWeightNew");
-					if(puunc==1) branches.push_back(punew ? "puSysUpNew" : "puSysUp");
-					else if(puunc==-1) branches.push_back(punew ? "puSysDownNew" : "puSysDown");
-					else branches.push_back(punew ? "puWeightNew" : "puWeight");
+					if(puunc==1) branches.push_back("puSysUp");
+					else if(puunc==-1) branches.push_back("puSysDown");
+					else branches.push_back("puWeight");
 				}
 			}
 			if(puupdcorr){
@@ -589,9 +588,9 @@ class KMCWeightSelector : public KSelector {
 			
 			if(pucorr) {
 				//use TreeMaker weights if no histo provided
-				if(puunc==1) w *= puhistUp ? GetBinContentBounded(puhistUp,looper->TrueNumInteractions) : punew ? looper->puSysUpNew : looper->puSysUp;
-				else if(puunc==-1) w *= puhistDown ? GetBinContentBounded(puhistDown,looper->TrueNumInteractions) : punew ? looper->puSysDownNew : looper->puSysDown;
-				else w *= puhist ? GetBinContentBounded(puhist,looper->TrueNumInteractions) : punew ? looper->puWeightNew : looper->puWeight;
+				if(puunc==1) w *= puhistUp ? GetBinContentBounded(puhistUp,looper->TrueNumInteractions) : looper->puSysUp;
+				else if(puunc==-1) w *= puhistDown ? GetBinContentBounded(puhistDown,looper->TrueNumInteractions) : looper->puSysDown;
+				else w *= puhist ? GetBinContentBounded(puhist,looper->TrueNumInteractions) : looper->puWeight;
 			}
 
 			if(puupdcorr){
@@ -640,7 +639,7 @@ class KMCWeightSelector : public KSelector {
 			}
 
 			if(scaleunc!=0){
-				vector<double> ScaleWeightsMod = *looper->ScaleWeights;
+				auto ScaleWeightsMod = *looper->ScaleWeights;
 				//remove unwanted variations
 				if(ScaleWeightsMod.size()>7) ScaleWeightsMod.erase(ScaleWeightsMod.begin()+7);
 				if(ScaleWeightsMod.size()>5) ScaleWeightsMod.erase(ScaleWeightsMod.begin()+5);

@@ -151,14 +151,6 @@ class KBDTVar_girth : public KBDTVar {
 };
 REGISTER_BDTVAR(girth);
 
-class KBDTVar_momenthalf : public KBDTVar {
-	public:
-		using KBDTVar::KBDTVar;
-		virtual void ListBranches() { branches = {"JetsAK8_momenthalf"}; }
-		virtual void Fill_(unsigned j) { branch = looper->JetsAK8_momenthalf->at(j); }
-};
-REGISTER_BDTVAR(momenthalf);
-
 class KBDTVar_msd : public KBDTVar {
 	public:
 		using KBDTVar::KBDTVar;
@@ -190,22 +182,6 @@ class KBDTVar_tau32 : public KBDTVar {
 		virtual void Fill_(unsigned j) { branch = looper->JetsAK8_NsubjettinessTau2->at(j) > 0 ? looper->JetsAK8_NsubjettinessTau3->at(j)/looper->JetsAK8_NsubjettinessTau2->at(j) : -1; }
 };
 REGISTER_BDTVAR(tau32);
-
-class KBDTVar_lean : public KBDTVar {
-	public:
-		using KBDTVar::KBDTVar;
-		virtual void ListBranches() { branches = {"JetsAK8_lean"}; }
-		virtual void Fill_(unsigned j) { branch = looper->JetsAK8_lean->at(j); }
-};
-REGISTER_BDTVAR(lean);
-
-class KBDTVar_ptdrlog : public KBDTVar {
-	public:
-		using KBDTVar::KBDTVar;
-		virtual void ListBranches() { branches = {"JetsAK8_ptdrlog"}; }
-		virtual void Fill_(unsigned j) { branch = looper->JetsAK8_ptdrlog->at(j); }
-};
-REGISTER_BDTVAR(ptdrlog);
 
 class KBDTVar_fChEM : public KBDTVar {
 	public:
@@ -399,13 +375,5 @@ class KBDTVar_procweight : public KBDTVar {
 		virtual void Fill_(unsigned j) { branch = looper->Weight; }
 };
 REGISTER_BDTVAR(procweight);
-
-class KBDTVar_puweight : public KBDTVar {
-	public:
-		using KBDTVar::KBDTVar;
-		virtual void ListBranches() { branches = {"puWeightNew"}; }
-		virtual void Fill_(unsigned j) { branch = looper->puWeightNew; }
-};
-REGISTER_BDTVAR(puweight);
 
 #endif

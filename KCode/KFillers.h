@@ -1450,48 +1450,6 @@ class KJetFiller_AK8avgbvsall : public KJetFiller {
 };
 REGISTER_JETFILLER(AK8avgbvsall);
 
-class KJetFiller_AK8maxbcvsall : public KJetFiller {
-	public:
-		using KJetFiller::KJetFiller;
-		virtual void CheckDeps(){ JetMatch = sel->Get<KJetMatchSelector*>("JetMatch"); }
-		virtual void ListBranches() { branches = {"Jets_bJetTagDeepCSVprobb","Jets_bJetTagDeepCSVprobbb","Jets_bJetTagDeepCSVprobc","Jets_bJetTagDeepCSVprobudsg",}; }
-		virtual void FillPerJet(KValue& value, double w, unsigned index) {
-			if(JetMatch and JetMatch->JetIndices.size()>index) {
-				vector<double> discrs; discrs.reserve(JetMatch->JetIndices[index].size());
-				for(auto j : JetMatch->JetIndices[index]) {
-					double numer = looper->Jets_bJetTagDeepCSVprobb->at(j) + looper->Jets_bJetTagDeepCSVprobbb->at(j) + looper->Jets_bJetTagDeepCSVprobc->at(j);
-					double denom = numer + looper->Jets_bJetTagDeepCSVprobudsg->at(j);
-					discrs.push_back(numer/denom);
-				}
-				value.Fill(*(TMath::LocMax(discrs.begin(),discrs.end())),w);
-			}
-		}
-		//member variables
-		KJetMatchSelector* JetMatch = NULL;
-};
-REGISTER_JETFILLER(AK8maxbcvsall);
-
-class KJetFiller_AK8avgbcvsall : public KJetFiller {
-	public:
-		using KJetFiller::KJetFiller;
-		virtual void CheckDeps(){ JetMatch = sel->Get<KJetMatchSelector*>("JetMatch"); }
-		virtual void ListBranches() { branches = {"Jets_bJetTagDeepCSVprobb","Jets_bJetTagDeepCSVprobbb","Jets_bJetTagDeepCSVprobc","Jets_bJetTagDeepCSVprobudsg",}; }
-		virtual void FillPerJet(KValue& value, double w, unsigned index) {
-			if(JetMatch and JetMatch->JetIndices.size()>index) {
-				vector<double> discrs; discrs.reserve(JetMatch->JetIndices[index].size());
-				for(auto j : JetMatch->JetIndices[index]) {
-					double numer = looper->Jets_bJetTagDeepCSVprobb->at(j) + looper->Jets_bJetTagDeepCSVprobbb->at(j) + looper->Jets_bJetTagDeepCSVprobc->at(j);
-					double denom = numer + looper->Jets_bJetTagDeepCSVprobudsg->at(j);
-					discrs.push_back(numer/denom);
-				}
-				value.Fill(TMath::Mean(discrs.begin(),discrs.end()),w);
-			}
-		}
-		//member variables
-		KJetMatchSelector* JetMatch = NULL;
-};
-REGISTER_JETFILLER(AK8avgbcvsall);
-
 class KJetFiller_AK8doubleb : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
@@ -1503,8 +1461,8 @@ REGISTER_JETFILLER(AK8doubleb);
 class KJetFiller_AK8deepdoubleb : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
-		virtual void ListBranches() { branches = {"JetsAK8_deepDoubleBDiscriminatorH"}; }
-		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8->size()>index) value.Fill(looper->JetsAK8_deepDoubleBDiscriminatorH->at(index),w); }
+		virtual void ListBranches() { branches = {"JetsAK8_pfMassIndependentDeepDoubleBvLJetTagsProbHbb"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8->size()>index) value.Fill(looper->JetsAK8_pfMassIndependentDeepDoubleBvLJetTagsProbHbb->at(index),w); }
 };
 REGISTER_JETFILLER(AK8deepdoubleb);
 
@@ -1621,14 +1579,6 @@ class KJetFiller_AK8girth : public KJetFiller {
 		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_girth->size()>index) value.Fill(looper->JetsAK8_girth->at(index),w); }
 };
 REGISTER_JETFILLER(AK8girth);
-
-class KJetFiller_AK8mhalf : public KJetFiller {
-	public:
-		using KJetFiller::KJetFiller;
-		virtual void ListBranches() { branches = {"JetsAK8_momenthalf"}; }
-		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_momenthalf->size()>index) value.Fill(looper->JetsAK8_momenthalf->at(index),w); }
-};
-REGISTER_JETFILLER(AK8mhalf);
 
 class KJetFiller_AK8mult : public KJetFiller {
 	public:
@@ -1784,14 +1734,6 @@ class KJetFiller_AK8fHFHad : public KJetFiller {
 };
 REGISTER_JETFILLER(AK8fHFHad);
 
-class KJetFiller_AK8lean : public KJetFiller {
-	public:
-		using KJetFiller::KJetFiller;
-		virtual void ListBranches() { branches = {"JetsAK8_lean"}; }
-		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_lean->size()>index) value.Fill(looper->JetsAK8_lean->at(index),w); }
-};
-REGISTER_JETFILLER(AK8lean);
-
 class KJetFiller_AK8fMu : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
@@ -1855,22 +1797,6 @@ class KJetFiller_AK8nPho : public KJetFiller {
 		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_photonMultiplicity->size()>index) value.Fill(looper->JetsAK8_photonMultiplicity->at(index),w); }
 };
 REGISTER_JETFILLER(AK8nPho);
-
-class KJetFiller_AK8ptdrlog : public KJetFiller {
-	public:
-		using KJetFiller::KJetFiller;
-		virtual void ListBranches() { branches = {"JetsAK8_ptdrlog"}; }
-		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_ptdrlog->size()>index) value.Fill(looper->JetsAK8_ptdrlog->at(index),w); }
-};
-REGISTER_JETFILLER(AK8ptdrlog);
-
-class KJetFiller_AK8ptdrlognorm : public KJetFiller {
-	public:
-		using KJetFiller::KJetFiller;
-		virtual void ListBranches() { branches = {"JetsAK8_ptdrlog","JetsAK8","JetsAK8_multiplicity"}; }
-		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_ptdrlog->size()>index) value.Fill(looper->JetsAK8_multiplicity->at(index)*log(looper->JetsAK8->at(index).Pt())-looper->JetsAK8_ptdrlog->at(index),w); }
-};
-REGISTER_JETFILLER(AK8ptdrlognorm);
 
 class KJetFiller_AK8ecfN2b1 : public KJetFiller {
 	public:

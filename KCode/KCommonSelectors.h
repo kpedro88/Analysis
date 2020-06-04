@@ -282,7 +282,6 @@ class KHLTSelector : public KSelector {
 		}
 		virtual void ListBranches(){
 			branches.insert(branches.end(),{
-				"TriggerNames",
 				"TriggerPass",
 			});
 		}
@@ -296,13 +295,17 @@ class KHLTSelector : public KSelector {
 			
 			//initial loop over trigger names to find indices (position is consistent for all events)
 			if(HLTIndices.empty()){
+				//create trigger name list from metadata
+				string full_list(looper->b_TriggerPass->GetTitle());
+				vector<string> TriggerNames;
+				KParser::process(full_list,',',TriggerNames);
 				for(unsigned h = 0; h < HLTLines.size(); h++){
-					vector<string>::iterator lb = lower_bound(looper->TriggerNames->begin(),looper->TriggerNames->end(),HLTLines[h]);
+					vector<string>::iterator lb = lower_bound(TriggerNames.begin(),TriggerNames.end(),HLTLines[h]);
 					if(debug){
 						cout << HLTLines[h] << " " << *lb << endl;
 					}
-					if(lb != looper->TriggerNames->end() && lb->find(HLTLines[h]) != std::string::npos){
-						HLTIndices.push_back(distance(looper->TriggerNames->begin(),lb));
+					if(lb != TriggerNames.end() && lb->find(HLTLines[h]) != std::string::npos){
+						HLTIndices.push_back(distance(TriggerNames.begin(),lb));
 					}
 				}
 				if(debug){
@@ -1385,7 +1388,7 @@ class KMuonVetoSelector : public KSelector {
 			loose = localOpt->Get("loose",false);
 		}
 		virtual void ListBranches(){
-			if(loose) branches.push_back("Muons_MiniIso");
+			if(loose) branches.push_back("Muons_iso");
 			else branches.push_back("NMuons");
 		}
 		
@@ -1396,7 +1399,7 @@ class KMuonVetoSelector : public KSelector {
 			if(loose) {
 				//loosen iso criteria (loose ID is ntuple baseline)
 				unsigned nmuons = 0;
-				for(auto m : *looper->Muons_MiniIso){
+				for(auto m : *looper->Muons_iso){
 					if(m < 0.4) ++nmuons;
 				}
 				return nmuons==0;

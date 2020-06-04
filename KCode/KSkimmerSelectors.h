@@ -145,7 +145,7 @@ class KMuonSelector : public KSelector {
 			if(loose){
 				//loosen iso criteria (loose ID is ntuple baseline)
 				unsigned nmuons = 0;
-				for(auto m : *looper->Muons_MiniIso){
+				for(auto m : *looper->Muons_iso){
 					if(m < 0.4) ++nmuons;
 				}
 				return nmuons==1;
@@ -753,7 +753,7 @@ class KPDFNormSelector : public KSelector {
 			}
 			
 			if(looper->ScaleWeights->size()>0){
-				vector<double> ScaleWeightsMod = *looper->ScaleWeights;
+				auto ScaleWeightsMod = *looper->ScaleWeights;
 				//remove unwanted variations
 				if(ScaleWeightsMod.size()>7) ScaleWeightsMod.erase(ScaleWeightsMod.begin()+7);
 				if(ScaleWeightsMod.size()>5) ScaleWeightsMod.erase(ScaleWeightsMod.begin()+5);
