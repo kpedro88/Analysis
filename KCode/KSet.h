@@ -86,6 +86,10 @@ class KSet : public KBase {
 				//special case to allow external histos to have different binning
 				if(all_ext){
 					if(htmp->GetXaxis()->GetXmin()==obj->htmp->GetXaxis()->GetXmin() and htmp->GetXaxis()->GetXmax()==obj->htmp->GetXaxis()->GetXmax()){
+						//keep titles & style from this set
+						htmp->GetXaxis()->SetTitle(obj->htmp->GetXaxis()->GetTitle());
+						htmp->GetYaxis()->SetTitle(obj->htmp->GetYaxis()->GetTitle());
+						htmp->GetZaxis()->SetTitle(obj->htmp->GetZaxis()->GetTitle());
 						obj->htmp = htmp;
 						MyStyle->Format(obj->htmp);
 					}
