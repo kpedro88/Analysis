@@ -349,6 +349,7 @@ ZJetsToNuNu_HT-200to400_MC2018_block8 \
 ZJetsToNuNu_HT-400to600_MC2018_block0 \
 ZJetsToNuNu_HT-400to600_MC2018_block1 \
 ZJetsToNuNu_HT-400to600_MC2018_block2 \
+ZJetsToNuNu_HT-400to600_MC2018_block3 \
 ZJetsToNuNu_HT-600to800_MC2018_block0 \
 ZJetsToNuNu_HT-600to800_MC2018_block1 \
 ZJetsToNuNu_HT-600to800_MC2018_block2 \
