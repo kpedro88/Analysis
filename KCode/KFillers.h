@@ -1540,6 +1540,30 @@ class KJetFiller_AK4genpt : public KJetFiller {
 };
 REGISTER_JETFILLER(AK4genpt);
 
+class KJetFiller_AK4eta : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"Jets"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->Jets->size()>index) value.Fill(looper->Jets->at(index).Eta(),w); }
+};
+REGISTER_JETFILLER(AK4eta);
+
+class KJetFiller_AK4abseta : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"Jets"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->Jets->size()>index) value.Fill(abs(looper->Jets->at(index).Eta()),w); }
+};
+REGISTER_JETFILLER(AK4abseta);
+
+class KJetFiller_AK4phi : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"Jets"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->Jets->size()>index) value.Fill(looper->Jets->at(index).Phi(),w); }
+};
+REGISTER_JETFILLER(AK4phi);
+
 //num b hadrons
 class KJetFiller_AK8nb : public KJetFiller {
     public:
