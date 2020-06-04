@@ -584,13 +584,19 @@ class KPlotManager : public KManager {
 				//then perform any fits
 				//and add to legend
 				double yield = 0;
-				if(yieldref) yield = yieldref->GetYield();
-				if(printyield) cout << p.first << " yield:" << endl;
 				bool yieldnorm = globalOpt->Get("yieldnorm",false) or p.second->GetLocalOpt()->Get("yieldnorm",false);
+				if(yieldnorm){
+					if(yieldref) { yield = yieldref->GetYield(); }
+					else if(globalOpt->Get("yieldnormval",yield)) {}
+					else {
+						throw runtime_error("normalization to yield requested for "+p.first+", but neither yieldref nor yieldnormval are set. Normalization cannot be performed.");
+					}
+				}
+				if(printyield) cout << p.first << " yield:" << endl;
 				bool xbindivide = p.second->GetLocalOpt()->Get("xbindivide",false);
 				bool ybindivide = p.second->GetLocalOpt()->Get("ybindivide",false);
 				for(unsigned s = 0; s < MySets.size(); s++){
-					if(yieldref && yieldnorm && yield>0 && MySets[s] != yieldref && MySets[s]->GetLocalOpt()->Get("yieldnorm",true)) MySets[s]->Normalize(yield);
+					if(yieldnorm && yield>0 && MySets[s] != yieldref && MySets[s]->GetLocalOpt()->Get("yieldnorm",true)) MySets[s]->Normalize(yield);
 					if(printyield) MySets[s]->PrintYield();
 					if(rebin) MySets[s]->Rebin(rebin);
 					if(unitnorm) MySets[s]->Normalize(1,true);
@@ -599,9 +605,6 @@ class KPlotManager : public KManager {
 					MySets[s]->AddToLegend(kleg);
 				}
 				if(printyield) cout << endl;
-				if(yieldnorm && !yieldref){
-					throw runtime_error("normalization to yield requested for "+p.first+", but yieldref not set. Normalization cannot be performed.");
-				}
 				
 				//build legend
 				kleg->Build();
@@ -663,11 +666,12 @@ class KPlotManager : public KManager {
 				}
 				double yield = 0;
 				bool yieldnorm = globalOpt->Get("yieldnorm",false) or p2map->GetTable().begin()->second->GetLocalOpt()->Get("yieldnorm",false);
-				if(yieldnorm && yieldref){
-					yield = yieldref->GetYield();
-				}
-				else if(yieldnorm && !yieldref){
-					throw runtime_error("normalization to yield requested for "+pm.first+", but yieldref not set. Normalization cannot be performed.");
+				if(yieldnorm){
+					if(yieldref) { yield = yieldref->GetYield(); }
+					else if(globalOpt->Get("yieldnormval",yield)) {}
+					else {
+						throw runtime_error("normalization to yield requested for "+pm.first+", but neither yieldref nor yieldnormval are set. Normalization cannot be performed.");
+					}
 				}
 				
 				double zmin = 1e100;
@@ -707,7 +711,7 @@ class KPlotManager : public KManager {
 						if(ptmp) theSet = MyRatios[s-MySets.size()];
 						else continue;
 						//build ratio histo (use plot histo as template)
-						((KSetRatio*)theSet)->Build(ptmp->GetHisto());
+						((KSetRatio*)theSet)->Build(nullptr,MyFitOptions,ptmp->GetHisto());
 					}
 					else {
 						theSet = MySets[s];
@@ -728,6 +732,7 @@ class KPlotManager : public KManager {
 						double ratiomax = zmax_ratio; globalOpt->Get("ratiomax",ratiomax);
 						ptmp->GetHisto()->GetZaxis()->SetRangeUser(ratiomin,ratiomax);
 						theSet->GetHisto()->GetZaxis()->SetRangeUser(ratiomin,ratiomax);
+						pad1->SetLogz(globalOpt->Get("ratiologz",false));
 					}
 					else {
 						ptmp->GetHisto()->GetZaxis()->SetRangeUser(zmin,zmax);

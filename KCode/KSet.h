@@ -555,6 +555,7 @@ class KSetRatio: public KSet {
 		using KBase::Build;
 		void Build(OptionMap* omap, OptionMapMap& fitopts, TH1* htemp=NULL){
 			Build(children[0]->GetHistoName(),children[0]->GetHisto(),children[1]->GetHisto(),htemp);
+			if(omap==NULL) return;
 			AddFits(stmp,omap,fitopts,"ratiofits");
 			DoFits();
 		}
