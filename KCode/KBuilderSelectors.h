@@ -676,7 +676,7 @@ class KMCWeightSelector : public KSelector {
 				else if(prefireunc<0) w *= looper->NonPrefiringProbDown;
 			}
 
-			if(hemvetocorr){
+/*			if(hemvetocorr){
 				//nominal: hem veto, up: no veto, dn: hem veto - (no veto - hem veto) = 2*hem veto - no veto
 				//to implement uncDown on per-event basis, remove vetoed event "twice" (weight of 0 = removed, weight of -1 = removed again)
 				if(hemvetounc==0) w *= looper->HEMDPhiVetoFilter;
@@ -685,7 +685,7 @@ class KMCWeightSelector : public KSelector {
 					if(!looper->HEMDPhiVetoFilter) w *= -1;
 					else w *= 1;
 				}
-			}
+			}*/
 
 			if(lepcorr){
 				//assume SL CR
@@ -1534,7 +1534,8 @@ class KSVJTagSelector : public KSelector {
 			//reset
 			ntags = 0;
 			JetsAK8_tagged.clear();
-			const auto& SVJTag = ebranch==seltor ? BDT->JetsAK8_bdt : *looper->JetsAK8_bdtSVJtag;
+//			const auto& SVJTag = ebranch==seltor ? BDT->JetsAK8_bdt : *looper->JetsAK8_bdtSVJtag;
+			const auto& SVJTag = BDT->JetsAK8_bdt;
 			JetsAK8_tagged.reserve(SVJTag.size());
 			for(unsigned j = 0; j < min(SVJTag.size(),2ul); ++j){
 				JetsAK8_tagged.push_back(SVJTag[j] > cut);

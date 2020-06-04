@@ -1416,10 +1416,13 @@ class KJetFiller_AK8maxbvsall : public KJetFiller {
 				branch_present = looper->fChain->GetBranchStatus(prefilled_branch.c_str()) and looper->fChain->GetBranch(prefilled_branch.c_str());
 			}
 
-			if(branch_present and index<looper->JetsAK8_maxBvsAll->size()){
+/*			if(branch_present and index<looper->JetsAK8_maxBvsAll->size()){
 				value.Fill(looper->JetsAK8_maxBvsAll->at(index),w);
 			}
 			else if(!branch_present and JetMatch and JetMatch->JetsAK8_maxBvsAll.size()>index) {
+				value.Fill(JetMatch->JetsAK8_maxBvsAll[index],w);
+			}*/
+			if(JetMatch and JetMatch->JetsAK8_maxBvsAll.size()>index) {
 				value.Fill(JetMatch->JetsAK8_maxBvsAll[index],w);
 			}
 			else {
@@ -1661,6 +1664,7 @@ class KJetFiller_AK8bdt : public KJetFiller {
 };
 REGISTER_JETFILLER(AK8bdt);
 
+/*
 //pre-existing bdt output
 class KJetFiller_AK8bdtSVJtag : public KJetFiller {
 	public:
@@ -1669,6 +1673,7 @@ class KJetFiller_AK8bdtSVJtag : public KJetFiller {
 		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_bdtSVJtag->size()>index) value.Fill(looper->JetsAK8_bdtSVJtag->at(index),w); }
 };
 REGISTER_JETFILLER(AK8bdtSVJtag);
+*/
 
 class KJetFiller_AK8fChEM : public KJetFiller {
 	public:

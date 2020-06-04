@@ -161,10 +161,13 @@ void KBDTVar_maxbvsall::Fill_(unsigned j) {
 		branch_present = looper->fChain->GetBranchStatus(prefilled_branch.c_str()) and looper->fChain->GetBranch(prefilled_branch.c_str());
 	}
 
-	if(branch_present and j<looper->JetsAK8_maxBvsAll->size()){
+/*	if(branch_present and j<looper->JetsAK8_maxBvsAll->size()){
 		branch = looper->JetsAK8_maxBvsAll->at(j);
 	}
 	else if(!branch_present and JetMatch and j<JetMatch->JetsAK8_maxBvsAll.size()){
+		branch = JetMatch->JetsAK8_maxBvsAll[j];
+	}*/
+	if(JetMatch and j<JetMatch->JetsAK8_maxBvsAll.size()){
 		branch = JetMatch->JetsAK8_maxBvsAll[j];
 	}
 	else {
@@ -1504,6 +1507,7 @@ class KMETFilterSelector : public KSelector {
 };
 REGISTER_SELECTOR(METFilter);
 
+/*
 //---------------------------------------------------------------
 //applies extra filters
 class KExtraFilterSelector : public KSelector {
@@ -1555,6 +1559,7 @@ class KExtraFilterSelector : public KSelector {
 		bool fastsim, data;
 };
 REGISTER_SELECTOR(ExtraFilter);
+*/
 
 //------------------------------------------------------
 //selects events based on run number (for blinding data)
@@ -1599,6 +1604,7 @@ class KBlindSelector : public KSelector {
 };
 REGISTER_SELECTOR(Blind);
 
+/*
 //---------------------------------------------------------------
 //compares ecal noise filters
 class KEcalNoiseComparisonSelector : public KSelector {
@@ -1647,6 +1653,7 @@ class KEcalNoiseComparisonSelector : public KSelector {
 		array<int,3> counters;
 };
 REGISTER_SELECTOR(EcalNoiseComparison);
+*/
 
 //-------------------------------------------------------------
 //base class for filters (w/ tag mode to add branches)
