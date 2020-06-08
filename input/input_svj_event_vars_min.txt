@@ -1,0 +1,47 @@
+INPUT
+input/input_global.txt
+
+OPTION
+int:yieldprecision[4]
+vstring:disable_branches[*]
+bool:closefiles[1]
+bool:debugcut[1]
+
+HISTO
+deltaphiminAK8	i:xnum[20]	d:xmin[0]	d:xmax[3.15]	s:xtitle[#Delta#phi_{min}]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlack]
+met	i:xnum[20]	d:xmin[0]	d:xmax[4000]	s:xtitle[#slash{E}_{T} [GeV]]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlue]
+leadjetAK4pt	i:xnum[20]	d:xmin[0]	d:xmax[4000]	s:xtitle[p_{T}(j_{1}) [GeV]]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlue]
+subleadjetAK4pt	i:xnum[20]	d:xmin[0]	d:xmax[4000]	s:xtitle[p_{T}(j_{2}) [GeV]]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kRed]
+leadjetAK4eta	i:xnum[40]	d:xmin[-2.4]	d:xmax[2.4]	s:xtitle[#eta(j_{1})]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlack]
+subleadjetAK4eta	i:xnum[40]	d:xmin[-2.4]	d:xmax[2.4]	s:xtitle[#eta(j_{2})]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlack]
+leadjetAK4abseta	i:xnum[20]	d:xmin[0]	d:xmax[2.4]	s:xtitle[|#eta(j_{1})|]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlack]
+subleadjetAK4abseta	i:xnum[20]	d:xmin[0]	d:xmax[2.4]	s:xtitle[|#eta(j_{2})|]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlack]
+leadjetAK4phi	i:xnum[40]	d:xmin[-3.15]	d:xmax[3.15]	s:xtitle[#phi(j_{1})]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlack]
+subleadjetAK4phi	i:xnum[40]	d:xmin[-3.15]	d:xmax[3.15]	s:xtitle[#phi(j_{2})]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlack]
+leadjetAK4fChHad	i:xnum[20]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{h^{#pm}}(j_{1})]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlue]
+leadjetAK4fEle	i:xnum[20]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{e}(j_{1})]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlue]
+leadjetAK4fMu	i:xnum[20]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{#mu}(j_{1})]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlue]
+leadjetAK4fNeuHad	i:xnum[20]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{h^{0}}(j_{1})]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlue]
+leadjetAK4fPho	i:xnum[20]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{#gamma}(j_{1})]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlue]
+leadjetAK4mult	i:xnum[20]	d:xmin[0]	d:xmax[100]	s:xtitle[n_{const.}(j_{1})]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlue]
+subleadjetAK4fChHad	i:xnum[20]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{h^{#pm}}(j_{2})]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlue]
+subleadjetAK4fEle	i:xnum[20]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{e}(j_{2})]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlue]
+subleadjetAK4fMu	i:xnum[20]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{#mu}(j_{2})]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlue]
+subleadjetAK4fNeuHad	i:xnum[20]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{h^{0}}(j_{2})]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlue]
+subleadjetAK4fPho	i:xnum[20]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{#gamma}(j_{2})]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlue]
+subleadjetAK4mult	i:xnum[20]	d:xmin[0]	d:xmax[100]	s:xtitle[n_{const.}(j_{2})]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlue]
+
+HISTO2D
+leadjetAK4abseta_leadjetAK4pt	i:xnum[20]	d:xmin[0]	d:xmax[2.4]	i:ynum[20]	d:ymin[0]	d:ymax[4000]	s:xtitle[|#eta(j_{1})|]	s:ytitle[p_{T}(j_{1}) [GeV]]	b:ratio[1]	b:logz[1]	s:ztitle[number of events]
+subleadjetAK4abseta_subleadjetAK4pt	i:xnum[20]	d:xmin[0]	d:xmax[2.4]	i:ynum[20]	d:ymin[0]	d:ymax[4000]	s:xtitle[|#eta(j_{2})|]	s:ytitle[p_{T}(j_{2}) [GeV]]	b:ratio[1]	b:logz[1]	s:ztitle[number of events]
+leadjetAK4abseta_leadjetAK4fPho	i:xnum[20]	d:xmin[0]	d:xmax[2.4]	i:ynum[20]	d:ymin[0]	d:ymax[1]	s:xtitle[|#eta(j_{1})|]	s:ytitle[f_{#gamma}(j_{1})]	b:ratio[1]	b:logz[1]	s:ztitle[number of events]
+subleadjetAK4abseta_subleadjetAK4fPho	i:xnum[20]	d:xmin[0]	d:xmax[2.4]	i:ynum[20]	d:ymin[0]	d:ymax[1]	s:xtitle[|#eta(j_{2})|]	s:ytitle[f_{#gamma}(j_{2})]	b:ratio[1]	b:logz[1]	s:ztitle[number of events]
+leadjetAK4eta_leadjetAK4fPho	i:xnum[40]	d:xmin[-2.4]	d:xmax[2.4]	i:ynum[20]	d:ymin[0]	d:ymax[1]	s:xtitle[#eta(j_{1})]	s:ytitle[f_{#gamma}(j_{1})]	b:ratio[1]	b:logz[1]	s:ztitle[number of events]
+subleadjetAK4eta_subleadjetAK4fPho	i:xnum[40]	d:xmin[-2.4]	d:xmax[2.4]	i:ynum[20]	d:ymin[0]	d:ymax[1]	s:xtitle[#eta(j_{2})]	s:ytitle[f_{#gamma}(j_{2})]	b:ratio[1]	b:logz[1]	s:ztitle[number of events]
+leadjetAK4eta_leadjetAK4phi	i:xnum[40]	d:xmin[-2.4]	d:xmax[2.4]	i:ynum[40]	d:ymin[-3.15]	d:ymax[3.15]	s:xtitle[#eta(j_{1})]	s:ytitle[#phi(j_{1}) [GeV]]	b:ratio[1]	b:logz[0]	s:ztitle[number of events]
+subleadjetAK4eta_subleadjetAK4phi	i:xnum[40]	d:xmin[-2.4]	d:xmax[2.4]	i:ynum[40]	d:ymin[-3.15]	d:ymax[3.15]	s:xtitle[#eta(j_{2})]	s:ytitle[#phi(j_{2}) [GeV]]	b:ratio[1]	b:logz[0]	s:ztitle[number of events]
+leadjetAK4eta_leadjetAK4pt	i:xnum[40]	d:xmin[-2.4]	d:xmax[2.4]	i:ynum[20]	d:ymin[0]	d:ymax[4000]	s:xtitle[#eta(j_{1})]	s:ytitle[p_{T}(j_{1}) [GeV]]	b:ratio[1]	b:logz[1]	s:ztitle[number of events]
+subleadjetAK4eta_subleadjetAK4pt	i:xnum[40]	d:xmin[-2.4]	d:xmax[2.4]	i:ynum[20]	d:ymin[0]	d:ymax[4000]	s:xtitle[#eta(j_{2})]	s:ytitle[p_{T}(j_{2}) [GeV]]	b:ratio[1]	b:logz[1]	s:ztitle[number of events]
+leadjetAK4fPho_leadjetAK4pt	i:xnum[20]	d:xmin[0]	d:xmax[1]	i:ynum[20]	d:ymin[0]	d:ymax[4000]	s:xtitle[f_{#gamma}(j_{1})]	s:ytitle[p_{T}(j_{1}) [GeV]]	b:ratio[1]	b:logz[1]	s:ztitle[number of events]
+subleadjetAK4fPho_subleadjetAK4pt	i:xnum[20]	d:xmin[0]	d:xmax[1]	i:ynum[20]	d:ymin[0]	d:ymax[4000]	s:xtitle[f_{#gamma}(j_{2})]	s:ytitle[p_{T}(j_{2}) [GeV]]	b:ratio[1]	b:logz[1]	s:ztitle[number of events]
+MTAK8_metMTratio	i:xnum[40]	d:xmin[0]	d:xmax[8000]	i:ynum[40]	d:ymin[0]	d:ymax[0.5]	s:xtitle[M_{T} [GeV]]	s:ytitle[R_{T}]	b:ratio[1]	b:logz[1]	s:ztitle[number of events]

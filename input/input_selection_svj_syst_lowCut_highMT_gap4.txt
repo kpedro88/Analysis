@@ -1,0 +1,7 @@
+SELECTION
+base
+	PhiSpikeVeto	s:name[PhiSpikeVeto16]	s:yearmc[MC2016]	s:yeardata[JetHT_2016]	s:spikelist[corrections/phispikes16.txt]	s:leadspikelist[corrections/leadphispikes16.txt]	b:tag[0]
+	GapJetVeto	d:etamin[0.72]	d:etamax[1.56]	b:abseta[1]	d:phomin[0.7]	d:phomax[-1]	d:ptmin[1000]	u:jindex[0]
+	RA2Bin	in:options[input/input_svj_bin_options_lowCut_highMT.txt]
+	Histo
+

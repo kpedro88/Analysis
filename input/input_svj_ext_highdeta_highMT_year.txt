@@ -1,0 +1,20 @@
+OPTION
+string:exthisto_extra[nominalHighDeta]
+int:npanel[1]
+string+:printsuffix[_year]
+
+SET
+hist	data	data	i:panel[1]	b:yieldnorm[0]
+	base	ext	data_2016	b:ext_auto[1]
+	base	ext	data_2017	b:ext_auto[1]
+	base	ext	data_2018PRE	b:ext_auto[1]
+	base	ext	data_2018POST	b:ext_auto[1]
+stack	mc	data
+	hist	data	data_2016	s:legname[2016]	c:color[kGray + 1]	i:panel[1]	b:yieldnorm[0]
+		base	ext	data_2016	b:ext_auto[1]
+	hist	data	data_2017	s:legname[2017]	c:color[kBlue]	i:panel[1]	b:yieldnorm[0]
+		base	ext	data_2017	b:ext_auto[1]
+	hist	data	data_2018PRE	s:legname[2018PRE]	c:color[kMagenta]	i:panel[1]	b:yieldnorm[0]
+		base	ext	data_2018PRE	b:ext_auto[1]
+	hist	data	data_2018POST	s:legname[2018POST]	c:color[kRed]	i:panel[1]	b:yieldnorm[0]
+		base	ext	data_2018POST	b:ext_auto[1]

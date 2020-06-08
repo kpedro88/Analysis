@@ -1,0 +1,6 @@
+INPUT
+input/input_svj_event_vars.txt
+
+HISTO
+deltaetaAK8	i:xnum[20]	d:xmin[0.0]	d:xmax[2.2]	s:xtitle[|#Delta#eta(J_{1},J_{2})|]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kGray + 1]
+deltaphiminAK8	i:xnum[20]	d:xmin[0]	d:xmax[3.15]	s:xtitle[#Delta#phi_{min}]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlack]

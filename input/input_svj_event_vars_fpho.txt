@@ -1,0 +1,12 @@
+INPUT
+input/input_global.txt
+
+OPTION
+int:yieldprecision[4]
+vstring:disable_branches[*]
+bool:closefiles[1]
+bool:debugcut[1]
+
+HISTO
+leadjetAK4fPho	i:xnum[20]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{#gamma}(j_{1})]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlue]
+subleadjetAK4fPho	i:xnum[20]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{#gamma}(j_{2})]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kBlue]
