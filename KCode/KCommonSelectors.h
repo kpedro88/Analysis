@@ -2129,6 +2129,63 @@ class KPhiSpikeVetoSelector : public KFilterSelector {
 };
 REGISTER_SELECTOR(PhiSpikeVeto);
 
+//-------------------------------------------------------------
+//vetos events with anomalous jets in gap region
+//identified using eta range and photon fraction
+//and optionally phi range, jet pt
+class KGapJetVetoSelector : public KFilterSelector {
+	public:
+		//constructor
+		typedef vector<pair<double,double>> SpikeList;
+		KGapJetVetoSelector() : KFilterSelector() { }
+		KGapJetVetoSelector(string name_, OptionMap* localOpt_) : KFilterSelector(name_,localOpt_),
+			etamin(1.0), etamax(1.6), abseta(true), phomin(0.6), phomax(-1), phimin(-1), phimax(-1), ptmin(-1), jindex(0), invert(false)
+		{
+			branchname = "GapJetVeto";
+			localOpt->Get("etamin",etamin);
+			localOpt->Get("etamax",etamax);
+			localOpt->Get("phomin",phomin);
+			localOpt->Get("phomax",phomax);
+			localOpt->Get("phimin",phimin);
+			localOpt->Get("phimax",phimax);
+			localOpt->Get("ptmin",ptmin);
+			localOpt->Get("jindex",jindex);
+			abseta = localOpt->Get("abseta",true);
+			invert = localOpt->Get("invert",false);
+			debug = localOpt->Get("debug",false);
+		}
+		virtual void ListBranches(){
+			branches.insert(branches.end(),{
+				"Jets",
+				"Jets_photonEnergyFraction",
+			});
+		}
+		virtual void GetResult() {
+			if(looper->Jets->size()<=jindex) {
+				result = true;
+			}
+			else {
+				double eta = looper->Jets->at(jindex).Eta();
+				if(abseta) eta = abs(eta);
+				result = !( (ptmin<0 or looper->Jets->at(jindex).Pt() > ptmin) and
+							(etamin<0 or eta > etamin) and
+							(etamax<0 or eta < etamax) and
+							(phimin<0 or looper->Jets->at(jindex).Phi() > phimin) and
+							(phimax<0 or looper->Jets->at(jindex).Phi() < phimax) and
+							(phomin<0 or looper->Jets_photonEnergyFraction->at(jindex) > phomin) and
+							(phomax<0 or looper->Jets_photonEnergyFraction->at(jindex) < phomax) );
+			}
+			if(invert) result = !result;
+			if(!result and debug) cout << "Failed: jet pt = " << looper->Jets->at(jindex).Pt() << ", eta = " << looper->Jets->at(jindex).Eta() << ", phi = " << looper->Jets->at(jindex).Phi() << ", fPho = " << looper->Jets_photonEnergyFraction->at(jindex) << endl;
+		}
+
+		//member variables
+		double etamin, etamax, phomin, phomax, phimin, phimax, ptmin;
+		unsigned jindex;
+		bool abseta, invert, debug;
+};
+REGISTER_SELECTOR(GapJetVeto);
+
 //---------------------------------------------------------------
 //calculates and applies extra filters (all at once)
 class KEventCleaningSelector : public KSelector {
