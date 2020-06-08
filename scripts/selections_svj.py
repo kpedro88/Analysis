@@ -4,7 +4,7 @@ selections = OrderedDict([
     ('Dijet', '\\multicolumn{2}{c}{$\\pt(j_{1,2}) > 200\\GeV$, $\\eta(j_{1,2}) < 2.4$}'),
     ('METMTRatio', '\\metmt & <0.15'),
     ('DeltaEta', '\\deta & <1.5'),
-    ('MTAK8', '\\mt & <1500\\GeV'),
+    ('MTAK8', '\\mt & >1500\\GeV'),
     ('MuonVeto', '\\nmuons & =0'),
     ('ElectronVeto', '\\neles & =0'),
     ('METFilter', '\\multicolumn{2}{c}{MET filters}'),
