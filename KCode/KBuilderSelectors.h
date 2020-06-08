@@ -840,9 +840,10 @@ class KLeadJetPtSelector : public KSelector {
 	public:
 		//constructor
 		KLeadJetPtSelector() : KSelector() { }
-		KLeadJetPtSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), pTmin(200) { 
+		KLeadJetPtSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), min(200), max(-1) { 
 			//check for option
-			localOpt->Get("pTmin",pTmin);
+			localOpt->Get("min",min);
+			localOpt->Get("max",max);
 		}
 		virtual void ListBranches(){
 			branches.push_back("Jets");
@@ -852,11 +853,11 @@ class KLeadJetPtSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return looper->Jets->size()>0 && looper->Jets->at(0).Pt() > pTmin;
+			return looper->Jets->size()>0 and (min<0 or looper->Jets->at(0).Pt() > min) and (max<0 or looper->Jets->at(0).Pt() < max);
 		}
 		
 		//member variables
-		double pTmin;
+		double min, max;
 };
 REGISTER_SELECTOR(LeadJetPt);
 
