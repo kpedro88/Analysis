@@ -1752,6 +1752,8 @@ class KMuonJetSelector : public KFilterSelector {
 		}
 		virtual void GetResult() {
 			bool noMuonJet = true;
+			//check for inconsistent case
+			if(looper->Jets->size()!=looper->Jets_muonEnergyFraction->size()) return;
 			for(unsigned j = 0; j < looper->Jets->size(); ++j){
 				if(looper->Jets->at(j).Pt() > 200 && looper->Jets_muonEnergyFraction->at(j) > 0.5 && abs(KMath::DeltaPhi(looper->Jets->at(j).Phi(),looper->METPhi)) > (TMath::Pi() - 0.4)){
 					noMuonJet = false;
