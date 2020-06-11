@@ -117,7 +117,7 @@ class SplitDir(object):
                     hist.SetBinContent(bin,hist.GetBinContent(bin)/hist.GetXaxis().GetBinWidth(bin))
                     hist.SetBinError(bin,hist.GetBinError(bin)/hist.GetXaxis().GetBinWidth(bin))
         return hist
-    def split(self, hist, store=True, toy=False, norm=0):
+    def split(self, hist, store=True, toy=False, toy_name="", norm=0):
         htemp = hist.ProjectionX(hist.GetName(),self.min,self.max)
         htempF = DtoF(htemp)
         # keep original norm (rebin may divide by bin width)
@@ -132,7 +132,7 @@ class SplitDir(object):
                 htempN = htempF.Clone(htempF.GetName()+"_norm")
                 htempN.Scale(norm/this_norm)
             htempT = finalBinning.makeToy(htempN,prev_neg=True)
-            htempT.SetName(hist.GetName()+"_toy")
+            htempT.SetName(toy_name if len(toy_name)>0 else hist.GetName()+"_toy")
 
         hists = [htempF]
         if htempT is not None: hists.append(htempT)
@@ -161,6 +161,7 @@ if __name__=="__main__":
     parser.add_argument("-d", "--data", dest="data", type=str, default=["data"], nargs="*", help="list of names for data category")
     parser.add_argument("-b", "--bkgs", dest="bkgs", type=str, default=["QCD","TT","WJets","ZJets"], nargs="*", help="list of names for bkg category")
     parser.add_argument("-t", "--toy", dest="toy", default=False, action="store_true", help="make toy data from bkg")
+    parser.add_argument("--mock", dest="mock", default=False, action="store_true", help="rename toy data from bkg to data_obs")
     parser.add_argument("-i", "--dir", dest="dir", type=str, default="", help="directory for input files")
     parser.add_argument("-f", "--files", dest="files", type=str, nargs="+", help="list of input files", required=True)
     parser.add_argument("-o", "--out", dest="out", type=str, help="output file name", required=True)
@@ -213,8 +214,10 @@ if __name__=="__main__":
             samples["sig"].append(tmp)
 
     # add up nominals for data, bkg
+    data_name = "data_obs"
+    if args.mock: data_name = "data_obs_real"
     if len(samples["data"])>0:
-        samples["data"][0].hadd_nominal("data_obs")
+        samples["data"][0].hadd_nominal(data_name)
         fprint("Added data")
 
     # add up nominals for bkg
@@ -271,7 +274,8 @@ if __name__=="__main__":
             for samp in samples[cat]:
                 for h in samp.output:
                     do_toy = args.toy and cat=="bkg" and samp.name=="Bkg"
-                    htmp, norm = dir.split(h,toy=do_toy,norm=data_norm)
+                    toy_name = "data_obs" if args.mock else ""
+                    htmp, norm = dir.split(h,toy=do_toy,norm=data_norm,toy_name=toy_name)
                     if cat=="data": data_norm = norm
         fprint("Splitting done for "+dir.name)
 
