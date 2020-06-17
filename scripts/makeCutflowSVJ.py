@@ -90,6 +90,12 @@ procs = OrderedDict([
 #        ('ST_tW_antitop', 19.4674),
 #        ('ST_tW_top', 35.6),
 #    ]),
+#    ('gamma+jets',[
+#        ('GJets_HT-100to200', 9226.0),
+#        ('GJets_HT-200to400', 2300.0),
+#        ('GJets_HT-400to600', 277.4),
+#        ('GJets_HT-600toInf', 93.38),
+#    ]),
     ('$\\PZprime \\to \\Pqdark\\Paqdark$',[
         ('SVJ_mZprime-3000_mDark-20_rinv-0.3_alpha-peak', .0155),
     ])

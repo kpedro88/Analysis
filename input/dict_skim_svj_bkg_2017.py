@@ -63,4 +63,8 @@ flist = [
 [['Fall17.ST_t-channel_antitop_4f_inclusiveDecays_TuneCP5_13TeV-powhegV2-madspin-pythia8'],    ['ST_t-channel_antitop_MC2017']],
 [['Fall17.ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_PSweights_13TeV-powheg-pythia8'],         ['ST_tW_top_MC2017']],
 [['Fall17.ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_PSweights_13TeV-powheg-pythia8'],     ['ST_tW_antitop_MC2017']],
+#[['Fall17.GJets_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8'],             ['GJets_HT-100to200_MC2017']],
+#[['Fall17.GJets_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8'],             ['GJets_HT-200to400_MC2017']],
+#[['Fall17.GJets_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8'],             ['GJets_HT-400to600_MC2017']],
+#[['Fall17.GJets_HT-600ToInf_TuneCP5_13TeV-madgraphMLM-pythia8'],             ['GJets_HT-600toInf_MC2017']],
 ]

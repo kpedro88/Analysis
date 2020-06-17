@@ -560,4 +560,22 @@ ST_s-channel_MC2018_block6 \
 ST_s-channel_MC2018_block7 \
 ST_tW_top_MC2018 \
 ST_tW_antitop_MC2018 \
+#GJets_HT-100to200_MC2018_block0 \
+#GJets_HT-100to200_MC2018_block1 \
+#GJets_HT-100to200_MC2018_block2 \
+#GJets_HT-100to200_MC2018_block3 \
+#GJets_HT-200to400_MC2018_block0 \
+#GJets_HT-200to400_MC2018_block1 \
+#GJets_HT-200to400_MC2018_block2 \
+#GJets_HT-200to400_MC2018_block3 \
+#GJets_HT-200to400_MC2018_block4 \
+#GJets_HT-200to400_MC2018_block5 \
+#GJets_HT-200to400_MC2018_block6 \
+#GJets_HT-400to600_MC2018_block0 \
+#GJets_HT-400to600_MC2018_block1 \
+#GJets_HT-400to600_MC2018_block2 \
+#GJets_HT-600toInf_MC2018_block0 \
+#GJets_HT-600toInf_MC2018_block1 \
+#GJets_HT-600toInf_MC2018_block2 \
+#GJets_HT-600toInf_MC2018_block3 \
 )

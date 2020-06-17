@@ -165,4 +165,12 @@ ST_t-channel_antitop_MC2016_block4 \
 ST_t-channel_antitop_MC2016_block5 \
 ST_tW_top_MC2016 \
 ST_tW_antitop_MC2016 \
+#GJets_HT-100to200_MC2016_block0 \
+#GJets_HT-100to200_MC2016_block1 \
+#GJets_HT-200to400_MC2016_block0 \
+#GJets_HT-200to400_MC2016_block1 \
+#GJets_HT-200to400_MC2016_block2 \
+#GJets_HT-200to400_MC2016_block3 \
+#GJets_HT-400to600_MC2016 \
+#GJets_HT-600toInf_MC2016 \
 )

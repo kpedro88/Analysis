@@ -83,4 +83,12 @@ flist = [
 [['Summer16v3.ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1'],    ['ST_t-channel_antitop_MC2016']],
 [['Summer16v3.ST_tW_top_5f_NoFullyHadronicDecays_13TeV-powheg_TuneCUETP8M1_ext1'],         ['ST_tW_top_MC2016']],
 [['Summer16v3.ST_tW_antitop_5f_NoFullyHadronicDecays_13TeV-powheg_TuneCUETP8M1_ext1'],     ['ST_tW_antitop_MC2016']],
+#[['Summer16v3.GJets_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+#  'Summer16v3.GJets_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1'],             ['GJets_HT-100to200_MC2016']],
+#[['Summer16v3.GJets_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+#  'Summer16v3.GJets_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1'],             ['GJets_HT-200to400_MC2016']],
+#[['Summer16v3.GJets_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+#  'Summer16v3.GJets_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1'],             ['GJets_HT-400to600_MC2016']],
+#[['Summer16v3.GJets_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+#  'Summer16v3.GJets_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_ext1'],             ['GJets_HT-600toInf_MC2016']],
 ]

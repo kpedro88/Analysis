@@ -61,6 +61,9 @@ for TYPE in ${TYPES[@]}; do
 	elif [ "$TYPE" = SVJBkg ]; then
 		INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims
 		DCCONFIG=input/input_DC_config_SVJbkg.txt
+	elif [ "$TYPE" = SVJBkgGJ ]; then
+		INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims
+		DCCONFIG=input/input_DC_config_SVJbkg.txt
 	else
 		echo "Unknown or unsupported type: $TYPE"
 		exit 1

@@ -5,7 +5,8 @@ source exportProd.sh
 JOBDIR=jobs
 JOBTYPE=skim
 INPUT=input/input_selection_svj.txt
-SELTYPE=dijetlowmtdetahadloosefull,dijetlowmthighdetahadloosefull,dijetmtdetahadloosefull,dijetmthighdetahadloosefull,dijetlowmtdetahadloose,dijetmthighdetahadloose,dijetlowmthighdetahadloose,dijetmtdetahadloose
+#SELTYPE=dijetlowmtdetahadloosefull,dijetlowmthighdetahadloosefull,dijetmtdetahadloosefull,dijetmthighdetahadloosefull,dijetlowmtdetahadloose,dijetmthighdetahadloose,dijetlowmthighdetahadloose,dijetmtdetahadloose
+SELTYPE=dijetmtdetahadloosefull,dijetmthighdetahadloosefull,dijetmthighdetahadloose,dijetmtdetahadloose
 #SELTYPE=dijetmthighdetahadloosefull,dijetlowmthighdetahadloosefull
 #SELTYPE=dijetmtdetahadloosefull
 #SELTYPE=dijetmtdetahadloose,dijetmtdetahadloosefull,dijetmthighdetahadloose,dijetmthighdetahadloosefull
@@ -13,6 +14,7 @@ SELTYPE=dijetlowmtdetahadloosefull,dijetlowmthighdetahadloosefull,dijetmtdetahad
 # old skims: dijetmtdetahadloosemf,dijetlowmtdetahadloose,dijetlowmtdetahadloosemf,dijetmtdetamu,dijetmtdetaele
 # old syst skims: dijetmtdetahadloosemf_JECup,dijetmtdetahadloosemf_JECdown,dijetmtdetahadloosemf_JERup,dijetmtdetahadloosemf_JERdown
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}
+#INDIR=root://hepxrd01.colorado.edu:1094//store/user/aperloff/SusyRA2Analysis2015/${RUN2PRODV}
 OUTDIR=tree
 STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims
 CHECKARGS=""

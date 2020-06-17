@@ -1,0 +1,10 @@
+OPTION
+string:exthisto_extra[nominalHighDeta]
+int:npanel[1]
+
+SET
+hist	mc	gjets	s:legname[#gamma+jets]	c:color[kRed + 2]	i:panel[1]
+	base	ext	GJets_MC2016	b:ext_auto[1]
+	base	ext	GJets_MC2017	b:ext_auto[1]
+	base	ext	GJets_MC2018PRE	b:ext_auto[1]
+	base	ext	GJets_MC2018POST	b:ext_auto[1]
