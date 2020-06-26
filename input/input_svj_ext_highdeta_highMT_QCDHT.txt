@@ -1,0 +1,10 @@
+OPTION
+string:exthisto_extra[nominalHighDeta]
+int:npanel[1]
+
+SET
+hist	mc	QCDHT	s:legname[QCD (H_{T}-binned)]	c:color[kBlue - 2]	i:panel[1]
+	base	ext	QCDHT_MC2016	b:ext_auto[1]
+	base	ext	QCDHT_MC2017	b:ext_auto[1]
+	base	ext	QCDHT_MC2018PRE	b:ext_auto[1]
+	base	ext	QCDHT_MC2018POST	b:ext_auto[1]
