@@ -145,6 +145,19 @@ dijetmthighdetahadloosefull
 	phiveto
 	DeltaPhiMinAK8	d:max[0.8]
 	endcommon
+dijetmthighdetahadloosefullgap
+	NormType
+	dijetmt
+	highdeta
+	vetoloose
+	METFilter	b:ecaldeadcell[0]
+	PhiSpikeVeto	s:name[PhiSpikeVeto16]	s:yearmc[MC2016]	s:yeardata[JetHT_2016]	s:spikelist[corrections/phispikes16.txt]	s:leadspikelist[corrections/leadphispikes16.txt]	b:tag[0]
+	PhiSpikeVeto	s:name[PhiSpikeVeto17]	s:yearmc[MC2017]	s:yeardata[JetHT_2017]	s:spikelist[corrections/phispikes17.txt]	s:leadspikelist[corrections/leadphispikes17.txt]	b:tag[0]
+	PhiSpikeVeto	s:name[PhiSpikeVeto18]	s:yearmc[MC2018]	s:yeardata[JetHT_2018]	s:spikelist[corrections/phispikes18.txt]	s:leadspikelist[corrections/leadphispikes18.txt]	b:tag[0]
+	GapJetVeto	d:etamin[-1]	d:etamax[-1]	b:abseta[1]	d:phomin[0.7]	d:phomax[-1]	d:ptmin[1000]	u:jindex[0]	b:tag[0]	b:invert[1]
+	DeltaPhiMinAK8	d:max[0.8]
+	MTAK8	s:name[highMTAK8]	d:min[3000]
+	endcommon
 dijetmtmaxdetahadloose
 	dijetmt
 	DeltaEta	d:min[1.5]	d:max[-1]
