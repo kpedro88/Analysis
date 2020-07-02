@@ -517,6 +517,20 @@ class KMCWeightSelector : public KSelector {
 					pdfallnorms[n-2] = double(nEventProc)/h_norm->GetBinContent(n);
 				}
 			}
+			psisrunc = 0; localOpt->Get("psisrunc",psisrunc);
+			psfsrunc = 0; localOpt->Get("psfsrunc",psfsrunc);
+			if(psisrunc!=0 or psfsrunc!=0){
+				//get the normalizations for parton shower uncertainties
+				TH1F* h_norm = KGet<TH1F>(base->GetFile(),"PSNorm");
+				psnorms = vector<double>(4,1.0);
+				//1: nominal, 2: ISR up, 3: ISR down, 4: FSR up, 5: FSR down
+				double nominal = h_norm->GetBinContent(1);
+				for(unsigned n = 0; n < 4; ++n){
+					//(bin in histo = index + 2)
+					psnorms[n] = nominal/h_norm->GetBinContent(n+2);
+				}
+			}
+
 		}
 		virtual void ListBranches(){
 			//force enable branches needed for cuts/weights/etc.
@@ -552,6 +566,9 @@ class KMCWeightSelector : public KSelector {
 			}
 			if(scaleunc!=0){
 				branches.push_back("ScaleWeights");
+			}
+			if(psisrunc!=0 or psfsrunc!=0){
+				branches.push_back("PSweights");
 			}
 			if(trigfncorr){
 				branches.push_back("MT_AK8");
@@ -656,6 +673,16 @@ class KMCWeightSelector : public KSelector {
 				double mean, rms;
 				tie(mean,rms) = KMath::MeanRMS(PDFweightsNorm.begin(),PDFweightsNorm.end());
 				w *= (pdfallunc>0 ? mean+rms : mean-rms);
+			}
+
+			//skip ps unc if weights missing
+			if(psisrunc!=0 and looper->PSweights->size()==14){
+				if(psisrunc==1) w *= looper->PSweights->at(6)*psnorms[0];
+				else if(psisrunc==-1) w *= looper->PSweights->at(8)*psnorms[1];
+			}
+			if(psfsrunc!=0 and looper->PSweights->size()==14){
+				if(psfsrunc==1) w *= looper->PSweights->at(7)*psnorms[2];
+				else if(psfsrunc==-1) w *= looper->PSweights->at(9)*psnorms[3];
 			}
 
 			//correct for expected FullSim PFJetID efficiency
@@ -783,11 +810,11 @@ class KMCWeightSelector : public KSelector {
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, useTreeXsec, useKFactor, debugWeight, didDebugWeight;
 		bool pucorr, putree, punew, puupdcorr, trigcorr, trigsystcorr, trigfncorr, isrcorr, useisrflat, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr, hemvetocorr, lepcorr;
 		double jetidcorrval, isotrackcorrval, trigsystcorrval, lumicorrval, isrflat;
-		int puunc, puupdunc, pdfunc, pdfallunc, isrunc, scaleunc, trigunc, trigyear, trigfnunc, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc, prefireunc, hemvetounc, lepidunc, lepisounc, leptrkunc;
+		int puunc, puupdunc, pdfunc, pdfallunc, isrunc, scaleunc, trigunc, trigyear, trigfnunc, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc, prefireunc, hemvetounc, lepidunc, lepisounc, leptrkunc, psisrunc, psfsrunc;
 		vector<int> mother;
 		TH1 *puhist, *puhistUp, *puhistDown;
 		TH1 *puupdhist, *puupdhistUp, *puupdhistDown;
-		vector<double> pdfnorms, pdfallnorms;
+		vector<double> pdfnorms, pdfallnorms, psnorms;
 		int nEventProc;
 		double xsection, norm, kfactor;
 		ISRCorrector isrcorror;
