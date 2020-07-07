@@ -9,5 +9,6 @@ selections = OrderedDict([
     ('ElectronVeto', '\\neles & =0'),
     ('METFilter', '\\multicolumn{2}{c}{MET filters}'),
     ('PhiSpikeVeto16', '\\multicolumn{2}{c}{Phi spike filter}'),
+    ('GapJetVeto', '\\multicolumn{2}{c}{Gap jet veto}'),
     ('DeltaPhiMinAK8', '\\mindphi & <0.8'),
 ])
