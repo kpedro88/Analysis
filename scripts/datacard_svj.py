@@ -1,6 +1,6 @@
 import os
 from collections import OrderedDict
-from optparse import OptionParser
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 
 # make status messages useful
 def fprint(msg):
@@ -16,33 +16,32 @@ def alpha_val(val):
     else: result = float(val)
     return result
 
-parser = OptionParser()
-parser.add_option("-o", "--outdir", dest="outdir", default = "svj1", help="output directory (default = %default)")
-parser.add_option("-f", "--file", dest="file", default = "/uscms_data/d3/pedrok/SUSY2015/analysis/v2/CMSSW_8_0_30/src/Analysis/test/MTAK8_dijetmtdetahadmf_fullbdtregions.root", help="input file (full path, local or EOS) (default = %default)")
-parser.add_option("-s", "--signal", dest="signal", default = "SVJ", help="signal name (default = %default)")
-parser.add_option("-r", "--regions", dest="regions", default = "S-Cut", help="comma-separated list of regions (default = %default)")
-(options, args) = parser.parse_args()
-
-options.regions = options.regions.split(',')
+parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
+parser.add_argument("-o", "--outdir", dest="outdir", default = "svj1", type=str, help="output directory")
+parser.add_argument("-f", "--file", dest="file", type=str, default = "root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig3/sigfull/datacard.root", help="input file (full path, local or EOS)")
+parser.add_argument("-s", "--signal", dest="signal", default = "SVJ", type=str, help="signal name")
+parser.add_argument("-r", "--regions", dest="regions", default = ["highCut_2018","lowCut_2018"], type=str, nargs='+', help="list of regions")
+parser.add_argument("-d", "--data", dest="data", default = False, action="store_true", help="use real data")
+args = parser.parse_args()
 
 with open('test/dict_xsec_Zprime.txt','r') as xfile:
     xsecs = {int(xline.split('\t')[0]): float(xline.split('\t')[1]) for xline in xfile}
 
 from ROOT import *
 
-f = TFile.Open(options.file)
-names = [k.GetName() for k in f.GetListOfKeys()]
+f = TFile.Open(args.file)
 
-if not os.path.exists(options.outdir): os.makedirs(options.outdir)
-os.chdir(options.outdir)
+if not os.path.exists(args.outdir): os.makedirs(args.outdir)
+os.chdir(args.outdir)
 
 outhists = []
 outfiles = []
 sigs_datacards = OrderedDict()
 sigs_setargs = OrderedDict()
 sigs_trkargs = OrderedDict()
-for iregion,region in enumerate(options.regions):
-    region_names = [name for name in names if region in name]
+for iregion,region in enumerate(args.regions):
+    rdir = f.Get(region)
+    names = [k.GetName() for k in rdir.GetListOfKeys()]
     sigs = OrderedDict()
     sigs_params = OrderedDict()
     sigs_yields = OrderedDict()
@@ -50,29 +49,36 @@ for iregion,region in enumerate(options.regions):
     bkgs_yields = OrderedDict()
     data_obs = None
 
-    for n in region_names:
+    for n in names:
         parse=n.split('_')
-        short_name = n.replace("_"+region,"")
-        if parse[1]==options.signal:
-            sigs[short_name] = f.Get(n)
+        # skip syst
+        if len(parse)>5: continue
+        # skip summed bkg
+        if parse[0]=="Bkg": continue
+        short_name = n
+        if parse[0]==args.signal:
+            # fix rinv 1.0
+            if not "rinv0" in parse[3]: parse[3] = parse[3] + "0"
+            sigs[short_name] = rdir.Get(n)
             sigs[short_name].SetName(short_name)
             sigs_params[short_name] = OrderedDict([
-                ("xsec", xsecs[int(parse[2])]),
-                ("mZprime", float(parse[2])),
-                ("mDark", float(parse[3])),
-                ("rinv", float(parse[4])),
-                ("alpha", alpha_val(parse[5])),
+                ("xsec", xsecs[int(parse[1].replace("mZprime",""))]),
+                ("mZprime", float(parse[1].replace("mZprime",""))),
+                ("mDark", float(parse[2].replace("mDark",""))),
+                ("rinv", float(parse[3].replace("rinv",""))/10.),
+                ("alpha", alpha_val(parse[4].replace("alpha",""))),
             ])
             sigs_yields[short_name] = sigs[short_name].Integral(1,sigs[short_name].GetNbinsX())
         elif n=="data_obs":
-            data_obs = f.Get(n)
+            data_obs = rdir.Get(n)
             data_obs.SetName(short_name)
         else:
-            bkgs[short_name] = f.Get(n)
+            bkgs[short_name] = rdir.Get(n)
             bkgs[short_name].SetName(short_name)
             bkgs_yields[short_name] = bkgs[short_name].Integral(1,bkgs[short_name].GetNbinsX())
 
     # make data_obs if not present
+    if not args.data: data_obs = None
     if data_obs is None:
         fprint("Making data_obs from bkgs...")
         for bkg, h_bkg in bkgs.iteritems():
@@ -82,8 +88,8 @@ for iregion,region in enumerate(options.regions):
             else:
                 data_obs.Add(h_bkg)
 
-    # observed = sum bkg
-    obs_total = sum([x for b,x in bkgs_yields.iteritems()])
+    # observed yield
+    obs_total = data_obs.Integral(1,data_obs.GetNbinsX())
 
     # write histograms to new file
     outname = "hists_"+region+".root"
@@ -151,7 +157,7 @@ for sig,datacards in sigs_datacards.iteritems():
     outfiles.append("higgsCombineTest.Asymptotic.mH120.sig"+sig+".root")
     
 #combine outfiles
-outname = "limit_"+options.outdir+".root"
+outname = "limit_"+args.outdir+".root"
 command = "hadd -f "+outname+''.join(" "+ofn for ofn in outfiles)
 fprint(command)
 os.system(command)
