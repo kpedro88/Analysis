@@ -67,7 +67,7 @@ done
 
 # postprocessing for SVJ
 if [ -n "$POSTPROCESS" ]; then
-	python processDatacardsSVJ.py -o datacard_${SAMPLE}.root -f MTAK8_*.root
+	python processDatacardsSVJ.py -o datacard_${SAMPLE}.root -f MTAK8_*.root -R 2
 fi
 
 # copy output to eos

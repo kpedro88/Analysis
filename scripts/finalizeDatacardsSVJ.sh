@@ -21,7 +21,7 @@ if [ -z "$OUTNAME" ]; then
 fi
 SKIP=$6
 
-python processDatacardsSVJ.py -o $OUTNAME -i root://cmseos.fnal.gov/${EOSDIR} -f $(eos root://cmseos.fnal.gov ls ${EOSDIR} | grep ${PREFIX}_ | grep -v SVJ) -m $NOMINAL -p $HISTO
+python processDatacardsSVJ.py -o $OUTNAME -i root://cmseos.fnal.gov/${EOSDIR} -f $(eos root://cmseos.fnal.gov ls ${EOSDIR} | grep ${PREFIX}_ | grep -v SVJ) -m $NOMINAL -p $HISTO -R 2
 
 if [ -n "$SKIP" ]; then
 	exit 0

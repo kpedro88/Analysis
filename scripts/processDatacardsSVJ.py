@@ -101,12 +101,13 @@ class Sample(object):
                 done_years.append(subyear)
 
 class SplitDir(object):
-    def __init__(self, name, min, max=None, bins=None):
+    def __init__(self, name, min, max=None, bins=None, binsSimple=None):
         self.name = name
         self.min = min
         self.max = max if max is not None else min
         self.output = []
         self.bins = bins
+        self.binsSimple = binsSimple
     def rebin(self, hist):
         # rebin and divide by bin width (if variable)
         if bins is not None:
@@ -116,6 +117,8 @@ class SplitDir(object):
                     bin = b+1
                     hist.SetBinContent(bin,hist.GetBinContent(bin)/hist.GetXaxis().GetBinWidth(bin))
                     hist.SetBinError(bin,hist.GetBinError(bin)/hist.GetXaxis().GetBinWidth(bin))
+        elif self.binsSimple is not None:
+            hist.Rebin(self.binsSimple)
         return hist
     def split(self, hist, store=True, toy=False, toy_name="", norm=0):
         htemp = hist.ProjectionX(hist.GetName(),self.min,self.max)
@@ -168,11 +171,13 @@ if __name__=="__main__":
     parser.add_argument("-n", "--no-split", dest="no_split", default=False, action="store_true", help="disable split into dirs for regions")
     parser.add_argument("-m", "--nominal", dest="nominal", default="nominal", type=str, help="name of nominal selection")
     parser.add_argument("-r", "--rebin", dest="rebin", type=shlex.split, help="rebin options for finalBinning")
+    parser.add_argument("-R", "--rebinSimple", dest="rebinSimple", type=int, default=0, help="simple rebin")
     parser.add_argument("-s", "--no-stat", dest="no_stat", default=False, action="store_true", help="disable signal stat histos")
     args = parser.parse_args()
 
     # bins
     should_rebin = args.rebin is not None and len(args.rebin)>0
+    if should_rebin and args.rebinSimple>0: parser.error("Can't use --rebin and --rebinSimple together, pick one")
     bins = finalBinning.main(argv=args.rebin) if should_rebin else None
 
     # categories
@@ -255,17 +260,18 @@ if __name__=="__main__":
     # use high-X bins for low-X regions
     bins_bdt = bins["highSVJ2"].values()[0][0] if should_rebin else None
     bins_cut = bins["highCut"].values()[0][0] if should_rebin else None
+    bins_simple = args.rebinSimple if args.rebinSimple>0 else None
     # split into TH1s and dirs (including cut-based using multiple bin projection)
     dirs = [
-        SplitDir("lowSVJ0_2018",1,bins=bins_bdt),
-        SplitDir("lowSVJ1_2018",2,bins=bins_bdt),
-        SplitDir("lowSVJ2_2018",3,bins=bins_bdt),
-        SplitDir("highSVJ0_2018",4,bins=bins_bdt),
-        SplitDir("highSVJ1_2018",5,bins=bins_bdt),
-        SplitDir("highSVJ2_2018",6,bins=bins_bdt),
+        SplitDir("lowSVJ0_2018",1,bins=bins_bdt,binsSimple=bins_simple),
+        SplitDir("lowSVJ1_2018",2,bins=bins_bdt,binsSimple=bins_simple),
+        SplitDir("lowSVJ2_2018",3,bins=bins_bdt,binsSimple=bins_simple),
+        SplitDir("highSVJ0_2018",4,bins=bins_bdt,binsSimple=bins_simple),
+        SplitDir("highSVJ1_2018",5,bins=bins_bdt,binsSimple=bins_simple),
+        SplitDir("highSVJ2_2018",6,bins=bins_bdt,binsSimple=bins_simple),
         # aggregate into cut-based
-        SplitDir("lowCut_2018",1,3,bins=bins_cut),
-        SplitDir("highCut_2018",4,6,bins=bins_cut),
+        SplitDir("lowCut_2018",1,3,bins=bins_cut,binsSimple=bins_simple),
+        SplitDir("highCut_2018",4,6,bins=bins_cut,binsSimple=bins_simple),
     ]
     for dir in dirs:
         dir.setup(outf)
