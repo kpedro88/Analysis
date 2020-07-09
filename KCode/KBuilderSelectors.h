@@ -519,6 +519,7 @@ class KMCWeightSelector : public KSelector {
 			}
 			psisrunc = 0; localOpt->Get("psisrunc",psisrunc);
 			psfsrunc = 0; localOpt->Get("psfsrunc",psfsrunc);
+			psflat = 0.; localOpt->Get("psflat",psflat);
 			if(psisrunc!=0 or psfsrunc!=0){
 				//get the normalizations for parton shower uncertainties
 				TH1F* h_norm = KGet<TH1F>(base->GetFile(),"PSNorm");
@@ -676,13 +677,25 @@ class KMCWeightSelector : public KSelector {
 			}
 
 			//skip ps unc if weights missing
-			if(psisrunc!=0 and looper->PSweights->size()==14){
-				if(psisrunc==1) w *= looper->PSweights->at(6)*psnorms[0];
-				else if(psisrunc==-1) w *= looper->PSweights->at(8)*psnorms[1];
+			if(psisrunc!=0){
+				if(looper->PSweights->size()==14){
+					if(psisrunc==1) w *= looper->PSweights->at(6)*psnorms[0];
+					else if(psisrunc==-1) w *= looper->PSweights->at(8)*psnorms[1];
+				}
+				else if(psflat!=0.){//flat placeholder
+					if(psisrunc==1) w *= (1+psflat);
+					else if(psisrunc==-1) w *= (1-psflat);
+				}
 			}
-			if(psfsrunc!=0 and looper->PSweights->size()==14){
-				if(psfsrunc==1) w *= looper->PSweights->at(7)*psnorms[2];
-				else if(psfsrunc==-1) w *= looper->PSweights->at(9)*psnorms[3];
+			if(psfsrunc!=0){
+				if(looper->PSweights->size()==14){
+					if(psfsrunc==1) w *= looper->PSweights->at(7)*psnorms[2];
+					else if(psfsrunc==-1) w *= looper->PSweights->at(9)*psnorms[3];
+				}
+				else if(psflat!=0.){//flat placeholder
+					if(psfsrunc==1) w *= (1+psflat);
+					else if(psfsrunc==-1) w *= (1-psflat);
+				}
 			}
 
 			//correct for expected FullSim PFJetID efficiency
@@ -809,7 +822,7 @@ class KMCWeightSelector : public KSelector {
 		bool internalNormType;
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, useTreeXsec, useKFactor, debugWeight, didDebugWeight;
 		bool pucorr, putree, punew, puupdcorr, trigcorr, trigsystcorr, trigfncorr, isrcorr, useisrflat, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr, hemvetocorr, lepcorr;
-		double jetidcorrval, isotrackcorrval, trigsystcorrval, lumicorrval, isrflat;
+		double jetidcorrval, isotrackcorrval, trigsystcorrval, lumicorrval, isrflat, psflat;
 		int puunc, puupdunc, pdfunc, pdfallunc, isrunc, scaleunc, trigunc, trigyear, trigfnunc, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc, prefireunc, hemvetounc, lepidunc, lepisounc, leptrkunc, psisrunc, psfsrunc;
 		vector<int> mother;
 		TH1 *puhist, *puhistUp, *puhistDown;
