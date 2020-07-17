@@ -13855,3 +13855,787 @@ hist	mc	T5qqqqVV_950_800_MC2018_fast
 	base	mc	T5qqqqVV_950_800_MC2018_fast	s:filename[tree_T5qqqqVV_950_800_MC2018_fast.root]	d:xsection[0.556]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]
 hist	mc	T5qqqqVV_950_825_MC2018_fast
 	base	mc	T5qqqqVV_950_825_MC2018_fast	s:filename[tree_T5qqqqVV_950_825_MC2018_fast.root]	d:xsection[0.556]	b:signal[1]	b:fastsim[1]	vi:mother[1000021]
+hist	mc	TChiHH_HToBB_HToBB_2D_1000_100_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1000_100_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1000_100_MC2018_fast.root]	d:xsection[0.000968853]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1000_150_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1000_150_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1000_150_MC2018_fast.root]	d:xsection[0.000968853]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1000_200_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1000_200_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1000_200_MC2018_fast.root]	d:xsection[0.000968853]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1000_250_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1000_250_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1000_250_MC2018_fast.root]	d:xsection[0.000968853]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1000_300_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1000_300_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1000_300_MC2018_fast.root]	d:xsection[0.000968853]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1000_350_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1000_350_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1000_350_MC2018_fast.root]	d:xsection[0.000968853]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1000_400_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1000_400_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1000_400_MC2018_fast.root]	d:xsection[0.000968853]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1000_450_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1000_450_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1000_450_MC2018_fast.root]	d:xsection[0.000968853]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1000_500_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1000_500_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1000_500_MC2018_fast.root]	d:xsection[0.000968853]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1000_50_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1000_50_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1000_50_MC2018_fast.root]	d:xsection[0.000968853]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1000_550_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1000_550_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1000_550_MC2018_fast.root]	d:xsection[0.000968853]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1000_600_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1000_600_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1000_600_MC2018_fast.root]	d:xsection[0.000968853]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1000_650_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1000_650_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1000_650_MC2018_fast.root]	d:xsection[0.000968853]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1000_700_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1000_700_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1000_700_MC2018_fast.root]	d:xsection[0.000968853]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1000_750_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1000_750_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1000_750_MC2018_fast.root]	d:xsection[0.000968853]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1000_800_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1000_800_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1000_800_MC2018_fast.root]	d:xsection[0.000968853]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1000_825_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1000_825_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1000_825_MC2018_fast.root]	d:xsection[0.000968853]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1000_850_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1000_850_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1000_850_MC2018_fast.root]	d:xsection[0.000968853]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1000_873_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1000_873_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1000_873_MC2018_fast.root]	d:xsection[0.000968853]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1025_850_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1025_850_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1025_850_MC2018_fast.root]	d:xsection[1]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1025_875_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1025_875_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1025_875_MC2018_fast.root]	d:xsection[1]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1025_898_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1025_898_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1025_898_MC2018_fast.root]	d:xsection[1]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1050_100_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1050_100_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1050_100_MC2018_fast.root]	d:xsection[0.000731306]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1050_150_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1050_150_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1050_150_MC2018_fast.root]	d:xsection[0.000731306]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1050_200_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1050_200_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1050_200_MC2018_fast.root]	d:xsection[0.000731306]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1050_250_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1050_250_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1050_250_MC2018_fast.root]	d:xsection[0.000731306]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1050_300_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1050_300_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1050_300_MC2018_fast.root]	d:xsection[0.000731306]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1050_350_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1050_350_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1050_350_MC2018_fast.root]	d:xsection[0.000731306]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1050_400_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1050_400_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1050_400_MC2018_fast.root]	d:xsection[0.000731306]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1050_450_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1050_450_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1050_450_MC2018_fast.root]	d:xsection[0.000731306]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1050_500_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1050_500_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1050_500_MC2018_fast.root]	d:xsection[0.000731306]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1050_50_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1050_50_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1050_50_MC2018_fast.root]	d:xsection[0.000731306]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1050_550_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1050_550_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1050_550_MC2018_fast.root]	d:xsection[0.000731306]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1050_600_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1050_600_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1050_600_MC2018_fast.root]	d:xsection[0.000731306]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1050_650_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1050_650_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1050_650_MC2018_fast.root]	d:xsection[0.000731306]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1050_700_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1050_700_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1050_700_MC2018_fast.root]	d:xsection[0.000731306]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1050_750_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1050_750_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1050_750_MC2018_fast.root]	d:xsection[0.000731306]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1050_800_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1050_800_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1050_800_MC2018_fast.root]	d:xsection[0.000731306]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1050_850_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1050_850_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1050_850_MC2018_fast.root]	d:xsection[0.000731306]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1050_875_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1050_875_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1050_875_MC2018_fast.root]	d:xsection[0.000731306]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1050_900_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1050_900_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1050_900_MC2018_fast.root]	d:xsection[0.000731306]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1050_923_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1050_923_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1050_923_MC2018_fast.root]	d:xsection[0.000731306]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1075_900_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1075_900_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1075_900_MC2018_fast.root]	d:xsection[1]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1075_925_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1075_925_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1075_925_MC2018_fast.root]	d:xsection[1]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1075_948_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1075_948_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1075_948_MC2018_fast.root]	d:xsection[1]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1100_100_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1100_100_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1100_100_MC2018_fast.root]	d:xsection[0.000538005]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1100_150_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1100_150_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1100_150_MC2018_fast.root]	d:xsection[0.000538005]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1100_200_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1100_200_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1100_200_MC2018_fast.root]	d:xsection[0.000538005]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1100_250_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1100_250_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1100_250_MC2018_fast.root]	d:xsection[0.000538005]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1100_300_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1100_300_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1100_300_MC2018_fast.root]	d:xsection[0.000538005]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1100_350_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1100_350_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1100_350_MC2018_fast.root]	d:xsection[0.000538005]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1100_400_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1100_400_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1100_400_MC2018_fast.root]	d:xsection[0.000538005]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1100_450_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1100_450_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1100_450_MC2018_fast.root]	d:xsection[0.000538005]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1100_500_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1100_500_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1100_500_MC2018_fast.root]	d:xsection[0.000538005]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1100_50_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1100_50_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1100_50_MC2018_fast.root]	d:xsection[0.000538005]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1100_550_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1100_550_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1100_550_MC2018_fast.root]	d:xsection[0.000538005]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1100_600_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1100_600_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1100_600_MC2018_fast.root]	d:xsection[0.000538005]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1100_650_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1100_650_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1100_650_MC2018_fast.root]	d:xsection[0.000538005]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1100_700_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1100_700_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1100_700_MC2018_fast.root]	d:xsection[0.000538005]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1100_750_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1100_750_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1100_750_MC2018_fast.root]	d:xsection[0.000538005]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1100_800_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1100_800_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1100_800_MC2018_fast.root]	d:xsection[0.000538005]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1100_850_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1100_850_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1100_850_MC2018_fast.root]	d:xsection[0.000538005]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1100_900_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1100_900_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1100_900_MC2018_fast.root]	d:xsection[0.000538005]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1100_925_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1100_925_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1100_925_MC2018_fast.root]	d:xsection[0.000538005]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1100_950_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1100_950_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1100_950_MC2018_fast.root]	d:xsection[0.000538005]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1100_973_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1100_973_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1100_973_MC2018_fast.root]	d:xsection[0.000538005]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1125_950_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1125_950_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1125_950_MC2018_fast.root]	d:xsection[1]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1125_975_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1125_975_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1125_975_MC2018_fast.root]	d:xsection[1]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1125_998_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1125_998_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1125_998_MC2018_fast.root]	d:xsection[1]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1150_1000_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1150_1000_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1150_1000_MC2018_fast.root]	d:xsection[0.000405108]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1150_100_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1150_100_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1150_100_MC2018_fast.root]	d:xsection[0.000405108]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1150_1023_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1150_1023_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1150_1023_MC2018_fast.root]	d:xsection[0.000405108]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1150_150_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1150_150_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1150_150_MC2018_fast.root]	d:xsection[0.000405108]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1150_200_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1150_200_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1150_200_MC2018_fast.root]	d:xsection[0.000405108]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1150_250_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1150_250_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1150_250_MC2018_fast.root]	d:xsection[0.000405108]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1150_300_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1150_300_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1150_300_MC2018_fast.root]	d:xsection[0.000405108]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1150_350_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1150_350_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1150_350_MC2018_fast.root]	d:xsection[0.000405108]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1150_400_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1150_400_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1150_400_MC2018_fast.root]	d:xsection[0.000405108]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1150_450_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1150_450_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1150_450_MC2018_fast.root]	d:xsection[0.000405108]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1150_500_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1150_500_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1150_500_MC2018_fast.root]	d:xsection[0.000405108]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1150_50_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1150_50_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1150_50_MC2018_fast.root]	d:xsection[0.000405108]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1150_550_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1150_550_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1150_550_MC2018_fast.root]	d:xsection[0.000405108]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1150_600_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1150_600_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1150_600_MC2018_fast.root]	d:xsection[0.000405108]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1150_650_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1150_650_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1150_650_MC2018_fast.root]	d:xsection[0.000405108]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1150_700_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1150_700_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1150_700_MC2018_fast.root]	d:xsection[0.000405108]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1150_750_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1150_750_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1150_750_MC2018_fast.root]	d:xsection[0.000405108]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1150_800_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1150_800_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1150_800_MC2018_fast.root]	d:xsection[0.000405108]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1150_850_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1150_850_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1150_850_MC2018_fast.root]	d:xsection[0.000405108]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1150_900_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1150_900_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1150_900_MC2018_fast.root]	d:xsection[0.000405108]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1150_950_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1150_950_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1150_950_MC2018_fast.root]	d:xsection[0.000405108]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1150_975_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1150_975_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1150_975_MC2018_fast.root]	d:xsection[0.000405108]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1175_1000_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1175_1000_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1175_1000_MC2018_fast.root]	d:xsection[1]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1175_1025_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1175_1025_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1175_1025_MC2018_fast.root]	d:xsection[1]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1175_1048_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1175_1048_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1175_1048_MC2018_fast.root]	d:xsection[1]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1200_1000_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1200_1000_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1200_1000_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1200_100_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1200_100_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1200_100_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1200_1025_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1200_1025_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1200_1025_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1200_1050_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1200_1050_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1200_1050_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1200_1073_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1200_1073_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1200_1073_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1200_150_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1200_150_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1200_150_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1200_200_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1200_200_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1200_200_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1200_250_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1200_250_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1200_250_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1200_300_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1200_300_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1200_300_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1200_350_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1200_350_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1200_350_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1200_400_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1200_400_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1200_400_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1200_450_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1200_450_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1200_450_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1200_500_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1200_500_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1200_500_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1200_50_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1200_50_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1200_50_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1200_550_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1200_550_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1200_550_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1200_600_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1200_600_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1200_600_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1200_650_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1200_650_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1200_650_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1200_700_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1200_700_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1200_700_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1200_750_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1200_750_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1200_750_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1200_800_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1200_800_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1200_800_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1200_850_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1200_850_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1200_850_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1200_900_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1200_900_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1200_900_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_1200_950_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_1200_950_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_1200_950_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_150_23_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_150_23_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_150_23_MC2018_fast.root]	d:xsection[3.83231]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_175_25_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_175_25_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_175_25_MC2018_fast.root]	d:xsection[2.26794]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_175_48_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_175_48_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_175_48_MC2018_fast.root]	d:xsection[2.26794]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_200_25_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_200_25_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_200_25_MC2018_fast.root]	d:xsection[1.33562]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_200_50_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_200_50_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_200_50_MC2018_fast.root]	d:xsection[1.33562]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_200_73_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_200_73_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_200_73_MC2018_fast.root]	d:xsection[1.33562]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_225_50_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_225_50_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_225_50_MC2018_fast.root]	d:xsection[0.860597]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_225_75_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_225_75_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_225_75_MC2018_fast.root]	d:xsection[0.860597]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_225_98_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_225_98_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_225_98_MC2018_fast.root]	d:xsection[0.860597]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_250_100_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_250_100_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_250_100_MC2018_fast.root]	d:xsection[0.577314]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_250_123_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_250_123_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_250_123_MC2018_fast.root]	d:xsection[0.577314]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_250_50_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_250_50_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_250_50_MC2018_fast.root]	d:xsection[0.577314]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_250_75_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_250_75_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_250_75_MC2018_fast.root]	d:xsection[0.577314]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_275_100_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_275_100_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_275_100_MC2018_fast.root]	d:xsection[0.400107]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_275_125_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_275_125_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_275_125_MC2018_fast.root]	d:xsection[0.400107]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_275_148_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_275_148_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_275_148_MC2018_fast.root]	d:xsection[0.400107]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_300_100_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_300_100_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_300_100_MC2018_fast.root]	d:xsection[0.284855]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_300_125_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_300_125_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_300_125_MC2018_fast.root]	d:xsection[0.284855]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_300_150_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_300_150_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_300_150_MC2018_fast.root]	d:xsection[0.284855]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_300_173_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_300_173_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_300_173_MC2018_fast.root]	d:xsection[0.284855]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_300_50_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_300_50_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_300_50_MC2018_fast.root]	d:xsection[0.284855]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_325_150_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_325_150_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_325_150_MC2018_fast.root]	d:xsection[0.20736]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_325_175_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_325_175_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_325_175_MC2018_fast.root]	d:xsection[0.20736]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_325_198_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_325_198_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_325_198_MC2018_fast.root]	d:xsection[0.20736]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_350_100_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_350_100_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_350_100_MC2018_fast.root]	d:xsection[0.153841]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_350_150_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_350_150_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_350_150_MC2018_fast.root]	d:xsection[0.153841]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_350_175_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_350_175_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_350_175_MC2018_fast.root]	d:xsection[0.153841]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_350_200_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_350_200_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_350_200_MC2018_fast.root]	d:xsection[0.153841]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_350_223_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_350_223_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_350_223_MC2018_fast.root]	d:xsection[0.153841]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_350_50_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_350_50_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_350_50_MC2018_fast.root]	d:xsection[0.153841]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_375_200_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_375_200_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_375_200_MC2018_fast.root]	d:xsection[0.116006]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_375_225_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_375_225_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_375_225_MC2018_fast.root]	d:xsection[0.116006]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_375_248_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_375_248_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_375_248_MC2018_fast.root]	d:xsection[0.116006]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_400_100_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_400_100_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_400_100_MC2018_fast.root]	d:xsection[0.0887325]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_400_150_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_400_150_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_400_150_MC2018_fast.root]	d:xsection[0.0887325]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_400_200_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_400_200_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_400_200_MC2018_fast.root]	d:xsection[0.0887325]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_400_225_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_400_225_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_400_225_MC2018_fast.root]	d:xsection[0.0887325]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_400_250_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_400_250_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_400_250_MC2018_fast.root]	d:xsection[0.0887325]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_400_273_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_400_273_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_400_273_MC2018_fast.root]	d:xsection[0.0887325]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_400_50_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_400_50_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_400_50_MC2018_fast.root]	d:xsection[0.0887325]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_425_250_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_425_250_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_425_250_MC2018_fast.root]	d:xsection[0.0686963]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_425_275_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_425_275_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_425_275_MC2018_fast.root]	d:xsection[0.0686963]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_425_298_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_425_298_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_425_298_MC2018_fast.root]	d:xsection[0.0686963]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_450_100_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_450_100_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_450_100_MC2018_fast.root]	d:xsection[0.0537702]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_450_150_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_450_150_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_450_150_MC2018_fast.root]	d:xsection[0.0537702]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_450_200_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_450_200_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_450_200_MC2018_fast.root]	d:xsection[0.0537702]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_450_250_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_450_250_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_450_250_MC2018_fast.root]	d:xsection[0.0537702]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_450_275_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_450_275_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_450_275_MC2018_fast.root]	d:xsection[0.0537702]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_450_300_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_450_300_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_450_300_MC2018_fast.root]	d:xsection[0.0537702]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_450_323_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_450_323_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_450_323_MC2018_fast.root]	d:xsection[0.0537702]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_450_50_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_450_50_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_450_50_MC2018_fast.root]	d:xsection[0.0537702]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_475_300_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_475_300_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_475_300_MC2018_fast.root]	d:xsection[0.0424699]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_475_325_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_475_325_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_475_325_MC2018_fast.root]	d:xsection[0.0424699]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_475_348_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_475_348_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_475_348_MC2018_fast.root]	d:xsection[0.0424699]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_500_100_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_500_100_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_500_100_MC2018_fast.root]	d:xsection[0.0338387]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_500_150_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_500_150_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_500_150_MC2018_fast.root]	d:xsection[0.0338387]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_500_200_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_500_200_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_500_200_MC2018_fast.root]	d:xsection[0.0338387]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_500_250_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_500_250_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_500_250_MC2018_fast.root]	d:xsection[0.0338387]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_500_300_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_500_300_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_500_300_MC2018_fast.root]	d:xsection[0.0338387]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_500_325_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_500_325_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_500_325_MC2018_fast.root]	d:xsection[0.0338387]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_500_350_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_500_350_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_500_350_MC2018_fast.root]	d:xsection[0.0338387]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_500_373_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_500_373_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_500_373_MC2018_fast.root]	d:xsection[0.0338387]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_500_50_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_500_50_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_500_50_MC2018_fast.root]	d:xsection[0.0338387]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_525_350_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_525_350_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_525_350_MC2018_fast.root]	d:xsection[0.0271867]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_525_375_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_525_375_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_525_375_MC2018_fast.root]	d:xsection[0.0271867]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_525_398_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_525_398_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_525_398_MC2018_fast.root]	d:xsection[0.0271867]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_550_100_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_550_100_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_550_100_MC2018_fast.root]	d:xsection[0.0219868]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_550_150_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_550_150_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_550_150_MC2018_fast.root]	d:xsection[0.0219868]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_550_200_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_550_200_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_550_200_MC2018_fast.root]	d:xsection[0.0219868]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_550_250_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_550_250_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_550_250_MC2018_fast.root]	d:xsection[0.0219868]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_550_300_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_550_300_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_550_300_MC2018_fast.root]	d:xsection[0.0219868]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_550_350_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_550_350_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_550_350_MC2018_fast.root]	d:xsection[0.0219868]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_550_375_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_550_375_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_550_375_MC2018_fast.root]	d:xsection[0.0219868]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_550_400_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_550_400_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_550_400_MC2018_fast.root]	d:xsection[0.0219868]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_550_423_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_550_423_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_550_423_MC2018_fast.root]	d:xsection[0.0219868]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_550_50_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_550_50_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_550_50_MC2018_fast.root]	d:xsection[0.0219868]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_575_400_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_575_400_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_575_400_MC2018_fast.root]	d:xsection[0.0179062]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_575_425_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_575_425_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_575_425_MC2018_fast.root]	d:xsection[0.0179062]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_575_448_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_575_448_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_575_448_MC2018_fast.root]	d:xsection[0.0179062]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_600_100_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_600_100_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_600_100_MC2018_fast.root]	d:xsection[0.0146677]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_600_150_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_600_150_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_600_150_MC2018_fast.root]	d:xsection[0.0146677]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_600_200_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_600_200_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_600_200_MC2018_fast.root]	d:xsection[0.0146677]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_600_250_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_600_250_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_600_250_MC2018_fast.root]	d:xsection[0.0146677]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_600_300_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_600_300_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_600_300_MC2018_fast.root]	d:xsection[0.0146677]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_600_350_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_600_350_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_600_350_MC2018_fast.root]	d:xsection[0.0146677]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_600_400_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_600_400_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_600_400_MC2018_fast.root]	d:xsection[0.0146677]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_600_425_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_600_425_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_600_425_MC2018_fast.root]	d:xsection[0.0146677]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_600_450_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_600_450_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_600_450_MC2018_fast.root]	d:xsection[0.0146677]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_600_473_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_600_473_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_600_473_MC2018_fast.root]	d:xsection[0.0146677]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_600_50_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_600_50_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_600_50_MC2018_fast.root]	d:xsection[0.0146677]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_625_450_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_625_450_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_625_450_MC2018_fast.root]	d:xsection[0.012062]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_625_475_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_625_475_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_625_475_MC2018_fast.root]	d:xsection[0.012062]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_625_498_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_625_498_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_625_498_MC2018_fast.root]	d:xsection[0.012062]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_650_100_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_650_100_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_650_100_MC2018_fast.root]	d:xsection[0.00996406]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_650_150_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_650_150_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_650_150_MC2018_fast.root]	d:xsection[0.00996406]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_650_200_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_650_200_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_650_200_MC2018_fast.root]	d:xsection[0.00996406]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_650_250_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_650_250_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_650_250_MC2018_fast.root]	d:xsection[0.00996406]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_650_300_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_650_300_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_650_300_MC2018_fast.root]	d:xsection[0.00996406]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_650_350_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_650_350_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_650_350_MC2018_fast.root]	d:xsection[0.00996406]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_650_400_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_650_400_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_650_400_MC2018_fast.root]	d:xsection[0.00996406]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_650_450_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_650_450_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_650_450_MC2018_fast.root]	d:xsection[0.00996406]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_650_475_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_650_475_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_650_475_MC2018_fast.root]	d:xsection[0.00996406]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_650_500_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_650_500_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_650_500_MC2018_fast.root]	d:xsection[0.00996406]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_650_50_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_650_50_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_650_50_MC2018_fast.root]	d:xsection[0.00996406]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_650_523_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_650_523_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_650_523_MC2018_fast.root]	d:xsection[0.00996406]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_675_500_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_675_500_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_675_500_MC2018_fast.root]	d:xsection[0.00828246]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_675_525_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_675_525_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_675_525_MC2018_fast.root]	d:xsection[0.00828246]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_675_548_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_675_548_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_675_548_MC2018_fast.root]	d:xsection[0.00828246]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_700_100_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_700_100_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_700_100_MC2018_fast.root]	d:xsection[0.00689981]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_700_150_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_700_150_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_700_150_MC2018_fast.root]	d:xsection[0.00689981]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_700_200_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_700_200_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_700_200_MC2018_fast.root]	d:xsection[0.00689981]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_700_250_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_700_250_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_700_250_MC2018_fast.root]	d:xsection[0.00689981]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_700_300_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_700_300_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_700_300_MC2018_fast.root]	d:xsection[0.00689981]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_700_350_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_700_350_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_700_350_MC2018_fast.root]	d:xsection[0.00689981]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_700_400_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_700_400_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_700_400_MC2018_fast.root]	d:xsection[0.00689981]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_700_450_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_700_450_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_700_450_MC2018_fast.root]	d:xsection[0.00689981]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_700_500_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_700_500_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_700_500_MC2018_fast.root]	d:xsection[0.00689981]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_700_50_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_700_50_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_700_50_MC2018_fast.root]	d:xsection[0.00689981]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_700_525_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_700_525_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_700_525_MC2018_fast.root]	d:xsection[0.00689981]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_700_550_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_700_550_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_700_550_MC2018_fast.root]	d:xsection[0.00689981]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_700_573_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_700_573_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_700_573_MC2018_fast.root]	d:xsection[0.00689981]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_725_550_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_725_550_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_725_550_MC2018_fast.root]	d:xsection[0.00578355]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_725_575_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_725_575_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_725_575_MC2018_fast.root]	d:xsection[0.00578355]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_725_598_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_725_598_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_725_598_MC2018_fast.root]	d:xsection[0.00578355]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_750_100_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_750_100_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_750_100_MC2018_fast.root]	d:xsection[0.0048731]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_750_150_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_750_150_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_750_150_MC2018_fast.root]	d:xsection[0.0048731]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_750_200_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_750_200_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_750_200_MC2018_fast.root]	d:xsection[0.0048731]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_750_250_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_750_250_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_750_250_MC2018_fast.root]	d:xsection[0.0048731]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_750_300_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_750_300_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_750_300_MC2018_fast.root]	d:xsection[0.0048731]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_750_350_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_750_350_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_750_350_MC2018_fast.root]	d:xsection[0.0048731]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_750_400_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_750_400_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_750_400_MC2018_fast.root]	d:xsection[0.0048731]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_750_450_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_750_450_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_750_450_MC2018_fast.root]	d:xsection[0.0048731]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_750_500_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_750_500_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_750_500_MC2018_fast.root]	d:xsection[0.0048731]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_750_50_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_750_50_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_750_50_MC2018_fast.root]	d:xsection[0.0048731]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_750_550_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_750_550_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_750_550_MC2018_fast.root]	d:xsection[0.0048731]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_750_575_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_750_575_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_750_575_MC2018_fast.root]	d:xsection[0.0048731]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_750_600_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_750_600_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_750_600_MC2018_fast.root]	d:xsection[0.0048731]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_750_623_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_750_623_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_750_623_MC2018_fast.root]	d:xsection[0.0048731]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_775_600_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_775_600_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_775_600_MC2018_fast.root]	d:xsection[0.00409781]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_775_625_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_775_625_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_775_625_MC2018_fast.root]	d:xsection[0.00409781]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_775_648_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_775_648_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_775_648_MC2018_fast.root]	d:xsection[0.00409781]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_800_100_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_800_100_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_800_100_MC2018_fast.root]	d:xsection[0.00346143]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_800_150_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_800_150_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_800_150_MC2018_fast.root]	d:xsection[0.00346143]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_800_200_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_800_200_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_800_200_MC2018_fast.root]	d:xsection[0.00346143]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_800_250_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_800_250_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_800_250_MC2018_fast.root]	d:xsection[0.00346143]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_800_300_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_800_300_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_800_300_MC2018_fast.root]	d:xsection[0.00346143]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_800_350_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_800_350_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_800_350_MC2018_fast.root]	d:xsection[0.00346143]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_800_400_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_800_400_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_800_400_MC2018_fast.root]	d:xsection[0.00346143]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_800_450_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_800_450_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_800_450_MC2018_fast.root]	d:xsection[0.00346143]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_800_500_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_800_500_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_800_500_MC2018_fast.root]	d:xsection[0.00346143]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_800_50_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_800_50_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_800_50_MC2018_fast.root]	d:xsection[0.00346143]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_800_550_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_800_550_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_800_550_MC2018_fast.root]	d:xsection[0.00346143]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_800_600_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_800_600_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_800_600_MC2018_fast.root]	d:xsection[0.00346143]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_800_625_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_800_625_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_800_625_MC2018_fast.root]	d:xsection[0.00346143]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_800_650_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_800_650_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_800_650_MC2018_fast.root]	d:xsection[0.00346143]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_800_673_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_800_673_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_800_673_MC2018_fast.root]	d:xsection[0.00346143]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_825_650_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_825_650_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_825_650_MC2018_fast.root]	d:xsection[0.0029337]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_825_675_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_825_675_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_825_675_MC2018_fast.root]	d:xsection[0.0029337]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_825_698_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_825_698_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_825_698_MC2018_fast.root]	d:xsection[0.0029337]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_850_100_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_850_100_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_850_100_MC2018_fast.root]	d:xsection[0.0024923]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_850_150_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_850_150_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_850_150_MC2018_fast.root]	d:xsection[0.0024923]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_850_200_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_850_200_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_850_200_MC2018_fast.root]	d:xsection[0.0024923]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_850_250_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_850_250_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_850_250_MC2018_fast.root]	d:xsection[0.0024923]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_850_300_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_850_300_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_850_300_MC2018_fast.root]	d:xsection[0.0024923]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_850_350_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_850_350_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_850_350_MC2018_fast.root]	d:xsection[0.0024923]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_850_400_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_850_400_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_850_400_MC2018_fast.root]	d:xsection[0.0024923]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_850_450_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_850_450_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_850_450_MC2018_fast.root]	d:xsection[0.0024923]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_850_500_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_850_500_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_850_500_MC2018_fast.root]	d:xsection[0.0024923]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_850_50_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_850_50_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_850_50_MC2018_fast.root]	d:xsection[0.0024923]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_850_550_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_850_550_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_850_550_MC2018_fast.root]	d:xsection[0.0024923]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_850_600_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_850_600_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_850_600_MC2018_fast.root]	d:xsection[0.0024923]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_850_650_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_850_650_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_850_650_MC2018_fast.root]	d:xsection[0.0024923]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_850_675_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_850_675_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_850_675_MC2018_fast.root]	d:xsection[0.0024923]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_850_700_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_850_700_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_850_700_MC2018_fast.root]	d:xsection[0.0024923]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_850_723_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_850_723_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_850_723_MC2018_fast.root]	d:xsection[0.0024923]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_875_700_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_875_700_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_875_700_MC2018_fast.root]	d:xsection[0.00213679]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_875_725_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_875_725_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_875_725_MC2018_fast.root]	d:xsection[0.00213679]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_875_748_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_875_748_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_875_748_MC2018_fast.root]	d:xsection[0.00213679]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_900_100_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_900_100_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_900_100_MC2018_fast.root]	d:xsection[0.00180616]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_900_150_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_900_150_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_900_150_MC2018_fast.root]	d:xsection[0.00180616]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_900_200_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_900_200_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_900_200_MC2018_fast.root]	d:xsection[0.00180616]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_900_250_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_900_250_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_900_250_MC2018_fast.root]	d:xsection[0.00180616]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_900_300_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_900_300_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_900_300_MC2018_fast.root]	d:xsection[0.00180616]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_900_350_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_900_350_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_900_350_MC2018_fast.root]	d:xsection[0.00180616]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_900_400_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_900_400_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_900_400_MC2018_fast.root]	d:xsection[0.00180616]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_900_450_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_900_450_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_900_450_MC2018_fast.root]	d:xsection[0.00180616]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_900_500_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_900_500_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_900_500_MC2018_fast.root]	d:xsection[0.00180616]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_900_50_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_900_50_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_900_50_MC2018_fast.root]	d:xsection[0.00180616]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_900_550_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_900_550_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_900_550_MC2018_fast.root]	d:xsection[0.00180616]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_900_600_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_900_600_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_900_600_MC2018_fast.root]	d:xsection[0.00180616]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_900_650_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_900_650_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_900_650_MC2018_fast.root]	d:xsection[0.00180616]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_900_700_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_900_700_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_900_700_MC2018_fast.root]	d:xsection[0.00180616]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_900_725_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_900_725_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_900_725_MC2018_fast.root]	d:xsection[0.00180616]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_900_750_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_900_750_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_900_750_MC2018_fast.root]	d:xsection[0.00180616]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_900_773_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_900_773_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_900_773_MC2018_fast.root]	d:xsection[0.00180616]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_925_750_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_925_750_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_925_750_MC2018_fast.root]	d:xsection[0.00155453]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_925_775_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_925_775_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_925_775_MC2018_fast.root]	d:xsection[0.00155453]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_925_798_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_925_798_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_925_798_MC2018_fast.root]	d:xsection[0.00155453]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_950_100_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_950_100_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_950_100_MC2018_fast.root]	d:xsection[0.00132692]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_950_150_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_950_150_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_950_150_MC2018_fast.root]	d:xsection[0.00132692]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_950_200_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_950_200_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_950_200_MC2018_fast.root]	d:xsection[0.00132692]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_950_250_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_950_250_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_950_250_MC2018_fast.root]	d:xsection[0.00132692]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_950_300_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_950_300_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_950_300_MC2018_fast.root]	d:xsection[0.00132692]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_950_350_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_950_350_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_950_350_MC2018_fast.root]	d:xsection[0.00132692]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_950_400_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_950_400_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_950_400_MC2018_fast.root]	d:xsection[0.00132692]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_950_450_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_950_450_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_950_450_MC2018_fast.root]	d:xsection[0.00132692]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_950_500_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_950_500_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_950_500_MC2018_fast.root]	d:xsection[0.00132692]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_950_50_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_950_50_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_950_50_MC2018_fast.root]	d:xsection[0.00132692]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_950_550_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_950_550_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_950_550_MC2018_fast.root]	d:xsection[0.00132692]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_950_600_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_950_600_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_950_600_MC2018_fast.root]	d:xsection[0.00132692]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_950_650_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_950_650_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_950_650_MC2018_fast.root]	d:xsection[0.00132692]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_950_700_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_950_700_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_950_700_MC2018_fast.root]	d:xsection[0.00132692]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_950_750_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_950_750_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_950_750_MC2018_fast.root]	d:xsection[0.00132692]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_950_775_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_950_775_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_950_775_MC2018_fast.root]	d:xsection[0.00132692]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_950_800_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_950_800_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_950_800_MC2018_fast.root]	d:xsection[0.00132692]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_950_823_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_950_823_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_950_823_MC2018_fast.root]	d:xsection[0.00132692]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_975_800_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_975_800_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_975_800_MC2018_fast.root]	d:xsection[0.00112975]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_975_825_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_975_825_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_975_825_MC2018_fast.root]	d:xsection[0.00112975]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_2D_975_848_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_2D_975_848_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_2D_975_848_MC2018_fast.root]	d:xsection[0.00112975]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_1000_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_1000_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_1000_1_MC2018_fast.root]	d:xsection[0.000968853]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_1025_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_1025_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_1025_1_MC2018_fast.root]	d:xsection[1]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_1050_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_1050_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_1050_1_MC2018_fast.root]	d:xsection[0.000731306]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_1075_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_1075_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_1075_1_MC2018_fast.root]	d:xsection[1]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_1100_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_1100_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_1100_1_MC2018_fast.root]	d:xsection[0.000538005]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_1125_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_1125_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_1125_1_MC2018_fast.root]	d:xsection[1]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_1150_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_1150_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_1150_1_MC2018_fast.root]	d:xsection[0.000405108]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_1175_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_1175_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_1175_1_MC2018_fast.root]	d:xsection[1]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_1200_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_1200_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_1200_1_MC2018_fast.root]	d:xsection[0.000299347]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_1225_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_1225_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_1225_1_MC2018_fast.root]	d:xsection[1]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_1250_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_1250_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_1250_1_MC2018_fast.root]	d:xsection[0.000240471]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_1275_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_1275_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_1275_1_MC2018_fast.root]	d:xsection[1]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_127_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_127_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_127_1_MC2018_fast.root]	d:xsection[7.6022]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_1300_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_1300_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_1300_1_MC2018_fast.root]	d:xsection[0.000160765]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_1325_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_1325_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_1325_1_MC2018_fast.root]	d:xsection[1]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_1350_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_1350_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_1350_1_MC2018_fast.root]	d:xsection[0.000111174]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_1375_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_1375_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_1375_1_MC2018_fast.root]	d:xsection[1]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_1400_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_1400_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_1400_1_MC2018_fast.root]	d:xsection[7.80263e-05]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_1425_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_1425_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_1425_1_MC2018_fast.root]	d:xsection[1]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_1450_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_1450_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_1450_1_MC2018_fast.root]	d:xsection[6.96962e-05]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_1475_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_1475_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_1475_1_MC2018_fast.root]	d:xsection[1]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_1500_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_1500_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_1500_1_MC2018_fast.root]	d:xsection[1]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_150_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_150_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_150_1_MC2018_fast.root]	d:xsection[3.83231]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_175_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_175_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_175_1_MC2018_fast.root]	d:xsection[2.26794]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_200_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_200_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_200_1_MC2018_fast.root]	d:xsection[1.33562]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_225_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_225_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_225_1_MC2018_fast.root]	d:xsection[0.860597]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_250_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_250_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_250_1_MC2018_fast.root]	d:xsection[0.577314]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_275_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_275_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_275_1_MC2018_fast.root]	d:xsection[0.400107]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_300_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_300_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_300_1_MC2018_fast.root]	d:xsection[0.284855]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_325_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_325_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_325_1_MC2018_fast.root]	d:xsection[0.20736]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_350_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_350_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_350_1_MC2018_fast.root]	d:xsection[0.153841]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_375_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_375_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_375_1_MC2018_fast.root]	d:xsection[0.116006]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_400_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_400_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_400_1_MC2018_fast.root]	d:xsection[0.0887325]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_425_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_425_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_425_1_MC2018_fast.root]	d:xsection[0.0686963]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_450_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_450_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_450_1_MC2018_fast.root]	d:xsection[0.0537702]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_475_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_475_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_475_1_MC2018_fast.root]	d:xsection[0.0424699]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_500_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_500_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_500_1_MC2018_fast.root]	d:xsection[0.0338387]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_525_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_525_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_525_1_MC2018_fast.root]	d:xsection[0.0271867]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_550_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_550_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_550_1_MC2018_fast.root]	d:xsection[0.0219868]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_575_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_575_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_575_1_MC2018_fast.root]	d:xsection[0.0179062]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_600_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_600_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_600_1_MC2018_fast.root]	d:xsection[0.0146677]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_625_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_625_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_625_1_MC2018_fast.root]	d:xsection[0.012062]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_650_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_650_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_650_1_MC2018_fast.root]	d:xsection[0.00996406]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_675_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_675_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_675_1_MC2018_fast.root]	d:xsection[0.00828246]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_700_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_700_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_700_1_MC2018_fast.root]	d:xsection[0.00689981]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_725_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_725_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_725_1_MC2018_fast.root]	d:xsection[0.00578355]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_750_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_750_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_750_1_MC2018_fast.root]	d:xsection[0.0048731]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_775_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_775_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_775_1_MC2018_fast.root]	d:xsection[0.00409781]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_800_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_800_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_800_1_MC2018_fast.root]	d:xsection[0.00346143]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_825_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_825_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_825_1_MC2018_fast.root]	d:xsection[0.0029337]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_850_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_850_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_850_1_MC2018_fast.root]	d:xsection[0.0024923]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_875_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_875_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_875_1_MC2018_fast.root]	d:xsection[0.00213679]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_900_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_900_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_900_1_MC2018_fast.root]	d:xsection[0.00180616]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_925_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_925_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_925_1_MC2018_fast.root]	d:xsection[0.00155453]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_950_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_950_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_950_1_MC2018_fast.root]	d:xsection[0.00132692]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
+hist	mc	TChiHH_HToBB_HToBB_975_1_MC2018_fast
+	base	mc	TChiHH_HToBB_HToBB_975_1_MC2018_fast	s:filename[tree_TChiHH_HToBB_HToBB_975_1_MC2018_fast.root]	d:xsection[0.00112975]	b:signal[1]	b:fastsim[1]	vi:mother[1000023,1000025]
