@@ -54,11 +54,11 @@ python makeSkimInput.py -r input/dict_skim_data_2018.py -w input/input_sets_skim
 ```
 Note: this script uses the python file lists in [TreeMaker/Production/python](https://github.com/TreeMaker/TreeMaker/tree/Run2/Production/python) to determine the number of files to chain together for each sample.
 
-To submit jobs to Condor (add the flag `-k` to reuse the existing CMSSW tarball):
+To submit jobs to Condor (add the flag `-k` to reuse the existing CMSSW tarball or `-d` to use in DRYRUN mode):
 ```
 cd batch
 ./SKsub.sh -t MC,Signal,Data -y 2016,2017,2018
-./SKsub.sh -t Fast -y 2016,2017,2018
+./SKsub.sh -t Fast,SignalScan -y 2016,2017,2018
 ```
 Note: the command with the argument `-t Fast` should only be run after the scanning step, below, is completed.
 
@@ -88,7 +88,13 @@ python makeScanInput.py -d Summer16v3Fast -r input/dict_scan_2016.py -w input/in
 python makeScanInput.py -d Fall17Fast -r input/dict_scan_2017.py -w input/input_sets_scan_2017.txt -e batch/exportScan2017.sh -y 2017 -n 10
 python makeScanInput.py -d Autumn18Fast -r input/dict_scan_2018.py -w input/input_sets_scan_2018.txt -e batch/exportScan2018.sh -y 2018 -n 10
 ```
-The last argument splits the scan input list into multiple blocks (each containing `n` ntuple files) for batch submission.  
+The last argument splits the scan input list into multiple blocks (each containing `n` ntuple files) for batch submission. In order to run the FullSim signal scans you will need to remove the word `Fast` from the `-d` argument and make the following file replacements:
+1. input/dict_scan_2016.py --> input/dict_scan_fullsim_2016.py
+2. input/input_sets_scan_2016.txt --> input/input_sets_scan_fullsim_2016.txt
+3. batch/exportScan2016.sh --> batch/exportScan2016Full.sh
+
+You can select a specific signal model by using the option `-i` (i.e. `-i SMS-T5qqqqZH-mGluino-1000to2500`)
+
 Note: as above, this script uses the python file lists in [TreeMaker/Production/python](https://github.com/TreeMaker/TreeMaker/tree/Run2/Production/python).
 
 To submit jobs to Condor:
@@ -110,6 +116,13 @@ python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2Produc
 python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV18/scan/ -m MC2017 -s input/input_sets_skim_fast_2017.txt -c input/input_sets_DC_fast_2017.txt -e batch/exportSkimFast2017.sh
 python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV18/scan/ -m MC2018 -y MC2018 -s input/input_sets_skim_fast_2018.txt -c input/input_sets_DC_fast_2018.txt -e batch/exportSkimFast2018.sh
 python makeFastInput.py -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV18/scan/ -m MC2018 -y MC2018HEM -s input/input_sets_skim_fast_2018HEM.txt -c input/input_sets_DC_fast_2018HEM.txt -e batch/exportSkimFast2018HEM.sh
+```
+
+If you are trying to make input files for the fullsim signal scans, then the commands become:
+```
+python makeFastInput.py -f -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV18/scan/ -m MC2016 -s input/input_sets_skim_signalscan_2016.txt -c input/input_sets_DC_signalscan_2016.txt -e batch/exportSkimSignalScan2016.sh -k T1bbbb,T1qqqq,T1tttt,T2bb,T2qq,T2tt,T5qqqqVV,TChiHH -x 1
+python makeFastInput.py -f -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV18/scan/ -m MC2017 -s input/input_sets_skim_signalscan_2017.txt -c input/input_sets_DC_signalscan_2017.txt -e batch/exportSkimSignalScan2017.sh -k T1bbbb,T1qqqq,T1tttt,T2bb,T2qq,T2tt,T5qqqqVV,TChiHH -x 1
+python makeFastInput.py -f -d /store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV18/scan/ -m MC2018 -y MC2018 -s input/input_sets_skim_signalscan_2018.txt -c input/input_sets_DC_signalscan_2018.txt -e batch/exportSkimSignalScan2018.sh -k T1bbbb,T1qqqq,T1tttt,T2bb,T2qq,T2tt,T5qqqqVV,TChiHH -x 1
 ```
 
 <a name="combined"></a>A separate script is available to create a "combined" model by adding together multiple signal models with different weights.

@@ -43,13 +43,15 @@ for TYPE in ${TYPES[@]}; do
 	if [ "$TYPE" != Fast ]; then
 		SELS=$SELS,$SELTYPE2
 	fi
-	if [ "$TYPE" = Signal ] || [ "$TYPE" = Fast ]; then
+	if [ "$TYPE" = Signal ] || [ "$TYPE" = SignalScan ] || [ "$TYPE" = Fast ]; then
 		SELS=$SELS,$SELTYPE3
-	fi
-	if [ "$TYPE" = Fast ]; then
-		SELS=$SELS,$SELTYPE4
-		TMPINDIR="$INDIR"/scan
-		TMPSTORE="$STORE"/scan
+		if [ "$TYPE" = Fast ] || [ "$TYPE" = SignalScan ]; then
+			TMPINDIR="$INDIR"/scan
+			TMPSTORE="$STORE"/scan
+			if [ "$TYPE" = Fast ]; then
+				SELS=$SELS,$SELTYPE4
+			fi
+		fi
 	fi
 	if [ "$TYPE" = Data ]; then
 		SELS=$SELS,signalUnblind
