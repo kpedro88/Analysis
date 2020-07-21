@@ -6,7 +6,7 @@ JOBDIR=jobs
 JOBTYPE=skim
 INPUT=input/input_selection.txt
 SELTYPE1=signal
-SELTYPE2=signalSideband,LDP,SLm,SLe,SLmLDP,SLeLDP,GJet_CleanVars,GJetLDP_CleanVars,GJetLoose_CleanVars,GJetLooseLDP_CleanVars,DYm_CleanVars,DYe_CleanVars,DYmLDP_CleanVars,DYeLDP_CleanVars
+SELTYPE2=LDP,SLm,SLe,SLmLDP,SLeLDP,GJet_CleanVars,GJetLDP_CleanVars,GJetLoose_CleanVars,GJetLooseLDP_CleanVars
 SELTYPE3=signal_JECup,signal_JECdown,signal_JERup,signal_JERdown
 SELTYPE4=signal_genMHT,SLm,SLe,SLm_genMHT,SLe_genMHT
 INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/${RUN2PRODV}
@@ -43,13 +43,15 @@ for TYPE in ${TYPES[@]}; do
 	if [ "$TYPE" != Fast ]; then
 		SELS=$SELS,$SELTYPE2
 	fi
-	if [ "$TYPE" = Signal ] || [ "$TYPE" = Fast ]; then
+	if [ "$TYPE" = Signal ] || [ "$TYPE" = SignalScan ] || [ "$TYPE" = Fast ]; then
 		SELS=$SELS,$SELTYPE3
-	fi
-	if [ "$TYPE" = Fast ]; then
-		SELS=$SELS,$SELTYPE4
-		TMPINDIR="$INDIR"/scan
-		TMPSTORE="$STORE"/scan
+		if [ "$TYPE" = Fast ] || [ "$TYPE" = SignalScan ]; then
+			TMPINDIR="$INDIR"/scan
+			TMPSTORE="$STORE"/scan
+			if [ "$TYPE" = Fast ]; then
+				SELS=$SELS,$SELTYPE4
+			fi
+		fi
 	fi
 	if [ "$TYPE" = Data ]; then
 		SELS=$SELS,signalUnblind

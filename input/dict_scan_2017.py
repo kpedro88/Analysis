@@ -1,10 +1,11 @@
 flist = [
 [['Fall17Fast.SMS-T1bbbb_TuneCP2_13TeV-madgraphMLM-pythia8'], ['T1bbbb_MC2017']],
 [['Fall17Fast.SMS-T1qqqq_TuneCP2_13TeV-madgraphMLM-pythia8'], ['T1qqqq_MC2017']],
+[['Fall17Fast.SMS-T1ttbb_TuneCP2_13TeV-madgraphMLM-pythia8'], ['T1ttbb_MC2017']],
 [['Fall17Fast.SMS-T1tttt_TuneCP2_13TeV-madgraphMLM-pythia8'], ['T1tttt_MC2017']],
 [['Fall17Fast.SMS-T2bb_TuneCP2_13TeV-madgraphMLM-pythia8'], ['T2bb_MC2017']],
 [['Fall17Fast.SMS-T2bb_mSbot-1650to2600_TuneCP2_13TeV-madgraphMLM-pythia8'], ['T2bb_mSbot-1650to2600_MC2017']],
-[['Fall17Fast.SMS-T2qq_TuneCP2_13TeV-madgraphMLM-pythia8'], ['T2qq_MC2017']],
+[['Fall17Fast.SMS-T2qq_TuneCP2_13TeV-madgraphMLM-pythia8', 'Fall17Fast.SMS-T2qq_TuneCP2_13TeV-madgraphMLM-pythia8_ext1'], ['T2qq_MC2017']],
 [['Fall17Fast.SMS-T2qq_mSq-1850to2600_TuneCP2_13TeV-madgraphMLM-pythia8'], ['T2qq_mSq-1850to2600_MC2017']],
 [['Fall17Fast.SMS-T2tt_mStop-1200to2000_TuneCP2_13TeV-madgraphMLM-pythia8'], ['T2tt_mStop-1200to2000_MC2017']],
 [['Fall17Fast.SMS-T2tt_mStop-150to250_TuneCP2_13TeV-madgraphMLM-pythia8'], ['T2tt_mStop-150to250_MC2017']],
@@ -12,4 +13,6 @@ flist = [
 [['Fall17Fast.SMS-T2tt_mStop-350to400_TuneCP2_13TeV-madgraphMLM-pythia8'], ['T2tt_mStop-350to400_MC2017']],
 [['Fall17Fast.SMS-T2tt_mStop-400to1200_TuneCP2_13TeV-madgraphMLM-pythia8'], ['T2tt_mStop-400to1200_MC2017']],
 [['Fall17Fast.SMS-T5qqqqVV_TuneCP2_13TeV-madgraphMLM-pythia8'], ['T5qqqqVV_MC2017']],
+[['Fall17Fast.SMS-TChiHH_HToBB_HToBB_2D_TuneCP2_13TeV-madgraphMLM-pythia8'], ['TChiHH_HToBB_HToBB_2D_MC2017']],
+[['Fall17Fast.SMS-TChiHH_HToBB_HToBB_TuneCP2_13TeV-madgraphMLM-pythia8'], ['TChiHH_HToBB_HToBB_MC2017']],
 ]

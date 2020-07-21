@@ -12,4 +12,6 @@ flist = [
 [['Autumn18Fast.SMS-T2tt_mStop-350to400_TuneCP2_13TeV-madgraphMLM-pythia8'], ['T2tt_mStop-350to400_MC2018']],
 [['Autumn18Fast.SMS-T2tt_mStop-400to1200_TuneCP2_13TeV-madgraphMLM-pythia8'], ['T2tt_mStop-400to1200_MC2018']],
 [['Autumn18Fast.SMS-T5qqqqVV_TuneCP2_13TeV-madgraphMLM-pythia8'], ['T5qqqqVV_MC2018']],
+[['Autumn18Fast.SMS-TChiHH_HToBB_HToBB_2D_TuneCP2_13TeV-madgraphMLM-pythia8'], ['TChiHH_HToBB_HToBB_2D_MC2018']],
+[['Autumn18Fast.SMS-TChiHH_HToBB_HToBB_TuneCP2_13TeV-madgraphMLM-pythia8'], ['TChiHH_HToBB_HToBB_MC2018']],
 ]

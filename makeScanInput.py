@@ -45,7 +45,7 @@ for file in files:
         if "Tune" in fpart: break
         short_name += fpart + '_'
     # remove SMS-
-    if options.id=="SMS": short_name = short_name.replace("SMS-","")
+    if "SMS" in options.id: short_name = short_name.replace("SMS-","")
     short_name = short_name[:-1]+yearsuff
     if short_name not in fdict: fdict[short_name] = [full_name]
     else: fdict[short_name].append(full_name)

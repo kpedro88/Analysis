@@ -27,6 +27,7 @@ parser.add_option("-c", "--card", dest="card", default="input/input_sets_DC_fast
 parser.add_option("-e", "--export", dest="export", default="batch/exportFast.sh", help="export file to write")
 parser.add_option("-p", "--params", dest="params", default=2, help="number of signal params")
 parser.add_option("-f", "--full", dest="full", default=False, action="store_true", help="fullsim (rather than fastsim)")
+parser.add_option("-x", "--extra-params", dest="extra", default=2, help="number of extra params")
 (options, args) = parser.parse_args()
 
 # parse skip list
@@ -64,11 +65,11 @@ for file in files:
     if skip: continue
     # parse filename: model, mMother-X, mLSP-Y, MC####, fast.root
     #             or: model, mZprime-X, mDark-Y, rinv-Z, alpha-W, MC####, scan.root
-    splitnum = int(options.params) + 2
+    splitnum = int(options.params) + int(options.extra)
     fsplit = file.split('_')
     model = '_'.join(fsplit[0:-splitnum])
     params = []
-    while splitnum>2:
+    while splitnum>int(options.extra):
         params.append(msplit(fsplit[-splitnum]))
         splitnum -= 1
     year = options.year if len(options.year)>0 else fsplit[-splitnum]

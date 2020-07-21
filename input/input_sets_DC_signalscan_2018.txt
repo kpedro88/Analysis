@@ -1,0 +1,33 @@
+SET
+hist	mc	T5qqqqZH-mGluino-1000to2500_1000_1_MC2018
+	base	mc	T5qqqqZH-mGluino-1000to2500_1000_1_MC2018	s:filename[tree_T5qqqqZH-mGluino-1000to2500_1000_1_MC2018.root]	d:xsection[0.385]	b:signal[1]	vi:mother[1000021]
+hist	mc	T5qqqqZH-mGluino-1000to2500_1100_1_MC2018
+	base	mc	T5qqqqZH-mGluino-1000to2500_1100_1_MC2018	s:filename[tree_T5qqqqZH-mGluino-1000to2500_1100_1_MC2018.root]	d:xsection[0.191]	b:signal[1]	vi:mother[1000021]
+hist	mc	T5qqqqZH-mGluino-1000to2500_1200_1_MC2018
+	base	mc	T5qqqqZH-mGluino-1000to2500_1200_1_MC2018	s:filename[tree_T5qqqqZH-mGluino-1000to2500_1200_1_MC2018.root]	d:xsection[0.0985]	b:signal[1]	vi:mother[1000021]
+hist	mc	T5qqqqZH-mGluino-1000to2500_1300_1_MC2018
+	base	mc	T5qqqqZH-mGluino-1000to2500_1300_1_MC2018	s:filename[tree_T5qqqqZH-mGluino-1000to2500_1300_1_MC2018.root]	d:xsection[0.0522]	b:signal[1]	vi:mother[1000021]
+hist	mc	T5qqqqZH-mGluino-1000to2500_1400_1_MC2018
+	base	mc	T5qqqqZH-mGluino-1000to2500_1400_1_MC2018	s:filename[tree_T5qqqqZH-mGluino-1000to2500_1400_1_MC2018.root]	d:xsection[0.0284]	b:signal[1]	vi:mother[1000021]
+hist	mc	T5qqqqZH-mGluino-1000to2500_1500_1_MC2018
+	base	mc	T5qqqqZH-mGluino-1000to2500_1500_1_MC2018	s:filename[tree_T5qqqqZH-mGluino-1000to2500_1500_1_MC2018.root]	d:xsection[0.0157]	b:signal[1]	vi:mother[1000021]
+hist	mc	T5qqqqZH-mGluino-1000to2500_1600_1_MC2018
+	base	mc	T5qqqqZH-mGluino-1000to2500_1600_1_MC2018	s:filename[tree_T5qqqqZH-mGluino-1000to2500_1600_1_MC2018.root]	d:xsection[0.00887]	b:signal[1]	vi:mother[1000021]
+hist	mc	T5qqqqZH-mGluino-1000to2500_1700_1_MC2018
+	base	mc	T5qqqqZH-mGluino-1000to2500_1700_1_MC2018	s:filename[tree_T5qqqqZH-mGluino-1000to2500_1700_1_MC2018.root]	d:xsection[0.00507]	b:signal[1]	vi:mother[1000021]
+hist	mc	T5qqqqZH-mGluino-1000to2500_1800_1_MC2018
+	base	mc	T5qqqqZH-mGluino-1000to2500_1800_1_MC2018	s:filename[tree_T5qqqqZH-mGluino-1000to2500_1800_1_MC2018.root]	d:xsection[0.00293]	b:signal[1]	vi:mother[1000021]
+hist	mc	T5qqqqZH-mGluino-1000to2500_1900_1_MC2018
+	base	mc	T5qqqqZH-mGluino-1000to2500_1900_1_MC2018	s:filename[tree_T5qqqqZH-mGluino-1000to2500_1900_1_MC2018.root]	d:xsection[0.00171]	b:signal[1]	vi:mother[1000021]
+hist	mc	T5qqqqZH-mGluino-1000to2500_2000_1_MC2018
+	base	mc	T5qqqqZH-mGluino-1000to2500_2000_1_MC2018	s:filename[tree_T5qqqqZH-mGluino-1000to2500_2000_1_MC2018.root]	d:xsection[0.00101]	b:signal[1]	vi:mother[1000021]
+hist	mc	T5qqqqZH-mGluino-1000to2500_2100_1_MC2018
+	base	mc	T5qqqqZH-mGluino-1000to2500_2100_1_MC2018	s:filename[tree_T5qqqqZH-mGluino-1000to2500_2100_1_MC2018.root]	d:xsection[0.000598]	b:signal[1]	vi:mother[1000021]
+hist	mc	T5qqqqZH-mGluino-1000to2500_2200_1_MC2018
+	base	mc	T5qqqqZH-mGluino-1000to2500_2200_1_MC2018	s:filename[tree_T5qqqqZH-mGluino-1000to2500_2200_1_MC2018.root]	d:xsection[0.000356]	b:signal[1]	vi:mother[1000021]
+hist	mc	T5qqqqZH-mGluino-1000to2500_2300_1_MC2018
+	base	mc	T5qqqqZH-mGluino-1000to2500_2300_1_MC2018	s:filename[tree_T5qqqqZH-mGluino-1000to2500_2300_1_MC2018.root]	d:xsection[0.000213]	b:signal[1]	vi:mother[1000021]
+hist	mc	T5qqqqZH-mGluino-1000to2500_2400_1_MC2018
+	base	mc	T5qqqqZH-mGluino-1000to2500_2400_1_MC2018	s:filename[tree_T5qqqqZH-mGluino-1000to2500_2400_1_MC2018.root]	d:xsection[0.000128]	b:signal[1]	vi:mother[1000021]
+hist	mc	T5qqqqZH-mGluino-1000to2500_2500_1_MC2018
+	base	mc	T5qqqqZH-mGluino-1000to2500_2500_1_MC2018	s:filename[tree_T5qqqqZH-mGluino-1000to2500_2500_1_MC2018.root]	d:xsection[7.68e-05]	b:signal[1]	vi:mother[1000021]
