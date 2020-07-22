@@ -53,8 +53,8 @@ for iregion,region in enumerate(args.regions):
         parse=n.split('_')
         # skip syst
         if len(parse)>5: continue
-        # skip summed bkg
-        if parse[0]=="Bkg": continue
+        # skip summed bkg (and toy)
+        if parse[0]=="Bkg" or parse[0]=="Bkg_toy": continue
         short_name = n
         if parse[0]==args.signal:
             # fix rinv 1.0

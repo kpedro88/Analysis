@@ -29,46 +29,90 @@ map<string,string> legnames = {
 	{"puunc", "pileup reweighting uncertainty [%]"},
 	{"scaleunc", "#mu_{R}/#mu_{F} uncertainty [%]"},
 	{"trigunc", "trigger uncertainty [%]"},
+	{"trigfnunc", "trigger uncertainty [%]"},
 	{"prefireunc","L1 prefiring weight uncertainty [%]"},
 	{"hemvetounc","HEM veto uncertainty [%]"},
 	{"contam","SL contamination [%]"},
+	{"pdfallunc", "PDF uncertainty [%]"},
+	{"psisrunc", "PS ISR uncertainty [%]"},
+	{"psfsrunc", "PS FSR uncertainty [%]"},
 	{"mMother", "M_{mother} [GeV]"},
 	{"mLSP", "M_{LSP} [GeV]"},
 	{"deltaM", "#DeltaM_{mother,LSP} [GeV]"},
+	{"mZprime", "m_{Z'} [GeV]"},
+	{"mDark", "m_{dark} [GeV]"},
+	{"rinv", "r_{inv}"},
+	{"alpha", "#alpha_{dark}"},
 };
+
+void getBinsQty(string rqty, TTree* tree, double& min, double& max, int& nbins, bool isMassPlane){
+	if(rqty=="mZprime"){
+		min = 1400; max = 5200; nbins = 19;
+	}
+	else if(rqty=="mDark"){
+		min = -4; max = 106; nbins = 11;
+	}
+	else if(rqty=="rinv"){
+		min = -0.05; max = 1.05; nbins = 11;
+	}
+	else if(rqty=="alpha"){
+		min = -3.5; max = -0.5; nbins = 3;
+	}
+	else {
+		min = 0; max = tree->GetMaximum(rqty.c_str()); nbins = 40;
+	}
+
+	if(isMassPlane){
+		min = tree->GetMinimum(rqty.c_str());
+		nbins = (max-min)/25;
+	}
+}
 
 //make 2D plot
 void plotSyst(TTree* tree, string xqty, string yqty, string model, string outdir, vector<string> printformats){
-	int nbinsx = 40, nbinsy = 40;
 	//get ranges (use mMother for derived quantity deltaM)
 	string rxqty = (xqty=="deltaM") ? "mMother" : xqty;
 	string ryqty = (yqty=="deltaM") ? "mMother" : yqty;
+	int nbinsx = 0, nbinsy = 0;
+	double xmin = 0, xmax = 0, ymin = 0, ymax = 0;
+	bool isPlane = false;
 	bool isMassPlane = false;
+	string cutPlane = "";
 	if(xqty=="massPlane"){
-		isMassPlane = true;
+		isPlane = isMassPlane = true;
 		rxqty = "mMother";
 		ryqty = "mLSP";
 	}
-	double xmin = 0;
-	double xmax = tree->GetMaximum(rxqty.c_str());
-	double ymin = 0;
-	double ymax = tree->GetMaximum(ryqty.c_str());
-	if(isMassPlane){
-		xmin = tree->GetMinimum(rxqty.c_str());		
-		ymin = tree->GetMinimum(ryqty.c_str());
+	else if(xqty=="SVJPlane1"){
+		isPlane = true;
+		rxqty = "mZprime";
+		ryqty = "mDark";
+		cutPlane = "*(rinv==0.3&&alpha==-2.)";
 	}
+	else if(xqty=="SVJPlane2"){
+		isPlane = true;
+		rxqty = "mZprime";
+		ryqty = "rinv";
+		cutPlane = "*(mDark==20&&alpha==-2.)";
+	}
+	else if(xqty=="SVJPlane3"){
+		isPlane = true;
+		rxqty = "mZprime";
+		ryqty = "alpha";
+		cutPlane = "*(rinv==0.3&&mDark==20)";
+	}
+
+	getBinsQty(rxqty, tree, xmin, xmax, nbinsx, isMassPlane);
+	getBinsQty(ryqty, tree, ymin, ymax, nbinsy, isMassPlane);
+
 	//make name
 	string hname = "plotSyst2D_"+yqty+"_vs_"+xqty+"_"+model;
 	
 	//initialize histos
-	if(isMassPlane) {
-		nbinsx = (xmax-xmin)/25;
-		nbinsy = (ymax-ymin)/25;
-	}
 	TH2F* hbase = new TH2F("hbase","",nbinsx,xmin,xmax,nbinsy,ymin,ymax);
-	if(isMassPlane){
-		hbase->GetXaxis()->SetTitle(legnames["mMother"].c_str());
-		hbase->GetYaxis()->SetTitle(legnames["mLSP"].c_str());
+	if(isPlane){
+		hbase->GetXaxis()->SetTitle(legnames[rxqty].c_str());
+		hbase->GetYaxis()->SetTitle(legnames[ryqty].c_str());
 		hbase->GetZaxis()->SetTitle(legnames[yqty].c_str());		
 	}
 	else {
@@ -82,19 +126,19 @@ void plotSyst(TTree* tree, string xqty, string yqty, string model, string outdir
 	//draw into histo
 	string drawname = yqty+":"+xqty+">>"+hname;
 	string cutname = "";
-	if(isMassPlane){
-		drawname = "mLSP:mMother>>"+hname;
-		cutname = yqty;
+	if(isPlane){
+		drawname = ryqty+":"+rxqty+">>"+hname;
+		cutname = yqty+cutPlane;
 	}
 	tree->Draw(drawname.c_str(),cutname.c_str(),"colz goff");
-	if(isMassPlane) {
+	if(isPlane) {
 		//if some bins have multiple entries, take average (better than sum...)
-		tree->Draw((drawname+"_unweighted").c_str(),"","colz goff");
+		tree->Draw((drawname+"_unweighted").c_str(),("1"+cutPlane).c_str(),"colz goff");
 		hfill->Divide(hfill_unweighted);
 	}
 
 	string lumi_text;
-	if(isMassPlane) lumi_text = "13 TeV ("+model+")";
+	if(isPlane) lumi_text = "13 TeV ("+model+")";
 	else {
 		double correl = hfill->GetCorrelationFactor();
 		stringstream ss;
@@ -108,7 +152,7 @@ void plotSyst(TTree* tree, string xqty, string yqty, string model, string outdir
 	globalOpt->Set<string>("lumi_text",lumi_text);
 	OptionMap* localOpt = new OptionMap();
 	localOpt->Set<bool>("ratio",false);
-	if(isMassPlane) localOpt->Set<bool>("logz",false);
+	if(isPlane) localOpt->Set<bool>("logz",false);
 	KPlot2D* plot = new KPlot2D(hname,"",localOpt,globalOpt);
 	plot->Initialize(hbase);
 	
@@ -135,6 +179,7 @@ void plotSyst2D(string indir,
 				bool correlate=true,
 				string outdir="plots/syst",
 				string prefix="tree_syst",
+				string suffix="fast",
 				vector<string> printformats={"png"})
 {
 	system(("mkdir -p "+outdir).c_str());
@@ -146,7 +191,7 @@ void plotSyst2D(string indir,
 	
 	for(const auto& model : models){
 		//get file/tree
-		string fname = indir+"/"+prefix+"_"+model+"_fast.root";
+		string fname = indir+"/"+prefix+"_"+model+"_"+suffix+".root";
 		TFile* file = KOpen(fname);
 		TTree* tree = KGet<TTree>(file,"tree");
 		tree->SetAlias("deltaM","mMother-mLSP");

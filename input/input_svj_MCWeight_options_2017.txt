@@ -9,4 +9,4 @@ bool:lumicorr[1]
 vdouble:lumicorrvals[0.977,1.0,1.023]
 bool:trigsystcorr[1]
 vdouble:trigsystcorrvals[0.98,1.0,1.02]
-
+double:psflat[0.1]

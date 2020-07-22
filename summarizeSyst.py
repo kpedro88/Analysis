@@ -25,7 +25,8 @@ def printSigFigs(num,fig,maxdec):
             # move decimal point
             rval = val.replace('.','')
             pindex2 = pindex+expo
-            if pindex2 >= len(rval): result = rval
+            # trailing zeroes
+            if pindex2 >= len(rval): result = rval+'0'*(pindex2-len(rval))
             else: result = rval[0:pindex2]+'.'+rval[pindex2:]
     else: # expo<0
         rval = val if pindex==-1 else val.replace('.','')

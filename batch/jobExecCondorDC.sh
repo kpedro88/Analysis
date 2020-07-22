@@ -68,6 +68,21 @@ done
 # postprocessing for SVJ
 if [ -n "$POSTPROCESS" ]; then
 	python processDatacardsSVJ.py -o datacard_${SAMPLE}.root -f MTAK8_*.root -R 2
+	PROCEXIT=$?
+	if [[ $PROCEXIT -ne 0 ]]; then
+		rm *.root
+		echo "exit code $PROCEXIT, failure in postprocessing, skipping xrdcp"
+		exit $PROCEXIT
+	fi
+
+	# make one final datacard per signal w/ bkg & data included
+	hadd datacard_final_${SAMPLE}.root datacard_${SAMPLE}.root ${STORE}/datacard_bkg_data.root
+	HADDEXIT=$?
+	if [[ $HADDEXIT -ne 0 ]]; then
+		rm *.root
+		echo "exit code $HADDEXIT, failure in postprocess hadd, skipping xrdcp"
+		exit $HADDEXIT
+	fi
 fi
 
 # copy output to eos

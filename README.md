@@ -259,21 +259,19 @@ root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ
 root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/Skims/tree_dijethad",{"input/input_svj_cutflow_had.txt","input/input_svj_cutflow_sets_zinv.txt"},{},1)'
 ```
 
-To create histograms for datacards:
+To create histograms for datacards and do post-processing:
 ```
 cd batch
-./DCsub_svj.sh -t SVJData,SVJBkg,SVJ,SVJScan -y Run2
-```
-
-Post-processing:
-```
-./finalizeDatacardsSVJ.sh /store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v2/
+./DCsub_svj.sh -t SVJData,SVJBkg -y Run2 -v trig3/sigfull
+(wait for jobs to finish)
+../finalizeDatacardsSVJ.sh -d /store/user/pedrok/SVJ2017/Datacards/trig3/sigfull -k
+./DCsub_svj.sh -t SVJScan -y Run2 -v trig3/sigfull
 ```
 
 Signal systematics studies:
 ```
 cd batch
-./HSsub.sh -c block,part,priv -d /store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v2 -k -n 1 -r
+./HSsub.sh -c block,scan -d /store/user/pedrok/SVJ2017/Datacards/trig3/sigfull -S scan -k -n 1
 cd ..
-python summarizeSyst.py -d /store/user/pedrok/SVJ2017/Datacards/Run2ProductionV17_v2 -c "mDark==30.&&rinv==0.3&&alpha==-2."
+python summarizeSyst.py -d /store/user/pedrok/SVJ2017/Datacards/trig3/sigfull -c "mDark==20.&&rinv==0.3&&alpha==-2."
 ```

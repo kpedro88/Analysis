@@ -189,8 +189,12 @@ if __name__=="__main__":
 
     # hardcoded list of correlated systematics
     correl_systs = set([
-        "JESup",
-        "JESdown",
+        "pdfalluncUp",
+        "pdfalluncDown",
+        "psisruncUp",
+        "psisruncDown",
+        "psfsruncUp",
+        "psfsruncDown",
     ])
 
     from ROOT import *

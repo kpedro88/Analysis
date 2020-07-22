@@ -8,7 +8,7 @@ CHECKARGS=""
 YEARS=()
 TYPES=()
 DRYRUN=""
-VERSION=${RUN2PRODV}_v2
+VERSION=""
 CONFIG=""
 NOSYST=""
 EXTRAS=""
@@ -40,6 +40,11 @@ while getopts "ky:t:c:v:r:e:n:sd" opt; do
 	esac
 done
 
+if [ -z "$VERSION" ]; then
+	echo "Must specify version folder with -v"
+	exit 1
+fi
+
 STORE=root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/${VERSION}
 SAFEVERSION=$(echo $VERSION | sed 's~/~_~')
 ./SKcheck.sh ${CHECKARGS}
@@ -49,9 +54,6 @@ for TYPE in ${TYPES[@]}; do
 	if [ "$TYPE" = SVJScan ]; then
 		INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims/scan
 		DCCONFIG=input/input_DC_config_SVJscan.txt
-		if [ "$YEAR" != Run2 ]; then
-			PREFIX=Skim
-		fi
 	elif [ "$TYPE" = SVJ ]; then
 		INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims
 		DCCONFIG=input/input_DC_config_SVJsig.txt
@@ -77,7 +79,7 @@ for TYPE in ${TYPES[@]}; do
 	fi
 
 	if [[ -z "$NOSYST" && ("$TYPE" = SVJ  ||  "$TYPE" = SVJScan) ]]; then
-		SYSTS=${NOMINAL},trigfnuncUp,trigfnuncDown,puuncUp,puuncDown,pdfalluncUp,pdfalluncDown
+		SYSTS=${NOMINAL},trigfnuncUp,trigfnuncDown,puuncUp,puuncDown,pdfalluncUp,pdfalluncDown,psisruncUp,psisruncDown,psfsruncUp,psfsruncDown
 		VARS=JECup,JECdown,JERup,JERdown
 	else
 		SYSTS=${NOMINAL}

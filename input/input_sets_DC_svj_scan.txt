@@ -1,0 +1,6 @@
+INPUT
+input/input_sets_DC_svj_scan_2018POST.txt
+input/input_sets_DC_svj_scan_2018PRE.txt
+input/input_sets_DC_svj_scan_2017.txt
+input/input_sets_DC_svj_scan_2016.txt
+

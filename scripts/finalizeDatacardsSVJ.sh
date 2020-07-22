@@ -1,33 +1,40 @@
 #!/bin/bash
 
-EOSDIR=$1
+TOPDIR=$CMSSW_BASE/src/Analysis
+EOSDIR=""
 # file prefix (not histo prefix)
-PREFIX=$2
-if [ -z "$PREFIX" ]; then
-	PREFIX=MTAK8_dijetmtdetahadloosefull
-fi
-NOMINAL=$3
-if [ -z "$NOMINAL" ]; then
-	NOMINAL=nominal
-fi
+PREFIX=MTAK8_dijetmtdetahadloosefull
+NOMINAL=nominal
 # histo prefix
-HISTO=$4
-if [ -z "$HISTO" ]; then
-	HISTO=MTAK8_RA2bin
-fi
-OUTNAME=$5
-if [ -z "$OUTNAME" ]; then
-	OUTNAME=test/datacard_bkg_data.root
-fi
-SKIP=$6
+HISTO=MTAK8_RA2bin
+OUTNAME=$TOPDIR/test/datacard_bkg_data.root
+SKIP=""
 
-python processDatacardsSVJ.py -o $OUTNAME -i root://cmseos.fnal.gov/${EOSDIR} -f $(eos root://cmseos.fnal.gov ls ${EOSDIR} | grep ${PREFIX}_ | grep -v SVJ) -m $NOMINAL -p $HISTO -R 2
+while getopts "d:p:n:h:o:k" opt; do
+	case "$opt" in
+		d) EOSDIR="$OPTARG"
+		;;
+		p) PREFIX="$OPTARG"
+		;;
+		n) NOMINAL="$OPTARG"
+		;;
+		h) HISTO="$OPTARG"
+		;;
+		o) OUTNAME="$OPTARG"
+		;;
+		k) SKIP=true
+		;;
+	esac
+done
+
+python $TOPDIR/processDatacardsSVJ.py -o $OUTNAME -i root://cmseos.fnal.gov/${EOSDIR} -f $(eos root://cmseos.fnal.gov ls ${EOSDIR} | grep ${PREFIX}_ | grep -v SVJ) -m $NOMINAL -p $HISTO -R 2 -t
+
+xrdcp -f $OUTNAME root://cmseos.fnal.gov/${EOSDIR}
 
 if [ -n "$SKIP" ]; then
 	exit 0
 fi
 
-xrdcp -f test/datacard_bkg_data.root root://cmseos.fnal.gov/${EOSDIR}
-cd batch
+cd $CMSSW_BASE/src/Analysis/batch
 ./haddEOS.sh -d ${EOSDIR} -i datacard -g _ -k -r
 
