@@ -165,9 +165,12 @@ void plotSyst(TTree* tree, string xqty, string yqty, string model, string outdir
 	plot->DrawText();
 	
 	//print image
-	for(const auto& printformat : printformats){
-		can->Print((outdir+"/"+hname+"."+printformat).c_str(),printformat.c_str());
-		if(printformat=="eps") system(("epstopdf "+hname+".eps").c_str());
+	for(auto pformat : printformats){
+		bool epstopdf = pformat=="pdf";
+		if(epstopdf) pformat = "eps";
+		string oname = outdir+"/"+hname+"."+pformat;
+		can->Print(oname.c_str(),pformat.c_str());
+		if(epstopdf) system(("epstopdf "+oname+" && rm "+oname).c_str());
 	}
 }
 

@@ -97,6 +97,7 @@ input/fast*/
 /doubleRatio.C
 /finalBinning.py
 /finalizeDatacardsSVJbin.sh
+/flat_svj.py
 
 # linked by setupXML.sh
 /KMVA/pugi*.*
