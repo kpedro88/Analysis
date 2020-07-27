@@ -92,7 +92,7 @@ for ((i=0; i < $MAXPLOTS; i++)); do
 	root -b -l -q 'KPlotDriver.C+("'$EXTDIR'",{"input/input_svj_stack_dijetmtdetahad_2017.txt","input/input_svj_full_bdt_regions.txt","'$HISTO'",'"$SETDATA"'"input/input_svj_ext_full_datacard_regions'$SETSUFF'.txt"},{"OPTION","s:extfilename['${EXTFILE}']","s:exthisto_dir['${REGION}'_2018]","s+:printsuffix[_'${REGION}${SUFF}']","vs:extra_text['"${RNAME}"']","vs+:printformat[pdf]","vs:numers[]","vs:denoms[]"'"$EXTRA"'},1)'
 	if [ -n "$WINDOW" ]; then
 		echo "WINDOW: $EXTDIR $REGION"
-		python getWindowYield.py -f $EXTFILE -d ${REGION}_2018 -s SVJ_mZprime3000_mDark20_rinv03_alphapeak -b Bkg
+		python getWindowYield.py -f $EXTFILE -d ${REGION}_2018 -s SVJ_mZprime3100_mDark20_rinv03_alphapeak -b Bkg
 	fi
 done
 
