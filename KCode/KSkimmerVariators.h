@@ -15,6 +15,10 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <unordered_set>
+#include <utility>
+#include <tuple>
+#include <cmath>
 
 using namespace std;
 
@@ -110,13 +114,10 @@ class KCleanVariator : public KVariator {
 				branch->Vary();
 			}
 		}
-		virtual void UndoVariation() {
+		virtual void UndoVariation(bool passed) {
 			//special case: if Jetsclean is empty, no reclustering was done (nothing removed from event), don't bother restoring
 			if(looper->Jetsclean->size()==0) return;
-			//restore original values
-			for(auto& branch : linkbranches){
-				branch->Restore();
-			}
+			KVariator::UndoVariation(passed);
 		}
 };
 REGISTER_VARIATOR(Clean);
@@ -143,9 +144,23 @@ class KJetVariator : public KVariator {
 
 			//check JES-specific options
 			if(vtype==JESup or vtype==JESdown){
-				localOpt->Get("AK8factor",AK8factor);
-				localOpt->Get("AK4factor",AK4factor);
 				localOpt->Get("njets",njets);
+				int ynum;
+				if(njets<0) localOpt->Get("ynum",ynum);
+				else ynum = njets;
+				int xnum = 100; localOpt->Get("xnum",xnum);
+				double xmax = 5; localOpt->Get("xmax",xmax);
+				h_JESfactor = new TH2F("JESfactor","",xnum,0,xmax,ynum,-0.5,-0.5+ynum);
+				h_JESfactor->GetXaxis()->SetTitle("p_{T}^{gen}/p_{T}^{reco}");
+				h_JESfactor->GetYaxis()->SetTitle("jet index");
+				h_JESfactor_passed = (TH2F*)h_JESfactor->Clone("JESfactor_passed");
+				h_JESfactor_tmp = (TH2F*)h_JESfactor->Clone("JESfactor_tmp");
+				h_JESfactorAK8 = (TH2F*)h_JESfactor->Clone("JESfactorAK8");
+				h_JESfactorAK8_passed = (TH2F*)h_JESfactorAK8->Clone("JESfactorAK8_passed");
+				h_JESfactorAK8_tmp = (TH2F*)h_JESfactorAK8->Clone("JESfactorAK8_tmp");
+			}
+			else {
+				h_JESfactor = h_JESfactor_passed = h_JESfactor_tmp = h_JESfactorAK8 = h_JESfactorAK8_passed = h_JESfactorAK8_tmp = nullptr;
 			}
 		}
 		~KJetVariator() {
@@ -351,6 +366,14 @@ class KJetVariator : public KVariator {
 					}
 				);
 			}
+			else if(vtype==JESup or vtype==JESdown) {
+				branches.insert(
+					branches.end(), {
+						"GenJets",
+						"GenJetsAK8",
+					}
+				);
+			}
 		}
 		//functions
 		virtual void DoVariation() {
@@ -365,10 +388,14 @@ class KJetVariator : public KVariator {
 			const auto& JetsAK8_orig = *looper->JetsAK8;
 			if(vtype==JESup or vtype==JESdown){
 				TLorentzVector METVec; METVec.SetPtEtaPhiE(looper->MET,0,looper->METPhi,looper->MET);
+				const auto& GenJets = *looper->GenJets;
+				const auto& GenJetsAK8 = *looper->GenJetsAK8;
 
-				ScaleJetsMET(Jets_orig, AK4factor, njets, Jets, order, METVec, true);
+				ScaleJetsMET(Jets_orig, GenJets, njets, Jets, order, METVec, h_JESfactor_tmp, true);
+				h_JESfactor->Add(h_JESfactor_tmp);
 				//only modify MET based on AK4 jets
-				ScaleJetsMET(JetsAK8_orig, AK8factor, njets, JetsAK8, orderAK8, METVec);
+				ScaleJetsMET(JetsAK8_orig, GenJetsAK8, njets, JetsAK8, orderAK8, METVec, h_JESfactorAK8_tmp);
+				h_JESfactorAK8->Add(h_JESfactorAK8_tmp);
 
 				MET = METVec.Pt();
 				METPhi = METVec.Phi();
@@ -427,15 +454,47 @@ class KJetVariator : public KVariator {
 				branch->Vary();
 			}
 		}
-		virtual void ScaleJetsMET(const vector<TLorentzVector>& Jets_orig, double factor, int n,
-								  vector<TLorentzVector>* theJets, vector<unsigned>& theOrder, TLorentzVector& theMET, bool doMET=false)
+		virtual void ScaleJetsMET(const vector<TLorentzVector>& Jets_orig, const vector<TLorentzVector>& GenJets, int n,
+								  vector<TLorentzVector>* theJets, vector<unsigned>& theOrder, TLorentzVector& theMET, TH2F* h_factor, bool doMET=false)
 		{
+			if(n<0 or n>Jets_orig.size()) n = Jets_orig.size();
+
+			//use official JetMET matching procedure: equiv to set<DR,jet_index,gen_index> sorted by DR
+			//from https://github.com/cms-jet/JetMETAnalysis/blob/master/JetUtilities/plugins/MatchRecToGen.cc
+			//but only consider n jets
+			map<double,pair<unsigned,unsigned>> matchMap;
+			for(unsigned j = 0; j < n; ++j){
+				for(unsigned g = 0; g < GenJets.size(); ++g){
+					matchMap.emplace(std::piecewise_construct, std::forward_as_tuple(Jets_orig[j].DeltaR(GenJets[g])), std::forward_as_tuple(j,g));
+				}
+			}
+			vector<int> Jets_genIndex(n,-1);
+			unordered_set<unsigned> j_used, g_used;
+			for(const auto& matchItem: matchMap){
+				unsigned j = matchItem.second.first;
+				unsigned g = matchItem.second.second;
+				bool used_j = j_used.find(j)!=j_used.end();
+				bool used_g = g_used.find(g)!=g_used.end();
+				if(!used_j and !used_g){
+					Jets_genIndex[j] = g;
+					j_used.insert(j);
+					g_used.insert(g);
+				}
+			}
+
 			theJets->reserve(Jets_orig.size());
 			theOrder.reserve(Jets_orig.size());
 			TLorentzVector v_old, v_new;
-			if(n<0) n = Jets_orig.size();
 			for(unsigned j = 0; j < Jets_orig.size(); ++j){
 				if(j<unsigned(n)){
+					//if no gen matches, don't modify jet
+					double factor = Jets_genIndex[j] >= 0 ? GenJets[Jets_genIndex[j]].Pt()/Jets_orig[j].Pt() : 1.;
+					//factor = 1 + x corresponds to JESup
+					//therefore, factor = 1 - x corresponds to JESdown
+					//even if x is negative, but if x > 1, don't allow 1 - x to become negative
+					if(vtype==JESdown) factor = max(0., 1 - (factor - 1));
+					//store the factor for later analysis
+					h_factor->Fill(factor, j);
 					theJets->push_back(Jets_orig[j]*factor);
 					v_old += Jets_orig[j];
 					v_new += theJets->back();
@@ -482,11 +541,18 @@ class KJetVariator : public KVariator {
 			}
 			
 		}
-		virtual void UndoVariation() {
-			//restore original values
-			for(auto& branch : linkbranches){
-				branch->Restore();
+		virtual void UndoVariation(bool passed) {
+			if(passed){
+				//separate histograms for events passing selection
+				h_JESfactor_passed->Add(h_JESfactor_tmp);
+				h_JESfactorAK8_passed->Add(h_JESfactorAK8_tmp);
 			}
+
+			//reset tmp histos
+			h_JESfactor_tmp->Reset();
+			h_JESfactorAK8_tmp->Reset();
+
+			KVariator::UndoVariation(passed);
 		}
 		//helper
 		void clear(){
@@ -505,6 +571,15 @@ class KJetVariator : public KVariator {
 			MET = 0;
 			METPhi = 0;
 		}
+		virtual void Finalize(TFile* file){
+			if(file){
+				file->cd();
+				h_JESfactor->Write();
+				h_JESfactor_passed->Write();
+				h_JESfactorAK8->Write();
+				h_JESfactorAK8_passed->Write();
+			}
+		}
 		
 		//member variables
 		vartypes vtype;
@@ -520,6 +595,8 @@ class KJetVariator : public KVariator {
 		double MT_AK8;
 		double MET;
 		double METPhi;
+		TH2F *h_JESfactor, *h_JESfactor_passed, *h_JESfactor_tmp;
+		TH2F *h_JESfactorAK8, *h_JESfactorAK8_passed, *h_JESfactorAK8_tmp;
 };
 REGISTER_VARIATOR(Jet);
 
@@ -623,12 +700,6 @@ class KLepFracVariator : public KVariator {
 				branch->Vary();
 			}
 		}
-		virtual void UndoVariation(){
-			//restore original values
-			for(auto& branch : linkbranches){
-				branch->Restore();
-			}
-		}
 		//helpers
 		void matchLep(const vector<TLorentzVector>& leptons, const vector<bool>& mask, const TLorentzVector& jet, int& match_index, double& match_pt){
 			for(unsigned l = 0; l < leptons.size(); ++l){
@@ -682,12 +753,6 @@ class KGenMHTVariator : public KVariator {
 				branch->Store();
 				//set to gen vars
 				branch->Vary();
-			}
-		}
-		virtual void UndoVariation(){
-			//restore original values
-			for(auto& branch : linkbranches){
-				branch->Restore();
 			}
 		}
 };
@@ -773,12 +838,6 @@ class KGenJetVariator : public KVariator {
 			for(auto& branch : linkbranches){
 				//set to new vars
 				branch->Vary();
-			}
-		}
-		virtual void UndoVariation(){
-			//restore original values
-			for(auto& branch : linkbranches){
-				branch->Restore();
 			}
 		}
 
@@ -898,12 +957,6 @@ class KCentralAK8Variator : public KVariator {
 			for(auto& branch : linkbranches){
 				//set to new vars
 				branch->Vary();
-			}
-		}
-		virtual void UndoVariation(){
-			//restore original values
-			for(auto& branch : linkbranches){
-				branch->Restore();
 			}
 		}
 
@@ -1045,12 +1098,6 @@ class KJetLeptonVariator : public KVariator {
 			for(auto& branch : linkbranches){
 				//set to new vars
 				branch->Vary();
-			}
-		}
-		virtual void UndoVariation(){
-			//restore original values
-			for(auto& branch : linkbranches){
-				branch->Restore();
 			}
 		}
 		

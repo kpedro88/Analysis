@@ -210,7 +210,12 @@ class KVariator : public KChecker {
 		}
 		//functions
 		virtual void DoVariation() {}
-		virtual void UndoVariation() {}
+		virtual void UndoVariation(bool passed) {
+			//restore original values
+			for(auto& branch : linkbranches){
+				branch->Restore();
+			}
+		}
 		//different behavior from usual checker
 		virtual void CheckBranches() {
 			ListBranches();
@@ -220,6 +225,8 @@ class KVariator : public KChecker {
 			}
 			looper->EnableBranches(branches);
 		}
+		//to allow variators to add objects to the file
+		virtual void Finalize(TFile*) { }
 		
 	protected:
 		//member variables
@@ -260,9 +267,15 @@ class KVariation {
 				variatorList[v]->DoVariation();
 			}
 		}
-		void UndoVariation() {
+		void UndoVariation(bool passed) {
 			for(unsigned v = 0; v < variatorList.size(); v++){
-				variatorList[v]->UndoVariation();
+				variatorList[v]->UndoVariation(passed);
+			}
+		}
+		//to allow variators to add objects to the file
+		virtual void Finalize(TFile* file) {
+			for(unsigned v = 0; v < variatorList.size(); v++){
+				variatorList[v]->Finalize(file);
 			}
 		}
 		

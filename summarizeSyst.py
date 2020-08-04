@@ -21,6 +21,7 @@ unc_names = {
     "psfsrunc": "FSR (parton shower)",
     "psisrunc": "ISR (parton shower)",
     "trigfnunc": "Trigger statistical",
+    "JES": "JES",
 }
 
 def getUncName(syst):

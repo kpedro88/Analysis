@@ -98,6 +98,7 @@ input/fast*/
 /finalBinning.py
 /finalizeDatacardsSVJbin.sh
 /flat_svj.py
+/makeJESTree.C
 
 # linked by setupXML.sh
 /KMVA/pugi*.*

@@ -129,8 +129,6 @@ class KSelection {
 				looper->EnableBranches({"RunNum","LumiBlockNum","EvtNum"});
 			}
 		}
-		void DoVariation() { if(variation) variation->DoVariation(); }
-		void UndoVariation() { if(variation) variation->UndoVariation(); }
 		template <class S> S Get(string name_){	return static_cast<S>(selectors.Get(name_)); }
 		//setup output tree
 		void MakeTree(string outdir, string filename, TTree* clone=NULL){
@@ -200,7 +198,7 @@ class KSelection {
 			if(result && tree) tree->Fill();
 
 			//reset event
-			if(variation) variation->UndoVariation();
+			if(variation) variation->UndoVariation(result);
 			
 			return result;
 		}
@@ -255,6 +253,8 @@ class KSelection {
 				for(unsigned s = 0; s < selectorList.size(); s++){
 					selectorList[s]->Finalize(file);
 				}
+				//just in case variators have something to add
+				if(variation) variation->Finalize(file);
 				
 				file->Close();
 			}

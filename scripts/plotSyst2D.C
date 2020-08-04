@@ -36,6 +36,10 @@ map<string,string> legnames = {
 	{"pdfallunc", "PDF uncertainty [%]"},
 	{"psisrunc", "PS ISR uncertainty [%]"},
 	{"psfsrunc", "PS FSR uncertainty [%]"},
+	{"JES", "JES uncertainty [%]"},
+	{"JESfactor", "JES factor (J_{1,2})"},
+	{"JESfactor1", "JES factor (J_{1})"},
+	{"JESfactor2", "JES factor (J_{2})"},
 	{"mMother", "M_{mother} [GeV]"},
 	{"mLSP", "M_{LSP} [GeV]"},
 	{"deltaM", "#DeltaM_{mother,LSP} [GeV]"},
@@ -152,7 +156,7 @@ void plotSyst(TTree* tree, string xqty, string yqty, string model, string outdir
 	globalOpt->Set<string>("lumi_text",lumi_text);
 	OptionMap* localOpt = new OptionMap();
 	localOpt->Set<bool>("ratio",false);
-	if(isPlane) localOpt->Set<bool>("logz",false);
+	if(isPlane and hfill->GetMaximum()<=110) localOpt->Set<bool>("logz",false);
 	KPlot2D* plot = new KPlot2D(hname,"",localOpt,globalOpt);
 	plot->Initialize(hbase);
 	

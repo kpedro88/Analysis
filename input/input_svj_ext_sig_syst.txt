@@ -23,6 +23,10 @@ MTAK8	i:xnum[65]	d:xmin[1500]	d:xmax[8000]	s:xtitle[M_{T} [GeV]]	s:ytitle[number
 SET
 hist	mc	central	s:legname[central]	c:color[kBlack]
 	base	ext	SVJ_3100_20_0.3_peak_MC2017	vs:exthisto_in[highCut_2018/SVJ_mZprime3100_mDark20_rinv03_alphapeak]	vs:exthisto_out[MTAK8]
+hist	mc	JESup	s:legname[JES up]	c:color[kBlue]	i:linestyle[7]
+	base	ext	SVJ_3100_20_0.3_peak_MC2017	vs:exthisto_in[highCut_2018/SVJ_mZprime3100_mDark20_rinv03_alphapeak_MCRun2JESUp]	vs:exthisto_out[MTAK8]
+hist	mc	JESdown	s:legname[JES down]	c:color[kRed]	i:linestyle[7]
+	base	ext	SVJ_3100_20_0.3_peak_MC2017	vs:exthisto_in[highCut_2018/SVJ_mZprime3100_mDark20_rinv03_alphapeak_MCRun2JESDown]	vs:exthisto_out[MTAK8]
 hist	mc	JECup	s:legname[JEC up]	c:color[kBlue]	i:linestyle[7]
 	base	ext	SVJ_3100_20_0.3_peak_MC2017	vs:exthisto_in[highCut_2018/SVJ_mZprime3100_mDark20_rinv03_alphapeak_MC2017JECUp]	vs:exthisto_out[MTAK8]
 hist	mc	JECdown	s:legname[JEC down]	c:color[kRed]	i:linestyle[7]
