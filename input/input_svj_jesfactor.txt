@@ -1,0 +1,14 @@
+INPUT
+input/input_global.txt
+
+OPTION
+int:yieldprecision[4]
+vstring:disable_branches[*]
+bool:closefiles[1]
+bool:debugcut[1]
+
+HISTO2D
+bothjetAK8JESupFactor_bothjetAK8index	i:xnum[100]	d:xmin[0]	d:xmax[5]	s:xtitle[p_{T}(J_{gen})/p_{T}(J_{reco})]	i:ynum[2]	d:ymin[-0.5]	d:ymax[1.5]	s:ytitle[AK8 jet index]	s:ztitle[number of events]	b:ratio[0]	b:logz[0]
+bothjetAK8JESdownFactor_bothjetAK8index	i:xnum[100]	d:xmin[0]	d:xmax[5]	s:xtitle[p_{T}(J_{gen})/p_{T}(J_{reco})]	i:ynum[2]	d:ymin[-0.5]	d:ymax[1.5]	s:ytitle[AK8 jet index]	s:ztitle[number of events]	b:ratio[0]	b:logz[0]
+bothjetAK4JESupFactor_bothjetAK4index	i:xnum[100]	d:xmin[0]	d:xmax[5]	s:xtitle[p_{T}(j_{gen})/p_{T}(j_{reco})]	i:ynum[2]	d:ymin[-0.5]	d:ymax[1.5]	s:ytitle[AK4 jet index]	s:ztitle[number of events]	b:ratio[0]	b:logz[0]
+bothjetAK4JESdownFactor_bothjetAK4index	i:xnum[100]	d:xmin[0]	d:xmax[5]	s:xtitle[p_{T}(j_{gen})/p_{T}(j_{reco})]	i:ynum[2]	d:ymin[-0.5]	d:ymax[1.5]	s:ytitle[AK4 jet index]	s:ztitle[number of events]	b:ratio[0]	b:logz[0]

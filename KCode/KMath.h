@@ -3,6 +3,7 @@
 
 //ROOT headers
 #include <TROOT.h>
+#include <TLorentzVector.h>
 #include <TMath.h>
 #include "Math/QuantFuncMathCore.h"
 
@@ -15,6 +16,9 @@
 #include <algorithm>
 #include <functional>
 #include <utility>
+#include <unordered_set>
+#include <tuple>
+#include <map>
 
 using namespace std;
 
@@ -130,6 +134,35 @@ namespace KMath {
 				j = order[j];
 			}
 		}
+	}
+	//use official JetMET matching procedure: equiv to set<DR,jet_index,gen_index> sorted by DR
+	//from https://github.com/cms-jet/JetMETAnalysis/blob/master/JetUtilities/plugins/MatchRecToGen.cc
+	//but only consider n jets
+	vector<int> MatchGenRec(const vector<TLorentzVector>& Jets, const vector<TLorentzVector>& GenJets, int n){
+		if(n<0 or n>Jets.size()) n = Jets.size();
+
+		map<double,pair<unsigned,unsigned>> matchMap;
+		for(unsigned j = 0; j < n; ++j){
+			for(unsigned g = 0; g < GenJets.size(); ++g){
+				matchMap.emplace(std::piecewise_construct, std::forward_as_tuple(Jets[j].DeltaR(GenJets[g])), std::forward_as_tuple(j,g));
+			}
+		}
+
+		vector<int> Jets_genIndex(n,-1);
+		unordered_set<unsigned> j_used, g_used;
+		for(const auto& matchItem: matchMap){
+			unsigned j = matchItem.second.first;
+			unsigned g = matchItem.second.second;
+			bool used_j = j_used.find(j)!=j_used.end();
+			bool used_g = g_used.find(g)!=g_used.end();
+			if(!used_j and !used_g){
+				Jets_genIndex[j] = g;
+				j_used.insert(j);
+				g_used.insert(g);
+			}
+		}
+
+		return Jets_genIndex;
 	}
 }
 

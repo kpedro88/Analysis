@@ -1485,6 +1485,51 @@ class KGenMatchSelector : public KSelector {
 REGISTER_SELECTOR(GenMatch);
 
 //----------------------------------------------------
+//provide gen-rec matching for jets
+class KGenRecSelector : public KSelector {
+	public:
+		//constructor
+		KGenRecSelector() : KSelector() { }
+		KGenRecSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { 
+			//check for option
+			doAK8 = localOpt->Get("doAK8",false);
+			doAK4 = localOpt->Get("doAK4",false);
+			njets = 2; localOpt->Get("njets",njets);
+			canfail = false;
+		}
+		virtual void ListBranches(){
+			if(doAK8) {
+				branches.insert(branches.end(),{
+					"JetsAK8",
+					"GenJetsAK8",
+				});
+			}
+			if(doAK4) {
+				branches.insert(branches.end(),{
+					"Jets",
+					"GenJets",
+				});
+			}
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			if(doAK8) JetsAK8_genIndex = KMath::MatchGenRec(*looper->JetsAK8,*looper->GenJetsAK8,njets);
+			if(doAK4) Jets_genIndex = KMath::MatchGenRec(*looper->Jets,*looper->GenJets,njets);
+
+			return true;
+		}
+		
+		//member variables
+		bool doAK4, doAK8;
+		int njets;
+		vector<int> Jets_genIndex, JetsAK8_genIndex;
+};
+REGISTER_SELECTOR(GenRec);
+
+//----------------------------------------------------
 //selects events based on leading jet pt
 class KMTRegressionSelector : public KSelector {
 	public:

@@ -15,9 +15,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <unordered_set>
-#include <utility>
-#include <tuple>
 #include <cmath>
 
 using namespace std;
@@ -457,30 +454,8 @@ class KJetVariator : public KVariator {
 		virtual void ScaleJetsMET(const vector<TLorentzVector>& Jets_orig, const vector<TLorentzVector>& GenJets, int n,
 								  vector<TLorentzVector>* theJets, vector<unsigned>& theOrder, TLorentzVector& theMET, TH2F* h_factor, bool doMET=false)
 		{
-			if(n<0 or n>Jets_orig.size()) n = Jets_orig.size();
-
-			//use official JetMET matching procedure: equiv to set<DR,jet_index,gen_index> sorted by DR
-			//from https://github.com/cms-jet/JetMETAnalysis/blob/master/JetUtilities/plugins/MatchRecToGen.cc
-			//but only consider n jets
-			map<double,pair<unsigned,unsigned>> matchMap;
-			for(unsigned j = 0; j < n; ++j){
-				for(unsigned g = 0; g < GenJets.size(); ++g){
-					matchMap.emplace(std::piecewise_construct, std::forward_as_tuple(Jets_orig[j].DeltaR(GenJets[g])), std::forward_as_tuple(j,g));
-				}
-			}
-			vector<int> Jets_genIndex(n,-1);
-			unordered_set<unsigned> j_used, g_used;
-			for(const auto& matchItem: matchMap){
-				unsigned j = matchItem.second.first;
-				unsigned g = matchItem.second.second;
-				bool used_j = j_used.find(j)!=j_used.end();
-				bool used_g = g_used.find(g)!=g_used.end();
-				if(!used_j and !used_g){
-					Jets_genIndex[j] = g;
-					j_used.insert(j);
-					g_used.insert(g);
-				}
-			}
+			const auto& Jets_genIndex = KMath::MatchGenRec(Jets_orig, GenJets, n);
+			n = Jets_genIndex.size();
 
 			theJets->reserve(Jets_orig.size());
 			theOrder.reserve(Jets_orig.size());

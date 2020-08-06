@@ -1,0 +1,13 @@
+OPTION
+string:exthisto_extra[nominal]
+int:npanel[1]
+
+SET
+hist	mc	QCD	s:legname[QCD]	c:color[kBlue + 2]	i:panel[1]
+	base	ext	QCD_MC2017	b:ext_auto[1]
+hist	mc	ttbar	s:legname[t#bar{t}]	c:color[kOrange - 2]	i:panel[1]
+	base	ext	TT_MC2017	b:ext_auto[1]
+hist	mc	wjets	s:legname[W(l#nu)+jets]	c:color[kOrange + 1]	i:panel[1]
+	base	ext	WJets_MC2017	b:ext_auto[1]
+hist	mc	zinv	s:legname[Z(#nu#nu)+jets]	c:color[kViolet + 1]	i:panel[1]
+	base	ext	ZJets_MC2017	b:ext_auto[1]

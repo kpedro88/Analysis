@@ -1371,6 +1371,44 @@ class KJetFiller_AK8genptquarkratio : public KJetFiller {
 };
 REGISTER_JETFILLER(AK8genptquarkratio);
 
+class KJetFiller_AK8JESupFactor : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void CheckDeps(){ GenRec = sel->Get<KGenRecSelector*>("GenRec"); }
+		virtual void ListBranches() { branches = {"JetsAK8","GenJetsAK8"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) {
+			if(GenRec and GenRec->JetsAK8_genIndex.size()>index) {
+				//if no gen matches, don't modify jet
+				double factor = GenRec->JetsAK8_genIndex[index] >= 0 ? looper->GenJetsAK8->at(GenRec->JetsAK8_genIndex[index]).Pt()/looper->JetsAK8->at(index).Pt() : 1.;
+				value.Fill(factor,w);
+			}
+		}
+		//member variables
+		KGenRecSelector* GenRec = NULL;
+};
+REGISTER_JETFILLER(AK8JESupFactor);
+
+class KJetFiller_AK8JESdownFactor : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void CheckDeps(){ GenRec = sel->Get<KGenRecSelector*>("GenRec"); }
+		virtual void ListBranches() { branches = {"JetsAK8","GenJetsAK8"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) {
+			if(GenRec and GenRec->JetsAK8_genIndex.size()>index) {
+				//if no gen matches, don't modify jet
+				double factor = GenRec->JetsAK8_genIndex[index] >= 0 ? looper->GenJetsAK8->at(GenRec->JetsAK8_genIndex[index]).Pt()/looper->JetsAK8->at(index).Pt() : 1.;
+				//factor = 1 + x corresponds to JESup
+				//therefore, factor = 1 - x corresponds to JESdown
+				//even if x is negative, but if x > 1, don't allow 1 - x to become negative
+				factor = max(0., 1 - (factor - 1));
+				value.Fill(factor,w);
+			}
+		}
+		//member variables
+		KGenRecSelector* GenRec = NULL;
+};
+REGISTER_JETFILLER(AK8JESdownFactor);
+
 class KJetFiller_AK8maxcsv : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
@@ -1523,6 +1561,22 @@ class KJetFiller_AK8abseta : public KJetFiller {
 		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8->size()>index) value.Fill(abs(looper->JetsAK8->at(index).Eta()),w); }
 };
 REGISTER_JETFILLER(AK8abseta);
+
+class KJetFiller_AK8index : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8->size()>index) value.Fill(index,w); }
+};
+REGISTER_JETFILLER(AK8index);
+
+class KJetFiller_AK4index : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"Jets"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->Jets->size()>index) value.Fill(index,w); }
+};
+REGISTER_JETFILLER(AK4index);
 
 class KJetFiller_AK4pt : public KJetFiller {
 	public:
@@ -2079,6 +2133,44 @@ class KJetFiller_AK4mult : public KJetFiller {
 		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->Jets_multiplicity->size()>index) value.Fill(looper->Jets_multiplicity->at(index),w); }
 };
 REGISTER_JETFILLER(AK4mult);
+
+class KJetFiller_AK4JESupFactor : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void CheckDeps(){ GenRec = sel->Get<KGenRecSelector*>("GenRec"); }
+		virtual void ListBranches() { branches = {"Jets","GenJets"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) {
+			if(GenRec and GenRec->Jets_genIndex.size()>index) {
+				//if no gen matches, don't modify jet
+				double factor = GenRec->Jets_genIndex[index] >= 0 ? looper->GenJets->at(GenRec->Jets_genIndex[index]).Pt()/looper->Jets->at(index).Pt() : 1.;
+				value.Fill(factor,w);
+			}
+		}
+		//member variables
+		KGenRecSelector* GenRec = NULL;
+};
+REGISTER_JETFILLER(AK4JESupFactor);
+
+class KJetFiller_AK4JESdownFactor : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void CheckDeps(){ GenRec = sel->Get<KGenRecSelector*>("GenRec"); }
+		virtual void ListBranches() { branches = {"Jets","GenJets"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) {
+			if(GenRec and GenRec->Jets_genIndex.size()>index) {
+				//if no gen matches, don't modify jet
+				double factor = GenRec->Jets_genIndex[index] >= 0 ? looper->GenJets->at(GenRec->Jets_genIndex[index]).Pt()/looper->Jets->at(index).Pt() : 1.;
+				//factor = 1 + x corresponds to JESup
+				//therefore, factor = 1 - x corresponds to JESdown
+				//even if x is negative, but if x > 1, don't allow 1 - x to become negative
+				factor = max(0., 1 - (factor - 1));
+				value.Fill(factor,w);
+			}
+		}
+		//member variables
+		KGenRecSelector* GenRec = NULL;
+};
+REGISTER_JETFILLER(AK4JESdownFactor);
 
 //-----------------------------------------------------------------------------
 //per-jet quantities based on invisible dark hadron gen info
