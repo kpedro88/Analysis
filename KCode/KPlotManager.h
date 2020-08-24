@@ -258,6 +258,16 @@ class KPlotManager : public KManager {
 					KBase* tmp = finalizeSet(ntmp,NULL,stmp,localAppend);
 				}
 			}
+
+			if(MySets.empty()){
+				string msg = "Nothing to do: no sets were constructed";
+				if(hasChosenSets){
+					stringstream ss;
+					KParser::printvec(chosensets,ss,",");
+					msg += " (requested: "+ss.str()+")";
+				}
+				throw runtime_error(msg);
+			}
 		}
 		KBase* finalizeSet(KNamedBase* ntmp, KBase* parent, string& selection, bool append){
 			//append selection to name
