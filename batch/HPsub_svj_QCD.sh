@@ -3,29 +3,40 @@
 source exportProd.sh
 
 JOBDIR=jobs
+INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV17
+STORE=root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/qcd/hist3
 CHECKARGS=""
+YEARS=()
+DRYRUN=""
 
 #check arguments
-while getopts "k" opt; do
+while getopts "kdy:" opt; do
 	case "$opt" in
-	k) CHECKARGS="${CHECKARGS} -k"
-	;;
+		k) CHECKARGS="${CHECKARGS} -k"
+		;;
+		y) IFS="," read -a YEARS <<< "$OPTARG"
+		;;
+		d) DRYRUN="echo"
+		;;
 	esac
 done
 
-INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV14
-STORE=root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/qcd/hist2
 ./SKcheck.sh ${CHECKARGS}
 
-SETS=../input/input_sets_hp_qcd_sep.txt
-INPUTS='"input/input_svj_hist.txt","input/input_svj_qcd_met_weight_sel.txt","input/input_svj_qcd_met_weight_hist.txt"'
-for ((i=0; i < $(cat $SETS | wc -l); i+=2)); do
-	LINE1=$(sed -n -e $((i+1))p ${SETS})
-	LINE2=$(sed -n -e $((i+2))p ${SETS})
-	SETNAME=$(echo "$LINE1" | cut -d$'\t' -f3)
-	JOBNAME='svj_qcd_met_weight_part'${i}
-	OUTPUT='"OPTION","string:rootfile['${JOBNAME}']"'
-	EXTRA='"SET","'${LINE1}'","'${LINE2}'"'
-	./HPtemp.sh ${JOBDIR} ${INDIR} ${STORE} "$INPUTS" "$OUTPUT" "$EXTRA" "$JOBNAME"
-done
+for YEAR in ${YEARS[@]}; do
+	INPUTS='"input/input_svj_hist.txt","input/input_svj_qcd_met_weight_sel_filter.txt","input/input_svj_qcd_met_weight_hist.txt","input/input_sets_hp_qcd_sep.txt"'
 
+	SNAME=HistQCD${YEAR}
+	source export${SNAME}.sh
+
+	JOBNAME='svj_qcd'${YEAR}'_met'
+	SLIST=${#SAMPLES[@]}
+	for ((i=0; i < ${#SAMPLES[@]}; i++)); do
+		SAMPLE=${SAMPLES[$i]}
+		SJOBNAME=${JOBNAME}'_part'${i}
+		OUTPUT='"OPTION","vstring:chosensets['${SAMPLE}']","string:rootfile['${SJOBNAME}']"'
+		echo 'KPlotDriver.C+("'"$INDIR"'",{'"$INPUTS"'},{'"$OUTPUT"'})' > jobs/input/macro_${SJOBNAME}.txt
+	done
+
+	$DRYRUN ./HPtemp.sh ${JOBDIR} ${INDIR} ${STORE} ${JOBNAME} "${SLIST}"
+done

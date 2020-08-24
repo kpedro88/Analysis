@@ -1,0 +1,15 @@
+OPTION
+int:npanel[1]
+string+:printsuffix[_qcd_met_filter]
+string:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/qcd/hist3/svj_qcd2016_met.root]
+vstring:extra_text[QCD (p_{T}-binned)]
+
+SET
+hist	mc	QCD_unskimmed	s:legname[unskimmed]	c:color[kBlack]	b:errband[1]
+	base	ext	QCD_unskimmed	b:ext_auto[1]
+hist	mc	QCD_metfilter	s:legname[MET filters]	c:color[kBlue]	b:errband[1]
+	base	ext	QCD_metfilter	b:ext_auto[1]
+hist	mc	QCD_lowgenmet	s:legname[#slash{E}_{T}^{gen} < 15 GeV]	c:color[kRed]	b:errband[1]
+	base	ext	QCD_lowgenmet	b:ext_auto[1]
+hist	mc	QCD_lowgenmetfilter	s:legname[#slash{E}_{T}^{gen} < 15 GeV, filters]	c:color[kMagenta]	b:errband[1]
+	base	ext	QCD_lowgenmetfilter	b:ext_auto[1]

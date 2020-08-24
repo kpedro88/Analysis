@@ -1,0 +1,23 @@
+OPTION
+vstring:disable_branches[*]
+vstring:selections[unskimmed,metfilter,lowgenmet,lowgenmetfilter]
+
+SELECTION
+unskimmed
+	sim
+filter
+	METFilter	b:ecaldeadcell[0]
+	PhiSpikeVeto	s:name[PhiSpikeVeto16]	s:yearmc[MC2016]	s:yeardata[JetHT_2016]	s:spikelist[corrections/phispikes16.txt]	s:leadspikelist[corrections/leadphispikes16.txt]	b:tag[0]
+	PhiSpikeVeto	s:name[PhiSpikeVeto17]	s:yearmc[MC2017]	s:yeardata[JetHT_2017]	s:spikelist[corrections/phispikes17.txt]	s:leadspikelist[corrections/leadphispikes17.txt]	b:tag[0]
+	PhiSpikeVeto	s:name[PhiSpikeVeto18]	s:yearmc[MC2018]	s:yeardata[JetHT_2018]	s:spikelist[corrections/phispikes18.txt]	s:leadspikelist[corrections/leadphispikes18.txt]	b:tag[0]
+metfilter
+	filter
+	sim
+lowgenmet
+	MET	b:gen[1]	d:min[15]	b:invert[1]
+	sim
+lowgenmetfilter
+	MET	b:gen[1]	d:min[15]	b:invert[1]
+	filter
+	sim
+

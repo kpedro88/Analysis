@@ -1,0 +1,20 @@
+OPTION
+int:npanel[1]
+string+:printsuffix[_qcd_met_filter]
+string:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/qcd/hist3/svj_qcd2016_met.root]
+vstring:extra_text[QCD (p_{T}-binned)]
+vstring:denoms[QCD_lowgenmet]
+vstring:numers[QCD_lowgenmetfilter]
+string:rationame[filter/all]
+double:ratiomin[0]
+double:ratiomax[2]
+
+HISTO
+met	i:xnum[100]	d:xmin[0]	d:xmax[1500]	s:xtitle[#slash{E}_{T} [GeV]]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]
+metsig	i:xnum[100]	d:xmin[0.1]	d:xmax[8000]	s:xtitle[S(#slash{E}_{T})]	s:ytitle[arbitrary units]	b:ratio[1]	b:logx[1]	b:logxbin[1]	b:logy[1]
+
+SET
+hist	mc	QCD_lowgenmet	s:legname[#slash{E}_{T}^{gen} < 15 GeV]	c:color[kRed]	b:errband[1]
+	base	ext	QCD_lowgenmet	b:ext_auto[1]
+hist	mc	QCD_lowgenmetfilter	s:legname[#slash{E}_{T}^{gen} < 15 GeV, filters]	c:color[kMagenta]	b:errband[1]
+	base	ext	QCD_lowgenmetfilter	b:ext_auto[1]

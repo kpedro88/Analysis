@@ -7,3 +7,4 @@ leadjetAK4pt	i:xnum[100]	d:xmin[0]	d:xmax[1500]	s:xtitle[p_{T}(j_{1}) [GeV]]	s:y
 leadjetAK8genpt	i:xnum[100]	d:xmin[0]	d:xmax[1500]	s:xtitle[p_{T}^{gen}(j_{1}^{AK8}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
 leadjetAK8pt	i:xnum[100]	d:xmin[0]	d:xmax[1500]	s:xtitle[p_{T}(j_{1}^{AK8}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
 madht	i:xnum[120]	d:xmin[0]	d:xmax[3000]	s:xtitle[H_{T}^{mad} [GeV]]	s:ytitle[number of events]	b:ratio[0]	b:logy[1]
+metsig	i:xnum[100]	d:xmin[0.1]	d:xmax[8000]	s:xtitle[S(#slash{E}_{T})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logx[1]	b:logxbin[1]	b:logy[1]
