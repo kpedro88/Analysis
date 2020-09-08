@@ -11,7 +11,3 @@ base	scan	SVJ_Zprime_Scan_MC2016_block5	u:block[5]	b:chain[1]	ch:filenames[Summe
 base	scan	SVJ_Zprime_Scan_MC2016_block6	u:block[6]	b:chain[1]	ch:filenames[Summer16v3.SVJ_Zprime_Scan_TuneCUETP8M1_13TeV_pythia8_,60,69,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
 base	scan	SVJ_Zprime_Scan_MC2016_block7	u:block[7]	b:chain[1]	ch:filenames[Summer16v3.SVJ_Zprime_Scan_TuneCUETP8M1_13TeV_pythia8_,70,79,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
 base	scan	SVJ_Zprime_Scan_MC2016_block8	u:block[8]	b:chain[1]	ch:filenames[Summer16v3.SVJ_Zprime_Scan_TuneCUETP8M1_13TeV_pythia8_,80,89,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
-base	scan	SVJ_Zprime_Scan_MC2016_block9	u:block[9]	b:chain[1]	ch:filenames[Summer16v3.SVJ_Zprime_Scan_TuneCUETP8M1_13TeV_pythia8_,90,99,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
-base	scan	SVJ_Zprime_Scan_MC2016_block10	u:block[10]	b:chain[1]	ch:filenames[Summer16v3.SVJ_Zprime_Scan_TuneCUETP8M1_13TeV_pythia8_,100,109,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
-base	scan	SVJ_Zprime_Scan_MC2016_block11	u:block[11]	b:chain[1]	ch:filenames[Summer16v3.SVJ_Zprime_Scan_TuneCUETP8M1_13TeV_pythia8_,110,119,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
-base	scan	SVJ_Zprime_Scan_MC2016_block12	u:block[12]	b:chain[1]	ch:filenames[Summer16v3.SVJ_Zprime_Scan_TuneCUETP8M1_13TeV_pythia8_,120,123,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
