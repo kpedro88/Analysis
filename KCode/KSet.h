@@ -85,7 +85,10 @@ class KSet : public KBase {
 				}
 				//special case to allow external histos to have different binning
 				if(all_ext){
-					if(htmp->GetXaxis()->GetXmin()==obj->htmp->GetXaxis()->GetXmin() and htmp->GetXaxis()->GetXmax()==obj->htmp->GetXaxis()->GetXmax()){
+					double diffmin = obj->htmp->GetXaxis()->GetXmin() - htmp->GetXaxis()->GetXmin();
+					double diffmax = obj->htmp->GetXaxis()->GetXmax() - htmp->GetXaxis()->GetXmax();
+					const double eps = 1e-10;
+					if(abs(diffmin)<eps and abs(diffmax)<eps){
 						//keep titles & style from this set
 						htmp->GetXaxis()->SetTitle(obj->htmp->GetXaxis()->GetTitle());
 						htmp->GetYaxis()->SetTitle(obj->htmp->GetYaxis()->GetTitle());
@@ -94,7 +97,9 @@ class KSet : public KBase {
 						MyStyle->Format(obj->htmp);
 					}
 					else {
-						throw runtime_error("Build error: inconsistent ranges in base histo ("+to_string(obj->htmp->GetXaxis()->GetXmin())+","+to_string(obj->htmp->GetXaxis()->GetXmax())+" and child histo ("+to_string(htmp->GetXaxis()->GetXmin())+","+to_string(htmp->GetXaxis()->GetXmax())+")");
+						std::stringstream sdiff;
+						sdiff << scientific << setprecision(10) << diffmin << "," << diffmax;
+						throw runtime_error("Build error: inconsistent ranges in base histo ("+to_string(obj->htmp->GetXaxis()->GetXmin())+","+to_string(obj->htmp->GetXaxis()->GetXmax())+") and child histo ("+to_string(htmp->GetXaxis()->GetXmin())+","+to_string(htmp->GetXaxis()->GetXmax())+") [diff = "+sdiff.str()+"]");
 					}
 				}
 				else {
