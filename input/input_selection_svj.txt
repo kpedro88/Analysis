@@ -101,6 +101,12 @@ dijetmtdetahadloose
 dijetmtdetahadloosemf
 	dijetmtdetahadloose
 	METFilter
+dijetmtdetahadloosefilter
+	dijetmtdeta
+	vetoloose
+	METFilter	b:ecaldeadcell[0]
+	phiveto
+	endcommon
 dijetmtdetahadloosefull
 	NormType
 	dijetmtdeta
