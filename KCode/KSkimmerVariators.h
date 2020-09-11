@@ -517,15 +517,17 @@ class KJetVariator : public KVariator {
 			
 		}
 		virtual void UndoVariation(bool passed) {
-			if(passed){
-				//separate histograms for events passing selection
-				h_JESfactor_passed->Add(h_JESfactor_tmp);
-				h_JESfactorAK8_passed->Add(h_JESfactorAK8_tmp);
-			}
+			if(h_JESfactor_passed){
+				if(passed){
+					//separate histograms for events passing selection
+					h_JESfactor_passed->Add(h_JESfactor_tmp);
+					h_JESfactorAK8_passed->Add(h_JESfactorAK8_tmp);
+				}
 
-			//reset tmp histos
-			h_JESfactor_tmp->Reset();
-			h_JESfactorAK8_tmp->Reset();
+				//reset tmp histos
+				h_JESfactor_tmp->Reset();
+				h_JESfactorAK8_tmp->Reset();
+			}
 
 			KVariator::UndoVariation(passed);
 		}
@@ -547,7 +549,7 @@ class KJetVariator : public KVariator {
 			METPhi = 0;
 		}
 		virtual void Finalize(TFile* file){
-			if(file){
+			if(file and h_JESfactor_passed){
 				file->cd();
 				h_JESfactor->Write();
 				h_JESfactor_passed->Write();
