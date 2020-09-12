@@ -1,5 +1,6 @@
 #include "KCode/KCutflow.h"
 #include "KCode/KMap.h"
+#include "KCode/KMath.h"
 
 #include <TFile.h>
 #include <TH1.h>
@@ -18,7 +19,7 @@ struct Sample {
 	double xsec, lumi;
 };
 
-void CutflowSum(string dir="", vector<Sample> samples={}, bool printerrors=false, int prcsn=2){
+void CutflowSum(string dir="", vector<Sample> samples={}, bool printerrors=false, int prcsn=2, bool skipzeros=false){
 	if(dir.empty()){
 		cout << "Recompiled CutflowSum, exiting." << endl;
 		return;
@@ -30,9 +31,17 @@ void CutflowSum(string dir="", vector<Sample> samples={}, bool printerrors=false
 	for(const auto& sample : samples){
 		TFile* file = KOpen(dir+"/tree_"+sample.name+".root");
 		
-		//get and scale histos
+		//get histos
 		auto nEventTmp = KGet<TH1F>(file,"nEventProc");
 		auto cutflowTmp = KGet<TH1F>(file,"cutflow");
+
+		//fix error values: PoissonErrorUp doesn't hadd correctly
+		for(int b = 1; b <= cutflowTmp->GetNbinsX(); ++b){
+			if(skipzeros and cutflowTmp->GetBinContent(b)==0.) cutflowTmp->SetBinError(b,0.);
+			else cutflowTmp->SetBinError(b,KMath::PoissonErrorUp(cutflowTmp->GetBinContent(b)));
+		}
+
+		//scale histos
 		double weight = sample.lumi * sample.xsec / nEventTmp->GetBinContent(1);
 		nEventTmp->Scale(weight);
 		cutflowTmp->Scale(weight);

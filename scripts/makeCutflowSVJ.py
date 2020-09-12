@@ -14,6 +14,7 @@ parser.add_option("-n", "--names", dest="names", type='string', default="selecti
 parser.add_option("-t", "--type", dest="type", type='choice', default="abs", choices=['abs','rel','raw','rawrel'], help="type of cutflow (abs, rel, raw, rawrel)")
 parser.add_option("-p", "--prec", dest="prec", type='int', default=1, help="numerical precision of output")
 parser.add_option("-e", "--no-error", dest="error", default=True, action="store_false", help="don't display statistical errors")
+parser.add_option("-z", "--skipzeros", dest="skipzeros", default=False, action="store_true", help="ignore errors on zero-count bins")
 parser.add_option("-v", "--verbose", dest="verbose", default=False, action="store_true", help="verbose output")
 (options, args) = parser.parse_args()
 
@@ -125,7 +126,7 @@ for procname,proc in procs.iteritems():
             samples.append('{"'+p[0]+'_MC'+year+'",'+str(p[1])+','+str(lumi)+'}')
 
     # process cutflow lines (summed over years)
-    cmd = "root -b -l -q 'CutflowSum.C("+'"'+options.dir+'",{'+','.join(samples)+'},1,'+str(options.prec)+')'+"'"
+    cmd = "root -b -l -q 'CutflowSum.C("+'"'+options.dir+'",{'+','.join(samples)+'},1,'+str(options.prec)+(',1' if options.skipzeros else "")+')'+"'"
     if options.verbose: print(cmd)
     cutflow = filter(None,os.popen(cmd).read().split('\n'))
     started = False
