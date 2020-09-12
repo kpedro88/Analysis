@@ -1,0 +1,30 @@
+INPUT
+input/input_svj_hist.txt
+
+OPTION
+int:npanel[1]
+double:luminorm[41500]
+double:sizeLeg[20]
+bool:appendsel[0]
+bool:treesuffix[1]
+bool:unitnorm[1]
+string:printsuffix[_unskimmed]
+vstring:selections[dijet]
+
+SELECTION
+dijet
+	Dijet	b:simple[1]
+	MCWeight
+	Histo
+
+HISTO
+deltaphiminAK8	i:xnum[100]	d:xmin[0]	d:xmax[3.15]	s:xtitle[#Delta#phi_{min}(J_{1,2},#slash{E}_{T})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlack]
+met	i:xnum[100]	d:xmin[0]	d:xmax[1500]	s:xtitle[#slash{E}_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlue]
+
+SET
+hist	mc	QCD	s:legname[QCD]	c:color[kBlack]
+	base	ext	QCD	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/qcd/hist4/svj_qcd2017_met.root]	b:ext_auto[1]
+hist	mc	SVJ_2000_20_0.3_peak	s:legname[SVJ_2000_20_0.3_peak]	c:color[kBlue]
+	base	mc	SVJ	s:filename[PrivateSamples.SVJ_2017_mZprime-2000_mDark-20_rinv-0p3_alpha-peak_n-1000_0_RA2AnalysisTree.root]	s:treename[TreeMaker2/PreSelection]
+hist	mc	T1tttt_2000_100	s:legname[T1tttt_2000_100]	c:color[kRed]
+	base	mc	T1tttt_2000_100_MC2017	b:chain[1]	ch:filenames[Fall17.SMS-T1tttt_mGluino-2000_mLSP-100_TuneCP2_13TeV-madgraphMLM-pythia8_,0,10,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]

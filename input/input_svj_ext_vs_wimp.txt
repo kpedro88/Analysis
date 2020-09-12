@@ -1,0 +1,27 @@
+INPUT
+input/input_svj_hist.txt
+
+OPTION
+int:npanel[1]
+double:luminorm[41500]
+double:sizeLeg[20]
+bool:appendsel[0]
+bool:treesuffix[1]
+bool:unitnorm[1]
+
+SELECTION
+simc
+	MCWeight	in:options[input/input_svj_MCWeight_options_2017.txt]
+	Histo
+
+HISTO
+deltaphiminAK8	i:xnum[100]	d:xmin[0]	d:xmax[3.333]	s:xtitle[#Delta#phi_{min}(J_{1,2},#slash{E}_{T})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlack]
+met	i:xnum[100]	d:xmin[0]	d:xmax[1515]	s:xtitle[#slash{E}_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlue]
+
+SET
+hist	mc	QCD	s:legname[QCD]	c:color[kBlack]
+	base	ext	QCD17	s:extfilename[test/Nm1/Nm1_QCD17.root]	vs:exthisto_in[QCD17_DeltaPhiMin_AK8,QCD17_MET]	vs:exthisto_out[deltaphiminAK8,met]
+hist	mc	SVJ_2000_0.3_peak	s:legname[SVJ_2000_0.3_peak]	c:color[kBlue]
+	base	mc	SVJ	s:filename[tree_SVJ_mZprime-2000_mDark-20_rinv-0.3_alpha-peak_MC2017.root]
+hist	mc	T1tttt_2000_100	s:legname[T1ttt_2000_100]	c:color[kRed]
+	base	mc	T1tttt	s:filename[tree_T1tttt_2000_100_MC2017.root]

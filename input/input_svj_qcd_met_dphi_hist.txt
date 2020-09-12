@@ -1,0 +1,13 @@
+OPTION
+vstring:disable_branches[*]
+vstring:selections[dijet]
+
+SELECTION
+dijet
+	Dijet	b:simple[1]
+	MCWeight
+	Histo
+
+HISTO
+deltaphiminAK8	i:xnum[100]	d:xmin[0]	d:xmax[3.15]	s:xtitle[#Delta#phi_{min}(J_{1,2},#slash{E}_{T})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlack]
+met	i:xnum[100]	d:xmin[0]	d:xmax[1500]	s:xtitle[#slash{E}_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	c:color[kBlue]
