@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 selections = OrderedDict([
-    ('Dijet', '\\multicolumn{2}{c}{$\\pt(j_{1,2}) > 200\\GeV$, $\\eta(j_{1,2}) < 2.4$}'),
+    ('Dijet', '\\multicolumn{2}{c}{$\\pt(J_{1,2}) > 200\\GeV$, $\\eta(J_{1,2}) < 2.4$}'),
     ('METMTRatio', '\\metmt & >0.15'),
     ('DeltaEta', '\\deta & <1.5'),
     ('MTAK8', '\\mt & >1500\\GeV'),
