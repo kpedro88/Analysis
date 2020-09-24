@@ -99,6 +99,8 @@ input/fast*/
 /finalizeDatacardsSVJbin.sh
 /flat_svj.py
 /makeJESTree.C
+/test_datacard.py
+/plot_test_dc.py
 
 # linked by setupXML.sh
 /KMVA/pugi*.*

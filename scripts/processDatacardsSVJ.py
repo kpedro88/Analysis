@@ -123,22 +123,21 @@ class SplitDir(object):
     def split(self, hist, store=True, toy=False, toy_name="", norm=0):
         htemp = hist.ProjectionX(hist.GetName(),self.min,self.max)
         htempF = DtoF(htemp)
+        hists = [htempF]
         # keep original norm (rebin may divide by bin width)
         this_norm = htempF.Integral(0,htempF.GetNbinsX()+1)
 
         # make toy before rebinning
         # only make a toy if it will be stored
-        htempT = None
         if store and toy:
             htempN = htempF
             if norm>0:
                 htempN = htempF.Clone(htempF.GetName()+"_norm")
                 htempN.Scale(norm/this_norm)
+                hists.append(htempN)
             htempT = finalBinning.makeToy(htempN,prev_neg=True)
             htempT.SetName(toy_name if len(toy_name)>0 else hist.GetName()+"_toy")
-
-        hists = [htempF]
-        if htempT is not None: hists.append(htempT)
+            hists.append(htempT)
 
         for ih in range(len(hists)):
             hists[ih] = self.rebin(hists[ih])

@@ -112,7 +112,7 @@ void getRange(int n, double* arr, double& ymin, double& ymax){
 
 //usage:
 //root -l 'plotLimit.C+("svj1",{{"mZprime",-1},{"mDark",20},{"rinv",0.3},{"alpha",0.2}},2)'
-void plotLimit(string sname, vector<pair<string,double>> vars, int nsigma=0){
+void plotLimit(string sname, vector<pair<string,double>> vars, int nsigma=0, bool do_obs=false){
 	//ranges for plotting
 	double ymin = 1e10, xmin = 1e10;
 	double ymax = 0, xmax = 0;
@@ -228,6 +228,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, int nsigma=0){
 
 	stringstream soname;
 	soname << "plotLimit_" << sname << "_vs_" << var;
+	if(do_obs) soname << "_obs";
 	string oname = soname.str();
 	KParser::clean(oname);
 	KPlot* plot = new KPlot(oname,localOpt,globalOpt);
@@ -245,7 +246,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, int nsigma=0){
 	//preamble of legend
 	kleg->AddEntry((TObject*)NULL,"95% CL upper limits","");
 	kleg->AddEntry(g_xsec,"Theoretical","l");
-	//kleg->AddEntry(g_obs,"Observed","pe");
+	if(do_obs) kleg->AddEntry(g_obs,"Observed","pe");
 	kleg->AddEntry(g_central,"Median expected","l");
 	if(nsigma>=1) kleg->AddEntry(g_one,"68% expected","f");
 	if(nsigma>=2) kleg->AddEntry(g_two,"95% expected","f");
@@ -269,7 +270,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, int nsigma=0){
 	if(nsigma>=1) g_one->Draw("f same");
 	//g_central->Draw("C same");
 	g_central->Draw("L same");
-	//g_obs->Draw("pC same");
+	if(do_obs) g_obs->Draw("pC same");
 	g_xsec->Draw("C same");
 
 	plot->GetHisto()->Draw("sameaxis"); //draw again so axes on top
@@ -278,5 +279,5 @@ void plotLimit(string sname, vector<pair<string,double>> vars, int nsigma=0){
 	//print image
 	can->Print((plot->GetName()+".png").c_str(),"png");
 	can->Print((plot->GetName()+".eps").c_str(),"eps");
-	system(("epstopdf "+plot->GetName()+".eps").c_str());
+	system(("epstopdf "+plot->GetName()+".eps && rm "+plot->GetName()+".eps").c_str());
 }
