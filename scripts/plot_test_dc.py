@@ -23,7 +23,7 @@ def parse_fname(fname):
     fsplit = fname.split('.')
     N = int(fsplit[0].replace("higgsCombineTest",""))
     X = fsplit[3].replace("region","")
-    Y = (fsplit[4]=="systS0")
+    Y = fsplit[4].replace("syst","") if fsplit[4].startswith("syst") else None
     return N, X, Y
 
 def get_limit_val(df,q):
@@ -77,9 +77,9 @@ for adir in args.dirs:
     for cf in combine_files:
         N, region, S0 = parse_fname(cf)
         df = up.open(cf)['limit'].pandas.df(['limit','quantileExpected'])
-        rinfo = region_info_S0 if S0 else region_info
+        rinfo = region_info_S0 if S0 is not None else region_info
         rinfo[region].x.append(N)
-        if N not in xvals: xvals[N] = "{S0}" if S0 else xnames[adir]
+        if N not in xvals: xvals[N] = "{{{}}}".format(S0) if S0 is not None else xnames[adir]
         rinfo[region].y.append(get_limit_val(df,0.5))
         rinfo[region].yerrup.append(get_limit_val(df,0.84))
         rinfo[region].yerrdn.append(get_limit_val(df,0.16))
@@ -96,8 +96,9 @@ xticks = [xticks[0]-1]+xticks+[xticks[-1]+1]
 xticklabels = [""]+xticklabels+[""]
 for ir,rinfo in enumerate([region_info, region_info_S0]):
     for region,points in rinfo.iteritems():
-        label = region.replace("_2018","")+(" (S0)" if ir==1 else "")
+        label = region.replace("_2018","")
         points.sort()
+        print region,ir,points.x,points.y
         #pts = ax.errorbar(points.x, points.y, yerr=[points.yerrdn, points.yerrup], label=label, color=colors[region], marker='o', fillstyle=markerstyles[ir], fmt='o')
         offset = 0.2 if "cut" in region.lower() else 0.0
         pts = ax.plot([x+offset for x in points.x], points.y, 'o', label=label, color=colors[region], marker='o', fillstyle=markerstyles[ir])
@@ -116,3 +117,4 @@ lax.legend(handles=leghandles, labels=legnames, loc='best', numpoints=1)
 lax.axis("off")
 fig.subplots_adjust(left=0.1, right=0.95, bottom=0.30, top=0.95)
 fig.savefig("test_dc_"+args.outname+".png",**{"dpi":100})
+
