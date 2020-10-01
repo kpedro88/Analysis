@@ -56,7 +56,7 @@ def fsearch(fname,value):
             if value in line: return True
     return False
 
-def make_command(card,region,param_line,num,no_syst,extra,freeze_bkg=None,regions=None):
+def make_command(card,region,param_line,num,no_syst,extra,freeze_bkg=None,freeze_individual=False,regions=None):
     main_params = {
         "highCut": (4,5),
         "lowCut": (4,5),
@@ -72,14 +72,15 @@ def make_command(card,region,param_line,num,no_syst,extra,freeze_bkg=None,region
         if not fsearch(card,"flatParam"): continue
         else: has_fit = True
         # use params from combined fit when freezing constituents of combined region
-        if freeze_bkg is not None and "{}" in freeze_bkg: freeze_bkg = freeze_bkg.format(region)
-        param_line = merge_dict(param_line, get_param_strings(r, main_params[r.replace("_2018","")], freeze_bkg))
+        if freeze_bkg is not None and "{}" in freeze_bkg:
+            freeze_tmp = freeze_bkg.format(r if freeze_individual else region)
+        param_line = merge_dict(param_line, get_param_strings(r, main_params[r.replace("_2018","")], freeze_tmp))
 
     command = "combine -M AsymptoticLimits --name Test{} --keyword-value region={}".format(num,region)
     if param_line is not None: command = command + " " + ' '.join([k+' '+v for k,v in param_line.iteritems()])
     syst_val = ""
     if no_syst: syst_val += "S0"
-    if has_fit and freeze_bkg is not None: syst_val += "B0"
+    if has_fit and freeze_bkg is not None: syst_val += "B0"+("i" if freeze_individual else "")
     if len(syst_val)>0: command += " --keyword-value syst={}".format(syst_val)
     if extra is not None: command += " {}".format(extra)
     command += " " + card
@@ -90,6 +91,7 @@ parser.add_argument("-d", "--dir", dest="dir", type=str, help="directory w/ card
 parser.add_argument("-r", "--region-group", dest="region_group", type=str, action='append', nargs='+', help="regions to combine: name region region ...")
 parser.add_argument("-S", "--no-syst", dest="no_syst", default=False, action='store_true', help="disable systematics")
 parser.add_argument("-B", "--freeze-bkg", dest="freeze_bkg", default=None, type=str, help="name of input file to freeze bkg fit params ({} gets formatted with region)")
+parser.add_argument("-i", "--freeze-individual", dest="freeze_individual", default=False, action='store_true', help="freeze bkg fit params for combination from individual region files")
 parser.add_argument("-D", "--dry-run", dest="dry_run", default=False, action='store_true', help="dry run (print combine commands but don't execute)")
 parser.add_argument("-n", "--num", dest="num", type=int, default=0, help="test number")
 parser.add_argument("-x", "--extra", dest="extra", default=None, type=str, help="extra args for combine commands")
@@ -120,7 +122,7 @@ for group in args.region_group:
         if param_line is not None:
             param_line = {k:v for k,v in pairwise(param_line.split())}
 
-        command = make_command(card,region,param_line,args.num,args.no_syst,args.extra,args.freeze_bkg)
+        command = make_command(card,region,param_line,args.num,args.no_syst,args.extra,args.freeze_bkg,args.freeze_individual)
         fprint(command)
         if not args.dry_run: subprocess.check_call(shlex.split(command))
 
@@ -132,6 +134,6 @@ for group in args.region_group:
         with open(dcfname,'w') as outfile:
             subprocess.check_call(shlex.split(command),stdout=outfile)
 
-        command = make_command(dcfname,group[0],param_line,args.num,args.no_syst,args.extra,args.freeze_bkg,group[index:])
+        command = make_command(dcfname,group[0],param_line,args.num,args.no_syst,args.extra,args.freeze_bkg,args.freeze_individual,group[index:])
         fprint(command)
         if not args.dry_run: subprocess.check_call(shlex.split(command))

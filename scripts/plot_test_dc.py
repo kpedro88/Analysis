@@ -64,6 +64,7 @@ xnames = {
     "stat3100": "[WS] fit bkg",
     "stat3100mc": "[WS] MC bkg (norm)",
     "stat3100mctoy": "[WS] MC bkg (toy)",
+    "stat3100rename": "[WS] fit bkg mH_region",
 }
 
 xvals = {}
@@ -73,7 +74,7 @@ xvals = {}
 region_info = defaultdict(Region)
 region_info_S0 = defaultdict(Region)
 for adir in args.dirs:
-    combine_files = glob.glob(os.path.join(adir,"higgs*.root"))
+    combine_files = glob.glob(os.path.join(adir,"higgs*AsymptoticLimits*.root"))
     for cf in combine_files:
         N, region, S0 = parse_fname(cf)
         df = up.open(cf)['limit'].pandas.df(['limit','quantileExpected'])
@@ -84,14 +85,17 @@ for adir in args.dirs:
         rinfo[region].yerrup.append(get_limit_val(df,0.84))
         rinfo[region].yerrdn.append(get_limit_val(df,0.16))
 
+# remove unnecessary gaps
+xshifted = {N:iN for iN,N in enumerate(sorted(xvals.keys()))}
+
 fig, (ax, lax) = plt.subplots(ncols=2, gridspec_kw={"width_ratios":[3.0,1]})
 leghandles = []
 legnames = []
 legorder = []
 ax.set_xlabel('test')
 ax.set_ylabel('r')
-xticks = list(sorted(xvals.keys()))
-xticklabels = [xvals[x] for x in xticks]
+xticks = list(sorted(xshifted.values()))
+xticklabels = [xvals[x] for x in sorted(xvals.keys())]
 xticks = [xticks[0]-1]+xticks+[xticks[-1]+1]
 xticklabels = [""]+xticklabels+[""]
 for ir,rinfo in enumerate([region_info, region_info_S0]):
@@ -101,7 +105,7 @@ for ir,rinfo in enumerate([region_info, region_info_S0]):
         print region,ir,points.x,points.y
         #pts = ax.errorbar(points.x, points.y, yerr=[points.yerrdn, points.yerrup], label=label, color=colors[region], marker='o', fillstyle=markerstyles[ir], fmt='o')
         offset = 0.2 if "cut" in region.lower() else 0.0
-        pts = ax.plot([x+offset for x in points.x], points.y, 'o', label=label, color=colors[region], marker='o', fillstyle=markerstyles[ir])
+        pts = ax.plot([xshifted[x]+offset for x in points.x], points.y, 'o', label=label, color=colors[region], marker='o', fillstyle=markerstyles[ir])
         ax.set_xticks(xticks)
         ax.set_xticklabels(xticklabels, rotation=45, ha='right')
         if ir==0:
