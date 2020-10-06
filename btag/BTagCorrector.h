@@ -185,12 +185,12 @@ class BTagCorrector {
 								<< ", " << sfEffLists[ja][0] << ", " << sfEffLists[ja][1] << ", " << sfEffLists[ja][2] << endl;
 							
 				if(Jets_bDiscriminator->at(ja) > wp){
-					c_numer *= eff_a;
-					c_denom *= eff_a*sf_a;
+					c_numer *= eff_a*sf_a;
+					c_denom *= eff_a;
 				}
 				else {
-					c_numer *= 1-eff_a;
-					c_denom *= 1-eff_a*sf_a;
+					c_numer *= 1-eff_a*sf_a;
+					c_denom *= 1-eff_a;
 				}
 			}
 			
