@@ -612,7 +612,7 @@ class KPlotManager : public KManager {
 					if(unitnorm) MySets[s]->Normalize(1,true);
 					if(xbindivide or ybindivide) MySets[s]->BinDivide(xbindivide,ybindivide);
 					MySets[s]->DoFits();
-					MySets[s]->AddToLegend(kleg);
+					if(!MySets[s]->GetLocalOpt()->Get("skiplegend",false)) MySets[s]->AddToLegend(kleg);
 				}
 				if(printyield) cout << endl;
 				

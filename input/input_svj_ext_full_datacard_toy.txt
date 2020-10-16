@@ -1,3 +1,8 @@
+OPTION
+string+:printsuffix[_toy]
+
 SET
 hist	data	data	i:panel[1]	s:legname[toy data]
+	base	ext	data	vs:exthisto_in[Bkg_toy]	vs:exthisto_out[MTAK8]
+hist	data	data2	i:panel[1]	s:legname[toy data]	c:markercolor[kWhite]	f:markersize[1.5]	b:skiplegend[1]
 	base	ext	data	vs:exthisto_in[Bkg_toy]	vs:exthisto_out[MTAK8]
