@@ -135,7 +135,12 @@ class KFit {
 template <>
 void KFit::Normalize<TH1>(TH1* htmp) {
 	if(normpar >= 0) {
-		fn->FixParameter(normpar,htmp->Integral(-1,-1));
+		//set normpar to 1 to get function integral
+		fn->SetParameter(normpar,1.);
+		double int_f = fn->Integral(htmp->GetBinLowEdge(1),htmp->GetBinLowEdge(htmp->GetNbinsX()+1));
+		//get function integral and histo integral over same range
+		double int_h = htmp->Integral(1,htmp->GetNbinsX());
+		fn->FixParameter(normpar,int_h/int_f);
 	}
 }
 
