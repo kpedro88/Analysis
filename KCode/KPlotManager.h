@@ -623,7 +623,7 @@ class KPlotManager : public KManager {
 				p.second->DrawHist();
 				//draw sets (reverse order, so first set is on top)
 				for(int s = MySets.size()-1; s >= 0; s--){
-					MySets[s]->Draw(pad1);
+					if(!MySets[s]->GetLocalOpt()->Get("skipdraw",false)) MySets[s]->Draw(pad1);
 					
 					//save histos in root file if requested
 					if(out_file){

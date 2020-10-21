@@ -1,0 +1,12 @@
+OPTION
+string+:printsuffix[_sigtoy]
+string:yieldref[data3]
+
+SET
+hist	data	data	i:panel[1]	s:legname[toy data (sig. inj.)]	b:yieldnorm[0]
+	base	ext	data	s:extfilename[test/datacard_toy.root]	vs:exthisto_in[Bkg_toy]	vs:exthisto_out[MTAK8]
+hist	data	data2	i:panel[1]	c:markercolor[kWhite]	f:markersize[1.5]	b:skiplegend[1]	b:yieldnorm[0]
+	base	ext	data	s:extfilename[test/datacard_toy.root]	vs:exthisto_in[Bkg_toy]	vs:exthisto_out[MTAK8]
+hist	data	data3	i:panel[1]	c:markercolor[kWhite]	f:markersize[1.5]	b:skiplegend[1]	b:skipdraw[1]
+	base	ext	data	s:extfilename[test/datacard_toy.root]	vs:exthisto_in[Bkg_toy]	vs:exthisto_out[MTAK8]
+	base	ext	SVJ_3100_20_0.3_peak_MC2017	vs:exthisto_in[SVJ_mZprime3100_mDark20_rinv03_alphapeak]	vs:exthisto_out[MTAK8]	b:subtract[1]
