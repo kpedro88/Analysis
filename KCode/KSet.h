@@ -523,16 +523,15 @@ class KSetRatio: public KSet {
 		//enums for different ratio calculations
 		//DataMC = data/MC, TF = data/MC but keep both errors, PctDiff = (data - MC)/MC, Pull = (data - MC)/err, Q1 = S/sqrt(B), Q2=S/sqrt(S+B), Q3 = 2[sqrt(S+B) - sqrt(B)], Q4 = sqrt(2*[(S+B)*log(1+S/B)-S]), Binom = pass/all
 		//numer = data, sig; denom = MC, bkg
-		enum ratiocalc { DataMC=0, PctDiff=1, Pull=2, Q1=3, Q2=4, Q3=5, Q4=6, Binom=7, TF=8, Res=9, RelRes=10 };
+		enum ratiocalc { DataMC=0, PctDiff=1, Pull=2, Q1=3, Q2=4, Q3=5, Q4=6, Binom=7, TF=8, Res=9, RelRes=10, PullFit=11 };
 		//constructor
 		KSetRatio() : KSet() {}
 		KSetRatio(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KSet(name_, localOpt_, globalOpt_), calc(DataMC), noErrBand(false) { 
 			children.resize(2);
-			string calcName = "";
 			globalOpt->Get("ratiocalc",calcName);
 			SetCalc(calcName);
 			//auto disable ratio fits on residuals
-			if(calc==Res or calc==RelRes) localOpt->Set<vector<string>>("ratiofits",{});
+			if(calc==Res or calc==RelRes or calc==PullFit) localOpt->Set<vector<string>>("ratiofits",{});
 		}
 		//destructor
 		virtual ~KSetRatio() {}
@@ -556,6 +555,7 @@ class KSetRatio: public KSet {
 			else if(calcName=="Binom") calc = Binom;
 			else if(calcName=="Res") calc = Res;
 			else if(calcName=="RelRes") calc = RelRes;
+			else if(calcName=="PullFit") calc = PullFit;
 		}
 		
 		//ratio class acts a little differently:
@@ -582,7 +582,7 @@ class KSetRatio: public KSet {
 			int nbins = hrat->GetNbinsX()+1;
 			//comparing a set to itself: must be residuals from fit
 			if(children[0]==children[1]){
-				if(calc!=Res and calc!=RelRes) calc = Res;
+				if(calc!=Res and calc!=RelRes and calc!=PullFit) calc = Res;
 			}
 			//only pull,data/MC supported for 2D
 			//todo: add others
@@ -692,18 +692,53 @@ class KSetRatio: public KSet {
 				}
 				noErrBand = true;
 			}
-			else if(calc==Res or calc==RelRes){
+			else if(calc==Res or calc==RelRes or calc==PullFit){ //data-fit, (data-fit)/fit, (data-fit)/err
 				const auto& basefits = children[0]->GetFits();
 				for(auto fit : basefits){
-					TH1* rtmp = (TH1*)hrat->Clone(("residual_"+fit->GetName()).c_str());
+					TH1* rtmp = (TH1*)hrat->Clone((calcName+"_"+fit->GetName()).c_str());
 					//subtract function
-					rtmp->Add(fit->GetFn(),-1);
-					//divide by function if relative
-					if(calc==RelRes) rtmp->Divide(fit->GetFn());
+					if(calc==Res or calc==RelRes){
+						rtmp->Add(fit->GetFn(),-1);
+						//divide by function if relative
+						if(calc==RelRes) rtmp->Divide(fit->GetFn());
+					}
+					else if(calc==PullFit){ //divide by data error
+						for(int b = 0; b < nbins; b++){
+							//subtract by integral rather than center of bin
+							rtmp->SetBinContent(b, rtmp->GetBinContent(b) - fit->GetFn()->Integral(rtmp->GetBinLowEdge(b), rtmp->GetBinLowEdge(b+1))/rtmp->GetBinWidth(100));
+							//choice of up or down err follows:
+							//  https://github.com/CMSDIJET/DijetRootTreeAnalyzer/blob/5735a7ff8819093e67ad189589dcb10e08b0520a/python/BinnedFit.py#L116-L209
+							//  RooHist::makeResidHist()
+							double err_tot_data = rtmp->GetBinContent(b) > 0 ? KMath::PoissonErrorLow(hrat->GetBinContent(b)) : KMath::PoissonErrorUp(hrat->GetBinContent(b));
+							rtmp->SetBinContent(b, err_tot_data > 0 ? rtmp->GetBinContent(b)/err_tot_data : 0);
+							//technically this should set up and down err separately
+							rtmp->SetBinError(b, err_tot_data > 0 ? rtmp->GetBinError(b)/err_tot_data : 0);
+						}
+					}
 					//formatting
 					fit->GetStyle()->Format(rtmp);
 					//store
 					obj->rtmp.push_back(rtmp);
+				}
+				//signal case (no fit): (s+b)-b = s (data should be denom)
+				if(basefits.empty() and calc==PullFit){
+					TH1* rtmp = (TH1*)hrat->Clone((calcName+"_"+children[0]->GetName()).c_str());
+					for(int b = 0; b < nbins; b++){
+						//s+b > b always, so use up err
+						double err_tot_data = KMath::PoissonErrorUp(h1->GetBinContent(b));
+						rtmp->SetBinContent(b, err_tot_data > 0 ? rtmp->GetBinContent(b)/err_tot_data : 0);
+						rtmp->SetBinError(b, err_tot_data > 0 ? rtmp->GetBinError(b)/err_tot_data : 0);
+					}
+					children[0]->GetStyle()->Format(rtmp);
+					obj->rtmp.push_back(rtmp);
+					//different style
+					localOpt->Set<string>("drawopt",children[0]->GetStyle()->GetDrawOpt());
+					MyStyle->SetLocalOpt(localOpt);
+				}
+				else if(calc==PullFit){
+					//also different style for data case
+					localOpt->Set<string>("drawopt","hist");
+					MyStyle->SetLocalOpt(localOpt);
 				}
 				noErrBand = true;
 			}
@@ -797,6 +832,7 @@ class KSetRatio: public KSet {
 		}
 	protected:
 		//new member variables
+		string calcName;
 		ratiocalc calc;
 		bool noErrBand;
 };

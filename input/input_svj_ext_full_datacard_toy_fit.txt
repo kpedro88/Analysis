@@ -1,0 +1,22 @@
+OPTION
+string:rationame[(Data-Fit)/#sigma]
+double:ratiomin[-4.5]
+double:ratiomax[4.5]
+string:ratiocalc[PullFit]
+bool:ratioline[0]
+bool:ratioleg[0]
+string+:printsuffix[_toy_fit]
+double:luminorm[137200]
+double:NdivYratio[505]
+
+SET
+hist	mc	SVJ_2100_20_0.3_peak	s:legname[SVJ_2100_20_0.3_peak]	c:color[kBlue]	i:linestyle[7]	i:panel[0]	b:yieldnorm[0]	vs:fits[]
+	base	ext	SVJ_2100_20_0.3_peak_MC2017	vs:exthisto_in[SVJ_mZprime2100_mDark20_rinv03_alphapeak]	vs:exthisto_out[MTAK8]
+hist	mc	SVJ_3100_20_0.3_peak	s:legname[SVJ_3100_20_0.3_peak]	c:color[kCyan + 2]	i:linestyle[7]	i:panel[0]	b:yieldnorm[0]	vs:fits[]
+	base	ext	SVJ_3100_20_0.3_peak_MC2017	vs:exthisto_in[SVJ_mZprime3100_mDark20_rinv03_alphapeak]	vs:exthisto_out[MTAK8]
+hist	mc	SVJ_4100_20_0.3_peak	s:legname[SVJ_4100_20_0.3_peak]	c:color[kMagenta]	i:linestyle[7]	i:panel[0]	b:yieldnorm[0]	vs:fits[]
+	base	ext	SVJ_4100_20_0.3_peak_MC2017	vs:exthisto_in[SVJ_mZprime4100_mDark20_rinv03_alphapeak]	vs:exthisto_out[MTAK8]
+hist	data	data	i:panel[1]	s:legname[toy data]
+	base	ext	data	vs:exthisto_in[Bkg_toy]	vs:exthisto_out[MTAK8]
+hist	data	data_sig	i:panel[1]	s:legname[toy data (sig. inj.)]	b:yieldnorm[0]
+	base	ext	data	s:extfilename[test/datacard_toy.root]	vs:exthisto_in[Bkg_toy]	vs:exthisto_out[MTAK8]

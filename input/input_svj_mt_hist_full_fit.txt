@@ -1,0 +1,2 @@
+HISTO
+MTAK8	i:xnum[130]	d:xmin[1500]	d:xmax[8000]	s:xtitle[M_{T} [GeV]]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kMagenta]	vs:fits[fmain]
