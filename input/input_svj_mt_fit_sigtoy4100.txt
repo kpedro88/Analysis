@@ -1,0 +1,5 @@
+FIT
+fmain_highCut	s:fn[[0]*(1-x/13000)^[1]*(x/13000)^(-([2]+[3]*log(x/13000)+[4]*log(x/13000)^2+[5]*log(x/13000)^3))]	vd:pars[1,10.8732944831,1.364182758,-0.731121785577,0.432668876832,0.160997516293]	s:legname[f_{1,4}(x)]	in:input[input/input_svj_mt_fit_opt.txt]
+fmain_lowCut	s:fn[[0]*(1-x/13000)^[1]*(x/13000)^(-([2]+[3]*log(x/13000)+[4]*log(x/13000)^2+[5]*log(x/13000)^3))]	vd:pars[1,-6.08935464482,8.98489995697,-6.83790549882,-4.53227594568,-0.809484200746]	s:legname[f_{1,4}(x)]	in:input[input/input_svj_mt_fit_opt.txt]
+fmain_highSVJ2	s:fn[[0]*(1-x/13000)^[1]*(x/13000)^(-[2])]	vd:pars[1,5.08704643261,4.21562487654]	s:legname[f_{1,1}(x)]	in:input[input/input_svj_mt_fit_opt.txt]
+fmain_lowSVJ2	s:fn[[0]*(1-x/13000)^[1]*(x/13000)^(-[2])]	vd:pars[1,0.0516924445711,8.0152861793]	s:legname[f_{1,1}(x)]	in:input[input/input_svj_mt_fit_opt.txt]

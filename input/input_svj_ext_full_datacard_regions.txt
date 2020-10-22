@@ -1,3 +1,6 @@
+OPTION
+vstring+:chosensets[SVJ_2100_20_0.3_peak,SVJ_3100_20_0.3_peak,SVJ_4100_20_0.3_peak,bkg]
+
 SET
 #hist	mc	SVJ_2000_20_0.3_peak	s:legname[SVJ_2000_20_0.3_peak]	c:color[kBlue]	i:linestyle[7]	i:panel[0]	b:yieldnorm[0]
 #	base	ext	SVJ_2000_20_0.3_peak_MC2017	vs:exthisto_in[SVJ_mZprime2000_mDark20_rinv03_alphapeak]	vs:exthisto_out[MTAK8]

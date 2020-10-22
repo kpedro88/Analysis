@@ -1,8 +1,9 @@
 OPTION
 string+:printsuffix[_toy]
+vstring+:chosensets[data,data2]
 
 SET
-hist	data	data	i:panel[1]	s:legname[toy data]
+hist	data	data	i:panel[1]	s:legname[toy data]	vs:extra_text[(no signal)]
 	base	ext	data	vs:exthisto_in[Bkg_toy]	vs:exthisto_out[MTAK8]
 hist	data	data2	i:panel[1]	s:legname[toy data]	c:markercolor[kWhite]	f:markersize[1.5]	b:skiplegend[1]
 	base	ext	data	vs:exthisto_in[Bkg_toy]	vs:exthisto_out[MTAK8]
