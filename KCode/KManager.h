@@ -59,6 +59,9 @@ class KManager {
 		//parse input file
 		bool ParseFile(string inname){
 			bool parsed_ = true;
+
+			//skip empty filenames
+			if(inname.empty()) return parsed_;
 			
 			//infinite loop detection
 			if(inputs.find(inname)!=inputs.end()){
