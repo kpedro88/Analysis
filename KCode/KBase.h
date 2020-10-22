@@ -133,7 +133,8 @@ class KBase {
 		virtual TH1* AddHisto(string s, TH1* h, OptionMap* omap=NULL);
 		//sets up fits for current histo (should only be called on top-level sets)
 		virtual void AddFits(string s, OptionMap* omap, OptionMapMap& fitopts, string fitopt="fits") {
-			vector<string> fits; omap->Get(fitopt,fits);
+			//histo fit list overrides global fit list
+			vector<string> fits; globalOpt->Get(fitopt,fits); omap->Get(fitopt,fits);
 			if(fits.empty()) return;
 			//cases: 1) no localfits specified, just use fits from histo, 2) empty localfits specified -> don't fit, 3) subset specified, fit just that subset
 			//use intersection of histo fits and localfits because localfits may not be strict subset of histo fits

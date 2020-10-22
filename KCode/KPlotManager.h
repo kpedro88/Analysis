@@ -345,9 +345,6 @@ class KPlotManager : public KManager {
 			//do everything
 			if(!parsed) return;
 
-			//put fit options into global
-			globalOpt->Set("fits",&MyFitOptions);
-			
 			//setup root output file if requested
 			string rootfilename = "";
 			if(globalOpt->Get<string>("rootfile",rootfilename) and rootfilename.size()>0) out_file = KOpen(rootfilename+".root","RECREATE");
