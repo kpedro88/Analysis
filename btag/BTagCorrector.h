@@ -58,17 +58,17 @@ class BTagCorrector {
 				h_eff_udsg->Divide(d_eff_udsg);
 			}
 		}
-		void SetCalib(string cfile){
+		void SetCalib(string cfile, BTagEntryS::OperatingPoint op=BTagEntryS::OP_MEDIUM){
 			//initialize btag helper classes
 			calib = BTagCalibrationS("",cfile);
-			reader = BTagCalibrationReaderS(BTagEntryS::OP_MEDIUM, "central", {"up","down"});
-			reader.load(calib, BTagEntryS::FLAV_B, "comb"); reader.load(calib, BTagEntryS::FLAV_C, "comb");  reader.load(calib, BTagEntryS::FLAV_UDSG, "incl");
+			reader = BTagCalibrationReaderS(op, "central", {"up","down"});
+			reader.load(calib, BTagEntryS::FLAV_B, "comb"); reader.load(calib, BTagEntryS::FLAV_C, "comb"); reader.load(calib, BTagEntryS::FLAV_UDSG, "incl");
 		}
-		void SetCalibFastSim(string cfile){
+		void SetCalibFastSim(string cfile, BTagEntryS::OperatingPoint op=BTagEntryS::OP_MEDIUM){
 			//read CFs
 			calibFast = BTagCalibrationS("",cfile);
-			readerFast = BTagCalibrationReaderS(BTagEntryS::OP_MEDIUM, "central", {"up","down"});
-			readerFast.load(calibFast, BTagEntryS::FLAV_B, "fastsim"); readerFast.load(calibFast, BTagEntryS::FLAV_C, "fastsim");  readerFast.load(calibFast, BTagEntryS::FLAV_UDSG, "fastsim");
+			readerFast = BTagCalibrationReaderS(op, "central", {"up","down"});
+			readerFast.load(calibFast, BTagEntryS::FLAV_B, "fastsim"); readerFast.load(calibFast, BTagEntryS::FLAV_C, "fastsim"); readerFast.load(calibFast, BTagEntryS::FLAV_UDSG, "fastsim");
 		}
 		void SetBtagSFunc(int u) { btagSFunc = u==0 ? "central" : (u==1 ? "up" : "down"); }
 		void SetCtagSFunc(int u) { btagSFunc = u==0 ? "central" : (u==1 ? "up" : "down"); } //ctag and btag are correlated
