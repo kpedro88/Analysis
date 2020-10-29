@@ -712,6 +712,17 @@ class KFiller_MTJJJAK8 : public KFiller {
 };
 REGISTER_FILLER(MTJJJAK8);
 
+//wide jet mass
+class KFiller_widejetmass : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void CheckDeps(){ WideJetMass = sel->Get<KWideJetMassSelector*>("WideJetMass"); }
+		virtual void Fill(KValue& value, double w) { if(WideJetMass) value.Fill(WideJetMass->mass,w); }
+		//member variables
+		KWideJetMassSelector* WideJetMass = NULL;
+};
+REGISTER_FILLER(widejetmass);
+
 //-----------------------------------------------------------------------------
 //transverse mass w/ regression
 class KFiller_MTAK8reg : public KFiller {

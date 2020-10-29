@@ -550,12 +550,14 @@ class KDijetAK4Selector : public KSelector {
 
 		//used for non-dummy selectors
 		virtual bool Cut() {
+			goodJets.clear();
 			if(looper->Jets->size()<njet) return false;
 			//per-jet cuts, if enabled
 			for(unsigned j = 0; j < njet; ++j){
 				if(id and !looper->Jets_ID->at(j)) return false;
 				if(pt>0 and looper->Jets->at(j).Pt()<=pt) return false;
 				if(eta>0 and abs(looper->Jets->at(j).Eta())>=eta) return false;
+				goodJets.push_back(looper->Jets->at(j));
 			}
 			return true;
 		}
@@ -564,8 +566,132 @@ class KDijetAK4Selector : public KSelector {
 		unsigned njet;
 		bool id;
 		double pt, eta;
+		vector<TLorentzVector> goodJets;
 };
 REGISTER_SELECTOR(DijetAK4);
+
+//----------------------------------------------------
+class KWideJetSelector : public KSelector {
+	public:
+		//constructor
+		KWideJetSelector() : KSelector() { }
+		KWideJetSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), radius(1.1), DijetAK4(nullptr) {
+			//check for options
+			localOpt->Get("radius",radius);
+		}
+		virtual void CheckDeps(){
+			DijetAK4 = sel->Get<KDijetAK4Selector*>("DijetAK4");
+			if(!DijetAK4) depfailed = true;
+		}
+		virtual void ListBranches(){
+			branches.insert(branches.end(),{
+				"Jets",
+				"Jets_ID",
+			});
+		}
+
+		//this selector doesn't add anything to tree
+
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			if(depfailed) return false;
+			const auto& seedJets = DijetAK4->goodJets;
+			//this copy gets modified
+			wideJets = seedJets;
+
+			//check all the other jets against DijetAK4 cuts
+			for(unsigned j = DijetAK4->njet; j < looper->Jets->size(); ++j){
+				if(DijetAK4->id and !looper->Jets_ID->at(j)) continue;
+				if(DijetAK4->pt>0 and looper->Jets->at(j).Pt()<=DijetAK4->pt) continue;
+				if(DijetAK4->eta>0 and abs(looper->Jets->at(j).Eta())>=DijetAK4->eta) continue;
+
+				//find closest seed jet
+				double minDR = 1e10;
+				int minDRindex = -1;
+				for(unsigned s = 0; s < seedJets.size(); ++s){
+					double deltaR = looper->Jets->at(j).DeltaR(seedJets[s]);
+					if(deltaR < minDR){
+						minDR = deltaR;
+						minDRindex = s;
+					}
+				}
+
+				//check radius to add to wide jet
+				if(minDR < radius) wideJets[minDRindex] += looper->Jets->at(j);
+			}
+
+			return true;
+		}
+
+		//member variables
+		double radius;
+		KDijetAK4Selector* DijetAK4;
+		vector<TLorentzVector> wideJets;
+};
+REGISTER_SELECTOR(WideJet);
+
+//----------------------------------------------------
+class KWideJetDeltaEtaSelector : public KSelector {
+	public:
+		//constructor
+		KWideJetDeltaEtaSelector() : KSelector() { }
+		KWideJetDeltaEtaSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), max(1.1), min(-1), WideJet(nullptr) {
+			//check for options
+			localOpt->Get("max",max);
+			localOpt->Get("min",min);
+		}
+		virtual void CheckDeps(){
+			WideJet = sel->Get<KWideJetSelector*>("WideJet");
+			if(!WideJet) depfailed = true;
+		}
+
+		//this selector doesn't add anything to tree
+
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			const auto& wideJets = WideJet->wideJets;
+			double deta = abs(wideJets.at(0).Eta()-wideJets.at(1).Eta());
+			return (min<0 or deta > min) and (max<0 or deta < max);
+		}
+
+		//member variables
+		double min, max;
+		KWideJetSelector* WideJet;
+};
+REGISTER_SELECTOR(WideJetDeltaEta);
+
+//----------------------------------------------------
+class KWideJetMassSelector : public KSelector {
+	public:
+		//constructor
+		KWideJetMassSelector() : KSelector() { }
+		KWideJetMassSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), min(0), WideJet(nullptr) {
+			//check for options
+			localOpt->Get("min",min);
+		}
+		virtual void CheckDeps(){
+			WideJet = sel->Get<KWideJetSelector*>("WideJet");
+			if(!WideJet) depfailed = true;
+		}
+
+		//this selector doesn't add anything to tree
+
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			const auto& wideJets = WideJet->wideJets;
+			TLorentzVector vjj;
+			for(const auto& jet : wideJets){
+				vjj += jet;
+			}
+			mass = vjj.M();
+			return (min<0 or mass > min);
+		}
+
+		//member variables
+		double min, mass;
+		KWideJetSelector* WideJet;
+};
+REGISTER_SELECTOR(WideJetMass);
 
 //----------------------------------------------------
 //selects events based on MET value
