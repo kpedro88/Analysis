@@ -363,6 +363,9 @@ class KBaseExt : public KBase {
 			TDirectory* dir = NULL;
 			if(!dextra.empty()) dir = KGet<TDirectory>(file,dextra);
 
+			//check for k-factor (for non-ext, applied in KMCWeightSelector)
+			useKFactor = localOpt->Get("kfactor",kfactor);
+
 			add_ext = true;
 			if(ext_auto){
 				TKey* key;
@@ -411,6 +414,7 @@ class KBaseExt : public KBase {
 			//otherwise, set current histo the usual way
 			obj = new KObject();
 			obj->htmp = (TH1*)h->Clone();
+			if (useKFactor) obj->htmp->Scale(kfactor);
 			MyObjects.Add(stmp,obj);
 			return obj->htmp;
 		}
@@ -424,6 +428,8 @@ class KBaseExt : public KBase {
 	private:
 		//member variables
 		bool add_ext;
+		bool useKFactor;
+		double kfactor;
 };
 REGISTER_SET(KBaseExt,base,ext);
 
