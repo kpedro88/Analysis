@@ -705,7 +705,7 @@ class KSetRatio: public KSet {
 					else if(calc==PullFit){ //divide by data error
 						for(int b = 0; b < nbins; b++){
 							//subtract by integral rather than center of bin
-							rtmp->SetBinContent(b, rtmp->GetBinContent(b) - fit->GetFn()->Integral(rtmp->GetBinLowEdge(b), rtmp->GetBinLowEdge(b+1))/rtmp->GetBinWidth(100));
+							rtmp->SetBinContent(b, rtmp->GetBinContent(b) - fit->GetFn()->Integral(rtmp->GetBinLowEdge(b), rtmp->GetBinLowEdge(b+1))/rtmp->GetBinWidth(b));
 							//choice of up or down err follows:
 							//  https://github.com/CMSDIJET/DijetRootTreeAnalyzer/blob/5735a7ff8819093e67ad189589dcb10e08b0520a/python/BinnedFit.py#L116-L209
 							//  RooHist::makeResidHist()
