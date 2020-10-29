@@ -41,10 +41,11 @@ class KFit {
 			opts += "N";
 			legname = name;
 			localOpt->Get("legname",legname);
+			legpars = localOpt->Get("legpars",true);
 			localOpt->Get("splitleg",splitleg);
 			//freeze specific or all parameters (freeze all = don't fit at all)
 			vector<int> fixpars; localOpt->Get("fixpars",fixpars);
-			bool freeze = localOpt->Get("freeze",false);
+			freeze = localOpt->Get("freeze",false);
 			if(freeze) {
 				fixpars.clear(); fixpars.resize(pars.size(),0);
 				iota(fixpars.begin(),fixpars.end(),0);
@@ -54,6 +55,7 @@ class KFit {
 			}
 			//parameter for normalization
 			localOpt->Get("normpar",normpar);
+			use_yield = localOpt->Get("yield",yield);
 			//precision for printing pars and chi2
 			localOpt->Get("precision",prcsn);
 			precfixed = localOpt->Get("precfixed",true);
@@ -81,6 +83,8 @@ class KFit {
 			Normalize(htmp);
 			//if all pars are fixed, this just sets chi2 and ndf
 			ptr = htmp->Fit(fn,opts.c_str());
+			//if all fixed: adjust ndf (exclude normpar)
+			if(freeze) fn->SetNDF(fn->GetNDF()-fn->GetNpar()+(normpar>=0?1:0));
 		}
 		template <typename T>
 		void Normalize(T* htmp) {}
@@ -92,19 +96,21 @@ class KFit {
 			sleg << legname << ", #chi^{2} / n_{dof} = " << fn->GetChisquare() << " / " << fn->GetNDF();
 			string ssleg = sleg.str();
 			vector<string> extra_text;
-			//print params 2 at a time to avoid overflow
-			int ctr = 0; sleg.str("");
-			for(int i = 0; i < fn->GetNpar(); ++i){
-				sleg << "p_{" << i << "} = " << fn->GetParameter(i);
-				if(printerr) sleg << " #pm " << fn->GetParError(i);
-				if(ctr==splitleg-1 or i==fn->GetNpar()-1){
-					extra_text.push_back(sleg.str());
-					sleg.str("");
-					ctr = 0;
-				}
-				else {
-					sleg << ", ";
-					++ctr;
+			if(legpars){
+				//print params 2 at a time to avoid overflow
+				int ctr = 0; sleg.str("");
+				for(int i = 0; i < fn->GetNpar(); ++i){
+					sleg << "p_{" << i << "} = " << fn->GetParameter(i);
+					if(printerr) sleg << " #pm " << fn->GetParError(i);
+					if(ctr==splitleg-1 or i==fn->GetNpar()-1){
+						extra_text.push_back(sleg.str());
+						sleg.str("");
+						ctr = 0;
+					}
+					else {
+						sleg << ", ";
+						++ctr;
+					}
 				}
 			}
 			string option = style->GetLegOpt();
@@ -123,9 +129,12 @@ class KFit {
 		bool setrange = false;
 		bool freeze = false;
 		string legname;
+		bool legpars;
 		string opts;
 		int splitleg = 2;
 		int normpar = -1;
+		bool use_yield;
+		double yield;
 		int prcsn = 2;
 		bool precfixed = true;
 		bool printerr = false;
@@ -138,8 +147,8 @@ void KFit::Normalize<TH1>(TH1* htmp) {
 		//set normpar to 1 to get function integral
 		fn->SetParameter(normpar,1.);
 		double int_f = fn->Integral(htmp->GetBinLowEdge(1),htmp->GetBinLowEdge(htmp->GetNbinsX()+1));
-		//get function integral and histo integral over same range
-		double int_h = htmp->Integral(1,htmp->GetNbinsX());
+		//get function integral and histo integral over same range (unless manual yield given)
+		double int_h = use_yield ? yield : htmp->Integral(1,htmp->GetNbinsX(),"width");
 		fn->FixParameter(normpar,int_h/int_f);
 	}
 }
