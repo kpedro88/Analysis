@@ -603,7 +603,11 @@ class KPlotManager : public KManager {
 				bool xbindivide = p.second->GetLocalOpt()->Get("xbindivide",false);
 				bool ybindivide = p.second->GetLocalOpt()->Get("ybindivide",false);
 				for(unsigned s = 0; s < MySets.size(); s++){
-					if(yieldnorm && yield>0 && MySets[s] != yieldref && MySets[s]->GetLocalOpt()->Get("yieldnorm",true)) MySets[s]->Normalize(yield);
+					if(yieldnorm && yield>0 && MySets[s] != yieldref && MySets[s]->GetLocalOpt()->Get("yieldnorm",true)) {
+						double yieldnormval = yield;
+						MySets[s]->GetLocalOpt()->Get("yieldnormval",yieldnormval);
+						MySets[s]->Normalize(yieldnormval);
+					}
 					if(printyield) MySets[s]->PrintYield();
 					if(rebin) MySets[s]->Rebin(rebin);
 					if(unitnorm) MySets[s]->Normalize(1,true);
