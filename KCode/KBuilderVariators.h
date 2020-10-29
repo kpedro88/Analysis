@@ -4,6 +4,7 @@
 //custom headers
 #include "KVariation.h"
 #include "KBuilder.h"
+#include "KSkimmerVariators.h"
 
 //ROOT headers
 #include <TLorentzVector.h>
