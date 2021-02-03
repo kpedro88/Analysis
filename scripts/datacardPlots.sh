@@ -18,7 +18,7 @@ FITPLOT=""
 FITFILE=""
 FITSETDAT=""
 
-while getopts "d:f:s:onymwbtT:F" opt; do
+while getopts "d:f:s:onymwbtT:Fa" opt; do
 	case "$opt" in
 		d) EXTDIR=$OPTARG
 		;;
@@ -46,6 +46,8 @@ while getopts "d:f:s:onymwbtT:F" opt; do
 		F) FITPLOT=true
 		   FITFILE=input/input_svj_mt_fit_toy.txt
 		   FITSETDAT=data
+		;;
+		a) FITFILE=input/input_svj_mt_fit_toy_alt.txt
 		;;
 	esac
 done
