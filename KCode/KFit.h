@@ -96,6 +96,7 @@ class KFit {
 			sleg << legname << ", #chi^{2} / n_{dof} = " << fn->GetChisquare() << " / " << fn->GetNDF();
 			string ssleg = sleg.str();
 			vector<string> extra_text;
+			localOpt->Get("extra_text",extra_text);
 			if(legpars){
 				//print params 2 at a time to avoid overflow
 				int ctr = 0; sleg.str("");
