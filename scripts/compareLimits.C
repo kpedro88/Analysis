@@ -24,15 +24,19 @@ struct Curve {
 		localOpt = tmp->localOpt();
 		name = tmp->fields[0];
 		localOpt->Get("legname",legname);
+		panel = 0; localOpt->Get("panel",panel);
+		localOpt->Get("extra_text",extra_text);
 		style = new KStyle(name,globalOpt,localOpt);
 
 		//make graph
 		vector<double> xvals, yvals, xsecs;
 		globalOpt->Get("xvals",xvals);
-		globalOpt->Get("xsecs",xsecs);
+		bool has_xsec = globalOpt->Get("xsecs",xsecs);
 		localOpt->Get("yvals",yvals);
-		for(unsigned i = 0; i < yvals.size(); ++i){
-			yvals[i] = yvals[i]*xsecs[i];
+		if (has_xsec) {
+			for(unsigned i = 0; i < yvals.size(); ++i){
+				yvals[i] = yvals[i]*xsecs[i];
+			}
 		}
 		graph = new TGraph(xvals.size(),xvals.data(),yvals.data());
 		style->Format(graph);
@@ -45,6 +49,8 @@ struct Curve {
 	string name;
 	OptionMap* localOpt;
 	string legname;
+	int panel;
+	vector<string> extra_text;
 	TGraph* graph;
 	KStyle* style;
 	double ymin, ymax;
@@ -77,7 +83,7 @@ void compareLimits(string oname, string input, string options){
 	for(const auto& tmp : tmps){
 		curves.emplace_back(tmp, globalOpt);
 		const auto& curve = curves.back();
-		kleg->AddEntry(curve.graph,curve.legname,curve.style->GetLegOpt());
+		kleg->AddEntry(curve.graph,curve.legname,curve.style->GetLegOpt(),curve.panel,curve.extra_text);
 		if(curve.ymin<ymin) ymin = curve.ymin;
 		if(curve.ymax>ymax) ymax = curve.ymax;
 	}
@@ -111,3 +117,4 @@ void compareLimits(string oname, string input, string options){
 		if(epstopdf) system(("epstopdf "+otmp+" && rm "+otmp).c_str());
 	}
 }
+
