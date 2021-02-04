@@ -465,6 +465,49 @@ class KLeadJetPTSelector : public KSelector {
 REGISTER_SELECTOR(LeadJetPT);
 
 //----------------------------------------------------
+//selects events based on lead jet pt value
+class KPrefiringVetoSelector : public KSelector {
+	public:
+		//constructor
+		KPrefiringVetoSelector() : KSelector() { }
+		KPrefiringVetoSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), maxpt(100), mineta(2.25), maxeta(3.0) {
+			//check for option
+			localOpt->Get("maxpt",maxpt);
+			localOpt->Get("mineta",mineta);
+			localOpt->Get("maxeta",maxeta);
+		}
+		virtual void ListBranches(){
+			branches.push_back("Jets");
+		}
+		virtual void CheckBase(){
+			//disable for 2018 samples
+			if(base->GetName().find("MC2018")!=string::npos){
+				dummy = true;
+			}
+		}
+
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			bool badjet = false;
+			for(const auto& jet: *looper->Jets){
+				//skip low-pt jets
+				if(jet.Pt()<=maxpt) break;
+				if(mineta<abs(jet.Eta()) and abs(jet.Eta())<maxeta){
+					badjet = true;
+					break;
+				}
+			}
+			return !badjet;
+		}
+		
+		//member variables
+		double maxpt;
+		double mineta;
+		double maxeta;
+};
+REGISTER_SELECTOR(PrefiringVeto);
+
+//----------------------------------------------------
 //selects events based on MHT value
 class KMHTSelector : public KSelector {
 	public:

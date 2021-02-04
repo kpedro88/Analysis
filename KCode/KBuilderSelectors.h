@@ -1681,7 +1681,6 @@ class KNSVJSelector : public KSelector {
 			//check for option
 			localOpt->Get("source",source);
 			localOpt->Get("num",num);
-			canfail = false;
 		}
 		virtual void CheckDeps(){
 			SVJTag = sel->Get<KSVJTagSelector*>(source);
