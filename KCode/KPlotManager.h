@@ -31,6 +31,8 @@ using namespace std;
 //class to store ROC info per curve
 class KRocEntry {
 	public:
+		enum effbtype { effb=0, minus1=1, inv=2 };
+
 		//constructor
 		KRocEntry(KBase* sig_, KBase* bkg_, string name_, OptionMap* localOpt_, OptionMap* globalOpt_, KMap<string>& allStyles_) :
 			sig(sig_), bkg(bkg_), name(name_), localOpt(localOpt_), globalOpt(globalOpt_), graph(nullptr), marker_wp(nullptr), style(nullptr), auc(0.0), panel(0), legname("")
@@ -39,12 +41,21 @@ class KRocEntry {
 			bool roclogx = globalOpt->Get("roclogx",false);
 			bool roclogy = globalOpt->Get("roclogy",false);
 			bool showAUC = globalOpt->Get("showAUC",false);
-			minus1 = globalOpt->Get("rocminus1",false);
+
+			//backwards compatibility
+			bool dominus1 = globalOpt->Get("rocminus1",false);
+			//new way (overrides old way if set)
+			string rocebtype("effb"); if (globalOpt->Get("rocebtype",rocebtype)) dominus1 = false;
+			if(rocebtype=="effb") ebtype = effb;
+			else if(rocebtype=="minus1" or dominus1) ebtype = minus1;
+			else if(rocebtype=="inv") ebtype = inv;
+
 			bool debugwp = globalOpt->Get("debugrocwp",false);
+			bool showmetrics = globalOpt->Get("rocmetrics",false);
 			int prcsn = 0; globalOpt->Get("yieldprecision",prcsn);
 
 			//select current histogram in sets
-			sig->GetHisto(name);
+			auto hsig = sig->GetHisto(name);
 			bkg->GetHisto(name);
 
 			//get efficiencies as copies
@@ -66,39 +77,59 @@ class KRocEntry {
 			pad01(effsig);
 			pad01(effbkg);
 
-			//option to use 1-eff(bkg)
-			if(minus1) {
-				for(auto& y: effbkg) y = 1. - y;
-				if(has_wp) wp_y = 1. - wp_y;
-			}
+			//always compute AUC w/ convention that 1.0 = perfect
+			auc = 1. - KMath::Integral(effsig,effbkg);
 
 			//check integral
-			auc = KMath::Integral(effsig,effbkg);
-			if((minus1 and auc<0.5) or (!minus1 and auc>0.5)){
+			if(auc<0.5){
 				//reverse!
 				for(unsigned e = 0; e < effsig.size(); ++e){
 					effsig[e] = 1 - effsig[e];
 					effbkg[e] = 1 - effbkg[e];
 				}
 				if(has_wp) { wp_x = 1 - wp_x; wp_y = 1 - wp_y; }
-				auc = KMath::Integral(effsig,effbkg);
+				auc = 1. - auc;
+			}
+
+			//make this before recomputing bkg eff, to use for metrics
+			auto effsig_orig = effsig;
+			auto effbkg_orig = effbkg;
+			auto gdefault = new TGraph(effsig_orig.size(),effsig_orig.data(),effbkg_orig.data());
+
+			//option to use 1-eff(bkg)
+			string bkgdesc("bkg");
+			if(ebtype==minus1) {
+				for(auto& y: effbkg) y = 1. - y;
+				if(has_wp) wp_y = 1. - wp_y;
+				bkgdesc = "1 - bkg";
+			}
+			//option to use 1/eff(bkg)
+			else if(ebtype==inv) {
+				//remove zeroes
+				effsig.erase(remove_if(effsig.begin(),effsig.end(), [&](const double& d){ return effbkg[&d - &*effsig.begin()]==0.; }), effsig.end());
+				effbkg.erase(remove_if(effbkg.begin(),effbkg.end(), [](const double& d){ return d==0.; }), effbkg.end());
+				for(auto& y: effbkg) y = 1./y;
+				if(has_wp) wp_y = 1./wp_y;
+				bkgdesc = "1 / bkg";
 			}
 
 			//check minima
 			xmin = 1e100;
 			ymin = 1e100;
+			ymax = 1;
 			if(roclogx) {
 				for(unsigned e = 0; e < effsig.size(); ++e){
 					if(effsig[e]<xmin and effsig[e]>0.) xmin = effsig[e];
 				}
 			}
 			else xmin = 0.;
-			if(roclogy) {
+			if(roclogy or ebtype==inv) {
 				for(unsigned e = 0; e < effbkg.size(); ++e){
 					if(effbkg[e]<ymin and effbkg[e]>0.) ymin = effbkg[e];
+					if(effbkg[e]>ymax) ymax = effbkg[e];
 				}
 			}
-			else ymin = 0.;
+			if(!roclogy) ymin = 0.;
 			
 			//create graph
 			graph = new TGraph(effsig.size(),effsig.data(),effbkg.data());
@@ -115,12 +146,19 @@ class KRocEntry {
 
 			//marker & printout after transformations
 			if(has_wp){
-				if(debugwp) cout << name << " @ WP = " << wp << ": sig = " << wp_x << ", " << (minus1 ? "1 - " : "") << "bkg = " << wp_y << endl;
+				if(debugwp) cout << name << " @ WP = " << wp << ": sig = " << wp_x << ", " << bkgdesc << " = " << wp_y << endl;
 				marker_wp = new TMarker(wp_x,wp_y,20);
 				style->FormatMarker(marker_wp);
 			}
+			if(showmetrics){
+				cout << name << " metrics:" << endl;
+				cout << "    " << "   acc: " << hsig->Integral(hsig->FindBin(0.5),-1)/hsig->Integral(-1,-1) << endl;
+				cout << "    " << "   auc: " << auc << endl;
+				double effb03 = gdefault->Eval(0.3);
+				cout << "    " << "1/effb: " << 1./effb03 << endl;
+			}
 
-			//legend info: histo x-name (+ auc, optionally), panel
+			//legend info: histo x-name (+auc, optionally), panel
 			localOpt->Get("panel",panel);
 			string xtitle; localOpt->Get("xtitle",xtitle);
 			stringstream sleg;
@@ -142,7 +180,7 @@ class KRocEntry {
 		}
 		//for sorting
 		bool operator<(const KRocEntry& r) const {
-			return minus1 ? auc > r.auc : auc < r.auc;
+			return auc > r.auc;
 		}
 
 		void AddToLegend(KLegend* kleg) const {
@@ -173,8 +211,8 @@ class KRocEntry {
 		double auc;
 		int panel;
 		string legname;
-		double xmin, ymin;
-		bool minus1;
+		double xmin, ymin, ymax;
+		effbtype ebtype;
 };
 
 //------------------------------------------
@@ -787,7 +825,6 @@ class KPlotManager : public KManager {
 			//check settings
 			bool roclogx = globalOpt->Get("roclogx",false);
 			bool roclogy = globalOpt->Get("roclogy",false);
-			bool rocminus1 = globalOpt->Get("rocminus1",false);
 			//draw curves for each sig vs each bkg
 			for(unsigned s = 0; s < roc_sig.size(); s++){
 				for(unsigned b = 0; b < roc_bkg.size(); b++){
@@ -801,6 +838,7 @@ class KPlotManager : public KManager {
 					rocs.reserve(MyPlots.GetTable().size());
 					double xmin = 1e100;
 					double ymin = 1e100;
+					double ymax = 1;
 					for(auto& p : MyPlots.GetTable()){
 						//select current histogram in sets
 						roc_sig[s]->GetHisto(p.first);
@@ -814,13 +852,16 @@ class KPlotManager : public KManager {
 						//check minima
 						if(roc_tmp.xmin < xmin) xmin = roc_tmp.xmin;
 						if(roc_tmp.ymin < ymin) ymin = roc_tmp.ymin;
+						if(roc_tmp.ymax > ymax) ymax = roc_tmp.ymax;
 					}
+					double rocymin(0.); if(globalOpt->Get("rocymin",rocymin) && rocymin > ymin) ymin = rocymin;
+					double rocymax(1.); if(globalOpt->Get("rocymax",rocymax) && rocymax < ymax) ymax = rocymax;
 					
 					//make base histo: 0..1 on both axes (unless log scale)
 					TH1F* h_base = new TH1F(roc_name.c_str(),"",10,xmin,1.);
-					h_base->GetYaxis()->SetRangeUser(ymin,1.);
+					h_base->GetYaxis()->SetRangeUser(ymin,rocs.back().ebtype==KRocEntry::inv ? ymax : 1.);
 					h_base->GetXaxis()->SetTitle(("#varepsilon_{sig} (" + roc_sig[s]->GetLegName() + ")").c_str());
-					h_base->GetYaxis()->SetTitle((string(rocminus1 ? "1 - " : "")+"#varepsilon_{bkg}"+ string(!roc_bkg[b]->GetLegName().empty() ? " (" + roc_bkg[b]->GetLegName() + ")" : "")).c_str());
+					h_base->GetYaxis()->SetTitle((string(rocs.back().ebtype==KRocEntry::minus1 ? "1 - " : rocs.back().ebtype==KRocEntry::inv ? " 1 / " : "")+"#varepsilon_{bkg}"+ string(!roc_bkg[b]->GetLegName().empty() ? " (" + roc_bkg[b]->GetLegName() + ")" : "")).c_str());
 					
 					//make plot
 					KPlot* p_roc = new KPlot(roc_name,NULL,globalOpt);
