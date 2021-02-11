@@ -1769,10 +1769,13 @@ REGISTER_JETFILLER(AK8nsubjet);
 class KJetFiller_AK8bdt : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"JetsAK8_isHV"}; }
+		virtual void CheckBase(){ isHV = base->GetLocalOpt()->Get("isHV",false); }
 		virtual void CheckDeps(){ BDT = sel->Get<KBDTSelector*>("BDT"); }
-		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(BDT and BDT->JetsAK8_bdt.size()>index) value.Fill(BDT->JetsAK8_bdt[index],w); }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(BDT and BDT->JetsAK8_bdt.size()>index and (not isHV or (looper->JetsAK8_isHV->size()>index and looper->JetsAK8_isHV->at(index)))) value.Fill(BDT->JetsAK8_bdt[index],w); }
 		//member variables
 		KBDTSelector* BDT = NULL;
+		bool isHV;
 };
 REGISTER_JETFILLER(AK8bdt);
 
@@ -1780,8 +1783,11 @@ REGISTER_JETFILLER(AK8bdt);
 class KJetFiller_AK8bdtSVJtag : public KJetFiller {
 	public:
 		using KJetFiller::KJetFiller;
-		virtual void ListBranches() { branches = {"JetsAK8_bdtSVJtag"}; }
-		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_bdtSVJtag->size()>index) value.Fill(looper->JetsAK8_bdtSVJtag->at(index),w); }
+		virtual void ListBranches() { branches = {"JetsAK8_bdtSVJtag","JetsAK8_isHV"}; }
+		virtual void CheckBase(){ isHV = base->GetLocalOpt()->Get("isHV",false); }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { if(looper->JetsAK8_bdtSVJtag->size()>index and (not isHV or (looper->JetsAK8_isHV->size()>index and looper->JetsAK8_isHV->at(index)))) value.Fill(looper->JetsAK8_bdtSVJtag->at(index),w); }
+		//member variables
+		bool isHV;
 };
 REGISTER_JETFILLER(AK8bdtSVJtag);
 
