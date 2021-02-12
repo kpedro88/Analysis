@@ -231,5 +231,6 @@ double KHisto::GetWeightPerJet(unsigned index){
 class KMCWeightSelector : public KSelector {};
 class KSVJFilterSelector : public KSelector {};
 class KLepFracFilterSelector : public KSelector {};
+class KJetPtFilterSelector : public KSelector {};
 
 #endif

@@ -60,6 +60,7 @@ class KMCWeightSelector : public KSelector {};
 class KSVJTagSelector : public KSelector {};
 class KSVJFilterSelector : public KSelector {};
 class KLepFracFilterSelector : public KSelector {};
+class KJetPtFilterSelector : public KSelector {};
 
 //----------------------------------------------------
 //selects negative-weight events (used for KSkimmer)

@@ -444,9 +444,12 @@ class KLeadJetPTSelector : public KSelector {
 	public:
 		//constructor
 		KLeadJetPTSelector() : KSelector() { }
-		KLeadJetPTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), min(500) { 
+		KLeadJetPTSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), min(500), max(-1), indices({0}) { 
 			//check for option
 			localOpt->Get("min",min);
+			localOpt->Get("max",max);
+			localOpt->Get("indices",indices);
+			all = localOpt->Get("all",false);
 		}
 		virtual void ListBranches(){
 			branches.push_back("JetsAK8");
@@ -456,11 +459,22 @@ class KLeadJetPTSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return (looper->JetsAK8->at(0).Pt()) > min;
+			//if all must pass: "and" behavior (start from true)
+			//if any must pass: "or" behavior (start from false)
+			bool goodEvent = all;
+			for(unsigned i = 0; i < indices.size(); ++i){
+				unsigned index = indices[i];
+				bool goodJet = index < looper->JetsAK8->size() and (min<0 or looper->JetsAK8->at(index).Pt() > min) and (max<0 or looper->JetsAK8->at(index).Pt() < max);
+				if(all) goodEvent &= goodJet;
+				else goodEvent |= goodJet;
+			}
+			return goodEvent;
 		}
 		
 		//member variables
-		double min;
+		double min, max;
+		vector<unsigned> indices;
+		bool all;
 };
 REGISTER_SELECTOR(LeadJetPT);
 

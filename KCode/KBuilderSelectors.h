@@ -1740,6 +1740,45 @@ class KLepFracFilterSelector : public KSelector {
 };
 REGISTER_SELECTOR(LepFracFilter);
 
+//----------------------------------------------------
+//filter jets based on pt for per-jet histos
+class KJetPtFilterSelector : public KSelector {
+	public:
+		//constructor
+		KJetPtFilterSelector() : KSelector() { }
+		KJetPtFilterSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), filter(0), min(-1), max(-1) { 
+			//check for option
+			//1 selects tagged, -1 selects anti-tagged
+			localOpt->Get("filter",filter);
+			localOpt->Get("min",min);
+			localOpt->Get("max",max);
+			canfail = false;
+		}
+		virtual void ListBranches(){
+			branches.insert(branches.end(),{
+				"JetsAK8"
+			});
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			JetsAK8_passCut.clear();
+			JetsAK8_passCut.reserve(looper->JetsAK8->size());
+			for(unsigned j = 0; j < looper->JetsAK8->size(); ++j){
+				JetsAK8_passCut.push_back((min<0 or looper->JetsAK8->at(j).Pt()>min) and (max<0 or looper->JetsAK8->at(j).Pt()<max));
+			}
+			return true;
+		}
+		
+		//member variables
+		int filter;
+		double min, max;
+		vector<bool> JetsAK8_passCut;
+};
+REGISTER_SELECTOR(JetPtFilter);
+
 //avoid unwanted dependency
 void KRA2BinSelector::CheckDeps(){
 	CheckLabels();
@@ -1781,6 +1820,11 @@ double KHisto::GetWeightPerJet(unsigned index){
 	if(LepFracFilter and LepFracFilter->filter!=0){
 		w *= (LepFracFilter->filter==1 and LepFracFilter->JetsAK8_passCut[index]) or
 			 (LepFracFilter->filter==-1 and !LepFracFilter->JetsAK8_passCut[index]);
+	}
+	//requiring jet pt range for a jet
+	if(JetPtFilter and JetPtFilter->filter!=0){
+		w *= (JetPtFilter->filter==1 and JetPtFilter->JetsAK8_passCut[index]) or
+			 (JetPtFilter->filter==-1 and !JetPtFilter->JetsAK8_passCut[index]);
 	}
 	return w;
 }

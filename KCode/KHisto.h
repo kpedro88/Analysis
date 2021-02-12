@@ -48,6 +48,7 @@ class KValue {
 class KMCWeightSelector;
 class KSVJFilterSelector;
 class KLepFracFilterSelector;
+class KJetPtFilterSelector;
 class KHisto;
 
 //---------------------------------------------------------------
@@ -227,6 +228,7 @@ class KHisto : public KChecker {
 			MCWeight = sel->Get<KMCWeightSelector*>("MCWeight");
 			SVJFilter = sel->Get<KSVJFilterSelector*>("SVJFilter");
 			LepFracFilter = sel->Get<KLepFracFilterSelector*>("LepFracFilter");
+			JetPtFilter = sel->Get<KJetPtFilterSelector*>("JetPtFilter");
 		}
 		virtual void CheckBase(){
 			//do not use MCWeight with data
@@ -291,6 +293,7 @@ class KHisto : public KChecker {
 		KMCWeightSelector* MCWeight;
 		KSVJFilterSelector* SVJFilter;
 		KLepFracFilterSelector* LepFracFilter;
+		KJetPtFilterSelector* JetPtFilter;
 		
 	protected:
 		//member variables
