@@ -148,6 +148,13 @@ class KPlot{
 				isInit = false;
 				return;
 			}
+
+			//option to change displayed axis
+			double dxmin = 0; bool has_dxmin = localOpt->Get("dxmin",dxmin);
+			double dxmax = 0; bool has_dxmax = localOpt->Get("dxmax",dxmax);
+			if(has_dxmin and has_dxmax){
+				histo->SetAxisRange(dxmin,dxmax);
+			}
 		}
 		virtual bool Initialize(TH1* histo_=NULL){
 			if(isInit) return isInit;
@@ -635,6 +642,18 @@ class KPlot2D: public KPlot {
 			else { //no/incomplete binning information, build failed
 				isInit = false;
 				return;
+			}
+
+			//option to change displayed axis
+			double dxmin = 0; bool has_dxmin = localOpt->Get("dxmin",dxmin);
+			double dxmax = 0; bool has_dxmax = localOpt->Get("dxmax",dxmax);
+			if(has_dxmin and has_dxmax){
+				histo->SetAxisRange(dxmin,dxmax);
+			}
+			double dymin = 0; bool has_dymin = localOpt->Get("dymin",dymin);
+			double dymax = 0; bool has_dymax = localOpt->Get("dymax",dymax);
+			if(has_dymin and has_dymax){
+				histo->SetAxisRange(dymin,dymax,"Y");
 			}
 
 			//get vars for labels
