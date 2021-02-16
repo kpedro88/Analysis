@@ -151,6 +151,15 @@ class KSet : public KBase {
 				children[c]->CloseFile();
 			}
 		}
+		//rebin current histo, set implementation
+		virtual void Rebin(int rebin){
+			KBase::Rebin(rebin);
+
+			//propagate to children for consistency
+			for(unsigned c = 0; c < children.size(); c++){
+				children[c]->Rebin(rebin);
+			}			
+		}
 		//divide current histo by bin width, set implementation
 		virtual void BinDivide(bool do_x, bool do_y, TH1* htmp=nullptr){
 			KBase::BinDivide(do_x,do_y);
@@ -470,6 +479,27 @@ class KSetMCStack : public KSet {
 			
 			//rebuild error band (enabled by default)
 			if(globalOpt->Get("errband",true)) BuildErrorBand();
+		}
+		//rebin current histo, stack implementation
+		virtual void Rebin(int rebin){
+			//scale stack histos
+			TObjArray* stack_array = obj->shtmp->GetStack();
+			for(int s = 0; s < stack_array->GetSize(); s++){
+				TH1* hist = (TH1*)stack_array->At(s);
+				hist->Rebin(rebin);
+			}
+		
+			//scale children for consistency
+			for(unsigned c = 0; c < children.size(); c++){
+				children[c]->Rebin(rebin);
+			}
+			
+			//rebuild error band (enabled by default)
+			if(globalOpt->Get("errband",true)) {
+				BuildErrorBand();
+				//style
+				MyStyle->FormatErr(obj->etmp);
+			}
 		}
 		//divide current histo by bin width, stack implementation
 		virtual void BinDivide(bool do_x, bool do_y, TH1* htmp=nullptr){
