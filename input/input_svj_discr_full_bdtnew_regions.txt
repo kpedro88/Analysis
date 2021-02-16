@@ -17,4 +17,4 @@ string:lumi_text[(13 TeV)]
 bool:unitnorm[1]
 
 HISTO
-bothjetAK8bdt	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[BDT discriminator]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	vd:xcuts[0.55]	vc:xcut_colors[kBlack]
+bothjetAK8bdt	i:xnum[1000]	d:xmin[0]	d:xmax[1]	s:xtitle[BDT discriminator]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	vd:xcuts[0.55]	vc:xcut_colors[kBlack]
