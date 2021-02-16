@@ -46,8 +46,8 @@ class KRocEntry {
 			bool dominus1 = globalOpt->Get("rocminus1",false);
 			//new way (overrides old way if set)
 			string rocebtype("effb"); if (globalOpt->Get("rocebtype",rocebtype)) dominus1 = false;
-			if(rocebtype=="effb") ebtype = effb;
-			else if(rocebtype=="minus1" or dominus1) ebtype = minus1;
+			if(rocebtype=="minus1" or dominus1) ebtype = minus1;
+			else if(rocebtype=="effb") ebtype = effb;
 			else if(rocebtype=="inv") ebtype = inv;
 
 			bool debugwp = globalOpt->Get("debugrocwp",false);
@@ -860,7 +860,7 @@ class KPlotManager : public KManager {
 					//make base histo: 0..1 on both axes (unless log scale)
 					TH1F* h_base = new TH1F(roc_name.c_str(),"",10,xmin,1.);
 					h_base->GetYaxis()->SetRangeUser(ymin,rocs.back().ebtype==KRocEntry::inv ? ymax : 1.);
-					h_base->GetXaxis()->SetTitle(("#varepsilon_{sig} (" + roc_sig[s]->GetLegName() + ")").c_str());
+					h_base->GetXaxis()->SetTitle(("#varepsilon_{sig} "+string(!roc_sig[s]->GetLegName().empty() ? "(" + roc_sig[s]->GetLegName() + ")" : "")).c_str());
 					h_base->GetYaxis()->SetTitle((string(rocs.back().ebtype==KRocEntry::minus1 ? "1 - " : rocs.back().ebtype==KRocEntry::inv ? " 1 / " : "")+"#varepsilon_{bkg}"+ string(!roc_bkg[b]->GetLegName().empty() ? " (" + roc_bkg[b]->GetLegName() + ")" : "")).c_str());
 					
 					//make plot
