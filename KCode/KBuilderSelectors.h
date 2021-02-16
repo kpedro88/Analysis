@@ -1822,7 +1822,7 @@ double KHisto::GetWeightPerJet(unsigned index){
 			 (LepFracFilter->filter==-1 and !LepFracFilter->JetsAK8_passCut[index]);
 	}
 	//requiring jet pt range for a jet
-	if(JetPtFilter and JetPtFilter->filter!=0){
+	if(JetPtFilter and JetPtFilter->filter!=0 and index<JetPtFilter->JetsAK8_passCut.size()){
 		w *= (JetPtFilter->filter==1 and JetPtFilter->JetsAK8_passCut[index]) or
 			 (JetPtFilter->filter==-1 and !JetPtFilter->JetsAK8_passCut[index]);
 	}
