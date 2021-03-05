@@ -1,0 +1,6 @@
+OPTION
+double:ymin_min[1e-4]
+int:rebin[10]
+
+HISTO
+bothjetAK8pt	i:xnum[1000]	d:xmin[0]	d:xmax[5000]	s:xtitle[p_{T}(J_{1,2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	vd:xcuts[150,300]	vc:xcut_colors[kBlack,kBlack]	d:dxmin[0]	d:dxmax[2000]

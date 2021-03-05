@@ -1,0 +1,53 @@
+#sections:
+# other input files to include in INPUT
+# global options in OPTION
+# 1D histograms in HISTO
+# 2D histograms in HISTO2D
+# datasets in SET
+# selections in SELECTION
+# variations in VARIATION
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c, chain/ch, input/in
+#items on each line in the HISTO, HISTO2D, SET, SELECTION, VARIATION sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#SELECTION/VARIATION: only required item is name
+#for datasets, child-parent relationships are indicated by tab-indentation
+#selectors/variators are associated with a selection/variation by tab-indentation
+
+INPUT
+input/input_svj_rocs.txt
+
+OPTION
+string:rocebtype[minus1]
+bool:rocmetrics[1]
+bool:skiphistos[1]
+vstring:roc_sig[sig]
+vstring:roc_bkg[QCD]
+bool:debugrocwp[1]
+bool:drawrocwp[1]
+string:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/bfkkm/chist/svj_bfkkmc2017_discr.root]
+string+:rocsuffix[_cmsLike]
+
+SELECTION
+sim
+	MCWeight
+	Histo
+
+#this is a really dirty hack to make one ROC plot w/ multiple sigs (instead of multiple qtys)
+HISTO
+SVJ1000	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[SVJ_1000_20_0.3_peak]	s:ytitle[arbitrary units]	c:color[kGray + 1]
+cmsLike	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[SVJ_1000_5_0.5_peak]	s:ytitle[arbitrary units]	c:color[kRed]
+mChi	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[mChi]	s:ytitle[arbitrary units]	c:color[kMagenta]
+lambdaDark	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[lambdaDark]	s:ytitle[arbitrary units]	c:color[kOrange + 2]
+NcDark	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[NcDark]	s:ytitle[arbitrary units]	c:color[kPink - 9]
+piDarkDecay	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[piDarkDecay]	s:ytitle[arbitrary units]	c:color[kCyan + 2]
+mDarkSplit	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[mDarkSplit]	s:ytitle[arbitrary units]	c:color[kMagenta + 2]
+allChanges	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[allChanges]	s:ytitle[arbitrary units]	c:color[kYellow + 3]
+modelB	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[BFKKM_modelB]	s:ytitle[arbitrary units]	c:color[kBlue]
+
+SET
+hist	mc	sig	s:legname[]	c:color[kBlue]
+	base	ext	sig_MC2017	vs:exthisto_in[bothjetAK8bdt_SVJ_1000_20_0.3_peak_jetsim,bothjetAK8bdt_SVJ_BFKKM_cmsLike_jetsim,bothjetAK8bdt_SVJ_BFKKM_cmsLike_mChi_jetsim,bothjetAK8bdt_SVJ_BFKKM_cmsLike_lambdaDark_jetsim,bothjetAK8bdt_SVJ_BFKKM_cmsLike_NcDark_jetsim,bothjetAK8bdt_SVJ_BFKKM_cmsLike_piDarkDecay_jetsim,bothjetAK8bdt_SVJ_BFKKM_cmsLike_mDarkSplit_jetsim,bothjetAK8bdt_SVJ_BFKKM_cmsLike_allChanges_jetsim,bothjetAK8bdt_SVJ_BFKKM_modelB_jetsim]	vs:exthisto_out[SVJ1000,cmsLike,mChi,lambdaDark,NcDark,piDarkDecay,mDarkSplit,allChanges,modelB]
+hist	mc	QCD	s:legname[QCD]	c:color[kBlack]
+	base	ext	QCD_MC2017	vs:exthisto_in[bothjetAK8bdt_QCD_jetsim,bothjetAK8bdt_QCD_jetsim,bothjetAK8bdt_QCD_jetsim,bothjetAK8bdt_QCD_jetsim,bothjetAK8bdt_QCD_jetsim,bothjetAK8bdt_QCD_jetsim,bothjetAK8bdt_QCD_jetsim,bothjetAK8bdt_QCD_jetsim,bothjetAK8bdt_QCD_jetsim]	vs:exthisto_out[SVJ1000,cmsLike,mChi,lambdaDark,NcDark,piDarkDecay,mDarkSplit,allChanges,modelB]	string:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/bfkkm/qhist/svj_bfkkm2017_discr.root]

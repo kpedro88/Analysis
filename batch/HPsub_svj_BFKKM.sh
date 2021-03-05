@@ -25,7 +25,7 @@ done
 
 STORE=root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/bfkkm/${STYPE}hist
 
-if [ "$STYPE" != q ] && [ "$STYPE" != s ]; then
+if [ "$STYPE" != q ] && [ "$STYPE" != s ] && [ "$STYPE" != c ]; then
 	echo "Unknown sample stype $STYPE"
 	exit 1
 fi
@@ -33,7 +33,7 @@ fi
 ./SKcheck.sh ${CHECKARGS}
 
 for YEAR in ${YEARS[@]}; do
-	INPUTS='"input/input_svj_discr_unskimmed.txt"'
+	INPUTS='"input/input_svj_discr_unskimmed.txt","input/input_svj_rocs_bothjet_E1.txt"'
 
 	SNAME=HistBFKKM${STYPE}${YEAR}
 	source export${SNAME}.sh

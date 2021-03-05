@@ -1,0 +1,44 @@
+OPTION
+vstring:disable_branches[*]
+#double:sizeLeg[18]
+int:npanel[2]
+string:ratiocalc[Q1]
+vstring:numers[]
+vstring:denoms[]
+string:rationame[S/#sqrt{B}]
+double:ratiomin[0]
+double:ratiomax[3]
+double:ratiolineval[-999]
+string:lumi_text[(13 TeV)]
+bool:unitnorm[1]
+vstring:selections[plot]
+string:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/bfkkm/chist/svj_bfkkmc2017_discr.root]
+string+:printsuffix[_cmsLike]
+
+SELECTION
+plot
+	MCWeight
+	Histo
+
+SET
+hist	mc	SVJ_1000_20_0.3_peak	s:legname[SVJ_1000_20_0.3_peak]	c:color[kGray + 1]	i:linestyle[7]	i:panel[0]
+	base	ext	SVJ_1000_20_0.3_peak	b:ext_auto[1]
+hist	mc	SVJ_BFKKM_cmsLike	s:legname[SVJ_1000_5_0.5_peak]	c:color[kRed]	i:linestyle[7]	i:panel[0]
+	base	ext	SVJ_BFKKM_cmsLike	b:ext_auto[1]
+hist	mc	SVJ_BFKKM_cmsLike_mChi	s:legname[mChi]	c:color[kMagenta]	i:linestyle[7]	i:panel[0]
+	base	ext	SVJ_BFKKM_cmsLike_mChi	b:ext_auto[1]
+hist	mc	SVJ_BFKKM_cmsLike_lambdaDark	s:legname[lambdaDark]	c:color[kOrange + 2]	i:linestyle[7]	i:panel[0]
+	base	ext	SVJ_BFKKM_cmsLike_lambdaDark	b:ext_auto[1]
+hist	mc	SVJ_BFKKM_cmsLike_NcDark	s:legname[NcDark]	c:color[kPink - 9]	i:linestyle[7]	i:panel[0]
+	base	ext	SVJ_BFKKM_cmsLike_NcDark	b:ext_auto[1]
+hist	mc	SVJ_BFKKM_cmsLike_piDarkDecay	s:legname[piDarkDecay]	c:color[kCyan + 2]	i:linestyle[7]	i:panel[1]
+	base	ext	SVJ_BFKKM_cmsLike_piDarkDecay	b:ext_auto[1]
+hist	mc	SVJ_BFKKM_cmsLike_mDarkSplit	s:legname[mDarkSplit]	c:color[kMagenta + 2]	i:linestyle[7]	i:panel[1]
+	base	ext	SVJ_BFKKM_cmsLike_mDarkSplit	b:ext_auto[1]
+hist	mc	SVJ_BFKKM_cmsLike_allChanges	s:legname[allChanges]	c:color[kYellow + 3]	i:linestyle[7]	i:panel[1]
+	base	ext	SVJ_BFKKM_cmsLike_allChanges	b:ext_auto[1]
+hist	mc	SVJ_BFKKM_modelB	s:legname[BFKKM_modelB]	c:color[kBlue]	i:linestyle[7]	i:panel[1]
+	base	ext	SVJ_BFKKM_modelB	b:ext_auto[1]
+hist	mc	QCD	s:legname[QCD]	c:color[kBlack]	i:panel[1]
+	base	ext	QCD	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/bfkkm/qhist/svj_bfkkm2017_discr.root]
+

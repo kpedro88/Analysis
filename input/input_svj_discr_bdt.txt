@@ -1,0 +1,6 @@
+OPTION
+double:ymin_min[1e-3]
+int:rebin[20]
+
+HISTO
+bothjetAK8bdt	i:xnum[1000]	d:xmin[0]	d:xmax[1]	s:xtitle[BDT discriminator]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	vd:xcuts[0.55]	vc:xcut_colors[kBlack]

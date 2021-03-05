@@ -1,0 +1,45 @@
+OPTION
+vstring:disable_branches[*]
+double:ymin_min[1e-4]
+#double:sizeLeg[18]
+int:npanel[2]
+string:ratiocalc[Q1]
+vstring:numers[]
+vstring:denoms[]
+string:rationame[S/#sqrt{B}]
+double:ratiomin[0]
+double:ratiomax[3]
+double:ratiolineval[-999]
+string:lumi_text[(13 TeV)]
+bool:unitnorm[1]
+vstring:selections[plot]
+int:rebin[10]
+string:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/bfkkm/shist/svj_bfkkms2017_discr.root]
+
+SELECTION
+plot
+	MCWeight
+	Histo
+
+HISTO
+bothjetAK8pt	i:xnum[1000]	d:xmin[0]	d:xmax[5000]	s:xtitle[p_{T}(J_{1,2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	vd:xcuts[150,300]	vc:xcut_colors[kBlack,kBlack]	d:dxmin[0]	d:dxmax[2000]
+bothjetAK8bdt	i:xnum[1000]	d:xmin[0]	d:xmax[1]	s:xtitle[BDT discriminator]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	vd:xcuts[0.55]	vc:xcut_colors[kBlack]
+
+SET
+hist	mc	SVJ_1000_20_0.3_peak	s:legname[SVJ_1000_20_0.3_peak]	c:color[kRed]	i:linestyle[7]	i:panel[0]
+	base	ext	SVJ_1000_20_0.3_peak	b:ext_auto[1]
+hist	mc	SVJ_1500_5_0.3_peak	s:legname[SVJ_1500_5_0.3_peak]	c:color[kMagenta]	i:linestyle[7]	i:panel[0]
+	base	ext	SVJ_1500_5_0.3_peak	b:ext_auto[1]
+hist	mc	SVJ_1500_20_0.5_peak	s:legname[SVJ_1500_20_0.5_peak]	c:color[kOrange + 2]	i:linestyle[7]	i:panel[0]
+	base	ext	SVJ_1500_20_0.5_peak	b:ext_auto[1]
+hist	mc	SVJ_1500_20_0.7_peak	s:legname[SVJ_1500_20_0.7_peak]	c:color[kBlue]	i:linestyle[7]	i:panel[0]
+	base	ext	SVJ_1500_20_0.7_peak	b:ext_auto[1]
+hist	mc	SVJ_3000_20_0.3_peak	s:legname[SVJ_3000_20_0.3_peak]	c:color[kCyan + 2]	i:linestyle[7]	i:panel[0]
+	base	ext	SVJ_3000_20_0.3_peak	b:ext_auto[1]
+#hist	mc	SVJ_BFKKM_modelA	s:legname[SVJ_BFKKM_modelA]	c:color[kBlue]	i:linestyle[7]	i:panel[0]
+#	base	ext	SVJ_BFKKM_modelA	b:ext_auto[1]
+#hist	mc	SVJ_BFKKM_modelB	s:legname[SVJ_BFKKM_modelB]	c:color[kMagenta]	i:linestyle[7]	i:panel[0]
+#	base	ext	SVJ_BFKKM_modelB	b:ext_auto[1]
+hist	mc	QCD	s:legname[QCD]	c:color[kBlack]
+	base	ext	QCD	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/bfkkm/qhist/svj_bfkkm2017_discr.root]
+
