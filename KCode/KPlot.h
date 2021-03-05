@@ -242,7 +242,12 @@ class KPlot{
 				
 				//make line
 				pad2->cd();
-				line = new TLine(ratio->GetXaxis()->GetXmin(),ratiolineval,ratio->GetXaxis()->GetXmax(),ratiolineval);
+				line = new TLine(
+					ratio->GetXaxis()->GetBinLowEdge(ratio->GetXaxis()->GetFirst()),
+					ratiolineval,
+					ratio->GetXaxis()->GetBinUpEdge(ratio->GetXaxis()->GetLast()),
+					ratiolineval
+				);
 				line->SetLineStyle(ratiolinestyle);
 				line->SetLineWidth(ratiolinewidth);
 				line->SetLineColor(ratiolinecolor);

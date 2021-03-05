@@ -452,21 +452,24 @@ class KLegend{
 			bh[0] = bh[1] = 0;
 			for(unsigned s = 0; s < hists.size(); s++){
 				TAxis* x1 = hists[s]->GetXaxis();
-				int xomin, xomax; //original xmin and xmax bin #s, to reset range at the end
-				xomin = x1->GetFirst();
-				xomax = x1->GetLast();
-				
+				//original xmin and xmax bin #s, to reset range at the end
+				int xomin = x1->GetFirst();
+				int xomax = x1->GetLast();
+				//get min & max accounting for possible range change
+				double x1min = x1->GetBinLowEdge(xomin);
+				double x1max = x1->GetBinUpEdge(xomax);
+
 				for(int i = 0; i < 2; i++){ //check each side of plot
 					//new bin #s for limited range
 					int xbmin, xbmax;
 					
 					xbmin = logx
-							? x1->FindBin(x1->GetXmin()*pow(x1->GetXmax()/x1->GetXmin(), (ucmin[i] - pad->GetLeftMargin())/gx))
-							: x1->FindBin((ucmin[i] - pad->GetLeftMargin())*(x1->GetXmax() - x1->GetXmin())/gx + x1->GetXmin());
+							? x1->FindBin(x1min*pow(x1max/x1min, (ucmin[i] - pad->GetLeftMargin())/gx))
+							: x1->FindBin((ucmin[i] - pad->GetLeftMargin())*(x1max - x1min)/gx + x1min);
 					if(xbmin > 1) xbmin -= 1; //include partial overlap
 					xbmax = logx
-							? x1->FindBin(x1->GetXmin()*pow(x1->GetXmax()/x1->GetXmin(), (ucmax[i] - pad->GetLeftMargin())/gx))
-							: x1->FindBin((ucmax[i] - pad->GetLeftMargin())*(x1->GetXmax() - x1->GetXmin())/gx + x1->GetXmin());
+							? x1->FindBin(x1min*pow(x1max/x1min, (ucmax[i] - pad->GetLeftMargin())/gx))
+							: x1->FindBin((ucmax[i] - pad->GetLeftMargin())*(x1max - x1min)/gx + x1min);
 					if(xbmax < hists[s]->GetNbinsX()) xbmax += 1; //include partial overlap
 					
 					//set range for search
