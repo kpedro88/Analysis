@@ -744,6 +744,15 @@ class KFiller_deltaetaAK8 : public KFiller {
 };
 REGISTER_FILLER(deltaetaAK8);
 
+//dphi(j1,j2)
+class KFiller_deltaphiAK8 : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void ListBranches() { branches = {"JetsAK8"}; }
+		virtual void Fill(KValue& value, double w) { if(looper->JetsAK8->size()>1) value.Fill(abs(looper->JetsAK8->at(0).DeltaPhi(looper->JetsAK8->at(1))),w); }
+};
+REGISTER_FILLER(deltaphiAK8);
+
 //dphi(j1,MET)
 class KFiller_deltaphi1AK8 : public KFiller {
 	public:

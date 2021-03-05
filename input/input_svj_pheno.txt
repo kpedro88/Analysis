@@ -1,0 +1,49 @@
+INPUT
+input/input_global.txt
+
+OPTION
+string:prelim_text[Simulation (work-in-progress)]
+bool:printyield[1]
+int:yieldprecision[2]
+bool:plotoverflow[1]
+bool:treesuffix[1]
+bool:appendsel[0]
+vstring:selections[pheno]
+vstring:disable_branches[*]
+bool:useTreeWeight[1]
+bool:debugloop[1]
+bool:debugcut[1]
+vstring:extra_text[SVJ_3000_20_0.3_peak]
+string:lumi_text[(13 TeV)]
+bool:unitnorm[1]
+string+:printsuffix[_pheno]
+vstring:numers[SVJ_3000_20_0.3_peak_Delphes]
+vstring:denoms[SVJ_3000_20_0.3_peak_CMS]
+string:rationame[Delphes/CMS]
+
+SELECTION
+pheno
+	LeptonVetoLoose
+	NJetAK8
+	EtaJetAK8
+	DeltaEta	d:max[1.5]
+	LeadJetPT	b:all[1]	d:min[200]	vu:indices[0,1]
+	MTAK8	d:min[1500]
+	METMTRatio	d:min[0.25]
+	Histo
+
+HISTO
+leadjetAK8pt	i:xnum[100]	d:xmin[0]	d:xmax[2500]	s:xtitle[p_{T}(J_{1}) [GeV]]	s:ytitle[arbitrary units]	vd:xcut[200]
+subleadjetAK8pt	i:xnum[100]	d:xmin[0]	d:xmax[2500]	s:xtitle[p_{T}(J_{2}) [GeV]]	s:ytitle[arbitrary units]	vd:xcut[200]
+deltaetaAK8	i:xnum[100]	d:xmin[0]	d:xmax[10]	s:xtitle[#Delta#eta(J_{1},J_{2})]	s:ytitle[arbitrary units]	vd:xcut[1.5]
+deltaphiAK8	i:xnum[100]	d:xmin[0]	d:xmax[5]	s:xtitle[#Delta#phi(J_{1},J_{2})]	s:ytitle[arbitrary units]
+metMTratio	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#slash{E}_{T}/M_{T}]	s:ytitle[arbitrary units]	vd:xcut[0.25]
+MJJAK8	i:xnum[80]	d:xmin[0]	d:xmax[8000]	s:xtitle[M_{JJ} [GeV]]	s:ytitle[arbitrary units]
+MTAK8	i:xnum[80]	d:xmin[0]	d:xmax[8000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	vd:xcut[1500]
+met	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[#slash{E}_{T} [GeV]	s:ytitle[arbitrary units]
+
+SET
+hist	mc	SVJ_3000_20_0.3_peak_CMS	s:legname[CMS]	c:color[kBlue]	i:panel[0]
+	base	mc	SVJ_3000_20_0.3_peak_CMS	s:filename[PrivateSamples.SVJ_2017_mZprime-3000_mDark-20_rinv-0p3_alpha-peak_n-1000_0_RA2AnalysisTree.root]	b:isHV[1]	s:treename[TreeMaker2/PreSelection]
+hist	mc	SVJ_3000_20_0.3_peak_Delphes	s:legname[Delphes]	c:color[kRed]	i:linestyle[7]	i:panel[0]
+	base	ext	SVJ_3000_20_0.3_peak_Delphes	s:extfilename[test/SVJ_3000_0.3_peak_output.root]	vs:exthisto_in[h_post_1pt,h_post_2pt,h_dEta,h_dPhi,h_transverseratio,h_Mjj,h_Mt,h_METPt]	vs:exthisto_out[leadjetAK8pt,subleadjetAK8pt,deltaetaAK8,deltaphiAK8,metMTratio,MJJAK8,MTAK8,met]

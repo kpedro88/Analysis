@@ -888,6 +888,38 @@ class KLeptonVetoSelector : public KSelector {
 };
 REGISTER_SELECTOR(LeptonVeto);
 
+//-------------------------------------------------------------
+//vetos events with leptons (loose iso)
+class KLeptonVetoLooseSelector : public KSelector {
+	public:
+		//constructor
+		KLeptonVetoLooseSelector() : KSelector() { }
+		KLeptonVetoLooseSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { }
+		virtual void ListBranches(){
+			branches.insert(branches.end(),{
+				"Muons_MiniIso",
+				"Electrons_MiniIso",
+			});
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			double min_iso = 0.4;
+			unsigned nlep = 0;
+			for(auto m : *looper->Muons_MiniIso){
+				if(m < min_iso) ++nlep;
+			}
+			for(auto e : *looper->Electrons_MiniIso){
+				if(e < min_iso) ++nlep;
+			}
+			return nlep==0;
+		}
+		
+		//member variables
+};
+REGISTER_SELECTOR(LeptonVetoLoose);
 
 //----------------------------------------------------
 //selects events based on MET/MT value
@@ -2465,5 +2497,62 @@ class KDeltaPhiExtendedSelector : public KSelector {
 		bool invert;
 };
 REGISTER_SELECTOR(DeltaPhiExtended);
+
+//----------------------------------------------------
+//selects events based on number of AK8 jets
+class KNJetAK8Selector : public KSelector {
+	public:
+		//constructor
+		KNJetAK8Selector() : KSelector() { }
+		KNJetAK8Selector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), njet(2) { 
+			//check for option
+			localOpt->Get("njet",njet);
+		}
+		virtual void ListBranches(){
+			branches.insert(branches.end(),{
+				"JetsAK8",
+			});
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return looper->JetsAK8->size() >= njet;
+		}
+		
+		//member variables
+		int njet;
+};
+REGISTER_SELECTOR(NJetAK8);
+
+//----------------------------------------------------
+//selects events based on number of AK8 jets
+class KEtaJetAK8Selector : public KSelector {
+	public:
+		//constructor
+		KEtaJetAK8Selector() : KSelector() { }
+		KEtaJetAK8Selector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), njet(2), eta(2.4) { 
+			//check for option
+			localOpt->Get("njet",njet);
+			localOpt->Get("eta",eta);
+		}
+		virtual void ListBranches(){
+			branches.insert(branches.end(),{
+				"JetsAK8",
+			});
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			for(unsigned j = 0; j < njet; ++j){
+				if(eta>0 and abs(looper->JetsAK8->at(j).Eta())>=eta) return false;
+			}
+			return true;
+		}
+		
+		//member variables
+		int njet;
+		double eta;
+};
+REGISTER_SELECTOR(EtaJetAK8);
 
 #endif
