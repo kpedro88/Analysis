@@ -16,6 +16,7 @@
 #include <exception>
 #include <algorithm>
 #include <vector>
+#include <numeric>
 
 using namespace std;
 
