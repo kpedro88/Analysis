@@ -112,7 +112,7 @@ void getRange(int n, double* arr, double& ymin, double& ymax){
 
 //usage:
 //root -l 'plotLimit.C+("svj1",{{"mZprime",-1},{"mDark",20},{"rinv",0.3},{"alpha",0.2}},2)'
-void plotLimit(string sname, vector<pair<string,double>> vars, int nsigma=0, bool do_obs=false){
+void plotLimit(string sname, vector<pair<string,double>> vars, int nsigma=0, map<string,string> extras={}, bool do_obs=false){
 	//ranges for plotting
 	double ymin = 1e10, xmin = 1e10;
 	double ymax = 0, xmax = 0;
@@ -202,6 +202,8 @@ void plotLimit(string sname, vector<pair<string,double>> vars, int nsigma=0, boo
 	//extend range
 	ymax = ymax*10;
 	ymin = ymin/10;
+	//avoid huge range
+	ymin = max(ymin,1e-5);
 	//xmax = xmax + 100;
 	//xmin = xmin - 100;
 
@@ -245,8 +247,13 @@ void plotLimit(string sname, vector<pair<string,double>> vars, int nsigma=0, boo
 
 	//preamble of legend
 	kleg->AddEntry((TObject*)NULL,"95% CL upper limits","");
+	if(extras.find("region_text")!=extras.end()) kleg->AddEntry((TObject*)NULL,extras["region_text"],"");
 	kleg->AddEntry(g_xsec,"Theoretical","l");
-	if(do_obs) kleg->AddEntry(g_obs,"Observed","pe");
+	if(do_obs) {
+		string obs_text("Observed");
+		if(extras.find("obs_text")!=extras.end()) obs_text = extras["obs_text"];
+		kleg->AddEntry(g_obs,obs_text,"pe");
+	}
 	kleg->AddEntry(g_central,"Median expected","l");
 	if(nsigma>=1) kleg->AddEntry(g_one,"68% expected","f");
 	if(nsigma>=2) kleg->AddEntry(g_two,"95% expected","f");
