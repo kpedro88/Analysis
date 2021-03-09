@@ -519,19 +519,8 @@ class KMCWeightSelector : public KSelector {
 			}
 			psisrunc = 0; localOpt->Get("psisrunc",psisrunc);
 			psfsrunc = 0; localOpt->Get("psfsrunc",psfsrunc);
+			psnorm = localOpt->Get("psnorm",true);
 			psflat = 0.; localOpt->Get("psflat",psflat);
-			if(psisrunc!=0 or psfsrunc!=0){
-				//get the normalizations for parton shower uncertainties
-				TH1F* h_norm = KGet<TH1F>(base->GetFile(),"PSNorm");
-				psnorms = vector<double>(4,1.0);
-				//1: nominal, 2: ISR up, 3: ISR down, 4: FSR up, 5: FSR down
-				double nominal = h_norm->GetBinContent(1);
-				for(unsigned n = 0; n < 4; ++n){
-					//(bin in histo = index + 2)
-					psnorms[n] = nominal/h_norm->GetBinContent(n+2);
-				}
-			}
-
 		}
 		virtual void ListBranches(){
 			//force enable branches needed for cuts/weights/etc.
@@ -676,11 +665,13 @@ class KMCWeightSelector : public KSelector {
 				w *= (pdfallunc>0 ? mean+rms : mean-rms);
 			}
 
-			//skip ps unc if weights missing
 			if(psisrunc!=0){
+				//skip ps unc if weights missing
 				if(looper->PSweights->size()==14){
-					if(psisrunc==1) w *= looper->PSweights->at(6)*psnorms[0];
-					else if(psisrunc==-1) w *= looper->PSweights->at(8)*psnorms[1];
+					int psindex = 0;
+					if(psisrunc==1) psindex = 6;
+					else if(psisrunc==-1) psindex = 8;
+					w *= getPSweight(psindex);
 				}
 				else if(psflat!=0.){//flat placeholder
 					if(psisrunc==1) w *= (1+psflat);
@@ -688,9 +679,12 @@ class KMCWeightSelector : public KSelector {
 				}
 			}
 			if(psfsrunc!=0){
+				//skip ps unc if weights missing
 				if(looper->PSweights->size()==14){
-					if(psfsrunc==1) w *= looper->PSweights->at(7)*psnorms[2];
-					else if(psfsrunc==-1) w *= looper->PSweights->at(9)*psnorms[3];
+					int psindex = 0;
+					if(psfsrunc==1) psindex = 7;
+					else if(psfsrunc==-1) psindex = 9;
+					w *= getPSweight(psindex);
 				}
 				else if(psflat!=0.){//flat placeholder
 					if(psfsrunc==1) w *= (1+psflat);
@@ -792,6 +786,15 @@ class KMCWeightSelector : public KSelector {
 			
 			return w;
 		}
+		//psweight helper
+		double getPSweight(int psindex) const {
+			//option to prevent norm by default weight for hidden valley (default weights have a bug in Pythia8.230)
+			double psweight = psnorm ? looper->PSweights->at(psindex)/looper->PSweights->at(0) : looper->PSweights->at(psindex);
+			//remove high weights
+			double maxweight = 10.0;
+			if(psweight>maxweight) psweight = 1.0;
+			return psweight;
+		}
 		//static members - kept in functions for safety
 		static HistoMapMap& puhistMap(){
 			static HistoMapMap puhistMap_;
@@ -821,13 +824,13 @@ class KMCWeightSelector : public KSelector {
 		KNormTypeSelector* NormType;
 		bool internalNormType;
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, useTreeXsec, useKFactor, debugWeight, didDebugWeight;
-		bool pucorr, putree, punew, puupdcorr, trigcorr, trigsystcorr, trigfncorr, isrcorr, useisrflat, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr, hemvetocorr, lepcorr;
+		bool pucorr, putree, punew, puupdcorr, trigcorr, trigsystcorr, trigfncorr, isrcorr, useisrflat, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr, hemvetocorr, lepcorr, psnorm;
 		double jetidcorrval, isotrackcorrval, trigsystcorrval, lumicorrval, isrflat, psflat;
 		int puunc, puupdunc, pdfunc, pdfallunc, isrunc, scaleunc, trigunc, trigyear, trigfnunc, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc, prefireunc, hemvetounc, lepidunc, lepisounc, leptrkunc, psisrunc, psfsrunc;
 		vector<int> mother;
 		TH1 *puhist, *puhistUp, *puhistDown;
 		TH1 *puupdhist, *puupdhistUp, *puupdhistDown;
-		vector<double> pdfnorms, pdfallnorms, psnorms;
+		vector<double> pdfnorms, pdfallnorms;
 		int nEventProc;
 		double xsection, norm, kfactor;
 		ISRCorrector isrcorror;

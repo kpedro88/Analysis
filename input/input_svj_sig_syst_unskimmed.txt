@@ -1,0 +1,54 @@
+INPUT
+input/input_svj_hist.txt
+
+OPTION
+int:npanel[1]
+double:luminorm[41500]
+double:sizeLeg[20]
+vstring:extra_text[SVJ_3100_20_0.3_peak]
+vstring:chosensets[central]
+vstring:denoms[central]
+string:rationame[syst/central]
+double:ratiomin[0.75]
+double:ratiomax[1.25]
+bool:appendsel[0]
+bool:treesuffix[0]
+string:printsuffix[unskimmed]
+bool:useTreeWeight[0]
+bool:useTreeXsec[0]
+
+SELECTION
+nominal
+	MCWeight
+	Histo
+psisruncUp
+	MCWeight	int:psisrunc[1]	b:psnorm[0]
+	Histo
+psisruncDown
+	MCWeight	int:psisrunc[-1]	b:psnorm[0]
+	Histo
+psfsruncUp
+	MCWeight	int:psfsrunc[1]	b:psnorm[0]
+	Histo
+psfsruncDown
+	MCWeight	int:psfsrunc[-1]	b:psnorm[0]
+	Histo
+
+HISTO
+#MTAK8	i:xnum[65]	d:xmin[1500]	d:xmax[8000]	s:xtitle[M_{T} [GeV]]	s:ytitle[number of events]	b:ratio[1]	d:dxmin[1500]	d:dxmax[4000]
+MTAK8	i:xnum[80]	d:xmin[0]	d:xmax[8000]	s:xtitle[M_{T} [GeV]]	s:ytitle[number of events]	b:ratio[1]	d:dxmin[0]	d:dxmax[4000]
+met	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[#slash{E}_{T} [GeV]]	s:ytitle[number of events]	b:ratio[1]
+genmet	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[#slash{E}_{T}^{(gen)} [GeV]]	s:ytitle[number of events]	b:ratio[1]
+leadjetAK8genpt	i:xnum[100]	d:xmin[0]	d:xmax[2000]	s:xtitle[p_{T}^{(gen)}(j_{1}) [GeV]]	s:ytitle[number of events]	b:ratio[1]
+
+SET
+hist	mc	central	s:legname[central]	c:color[kBlack]	vs:selections[nominal]
+	base	mc	SVJ_3100_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-3100_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	i:nEventProc[12622]	d:xsection[0.01209]
+hist	mc	PSISRup	s:legname[PS ISR up]	c:color[kBlue]	i:linestyle[7]	vs:selections[psisruncUp]
+	base	mc	SVJ_3100_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-3100_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	i:nEventProc[12622]	d:xsection[0.01209]
+hist	mc	PSISRdown	s:legname[PS ISR down]	c:color[kRed]	i:linestyle[7]	vs:selections[psisruncDown]
+	base	mc	SVJ_3100_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-3100_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	i:nEventProc[12622]	d:xsection[0.01209]
+hist	mc	PSFSRup	s:legname[PS FSR up]	c:color[kBlue]	i:linestyle[7]	vs:selections[psfsruncUp]
+	base	mc	SVJ_3100_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-3100_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	i:nEventProc[12622]	d:xsection[0.01209]
+hist	mc	PSFSRdown	s:legname[PS FSR down]	c:color[kRed]	i:linestyle[7]	vs:selections[psfsruncDown]
+	base	mc	SVJ_3100_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-3100_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	i:nEventProc[12622]	d:xsection[0.01209]

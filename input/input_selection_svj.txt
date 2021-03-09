@@ -15,7 +15,6 @@ vstring:disable_branches[*clean*,*Clean*]
 SELECTION
 common
 	PDFNorm
-	PSNorm
 endcommon
 	JetMatch	b:forceadd[1]
 	BDT	s:name[BDT]	s:weights[KMVA/E3_TMVA_bdt_weights.xml]	s:type[BDTG]	b:positive[1]	b:forceadd[1]	s:branchname[bdtSVJtag]	vs:variables[girth,tau21,tau32,msd,deltaphi,axisminor,axismajor,ptD,ecfN2b1,ecfN3b1,fChHad,fEle,fMu,fNeuHad,fPho]	b:tmva[0]

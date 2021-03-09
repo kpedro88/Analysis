@@ -784,62 +784,6 @@ class KPDFNormSelector : public KSelector {
 REGISTER_SELECTOR(PDFNorm);
 
 //-----------------------------------------------------------------
-//stores info for normalizing parton shower uncertainties
-class KPSNormSelector : public KSelector {
-	public:
-		//constructor
-		KPSNormSelector() : KSelector() { }
-		KPSNormSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), h_norm(NULL) {
-			canfail = false;
-			//initialize histogram
-			TH1::AddDirectory(kFALSE);
-			//bins:
-			//1: nominal, 2: ISR up, 3: ISR down, 4: FSR up, 5: FSR down
-			h_norm = new TH1F("PSNorm","",5,0.5,5.5);
-		}
-		virtual void CheckBase(){
-			//disable this for data
-			if(base->IsData()) {
-				dummy = true;
-				delete h_norm;
-			}
-		}
-
-		//this selector doesn't add anything to tree
-		
-		//used for non-dummy selectors
-		virtual bool Cut() {
-			if(looper->PSweights->size()==14){
-				double denom = looper->PSweights->at(0);
-				h_norm->Fill(1,getWeight(denom,denom));
-				//using "default" variations (factor 1/2 or 2 in radiation factorization scale)
-				h_norm->Fill(2,getWeight(looper->PSweights->at(6),denom));
-				h_norm->Fill(3,getWeight(looper->PSweights->at(8),denom));
-				h_norm->Fill(4,getWeight(looper->PSweights->at(7),denom));
-				h_norm->Fill(5,getWeight(looper->PSweights->at(9),denom));
-			}
-			return true;
-		}
-		//helper to remove high weights
-		double getWeight(double numer, double denom, double max=10.){
-			double weight = numer/denom;
-			if(weight>=max) weight = 1.0;
-			return weight;
-		}
-		
-		virtual void Finalize(TFile* file){
-			if(dummy) return;
-			//write to file
-			file->cd();
-			h_norm->Write();
-		}
-		
-		//member variables
-		TH1F *h_norm;
-};
-REGISTER_SELECTOR(PSNorm);
-
-//-----------------------------------------------------------------
 //stores info for pileup acceptance uncertainty
 class KPileupAccSelector : public KSelector {
 	public:

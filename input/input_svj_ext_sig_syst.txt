@@ -17,8 +17,7 @@ bool:treesuffix[0]
 string:printsuffix[dijetmtdetahadloosefull_highCut]
 
 HISTO
-#MTAK8	i:xnum[45]	d:xmin[1500]	d:xmax[6000]	s:xtitle[M_{T} [GeV]]	s:ytitle[number of events]	b:ratio[1]
-MTAK8	i:xnum[65]	d:xmin[1500]	d:xmax[8000]	s:xtitle[M_{T} [GeV]]	s:ytitle[number of events]	b:ratio[1]
+MTAK8	i:xnum[65]	d:xmin[1500]	d:xmax[8000]	s:xtitle[M_{T} [GeV]]	s:ytitle[number of events]	b:ratio[1]	d:dxmin[1500]	d:dxmax[4000]
 
 SET
 hist	mc	central	s:legname[central]	c:color[kBlack]
