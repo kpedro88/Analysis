@@ -218,9 +218,7 @@ To submit scan jobs to Condor:
 cd batch
 ./SCsub_svj.sh -y 2016,2017,2018
 (wait for jobs to finish)
-./HSsub.sh -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan -g "_block[0-9]*_MC2016" -S "MC2016_scan" -r
-./HSsub.sh -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan -g "_block[0-9]*_MC2017" -S "MC2017_scan" -r
-./HSsub.sh -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan -g "_block[0-9]*_MC2018" -S "MC2018_scan" -r
+for i in MC2016 MC2017 MC2018; do ./HSsub.sh -d /store/user/lpcsusyhad/SVJ2017/Run2ProductionV17/scan -g "_block[0-9]*_${i}" -S "${i}_scan" -v; done
 ```
 
 To make the input lists and skim the signal scans:
@@ -262,16 +260,16 @@ root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ
 To create histograms for datacards and do post-processing:
 ```
 cd batch
-./DCsub_svj.sh -t SVJData,SVJBkg -y Run2 -v trig3/sigfull
+./DCsub_svj.sh -t SVJData,SVJBkg -y Run2 -v trig5/sigfull
 (wait for jobs to finish)
-../finalizeDatacardsSVJ.sh -d /store/user/pedrok/SVJ2017/Datacards/trig3/sigfull -k
-./DCsub_svj.sh -t SVJScan -y Run2 -v trig3/sigfull
+../finalizeDatacardsSVJ.sh -d /store/user/pedrok/SVJ2017/Datacards/trig5/sigfull -k
+./DCsub_svj.sh -t SVJScan -y Run2 -v trig5/sigfull
 ```
 
 Signal systematics studies:
 ```
 cd batch
-./HSsub.sh -c block,scan -d /store/user/pedrok/SVJ2017/Datacards/trig3/sigfull -S scan -k -n 1
+./HSsub.sh -c block,scan -d /store/user/pedrok/SVJ2017/Datacards/trig5/sigfull -S scan -k -n 1
 cd ..
-python summarizeSyst.py -d /store/user/pedrok/SVJ2017/Datacards/trig3/sigfull -c "mDark==20.&&rinv==0.3&&alpha==-2."
+python summarizeSyst.py -d /store/user/pedrok/SVJ2017/Datacards/trig5/sigfull -c "mDark==20.&&rinv==0.3&&alpha==-2."
 ```
