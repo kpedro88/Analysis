@@ -101,6 +101,7 @@ input/fast*/
 /makeJESTree.C
 /test_datacard.py
 /plot_test_dc.py
+/getPostfitChi2.py
 
 # linked by setupXML.sh
 /KMVA/pugi*.*

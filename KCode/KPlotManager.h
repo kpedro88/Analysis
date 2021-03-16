@@ -939,7 +939,7 @@ class KPlotManager : public KManager {
 					otmp += "." + pformat;
 					KParser::clean(otmp);
 					can->Print(otmp.c_str(),pformat.c_str());
-					if(epstopdf) system(("epstopdf "+otmp+" && rm "+otmp).c_str());
+					if(epstopdf) system(("epstopdf "+otmp+" |& grep -q -v 'no version information available' || true && rm "+otmp).c_str());
 				}
 			}
 		}
