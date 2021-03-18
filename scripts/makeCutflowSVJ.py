@@ -1,6 +1,6 @@
 import os, stat, sys
 from optparse import OptionParser
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 
 # avoid relative import
 import sys
@@ -102,6 +102,11 @@ procs = OrderedDict([
     ])
 ])
 
+kfactors = defaultdict(lambda: defaultdict(lambda: 1.0))
+kfactors['QCD']['2016'] = 1.2
+kfactors['QCD']['2017'] = 1.9
+kfactors['QCD']['2018'] = 1.5
+
 cutflow_inds = {
     'raw': 1,
     'rawrel': 1,
@@ -123,7 +128,8 @@ for procname,proc in procs.iteritems():
                 year = "2017"
             if "ST_t-channel" in p[0] and year=="2018":
                 year = "2017"
-            samples.append('{"'+p[0]+'_MC'+year+'",'+str(p[1])+','+str(lumi)+'}')
+            xsec = p[1]*kfactors[procname][year]
+            samples.append('{"'+p[0]+'_MC'+year+'",'+str(xsec)+','+str(lumi)+'}')
 
     # process cutflow lines (summed over years)
     cmd = "root -b -l -q 'CutflowSum.C("+'"'+options.dir+'",{'+','.join(samples)+'},1,'+str(options.prec)+(',1' if options.skipzeros else "")+')'+"'"
