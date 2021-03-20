@@ -1,0 +1,52 @@
+INPUT
+input/input_svj_paper.txt
+
+OPTION
+vstring{|}:extra_text[signal (^{}m_{dark} = 20 GeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
+vint:extra_text_panels[1,1]
+string:rootfile[test/paper/Nm1/Nm1_plots.root]
+string:printsuffix[Run2ProductionV17_Nm1]
+
+HISTO
+metMTratio	i:xnum[10]	d:xmin[0]	d:xmax[0.4545]	s:xtitle[R_{T}]	s:ytitle[arbitrary units]	b:logy[1]	b:ratio[0]	vd:xcuts[0.15,0.25]	vc:xcut_colors[kBlack,kRed]
+MTAK8	i:xnum[10]	d:xmin[0]	d:xmax[6060]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:logy[1]	b:ratio[0]	vd:xcuts[1500]	vc:xcut_colors[kBlack]
+deltaetaAK8	i:xnum[10]	d:xmin[0]	d:xmax[3.535]	s:xtitle[#Delta#eta(J_{1},J_{2})]	s:ytitle[arbitrary units]	b:logy[1]	b:ratio[0]	vd:xcuts[1.5]	vc:xcut_colors[kBlack]
+deltaphiminAK8	i:xnum[10]	d:xmin[0]	d:xmax[3.333]	s:xtitle[#Delta#phi_{min}]	s:ytitle[arbitrary units]	b:logy[1]	b:ratio[0]	vd:xcuts[0.8]	vc:xcut_colors[kRed]
+
+SET
+hist	mc	SVJ_2000_20_0.3_peak	s:legname[m_{Z'} = 2000 GeV]	c:color[kBlue]	i:linestyle[7]	i:panel[1]
+	base	ext	SVJ_2000_20_0.3_peak_MC2016	s:extfilename[test/paper/Nm1/2016_z2000.root]	vs:exthisto_in[metR_z20,MT_with_METMT_Cut_z20,DeltaEta_z20,DeltaPhiMin_AK8_z20]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+	base	ext	SVJ_2000_20_0.3_peak_MC2017	s:extfilename[test/paper/Nm1/2017_z2000.root]	vs:exthisto_in[metR_z20,MT_with_METMT_Cut_z20,DeltaEta_z20,DeltaPhiMin_AK8_z20]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+	base	ext	SVJ_2000_20_0.3_peak_MC2018PRE	s:extfilename[test/paper/Nm1/2018PRE_z2000.root]	vs:exthisto_in[metR_z20,MT_with_METMT_Cut_z20,DeltaEta_z20,DeltaPhiMin_AK8_z20]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+	base	ext	SVJ_2000_20_0.3_peak_MC2018POST	s:extfilename[test/paper/Nm1/2018POST_z2000.root]	vs:exthisto_in[metR_z20,MT_with_METMT_Cut_z20,DeltaEta_z20,DeltaPhiMin_AK8_z20]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+hist	mc	SVJ_3000_20_0.3_peak	s:legname[m_{Z'} = 3000 GeV]	c:color[kCyan + 2]	i:linestyle[7]	i:panel[1]
+	base	ext	SVJ_3000_20_0.3_peak_MC2016	s:extfilename[test/paper/Nm1/2016_z3000.root]	vs:exthisto_in[metR_base,MT_with_METMT_Cut_base,DeltaEta_base,DeltaPhiMin_AK8_base]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+	base	ext	SVJ_3000_20_0.3_peak_MC2017	s:extfilename[test/paper/Nm1/2017_z3000.root]	vs:exthisto_in[metR_base,MT_with_METMT_Cut_base,DeltaEta_base,DeltaPhiMin_AK8_base]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+	base	ext	SVJ_3000_20_0.3_peak_MC2018PRE	s:extfilename[test/paper/Nm1/2018PRE_z3000.root]	vs:exthisto_in[metR_base,MT_with_METMT_Cut_base,DeltaEta_base,DeltaPhiMin_AK8_base]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+	base	ext	SVJ_3000_20_0.3_peak_MC2018POST	s:extfilename[test/paper/Nm1/2018POST_z3000.root]	vs:exthisto_in[metR_base,MT_with_METMT_Cut_base,DeltaEta_base,DeltaPhiMin_AK8_base]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+hist	mc	SVJ_4000_20_0.3_peak	s:legname[m_{Z'} = 4000 GeV]	c:color[kMagenta]	i:linestyle[7]	i:panel[1]
+	base	ext	SVJ_4000_20_0.3_peak_MC2016	s:extfilename[test/paper/Nm1/2016_z4000.root]	vs:exthisto_in[metR_z40,MT_with_METMT_Cut_z40,DeltaEta_z40,DeltaPhiMin_AK8_z40]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+	base	ext	SVJ_4000_20_0.3_peak_MC2017	s:extfilename[test/paper/Nm1/2017_z4000.root]	vs:exthisto_in[metR_z40,MT_with_METMT_Cut_z40,DeltaEta_z40,DeltaPhiMin_AK8_z40]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+	base	ext	SVJ_4000_20_0.3_peak_MC2018PRE	s:extfilename[test/paper/Nm1/2018PRE_z4000.root]	vs:exthisto_in[metR_z40,MT_with_METMT_Cut_z40,DeltaEta_z40,DeltaPhiMin_AK8_z40]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+	base	ext	SVJ_4000_20_0.3_peak_MC2018POST	s:extfilename[test/paper/Nm1/2018POST_z4000.root]	vs:exthisto_in[metR_z40,MT_with_METMT_Cut_z40,DeltaEta_z40,DeltaPhiMin_AK8_z40]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+hist	mc	QCD	s:legname[QCD]	c:color[kBlue + 2]	i:panel[0]
+	base	ext	QCD_MC2016	s:extfilename[test/paper/Nm1/Nm1_QCD16.root]	vs:exthisto_in[QCD16_metR,QCD16_MT_with_METMT_Cut,QCD16_DeltaEta,QCD16_DeltaPhiMin_AK8]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+	base	ext	QCD_MC2017	s:extfilename[test/paper/Nm1/Nm1_QCD17.root]	vs:exthisto_in[QCD17_metR,QCD17_MT_with_METMT_Cut,QCD17_DeltaEta,QCD17_DeltaPhiMin_AK8]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+	base	ext	QCD_MC2018PRE	s:extfilename[test/paper/Nm1/Nm1_QCD18PRE.root]	vs:exthisto_in[QCD18PRE_metR,QCD18PRE_MT_with_METMT_Cut,QCD18PRE_DeltaEta,QCD18PRE_DeltaPhiMin_AK8]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+	base	ext	QCD_MC2018POST	s:extfilename[test/paper/Nm1/Nm1_QCD18POST.root]	vs:exthisto_in[QCD18POST_metR,QCD18POST_MT_with_METMT_Cut,QCD18POST_DeltaEta,QCD18POST_DeltaPhiMin_AK8]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+hist	mc	TTJets	s:legname[t#bar{t}]	c:color[kOrange - 2]	i:panel[0]
+	base	ext	TTJets_MC2016	s:extfilename[test/paper/Nm1/Nm1_TTJets16.root]	vs:exthisto_in[TTJets16_metR,TTJets16_MT_with_METMT_Cut,TTJets16_DeltaEta,TTJets16_DeltaPhiMin_AK8]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+	base	ext	TTJets_MC2017	s:extfilename[test/paper/Nm1/Nm1_TTJets17.root]	vs:exthisto_in[TTJets17_metR,TTJets17_MT_with_METMT_Cut,TTJets17_DeltaEta,TTJets17_DeltaPhiMin_AK8]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+	base	ext	TTJets_MC2018PRE	s:extfilename[test/paper/Nm1/Nm1_TTJets18PRE.root]	vs:exthisto_in[TTJets18PRE_metR,TTJets18PRE_MT_with_METMT_Cut,TTJets18PRE_DeltaEta,TTJets18PRE_DeltaPhiMin_AK8]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+	base	ext	TTJets_MC2018POST	s:extfilename[test/paper/Nm1/Nm1_TTJets18POST.root]	vs:exthisto_in[TTJets18POST_metR,TTJets18POST_MT_with_METMT_Cut,TTJets18POST_DeltaEta,TTJets18POST_DeltaPhiMin_AK8]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+hist	mc	WJets	s:legname[W(l#nu)+jets]	c:color[kOrange + 1]	i:panel[0]
+	base	ext	WJets_MC2016	s:extfilename[test/paper/Nm1/Nm1_WJets16.root]	vs:exthisto_in[WJets16_metR,WJets16_MT_with_METMT_Cut,WJets16_DeltaEta,WJets16_DeltaPhiMin_AK8]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+	base	ext	WJets_MC2017	s:extfilename[test/paper/Nm1/Nm1_WJets17.root]	vs:exthisto_in[WJets17_metR,WJets17_MT_with_METMT_Cut,WJets17_DeltaEta,WJets17_DeltaPhiMin_AK8]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+	base	ext	WJets_MC2018PRE	s:extfilename[test/paper/Nm1/Nm1_WJets18PRE.root]	vs:exthisto_in[WJets18PRE_metR,WJets18PRE_MT_with_METMT_Cut,WJets18PRE_DeltaEta,WJets18PRE_DeltaPhiMin_AK8]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+	base	ext	WJets_MC2018POST	s:extfilename[test/paper/Nm1/Nm1_WJets18POST.root]	vs:exthisto_in[WJets18POST_metR,WJets18POST_MT_with_METMT_Cut,WJets18POST_DeltaEta,WJets18POST_DeltaPhiMin_AK8]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+hist	mc	ZJets	s:legname[Z(#nu#nu)+jets]	c:color[kViolet + 1]	i:panel[0]
+	base	ext	ZJets_MC2016	s:extfilename[test/paper/Nm1/Nm1_ZJets16.root]	vs:exthisto_in[ZJets16_metR,ZJets16_MT_with_METMT_Cut,ZJets16_DeltaEta,ZJets16_DeltaPhiMin_AK8]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+	base	ext	ZJets_MC2017	s:extfilename[test/paper/Nm1/Nm1_ZJets17.root]	vs:exthisto_in[ZJets17_metR,ZJets17_MT_with_METMT_Cut,ZJets17_DeltaEta,ZJets17_DeltaPhiMin_AK8]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+	base	ext	ZJets_MC2018PRE	s:extfilename[test/paper/Nm1/Nm1_ZJets18PRE.root]	vs:exthisto_in[ZJets18PRE_metR,ZJets18PRE_MT_with_METMT_Cut,ZJets18PRE_DeltaEta,ZJets18PRE_DeltaPhiMin_AK8]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+	base	ext	ZJets_MC2018POST	s:extfilename[test/paper/Nm1/Nm1_ZJets18POST.root]	vs:exthisto_in[ZJets18POST_metR,ZJets18POST_MT_with_METMT_Cut,ZJets18POST_DeltaEta,ZJets18POST_DeltaPhiMin_AK8]	vs:exthisto_out[metMTratio,MTAK8,deltaetaAK8,deltaphiminAK8]
+
