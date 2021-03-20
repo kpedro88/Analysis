@@ -398,26 +398,8 @@ class KBaseExt : public KBase {
 		
 		//change histo add mode
 		void SetAddExt(bool ae) { add_ext = ae; }
-		//histo add so external histos won't get overwritten
-		virtual TH1* AddHisto(string s, TH1* h, OptionMap* omap=NULL){
-			//set current name
-			stmp = s;
-			
-			if(!add_ext){ //if the histo being added is not from ext, check to see if it is already added
-				KObject* otmp = MyObjects.Get(s);
-				if(otmp and otmp->htmp){ //if it is already added, just use it, do not overwrite it
-					obj = otmp;
-					return obj->htmp;
-				}
-			}
-			
-			//otherwise, set current histo the usual way
-			obj = new KObject();
-			obj->htmp = (TH1*)h->Clone();
-			if (useKFactor) obj->htmp->Scale(kfactor);
-			MyObjects.Add(stmp,obj);
-			return obj->htmp;
-		}
+		//histo add so external histos won't get overwritten, implemented in KHisto.h
+		virtual TH1* AddHisto(string s, TH1* h, OptionMap* omap=NULL);
 		
 		//external histos do not need to build
 		using KBase::Build;

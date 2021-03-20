@@ -466,11 +466,9 @@ class KLegend{
 					xbmin = logx
 							? x1->FindBin(x1min*pow(x1max/x1min, (ucmin[i] - pad->GetLeftMargin())/gx))
 							: x1->FindBin((ucmin[i] - pad->GetLeftMargin())*(x1max - x1min)/gx + x1min);
-					if(xbmin > 1) xbmin -= 1; //include partial overlap
 					xbmax = logx
 							? x1->FindBin(x1min*pow(x1max/x1min, (ucmax[i] - pad->GetLeftMargin())/gx))
 							: x1->FindBin((ucmax[i] - pad->GetLeftMargin())*(x1max - x1min)/gx + x1min);
-					if(xbmax < hists[s]->GetNbinsX()) xbmax += 1; //include partial overlap
 					
 					//set range for search
 					x1->SetRange(xbmin,xbmax);
@@ -479,6 +477,8 @@ class KLegend{
 					if(checkerr) bh_ += hists[s]->GetBinError(b_);
 					//check height
 					if(bh_ > bh[i]) bh[i] = bh_;
+
+					if(debug) cout << "Overlap check for " << hists[s]->GetName() << " (" << i << "): bin range [" << xbmin << "," << xbmax << "], max bin " << b_ << ", height " << bh_ << (checkerr ? " (includes err)" : "") << endl;
 					
 					//reset to original range
 					x1->SetRange(xomin,xomax);

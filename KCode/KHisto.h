@@ -113,15 +113,17 @@ class KHisto : public KChecker {
 		//constructors
 		KHisto() : KChecker(), isSpecial(false), MCWeight(0) {}
 		KHisto(string name_, OptionMap* localOpt_, TH1* htmp_, KBase* base_) : KChecker(name_, localOpt_), htmp(htmp_), isSpecial(false), MCWeight(0) {
+			//initialization - checkers
+			SetSelection(base_->GetSelection());
+			SetBase(base_);
+
+			if(base_->IsExt()) return;
+
 			vector<string> vars;
 			if(!localOpt->Get("vars",vars)){
 				//split up histo variables from name (if not otherwise specified)
 				KParser::process(name,'_',vars);
 			}
-			
-			//initialization - checkers
-			SetSelection(base_->GetSelection());
-			SetBase(base_);
 
 			if(htmp){
 				//make fillers
@@ -198,24 +200,33 @@ class KHisto : public KChecker {
 		//defined in K(Builder/Skimmer)Selectors.h to avoid circular dependency
 		virtual double GetWeight();
 		virtual double GetWeightPerJet(unsigned index);
-		virtual void Finalize(){
-			if(sel->GetGlobalOpt()->Get("plotoverflow",false)){
+		virtual void Finalize(TH1* haxis=NULL){
+			//propagate SetAxisRange to external histos
+			if(haxis) htmp->GetXaxis()->SetRange(haxis->GetXaxis()->GetFirst(),haxis->GetXaxis()->GetLast());
+
+			bool overflow = base->GetGlobalOpt()->Get("plotoverflow",false);
+			if(overflow){
 				if(fillers.size()==2) return; //not implemented for 2D histos or profiles yet
-				
+
+				//handle change in displayed x-axis
+				bool overflowall = base->GetGlobalOpt()->Get("plotoverflowall",overflow);
 				//temporary histo to calculate error correctly when adding overflow bin to last bin
 				TH1* otmp = (TH1*)htmp->Clone();
 				otmp->Reset("ICEM");
 				int ovbin = htmp->GetNbinsX()+1;
+				int ovbin0 = overflowall ? htmp->GetXaxis()->GetLast()+1 : ovbin;
 				double err = 0.;
-				otmp->SetBinContent(ovbin-1,htmp->IntegralAndError(ovbin,ovbin,err));
-				otmp->SetBinError(ovbin-1,err);
+				otmp->SetBinContent(ovbin0-1,htmp->IntegralAndError(ovbin0,ovbin,err));
+				otmp->SetBinError(ovbin0-1,err);
 				
 				//add overflow bin to last bin
 				htmp->Add(otmp);
 				
-				//remove overflow bin from htmp (for consistent integral/yield)
-				htmp->SetBinContent(ovbin,0);
-				htmp->SetBinError(ovbin,0);
+				//remove overflow bin(s) from htmp (for consistent integral/yield)
+				for(int b = ovbin0; b <= ovbin; ++b){
+					htmp->SetBinContent(b,0);
+					htmp->SetBinError(b,0);
+				}
 				
 				delete otmp;
 			}
@@ -332,5 +343,28 @@ void KBase::Normalize(double nn, bool toYield){
 	double simyield = obj->htmp->GetDimension()==2 ? ((TH2*)obj->htmp)->Integral(0,obj->htmp->GetNbinsX()+1,0,obj->htmp->GetNbinsY()+1) : obj->htmp->Integral(0,obj->htmp->GetNbinsX()+1);
 	if(toYield) obj->htmp->Scale(nn/simyield);
 	else obj->htmp->Scale(nn);
+}
+//histo add so external histos won't get overwritten
+TH1* KBaseExt::AddHisto(string s, TH1* h, OptionMap* omap){
+	//set current name
+	stmp = s;
+	
+	if(!add_ext){ //if the histo being added is not from ext, check to see if it is already added
+		KObject* otmp = MyObjects.Get(s);
+		if(otmp and otmp->htmp){ //if it is already added, just use it, do not overwrite it
+			//ext has no build step, so just finalize now
+			obj = otmp;
+			obj->khtmp->Finalize(h);
+			return obj->htmp;
+		}
+	}
+	
+	//otherwise, set current histo the usual way
+	obj = new KObject();
+	obj->htmp = (TH1*)h->Clone();
+	if (useKFactor) obj->htmp->Scale(kfactor);
+	obj->khtmp = new KHisto(s,omap,obj->htmp,this);
+	MyObjects.Add(stmp,obj);
+	return obj->htmp;
 }
 #endif
