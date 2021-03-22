@@ -5,7 +5,7 @@ OPTION
 vstring{|}:extra_text[signal (^{}m_{Z'} = 3000 GeV,|^{}m_{dark} = 20 GeV, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
 vint:extra_text_panels[1,1]
 string:extfilename[test/paper/bdt/svj_dijetmtdetahadloosemf_bothjet_E1_Z30.root]
-string:rootfile[test/paper/bdt/bdt_rinv_plots.root]
+string:rootfile[test/paper/bdt/bdt_rinv_plots]
 string:printsuffix[dijetmtdetahadloosemf_bdt_rinv_flatptZ30]
 
 HISTO
