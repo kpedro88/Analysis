@@ -202,7 +202,13 @@ class KHisto : public KChecker {
 		virtual double GetWeightPerJet(unsigned index);
 		virtual void Finalize(TH1* haxis=NULL){
 			//propagate SetAxisRange to external histos
-			if(haxis) htmp->GetXaxis()->SetRange(haxis->GetXaxis()->GetFirst(),haxis->GetXaxis()->GetLast());
+			//based on upper edge of first and last bins in axis histo (subtract 1 because upper edge is always assigned to next bin)
+			if(haxis) {
+				htmp->SetAxisRange(
+					htmp->GetXaxis()->FindBin(haxis->GetXaxis()->GetBinUpEdge(haxis->GetXaxis()->GetFirst()))-1,
+					htmp->GetXaxis()->FindBin(haxis->GetXaxis()->GetBinUpEdge(haxis->GetXaxis()->GetLast()))-1
+				);
+			}
 
 			bool overflow = base->GetGlobalOpt()->Get("plotoverflow",false);
 			if(overflow){
@@ -365,6 +371,10 @@ TH1* KBaseExt::AddHisto(string s, TH1* h, OptionMap* omap){
 	if (useKFactor) obj->htmp->Scale(kfactor);
 	obj->khtmp = new KHisto(s,omap,obj->htmp,this);
 	MyObjects.Add(stmp,obj);
+	if(debug){
+		cout << "base ext " << name << ": added histo " << s << endl;
+		obj->htmp->Print();
+	}
 	return obj->htmp;
 }
 #endif

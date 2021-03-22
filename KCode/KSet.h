@@ -31,7 +31,9 @@ class KSet : public KBase {
 	public:
 		//constructor
 		KSet() : KBase() { }
-		KSet(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KBase(name_, localOpt_, globalOpt_) {	}
+		KSet(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KBase(name_, localOpt_, globalOpt_) {
+			debug = globalOpt->Get("debugset",false);
+		}
 		//destructor
 		virtual ~KSet() {}
 		
@@ -69,18 +71,24 @@ class KSet : public KBase {
 				children[c]->Build();
 			}
 			//then loop to add up histos (only resetting current histo for children once)
+			if(debug) cout << "Set " << name << ":" << endl;
 			for(auto& sit : MyObjects.GetTable()){
 				GetHisto(sit.first); //this will propagate to children
 				if(obj->khtmp and obj->khtmp->IsSpecial()) continue; //don't hadd special histos
 
 				TH1* htmp = nullptr;
 				bool all_ext = true;
+				if(debug) cout << "Histo " << sit.first << ":" << endl;
 				for(auto& child: children){ //include option to subtract histos, off by default
 					if(htmp==nullptr){
 						htmp = (TH1*)child->GetHisto()->Clone();
 						htmp->Reset("ICESM");
 					}
 					all_ext &= child->IsExt();
+					if(debug){
+						cout << "child " << name << (child->IsExt() ? " (ext)" : " ") << ":" << endl;
+						child->GetHisto()->Print();
+					}
 					htmp->Add(child->GetHisto(), child->GetLocalOpt()->Get("subtract",false) ? -1 : 1);				
 				}
 				//special case to allow external histos to have different binning
@@ -104,6 +112,10 @@ class KSet : public KBase {
 				}
 				else {
 					obj->htmp->Add(htmp);
+				}
+				if(debug) {
+					cout << "Result:" << endl;
+					obj->htmp->Print();
 				}
 
 				//build error band, disabled by default
@@ -184,6 +196,7 @@ class KSet : public KBase {
 		//member variables
 		KBase* parent; //overloaded variable name
 		vector<KBase*> children;
+		bool debug;
 };
 
 //------------------------------

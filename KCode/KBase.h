@@ -348,6 +348,7 @@ class KBaseExt : public KBase {
 			file = KOpen(filename);
 
 			//check for importing histos automatically
+			debug = globalOpt->Get("debugext",false);
 			bool ext_auto = localOpt->Get("ext_auto",false);
 			string hsuff;
 			if(localOpt->Get("exthisto_suff",hsuff)) ext_auto = true;
@@ -370,14 +371,17 @@ class KBaseExt : public KBase {
 			if(ext_auto){
 				TKey* key;
 				TIter next(dir ? dir->GetListOfKeys() : file->GetListOfKeys());
+				int counter = 0;
 				while((key = (TKey*)next())) {
 					string ntmp = key->GetName();
 					//look for names in the format histo_suff(_extra)
 					if(ntmp.size() > hsuff.size() and ntmp.compare(ntmp.size()-hsuff.size(),hsuff.size(),hsuff)==0){
 						auto extmp = dir ? KGet<TH1,TDirectory>(dir,ntmp) : KGet<TH1>(file,ntmp);
 						AddHisto(ntmp.substr(0,ntmp.size()-hsuff.size()-1),extmp);
+						++counter;
 					}
 				}
+				if (counter==0) cout << "Warning: ext_auto was specified for base ext " << name << ", but no histograms were found." << endl;
 			}
 			else {
 				//check for specific histos to import
@@ -410,6 +414,7 @@ class KBaseExt : public KBase {
 	private:
 		//member variables
 		bool add_ext;
+		bool debug;
 		bool useKFactor;
 		double kfactor;
 };
