@@ -31,11 +31,17 @@ TFile* KOpen(string fname, string mode="READ", bool dothrow=true){
 	}
 	return file;
 }
+template <class F>
+string _KGet_name() { return "object"; }
+template <>
+string _KGet_name<TFile>() { return "file"; }
+template <>
+string _KGet_name<TDirectory>() { return "TDirectory"; }
 template <class T, class F=TFile>
 T* KGet(F* file, string getname, bool dothrow=true){
 	T* obj = static_cast<T*>(file->Get(getname.c_str()));
 	if(!obj and dothrow){
-		throw runtime_error("Could not get "+getname+" from file "+file->GetName());
+		throw runtime_error("Could not get "+getname+" from "+_KGet_name<F>()+" "+file->GetName());
 	}
 	return obj;
 }
