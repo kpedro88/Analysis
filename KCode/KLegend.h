@@ -466,10 +466,12 @@ class KLegend{
 					xbmin = logx
 							? x1->FindBin(x1min*pow(x1max/x1min, (ucmin[i] - pad->GetLeftMargin())/gx))
 							: x1->FindBin((ucmin[i] - pad->GetLeftMargin())*(x1max - x1min)/gx + x1min);
+					if(i==1 and xbmin > 1) xbmin -= 1; //include extra bin for non-legend side (in case histo taller than legend)
 					xbmax = logx
 							? x1->FindBin(x1min*pow(x1max/x1min, (ucmax[i] - pad->GetLeftMargin())/gx))
 							: x1->FindBin((ucmax[i] - pad->GetLeftMargin())*(x1max - x1min)/gx + x1min);
-					
+					if(i==1 and xbmax < hists[s]->GetNbinsX()) xbmax += 1; //include extra bin for non-legend side (in case histo taller than legend)
+
 					//set range for search
 					x1->SetRange(xbmin,xbmax);
 					int b_ = hists[s]->GetMaximumBin();
