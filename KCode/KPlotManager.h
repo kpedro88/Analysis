@@ -34,7 +34,7 @@ class KRocEntry {
 		enum effbtype { effb=0, minus1=1, inv=2 };
 
 		//constructor
-		KRocEntry(KBase* sig_, KBase* bkg_, string name_, OptionMap* localOpt_, OptionMap* globalOpt_, KMap<string>& allStyles_) :
+		KRocEntry(KBase* sig_, KBase* bkg_, string name_, OptionMap* localOpt_, OptionMap* globalOpt_) :
 			sig(sig_), bkg(bkg_), name(name_), localOpt(localOpt_), globalOpt(globalOpt_), graph(nullptr), marker_wp(nullptr), style(nullptr), auc(0.0), panel(0), legname("")
 		{
 			//get global options
@@ -137,11 +137,7 @@ class KRocEntry {
 			graph->SetTitle("");
 
 			//format graph using KPlot local options for this histo/qty
-			string styleName = "roc";
-			if(allStyles_.Has(styleName)){
-				KNamed* ntmp = KParser::processNamed<1>(styleName+"\t"+allStyles_.Get(styleName));
-				style = new KStyle(ntmp->fields[0],ntmp->localOpt(),localOpt);
-			}
+			style = KStyle::GetWithDefault("roc",localOpt);
 			style->Format(graph);
 
 			//marker & printout after transformations
@@ -336,7 +332,7 @@ class KPlotManager : public KManager {
 			}
 
 			//set style at the end, in case parent modifies child's style options
-			tmp->SetStyle(allStyles);
+			tmp->SetStyle();
 			
 			//recurse (if necessary) to set up children
 			for(auto& ctmp : ntmp->children){
@@ -375,7 +371,7 @@ class KPlotManager : public KManager {
 				rtmp->GetLocalOpt()->Set<string>("drawopt","pe");
 				rtmp->SetStyle(style_source->GetStyle());
 			}
-			else rtmp->SetStyle(allStyles); //default style
+			else rtmp->SetStyle(); //default style
 			MyRatios.push_back(rtmp);
 		}
 		//where the magic happens
@@ -847,7 +843,7 @@ class KPlotManager : public KManager {
 						//initialize roc entry
 						//get efficiencies as copies (in case of reversal)
 						//(cached results will be returned if the calculation was already done)
-						rocs.emplace_back(roc_sig[s],roc_bkg[b],p.first,p.second->GetLocalOpt(),globalOpt,allStyles);
+						rocs.emplace_back(roc_sig[s],roc_bkg[b],p.first,p.second->GetLocalOpt(),globalOpt);
 						const auto& roc_tmp = rocs.back();
 						//check minima
 						if(roc_tmp.xmin < xmin) xmin = roc_tmp.xmin;

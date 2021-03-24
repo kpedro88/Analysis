@@ -3,6 +3,7 @@
 
 //custom headers
 #include "KMap.h"
+#include "KParser.h"
 
 //ROOT headers
 #include <TROOT.h>
@@ -15,8 +16,8 @@ class KStyle {
 	public:
 		//constructor
 		KStyle() : name(""), defaultOpt(new OptionMap()), localOpt(new OptionMap()) {}
-		KStyle(string name_, OptionMap* defaultOpt_, OptionMap* localOpt_) : 
-			name(name_), defaultOpt(defaultOpt_ ? defaultOpt_ : new OptionMap()), localOpt(localOpt_ ? localOpt_ : new OptionMap()),
+		KStyle(string name_, OptionMap* defaultOpt_, OptionMap* localOpt_, string prefix_="") : 
+			name(name_), defaultOpt(defaultOpt_ ? defaultOpt_ : new OptionMap()), localOpt(localOpt_ ? localOpt_ : new OptionMap()), prefix(prefix_),
 			linecolor(kBlack), markercolor(kBlack), fillcolor(kWhite), errcolor(kGray+1),
 			linewidth(2), linestyle(1), markersize(1.), markerstyle(20), fillstyle(1001), errstyle(3005),
 			drawopt("pe"), legopt("pe"), errdrawopt("f"), errlegopt("f")
@@ -32,6 +33,23 @@ class KStyle {
 			{}
 		//destructor
 		virtual ~KStyle() {}
+
+		//default styles stored in singleton
+		static KMap<string>& GetAllStyles() {
+			static KMap<string> allStyles;
+			return allStyles;
+		}
+		//helper to check default styles
+		static KStyle* GetWithDefault(string styleName, OptionMap* opt, bool strict=true, string prefix_=""){
+			auto& allStyles = GetAllStyles();
+			//search the list of default styles
+			if(allStyles.Has(styleName)){
+				KNamed* ntmp = KParser::processNamed<1>(styleName+"\t"+allStyles.Get(styleName));
+				return new KStyle(ntmp->fields[0],ntmp->localOpt(),opt,prefix_);
+			}
+			else if(!strict) return new KStyle(styleName,nullptr,opt,prefix_);
+			else return nullptr;
+		}
 		
 		//initialization
 		void CheckAllParams(bool checkdefault);
@@ -82,12 +100,14 @@ class KStyle {
 		template <class T>
 		void CheckParam(string sname, T & xtype, bool checkdefault){
 			if(checkdefault) defaultOpt->Get(sname,xtype);
+			sname = prefix+sname;
 			localOpt->Get(sname,xtype);
 		}
 	
 		//members
 		string name;
 		OptionMap *defaultOpt, *localOpt;
+		string prefix;
 		//style params
 		Color_t linecolor, markercolor, fillcolor, errcolor;
 		int linewidth, linestyle;
@@ -105,7 +125,8 @@ void KStyle::CheckParam<Color_t>(string sname, Color_t & xtype, bool checkdefaul
 		defaultOpt->Get("color",xtype);
 		defaultOpt->Get(sname,xtype);
 	}
-	localOpt->Get("color",xtype);
+	localOpt->Get(prefix+"color",xtype);
+	sname = prefix+sname;
 	localOpt->Get(sname,xtype);
 }
 

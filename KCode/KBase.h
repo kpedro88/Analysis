@@ -281,14 +281,11 @@ class KBase {
 			if(!MyCutflow) MakeCutflows();
 			return (MyCutflow ? MyCutflow->GetEfficiency(ct,globalOpt->Get("cutflownorm",false)) : NULL);
 		}
-		virtual void SetStyle(KMap<string>& allStyles, string styleName="") {
+		virtual void SetStyle(string styleName="") {
 			if(styleName.size()==0) return;
 			
 			//search the list of default styles
-			if(allStyles.Has(styleName)){
-				KNamed* ntmp = KParser::processNamed<1>(styleName+"\t"+allStyles.Get(styleName));
-				MyStyle = new KStyle(ntmp->fields[0],ntmp->localOpt(),localOpt);
-			}
+			MyStyle = KStyle::GetWithDefault(styleName,localOpt);
 		}
 		virtual void SetStyle(const KStyle* orig){
 			MyStyle = new KStyle(*orig);

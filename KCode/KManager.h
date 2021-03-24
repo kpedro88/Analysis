@@ -216,7 +216,7 @@ class KManager {
 			}
 			else name = style; //style with no options
 			
-			allStyles.Add(name,opts);
+			KStyle::GetAllStyles().Add(name,opts);
 		}
 		//accessors
 		OptionMap* GetGlobalOpt() { return globalOpt; }
@@ -230,7 +230,6 @@ class KManager {
 		bool parsed;
 		int prcsn;
 		set<string> inputs;
-		KMap<string> allStyles;
 		KMap<vector<KNamed*>> allSelections, allVariations;
 		map<string,vector<KNamed*>>::iterator curr_sel, curr_var;
 };

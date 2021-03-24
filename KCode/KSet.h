@@ -249,8 +249,8 @@ class KSetData: public KSet {
 			else if(obj->htmp->GetDimension()==2) obj->htmp->Draw("colz same");
 		}
 		using KBase::SetStyle;
-		virtual void SetStyle(KMap<string>& allStyles, string styleName="") {
-			KBase::SetStyle(allStyles,"data");
+		virtual void SetStyle(string styleName="") {
+			KBase::SetStyle("data");
 		}
 		//accessors
 		virtual bool IsData() { return true; }
@@ -302,10 +302,10 @@ class KSetMC: public KSet {
 			else if(obj->htmp->GetDimension()==2) obj->htmp->Draw("colz same");
 		}
 		using KBase::SetStyle;
-		virtual void SetStyle(KMap<string>& allStyles, string styleName="") {
+		virtual void SetStyle(string styleName="") {
 			//set some defaults first
 			if(!localOpt->Has("fillcolor")) localOpt->Set("fillcolor",kWhite);
-			KBase::SetStyle(allStyles,"hist");
+			KBase::SetStyle("hist");
 		}
 		//accessors
 		virtual bool IsData() { return false; }
@@ -546,8 +546,8 @@ class KSetMCStack : public KSet {
 		}
 
 		using KBase::SetStyle;
-		virtual void SetStyle(KMap<string>& allStyles, string styleName="") {
-			KBase::SetStyle(allStyles,"stack");
+		virtual void SetStyle(string styleName="") {
+			KBase::SetStyle("stack");
 		}
 		//accessors
 		virtual bool IsData() { return false; }
@@ -854,8 +854,8 @@ class KSetRatio: public KSet {
 			}
 		}
 		using KBase::SetStyle;
-		virtual void SetStyle(KMap<string>& allStyles, string styleName="") {
-			KBase::SetStyle(allStyles,"data");
+		virtual void SetStyle(string styleName="") {
+			KBase::SetStyle("data");
 		}
 		virtual void AddToLegend(KLegend* kleg) {
 			if(!kleg) return;
