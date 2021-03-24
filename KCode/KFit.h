@@ -8,6 +8,7 @@
 #include <TF1.h>
 #include <TFitResultPtr.h>
 #include <TH1.h>
+#include <TGraph.h>
 #include <TPad.h>
 
 #include <string>
@@ -61,6 +62,17 @@ class KFit {
 			localOpt->Get("precision",prcsn);
 			precfixed = localOpt->Get("precfixed",true);
 			printerr = localOpt->Get("printerr",false);
+
+			//error band (optional)
+			string bandfilename, bandname;
+			bool has_band = localOpt->Get("bandfile",bandfilename) and localOpt->Get("bandname",bandname);
+			if(has_band){
+				auto bandfile = KOpen(bandfilename);
+				band = KGet<TGraph>(bandfile,bandname);
+				bstyle = KStyle::GetWithDefault("band",localOpt,false,"g");
+				bstyle->Format(band);
+			}
+			//todo: add option to get error band from fit directly (alternative to importing)
 		}
 
 		//accessors
@@ -89,7 +101,6 @@ class KFit {
 		}
 		template <typename T>
 		void Normalize(T* htmp) {}
-		//todo: add option to plot fit error band?
 		void AddToLegend(KLegend* kleg, int panel=0, bool assoc=false){
 			stringstream sleg;
 			if(precfixed) sleg << fixed;
@@ -116,9 +127,11 @@ class KFit {
 				}
 			}
 			string option = style->GetLegOpt();
-			kleg->AddEntry(fn,ssleg,option,panel,extra_text,assoc);
+			kleg->AddEntry(fn,ssleg,style->GetLegOpt(),panel,extra_text,assoc);
+			if(band) kleg->AddEntry(band,"uncertainty ["+legname+"]",bstyle->GetLegOpt(),panel,{},assoc);
 		}
 		void Draw(TPad* pad){
+			if(band) band->Draw(bstyle->GetDrawOpt("same").c_str());
 			fn->Draw(style->GetDrawOpt("same").c_str());
 		}
 
@@ -140,6 +153,8 @@ class KFit {
 		int prcsn = 2;
 		bool precfixed = true;
 		bool printerr = false;
+		TGraph* band = nullptr;
+		KStyle* bstyle = nullptr;
 };
 
 //only normalize to histos

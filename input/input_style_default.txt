@@ -3,3 +3,4 @@ data	c:color[kBlack]	c:fillcolor[kWhite]	i:linewidth[1]	i:markerstyle[20]	s:draw
 hist	c:color[kBlue]	c:fillcolor[kWhite]	i:linewidth[2]	i:linestyle[1]	s:drawopt[hist]	s:legopt[l]	s:errdrawopt[2]	s:errlegopt[f]
 stack	c:color[kBlack]	c:fillcolor[kWhite]	i:linewidth[2]	i:linestyle[1]	s:drawopt[hist]	s:legopt[l]	s:errdrawopt[2]	s:errlegopt[f]	c:errcolor[kGray + 1]
 roc	c:color[kBlack]	i:linewidth[2]	i:linestyle[1]	s:drawopt[l]	s:legopt[l]
+band	i:linewidth[1]	s:drawopt[fl]	s:legopt[f]

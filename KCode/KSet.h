@@ -241,10 +241,10 @@ class KSetData: public KSet {
 		void Draw(TPad* pad) {
 			pad->cd();
 			if(obj->htmp->GetDimension()==1) {
-				obj->htmp->Draw(MyStyle->GetDrawOpt("same").c_str());
 				for(auto fit : obj->ftmp){
 					fit->Draw(pad);
 				}
+				obj->htmp->Draw(MyStyle->GetDrawOpt("same").c_str());
 			}
 			else if(obj->htmp->GetDimension()==2) obj->htmp->Draw("colz same");
 		}
