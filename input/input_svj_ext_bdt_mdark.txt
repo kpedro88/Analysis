@@ -9,8 +9,8 @@ string:rootfile[test/paper/bdt/bdt_mdark_plots]
 string:printsuffix[dijetmtdetahadloosemf_bdt_mdark_flatptZ30]
 
 HISTO
-bothjetAK8tau32	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#tau_{32}(J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
-bothjetAK8msd	i:xnum[100]	d:xmin[0]	d:xmax[500]	s:xtitle[m_{SD}(J_{1,2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	d:dxmin[0]	d:dxmax[300]
+bothjetAK8tau32	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#tau_{32}(^{}J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+bothjetAK8msd	i:xnum[100]	d:xmin[0]	d:xmax[500]	s:xtitle[m_{SD}(^{}J_{1,2}) [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	d:dxmin[0]	d:dxmax[300]
 
 SET
 hist	mc	SVJ_3000_1_0.3_peak	s:legname[m_{dark} = 1 GeV]	c:color[kRed]	i:linestyle[7]	i:panel[1]
