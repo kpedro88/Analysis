@@ -47,6 +47,7 @@ class KFit {
 			legname = name;
 			localOpt->Get("legname",legname);
 			legpars = localOpt->Get("legpars",true);
+			splitchi2 = localOpt->Get("splitchi2",false);
 			localOpt->Get("splitleg",splitleg);
 			//freeze specific or all parameters (freeze all = don't fit at all)
 			vector<int> fixpars; localOpt->Get("fixpars",fixpars);
@@ -110,13 +111,16 @@ class KFit {
 		template <typename T>
 		void Normalize(T* htmp) {}
 		void AddToLegend(KLegend* kleg, int panel=0, bool assoc=false){
-			stringstream sleg;
+			stringstream sleg, schi2;
 			if(precfixed) sleg << fixed;
-			sleg << setprecision(prcsn);
-			sleg << legname << ", ^{}#chi^{2} / ^{}n_{dof} = " << fn->GetChisquare() << " / " << fn->GetNDF();
+			sleg << legname;
+			schi2 << setprecision(prcsn);
+			schi2 << "^{}#chi^{2} / ^{}n_{dof} = " << fn->GetChisquare() << " / " << fn->GetNDF();
+			if(!splitchi2) sleg << ", " << schi2.str();
 			string ssleg = sleg.str();
 			vector<string> extra_text;
 			localOpt->Get("extra_text",extra_text);
+			if(splitchi2) extra_text.push_back(schi2.str());
 			if(legpars){
 				//print params 2 at a time to avoid overflow
 				int ctr = 0; sleg.str("");
@@ -155,6 +159,7 @@ class KFit {
 		bool legpars;
 		string opts;
 		bool altchi2;
+		bool splitchi2;
 		int splitleg = 2;
 		int normpar = -1;
 		bool use_yield;
