@@ -55,12 +55,12 @@ namespace KMath {
 	}
 	//ref: https://twiki.cern.ch/twiki/bin/viewauth/CMS/PoissonErrorBars
 	double PoissonErrorLow(int N){
-		const double alpha = 1 - 0.6827; //1 sigma interval
+		const double alpha = 1 - 0.682689492; //1 sigma interval, match TH1 Poisson error computation
 		double L = (N==0) ? 0 : (ROOT::Math::gamma_quantile(alpha/2,N,1.));
 		return N - L;
 	}
 	double PoissonErrorUp(int N){
-		const double alpha = 1 - 0.6827; //1 sigma interval
+		const double alpha = 1 - 0.682689492; //1 sigma interval, match TH1 Poisson error computation
 		double U = (ROOT::Math::gamma_quantile_c(alpha/2,N+1,1.));
 		return U - N;
 	}

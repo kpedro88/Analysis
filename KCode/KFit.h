@@ -2,6 +2,7 @@
 #define KFIT_H
 
 #include "KMap.h"
+#include "KMath.h"
 #include "KStyle.h"
 #include "KLegend.h"
 
@@ -9,6 +10,7 @@
 #include <TFitResultPtr.h>
 #include <TH1.h>
 #include <TGraph.h>
+#include <TGraphAsymmErrors.h>
 #include <TPad.h>
 
 #include <string>
@@ -177,23 +179,47 @@ void KFit::Normalize<TH1>(TH1* htmp) {
 	}
 }
 
-//only implemented for histos right now
+//only implemented for TGraphAsymmErrors
 template <>
-void KFit::DoAltChi2(TH1* htmp){
+void KFit::DoAltChi2(TGraphAsymmErrors* gtmp){
 	//copy the computation from RooCurve::chiSquare()
-	//for this to be completely correct, kPoisson error option should be set for histo
-	if(htmp->GetBinErrorOption()==TH1::kNormal) cout << "Warning: using RooFit chi2 computation with Gaussian errors for fit " << name << endl;
 	double chisq = 0.;
-	for(int i = 1; i <= htmp->GetNbinsX(); ++i){
-		double avg = fn->Integral(htmp->GetBinLowEdge(i),htmp->GetBinLowEdge(i+1))/htmp->GetBinWidth(i);
-		double y = htmp->GetBinContent(i);
+	for(int i = 0; i < gtmp->GetN(); ++i){
+		double avg = fn->Integral(gtmp->GetX()[i]-gtmp->GetEXlow()[i], gtmp->GetX()[i]+gtmp->GetEXhigh()[i])/(gtmp->GetEXlow()[i]+gtmp->GetEXhigh()[i]);
+		double y = gtmp->GetY()[i];
 		if(y!=0){
-			double err = (y>avg) ? htmp->GetBinErrorLow(i) : htmp->GetBinErrorUp(i);
+			double err = (y>avg) ? gtmp->GetEYlow()[i] : gtmp->GetEYhigh()[i];
 			double pull = (y-avg)/err;
 			chisq += pull*pull;
 		}
 	}
 	fn->SetChisquare(chisq);
+}
+
+//convert histogram to TGraphAsymmErrors
+//use Poisson error calculation if kPoisson error option is enabled
+//(this error option doesn't actually work all the time in ROOT 6.06)
+template <>
+void KFit::DoAltChi2(TH1* htmp){
+	bool poisson = htmp->GetBinErrorOption()==TH1::kPoisson;
+	//for this to be completely correct, kPoisson error option should be set for histo
+	if(!poisson) cout << "Warning: using RooFit chi2 computation with Gaussian errors for fit " << name << endl;
+	vector<vector<double>> values(5); //x, ex, y, eyl, eyh
+	for(auto& v : values){ v.reserve(htmp->GetNbinsX()); }
+	for(int i = 1; i < htmp->GetNbinsX(); ++i){
+		auto axis = htmp->GetXaxis();
+		values[0].push_back(axis->GetBinCenter(i));
+		values[1].push_back(axis->GetBinWidth(i)/2.);
+		values[2].push_back(htmp->GetBinContent(i));
+		values[3].push_back(poisson ? KMath::PoissonErrorLow(values[2].back()) : htmp->GetBinError(i));
+		values[4].push_back(poisson ? KMath::PoissonErrorUp(values[2].back()) : htmp->GetBinError(i));
+	}
+	TGraphAsymmErrors* gtmp = new TGraphAsymmErrors(
+		values[0].size(),
+		values[0].data(), values[2].data(), values[1].data(),
+		values[1].data(), values[3].data(), values[4].data()
+	);
+	DoAltChi2(gtmp);
 }
 
 #endif
