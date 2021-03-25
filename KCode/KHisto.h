@@ -204,9 +204,11 @@ class KHisto : public KChecker {
 			//propagate SetAxisRange to external histos
 			//based on upper edge of first and last bins in axis histo (subtract 1 because upper edge is always assigned to next bin)
 			if(haxis) {
+				auto xaxis = haxis->GetXaxis();
+				auto xtmp = htmp->GetXaxis();
 				htmp->SetAxisRange(
-					htmp->GetXaxis()->FindBin(haxis->GetXaxis()->GetBinUpEdge(haxis->GetXaxis()->GetFirst()))-1,
-					htmp->GetXaxis()->FindBin(haxis->GetXaxis()->GetBinUpEdge(haxis->GetXaxis()->GetLast()))-1
+					xtmp->GetBinCenter(xtmp->FindBin(xaxis->GetBinUpEdge(xaxis->GetFirst()))-1),
+					xtmp->GetBinCenter(xtmp->FindBin(xaxis->GetBinUpEdge(xaxis->GetLast()))-1)
 				);
 			}
 

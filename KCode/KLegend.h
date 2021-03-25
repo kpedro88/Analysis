@@ -430,6 +430,10 @@ class KLegend{
 			double gy = 1 - (pad->GetBottomMargin() + pad->GetTopMargin());
 			double gx = 1 - (pad->GetLeftMargin() + pad->GetRightMargin());
 			double eps = 0.05; //small separation between legend and histos
+			if(debug){
+				cout << "Pad margins: " << pad->GetLeftMargin() << " " << pad->GetRightMargin() << " " << pad->GetBottomMargin() << " " << pad->GetTopMargin() << endl;
+				cout << "Misc: " << gx << " " << gy << " " << eps << endl;
+			}
 
 			//bounds to check
 			double ucmin[2], ucmax[2], vcmin[2]; //[0] is legend side, [1] is other side
@@ -445,7 +449,12 @@ class KLegend{
 			}
 			vcmin[0] = vmin; //legend always at the bottom
 			vcmin[1] = vmax; //just compare to top of plot (margin + ticks) on the other side
-			
+
+			if(debug){
+				cout << "Bounds to check (legend side, 0): " << ucmin[0] << " " << ucmax[0] << " " << vcmin[0] << endl;
+				cout << "Bounds to check  (other side, 1): " << ucmin[1] << " " << ucmax[1] << " " << vcmin[1] << endl;
+			}
+
 			//loop over histos
 			double bh[2]; //height of highest bin + error (legend)
 			bool checkerr = globalOpt->Get("checkerr",true);
@@ -491,6 +500,10 @@ class KLegend{
 			for(int i = 0; i < 2; i++){
 				//account for log scale if enabled
 				ymax_[i] = logy ? ymin*pow(bh[i]/ymin, gy/(vcmin[i] - pad->GetBottomMargin() - eps)) : ymin + gy*(bh[i] - ymin)/(vcmin[i] - pad->GetBottomMargin() - eps);
+			}
+			if(debug){
+				cout << "Results (" << 0 << "): bh = " << bh[0] << ", ymax = " << ymax_[0] << endl;
+				cout << "Results (" << 1 << "): bh = " << bh[1] << ", ymax = " << ymax_[1] << endl;
 			}
 			ymax = max(ymax_[0],ymax_[1]);
 			userange = true;
