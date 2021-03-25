@@ -69,6 +69,7 @@ class KBase {
 			MyLooper(0), MySelection(0), stmp(""), obj(0), isBuilt(false), MyStyle(0)
 		{
 			debugroc = globalOpt->Get("debugroc",false);
+			poisson = localOpt->Get("poisson",false);
 		}
 		//subsequent initialization
 		virtual void SetLooper(){
@@ -202,6 +203,8 @@ class KBase {
 				for(auto fit : obj->ftmp){
 					//fit name is already assigned as [fit]_[hist]_[set]
 					fit->GetFn()->Write();
+					auto g = fit->GetBand();
+					if(g) g->Write();
 				}
 			}
 		}
@@ -296,7 +299,8 @@ class KBase {
 		virtual bool IsMC() { return !localOpt->Get("data",true); }
 		virtual bool IsExt() { return false; }
 		virtual void SetBuilt() { isBuilt = true; }
-		
+		virtual void SetPoisson(bool p) { poisson = p; }
+
 		//other virtual functions (unimplemented at this level)
 		virtual void Draw(TPad*) {}
 		virtual void AddToLegend(KLegend*) {}
@@ -322,6 +326,7 @@ class KBase {
 		KObject* obj;
 		bool isBuilt;
 		bool debugroc;
+		bool poisson;
 		KStyle* MyStyle;
 };
 typedef KFactory<KBase,string,OptionMap*,OptionMap*> KBaseFactory;

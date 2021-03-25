@@ -338,6 +338,7 @@ TH1* KBase::AddHisto(string s, TH1* h, OptionMap* omap){
 		//but don't make KHisto if no omap provided
 		if(omap) obj->khtmp = new KHisto(s,omap,obj->htmp,this);
 		if(!obj->htmp and obj->khtmp) obj->htmp = obj->khtmp->GetHisto();
+		if(poisson) obj->htmp->SetBinErrorOption(TH1::kPoisson);
 		MyObjects.Add(stmp,obj);
 	}
 	return obj->htmp;
@@ -368,6 +369,7 @@ TH1* KBaseExt::AddHisto(string s, TH1* h, OptionMap* omap){
 	//otherwise, set current histo the usual way
 	obj = new KObject();
 	obj->htmp = (TH1*)h->Clone();
+	if(poisson) obj->htmp->SetBinErrorOption(TH1::kPoisson);
 	if (useKFactor) obj->htmp->Scale(kfactor);
 	obj->khtmp = new KHisto(s,omap,obj->htmp,this);
 	MyObjects.Add(stmp,obj);

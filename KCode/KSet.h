@@ -41,6 +41,7 @@ class KSet : public KBase {
 			children.push_back(ch);
 			//cout << this->name << " added child " << children[children.size()-1]->GetName() << endl;
 			ch->SetParent(this);
+			if(poisson) ch->SetPoisson(true);
 		}
 		vector<KBase*>& GetChildren() { return children; }
 		KBase* GetParent() { return parent; }
@@ -83,6 +84,7 @@ class KSet : public KBase {
 					if(htmp==nullptr){
 						htmp = (TH1*)child->GetHisto()->Clone();
 						htmp->Reset("ICESM");
+						if(poisson) htmp->SetBinErrorOption(TH1::kPoisson);
 					}
 					all_ext &= child->IsExt();
 					if(debug){

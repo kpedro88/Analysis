@@ -41,6 +41,7 @@ class KFit {
 			//options for TH1::Fit()
 			localOpt->Get("opts",opts);
 			opts += "N";
+			altchi2 = localOpt->Get("altchi2",false);
 			legname = name;
 			localOpt->Get("legname",legname);
 			legpars = localOpt->Get("legpars",true);
@@ -71,6 +72,7 @@ class KFit {
 				band = KGet<TGraph>(bandfile,bandname);
 				bstyle = KStyle::GetWithDefault("band",localOpt,false,"g");
 				bstyle->Format(band);
+				band->SetName(("errorband_"+name).c_str());
 			}
 			//todo: add option to get error band from fit directly (alternative to importing)
 		}
@@ -87,6 +89,7 @@ class KFit {
 			if(!setrange) fn->SetRange(xmin, xmax);
 		}
 		TF1* GetFn() { return fn; }
+		TGraph* GetBand() { return band; }
 		const string& GetOpts() { return opts; }
 		KStyle* GetStyle() { return style; }
 		string GetName() { return name; }
@@ -98,7 +101,10 @@ class KFit {
 			ptr = htmp->Fit(fn,opts.c_str());
 			//if all fixed: adjust ndf (exclude normpar)
 			if(freeze) fn->SetNDF(fn->GetNDF()-fn->GetNpar()+(normpar>=0?1:0));
+			if(altchi2) DoAltChi2(htmp);
 		}
+		template <typename T>
+		void DoAltChi2(T* htmp) {}
 		template <typename T>
 		void Normalize(T* htmp) {}
 		void AddToLegend(KLegend* kleg, int panel=0, bool assoc=false){
@@ -146,6 +152,7 @@ class KFit {
 		string legname;
 		bool legpars;
 		string opts;
+		bool altchi2;
 		int splitleg = 2;
 		int normpar = -1;
 		bool use_yield;
@@ -168,6 +175,25 @@ void KFit::Normalize<TH1>(TH1* htmp) {
 		double int_h = use_yield ? yield : htmp->Integral(1,htmp->GetNbinsX(),"width");
 		fn->FixParameter(normpar,int_h/int_f);
 	}
+}
+
+//only implemented for histos right now
+template <>
+void KFit::DoAltChi2(TH1* htmp){
+	//copy the computation from RooCurve::chiSquare()
+	//for this to be completely correct, kPoisson error option should be set for histo
+	if(htmp->GetBinErrorOption()==TH1::kNormal) cout << "Warning: using RooFit chi2 computation with Gaussian errors for fit " << name << endl;
+	double chisq = 0.;
+	for(int i = 1; i <= htmp->GetNbinsX(); ++i){
+		double avg = fn->Integral(htmp->GetBinLowEdge(i),htmp->GetBinLowEdge(i+1))/htmp->GetBinWidth(i);
+		double y = htmp->GetBinContent(i);
+		if(y!=0){
+			double err = (y>avg) ? htmp->GetBinErrorLow(i) : htmp->GetBinErrorUp(i);
+			double pull = (y-avg)/err;
+			chisq += pull*pull;
+		}
+	}
+	fn->SetChisquare(chisq);
 }
 
 #endif
