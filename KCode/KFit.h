@@ -111,7 +111,7 @@ class KFit {
 			stringstream sleg;
 			if(precfixed) sleg << fixed;
 			sleg << setprecision(prcsn);
-			sleg << legname << ", #chi^{2} / n_{dof} = " << fn->GetChisquare() << " / " << fn->GetNDF();
+			sleg << legname << ", ^{}#chi^{2} / ^{}n_{dof} = " << fn->GetChisquare() << " / " << fn->GetNDF();
 			string ssleg = sleg.str();
 			vector<string> extra_text;
 			localOpt->Get("extra_text",extra_text);
@@ -119,7 +119,7 @@ class KFit {
 				//print params 2 at a time to avoid overflow
 				int ctr = 0; sleg.str("");
 				for(int i = 0; i < fn->GetNpar(); ++i){
-					sleg << "p_{" << i << "} = " << fn->GetParameter(i);
+					sleg << "^{}p_{" << i << "} = " << fn->GetParameter(i);
 					if(printerr) sleg << " #pm " << fn->GetParError(i);
 					if(ctr==splitleg-1 or i==fn->GetNpar()-1){
 						extra_text.push_back(sleg.str());
@@ -134,7 +134,7 @@ class KFit {
 			}
 			string option = style->GetLegOpt();
 			kleg->AddEntry(fn,ssleg,style->GetLegOpt(),panel,extra_text,assoc);
-			if(band) kleg->AddEntry(band,"uncertainty ["+legname+"]",bstyle->GetLegOpt(),panel,{},assoc);
+			if(band) kleg->AddEntry(band,"uncertainty [^{}"+legname+"]",bstyle->GetLegOpt(),panel,{},assoc);
 		}
 		void Draw(TPad* pad){
 			if(band) band->Draw(bstyle->GetDrawOpt("same").c_str());
