@@ -29,6 +29,7 @@
 
 #include "KCode/KPlot.h"
 #include "KCode/KMap.h"
+#include "KCode/KParser.h"
 
 using namespace std;
 
@@ -111,8 +112,18 @@ void getRange(int n, double* arr, double& ymin, double& ymax){
 }
 
 //usage:
-//root -l 'plotLimit.C+("svj1",{{"mZprime",-1},{"mDark",20},{"rinv",0.3},{"alpha",0.2}},2)'
-void plotLimit(string sname, vector<pair<string,double>> vars, int nsigma=0, map<string,string> extras={}, bool do_obs=false){
+//root -l 'plotLimit.C+("svj1",{{"mZprime",-1},{"mDark",20},{"rinv",0.3},{"alpha",0.2}},{"i:nsigma[2]"})'
+void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> options={}){
+	OptionMap* globalOpt = new OptionMap();
+	for(const auto& opt : options){
+		KParser::processOption(opt,globalOpt);
+	}
+	double varied = -1; globalOpt->Get("varied",varied);
+	int nsigma = 0; globalOpt->Get("nsigma",nsigma);
+	string region_text; globalOpt->Get("region_text",region_text);
+	bool do_obs = globalOpt->Get("do_obs",false);
+	string obs_text("Observed"); globalOpt->Get("obs_text",obs_text);
+
 	//ranges for plotting
 	double ymin = 1e10, xmin = 1e10;
 	double ymax = 0, xmax = 0;
@@ -128,7 +139,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, int nsigma=0, map
 	string var;
 	double eps = .0001;
 	for(const auto& v : vars){
-		if(v.second==-1) var = v.first;
+		if(v.second==varied) var = v.first;
 		//leave a trailing && to combine with quantile requirement later
 		else scname << "abs(trackedParam_" << v.first << "-" << v.second << ")<" << eps << "&&";
 	}
@@ -143,10 +154,10 @@ void plotLimit(string sname, vector<pair<string,double>> vars, int nsigma=0, map
 	string yname, xname;
 	yname = "#sigma#timesB [pb]";
 	map<string,string> vdict{
-		{"mZprime","m_{Z'}"},
-		{"mDark","m_{d}"},
-		{"rinv","r_{inv}"},
-		{"alpha","#alpha_{d}"},
+		{"mZprime","^{}m_{Z'}"},
+		{"mDark","^{}m_{d}"},
+		{"rinv","^{}r_{inv}"},
+		{"alpha","^{}#alpha_{d}"},
 	};
 	map<string,string> unitdict{
 		{"mZprime"," [GeV]"},
@@ -208,14 +219,14 @@ void plotLimit(string sname, vector<pair<string,double>> vars, int nsigma=0, map
 	//xmin = xmin - 100;
 
 	//setup plotting options
-	OptionMap* globalOpt = new OptionMap();
-	globalOpt->Set<string>("lumi_text","137 fb^{-1} (13 TeV)");
-	globalOpt->Set<bool>("checkerr",false);
-	globalOpt->Set<int>("npanel",1);
-	//globalOpt->Set<bool>("balance_panels",true);
-	globalOpt->Set<double>("ymin",ymin);
-	globalOpt->Set<double>("sizeLeg",20);
-	//globalOpt->Set<double>("sizeSymb",0.2);
+	OptionMap* plotOpt = new OptionMap();
+	plotOpt->Set<string>("lumi_text","137 fb^{-1} (13 TeV)");
+	plotOpt->Set<bool>("checkerr",false);
+	plotOpt->Set<int>("npanel",1);
+	//plotOpt->Set<bool>("balance_panels",true);
+	plotOpt->Set<double>("ymin",ymin);
+	plotOpt->Set<double>("sizeLeg",20);
+	//plotOpt->Set<double>("sizeSymb",0.2);
 	
 	OptionMap* localOpt = new OptionMap();
 	localOpt->Set<bool>("ratio",false);
@@ -233,7 +244,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, int nsigma=0, map
 	if(do_obs) soname << "_obs";
 	string oname = soname.str();
 	KParser::clean(oname);
-	KPlot* plot = new KPlot(oname,localOpt,globalOpt);
+	KPlot* plot = new KPlot(oname,localOpt,plotOpt);
 	plot->Initialize(hbase);
 	KLegend* kleg = plot->GetLegend();
 	TCanvas* can = plot->GetCanvas();
@@ -247,13 +258,9 @@ void plotLimit(string sname, vector<pair<string,double>> vars, int nsigma=0, map
 
 	//preamble of legend
 	kleg->AddEntry((TObject*)NULL,"95% CL upper limits","");
-	if(extras.find("region_text")!=extras.end()) kleg->AddEntry((TObject*)NULL,extras["region_text"],"");
+	if(!region_text.empty()) kleg->AddEntry((TObject*)NULL,region_text,"");
 	kleg->AddEntry(g_xsec,"Theoretical","l");
-	if(do_obs) {
-		string obs_text("Observed");
-		if(extras.find("obs_text")!=extras.end()) obs_text = extras["obs_text"];
-		kleg->AddEntry(g_obs,obs_text,"pe");
-	}
+	if(do_obs) kleg->AddEntry(g_obs,obs_text,"pe");
 	kleg->AddEntry(g_central,"Median expected","l");
 	if(nsigma>=1) kleg->AddEntry(g_one,"68% expected","f");
 	if(nsigma>=2) kleg->AddEntry(g_two,"95% expected","f");
