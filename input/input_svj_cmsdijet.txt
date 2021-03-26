@@ -4,7 +4,7 @@ int:yieldprecision[4]
 vstring:disable_branches[*clean*,*Clean*]
 bool:debugloop[1]
 bool:debugcut[1]
-vstring:selections[cmsdijet,cmsdijet_JECup,cmsdijet_JECdown,cmsdijet_JERup,cmsdijet_JERdown]
+vstring:selections[cmsdijet,cmsdijet_jesUp,cmsdijet_jesDown,cmsdijet_jerUp,cmsdijet_jerDown]
 
 INPUT
 input/input_style_default.txt
@@ -19,92 +19,17 @@ cmsdijet
 	Histo
 
 VARIATION
-JECup
+jesUp
 	Jet	s:vartype[JECup]
-JECdown
+jesDown
 	Jet	s:vartype[JECdown]
-JERup
+jerUp
 	Jet	s:vartype[JERup]
-JERdown
+jerDown
 	Jet	s:vartype[JERdown]
 
 HISTO
-widejetmass	vd:xbins[1500,1530,1607,1687,1770,1856,1945,2037,2132,2231,2332,2438,2546,2659,2775,2895,3019,3147,3279,3416,3558,3704,3854,4010,4171,4337,4509,4686,4869,5058,5253,5455,5663,5877,6099,6328,6564,6808,7060,7320,7589,7866,8152]	s:xtitle[M_{jj} [GeV]]	s:ytitle[events / GeV]	b:ratio[0]	b:xbindivide[1]
+widejetmass	vd:xbins[1500,1530,1607,1687,1770,1856,1945,2037,2132,2231,2332,2438,2546,2659,2775,2895,3019,3147,3279,3416,3558,3704,3854,4010,4171,4337,4509,4686,4869,5058,5253,5455,5663,5877,6099,6328,6564,6808,7060,7320,7589,7866,8152]	s:xtitle[M_{jj} [GeV]]	s:ytitle[number of events]	b:ratio[0]
 
-SET
-hist	mc	SVJ_1500_20_0.3_peak
-	base	mc	SVJ_1500_20_0.3_peak_MC2016	s:filename[SVJ_mZprime-1500_mDark-20_rinv-0.3_alpha-peak_MC2016_scan.root]	d:xsection[0.77]	b:signal[1]	vi:mother[4900023]	i:nEventProc[18584]	d:kfactor[35920]
-	base	mc	SVJ_1500_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-1500_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	d:xsection[0.77]	b:signal[1]	vi:mother[4900023]	i:nEventProc[19262]	d:kfactor[41530]
-	base	mc	SVJ_1500_20_0.3_peak_MC2018	s:filename[SVJ_mZprime-1500_mDark-20_rinv-0.3_alpha-peak_MC2018_scan.root]	d:xsection[0.77]	b:signal[1]	vi:mother[4900023]	i:nEventProc[21560]	d:kfactor[59740]
-hist	mc	SVJ_1700_20_0.3_peak
-	base	mc	SVJ_1700_20_0.3_peak_MC2016	s:filename[SVJ_mZprime-1700_mDark-20_rinv-0.3_alpha-peak_MC2016_scan.root]	d:xsection[0.4327]	b:signal[1]	vi:mother[4900023]	i:nEventProc[20093]	d:kfactor[35920]
-	base	mc	SVJ_1700_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-1700_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	d:xsection[0.4327]	b:signal[1]	vi:mother[4900023]	i:nEventProc[21965]	d:kfactor[41530]
-	base	mc	SVJ_1700_20_0.3_peak_MC2018	s:filename[SVJ_mZprime-1700_mDark-20_rinv-0.3_alpha-peak_MC2018_scan.root]	d:xsection[0.4327]	b:signal[1]	vi:mother[4900023]	i:nEventProc[23497]	d:kfactor[59740]
-hist	mc	SVJ_1900_20_0.3_peak
-	base	mc	SVJ_1900_20_0.3_peak_MC2016	s:filename[SVJ_mZprime-1900_mDark-20_rinv-0.3_alpha-peak_MC2016_scan.root]	d:xsection[0.2479]	b:signal[1]	vi:mother[4900023]	i:nEventProc[20054]	d:kfactor[35920]
-	base	mc	SVJ_1900_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-1900_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	d:xsection[0.2479]	b:signal[1]	vi:mother[4900023]	i:nEventProc[18686]	d:kfactor[41530]
-	base	mc	SVJ_1900_20_0.3_peak_MC2018	s:filename[SVJ_mZprime-1900_mDark-20_rinv-0.3_alpha-peak_MC2018_scan.root]	d:xsection[0.2479]	b:signal[1]	vi:mother[4900023]	i:nEventProc[23680]	d:kfactor[59740]
-hist	mc	SVJ_2100_20_0.3_peak
-	base	mc	SVJ_2100_20_0.3_peak_MC2016	s:filename[SVJ_mZprime-2100_mDark-20_rinv-0.3_alpha-peak_MC2016_scan.root]	d:xsection[0.1384]	b:signal[1]	vi:mother[4900023]	i:nEventProc[20683]	d:kfactor[35920]
-	base	mc	SVJ_2100_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-2100_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	d:xsection[0.1384]	b:signal[1]	vi:mother[4900023]	i:nEventProc[24149]	d:kfactor[41530]
-	base	mc	SVJ_2100_20_0.3_peak_MC2018	s:filename[SVJ_mZprime-2100_mDark-20_rinv-0.3_alpha-peak_MC2018_scan.root]	d:xsection[0.1384]	b:signal[1]	vi:mother[4900023]	i:nEventProc[22179]	d:kfactor[59740]
-hist	mc	SVJ_2300_20_0.3_peak
-	base	mc	SVJ_2300_20_0.3_peak_MC2016	s:filename[SVJ_mZprime-2300_mDark-20_rinv-0.3_alpha-peak_MC2016_scan.root]	d:xsection[0.08124]	b:signal[1]	vi:mother[4900023]	i:nEventProc[15430]	d:kfactor[35920]
-	base	mc	SVJ_2300_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-2300_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	d:xsection[0.08124]	b:signal[1]	vi:mother[4900023]	i:nEventProc[14655]	d:kfactor[41530]
-	base	mc	SVJ_2300_20_0.3_peak_MC2018	s:filename[SVJ_mZprime-2300_mDark-20_rinv-0.3_alpha-peak_MC2018_scan.root]	d:xsection[0.08124]	b:signal[1]	vi:mother[4900023]	i:nEventProc[17094]	d:kfactor[59740]
-hist	mc	SVJ_2500_20_0.3_peak
-	base	mc	SVJ_2500_20_0.3_peak_MC2016	s:filename[SVJ_mZprime-2500_mDark-20_rinv-0.3_alpha-peak_MC2016_scan.root]	d:xsection[0.04977]	b:signal[1]	vi:mother[4900023]	i:nEventProc[12792]	d:kfactor[35920]
-	base	mc	SVJ_2500_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-2500_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	d:xsection[0.04977]	b:signal[1]	vi:mother[4900023]	i:nEventProc[12462]	d:kfactor[41530]
-	base	mc	SVJ_2500_20_0.3_peak_MC2018	s:filename[SVJ_mZprime-2500_mDark-20_rinv-0.3_alpha-peak_MC2018_scan.root]	d:xsection[0.04977]	b:signal[1]	vi:mother[4900023]	i:nEventProc[15316]	d:kfactor[59740]
-hist	mc	SVJ_2700_20_0.3_peak
-	base	mc	SVJ_2700_20_0.3_peak_MC2016	s:filename[SVJ_mZprime-2700_mDark-20_rinv-0.3_alpha-peak_MC2016_scan.root]	d:xsection[0.03042]	b:signal[1]	vi:mother[4900023]	i:nEventProc[10106]	d:kfactor[35920]
-	base	mc	SVJ_2700_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-2700_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	d:xsection[0.03042]	b:signal[1]	vi:mother[4900023]	i:nEventProc[12026]	d:kfactor[41530]
-	base	mc	SVJ_2700_20_0.3_peak_MC2018	s:filename[SVJ_mZprime-2700_mDark-20_rinv-0.3_alpha-peak_MC2018_scan.root]	d:xsection[0.03042]	b:signal[1]	vi:mother[4900023]	i:nEventProc[12896]	d:kfactor[59740]
-hist	mc	SVJ_2900_20_0.3_peak
-	base	mc	SVJ_2900_20_0.3_peak_MC2016	s:filename[SVJ_mZprime-2900_mDark-20_rinv-0.3_alpha-peak_MC2016_scan.root]	d:xsection[0.01969]	b:signal[1]	vi:mother[4900023]	i:nEventProc[11999]	d:kfactor[35920]
-	base	mc	SVJ_2900_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-2900_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	d:xsection[0.01969]	b:signal[1]	vi:mother[4900023]	i:nEventProc[11140]	d:kfactor[41530]
-	base	mc	SVJ_2900_20_0.3_peak_MC2018	s:filename[SVJ_mZprime-2900_mDark-20_rinv-0.3_alpha-peak_MC2018_scan.root]	d:xsection[0.01969]	b:signal[1]	vi:mother[4900023]	i:nEventProc[9724]	d:kfactor[59740]
-hist	mc	SVJ_3100_20_0.3_peak
-	base	mc	SVJ_3100_20_0.3_peak_MC2016	s:filename[SVJ_mZprime-3100_mDark-20_rinv-0.3_alpha-peak_MC2016_scan.root]	d:xsection[0.01209]	b:signal[1]	vi:mother[4900023]	i:nEventProc[12343]	d:kfactor[35920]
-	base	mc	SVJ_3100_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-3100_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	d:xsection[0.01209]	b:signal[1]	vi:mother[4900023]	i:nEventProc[12622]	d:kfactor[41530]
-	base	mc	SVJ_3100_20_0.3_peak_MC2018	s:filename[SVJ_mZprime-3100_mDark-20_rinv-0.3_alpha-peak_MC2018_scan.root]	d:xsection[0.01209]	b:signal[1]	vi:mother[4900023]	i:nEventProc[9581]	d:kfactor[59740]
-hist	mc	SVJ_3300_20_0.3_peak
-	base	mc	SVJ_3300_20_0.3_peak_MC2016	s:filename[SVJ_mZprime-3300_mDark-20_rinv-0.3_alpha-peak_MC2016_scan.root]	d:xsection[0.007494]	b:signal[1]	vi:mother[4900023]	i:nEventProc[9372]	d:kfactor[35920]
-	base	mc	SVJ_3300_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-3300_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	d:xsection[0.007494]	b:signal[1]	vi:mother[4900023]	i:nEventProc[10266]	d:kfactor[41530]
-	base	mc	SVJ_3300_20_0.3_peak_MC2018	s:filename[SVJ_mZprime-3300_mDark-20_rinv-0.3_alpha-peak_MC2018_scan.root]	d:xsection[0.007494]	b:signal[1]	vi:mother[4900023]	i:nEventProc[10494]	d:kfactor[59740]
-hist	mc	SVJ_3500_20_0.3_peak
-	base	mc	SVJ_3500_20_0.3_peak_MC2016	s:filename[SVJ_mZprime-3500_mDark-20_rinv-0.3_alpha-peak_MC2016_scan.root]	d:xsection[0.005036]	b:signal[1]	vi:mother[4900023]	i:nEventProc[9057]	d:kfactor[35920]
-	base	mc	SVJ_3500_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-3500_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	d:xsection[0.005036]	b:signal[1]	vi:mother[4900023]	i:nEventProc[10587]	d:kfactor[41530]
-	base	mc	SVJ_3500_20_0.3_peak_MC2018	s:filename[SVJ_mZprime-3500_mDark-20_rinv-0.3_alpha-peak_MC2018_scan.root]	d:xsection[0.005036]	b:signal[1]	vi:mother[4900023]	i:nEventProc[11088]	d:kfactor[59740]
-hist	mc	SVJ_3700_20_0.3_peak
-	base	mc	SVJ_3700_20_0.3_peak_MC2016	s:filename[SVJ_mZprime-3700_mDark-20_rinv-0.3_alpha-peak_MC2016_scan.root]	d:xsection[0.003252]	b:signal[1]	vi:mother[4900023]	i:nEventProc[8858]	d:kfactor[35920]
-	base	mc	SVJ_3700_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-3700_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	d:xsection[0.003252]	b:signal[1]	vi:mother[4900023]	i:nEventProc[9814]	d:kfactor[41530]
-	base	mc	SVJ_3700_20_0.3_peak_MC2018	s:filename[SVJ_mZprime-3700_mDark-20_rinv-0.3_alpha-peak_MC2018_scan.root]	d:xsection[0.003252]	b:signal[1]	vi:mother[4900023]	i:nEventProc[11852]	d:kfactor[59740]
-hist	mc	SVJ_3900_20_0.3_peak
-	base	mc	SVJ_3900_20_0.3_peak_MC2016	s:filename[SVJ_mZprime-3900_mDark-20_rinv-0.3_alpha-peak_MC2016_scan.root]	d:xsection[0.0021]	b:signal[1]	vi:mother[4900023]	i:nEventProc[11200]	d:kfactor[35920]
-	base	mc	SVJ_3900_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-3900_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	d:xsection[0.0021]	b:signal[1]	vi:mother[4900023]	i:nEventProc[11900]	d:kfactor[41530]
-	base	mc	SVJ_3900_20_0.3_peak_MC2018	s:filename[SVJ_mZprime-3900_mDark-20_rinv-0.3_alpha-peak_MC2018_scan.root]	d:xsection[0.0021]	b:signal[1]	vi:mother[4900023]	i:nEventProc[10424]	d:kfactor[59740]
-hist	mc	SVJ_4100_20_0.3_peak
-	base	mc	SVJ_4100_20_0.3_peak_MC2016	s:filename[SVJ_mZprime-4100_mDark-20_rinv-0.3_alpha-peak_MC2016_scan.root]	d:xsection[0.001356]	b:signal[1]	vi:mother[4900023]	i:nEventProc[11069]	d:kfactor[35920]
-	base	mc	SVJ_4100_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-4100_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	d:xsection[0.001356]	b:signal[1]	vi:mother[4900023]	i:nEventProc[10211]	d:kfactor[41530]
-	base	mc	SVJ_4100_20_0.3_peak_MC2018	s:filename[SVJ_mZprime-4100_mDark-20_rinv-0.3_alpha-peak_MC2018_scan.root]	d:xsection[0.001356]	b:signal[1]	vi:mother[4900023]	i:nEventProc[10617]	d:kfactor[59740]
-hist	mc	SVJ_4300_20_0.3_peak
-	base	mc	SVJ_4300_20_0.3_peak_MC2016	s:filename[SVJ_mZprime-4300_mDark-20_rinv-0.3_alpha-peak_MC2016_scan.root]	d:xsection[0.0008757]	b:signal[1]	vi:mother[4900023]	i:nEventProc[12450]	d:kfactor[35920]
-	base	mc	SVJ_4300_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-4300_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	d:xsection[0.0008757]	b:signal[1]	vi:mother[4900023]	i:nEventProc[11725]	d:kfactor[41530]
-	base	mc	SVJ_4300_20_0.3_peak_MC2018	s:filename[SVJ_mZprime-4300_mDark-20_rinv-0.3_alpha-peak_MC2018_scan.root]	d:xsection[0.0008757]	b:signal[1]	vi:mother[4900023]	i:nEventProc[11275]	d:kfactor[59740]
-hist	mc	SVJ_4500_20_0.3_peak
-	base	mc	SVJ_4500_20_0.3_peak_MC2016	s:filename[SVJ_mZprime-4500_mDark-20_rinv-0.3_alpha-peak_MC2016_scan.root]	d:xsection[0.0005655]	b:signal[1]	vi:mother[4900023]	i:nEventProc[9303]	d:kfactor[35920]
-	base	mc	SVJ_4500_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-4500_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	d:xsection[0.0005655]	b:signal[1]	vi:mother[4900023]	i:nEventProc[9392]	d:kfactor[41530]
-	base	mc	SVJ_4500_20_0.3_peak_MC2018	s:filename[SVJ_mZprime-4500_mDark-20_rinv-0.3_alpha-peak_MC2018_scan.root]	d:xsection[0.0005655]	b:signal[1]	vi:mother[4900023]	i:nEventProc[11111]	d:kfactor[59740]
-hist	mc	SVJ_4700_20_0.3_peak
-	base	mc	SVJ_4700_20_0.3_peak_MC2016	s:filename[SVJ_mZprime-4700_mDark-20_rinv-0.3_alpha-peak_MC2016_scan.root]	d:xsection[0.0003652]	b:signal[1]	vi:mother[4900023]	i:nEventProc[7971]	d:kfactor[35920]
-	base	mc	SVJ_4700_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-4700_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	d:xsection[0.0003652]	b:signal[1]	vi:mother[4900023]	i:nEventProc[11305]	d:kfactor[41530]
-	base	mc	SVJ_4700_20_0.3_peak_MC2018	s:filename[SVJ_mZprime-4700_mDark-20_rinv-0.3_alpha-peak_MC2018_scan.root]	d:xsection[0.0003652]	b:signal[1]	vi:mother[4900023]	i:nEventProc[12073]	d:kfactor[59740]
-hist	mc	SVJ_4900_20_0.3_peak
-	base	mc	SVJ_4900_20_0.3_peak_MC2016	s:filename[SVJ_mZprime-4900_mDark-20_rinv-0.3_alpha-peak_MC2016_scan.root]	d:xsection[0.0002358]	b:signal[1]	vi:mother[4900023]	i:nEventProc[9435]	d:kfactor[35920]
-	base	mc	SVJ_4900_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-4900_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	d:xsection[0.0002358]	b:signal[1]	vi:mother[4900023]	i:nEventProc[10825]	d:kfactor[41530]
-	base	mc	SVJ_4900_20_0.3_peak_MC2018	s:filename[SVJ_mZprime-4900_mDark-20_rinv-0.3_alpha-peak_MC2018_scan.root]	d:xsection[0.0002358]	b:signal[1]	vi:mother[4900023]	i:nEventProc[10237]	d:kfactor[59740]
-hist	mc	SVJ_5100_20_0.3_peak
-	base	mc	SVJ_5100_20_0.3_peak_MC2016	s:filename[SVJ_mZprime-5100_mDark-20_rinv-0.3_alpha-peak_MC2016_scan.root]	d:xsection[0.0001523]	b:signal[1]	vi:mother[4900023]	i:nEventProc[10719]	d:kfactor[35920]
-	base	mc	SVJ_5100_20_0.3_peak_MC2017	s:filename[SVJ_mZprime-5100_mDark-20_rinv-0.3_alpha-peak_MC2017_scan.root]	d:xsection[0.0001523]	b:signal[1]	vi:mother[4900023]	i:nEventProc[11880]	d:kfactor[41530]
-	base	mc	SVJ_5100_20_0.3_peak_MC2018	s:filename[SVJ_mZprime-5100_mDark-20_rinv-0.3_alpha-peak_MC2018_scan.root]	d:xsection[0.0001523]	b:signal[1]	vi:mother[4900023]	i:nEventProc[12133]	d:kfactor[59740]
+INPUT
+input/input_sets_svj_scan.txt

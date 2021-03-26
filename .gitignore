@@ -102,6 +102,7 @@ input/fast*/
 /test_datacard.py
 /plot_test_dc.py
 /getPostfitChi2.py
+/makeScanSVJ.py
 
 # linked by setupXML.sh
 /KMVA/pugi*.*
