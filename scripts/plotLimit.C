@@ -16,6 +16,7 @@
 #include <TVirtualPadPainter.h>
 
 #include <vector>
+#include <set>
 #include <map>
 #include <string>
 #include <sstream>
@@ -103,12 +104,26 @@ TGraph* getBand(TTree* limit, string dname, string cname, double q_dn, double q_
 	return gtmp;
 }
 
-void getRange(int n, double* arr, double& ymin, double& ymax){
+set<double> getRange(int n, double* arr, double& ymin, double& ymax, bool do_set=false){
 	double ymin_ = TMath::MinElement(n,arr);
 	if(ymin_ < ymin) ymin = ymin_;
 	
 	double ymax_ = TMath::MaxElement(n,arr);
 	if(ymax_ > ymax) ymax = ymax_;
+
+	set<double> vals;
+	if(do_set) vals.insert(arr, arr+n);
+	return vals;
+}
+
+string alphaName(double val){
+	string name = "^{}#alpha_{dark}^{";
+	if(val==-2) name += "peak";
+	else if(val==-1) name += "high";
+	else if(val==-3) name += "low";
+	else throw runtime_error("Unknown alpha value: "+to_string(val));
+	name += "}";
+	return name;
 }
 
 //usage:
@@ -126,7 +141,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 
 	//ranges for plotting
 	double ymin = 1e10, xmin = 1e10;
-	double ymax = 0, xmax = 0;
+	double ymax = 0, xmax = -1e10;
 	gStyle->SetOptStat(0);
 	
 	//extract info from hadded limit file
@@ -155,9 +170,9 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	yname = "#sigma#timesB [pb]";
 	map<string,string> vdict{
 		{"mZprime","^{}m_{Z'}"},
-		{"mDark","^{}m_{d}"},
+		{"mDark","^{}m_{dark}"},
 		{"rinv","^{}r_{inv}"},
-		{"alpha","^{}#alpha_{d}"},
+		{"alpha","^{}#alpha_{dark}"},
 	};
 	map<string,string> unitdict{
 		{"mZprime"," [GeV]"},
@@ -165,8 +180,10 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		{"rinv",""},
 		{"alpha",""},
 	};
+	KMap<vector<string>> labels;
+	labels.Add("alpha",{alphaName(-3.),alphaName(-2.),alphaName(-1.)});
 	xname = vdict[var]+unitdict[var];
-	
+
 	//get observed limit (w/ xsec)
 	int npts = limit->Draw(dname.c_str(),(cname+"abs(quantileExpected+1)<0.01").c_str(),"goff");
 	Limits lim_obs(npts,limit->GetV1(),limit->GetV2(),limit->GetV3());
@@ -185,8 +202,8 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	g_xsec->SetLineWidth(2);
 	getRange(npts,lim_obs.x.data(),ymin,ymax);
 	//only get x range once
-	getRange(npts,lim_obs.v.data(),xmin,xmax);
-	
+	const auto& xvals = getRange(npts,lim_obs.v.data(),xmin,xmax,true);
+
 	//get central value (expected)
 	npts = limit->Draw(dname.c_str(),(cname+"abs(quantileExpected-0.5)<0.01").c_str(),"goff");
 	Limits lim_cen(npts,limit->GetV1(),limit->GetV2(),limit->GetV3());
@@ -231,21 +248,30 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	OptionMap* localOpt = new OptionMap();
 	localOpt->Set<bool>("ratio",false);
 	localOpt->Set<bool>("logy",true);
-	
-	//make plot
-	//make histo for axes
-	TH1F* hbase = new TH1F("hbase","",100,xmin,xmax);
-	hbase->GetYaxis()->SetTitle(yname.c_str());
-	hbase->GetXaxis()->SetTitle(xname.c_str());
-	hbase->GetYaxis()->SetRangeUser(ymin,ymax);
+	localOpt->Set<int>("xnum",xvals.size());
+	localOpt->Set<double>("xmin",xmin);
+	localOpt->Set<double>("xmax",xmax);
+	localOpt->Set<string>("xtitle",xname);
+	localOpt->Set<string>("ytitle",yname);
+	if (labels.Has(var)){
+		const auto& label = labels.Get(var);
+		if (label.size()==xvals.size()){
+			localOpt->Set<bool>("xbinlabel",true);
+			localOpt->Set<vector<string>>("xlabels",label);
+		}
+	}
 
+	//make plot
 	stringstream soname;
 	soname << "plotLimit_" << sname << "_vs_" << var;
 	if(do_obs) soname << "_obs";
 	string oname = soname.str();
 	KParser::clean(oname);
 	KPlot* plot = new KPlot(oname,localOpt,plotOpt);
-	plot->Initialize(hbase);
+	//make histo for axes
+	plot->Initialize();
+	auto hbase = plot->GetHisto();
+	hbase->GetYaxis()->SetRangeUser(ymin,ymax);
 	KLegend* kleg = plot->GetLegend();
 	TCanvas* can = plot->GetCanvas();
 	TPad* pad1 = plot->GetPad1();
@@ -266,9 +292,9 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	if(nsigma>=2) kleg->AddEntry(g_two,"95% expected","f");
 	stringstream vname;
 	for(const auto& v : vars){
-		if(v.second==-1) continue;
+		if(v.second==varied) continue;
 		vname << vdict[v.first] << " = ";
-		if(v.first=="alpha" and v.second<0) vname << "#alpha_{d}^{" << (v.second==-2?"peak":v.second==-3?"low":"high") << "}";
+		if(v.first=="alpha" and v.second<0) vname << alphaName(v.second);
 		else vname << v.second;
 		vname << ", ";
 	}
