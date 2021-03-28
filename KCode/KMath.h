@@ -119,21 +119,25 @@ namespace KMath {
 		return make_pair(mean,rms);
 	}
 	//to apply an existing sort to a collection
-	template <typename Vec>
-	void apply_permutation_in_place(Vec& vec, const vector<unsigned>& order){
-		vector<bool> done(vec.size());
-		for(unsigned i = 0; i < vec.size(); ++i){
+	template <typename Arr>
+	void apply_permutation_in_place(unsigned size, Arr* arr, const vector<unsigned>& order){
+		vector<bool> done(size);
+		for(unsigned i = 0; i < size; ++i){
 			if(done[i]) continue;
 			done[i] = true;
 			unsigned prev_j = i;
 			unsigned j = order[i];
 			while(i != j){
-				swap(vec[prev_j],vec[j]);
+				swap(arr[prev_j],arr[j]);
 				done[j] = true;
 				prev_j = j;
 				j = order[j];
 			}
 		}
+	}
+	template <typename Vec>
+	void apply_permutation_in_place(Vec& vec, const vector<unsigned>& order){
+		apply_permutation_in_place(vec.size(),vec.data(),order);
 	}
 	//use official JetMET matching procedure: equiv to set<DR,jet_index,gen_index> sorted by DR
 	//from https://github.com/cms-jet/JetMETAnalysis/blob/master/JetUtilities/plugins/MatchRecToGen.cc
