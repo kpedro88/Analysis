@@ -169,6 +169,7 @@ class KLegend{
 			globalOpt->Get("ymin_max",ymin_max);
 			double ymax_ = 1;
 			if(globalOpt->Get("ymax",ymax_)) SetManualYmax(ymax_);
+			qdefault = 0; globalOpt->Get("qdefault",qdefault);
 		}
 		//destructor
 		virtual ~KLegend() {}
@@ -234,8 +235,8 @@ class KLegend{
 			}
 			
 			//find the least populated quadrant
-			unsigned bestq = 0; //default
-			unsigned bestqval = quadrants[0];
+			unsigned bestq = qdefault; //default
+			unsigned bestqval = quadrants[qdefault];
 			for(unsigned q = 1; q < quadrants.size(); ++q){
 				if(quadrants[q] < bestqval){
 					bestqval = quadrants[q];
@@ -545,6 +546,8 @@ class KLegend{
 		void SetLocalOpt(OptionMap* opt) { localOpt = opt; if(localOpt==0) localOpt = new OptionMap(); } //must always have an option map
 		OptionMap* GetGlobalOpt() { return globalOpt; }
 		void SetGlobalOpt(OptionMap* opt) { globalOpt = opt; if(globalOpt==0) globalOpt = new OptionMap(); } //must always have an option map
+		void SetDefaultQuadrant(int q) { qdefault = q; }
+		int GetDefaultQuadrant() { return qdefault; }
 
 	protected:
 		//member variables
@@ -567,6 +570,7 @@ class KLegend{
 		double ymin_min, ymin_max;
 		bool userange;
 		bool manual_ymin, manual_ymax;
+		int qdefault;
 };
 
 #endif

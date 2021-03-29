@@ -32,11 +32,33 @@
 #include <exception>
 
 #include "KCode/KPlot.h"
+#include "KCode/KLegend.h"
 #include "KCode/KMap.h"
 #include "KCode/KMath.h"
 #include "KCode/KParser.h"
 
 using namespace std;
+
+//get around hardcoded limits on nbins for generated histogram
+class KGraph2D : public TGraph2D {
+	public:
+		void SetNpx(Int_t npx){
+			fNpx = npx;
+			if (fHistogram) {
+				delete fHistogram;
+				fHistogram = nullptr;
+				fDelaunay = nullptr;
+			}
+		}
+		void SetNpy(Int_t npy){
+			fNpy = npy;
+			if (fHistogram) {
+				delete fHistogram;
+				fHistogram = nullptr;
+				fDelaunay = nullptr;
+			}
+		}
+	};
 
 class Limits {
 	public:
@@ -68,12 +90,14 @@ class Limits {
 				if(v2s) {
 					v2.push_back(v2s[i]);
 					l.push_back(-log10(rs[i]));
+					S.push_back(log10(s.back()));
 				}
 			}
 		}
 		//s = r * x, cross section limit
 		//l = log10(1/r), for 2D exclusion contours
-		vector<double> r, x, s, v1, v2, l;
+		//S = log10(s), for 2D exclusion histogram
+		vector<double> r, x, s, v1, v2, l, S;
 };
 
 Limits getLimit(TTree* limit, const string& dname, const string& cname, double q){
@@ -107,6 +131,49 @@ TGraph* getBand(TTree* limit, string dname, string cname, double q_dn, double q_
 
 	TGraph* gtmp = new TGraph(npts*2,vtmp,stmp);
 	return gtmp;
+}
+
+//based on https://gitlab.cern.ch/eno/emerginjetsPlotting/-/blob/master/emjet_exclusion_plots.py
+vector<TGraph*> findExclusionCurve(Limits& lim){
+	//contours can only be obtained by drawing: put into batch mode temporarily
+	bool isBatch = gROOT->IsBatch();
+	gROOT->SetBatch(kTRUE);
+	auto graph = new TGraph2D(lim.v1.size(),lim.v1.data(),lim.v2.data(),lim.l.data());
+	auto hist = graph->GetHistogram();
+
+	//z axis is log(1/r), so anything > 0 is excluded
+	//use 1e-10 as threshold to avoid creating contour around empty parts of graph
+	double contour_values[1] = {1e-10};
+	hist->SetContour(1, contour_values);
+
+	//draw to get contours
+	auto can = new TCanvas();
+	hist->Draw("cont list");
+	can->Update();
+	auto contours = (TObjArray*)(gROOT->GetListOfSpecials()->FindObject("contours"));
+	auto contour_list = (TList*)(contours->At(0));
+
+	//each contour level may have multiple graphs (in case of disconnected regions)
+	vector<TGraph*> results; results.reserve(contour_list->GetSize());
+	auto curve = (TGraph*)(contour_list->First());
+	for(unsigned j = 0; j < contour_list->GetSize(); ++j){
+		results.push_back((TGraph*)(curve->Clone()));
+		curve = (TGraph*)(contour_list->After(curve));
+	}
+
+	gROOT->SetBatch(isBatch);
+	delete can;
+	return results;
+}
+
+void styleGraphs(vector<TGraph*>& graphs, Color_t linecolor, int linestyle, int linewidth=2){
+	//because graphs are used for legends, the vector should have at least one entry
+	if(graphs.empty()) graphs.push_back(new TGraph());
+	for(auto graph : graphs){
+		graph->SetLineColor(linecolor);
+		graph->SetLineStyle(linestyle);
+		graph->SetLineWidth(linewidth);
+	}
 }
 
 set<double> getRange(int n, const double* arr, double& ymin, double& ymax, bool do_set=false){
@@ -144,6 +211,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	bool do_obs = globalOpt->Get("do_obs",false);
 	string obs_text("Observed"); globalOpt->Get("obs_text",obs_text);
 	string lumi_text("(13 TeV)"); globalOpt->Get("lumi_text",lumi_text);
+	string prelim_text; bool set_prelim = globalOpt->Get("prelim_text",prelim_text);
 
 	//ranges for plotting
 	double ymin = 1e10, xmin = 1e10;
@@ -245,18 +313,15 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		ymin = ymin/10;
 		//avoid huge range
 		ymin = max(ymin,1e-5);
-		//xmax = xmax + 100;
-		//xmin = xmin - 100;
 
 		//setup plotting options
 		OptionMap* plotOpt = new OptionMap();
 		plotOpt->Set<string>("lumi_text",lumi_text);
+		if(set_prelim) plotOpt->Set<string>("prelim_text",prelim_text);
 		plotOpt->Set<bool>("checkerr",false);
 		plotOpt->Set<int>("npanel",1);
-		//plotOpt->Set<bool>("balance_panels",true);
 		plotOpt->Set<double>("ymin",ymin);
 		plotOpt->Set<double>("sizeLeg",20);
-		//plotOpt->Set<double>("sizeSymb",0.2);
 
 		OptionMap* localOpt = new OptionMap();
 		localOpt->Set<bool>("ratio",false);
@@ -321,7 +386,6 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		//draw graphs
 		if(nsigma>=2) g_two->Draw("f same");
 		if(nsigma>=1) g_one->Draw("f same");
-		//g_central->Draw("C same");
 		g_central->Draw("L same");
 		if(do_obs) g_obs->Draw("pC same");
 		g_xsec->Draw("C same");
@@ -333,19 +397,192 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		can->Print((plot->GetName()+".png").c_str(),"png");
 		can->Print((plot->GetName()+".eps").c_str(),"eps");
 		system(("epstopdf "+plot->GetName()+".eps && rm "+plot->GetName()+".eps").c_str());
+
+		//save objects
+		auto outfile = TFile::Open((plot->GetName()+".root").c_str(),"RECREATE");
+		outfile->cd();
+		hbase->Write();
+		if(nsigma>=2) g_two->Write("g_two");
+		if(nsigma>=1) g_one->Write("g_one");
+		g_central->Write("g_central");
+		if(do_obs) g_obs->Write("g_obs");
+		g_xsec->Write("g_xsec");
 	}
 	//2D plot
 	else {
 		//setup plotting options
+		ymax = -1e10;
 		yname = vdict[var2]+unitdict[var2];
-		zname = "95% CL upper limit on #sigma#timesB [pb]";
+		zname = string("95% CL ")+(do_obs ? "obs." : "exp.")+" upper limit on #sigma#timesB [pb]";
 		dname += ":trackedParam_"+var2;
 
-		//get observed limit (w/ xsec)
-		const auto& lim_obs = getLimit(limit,dname,cname,-1);
+		//get observed limit (w/ xsec) & exclusion contour
+		auto lim_obs = getLimit(limit,dname,cname,-1);
+		int npts = lim_obs.r.size();
+		auto contours_obs = findExclusionCurve(lim_obs);
+		styleGraphs(contours_obs,kBlack,1);
+		//only get x,y ranges once
+		const auto& xvals = getRange(npts,lim_obs.v1.data(),xmin,xmax,true);
+		const auto& yvals = getRange(npts,lim_obs.v2.data(),ymin,ymax,true);
 
-		//get central value (expected)
-		const auto& lim_cen = getLimit(limit,dname,cname,0.5);
+		//get central value (expected) & exclusion contour
+		auto lim_cen = getLimit(limit,dname,cname,0.5);
+		auto contours_cen = findExclusionCurve(lim_cen);
+		styleGraphs(contours_cen,kRed,1);
 
+		//get uncertainty bands and contours
+		vector<Limits> lim_sigmas;
+		if(nsigma>=1){
+			lim_sigmas.push_back(getLimit(limit,dname,cname,0.16));
+			lim_sigmas.push_back(getLimit(limit,dname,cname,0.84));
+		}
+		if(nsigma>=2){
+			lim_sigmas.push_back(getLimit(limit,dname,cname,0.025));
+			lim_sigmas.push_back(getLimit(limit,dname,cname,0.975));
+		}
+		vector<vector<TGraph*>> contours_sigmas;
+		for(unsigned i = 0; i < lim_sigmas.size(); ++i){
+			contours_sigmas.push_back(findExclusionCurve(lim_sigmas[i]));
+			styleGraphs(contours_sigmas.back(), kRed, i>=2 ? 2 : 7);
+		}
+
+		//get histogram to plot
+		TGraph2D* gtmp;
+		if(do_obs) gtmp = new TGraph2D(lim_obs.v1.size(),lim_obs.v1.data(),lim_obs.v2.data(),lim_obs.S.data());
+		else gtmp = new TGraph2D(lim_cen.v1.size(),lim_cen.v1.data(),lim_cen.v2.data(),lim_cen.S.data());
+		//control number of bins for labeled axes
+		if(labels.Has(var1)) ((KGraph2D*)gtmp)->SetNpx(xvals.size());
+		if(labels.Has(var2)) ((KGraph2D*)gtmp)->SetNpy(yvals.size());
+		auto h2d = (TH2F*)(gtmp->GetHistogram()->Clone());
+		//convert back to normal scale
+		//bins with zero content and zero error correspond to empty parts of graph: set to very small value
+		double empty = 1e-100;
+		double zmin = 1e10;
+		for(unsigned i = 0; i <= h2d->GetNbinsX()+1; ++i){
+			for(unsigned j = 0; j <= h2d->GetNbinsY()+1; ++j){
+				if(h2d->GetBinContent(i,j)==0. and h2d->GetBinError(i,j)==0.) h2d->SetBinContent(i,j,empty);
+				else{
+					double new_content = pow(10,h2d->GetBinContent(i,j));
+					h2d->SetBinContent(i,j,new_content);
+					if(new_content<zmin) zmin = new_content;
+				}
+			}
+		}
+		//take z axis max
+		double zmax = h2d->GetMaximum();
+		//set range to avoid filling empty parts
+		h2d->GetZaxis()->SetRangeUser(zmin,zmax);
+		h2d->GetZaxis()->SetTitle(zname.c_str());
+
+		//setup plotting options
+		OptionMap* plotOpt = new OptionMap();
+		plotOpt->Set<string>("lumi_text",lumi_text);
+		if(set_prelim) plotOpt->Set<string>("prelim_text",prelim_text);
+		plotOpt->Set<bool>("checkerr",false);
+		plotOpt->Set<int>("npanel",1);
+		plotOpt->Set<double>("sizeLeg",20);
+		plotOpt->Set<int>("qdefault",1);
+
+		OptionMap* localOpt = new OptionMap();
+		localOpt->Set<bool>("ratio",false);
+		localOpt->Set<bool>("logz",true);
+		localOpt->Set<int>("xnum",xvals.size());
+		localOpt->Set<double>("xmin",xmin);
+		localOpt->Set<double>("xmax",xmax);
+		localOpt->Set<string>("xtitle",xname);
+		localOpt->Set<int>("ynum",yvals.size());
+		localOpt->Set<double>("ymin",ymin);
+		localOpt->Set<double>("ymax",ymax);
+		localOpt->Set<string>("ytitle",yname);
+		if (labels.Has(var1)){
+			const auto& label = labels.Get(var1);
+			if (label.size()==xvals.size()){
+				localOpt->Set<bool>("xbinlabel",true);
+				localOpt->Set<vector<string>>("xlabels",label);
+			}
+		}
+		if (labels.Has(var2)){
+			const auto& label = labels.Get(var2);
+			if (label.size()==yvals.size()){
+				localOpt->Set<bool>("ybinlabel",true);
+				localOpt->Set<vector<string>>("ylabels",label);
+			}
+		}
+
+		//make plot
+		stringstream soname;
+		soname << "plotLimit_" << sname << "_vs_" << var1 << "_" << var2;
+		if(do_obs) soname << "_obs";
+		string oname = soname.str();
+		KParser::clean(oname);
+		KPlot2D* plot = new KPlot2D(oname,"",localOpt,plotOpt);
+		//make histo for axes
+		plot->Initialize();
+		auto hbase = plot->GetHisto();
+		hbase->GetZaxis()->SetRangeUser(zmin,zmax);
+		hbase->GetZaxis()->SetTitle(zname.c_str());
+		TCanvas* can = plot->GetCanvas();
+		TPad* pad1 = plot->GetPad1();
+
+		//make legend
+		KLegend* kleg = new KLegend(pad1,localOpt,plotOpt);
+		kleg->AddEntry((TObject*)NULL,"95% CL upper limits","");
+		if(!region_text.empty()) kleg->AddEntry((TObject*)NULL,region_text,"");
+		if(do_obs) kleg->AddEntry(contours_obs[0],obs_text,"l");
+		kleg->AddEntry(contours_cen[0],"Median expected","l");
+		if(nsigma>=1) kleg->AddEntry(contours_sigmas[0][0],"68% expected","l");
+		if(nsigma>=2) kleg->AddEntry(contours_sigmas[2][0],"95% expected","l");
+		//add all graphs to legend
+		for(auto& v: {contours_obs,contours_cen}){
+			for(auto c: v){
+				kleg->AddGraph(c);
+			}
+		}
+		for(auto& v: contours_sigmas){
+			for(auto c: v){
+				kleg->AddGraph(c);
+			}
+		}
+		kleg->AddHist(plot->GetHisto()); //for tick sizes
+
+		//use graph "best" algo (must be after axes drawn)
+		plot->DrawHist();
+		kleg->Build(KLegend::hdefault,KLegend::vdefault);
+		//extra style options
+		auto leg = kleg->GetLegend();
+		leg->SetFillStyle(1001);
+		leg->SetFillColorAlpha(0,0.6);
+
+		//draw objects
+		h2d->Draw("colz same");
+		for(const auto& v: contours_sigmas){
+			for(auto c: v){
+				c->Draw("c same");
+			}
+		}
+		for(auto c: contours_cen){
+			c->Draw("c same");
+		}
+		if(do_obs){
+			for(auto c: contours_obs){
+				c->Draw("c same");
+			}
+		}
+		plot->GetHisto()->Draw("sameaxis"); //draw again so axes on top
+		kleg->Draw();
+		plot->DrawText();
+
+		//print image
+		//save directly to pdf: saving to eps and then converting to pdf loses transparent legend behavior
+		can->Print((plot->GetName()+".pdf").c_str(),"pdf");
+		//convert from pdf to png (better display of dashed lines)
+		system(("convert -trim -density 300 "+plot->GetName()+".pdf "+plot->GetName()+".png").c_str());
+
+		//save objects
+		auto outfile = TFile::Open((plot->GetName()+".root").c_str(),"RECREATE");
+		outfile->cd();
+		hbase->Write();
+		h2d->Write();
+		//todo: write contours
 	}
 }

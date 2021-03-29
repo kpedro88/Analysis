@@ -746,6 +746,7 @@ class KPlot2D: public KPlot {
 		void DrawHist(){
 			pad1->cd();
 			histo->Draw("colz");
+			pad1->Update();
 		}
 		
 		//accessors
