@@ -536,6 +536,16 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		kleg->AddEntry(contours_cen[0],"Median expected","l");
 		if(nsigma>=1) kleg->AddEntry(contours_sigmas[0][0],"68% expected","l");
 		if(nsigma>=2) kleg->AddEntry(contours_sigmas[2][0],"95% expected","l");
+		stringstream vname;
+		for(const auto& v : vars){
+			if(v.first==var1 or v.first==var2) continue;
+			vname << vdict[v.first] << " = ";
+			if(v.first=="alpha" and v.second<0) vname << alphaName(v.second);
+			else vname << v.second;
+			vname << ", ";
+		}
+		string svname = vname.str(); svname.pop_back(); svname.pop_back();
+		kleg->AddEntry((TObject*)NULL,svname,"");
 		//add all graphs to legend
 		for(auto& v: {contours_obs,contours_cen}){
 			for(auto c: v){
