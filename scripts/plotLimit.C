@@ -213,6 +213,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	string lumi_text("(13 TeV)"); globalOpt->Get("lumi_text",lumi_text);
 	string prelim_text; bool set_prelim = globalOpt->Get("prelim_text",prelim_text);
 	string dir; globalOpt->Get("dir",dir);
+	string printsuffix; globalOpt->Get("printsuffix",printsuffix);
 
 	//ranges for plotting
 	double ymin = 1e10, xmin = 1e10;
@@ -345,6 +346,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		stringstream soname;
 		soname << "plotLimit_" << sname << "_vs_" << var1;
 		if(do_obs) soname << "_obs";
+		if(!printsuffix.empty()) soname << "_" << printsuffix;
 		string oname = soname.str();
 		KParser::clean(oname);
 		if(!dir.empty()) oname = dir+"/"+oname;
@@ -382,6 +384,10 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		string svname = vname.str(); svname.pop_back(); svname.pop_back();
 		kleg->AddEntry((TObject*)NULL,svname,"");
 		kleg->Build(KLegend::right,KLegend::top);
+		//extra style options
+		auto leg = kleg->GetLegend();
+		leg->SetFillStyle(1001);
+		leg->SetFillColorAlpha(0,0.6);
 
 		//draw blank histo for axes
 		plot->DrawHist();
@@ -397,9 +403,10 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		plot->DrawText();
 
 		//print image
-		can->Print((plot->GetName()+".png").c_str(),"png");
-		can->Print((plot->GetName()+".eps").c_str(),"eps");
-		system(("epstopdf "+plot->GetName()+".eps && rm "+plot->GetName()+".eps").c_str());
+		//save directly to pdf: saving to eps and then converting to pdf loses transparent legend behavior
+		can->Print((plot->GetName()+".pdf").c_str(),"pdf");
+		//convert from pdf to png (better display of dashed lines)
+		system(("convert -trim -density 300 "+plot->GetName()+".pdf "+plot->GetName()+".png").c_str());
 
 		//save objects
 		auto outfile = TFile::Open((plot->GetName()+".root").c_str(),"RECREATE");
@@ -516,6 +523,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		stringstream soname;
 		soname << "plotLimit_" << sname << "_vs_" << var1 << "_" << var2;
 		if(do_obs) soname << "_obs";
+		if(!printsuffix.empty()) soname << "_" << printsuffix;
 		string oname = soname.str();
 		KParser::clean(oname);
 		if(!dir.empty()) oname = dir+"/"+oname;
