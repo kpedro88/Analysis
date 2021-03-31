@@ -189,16 +189,22 @@ template <>
 void KFit::DoAltChi2(TGraphAsymmErrors* gtmp){
 	//copy the computation from RooCurve::chiSquare()
 	double chisq = 0.;
+	int skipped = 0;
 	for(int i = 0; i < gtmp->GetN(); ++i){
 		double avg = fn->Integral(gtmp->GetX()[i]-gtmp->GetEXlow()[i], gtmp->GetX()[i]+gtmp->GetEXhigh()[i])/(gtmp->GetEXlow()[i]+gtmp->GetEXhigh()[i]);
 		double y = gtmp->GetY()[i];
 		if(y!=0){
 			double err = (y>avg) ? gtmp->GetEYlow()[i] : gtmp->GetEYhigh()[i];
+			if(err==0){
+				++skipped;
+				continue;
+			}
 			double pull = (y-avg)/err;
 			chisq += pull*pull;
 		}
 	}
 	fn->SetChisquare(chisq);
+	if(skipped>0) fn->SetNDF(fn->GetNDF()-skipped);
 }
 
 //convert histogram to TGraphAsymmErrors
