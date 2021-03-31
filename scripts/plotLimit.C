@@ -212,6 +212,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	string obs_text("Observed"); globalOpt->Get("obs_text",obs_text);
 	string lumi_text("(13 TeV)"); globalOpt->Get("lumi_text",lumi_text);
 	string prelim_text; bool set_prelim = globalOpt->Get("prelim_text",prelim_text);
+	string dir; globalOpt->Get("dir",dir);
 
 	//ranges for plotting
 	double ymin = 1e10, xmin = 1e10;
@@ -220,6 +221,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 
 	//extract info from hadded limit file
 	string fname = "limit_"+sname+".root";
+	if(!dir.empty()) fname = dir+"/"+fname;
 	TFile* file = KOpen(fname);
 	TTree* limit = KGet<TTree>(file,"limit");
 
@@ -345,6 +347,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		if(do_obs) soname << "_obs";
 		string oname = soname.str();
 		KParser::clean(oname);
+		if(!dir.empty()) oname = dir+"/"+oname;
 		KPlot* plot = new KPlot(oname,localOpt,plotOpt);
 		//make histo for axes
 		plot->Initialize();
@@ -515,6 +518,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		if(do_obs) soname << "_obs";
 		string oname = soname.str();
 		KParser::clean(oname);
+		if(!dir.empty()) oname = dir+"/"+oname;
 		KPlot2D* plot = new KPlot2D(oname,"",localOpt,plotOpt);
 		//make histo for axes
 		plot->Initialize();
