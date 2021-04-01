@@ -16,6 +16,10 @@
 #include <string>
 #include <vector>
 #include <cstdlib>
+#include <fstream>
+
+//other headers
+#include <boost/range/adaptor/reversed.hpp>
 
 using namespace std;
 
@@ -28,22 +32,39 @@ struct Curve {
 		localOpt->Get("extra_text",extra_text);
 		style = new KStyle(name,globalOpt,localOpt);
 
-		//make graph
-		vector<double> xvals, yvals, xsecs;
-		globalOpt->Get("xvals",xvals);
-		bool has_xsec = globalOpt->Get("xsecs",xsecs);
-		localOpt->Get("yvals",yvals);
-		if (has_xsec) {
-			for(unsigned i = 0; i < yvals.size(); ++i){
-				yvals[i] = yvals[i]*xsecs[i];
-			}
+		string extfilename; localOpt->Get("extfilename",extfilename);
+		//get graph
+		if(!extfilename.empty()){
+			auto extfile = KOpen(extfilename);
+			string extgraph; localOpt->Get("extgraph",extgraph);
+			graph = KGet<TGraph>(extfile,extgraph);
+			style->Format(graph);
 		}
-		graph = new TGraph(xvals.size(),xvals.data(),yvals.data());
-		style->Format(graph);
+		//make graph
+		else {
+			vector<double> xvals, yvals, xsecs;
+			globalOpt->Get("xvals",xvals);
+			bool has_xsec = globalOpt->Get("xsecs",xsecs);
+			localOpt->Get("yvals",yvals);
+			if (has_xsec) {
+				for(unsigned i = 0; i < yvals.size(); ++i){
+					yvals[i] = yvals[i]*xsecs[i];
+				}
+			}
+			graph = new TGraph(xvals.size(),xvals.data(),yvals.data());
+			style->Format(graph);
+		}
 
 		//get extrema
-		ymin = TMath::MinElement(yvals.size(),yvals.data());
-		ymax = TMath::MaxElement(yvals.size(),yvals.data());
+		ymin = TMath::MinElement(graph->GetN(),graph->GetY());
+		ymax = TMath::MaxElement(graph->GetN(),graph->GetY());
+	}
+	//helpers
+	void AddToLegend(KLegend* kleg){
+		kleg->AddEntry(graph,legname,style->GetLegOpt(),panel,extra_text);
+	}
+	void Draw(){
+		graph->Draw(style->GetDrawOpt("same").c_str());
 	}
 	//members
 	string name;
@@ -82,8 +103,8 @@ void compareLimits(string oname, string input, string options){
 	vector<Curve> curves; curves.reserve(tmps.size());
 	for(const auto& tmp : tmps){
 		curves.emplace_back(tmp, globalOpt);
-		const auto& curve = curves.back();
-		kleg->AddEntry(curve.graph,curve.legname,curve.style->GetLegOpt(),curve.panel,curve.extra_text);
+		auto& curve = curves.back();
+		curve.AddToLegend(kleg);
 		if(curve.ymin<ymin) ymin = curve.ymin;
 		if(curve.ymax>ymax) ymax = curve.ymax;
 	}
@@ -96,25 +117,46 @@ void compareLimits(string oname, string input, string options){
 	
 	//use graph "best" algo (must be after axes drawn)
 	kleg->Build(KLegend::hdefault,KLegend::vdefault);
+	//extra style options
+	auto leg = kleg->GetLegend();
+	leg->SetFillStyle(1001);
+	leg->SetFillColorAlpha(0,0.6);
 
 	//draw graphs
-	for(const auto& curve : curves){
-		curve.graph->Draw(curve.style->GetDrawOpt("same").c_str());
+	if(globalOpt->Get("reverse",false)){
+		for(auto& curve : boost::adaptors::reverse(curves)){
+			curve.Draw();
+		}
+	}
+	else {
+		for(auto& curve : curves){
+			curve.Draw();
+		}
 	}
 
 	plot->GetHisto()->Draw("sameaxis"); //draw again so axes on top
 	plot->DrawText();
-	
+
+	string dir; globalOpt->Get("dir",dir);
 	//print image
+	//save directly to pdf: saving to eps and then converting to pdf loses transparent legend behavior
 	vector<string> pformats; globalOpt->Get("printformat",pformats);
 	for(auto pformat : pformats){
-		string otmp = oname;
-		bool epstopdf = pformat=="pdf";
-		if(epstopdf) pformat = "eps";
-		otmp += "." + pformat;
+		string otmp = oname+"."+pformat;
 		KParser::clean(otmp);
+		if(!dir.empty()) otmp = dir+"/"+otmp;
+		//if possible, convert from pdf to png (better display of dashed lines)
+		if(pformat=="png"){
+			string otmp2 = oname+".pdf";
+			KParser::clean(otmp2);
+			if(!dir.empty()) otmp2 = dir+"/"+otmp2;
+			ifstream f(otmp2.c_str());
+			if(f.good()){
+				system(("convert -trim -density 300 "+otmp2+" "+otmp).c_str());
+				continue;
+			}
+		}
 		can->Print(otmp.c_str(),pformat.c_str());
-		if(epstopdf) system(("epstopdf "+otmp+" && rm "+otmp).c_str());
 	}
 }
 
