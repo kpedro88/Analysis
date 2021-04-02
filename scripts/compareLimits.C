@@ -31,6 +31,7 @@ struct Curve {
 		panel = 0; localOpt->Get("panel",panel);
 		localOpt->Get("extra_text",extra_text);
 		style = new KStyle(name,globalOpt,localOpt);
+		obs = localOpt->Get("obs",false);
 
 		string extfilename; localOpt->Get("extfilename",extfilename);
 		//get graph
@@ -75,11 +76,13 @@ struct Curve {
 	TGraph* graph;
 	KStyle* style;
 	double ymin, ymax;
+	bool obs;
 };
 
 void compareLimits(string oname, string input, string options){
 	OptionMap* globalOpt = new OptionMap();
 	KParser::processOption("in:input["+options+"]",globalOpt);
+	bool do_obs = globalOpt->Get("do_obs",false);
 
 	//set up plot
 	vector<double> xvals; globalOpt->Get("xvals",xvals);
@@ -104,6 +107,10 @@ void compareLimits(string oname, string input, string options){
 	for(const auto& tmp : tmps){
 		curves.emplace_back(tmp, globalOpt);
 		auto& curve = curves.back();
+		if(!do_obs and curve.obs){
+			curves.pop_back();
+			continue;
+		}
 		curve.AddToLegend(kleg);
 		if(curve.ymin<ymin) ymin = curve.ymin;
 		if(curve.ymax>ymax) ymax = curve.ymax;

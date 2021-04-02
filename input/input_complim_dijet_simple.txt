@@ -1,4 +1,4 @@
 xsec	s:legname[Theoretical]	c:color[kMagenta]	i:linestyle[1]	s:extfilename[test/dijet/plotLimit_dijet_vs_mZprime_obs__alphaPeak.root]	s:extgraph[g_xsec]
-aHigh	s:legname[Observed (^{}#alpha_{dark}^{high})]	c:color[kBlue]	i:linestyle[1]	s:extfilename[test/dijet/plotLimit_dijet_vs_mZprime_obs__alphaHigh.root]	s:extgraph[g_obs]
-aPeak	s:legname[Observed (^{}#alpha_{dark}^{peak})]	c:color[kBlack]	i:linestyle[1]	s:extfilename[test/dijet/plotLimit_dijet_vs_mZprime_obs__alphaPeak.root]	s:extgraph[g_obs]
-aLow	s:legname[Observed (^{}#alpha_{dark}^{low})]	c:color[kRed]	i:linestyle[1]	s:extfilename[test/dijet/plotLimit_dijet_vs_mZprime_obs__alphaLow.root]	s:extgraph[g_obs]	vs{|}:extra_text[^{}m_{dark} = 20 GeV, ^{}r_{inv} = 0.3]
+aHigh	s:legname[Observed (^{}#alpha_{dark}^{high})]	c:color[kBlue]	i:linestyle[1]	s:extfilename[test/dijet/plotLimit_dijet_vs_mZprime_obs__alphaHigh.root]	s:extgraph[g_obs]	b:obs[1]
+aPeak	s:legname[Observed (^{}#alpha_{dark}^{peak})]	c:color[kBlack]	i:linestyle[1]	s:extfilename[test/dijet/plotLimit_dijet_vs_mZprime_obs__alphaPeak.root]	s:extgraph[g_obs]	b:obs[1]
+aLow	s:legname[Observed (^{}#alpha_{dark}^{low})]	c:color[kRed]	i:linestyle[1]	s:extfilename[test/dijet/plotLimit_dijet_vs_mZprime_obs__alphaLow.root]	s:extgraph[g_obs]	vs{|}:extra_text[^{}m_{dark} = 20 GeV, ^{}r_{inv} = 0.3]	b:obs[1]
