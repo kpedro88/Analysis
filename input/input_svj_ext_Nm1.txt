@@ -4,14 +4,14 @@ input/input_svj_paper.txt
 OPTION
 vstring{|}:extra_text[signal (^{}m_{dark} = 20 GeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
 vint:extra_text_panels[1,1]
-string:rootfile[test/paper/Nm1/Nm1_plots.root]
+string:rootfile[test/paper/Nm1/Nm1_plots]
 string:printsuffix[Run2ProductionV17_Nm1]
 
 HISTO
-metMTratio	i:xnum[10]	d:xmin[0]	d:xmax[0.4545]	s:xtitle[R_{T}]	s:ytitle[arbitrary units]	b:logy[1]	b:ratio[0]	vd:xcuts[0.15,0.25]	vc:xcut_colors[kBlack,kRed]
-MTAK8	i:xnum[10]	d:xmin[0]	d:xmax[6060]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:logy[1]	b:ratio[0]	vd:xcuts[1500]	vc:xcut_colors[kBlack]
-deltaetaAK8	i:xnum[10]	d:xmin[0]	d:xmax[3.535]	s:xtitle[#Delta#eta(J_{1},J_{2})]	s:ytitle[arbitrary units]	b:logy[1]	b:ratio[0]	vd:xcuts[1.5]	vc:xcut_colors[kBlack]
-deltaphiminAK8	i:xnum[10]	d:xmin[0]	d:xmax[3.333]	s:xtitle[#Delta#phi_{min}]	s:ytitle[arbitrary units]	b:logy[1]	b:ratio[0]	vd:xcuts[0.8]	vc:xcut_colors[kRed]
+metMTratio	i:xnum[100]	d:xmin[0]	d:xmax[0.4545]	s:xtitle[R_{T}]	s:ytitle[arbitrary units]	b:logy[1]	b:ratio[0]	vd:xcuts[0.15,0.25]	vc:xcut_colors[kBlack,kRed]
+MTAK8	i:xnum[100]	d:xmin[0]	d:xmax[6060]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:logy[1]	b:ratio[0]	vd:xcuts[1500]	vc:xcut_colors[kBlack]
+deltaetaAK8	i:xnum[100]	d:xmin[0]	d:xmax[3.535]	s:xtitle[#Delta#eta(J_{1},J_{2})]	s:ytitle[arbitrary units]	b:logy[1]	b:ratio[0]	vd:xcuts[1.5]	vc:xcut_colors[kBlack]
+deltaphiminAK8	i:xnum[100]	d:xmin[0]	d:xmax[3.333]	s:xtitle[#Delta#phi_{min}]	s:ytitle[arbitrary units]	b:logy[1]	b:ratio[0]	vd:xcuts[0.8]	vc:xcut_colors[kRed]
 
 SET
 hist	mc	SVJ_2000_20_0.3_peak	s:legname[m_{Z'} = 2000 GeV]	c:color[kBlue]	i:linestyle[7]	i:panel[1]
