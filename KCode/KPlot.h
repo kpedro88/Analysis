@@ -9,7 +9,6 @@
 //ROOT headers
 #include <TROOT.h>
 #include <TLegend.h>
-#include <TPaveText.h>
 #include <TH1.h>
 #include <TH1F.h>
 #include <TProfile.h>
@@ -39,7 +38,7 @@ class KPlot{
 		//constructor
 		KPlot() : 
 			name(""), localOpt(0), globalOpt(0), histo(0), ratio(0), exec(0), isInit(false), 
-			can(0), pad1(0), pad2(0), leg(0), rleg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0),
+			can(0), pad1(0), pad2(0), leg(0), rleg(0), textCMS(0), textExtra(0), textLumi(0), line(0),
 			pad1size(0), pad1W(0), pad1H(0), pad2size(0), pad2W(0), pad2H(0)
 		{
 			//must always have local & global option maps
@@ -51,7 +50,7 @@ class KPlot{
 		//universal size values set in initialization list
 		KPlot(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : 
 			name(name_), localOpt(localOpt_), globalOpt(globalOpt_), histo(0), ratio(0), exec(0), isInit(false),
-			can(0), pad1(0), pad2(0), leg(0), rleg(0), paveCMS(0), paveExtra(0), paveLumi(0), line(0),
+			can(0), pad1(0), pad2(0), leg(0), rleg(0), textCMS(0), textExtra(0), textLumi(0), line(0),
 			pad1size(0), pad1W(0), pad1H(0), pad2size(0), pad2W(0), pad2H(0)
 		{
 			//must always have local & global option maps
@@ -271,7 +270,7 @@ class KPlot{
 				SetTitleOffset(pad1,histo->GetYaxis());
 			}
 			
-			InitializePaves();
+			InitializeText();
 			
 			//create legend
 			leg = new KLegend(pad1,localOpt,globalOpt);
@@ -279,24 +278,22 @@ class KPlot{
 			
 			return isInit;
 		}
-		void InitializePaves(){
+		void InitializeText(){
 			pad1->cd();
 			
 			//setup CMS text
 			const int cmsFont = 61;
-			TLatex width_test_cms(0,0,"CMS");
+			string cms_text = "CMS";
+			TLatex width_test_cms(0,0,cms_text.c_str());
 			width_test_cms.SetTextSize(sizeP/pad1H);
 			width_test_cms.SetTextFont(cmsFont);
-			double posP = 1-(marginT-2)/pad1H;
+			double posP = 1-(marginT-8)/pad1H;
 			double uminCMS = marginL/pad1W;
 			double umaxCMS = marginL/pad1W + width_test_cms.GetXsize();
-			paveCMS = new TPaveText(uminCMS,posP,umaxCMS,1.0,"NDC");
-			paveCMS->SetFillColor(0);
-			paveCMS->SetBorderSize(0);
-			paveCMS->SetTextFont(cmsFont);
-			paveCMS->SetTextSize(sizeP/pad1H);
-			paveCMS->SetMargin(0);
-			paveCMS->AddText("CMS");
+			textCMS = new TLatex(uminCMS,posP,cms_text.c_str());
+			textCMS->SetTextSize(sizeP/pad1H);
+			textCMS->SetTextFont(cmsFont);
+			textCMS->SetNDC();
 			
 			//setup prelim text
 			const int prelimFont = 52;
@@ -307,26 +304,16 @@ class KPlot{
 			if(!prelim_text.empty() and prelim_text[0]!=' ') prelim_text = " "+prelim_text;
 			TLatex width_test_extra(0,0,prelim_text.c_str());
 			width_test_extra.SetTextSize(sizePextra/pad1H);
-			width_test_cms.SetTextFont(prelimFont);
+			width_test_extra.SetTextFont(prelimFont);
 			double uminExtra = umaxCMS;
 			double umaxExtra = uminExtra + width_test_extra.GetXsize();
-			double offsetExtra = 0.;
-			//special settings for vertical alignment in pdfs
-			//determined by trial and error for the specific fonts and sizes used here
-			if(globalOpt->Get("pdfFormat",false)){
-				offsetExtra = sizePdiff*1.5/pad1H;
-				//shift to account for letters with tails
-				if(prelim_text.find_first_of("gjpqy")!=string::npos) offsetExtra += 0.26*width_test_extra.GetYsize();
-			}
-			paveExtra = new TPaveText(uminExtra,posP,umaxExtra,1.0-offsetExtra,"NDC");
-			paveExtra->SetFillColor(0);
-			paveExtra->SetBorderSize(0);
-			paveExtra->SetTextFont(prelimFont);
-			paveExtra->SetTextSize(sizePextra/pad1H);
-			paveExtra->SetMargin(0);
-			paveExtra->AddText(prelim_text.c_str());
-			
+			textExtra = new TLatex(uminExtra,posP,prelim_text.c_str());
+			textExtra->SetTextSize(sizePextra/pad1H);
+			textExtra->SetTextFont(prelimFont);
+			textExtra->SetNDC();
+
 			//setup lumi text
+			const int lumiFont = 42;
 			double intlumi = 0;
 			globalOpt->Get<double>("luminorm",intlumi);
 			string luminormunit = "fbinv";
@@ -339,14 +326,13 @@ class KPlot{
 			globalOpt->Get("lumi_text",fbname);
 			TLatex width_test_lumi(0,0,fbname.c_str());
 			width_test_lumi.SetTextSize(sizeP/pad1H);
+			width_test_lumi.SetTextFont(lumiFont);
 			double umaxLumi = 1-marginR/pad1W;
 			double uminLumi = umaxLumi - width_test_lumi.GetXsize();
-			paveLumi = new TPaveText(uminLumi,posP,umaxLumi,1.0,"NDC");
-			paveLumi->SetFillColor(0);
-			paveLumi->SetBorderSize(0);
-			paveLumi->SetTextFont(42);
-			paveLumi->SetTextSize(sizeP/pad1H);
-			paveLumi->AddText(fbname.c_str());
+			textLumi = new TLatex(uminLumi,posP,fbname.c_str());
+			textLumi->SetTextSize(sizeP/pad1H);
+			textLumi->SetTextFont(lumiFont);
+			textLumi->SetNDC();
 		}
 		
 		//drawing
@@ -413,9 +399,9 @@ class KPlot{
 			}
 			
 			if(leg) leg->Draw();
-			paveCMS->Draw("same");
-			paveExtra->Draw("same");
-			paveLumi->Draw("same");
+			textCMS->Draw("same");
+			textExtra->Draw("same");
+			textLumi->Draw("same");
 		}
 		void DrawRatio(){
 			pad2->cd();
@@ -540,9 +526,9 @@ class KPlot{
 		void SetLegend(KLegend* leg_) { leg = leg_; }
 		KLegend* GetLegendRatio() { return rleg; }
 		void SetLegendRatio(KLegend* leg_) { rleg = leg_; }
-		TPaveText* GetCMSText() { return paveCMS; }
-		TPaveText* GetExtraText() { return paveExtra; }
-		TPaveText* GetLumiText() { return paveLumi; }
+		TLatex* GetCMSText() { return textCMS; }
+		TLatex* GetExtraText() { return textExtra; }
+		TLatex* GetLumiText() { return textLumi; }
 		OptionMap* GetLocalOpt() { return localOpt; }
 		void SetLocalOpt(OptionMap* opt) { localOpt = opt; if(localOpt==0) localOpt = new OptionMap(); } //must always have an option map
 		OptionMap* GetGlobalOpt() { return globalOpt; }
@@ -560,9 +546,9 @@ class KPlot{
 		TPad *pad1, *pad2;
 		KLegend* leg;
 		KLegend* rleg;
-		TPaveText* paveCMS;
-		TPaveText* paveExtra;
-		TPaveText* paveLumi;
+		TLatex* textCMS;
+		TLatex* textExtra;
+		TLatex* textLumi;
 		TLine* line;
 		vector<TLine*> xcut_lines, ycut_lines, xcut_ratio_lines;
 		double canvasW, canvasH, canvasWextra, canvasHextra, ratioH;
@@ -753,7 +739,7 @@ class KPlot2D: public KPlot {
 			SetTitleOffset(pad1,histo->GetYaxis());
 			SetTitleOffset(pad1,histo->GetZaxis());
 			
-			InitializePaves();
+			InitializeText();
 			
 			return isInit;
 		}
