@@ -283,32 +283,47 @@ class KPlot{
 			pad1->cd();
 			
 			//setup CMS text
+			const int cmsFont = 61;
 			TLatex width_test_cms(0,0,"CMS");
 			width_test_cms.SetTextSize(sizeP/pad1H);
-			double posP = 1-(marginT-1)/pad1H;
+			width_test_cms.SetTextFont(cmsFont);
+			double posP = 1-(marginT-2)/pad1H;
 			double uminCMS = marginL/pad1W;
 			double umaxCMS = marginL/pad1W + width_test_cms.GetXsize();
 			paveCMS = new TPaveText(uminCMS,posP,umaxCMS,1.0,"NDC");
 			paveCMS->SetFillColor(0);
 			paveCMS->SetBorderSize(0);
-			paveCMS->SetTextFont(61);
+			paveCMS->SetTextFont(cmsFont);
 			paveCMS->SetTextSize(sizeP/pad1H);
+			paveCMS->SetMargin(0);
 			paveCMS->AddText("CMS");
 			
 			//setup prelim text
-			//todo: add option to enable/disable/change
-			double sizePextra = sizeP - 3; //smaller
-			string prelim_text = " Preliminary";
+			const int prelimFont = 52;
+			double sizePdiff = 3;
+			double sizePextra = sizeP - sizePdiff; //smaller
+			string prelim_text = "Preliminary";
 			globalOpt->Get("prelim_text",prelim_text);
+			if(!prelim_text.empty() and prelim_text[0]!=' ') prelim_text = " "+prelim_text;
 			TLatex width_test_extra(0,0,prelim_text.c_str());
 			width_test_extra.SetTextSize(sizePextra/pad1H);
+			width_test_cms.SetTextFont(prelimFont);
 			double uminExtra = umaxCMS;
 			double umaxExtra = uminExtra + width_test_extra.GetXsize();
-			paveExtra = new TPaveText(uminExtra,posP,umaxExtra,1.0,"NDC");
+			double offsetExtra = 0.;
+			//special settings for vertical alignment in pdfs
+			//determined by trial and error for the specific fonts and sizes used here
+			if(globalOpt->Get("pdfFormat",false)){
+				offsetExtra = sizePdiff*1.5/pad1H;
+				//shift to account for letters with tails
+				if(prelim_text.find_first_of("gjpqy")!=string::npos) offsetExtra += 0.26*width_test_extra.GetYsize();
+			}
+			paveExtra = new TPaveText(uminExtra,posP,umaxExtra,1.0-offsetExtra,"NDC");
 			paveExtra->SetFillColor(0);
 			paveExtra->SetBorderSize(0);
-			paveExtra->SetTextFont(52);
+			paveExtra->SetTextFont(prelimFont);
 			paveExtra->SetTextSize(sizePextra/pad1H);
+			paveExtra->SetMargin(0);
 			paveExtra->AddText(prelim_text.c_str());
 			
 			//setup lumi text
