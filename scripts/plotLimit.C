@@ -176,6 +176,14 @@ void styleGraphs(vector<TGraph*>& graphs, Color_t linecolor, int linestyle, int 
 	}
 }
 
+void writeContour(const std::string& cname, const vector<TGraph*>& v){
+	for(unsigned j = 0; j < v.size(); ++j){
+		stringstream ss;
+		ss << "contour_" << cname << "_" << j;
+		v[j]->Write(ss.str().c_str());
+	}
+}
+
 set<double> getRange(int n, const double* arr, double& ymin, double& ymax, bool do_set=false){
 	double ymin_ = TMath::MinElement(n,arr);
 	if(ymin_ < ymin) ymin = ymin_;
@@ -605,6 +613,12 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		outfile->cd();
 		hbase->Write();
 		h2d->Write();
-		//todo: write contours
+		//write contours w/ unique names
+		writeContour("central", contours_cen);
+		if(do_obs) writeContour("obs", contours_obs);
+		vector<string> cnames{"sigma1d","sigma1u","sigma2d","sigma2u"};
+		for(unsigned i = 0; i < contours_sigmas.size(); ++i){
+			writeContour(cnames[i], contours_sigmas[i]);
+		}
 	}
 }

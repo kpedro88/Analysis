@@ -103,6 +103,7 @@ input/fast*/
 /plot_test_dc.py
 /getPostfitChi2.py
 /makeScanSVJ.py
+/intersectLimit.py
 
 # linked by setupXML.sh
 /KMVA/pugi*.*
