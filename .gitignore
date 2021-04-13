@@ -104,6 +104,7 @@ input/fast*/
 /getPostfitChi2.py
 /makeScanSVJ.py
 /intersectLimit.py
+/intersectLimit2D.py
 
 # linked by setupXML.sh
 /KMVA/pugi*.*
