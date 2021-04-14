@@ -270,6 +270,89 @@ class KBDTSelector : public KSelector {
 REGISTER_SELECTOR(BDT);
 
 //----------------------------------------------------
+//compute SVJ tags using BDT values
+class KSVJTagSelector : public KSelector {
+	public:
+		enum svjbranches { bdt = 0, seltor = 2 };
+		//constructor
+		KSVJTagSelector() : KSelector() { }
+		KSVJTagSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), branch(""), cut(0.), BDT(NULL) { 
+			//check for option
+			localOpt->Get("branch",branch);
+			if(branch=="bdtSVJtag") ebranch = bdt;
+			else if(branch.empty()) ebranch = seltor;
+			else throw runtime_error("Unknown bdt branch: "+branch);
+			localOpt->Get("cut",cut);
+			canfail = false;
+		}
+		virtual void ListBranches(){
+			if(!branch.empty()) branches.push_back("JetsAK8_"+branch);
+		}
+		virtual void CheckDeps(){
+			if(ebranch==seltor){
+				BDT = sel->Get<KBDTSelector*>("BDT");
+				if(!BDT) depfailed = true;
+			}
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			//reset
+			ntags = 0;
+			JetsAK8_tagged.clear();
+			const auto& SVJTag = ebranch==seltor ? BDT->JetsAK8_bdt : *looper->JetsAK8_bdtSVJtag;
+			JetsAK8_tagged.reserve(SVJTag.size());
+			for(unsigned j = 0; j < min(SVJTag.size(),2ul); ++j){
+				JetsAK8_tagged.push_back(SVJTag[j] > cut);
+				if(JetsAK8_tagged.back()) ++ntags;
+			}
+
+			return true;
+		}
+		
+		//member variables
+		string branch;
+		double cut;
+		unsigned ntags;
+		vector<bool> JetsAK8_tagged;
+		svjbranches ebranch;
+		KBDTSelector* BDT;
+};
+REGISTER_SELECTOR(SVJTag);
+
+//----------------------------------------------------
+//select number of SVJ tags
+class KNSVJSelector : public KSelector {
+	public:
+		//constructor
+		KNSVJSelector() : KSelector() { }
+		KNSVJSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), source(""), num(0), SVJTag(NULL) { 
+			//check for option
+			localOpt->Get("source",source);
+			localOpt->Get("num",num);
+		}
+		virtual void CheckDeps(){
+			SVJTag = sel->Get<KSVJTagSelector*>(source);
+			if(!SVJTag) depfailed = true;
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return (SVJTag->ntags==num);
+		}
+		
+		//member variables
+		string source;
+		unsigned num;
+		KSVJTagSelector* SVJTag;
+};
+REGISTER_SELECTOR(NSVJ);
+
+//----------------------------------------------------
 //selects events based on HLT line
 class KHLTSelector : public KSelector {
 	public:
@@ -946,7 +1029,7 @@ class KMETMTRatioSelector : public KSelector {
 		virtual bool Cut() {
 			if(looper->JetsAK8->size()<2) return false;
 			double metMTratio = looper->MT_AK8 > 0 ? looper->MET/looper->MT_AK8 : 0.0;
-			return ( (min<0 or metMTratio>min) and (max<0 or metMTratio<max) );
+			return ( (min<0 or metMTratio>min) and (max<0 or metMTratio<=max) );
 		}
 		
 		//member variables
@@ -1288,7 +1371,6 @@ REGISTER_SELECTOR(EventShape);
 
 //forward declaration
 class KMCWeightSelector;
-class KSVJTagSelector;
 //---------------------------------------------------------------
 //class to store and apply RA2 binning
 class KRA2BinSelector : public KSelector {

@@ -1592,59 +1592,6 @@ class KMTRegressionSelector : public KSelector {
 REGISTER_SELECTOR(MTRegression);
 
 //----------------------------------------------------
-//compute SVJ tags using BDT values
-class KSVJTagSelector : public KSelector {
-	public:
-		enum svjbranches { bdt = 0, seltor = 2 };
-		//constructor
-		KSVJTagSelector() : KSelector() { }
-		KSVJTagSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), branch(""), cut(0.), BDT(NULL) { 
-			//check for option
-			localOpt->Get("branch",branch);
-			if(branch=="bdtSVJtag") ebranch = bdt;
-			else if(branch.empty()) ebranch = seltor;
-			else throw runtime_error("Unknown bdt branch: "+branch);
-			localOpt->Get("cut",cut);
-			canfail = false;
-		}
-		virtual void ListBranches(){
-			if(!branch.empty()) branches.push_back("JetsAK8_"+branch);
-		}
-		virtual void CheckDeps(){
-			if(ebranch==seltor){
-				BDT = sel->Get<KBDTSelector*>("BDT");
-				if(!BDT) depfailed = true;
-			}
-		}
-		
-		//this selector doesn't add anything to tree
-		
-		//used for non-dummy selectors
-		virtual bool Cut() {
-			//reset
-			ntags = 0;
-			JetsAK8_tagged.clear();
-			const auto& SVJTag = ebranch==seltor ? BDT->JetsAK8_bdt : *looper->JetsAK8_bdtSVJtag;
-			JetsAK8_tagged.reserve(SVJTag.size());
-			for(unsigned j = 0; j < min(SVJTag.size(),2ul); ++j){
-				JetsAK8_tagged.push_back(SVJTag[j] > cut);
-				if(JetsAK8_tagged.back()) ++ntags;
-			}
-
-			return true;
-		}
-		
-		//member variables
-		string branch;
-		double cut;
-		unsigned ntags;
-		vector<bool> JetsAK8_tagged;
-		svjbranches ebranch;
-		KBDTSelector* BDT;
-};
-REGISTER_SELECTOR(SVJTag);
-
-//----------------------------------------------------
 //filter jets based on svj tag for per-jet histos
 class KSVJFilterSelector : public KSelector {
 	public:
@@ -1673,36 +1620,6 @@ class KSVJFilterSelector : public KSelector {
 		KSVJTagSelector* SVJTag;
 };
 REGISTER_SELECTOR(SVJFilter);
-
-//----------------------------------------------------
-//select number of SVJ tags
-class KNSVJSelector : public KSelector {
-	public:
-		//constructor
-		KNSVJSelector() : KSelector() { }
-		KNSVJSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), source(""), num(0), SVJTag(NULL) { 
-			//check for option
-			localOpt->Get("source",source);
-			localOpt->Get("num",num);
-		}
-		virtual void CheckDeps(){
-			SVJTag = sel->Get<KSVJTagSelector*>(source);
-			if(!SVJTag) depfailed = true;
-		}
-		
-		//this selector doesn't add anything to tree
-		
-		//used for non-dummy selectors
-		virtual bool Cut() {
-			return (SVJTag->ntags==num);
-		}
-		
-		//member variables
-		string source;
-		unsigned num;
-		KSVJTagSelector* SVJTag;
-};
-REGISTER_SELECTOR(NSVJ);
 
 //----------------------------------------------------
 //filter jets based on lepton fractions for per-jet histos

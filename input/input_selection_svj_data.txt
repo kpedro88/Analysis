@@ -1,0 +1,28 @@
+OPTION
+int:yieldprecision[2]
+bool:doClone[1]
+#bool:quickchain[1]
+vstring:disable_branches[*]
+vstring:enable_branches[RunNum,LumiBlockNum,EvtNum,MET,METPhi,MT_AK8,JetsAK8,JetsAK8_bdtSVJtag]
+
+SELECTION
+lowCut
+	nominal
+	METMTRatio	d:min[0.15]	d:max[0.25]
+	MTAK8	d:min[5000]
+highCut
+	nominal
+	METMTRatio	d:min[0.25]
+	MTAK8	d:min[5000]
+lowSVJ2
+	nominal
+	METMTRatio	d:min[0.15]	d:max[0.25]
+	MTAK8	d:min[2500]
+	SVJTag	s:branch[bdtSVJtag]	d:cut[0.55]
+	NSVJ	u:num[2]	s:source[SVJTag]
+highSVJ2
+	nominal
+	METMTRatio	d:min[0.25]
+	MTAK8	d:min[2500]
+	SVJTag	s:branch[bdtSVJtag]	d:cut[0.55]
+	NSVJ	u:num[2]	s:source[SVJTag]

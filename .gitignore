@@ -105,6 +105,7 @@ input/fast*/
 /makeScanSVJ.py
 /intersectLimit.py
 /intersectLimit2D.py
+/skimDataFinal.sh
 
 # linked by setupXML.sh
 /KMVA/pugi*.*

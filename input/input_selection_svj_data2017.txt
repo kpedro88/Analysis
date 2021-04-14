@@ -1,0 +1,10 @@
+SELECTION
+nominal
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+
+SET
+base	skim	JetHT_2017B	s:filename[tree_JetHT_2017B.root]	b:data[1]
+base	skim	JetHT_2017C	s:filename[tree_JetHT_2017C.root]	b:data[1]
+base	skim	JetHT_2017D	s:filename[tree_JetHT_2017D.root]	b:data[1]
+base	skim	JetHT_2017E	s:filename[tree_JetHT_2017E.root]	b:data[1]
+base	skim	JetHT_2017F	s:filename[tree_JetHT_2017F.root]	b:data[1]

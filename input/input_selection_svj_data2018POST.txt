@@ -1,0 +1,11 @@
+SELECTION
+nominal
+	HLT	vs:HLTLines[HLT_AK8PFJet500_v,HLT_CaloJet500_NoJetID_v,HLT_PFHT1050_v,HLT_PFJet500_v]
+	Blind	i:firstUnblindRun[319077]
+	HEMOptVeto
+
+SET
+base	skim	JetHT_2018A	s:filename[tree_JetHT_2018A.root]	b:data[1]
+base	skim	JetHT_2018B	s:filename[tree_JetHT_2018B.root]	b:data[1]
+base	skim	JetHT_2018C	s:filename[tree_JetHT_2018C.root]	b:data[1]
+base	skim	JetHT_2018D	s:filename[tree_JetHT_2018D.root]	b:data[1]
