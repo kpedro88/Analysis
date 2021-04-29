@@ -43,9 +43,11 @@ cd src/Analysis
 # option to run over all years in series for SVJ
 NEWSAMPLES=()
 POSTPROCESS=""
-if [[ ( "$TYPE" = SVJ || "$TYPE" = SVJScan ) && "$YEAR" = Run2 ]]; then
+if [[ ( "$TYPE" = SVJ || "$TYPE" = SVJScan || "$TYPE" = SVJScanBenchmark ) && "$YEAR" = Run2 ]]; then
 	NEWSAMPLES=(${SAMPLE}_MC2016 ${SAMPLE}_MC2017 ${SAMPLE}_MC2018PRE ${SAMPLE}_MC2018POST)
-	POSTPROCESS=true
+	if [[ ( "$TYPE" = SVJ || "$TYPE" = SVJScan ) ]]; then
+		POSTPROCESS=true
+	fi
 else
 	NEWSAMPLES=(${SAMPLE})
 fi
