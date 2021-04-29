@@ -1,0 +1,68 @@
+INPUT
+input/input_svj_paper.txt
+
+OPTION
+string:extfilename[test/paper/bdt/bothjetAK8bdtSVJtag_presel.root]
+#string:rootfile[test/paper/bdt/discr_plots]
+string:printsuffix[_eff_dijetmthighdetahadloose_WP55_E3]
+int:rebin[40]
+string:exthisto_extra[nominalHighDeta]
+string:ratiocalc[Binom]
+int:npanel[1]
+double:ymin[0]
+double:ymax[1]
+string:prelim_text[]
+string:lumi_text[137 ^{}fb^{-1} (13 TeV)]
+vstring:numers[effdata]
+vstring:denoms[effmc]
+
+HISTO
+bothjetAK8abseta	i:xnum[1000]	d:xmin[0]	d:xmax[2.4]	s:xtitle[|#eta(^{}J_{1,2})|]	s:ytitle[#varepsilon(SVJ tagger)]	b:ratio[1]	b:logy[0]
+
+SET
+ratio	mc	effmc	s:legname[MC]	i:nchildren[0]	c:color[kRed]
+	hist	mc	numer
+		base	ext	QCD_MC2016	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_bdt/bdt.root]
+		base	ext	QCD_MC2017	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_bdt/bdt.root]
+		base	ext	QCD_MC2018PRE	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_bdt/bdt.root]
+		base	ext	QCD_MC2018POST	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_bdt/bdt.root]
+		base	ext	TT_MC2016	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_bdt/bdt.root]
+		base	ext	TT_MC2017	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_bdt/bdt.root]
+		base	ext	TT_MC2018PRE	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_bdt/bdt.root]
+		base	ext	TT_MC2018POST	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_bdt/bdt.root]
+		base	ext	WJets_MC2016	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_bdt/bdt.root]
+		base	ext	WJets_MC2017	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_bdt/bdt.root]
+		base	ext	WJets_MC2018PRE	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_bdt/bdt.root]
+		base	ext	WJets_MC2018POST	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_bdt/bdt.root]
+		base	ext	ZJets_MC2016	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_bdt/bdt.root]
+		base	ext	ZJets_MC2017	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_bdt/bdt.root]
+		base	ext	ZJets_MC2018PRE	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_bdt/bdt.root]
+		base	ext	ZJets_MC2018POST	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_bdt/bdt.root]
+	hist	mc	denom
+		base	ext	QCD_MC2016	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_presel/presel.root]
+		base	ext	QCD_MC2017	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_presel/presel.root]
+		base	ext	QCD_MC2018PRE	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_presel/presel.root]
+		base	ext	QCD_MC2018POST	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_presel/presel.root]
+		base	ext	TT_MC2016	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_presel/presel.root]
+		base	ext	TT_MC2017	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_presel/presel.root]
+		base	ext	TT_MC2018PRE	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_presel/presel.root]
+		base	ext	TT_MC2018POST	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_presel/presel.root]
+		base	ext	WJets_MC2016	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_presel/presel.root]
+		base	ext	WJets_MC2017	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_presel/presel.root]
+		base	ext	WJets_MC2018PRE	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_presel/presel.root]
+		base	ext	WJets_MC2018POST	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_presel/presel.root]
+		base	ext	ZJets_MC2016	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_presel/presel.root]
+		base	ext	ZJets_MC2017	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_presel/presel.root]
+		base	ext	ZJets_MC2018PRE	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_presel/presel.root]
+		base	ext	ZJets_MC2018POST	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_presel/presel.root]
+ratio	mc	effdata	s:legname[data]	i:nchildren[0]	c:color[kBlue]
+	hist	mc	numer
+		base	ext	data_2016	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_bdt/bdt.root]
+		base	ext	data_2017	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_bdt/bdt.root]
+		base	ext	data_2018PRE	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_bdt/bdt.root]
+		base	ext	data_2018POST	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_bdt/bdt.root]
+	hist	mc	denom
+		base	ext	data_2016	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_presel/presel.root]
+		base	ext	data_2017	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_presel/presel.root]
+		base	ext	data_2018PRE	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_presel/presel.root]
+		base	ext	data_2018POST	b:ext_auto[1]	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/highdeta_presel/presel.root]
