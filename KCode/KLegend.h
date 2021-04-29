@@ -115,6 +115,7 @@ class KLegend{
 			if(globalOpt==0) globalOpt = new OptionMap();
 			
 			debug = globalOpt->Get("debug_legend",false);
+			auto_g = globalOpt->Get("auto_g",true);
 			
 			padH = pad->GetWh()*pad->GetAbsHNDC();
 			padW = pad->GetWw()*pad->GetAbsWNDC();
@@ -271,7 +272,7 @@ class KLegend{
 			if(debug) cout << "bounds: " << lbound << " " << rbound << " " << tbound << " " << bbound << endl;
 			
 			//use graph-based algo
-			if(hdir==hdefault and vdir==vdefault){
+			if((auto_g and !graphs.empty()) or (hdir==hdefault and vdir==vdefault)){
 				auto dirs = BuildG();
 				hdir = dirs.first;
 				vdir = dirs.second;
@@ -554,7 +555,7 @@ class KLegend{
 		TPad* pad;
 		OptionMap* localOpt;
 		OptionMap* globalOpt;
-		bool debug;
+		bool debug, auto_g;
 		int npanel;
 		bool balance_panels;
 		double legwidth, legheight;
