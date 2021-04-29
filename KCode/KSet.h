@@ -595,15 +595,17 @@ class KSetRatio: public KSet {
 		//simplified generic build (for using ratio calc in pad1)
 		virtual void Build(){
 			int rebin = 0; globalOpt->Get("rebin",rebin);
-			//first, all children build (& rebin if necessary)
+			//first, all children build
 			for(unsigned c = 0; c < children.size(); c++){
 				children[c]->Build();
-				if(rebin) children[c]->Rebin(rebin);
 			}
-			//then loop over histos (only resetting current histo for children once)
+			//then loop over histos (only resetting current histo for children once, rebin if necessary)
 			if(debug) cout << "Set " << name << ":" << endl;
 			for(auto& sit : MyObjects.GetTable()){
 				GetHisto(sit.first); //this will propagate to children
+				for(unsigned c = 0; c < children.size(); c++){
+					if(rebin) children[c]->Rebin(rebin);
+				}
 				Build(sit.first,children[0]->GetHisto(),children[1]->GetHisto());
 			}
 		}
