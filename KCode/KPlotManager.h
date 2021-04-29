@@ -746,7 +746,9 @@ class KPlotManager : public KManager {
 					if(ztmp > zmax) zmax = ztmp;
 				}
 				if(printyield) cout << endl;
-				
+				globalOpt->Get("zmin",zmin);
+				globalOpt->Get("zmax",zmax);
+
 				//one plot for each set
 				for(unsigned s = 0; s < MySets.size()+MyRatios.size(); s++){
 					KBase* theSet;
