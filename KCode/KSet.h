@@ -193,7 +193,31 @@ class KSet : public KBase {
 			//then do current histo
 			KBase::Normalize(nn,toYield);
 		}
-		
+		//adds histo to legend
+		void AddToLegend(KLegend* kleg) {
+			int panel_tmp = 0;
+			localOpt->Get("panel",panel_tmp);
+			vector<string> extra_text;
+			localOpt->Get("extra_text",extra_text);
+			string option = MyStyle->GetLegOpt();
+			//only draw horizontal line if horizontal error bar is enabled
+			//note: this setting only works in ROOT 5.34.11+
+			if(IsData() and option.find("e")!=string::npos && (globalOpt->Get("horizerrbars",false) || obj->htmp->GetXaxis()->IsVariableBinSize())){
+				option += "l";
+			}
+			kleg->AddEntry(obj->htmp ? (TObject*)obj->htmp : (TObject*)obj->btmp,GetLegName(),option,panel_tmp,extra_text);
+			//check if error band needs to be added
+			if(localOpt->Get("errband",false) && localOpt->Get("errbandleg",true) and obj->etmp) {
+				//this assumes it has already been created previously... a little unsafe, but a pain in the ass otherwise
+				option = MyStyle->GetLegOptErr();
+				kleg->AddEntry(obj->etmp,"uncertainty",option,panel_tmp);
+			}
+			//check for fits
+			for(auto fit : obj->ftmp){
+				fit->AddToLegend(kleg,panel_tmp,true);
+			}
+		}
+
 	protected:
 		//member variables
 		KBase* parent; //overloaded variable name
@@ -219,24 +243,6 @@ class KSetData: public KSet {
 			if(ch->GetLocalOpt()->Get("intlumi",intlumi_ch)) {
 				localOpt->Get("intlumi",intlumi);
 				localOpt->Set("intlumi",intlumi + intlumi_ch);
-			}
-		}
-		//adds histo to legend
-		void AddToLegend(KLegend* kleg) {
-			int panel_tmp = 0;
-			localOpt->Get("panel",panel_tmp);
-			vector<string> extra_text;
-			localOpt->Get("extra_text",extra_text);
-			string option = MyStyle->GetLegOpt();
-			//only draw horizontal line if horizontal error bar is enabled
-			//note: this setting only works in ROOT 5.34.11+
-			if(option.find("e")!=string::npos && (globalOpt->Get("horizerrbars",false) || obj->htmp->GetXaxis()->IsVariableBinSize())){
-				option += "l";
-			}
-			kleg->AddEntry(obj->htmp,GetLegName(),option,panel_tmp,extra_text);
-			//check for fits
-			for(auto fit : obj->ftmp){
-				fit->AddToLegend(kleg,panel_tmp,true);
 			}
 		}
 		//draw function
@@ -270,26 +276,6 @@ class KSetMC: public KSet {
 		//destructor
 		virtual ~KSetMC() {}
 
-		//adds histo to legend
-		void AddToLegend(KLegend* kleg) {
-			int panel_tmp = 0;
-			localOpt->Get("panel",panel_tmp);
-			vector<string> extra_text;
-			localOpt->Get("extra_text",extra_text);
-			string option = MyStyle->GetLegOpt();
-			kleg->AddEntry(obj->htmp,GetLegName(),option,panel_tmp,extra_text);
-			
-			//check if error band needs to be added
-			if(localOpt->Get("errband",false) && localOpt->Get("errbandleg",true)) {
-				//this assumes it has already been created previously... a little unsafe, but a pain in the ass otherwise
-				option = MyStyle->GetLegOptErr();
-				kleg->AddEntry(obj->etmp,"uncertainty",option,panel_tmp);
-			}
-			//check for fits
-			for(auto fit : obj->ftmp){
-				fit->AddToLegend(kleg,panel_tmp,true);
-			}
-		}
 		//draw function
 		void Draw(TPad* pad) {
 			pad->cd();
@@ -571,8 +557,9 @@ class KSetRatio: public KSet {
 		enum ratiocalc { DataMC=0, PctDiff=1, Pull=2, Q1=3, Q2=4, Q3=5, Q4=6, Binom=7, TF=8, Res=9, RelRes=10, PullFit=11 };
 		//constructor
 		KSetRatio() : KSet() {}
-		KSetRatio(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KSet(name_, localOpt_, globalOpt_), calc(DataMC), noErrBand(false) { 
-			children.resize(2);
+		KSetRatio(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KSet(name_, localOpt_, globalOpt_), calc(DataMC), noErrBand(false) {
+			int nchildren(2); localOpt->Get("nchildren",nchildren);
+			children.resize(nchildren);
 			globalOpt->Get("ratiocalc",calcName);
 			SetCalc(calcName);
 			//auto disable ratio fits on residuals
@@ -602,11 +589,27 @@ class KSetRatio: public KSet {
 			else if(calcName=="RelRes") calc = RelRes;
 			else if(calcName=="PullFit") calc = PullFit;
 		}
-		
+
+		//ratios should not be rebinned
+		virtual void Rebin(int rebin){}
+		//simplified generic build (for using ratio calc in pad1)
+		virtual void Build(){
+			int rebin = 0; globalOpt->Get("rebin",rebin);
+			//first, all children build (& rebin if necessary)
+			for(unsigned c = 0; c < children.size(); c++){
+				children[c]->Build();
+				if(rebin) children[c]->Rebin(rebin);
+			}
+			//then loop over histos (only resetting current histo for children once)
+			if(debug) cout << "Set " << name << ":" << endl;
+			for(auto& sit : MyObjects.GetTable()){
+				GetHisto(sit.first); //this will propagate to children
+				Build(sit.first,children[0]->GetHisto(),children[1]->GetHisto());
+			}
+		}
 		//ratio class acts a little differently:
 		//only builds from the current histo of numer and denom
 		//(since some histos might not want ratios, and also has to wait for possible norm to yield)
-		using KBase::Build;
 		void Build(OptionMap* omap, OptionMapMap& fitopts, TH1* htemp=NULL){
 			Build(children[0]->GetHistoName(),children[0]->GetHisto(),children[1]->GetHisto(),htemp);
 			if(omap==NULL) return;
@@ -644,17 +647,41 @@ class KSetRatio: public KSet {
 				hsim = static_cast<TProfile*>(hsim)->ProjectionX();
 				hsim0 = static_cast<TProfile*>(hsim0)->ProjectionX();
 			}
-			
+			//only data/MC supported for ratio of ratios
+			if(children[0]->IsRatio() and children[1]->IsRatio()) calc = DataMC;
+
 			if(calc==DataMC){ //data/mc
-				//remove sim bin errors
-				for(int b = 0; b < nbins; b++){
-					hsim0->SetBinError(b,0);
+				auto b0 = ((KSetRatio*)children[0])->obj->btmp;
+				auto b1 = ((KSetRatio*)children[1])->obj->btmp;
+				//special case for ratio of ratios
+				if(children[0]->IsRatio() and children[1]->IsRatio() and b0 and b1){
+					auto y0 = b0->GetY();
+					auto y1 = b1->GetY();
+					auto yel0 = b0->GetEYlow();
+					auto yel1 = b1->GetEYlow();
+					auto yeh0 = b0->GetEYhigh();
+					auto yeh1 = b1->GetEYhigh();
+					int npts = b0->GetN();
+					std::vector<double> yval, yel, yeh;
+					yval.reserve(npts); yel.reserve(npts); yeh.reserve(npts);
+					for(int b = 0; b < npts; ++b){
+						yval.push_back(y0[b]/y1[b]);
+						yel.push_back(yval.back()*sqrt(yel0[b]*yel0[b]/(y0[b]*y0[b])+yel1[b]*yel1[b]/(y1[b]*y1[b])));
+						yeh.push_back(yval.back()*sqrt(yeh0[b]*yeh0[b]/(y0[b]*y0[b])+yeh1[b]*yeh1[b]/(y1[b]*y1[b])));
+					}
+					obj->btmp = new TGraphAsymmErrors(npts,b0->GetX(),yval.data(),b0->GetEXlow(),b0->GetEXhigh(),yel.data(),yeh.data());
 				}
-				
-				hrat->Divide(hdata,hsim0);
-				if(hrat->GetDimension()==2){
+				else {
+					//remove sim bin errors
 					for(int b = 0; b < nbins; b++){
-						if(std::isnan(hrat->GetBinContent(b)) or hrat->GetBinError(b)<=0) hrat->SetBinContent(b,-1000); //hack so empty cells are not painted
+						hsim0->SetBinError(b,0);
+					}
+					hrat->Divide(hdata,hsim0);
+	
+					if(hrat->GetDimension()==2){
+						for(int b = 0; b < nbins; b++){
+							if(std::isnan(hrat->GetBinContent(b)) or hrat->GetBinError(b)<=0) hrat->SetBinContent(b,-1000); //hack so empty cells are not painted
+						}
 					}
 				}
 			}
@@ -859,7 +886,8 @@ class KSetRatio: public KSet {
 		virtual void SetStyle(string styleName="") {
 			KBase::SetStyle("data");
 		}
-		virtual void AddToLegend(KLegend* kleg) {
+		using KSet::AddToLegend;
+		void AddToLegendRatio(KLegend* kleg) {
 			if(!kleg) return;
 			//for legend placement
 			if(!obj->rtmp.empty()) {
@@ -875,12 +903,14 @@ class KSetRatio: public KSet {
 				fit->AddToLegend(kleg,0);
 			}
 		}
+		virtual bool IsRatio() { return true; }
+
 	protected:
 		//new member variables
 		string calcName;
 		ratiocalc calc;
 		bool noErrBand;
 };
-//not registered
+REGISTER_SET(KSetRatio,ratio,mc);
 
 #endif

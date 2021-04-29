@@ -676,7 +676,7 @@ class KPlotManager : public KManager {
 					//add to legend before updating pad
 					for(unsigned r = 0; r < MyRatios.size(); ++r){
 						MyRatios[r]->Build(p.second->GetLocalOpt(),MyFitOptions);
-						MyRatios[r]->AddToLegend(rleg);
+						MyRatios[r]->AddToLegendRatio(rleg);
 					}
 
 					p.second->DrawRatio();

@@ -195,6 +195,10 @@ class KBase {
 					res->Write();
 				}
 			}
+			else if(obj->btmp){
+				obj->btmp->SetName(oname.c_str());
+				obj->btmp->Write();
+			}
 			else {
 				obj->htmp->SetName(oname.c_str());
 				obj->htmp->Write();
@@ -297,6 +301,7 @@ class KBase {
 		virtual KStyle* GetStyle() { return MyStyle; }
 		virtual bool IsData() { return localOpt->Get("data",false); }
 		virtual bool IsMC() { return !localOpt->Get("data",true); }
+		virtual bool IsRatio() { return false; }
 		virtual bool IsExt() { return false; }
 		virtual void SetBuilt() { isBuilt = true; }
 		virtual void SetPoisson(bool p) { poisson = p; }
