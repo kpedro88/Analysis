@@ -3,14 +3,14 @@ input/input_svj_paper.txt
 
 OPTION
 int:npanel[1]
-vstring{|}:extra_text[signal:|^{}m_{Z'} = 3000 GeV, ^{}m_{dark} = 20 GeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak}]
-string:extfilename[test/paper/bdt/bothjetAK8bdt__dijetmtdetahad_E3.root]
+vstring{|}:extra_text[signal:|^{}m_{Z'} = 3100 GeV, ^{}m_{dark} = 20 GeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak}]
+string:extfilename[test/paper/bdt/discr_plots.root]
 string:rootfile[test/paper/bdt/discr_roc_plots]
-string:printsuffix[dijetmtdetahadloosemf_discr_flatptZ30]
+string:printsuffix[dijetmtdetahadloose_discr_E3]
 bool:roc[1]
 string:rocebtype[minus1]
 bool:skiphistos[1]
-vstring:roc_sig[SVJ_3000_20_0.3_peak]
+vstring:roc_sig[SVJ_3100_20_0.3_peak]
 vstring:roc_bkg[bkg]
 bool:showAUC[1]
 bool:debugrocwp[1]
@@ -26,8 +26,8 @@ wjets	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[W(l#nu)+jets]	s:ytitle[arbitrary u
 zinv	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[Z(#nu#nu)+jets]	s:ytitle[arbitrary units]	c:color[kViolet + 1]	d:wp[0.55]	i:markerstyle[20]
 
 SET
-hist	mc	SVJ_3000_20_0.3_peak	s:legname[]	c:color[kCyan + 2]
-	base	ext	SVJ_3000_20_0.3_peak_MC2017	vs:exthisto_in[bothjetAK8bdt_SVJ_3000_20_0.3_peak,bothjetAK8bdt_SVJ_3000_20_0.3_peak,bothjetAK8bdt_SVJ_3000_20_0.3_peak,bothjetAK8bdt_SVJ_3000_20_0.3_peak]	vs:exthisto_out[QCD,ttbar,wjets,zinv]
+hist	mc	SVJ_3100_20_0.3_peak	s:legname[]	c:color[kCyan + 2]
+	base	ext	SVJ_3100_20_0.3_peak	vs:exthisto_in[bothjetAK8bdtSVJtag_SVJ_3100_20_0.3_peak,bothjetAK8bdtSVJtag_SVJ_3100_20_0.3_peak,bothjetAK8bdtSVJtag_SVJ_3100_20_0.3_peak,bothjetAK8bdtSVJtag_SVJ_3100_20_0.3_peak]	vs:exthisto_out[QCD,ttbar,wjets,zinv]
 hist	mc	bkg	s:legname[]	c:color[kBlack]
-	base	ext	bkg_MC2017	vs:exthisto_in[bothjetAK8bdt_QCD,bothjetAK8bdt_ttbar,bothjetAK8bdt_wjets,bothjetAK8bdt_zinv]	vs:exthisto_out[QCD,ttbar,wjets,zinv]
+	base	ext	bkg	vs:exthisto_in[bothjetAK8bdtSVJtag_QCD,bothjetAK8bdtSVJtag_ttbar,bothjetAK8bdtSVJtag_wjets,bothjetAK8bdtSVJtag_zinv]	vs:exthisto_out[QCD,ttbar,wjets,zinv]
 
