@@ -557,13 +557,15 @@ class KSetRatio: public KSet {
 		enum ratiocalc { DataMC=0, PctDiff=1, Pull=2, Q1=3, Q2=4, Q3=5, Q4=6, Binom=7, TF=8, Res=9, RelRes=10, PullFit=11 };
 		//constructor
 		KSetRatio() : KSet() {}
-		KSetRatio(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KSet(name_, localOpt_, globalOpt_), calc(DataMC), noErrBand(false) {
+		KSetRatio(string name_, OptionMap* localOpt_, OptionMap* globalOpt_) : KSet(name_, localOpt_, globalOpt_), calc1D(DataMC), noErrBand(false) {
 			int nchildren(2); localOpt->Get("nchildren",nchildren);
 			children.resize(nchildren);
-			globalOpt->Get("ratiocalc",calcName);
-			SetCalc(calcName);
+			globalOpt->Get("ratiocalc",calcName1D);
+			SetCalc(calcName1D,&calc1D);
+			if(globalOpt->Get("ratiocalc2D",calcName2D)) SetCalc(calcName2D,&calc2D);
+			else calc2D = calc1D;
 			//auto disable ratio fits on residuals
-			if(calc==Res or calc==RelRes or calc==PullFit) localOpt->Set<vector<string>>("ratiofits",{});
+			if(calc1D==Res or calc1D==RelRes or calc1D==PullFit) localOpt->Set<vector<string>>("ratiofits",{});
 		}
 		//destructor
 		virtual ~KSetRatio() {}
@@ -572,26 +574,28 @@ class KSetRatio: public KSet {
 		void AddNumerator(KBase* numer){ children[0] = numer; }
 		void AddDenominator(KBase* denom){ children[1] = denom; }
 		string GetRatioName2D() {
-			if(calc==DataMC) return "[" + children[0]->GetLegName() + " / " + children[1]->GetLegName() + "]";
+			if(calc2D==DataMC) return "[" + children[0]->GetLegName() + " / " + children[1]->GetLegName() + "]";
 			else return "[" + children[0]->GetLegName() + " - " + children[1]->GetLegName() + "]/#sigma";
 		}
-		void SetCalc(string calcName){
-			if(calcName=="DataMC") calc = DataMC;
-			else if(calcName=="TF") calc = TF;
-			else if(calcName=="PctDiff") calc = PctDiff;
-			else if(calcName=="Pull") calc = Pull;
-			else if(calcName=="Q1") calc = Q1;
-			else if(calcName=="Q2") calc = Q2;
-			else if(calcName=="Q3") calc = Q3;
-			else if(calcName=="Q4") calc = Q4;
-			else if(calcName=="Binom") calc = Binom;
-			else if(calcName=="Res") calc = Res;
-			else if(calcName=="RelRes") calc = RelRes;
-			else if(calcName=="PullFit") calc = PullFit;
+		void SetCalc(const string& calcName, ratiocalc* calcVal=nullptr){
+			if(!calcVal) calcVal = &calc1D;
+			if(calcName=="DataMC") *calcVal = DataMC;
+			else if(calcName=="TF") *calcVal = TF;
+			else if(calcName=="PctDiff") *calcVal = PctDiff;
+			else if(calcName=="Pull") *calcVal = Pull;
+			else if(calcName=="Q1") *calcVal = Q1;
+			else if(calcName=="Q2") *calcVal = Q2;
+			else if(calcName=="Q3") *calcVal = Q3;
+			else if(calcName=="Q4") *calcVal = Q4;
+			else if(calcName=="Binom") *calcVal = Binom;
+			else if(calcName=="Res") *calcVal = Res;
+			else if(calcName=="RelRes") *calcVal = RelRes;
+			else if(calcName=="PullFit") *calcVal = PullFit;
 		}
 
-		//ratios should not be rebinned
+		//ratios should not be rebinned or normalized
 		virtual void Rebin(int rebin){}
+		virtual void Normalize(double nn, bool toYield) {}
 		//simplified generic build (for using ratio calc in pad1)
 		virtual void Build(){
 			int rebin = 0; globalOpt->Get("rebin",rebin);
@@ -630,6 +634,7 @@ class KSetRatio: public KSet {
 			TH1* hrat = (htemp ? (TH1*)htemp->Clone() : (TH1*)h0->Clone());
 
 			int nbins = hrat->GetNbinsX()+1;
+			ratiocalc calc = calc1D;
 			//comparing a set to itself: must be residuals from fit
 			if(children[0]==children[1]){
 				if(calc!=Res and calc!=RelRes and calc!=PullFit) calc = Res;
@@ -637,6 +642,7 @@ class KSetRatio: public KSet {
 			//only pull,data/MC supported for 2D
 			//todo: add others
 			if(hrat->GetDimension()==2) {
+				calc = calc2D;
 				if(calc!=DataMC and calc!=Pull) calc = Pull;
 				nbins = ((TH2F*)hrat)->GetSize();
 			}
@@ -769,7 +775,7 @@ class KSetRatio: public KSet {
 			else if(calc==Res or calc==RelRes or calc==PullFit){ //data-fit, (data-fit)/fit, (data-fit)/err
 				const auto& basefits = children[0]->GetFits();
 				for(auto fit : basefits){
-					TH1* rtmp = (TH1*)hrat->Clone((calcName+"_"+fit->GetName()).c_str());
+					TH1* rtmp = (TH1*)hrat->Clone((calcName1D+"_"+fit->GetName()).c_str());
 					//subtract function
 					if(calc==Res or calc==RelRes){
 						rtmp->Add(fit->GetFn(),-1);
@@ -796,7 +802,7 @@ class KSetRatio: public KSet {
 				}
 				//signal case (no fit): (s+b)-b = s (data should be denom)
 				if(basefits.empty() and calc==PullFit){
-					TH1* rtmp = (TH1*)hrat->Clone((calcName+"_"+children[0]->GetName()).c_str());
+					TH1* rtmp = (TH1*)hrat->Clone((calcName1D+"_"+children[0]->GetName()).c_str());
 					for(int b = 0; b < nbins; b++){
 						//s+b > b always, so use up err
 						double err_tot_data = KMath::PoissonErrorUp(h1->GetBinContent(b));
@@ -844,7 +850,7 @@ class KSetRatio: public KSet {
 					//y widths use error propagation for f = data/mc : sigma_f = sigma_mc*data/mc^2
 					//(taking sigma_data = 0, since included in ratio point error bars)
 					//currenty only defined for data/mc calc
-					if(calc==DataMC){
+					if(calc1D==DataMC){
 						erat->SetPointEYlow(b, hsim->GetBinError(b)*hdata->GetBinContent(b)/(hsim->GetBinContent(b)*hsim->GetBinContent(b)));
 						erat->SetPointEYhigh(b, hsim->GetBinError(b)*hdata->GetBinContent(b)/(hsim->GetBinContent(b)*hsim->GetBinContent(b)));
 					}
@@ -909,8 +915,8 @@ class KSetRatio: public KSet {
 
 	protected:
 		//new member variables
-		string calcName;
-		ratiocalc calc;
+		string calcName1D, calcName2D;
+		ratiocalc calc1D, calc2D;
 		bool noErrBand;
 };
 REGISTER_SET(KSetRatio,ratio,mc);
