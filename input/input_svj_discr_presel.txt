@@ -10,3 +10,4 @@ bool:debugcut[1]
 HISTO
 bothjetAK8bdtSVJtag	i:xnum[1000]	d:xmin[0]	d:xmax[1]	s:xtitle[BDT discriminator]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	vd:xcuts[0.55]	vc:xcut_colors[kBlack]
 bothjetAK8abseta	i:xnum[1000]	d:xmin[0]	d:xmax[2.4]	s:xtitle[|#eta(^{}J_{1,2})|]	s:ytitle[arbitrary units]
+bothjetAK8pt	i:xnum[1000]	d:xmin[0]	d:xmax[3000]	s:xtitle[p_{T}(^{}J_{1,2})]	s:ytitle[arbitrary units]
