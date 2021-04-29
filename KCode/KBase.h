@@ -253,9 +253,10 @@ class KBase {
 		virtual double GetYield() { return obj->htmp->Integral(0,obj->htmp->GetNbinsX()+1); }
 		TFile* GetFile() { return file; }
 		virtual void CloseFile() { if(file) file->Close(); }
-		//rebin current hiso
+		//rebin current histo
 		virtual void Rebin(int rebin){
-			obj->htmp->Rebin(rebin);
+			if(obj->htmp->GetDimension()==2) ((TH2*)obj->htmp)->Rebin2D(rebin,rebin);
+			else obj->htmp->Rebin(rebin);
 		}
 		//divide current histo by bin width, default implementation
 		virtual void BinDivide(bool do_x, bool do_y, TH1* htmp=nullptr){
