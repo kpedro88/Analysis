@@ -227,6 +227,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	bool acceff = globalOpt->Get("acceff",false);
 	string fpre(acceff ? "sigAccEff" : "limit");
 	string plotpre(acceff ? "plotAccEff" : "plotLimit");
+	string pname(acceff ? "signal efficiency #times acceptance" : "");
 
 	//ranges for plotting
 	double ymin = 1e10, xmin = 1e10;
@@ -279,7 +280,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	//1D plot
 	if(var2.empty()) {
 		//setup plotting options
-		yname = "#sigma#timesB [pb]";
+		yname = pname.empty() ? "#sigma#timesB [pb]" : pname;
 
 		TGraph *g_obs = nullptr, *g_xsec = nullptr;
 		int npts = 0;
@@ -384,7 +385,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		kleg->AddHist(plot->GetHisto()); //for tick sizes
 
 		//preamble of legend
-		kleg->AddEntry((TObject*)NULL,"95% CL upper limits","");
+		if(!acceff) kleg->AddEntry((TObject*)NULL,"95% CL upper limits","");
 		if(!region_text.empty()) kleg->AddEntry((TObject*)NULL,region_text,"");
 		if(g_xsec) kleg->AddEntry(g_xsec,"Theoretical","l");
 		if(do_obs and g_obs) kleg->AddEntry(g_obs,obs_text,"pe");
@@ -441,8 +442,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		//setup plotting options
 		ymax = -1e10;
 		yname = vdict[var2]+unitdict[var2];
-		zname = string("95% CL ")+(do_obs ? "obs." : "exp.")+" upper limit on #sigma#timesB [pb]";
-		if(acceff) zname = "signal efficiency #times acceptance";
+		zname = pname.empty() ? string("95% CL ")+(do_obs ? "obs." : "exp.")+" upper limit on #sigma#timesB [pb]" : pname;
 		dname += ":trackedParam_"+var2;
 
 		Limits lim_obs, lim_cen;
@@ -567,7 +567,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 
 		//make legend
 		KLegend* kleg = new KLegend(pad1,localOpt,plotOpt);
-		kleg->AddEntry((TObject*)NULL,"95% CL upper limits","");
+		if(!acceff) kleg->AddEntry((TObject*)NULL,"95% CL upper limits","");
 		if(!region_text.empty()) kleg->AddEntry((TObject*)NULL,region_text,"");
 		if(do_obs and !contours_obs.empty()) kleg->AddEntry(contours_obs[0],obs_text,"l");
 		if(!contours_cen.empty()) kleg->AddEntry(contours_cen[0],"Median expected","l");

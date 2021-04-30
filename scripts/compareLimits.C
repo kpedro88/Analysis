@@ -115,6 +115,8 @@ void compareLimits(string oname, string input, string options){
 		if(curve.ymin<ymin) ymin = curve.ymin;
 		if(curve.ymax>ymax) ymax = curve.ymax;
 	}
+	globalOpt->Get("ymin",ymin);
+	globalOpt->Get("ymax",ymax);
 	//set extrema
 	double yfactor = 10; globalOpt->Get("yfactor",yfactor);
 	hbase->GetYaxis()->SetRangeUser(ymin/yfactor,ymax*yfactor);

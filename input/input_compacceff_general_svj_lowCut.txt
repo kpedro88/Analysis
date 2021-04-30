@@ -1,0 +1,2 @@
+input:input[input/input_compacceff_general_svj.txt]
+vstring:extra_text[low-^{}R_{T}]
