@@ -125,10 +125,12 @@ dijetlowmtdetahadloosemf
 dijetmtdetamu
 	dijetmtdeta
 	mu
+	phitag
 	endcommon
 dijetmtdetaele
 	dijetmtdeta
 	ele
+	phitag
 	endcommon
 dijetmtmutrig
 	dijetmt
