@@ -2,8 +2,8 @@ INPUT
 input/input_svj_paper.txt
 
 OPTION
-vstring{|}:extra_text[signal (^{}m_{dark} = 20 GeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
-vint:extra_text_panels[1,1]
+#vstring{|}:extra_text[signal (^{}m_{dark} = 20 GeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
+vint:extra_text_panels[0,1,1]
 string:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig5/sig_presel/presel.root]
 string:rootfile[test/discr_plots_presel]
 string:printsuffix[dijetmtdetahadloose_discr]
@@ -16,6 +16,8 @@ vstring:denoms[bkg]
 
 HISTO
 bothjetAK8bdtSVJtag	i:xnum[1000]	d:xmin[0]	d:xmax[1]	s:xtitle[BDT discriminator (^{}J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	vd:xcuts[0.55]	vc:xcut_colors[kBlack]
+leadjetAK8bdtSVJtag	i:xnum[1000]	d:xmin[0]	d:xmax[1]	s:xtitle[BDT discriminator (^{}J_{1})]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	vd:xcuts[0.55]	vc:xcut_colors[kBlack]
+subleadjetAK8bdtSVJtag	i:xnum[1000]	d:xmin[0]	d:xmax[1]	s:xtitle[BDT discriminator (^{}J_{2})]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	vd:xcuts[0.55]	vc:xcut_colors[kBlack]
 
 SET
 hist	mc	SVJ_2100_20_0.3_peak	s:legname[m_{Z'} = 2100 GeV]	c:color[kBlue]	i:linestyle[7]	i:panel[1]

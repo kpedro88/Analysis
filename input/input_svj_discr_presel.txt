@@ -8,6 +8,17 @@ bool:closefiles[1]
 bool:debugcut[1]
 
 HISTO
-bothjetAK8bdtSVJtag	i:xnum[1000]	d:xmin[0]	d:xmax[1]	s:xtitle[BDT discriminator]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	vd:xcuts[0.55]	vc:xcut_colors[kBlack]
+bothjetAK8bdtSVJtag	i:xnum[1000]	d:xmin[0]	d:xmax[1]	s:xtitle[BDT discriminator (^{}J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	vd:xcuts[0.55]	vc:xcut_colors[kBlack]
 bothjetAK8abseta	i:xnum[1000]	d:xmin[0]	d:xmax[2.4]	s:xtitle[|#eta(^{}J_{1,2})|]	s:ytitle[arbitrary units]
 bothjetAK8pt	i:xnum[1000]	d:xmin[0]	d:xmax[3000]	s:xtitle[p_{T}(^{}J_{1,2})]	s:ytitle[arbitrary units]
+leadjetAK8bdtSVJtag	i:xnum[1000]	d:xmin[0]	d:xmax[1]	s:xtitle[BDT discriminator (^{}J_{1})]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	vd:xcuts[0.55]	vc:xcut_colors[kBlack]
+leadjetAK8abseta	i:xnum[1000]	d:xmin[0]	d:xmax[2.4]	s:xtitle[|#eta(^{}J_{1})|]	s:ytitle[arbitrary units]
+leadjetAK8pt	i:xnum[1000]	d:xmin[0]	d:xmax[3000]	s:xtitle[p_{T}(^{}J_{1})]	s:ytitle[arbitrary units]
+subleadjetAK8bdtSVJtag	i:xnum[1000]	d:xmin[0]	d:xmax[1]	s:xtitle[BDT discriminator (^{}J_{2})]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	vd:xcuts[0.55]	vc:xcut_colors[kBlack]
+subleadjetAK8abseta	i:xnum[1000]	d:xmin[0]	d:xmax[2.4]	s:xtitle[|#eta(^{}J_{2})|]	s:ytitle[arbitrary units]
+subleadjetAK8pt	i:xnum[1000]	d:xmin[0]	d:xmax[3000]	s:xtitle[p_{T}(^{}J_{2})]	s:ytitle[arbitrary units]
+
+HISTO2D
+bothjetAK8pt_bothjetAK8abseta	i:xnum[1000]	d:xmin[0]	d:xmax[3000]	s:xtitle[p_{T}(^{}J_{1,2})]	i:ynum[1000]	d:ymin[0]	d:ymax[2.4]	s:ytitle[|#eta(^{}J_{1,2})|]	s:ztitle[arbitrary units]
+leadjetAK8pt_leadjetAK8abseta	i:xnum[1000]	d:xmin[0]	d:xmax[3000]	s:xtitle[p_{T}(^{}J_{1})]	i:ynum[1000]	d:ymin[0]	d:ymax[2.4]	s:ytitle[|#eta(^{}J_{1,2})|]	s:ztitle[arbitrary units]
+subleadjetAK8pt_subleadjetAK8abseta	i:xnum[1000]	d:xmin[0]	d:xmax[3000]	s:xtitle[p_{T}(^{}J_{2})]	i:ynum[1000]	d:ymin[0]	d:ymax[2.4]	s:ytitle[|#eta(^{}J_{1,2})|]	s:ztitle[arbitrary units]

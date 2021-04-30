@@ -2,23 +2,35 @@ INPUT
 input/input_svj_paper.txt
 
 OPTION
-string:extfilename[test/paper/bdt/bothjetAK8bdtSVJtag_presel.root]
 #string:rootfile[test/paper/bdt/discr_plots]
 string:printsuffix[_eff_dijetmthighdetahadloose_WP55_E3]
 int:rebin[40]
 string:exthisto_extra[nominalHighDeta]
 string:ratiocalc[Binom]
+string:ratiocalc2D[DataMC]
 int:npanel[1]
 double:ymin[0]
-double:ymax[1]
+double:ymax[0.5]
+double:zmin[0]
+double:zmax[0.5]
 string:prelim_text[]
 string:lumi_text[137 ^{}fb^{-1} (13 TeV)]
 vstring:numers[effdata]
 vstring:denoms[effmc]
+vstring:extra_text[high-#Delta#eta region (presel)]
 
 HISTO
 bothjetAK8abseta	i:xnum[1000]	d:xmin[0]	d:xmax[2.4]	s:xtitle[|#eta(^{}J_{1,2})|]	s:ytitle[#varepsilon(SVJ tagger)]	b:ratio[1]	b:logy[0]
 bothjetAK8pt	i:xnum[1000]	d:xmin[0]	d:xmax[3000]	s:xtitle[p_{T}(^{}J_{1,2})]	s:ytitle[#varepsilon(SVJ tagger)]	b:ratio[1]	b:logy[0]
+leadjetAK8abseta	i:xnum[1000]	d:xmin[0]	d:xmax[2.4]	s:xtitle[|#eta(^{}J_{1})|]	s:ytitle[#varepsilon(SVJ tagger)]	b:ratio[1]	b:logy[0]
+leadjetAK8pt	i:xnum[1000]	d:xmin[0]	d:xmax[3000]	s:xtitle[p_{T}(^{}J_{1})]	s:ytitle[#varepsilon(SVJ tagger)]	b:ratio[1]	b:logy[0]
+subleadjetAK8abseta	i:xnum[1000]	d:xmin[0]	d:xmax[2.4]	s:xtitle[|#eta(^{}J_{2})|]	s:ytitle[#varepsilon(SVJ tagger)]	b:ratio[1]	b:logy[0]
+subleadjetAK8pt	i:xnum[1000]	d:xmin[0]	d:xmax[3000]	s:xtitle[p_{T}(^{}J_{2})]	s:ytitle[#varepsilon(SVJ tagger)]	b:ratio[1]	b:logy[0]
+
+HISTO2D
+bothjetAK8pt_bothjetAK8abseta	i:xnum[1000]	d:xmin[0]	d:xmax[3000]	s:xtitle[p_{T}(^{}J_{1,2})]	i:ynum[1000]	d:ymin[0]	d:ymax[2.4]	s:ytitle[|#eta(^{}J_{1,2})|]	s:ztitle[#varepsilon(SVJ tagger)]	b:ratio[0]	b:logz[0]
+leadjetAK8pt_leadjetAK8abseta	i:xnum[1000]	d:xmin[0]	d:xmax[3000]	s:xtitle[p_{T}(^{}J_{1})]	i:ynum[1000]	d:ymin[0]	d:ymax[2.4]	s:ytitle[|#eta(^{}J_{1})|]	s:ztitle[#varepsilon(SVJ tagger)]	b:ratio[0]	b:logz[0]
+subleadjetAK8pt_subleadjetAK8abseta	i:xnum[1000]	d:xmin[0]	d:xmax[3000]	s:xtitle[p_{T}(^{}J_{2})]	i:ynum[1000]	d:ymin[0]	d:ymax[2.4]	s:ytitle[|#eta(^{}J_{2})|]	s:ztitle[#varepsilon(SVJ tagger)]	b:ratio[0]	b:logz[0]
 
 SET
 ratio	mc	effmc	s:legname[MC]	i:nchildren[0]	c:color[kRed]
