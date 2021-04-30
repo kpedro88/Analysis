@@ -62,6 +62,7 @@ class KGraph2D : public TGraph2D {
 
 class Limits {
 	public:
+		Limits() {}
 		Limits(unsigned n, double* rs, double* xs, double* v1s, double* v2s=nullptr){
 			//get indices from sorting by v
 			vector<unsigned> order(n);
@@ -94,6 +95,7 @@ class Limits {
 				}
 			}
 		}
+		bool empty() const { return r.empty(); }
 		//s = r * x, cross section limit
 		//l = log10(1/r), for 2D exclusion contours
 		//S = log10(s), for 2D exclusion histogram
@@ -222,6 +224,9 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	string prelim_text; bool set_prelim = globalOpt->Get("prelim_text",prelim_text);
 	string dir; globalOpt->Get("dir",dir);
 	string printsuffix; globalOpt->Get("printsuffix",printsuffix);
+	bool acceff = globalOpt->Get("acceff",false);
+	string fpre(acceff ? "sigAccEff" : "limit");
+	string plotpre(acceff ? "plotAccEff" : "plotLimit");
 
 	//ranges for plotting
 	double ymin = 1e10, xmin = 1e10;
@@ -229,7 +234,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	gStyle->SetOptStat(0);
 
 	//extract info from hadded limit file
-	string fname = "limit_"+sname+".root";
+	string fname = fpre+"_"+sname+".root";
 	if(!dir.empty()) fname = dir+"/"+fname;
 	TFile* file = KOpen(fname);
 	TTree* limit = KGet<TTree>(file,"limit");
@@ -276,25 +281,28 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		//setup plotting options
 		yname = "#sigma#timesB [pb]";
 
-		//get observed limit (w/ xsec)
-		const auto& lim_obs = getLimit(limit,dname,cname,-1);
-		int npts = lim_obs.r.size();
-		TGraph* g_obs = new TGraph(npts,lim_obs.v1.data(),lim_obs.s.data());
-		g_obs->SetMarkerColor(kBlack);
-		g_obs->SetLineColor(kBlack);
-		g_obs->SetMarkerStyle(20);
-		g_obs->SetLineStyle(1);
-		g_obs->SetLineWidth(2);
-		getRange(npts,lim_obs.s.data(),ymin,ymax);
+		TGraph *g_obs = nullptr, *g_xsec = nullptr;
+		int npts = 0;
 
-		//get cross section
-		TGraph* g_xsec = new TGraph(npts,lim_obs.v1.data(),lim_obs.x.data());
-		g_xsec->SetLineColor(kMagenta);
-		g_xsec->SetLineStyle(1);
-		g_xsec->SetLineWidth(2);
-		getRange(npts,lim_obs.x.data(),ymin,ymax);
-		//only get x range once
-		const auto& xvals = getRange(npts,lim_obs.v1.data(),xmin,xmax,true);
+		if(!acceff){
+			//get observed limit (w/ xsec)
+			const auto& lim_obs = getLimit(limit,dname,cname,-1);
+			npts = lim_obs.r.size();
+			g_obs = new TGraph(npts,lim_obs.v1.data(),lim_obs.s.data());
+			g_obs->SetMarkerColor(kBlack);
+			g_obs->SetLineColor(kBlack);
+			g_obs->SetMarkerStyle(20);
+			g_obs->SetLineStyle(1);
+			g_obs->SetLineWidth(2);
+			getRange(npts,lim_obs.s.data(),ymin,ymax);
+	
+			//get cross section
+			g_xsec = new TGraph(npts,lim_obs.v1.data(),lim_obs.x.data());
+			g_xsec->SetLineColor(kMagenta);
+			g_xsec->SetLineStyle(1);
+			g_xsec->SetLineWidth(2);
+			getRange(npts,lim_obs.x.data(),ymin,ymax);
+		}
 
 		//get central value (expected)
 		const auto& lim_cen = getLimit(limit,dname,cname,0.5);
@@ -304,6 +312,8 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		g_central->SetLineStyle(2);
 		g_central->SetLineWidth(2);
 		getRange(npts,lim_cen.s.data(),ymin,ymax);
+		//only get x range once
+		const auto& xvals = getRange(npts,lim_cen.v1.data(),xmin,xmax,true);
 
 		//get bands (expected)
 		TGraph* g_one = NULL;
@@ -352,7 +362,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 
 		//make plot
 		stringstream soname;
-		soname << "plotLimit_" << sname << "_vs_" << var1;
+		soname << plotpre << "_" << sname << "_vs_" << var1;
 		if(do_obs) soname << "_obs";
 		if(!printsuffix.empty()) soname << "_" << printsuffix;
 		string oname = soname.str();
@@ -376,8 +386,8 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		//preamble of legend
 		kleg->AddEntry((TObject*)NULL,"95% CL upper limits","");
 		if(!region_text.empty()) kleg->AddEntry((TObject*)NULL,region_text,"");
-		kleg->AddEntry(g_xsec,"Theoretical","l");
-		if(do_obs) kleg->AddEntry(g_obs,obs_text,"pe");
+		if(g_xsec) kleg->AddEntry(g_xsec,"Theoretical","l");
+		if(do_obs and g_obs) kleg->AddEntry(g_obs,obs_text,"pe");
 		kleg->AddEntry(g_central,"Median expected","l");
 		if(nsigma>=1) kleg->AddEntry(g_one,"68% expected","f");
 		if(nsigma>=2) kleg->AddEntry(g_two,"95% expected","f");
@@ -404,8 +414,8 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		if(nsigma>=2) g_two->Draw("f same");
 		if(nsigma>=1) g_one->Draw("f same");
 		g_central->Draw("L same");
-		if(do_obs) g_obs->Draw("pC same");
-		g_xsec->Draw("C same");
+		if(do_obs and g_obs) g_obs->Draw("pC same");
+		if(g_xsec) g_xsec->Draw("C same");
 
 		plot->GetHisto()->Draw("sameaxis"); //draw again so axes on top
 		plot->DrawText();
@@ -423,8 +433,8 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		if(nsigma>=2) g_two->Write("g_two");
 		if(nsigma>=1) g_one->Write("g_one");
 		g_central->Write("g_central");
-		if(do_obs) g_obs->Write("g_obs");
-		g_xsec->Write("g_xsec");
+		if(do_obs and g_obs) g_obs->Write("g_obs");
+		if(g_xsec) g_xsec->Write("g_xsec");
 	}
 	//2D plot
 	else {
@@ -432,21 +442,29 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		ymax = -1e10;
 		yname = vdict[var2]+unitdict[var2];
 		zname = string("95% CL ")+(do_obs ? "obs." : "exp.")+" upper limit on #sigma#timesB [pb]";
+		if(acceff) zname = "signal efficiency #times acceptance";
 		dname += ":trackedParam_"+var2;
 
-		//get observed limit (w/ xsec) & exclusion contour
-		auto lim_obs = getLimit(limit,dname,cname,-1);
-		int npts = lim_obs.r.size();
-		auto contours_obs = findExclusionCurve(lim_obs);
-		styleGraphs(contours_obs,kBlack,1);
-		//only get x,y ranges once
-		const auto& xvals = getRange(npts,lim_obs.v1.data(),xmin,xmax,true);
-		const auto& yvals = getRange(npts,lim_obs.v2.data(),ymin,ymax,true);
+		Limits lim_obs, lim_cen;
+		vector<TGraph*> contours_obs, contours_cen;
+		set<double> xvals, yvals;
 
-		//get central value (expected) & exclusion contour
-		auto lim_cen = getLimit(limit,dname,cname,0.5);
-		auto contours_cen = findExclusionCurve(lim_cen);
-		styleGraphs(contours_cen,kRed,1);
+		//only get x,y ranges once
+		lim_cen = getLimit(limit,dname,cname,0.5);
+		int npts = lim_cen.r.size();
+		xvals = getRange(npts,lim_cen.v1.data(),xmin,xmax,true);
+		yvals = getRange(npts,lim_cen.v2.data(),ymin,ymax,true);
+
+		if(!acceff){
+			//get observed limit (w/ xsec) & exclusion contour
+			lim_obs = getLimit(limit,dname,cname,-1);
+			contours_obs = findExclusionCurve(lim_obs);
+			styleGraphs(contours_obs,kBlack,1);
+
+			//get central value (expected) & exclusion contour
+			contours_cen = findExclusionCurve(lim_cen);
+			styleGraphs(contours_cen,kRed,1);
+		}
 
 		//get uncertainty bands and contours
 		vector<Limits> lim_sigmas;
@@ -466,20 +484,23 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 
 		//get histogram to plot
 		TGraph2D* gtmp;
-		if(do_obs) gtmp = new TGraph2D(lim_obs.v1.size(),lim_obs.v1.data(),lim_obs.v2.data(),lim_obs.S.data());
-		else gtmp = new TGraph2D(lim_cen.v1.size(),lim_cen.v1.data(),lim_cen.v2.data(),lim_cen.S.data());
+		if(acceff) gtmp = new TGraph2D(lim_cen.v1.size(),lim_cen.v1.data(),lim_cen.v2.data(),lim_cen.s.data()); //acceff doesn't use log
+		else {
+			if(do_obs) gtmp = new TGraph2D(lim_obs.v1.size(),lim_obs.v1.data(),lim_obs.v2.data(),lim_obs.S.data());
+			else gtmp = new TGraph2D(lim_cen.v1.size(),lim_cen.v1.data(),lim_cen.v2.data(),lim_cen.S.data());
+		}
 		//control number of bins for labeled axes
 		if(labels.Has(var1)) ((KGraph2D*)gtmp)->SetNpx(xvals.size());
 		if(labels.Has(var2)) ((KGraph2D*)gtmp)->SetNpy(yvals.size());
 		auto h2d = (TH2F*)(gtmp->GetHistogram()->Clone());
 		//convert back to normal scale
 		//bins with zero content and zero error correspond to empty parts of graph: set to very small value
-		double empty = 1e-100;
-		double zmin = 1e10;
+		double empty = acceff ? -1 : 1e-100;
+		double zmin = acceff ? 0 : 1e10;
 		for(unsigned i = 0; i <= h2d->GetNbinsX()+1; ++i){
 			for(unsigned j = 0; j <= h2d->GetNbinsY()+1; ++j){
 				if(h2d->GetBinContent(i,j)==0. and h2d->GetBinError(i,j)==0.) h2d->SetBinContent(i,j,empty);
-				else{
+				else if(!acceff){ //acceff doesn't use log
 					double new_content = pow(10,h2d->GetBinContent(i,j));
 					h2d->SetBinContent(i,j,new_content);
 					if(new_content<zmin) zmin = new_content;
@@ -503,7 +524,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 
 		OptionMap* localOpt = new OptionMap();
 		localOpt->Set<bool>("ratio",false);
-		localOpt->Set<bool>("logz",true);
+		localOpt->Set<bool>("logz",!acceff);
 		localOpt->Set<int>("xnum",xvals.size());
 		localOpt->Set<double>("xmin",xmin);
 		localOpt->Set<double>("xmax",xmax);
@@ -529,7 +550,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 
 		//make plot
 		stringstream soname;
-		soname << "plotLimit_" << sname << "_vs_" << var1 << "_" << var2;
+		soname << plotpre << "_" << sname << "_vs_" << var1 << "_" << var2;
 		if(do_obs) soname << "_obs";
 		if(!printsuffix.empty()) soname << "_" << printsuffix;
 		string oname = soname.str();
@@ -548,8 +569,8 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		KLegend* kleg = new KLegend(pad1,localOpt,plotOpt);
 		kleg->AddEntry((TObject*)NULL,"95% CL upper limits","");
 		if(!region_text.empty()) kleg->AddEntry((TObject*)NULL,region_text,"");
-		if(do_obs) kleg->AddEntry(contours_obs[0],obs_text,"l");
-		kleg->AddEntry(contours_cen[0],"Median expected","l");
+		if(do_obs and !contours_obs.empty()) kleg->AddEntry(contours_obs[0],obs_text,"l");
+		if(!contours_cen.empty()) kleg->AddEntry(contours_cen[0],"Median expected","l");
 		if(nsigma>=1) kleg->AddEntry(contours_sigmas[0][0],"68% expected","l");
 		if(nsigma>=2) kleg->AddEntry(contours_sigmas[2][0],"95% expected","l");
 		stringstream vname;
@@ -614,8 +635,8 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		hbase->Write();
 		h2d->Write();
 		//write contours w/ unique names
-		writeContour("central", contours_cen);
-		if(do_obs) writeContour("obs", contours_obs);
+		if(!contours_cen.empty()) writeContour("central", contours_cen);
+		if(do_obs and !contours_obs.empty()) writeContour("obs", contours_obs);
 		vector<string> cnames{"sigma1d","sigma1u","sigma2d","sigma2u"};
 		for(unsigned i = 0; i < contours_sigmas.size(); ++i){
 			writeContour(cnames[i], contours_sigmas[i]);
