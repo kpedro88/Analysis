@@ -5,7 +5,7 @@ nominal
 	HEMOptVeto
 
 SET
-base	skim	JetHT_2018A	s:filename[tree_JetHT_2018A.root]	b:data[1]
-base	skim	JetHT_2018B	s:filename[tree_JetHT_2018B.root]	b:data[1]
-base	skim	JetHT_2018C	s:filename[tree_JetHT_2018C.root]	b:data[1]
-base	skim	JetHT_2018D	s:filename[tree_JetHT_2018D.root]	b:data[1]
+base	skim	JetHT_2018POSTA	s:filename[tree_JetHT_2018A.root]	b:data[1]
+base	skim	JetHT_2018POSTB	s:filename[tree_JetHT_2018B.root]	b:data[1]
+base	skim	JetHT_2018POSTC	s:filename[tree_JetHT_2018C.root]	b:data[1]
+base	skim	JetHT_2018POSTD	s:filename[tree_JetHT_2018D.root]	b:data[1]

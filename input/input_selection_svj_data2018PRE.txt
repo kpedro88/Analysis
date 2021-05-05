@@ -4,7 +4,7 @@ nominal
 	Blind	i:lastUnblindRun[319076]
 
 SET
-base	skim	JetHT_2018A	s:filename[tree_JetHT_2018A.root]	b:data[1]
-base	skim	JetHT_2018B	s:filename[tree_JetHT_2018B.root]	b:data[1]
-base	skim	JetHT_2018C	s:filename[tree_JetHT_2018C.root]	b:data[1]
-base	skim	JetHT_2018D	s:filename[tree_JetHT_2018D.root]	b:data[1]
+base	skim	JetHT_2018PREA	s:filename[tree_JetHT_2018A.root]	b:data[1]
+base	skim	JetHT_2018PREB	s:filename[tree_JetHT_2018B.root]	b:data[1]
+base	skim	JetHT_2018PREC	s:filename[tree_JetHT_2018C.root]	b:data[1]
+base	skim	JetHT_2018PRED	s:filename[tree_JetHT_2018D.root]	b:data[1]
