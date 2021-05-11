@@ -15,6 +15,7 @@
 #include <TAxis.h>
 #include <TStyle.h>
 #include <TVirtualPadPainter.h>
+#include <Math/Interpolator.h>
 
 #include <vector>
 #include <set>
@@ -63,7 +64,7 @@ class KGraph2D : public TGraph2D {
 class Limits {
 	public:
 		Limits() {}
-		Limits(unsigned n, double* rs, double* xs, double* v1s, double* v2s=nullptr){
+		Limits(int itype, unsigned n, double* rs, double* xs, double* v1s, double* v2s=nullptr){
 			//get indices from sorting by v
 			vector<unsigned> order(n);
 			iota(order.begin(),order.end(),0);
@@ -87,51 +88,79 @@ class Limits {
 				r.push_back(rs[i]);
 				x.push_back(xs[i]);
 				s.push_back(rs[i]*xs[i]);
+				S.push_back(log10(s.back()));
 				v1.push_back(v1s[i]);
 				if(v2s) {
 					v2.push_back(v2s[i]);
 					l.push_back(-log10(rs[i]));
-					S.push_back(log10(s.back()));
 				}
+				else l.push_back(log10(x.back()));
 			}
+
+			interp(itype);
 		}
 		bool empty() const { return r.empty(); }
+		void interp(int itype=0, int npts=100) {
+			if(itype==0 or !v2.empty()) return; //only for 1D
+			bool logr = itype==1;
+			vector<double> vi, si, xi;
+			ROOT::Math::Interpolator interp(v1,logr ? S : s,ROOT::Math::Interpolation::kLINEAR);
+			ROOT::Math::Interpolator interpx(v1,logr ? l : x,ROOT::Math::Interpolation::kLINEAR);
+			for(unsigned i = 0; i < v1.size()-1; ++i){
+				double delta = (v1[i+1] - v1[i])/(npts);
+				for(unsigned j = 0; j < npts+1; ++j){
+					vi.push_back(j==npts ? v1[i+1] : v1[i] + j*delta);
+					double sval = interp.Eval(vi.back());
+					si.push_back(logr ? pow(10,sval) : sval);
+					double xval = interpx.Eval(vi.back());
+					xi.push_back(logr ? pow(10,xval) : xval);
+				}
+			}
+			v1_orig = v1;
+			s_orig = s;
+			x_orig = x;
+			v1 = vi;
+			s = si;
+			x = xi;
+		}
 		//s = r * x, cross section limit
-		//l = log10(1/r), for 2D exclusion contours
-		//S = log10(s), for 2D exclusion histogram
+		//l = log10(1/r), for 2D exclusion contours; OR log10(x), for 1D interpolation
+		//S = log10(s), for 2D exclusion histogram & 1D interpolation
 		vector<double> r, x, s, v1, v2, l, S;
+		vector<double> x_orig, s_orig, v1_orig;
 };
 
-Limits getLimit(TTree* limit, const string& dname, const string& cname, double q){
+Limits getLimit(TTree* limit, const string& dname, const string& cname, double q, int itype){
 	const double eps = 0.01;
 	stringstream ss;
 	ss << "abs(quantileExpected-" << q << ")<" << eps;
 	int npts = limit->Draw(dname.c_str(),(cname+ss.str()).c_str(),"goff");
 	bool is2D = count(dname.begin(),dname.end(),':') >= 3;
-	Limits lim(npts,limit->GetV1(),limit->GetV2(),limit->GetV3(),is2D ? limit->GetV4() : nullptr);
+	Limits lim(itype,npts,limit->GetV1(),limit->GetV2(),limit->GetV3(),is2D ? limit->GetV4() : nullptr);
 	return lim;
 }
 
-TGraph* getBand(TTree* limit, string dname, string cname, double q_dn, double q_up){
-	const auto& lim_dn = getLimit(limit,dname,cname,q_dn);
-	int npts = lim_dn.r.size();
-	
-	double* stmp = new double[npts*2];
-	double* vtmp = new double[npts*2];
-	for(int m = 0; m < npts; ++m){
-		stmp[npts*2-1-m] = lim_dn.s[m];
-		vtmp[npts*2-1-m] = lim_dn.v1[m];
+TGraph* getBand(TTree* limit, string dname, string cname, double q_dn, double q_up, int itype){
+	const auto& lim_dn = getLimit(limit,dname,cname,q_dn,itype);
+	int npts_dn = lim_dn.s.size();
+
+	const auto& lim_up = getLimit(limit,dname,cname,q_up,itype);
+	int npts_up = lim_up.s.size();
+
+	int npts = npts_dn+npts_up;
+	double* stmp = new double[npts];
+	double* vtmp = new double[npts];
+	for(int m = 0; m < npts_dn; ++m){
+		stmp[npts-1-m] = lim_dn.s[m];
+		vtmp[npts-1-m] = lim_dn.v1[m];
 	}
 
-	const auto& lim_up = getLimit(limit,dname,cname,q_up);
-	npts = lim_up.r.size();
-
-	for(int m = 0; m < npts; ++m){
+	for(int m = 0; m < npts_up; ++m){
 		stmp[m] = lim_up.s[m];
 		vtmp[m] = lim_up.v1[m];
 	}
 
-	TGraph* gtmp = new TGraph(npts*2,vtmp,stmp);
+	TGraph* gtmp = new TGraph(npts,vtmp,stmp);
 	return gtmp;
 }
 
@@ -219,12 +248,14 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	int nsigma = 0; globalOpt->Get("nsigma",nsigma);
 	string region_text; globalOpt->Get("region_text",region_text);
 	bool do_obs = globalOpt->Get("do_obs",false);
+	bool interp = globalOpt->Get("interp",false);
 	string obs_text("Observed"); globalOpt->Get("obs_text",obs_text);
 	string lumi_text("(13 TeV)"); globalOpt->Get("lumi_text",lumi_text);
 	string prelim_text; bool set_prelim = globalOpt->Get("prelim_text",prelim_text);
 	string dir; globalOpt->Get("dir",dir);
 	string printsuffix; globalOpt->Get("printsuffix",printsuffix);
 	bool acceff = globalOpt->Get("acceff",false);
+	int itype = interp ? acceff ? 2 : 1 : 0;
 	string fpre(acceff ? "sigAccEff" : "limit");
 	string plotpre(acceff ? "plotAccEff" : "plotLimit");
 	string pname(acceff ? "signal efficiency #times acceptance" : "");
@@ -282,13 +313,13 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		//setup plotting options
 		yname = pname.empty() ? "#sigma#timesB [pb]" : pname;
 
-		TGraph *g_obs = nullptr, *g_xsec = nullptr;
+		TGraph *g_obs = nullptr, *g_obs_pt = nullptr, *g_xsec = nullptr;
 		int npts = 0;
 
 		if(!acceff){
 			//get observed limit (w/ xsec)
-			const auto& lim_obs = getLimit(limit,dname,cname,-1);
-			npts = lim_obs.r.size();
+			auto lim_obs = getLimit(limit,dname,cname,-1,itype);
+			npts = lim_obs.s.size();
 			g_obs = new TGraph(npts,lim_obs.v1.data(),lim_obs.s.data());
 			g_obs->SetMarkerColor(kBlack);
 			g_obs->SetLineColor(kBlack);
@@ -296,7 +327,16 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 			g_obs->SetLineStyle(1);
 			g_obs->SetLineWidth(2);
 			getRange(npts,lim_obs.s.data(),ymin,ymax);
-	
+
+			if(interp){
+				g_obs_pt = new TGraph(lim_obs.s_orig.size(),lim_obs.v1_orig.data(),lim_obs.s_orig.data());
+				g_obs_pt->SetMarkerColor(kBlack);
+				g_obs_pt->SetLineColor(kBlack);
+				g_obs_pt->SetMarkerStyle(20);
+				g_obs_pt->SetLineStyle(1);
+				g_obs_pt->SetLineWidth(2);
+			}
+
 			//get cross section
 			g_xsec = new TGraph(npts,lim_obs.v1.data(),lim_obs.x.data());
 			g_xsec->SetLineColor(kMagenta);
@@ -306,8 +346,8 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		}
 
 		//get central value (expected)
-		const auto& lim_cen = getLimit(limit,dname,cname,0.5);
-		npts = lim_cen.r.size();
+		const auto& lim_cen = getLimit(limit,dname,cname,0.5,itype);
+		npts = lim_cen.s.size();
 		TGraph* g_central = new TGraph(npts,lim_cen.v1.data(),lim_cen.s.data());
 		g_central->SetLineColor(kBlue);
 		g_central->SetLineStyle(2);
@@ -315,17 +355,18 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		getRange(npts,lim_cen.s.data(),ymin,ymax);
 		//only get x range once
 		const auto& xvals = getRange(npts,lim_cen.v1.data(),xmin,xmax,true);
+		xmax += eps;
 
 		//get bands (expected)
 		TGraph* g_one = NULL;
 		if(nsigma>=1){
-			g_one = getBand(limit,dname,cname,0.16,0.84);
+			g_one = getBand(limit,dname,cname,0.16,0.84,itype);
 			g_one->SetFillColor(kGreen+1);
 			getRange(npts*2,g_one->GetY(),ymin,ymax);
 		}
 		TGraph* g_two = NULL;
 		if(nsigma>=2){
-			g_two = getBand(limit,dname,cname,0.025,0.975);
+			g_two = getBand(limit,dname,cname,0.025,0.975,itype);
 			g_two->SetFillColor(kOrange);
 			getRange(npts*2,g_two->GetY(),ymin,ymax);
 		}
@@ -415,8 +456,17 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		if(nsigma>=2) g_two->Draw("f same");
 		if(nsigma>=1) g_one->Draw("f same");
 		g_central->Draw("L same");
-		if(do_obs and g_obs) g_obs->Draw("pC same");
-		if(g_xsec) g_xsec->Draw("C same");
+		if(interp){
+			if(do_obs){
+				if(g_obs) g_obs->Draw("L same");
+				if(g_obs_pt) g_obs_pt->Draw("p same");
+			}
+			if(g_xsec) g_xsec->Draw("L same");
+		}
+		else{
+			if(do_obs and g_obs) g_obs->Draw("pC same");
+			if(g_xsec) g_xsec->Draw("C same");
+		}
 
 		plot->GetHisto()->Draw("sameaxis"); //draw again so axes on top
 		plot->DrawText();
@@ -450,14 +500,14 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		set<double> xvals, yvals;
 
 		//only get x,y ranges once
-		lim_cen = getLimit(limit,dname,cname,0.5);
+		lim_cen = getLimit(limit,dname,cname,0.5,itype);
 		int npts = lim_cen.r.size();
 		xvals = getRange(npts,lim_cen.v1.data(),xmin,xmax,true);
 		yvals = getRange(npts,lim_cen.v2.data(),ymin,ymax,true);
 
 		if(!acceff){
 			//get observed limit (w/ xsec) & exclusion contour
-			lim_obs = getLimit(limit,dname,cname,-1);
+			lim_obs = getLimit(limit,dname,cname,-1,itype);
 			contours_obs = findExclusionCurve(lim_obs);
 			styleGraphs(contours_obs,kBlack,1);
 
@@ -469,12 +519,12 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		//get uncertainty bands and contours
 		vector<Limits> lim_sigmas;
 		if(nsigma>=1){
-			lim_sigmas.push_back(getLimit(limit,dname,cname,0.16));
-			lim_sigmas.push_back(getLimit(limit,dname,cname,0.84));
+			lim_sigmas.push_back(getLimit(limit,dname,cname,0.16,itype));
+			lim_sigmas.push_back(getLimit(limit,dname,cname,0.84,itype));
 		}
 		if(nsigma>=2){
-			lim_sigmas.push_back(getLimit(limit,dname,cname,0.025));
-			lim_sigmas.push_back(getLimit(limit,dname,cname,0.975));
+			lim_sigmas.push_back(getLimit(limit,dname,cname,0.025,itype));
+			lim_sigmas.push_back(getLimit(limit,dname,cname,0.975,itype));
 		}
 		vector<vector<TGraph*>> contours_sigmas;
 		for(unsigned i = 0; i < lim_sigmas.size(); ++i){
