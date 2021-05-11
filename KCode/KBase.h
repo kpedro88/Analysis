@@ -395,7 +395,9 @@ class KBaseExt : public KBase {
 				//check for specific histos to import
 				vector<string> exthisto_in;
 				vector<string> exthisto_out;
+				globalOpt->Get("exthisto_in",exthisto_in);
 				localOpt->Get("exthisto_in",exthisto_in);
+				globalOpt->Get("exthisto_out",exthisto_out);
 				localOpt->Get("exthisto_out",exthisto_out);
 				if(exthisto_in.size() != exthisto_out.size()){
 					throw runtime_error("vectors of external histo input and output names have different lengths "+to_string(exthisto_in.size())+", "+to_string(exthisto_out.size())+" (in "+name+")");
