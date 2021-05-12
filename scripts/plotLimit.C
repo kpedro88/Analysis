@@ -430,7 +430,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		if(!region_text.empty()) kleg->AddEntry((TObject*)NULL,region_text,"");
 		if(g_xsec) kleg->AddEntry(g_xsec,"Theoretical","l");
 		if(do_obs and g_obs) kleg->AddEntry(g_obs,obs_text,"pe");
-		kleg->AddEntry(g_central,"Median expected","l");
+		if(!acceff) kleg->AddEntry(g_central,"Median expected","l");
 		if(nsigma>=1) kleg->AddEntry(g_one,"68% expected","f");
 		if(nsigma>=2) kleg->AddEntry(g_two,"95% expected","f");
 		stringstream vname;
