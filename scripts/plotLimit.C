@@ -247,6 +247,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	double varied = -1; globalOpt->Get("varied",varied);
 	int nsigma = 0; globalOpt->Get("nsigma",nsigma);
 	string region_text; globalOpt->Get("region_text",region_text);
+	bool logy = globalOpt->Get("logy",true);
 	bool do_obs = globalOpt->Get("do_obs",false);
 	bool interp = globalOpt->Get("interp",false);
 	string obs_text("Observed"); globalOpt->Get("obs_text",obs_text);
@@ -371,9 +372,12 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 			getRange(npts*2,g_two->GetY(),ymin,ymax);
 		}
 
+		globalOpt->Get("ymin",ymin);
+		globalOpt->Get("ymax",ymax);
 		//extend range
-		ymax = ymax*10;
-		ymin = ymin/10;
+		double yfactor = 10; globalOpt->Get("yfactor",yfactor);
+		ymax = ymax*yfactor;
+		ymin = ymin/yfactor;
 		//avoid huge range
 		ymin = max(ymin,1e-5);
 
@@ -388,7 +392,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 
 		OptionMap* localOpt = new OptionMap();
 		localOpt->Set<bool>("ratio",false);
-		localOpt->Set<bool>("logy",true);
+		localOpt->Set<bool>("logy",logy);
 		localOpt->Set<int>("xnum",xvals.size());
 		localOpt->Set<double>("xmin",xmin);
 		localOpt->Set<double>("xmax",xmax);
