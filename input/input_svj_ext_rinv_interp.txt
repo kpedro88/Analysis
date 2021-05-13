@@ -1,0 +1,24 @@
+INPUT
+input/input_svj_paper.txt
+
+OPTION
+bool:treesuffix[0]
+vstring:exthisto_out[MT2500,MT3100]
+int:npanel[1]
+string:extfilename[test/testMorph_2500_3100_rinv012.root]
+vstring:numers[integral,moment]
+vstring:denoms[none]
+string:rationame[interp/actual]
+bool:errband[0]
+
+#HISTO
+#MT2500	i:xnum[130]	d:xmin[1500]	d:xmax[8000]	s:xtitle[M_{T} [GeV]]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	d:dxmin[1500]	d:dxmax[4000]
+#MT3100	i:xnum[130]	d:xmin[1500]	d:xmax[8000]	s:xtitle[M_{T} [GeV]]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	d:dxmin[1500]	d:dxmax[4000]
+
+SET
+hist	mc	none	s:legname[r_{inv} = 0.1]	c:color[kBlack]
+	base	ext	rinv0	vs:exthisto_in[SVJ_mZprime2500_mDark20_rinv01_alphapeak_none,SVJ_mZprime3100_mDark20_rinv01_alphapeak_none]
+hist	mc	integral	s:legname[RooIntegralMorph]	c:color[kBlue]
+	base	ext	rinv01	vs:exthisto_in[SVJ_mZprime2500_mDark20_rinv01_alphapeak_integral,SVJ_mZprime3100_mDark20_rinv01_alphapeak_integral]
+hist	mc	moment	s:legname[RooMomentMorph]	c:color[kRed]
+	base	ext	rinv02	vs:exthisto_in[SVJ_mZprime2500_mDark20_rinv01_alphapeak_moment,SVJ_mZprime3100_mDark20_rinv01_alphapeak_moment]

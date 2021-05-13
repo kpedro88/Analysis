@@ -1,0 +1,23 @@
+INPUT
+input/input_svj_paper.txt
+
+OPTION
+bool:treesuffix[0]
+vstring:exthisto_out[MTAK8]
+int:npanel[1]
+string:rationame[BDT/cut]
+#double:ymin[1e-4]
+
+HISTO
+MTAK8	i:xnum[130]	d:xmin[1500]	d:xmax[8000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]	c:color[kMagenta]
+
+SET
+hist	mc	highCut	s:legname[high-^{}R_{T}]	c:color[kBlack]
+	base	ext	SVJ	s:exthisto_dir[highCut_2018]
+hist	mc	highSVJ2	s:legname[high-SVJ2]	c:color[kMagenta]
+	base	ext	SVJ	s:exthisto_dir[highSVJ2_2018]
+hist	mc	lowCut	s:legname[low-^{}R_{T}]	c:color[kBlue]
+	base	ext	SVJ	s:exthisto_dir[lowCut_2018]
+hist	mc	lowSVJ2	s:legname[low-SVJ2]	c:color[kRed]
+	base	ext	SVJ	s:exthisto_dir[lowSVJ2_2018]
+
