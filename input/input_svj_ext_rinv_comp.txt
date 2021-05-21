@@ -4,19 +4,25 @@ input/input_svj_paper.txt
 OPTION
 bool:treesuffix[0]
 vstring:exthisto_out[MT2500,MT3100]
-int:npanel[1]
+int:npanel[2]
 string:extfilename[test/datacard_final_2500_3100_rinv012.root]
 bool:unitnorm[0]
 string:lumi_text[137 ^{}fb^{-1} (13 TeV)]
+string+:printsuffix[_integral]
+vint:extra_text_panels[0,0,0,0]
 
 #HISTO
 #MT2500	i:xnum[130]	d:xmin[1500]	d:xmax[8000]	s:xtitle[M_{T} [GeV]]	s:ytitle[number of events]	b:ratio[0]	b:logy[1]	d:dxmin[1500]	d:dxmax[4000]
 #MT3100	i:xnum[130]	d:xmin[1500]	d:xmax[8000]	s:xtitle[M_{T} [GeV]]	s:ytitle[number of events]	b:ratio[0]	b:logy[1]	d:dxmin[1500]	d:dxmax[4000]
 
 SET
-hist	mc	rinv0	s:legname[r_{inv} = 0.0]	c:color[kBlue]
+hist	mc	rinv0	s:legname[r_{inv} = 0.0]	c:color[kBlue]	i:panel[1]
 	base	ext	rinv0	vs:exthisto_in[SVJ_mZprime2500_mDark20_rinv0_alphapeak,SVJ_mZprime3100_mDark20_rinv0_alphapeak]
-hist	mc	rinv01	s:legname[r_{inv} = 0.1]	c:color[kMagenta]
+hist	mc	rinv01	s:legname[r_{inv} = 0.1]	c:color[kMagenta]	i:panel[1]
 	base	ext	rinv01	vs:exthisto_in[SVJ_mZprime2500_mDark20_rinv01_alphapeak,SVJ_mZprime3100_mDark20_rinv01_alphapeak]
-hist	mc	rinv02	s:legname[r_{inv} = 0.2]	c:color[kRed]
+hist	mc	rinv02	s:legname[r_{inv} = 0.2]	c:color[kRed]	i:panel[1]
 	base	ext	rinv02	vs:exthisto_in[SVJ_mZprime2500_mDark20_rinv02_alphapeak,SVJ_mZprime3100_mDark20_rinv02_alphapeak]
+hist	mc	rinv01i	s:legname[r_{inv} = 0.1 (morph)]	c:color[kMagenta + 2]	i:linestyle[7]	i:panel[1]
+	base	ext	rinv01	s:extfilename[test/testMorph_2500_3100_rinv012.root]	vs:exthisto_in[SVJ_mZprime2500_mDark20_rinv01_alphapeak_integral,SVJ_mZprime3100_mDark20_rinv01_alphapeak_integral]
+hist	mc	rinv005i	s:legname[r_{inv} = 0.05 (morph)]	c:color[kBlack]	i:linestyle[7]	i:panel[1]
+	base	ext	rinv005	s:extfilename[test/testMorph_2500_3100_rinv005.root]	vs:exthisto_in[SVJ_mZprime2500_mDark20_rinv005_alphapeak_integral,SVJ_mZprime3100_mDark20_rinv005_alphapeak_integral]
