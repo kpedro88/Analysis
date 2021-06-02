@@ -40,6 +40,15 @@ struct Curve {
 			string extgraph; localOpt->Get("extgraph",extgraph);
 			graph = KGet<TGraph>(extfile,extgraph);
 			style->Format(graph);
+			//option to multiply graph by something
+			vector<double> xsecs;
+			bool has_xsec = globalOpt->Get("xsecs",xsecs);
+			if (has_xsec) {
+				if(xsecs.size()!=graph->GetN()) throw std::runtime_error("Different lengths: "+to_string(xsecs.size())+" (xsec), "+to_string(graph->GetN())+" (graph)");
+				for(unsigned i = 0; i < graph->GetN(); ++i){
+					graph->GetY()[i] = graph->GetY()[i]*xsecs[i];
+				}
+			}
 		}
 		//make graph
 		else {
@@ -166,6 +175,19 @@ void compareLimits(string oname, string input, string options){
 			}
 		}
 		can->Print(otmp.c_str(),pformat.c_str());
+	}
+
+	//save objects
+	if(globalOpt->Get("save",false)){
+		string otmp = oname+".root";
+		KParser::clean(otmp);
+		if(!dir.empty()) otmp = dir+"/"+otmp;
+		auto outfile = TFile::Open(otmp.c_str(),"RECREATE");
+		outfile->cd();
+		for(auto& curve : curves){
+			curve.graph->SetName(curve.name.c_str());
+			curve.graph->Write();
+		}
 	}
 }
 
