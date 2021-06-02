@@ -1,0 +1,4 @@
+rinv03	s:legname[r_{inv} = 0.3]	c:color[kBlack]	i:linestyle[1]	s:drawopt[c]	i:panel[0]	s:extfilename[test/svj/plotAccEff_highSVJ2_vs_mZprime__rinv0.3.root]	s:extgraph[g_central]
+rinv05	s:legname[r_{inv} = 0.5]	c:color[kBlue]	i:linestyle[1]	s:drawopt[c]	i:panel[0]	s:extfilename[test/svj/plotAccEff_highSVJ2_vs_mZprime__rinv0.5.root]	s:extgraph[g_central]
+rinv07	s:legname[r_{inv} = 0.7]	c:color[kRed]	i:linestyle[1]	s:drawopt[c]	i:panel[0]	s:extfilename[test/svj/plotAccEff_highSVJ2_vs_mZprime__rinv0.7.root]	s:extgraph[g_central]
+rinv09	s:legname[r_{inv} = 0.9]	c:color[kMagenta]	i:linestyle[1]	s:drawopt[c]	i:panel[0]	s:extfilename[test/svj/plotAccEff_highSVJ2_vs_mZprime__rinv0.9.root]	s:extgraph[g_central]	vs{|}:extra_text[^{}m_{dark} = 20 GeV, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak}]
