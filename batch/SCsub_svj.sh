@@ -9,13 +9,18 @@ STORE=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/scan
 CHECKARGS=""
 YEARS=()
 DRYRUN=""
+SUFFIX=""
 
 #check arguments
-while getopts "ky:d" opt; do
+while getopts "ky:s:i:d" opt; do
 	case "$opt" in
 		k) CHECKARGS="${CHECKARGS} -k"
 		;;
 		y) IFS="," read -a YEARS <<< "$OPTARG"
+		;;
+		s) SUFFIX="$OPTARG"
+		;;
+		i) INDIR="$OPTARG"
 		;;
 		d) DRYRUN="echo"
 		;;
@@ -25,7 +30,7 @@ done
 ./SKcheck.sh ${CHECKARGS}
 
 for YEAR in ${YEARS[@]}; do
-	SNAME=ScanSVJ${YEAR}
+	SNAME=ScanSVJ${YEAR}${SUFFIX}
 	source export${SNAME}.sh
 	# skip nonexistent ones
 	if [[ $? -ne 0 ]]; then continue; fi

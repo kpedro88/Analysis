@@ -40,6 +40,7 @@ class KScanner : public KLooper {
 			//wait to check these
 			splitT1ttbb = false;
 			splitSVJ = false;
+			first_param = 0;
 		}
 		//destructor
 		virtual ~KScanner() {}
@@ -163,8 +164,8 @@ class KScanner : public KLooper {
 			cout << header << endl;
 			for(const auto& mp : partMap){
 				//print all the mass points in this file
-				for(unsigned p = 0; p < mp.first.size(); ++p){
-					cout << right << setw(headers[p].size()) << mp.first[p] << "  ";
+				for(unsigned p = 0; p < headers.size(); ++p){
+					cout << right << setw(headers[p].size()) << mp.first[p+first_param] << "  ";
 				}
 				cout << endl;
 			}
@@ -188,7 +189,11 @@ class KScanner : public KLooper {
 				{-3,"low"},
 			};
 			stringstream oss;
-			if(splitSVJ) oss << outpre << "_" << "mZprime-" << params[0] << "_mDark-" << params[1] << "_rinv-" << params[2] << "_alpha-" << alpha_vals.at(int(params[3])) << "_block" << block;
+			if(splitSVJ) {
+				//signal naming changed (channel added at beginning)
+				if(params[0]==0.) first_param = 1;
+				oss << outpre << "_" << "mZprime-" << params[first_param] << "_mDark-" << params[first_param+1] << "_rinv-" << params[first_param+2] << "_alpha-" << alpha_vals.at(int(params[first_param+3])) << "_block" << block;
+			}
 			else oss << outpre << "_" << "mMother-" << params[0] << "_mLSP-" << params[1] << "_block" << block;
 			return oss.str();
 		}
@@ -205,6 +210,7 @@ class KScanner : public KLooper {
 		Long64_t nentries;
 		string outpre, outsuff;
 		bool splitT1ttbb, splitSVJ;
+		int first_param;
 };
 
 //-------------------------------------------

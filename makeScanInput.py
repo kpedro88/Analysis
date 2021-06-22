@@ -1,4 +1,4 @@
-import sys, os, stat
+import sys, os, stat, imp
 from optparse import OptionParser
 
 # define options
@@ -11,6 +11,8 @@ parser.add_option("-w", "--write", dest="write", default="input/input_sets_scan.
 parser.add_option("-e", "--export", dest="export", default="batch/exportScan.sh", help="export file to write")
 parser.add_option("-y", "--year", dest="year", default="", help="year (for MC suffix)")
 parser.add_option("-i", "--identifier", dest="id", default="SMS", help="identifier for desired files")
+parser.add_option("-a", "--actual", dest="actual", default=False, action="store_true", help="use actual files (account for skipped files)")
+parser.add_option("-f", "--folder", dest="folder", default="", help="EOS directory to check for actual ntuples")
 (options, args) = parser.parse_args()
 
 # find the python files
@@ -65,4 +67,4 @@ if not options.keep:
 preamble = "OPTION\nstring:outsuff["+yearsuff+"_fast]\n"
 # run makeSkimInput.py
 from makeSkimInput import makeSkimInput
-makeSkimInput(wfname,options.write,options.export,"scan",nfiles,preamble=preamble)
+makeSkimInput(wfname,options.write,options.export,"scan",nfiles,preamble=preamble,actual=options.actual,folder=options.folder)

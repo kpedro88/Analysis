@@ -43,7 +43,7 @@ def makeSkimLine(short_name,full_names,file_mins,file_maxs,mothers,btype="skim",
     expline = the_name + " \\\n"
     return (line,expline)
 
-def makeSkimInput(read,write,export,btype="skim",nfiles=0,data=False,folder="",nfilesTM=1,preamble=""):
+def makeSkimInput(read,write,export,btype="skim",nfiles=0,data=False,folder="",nfilesTM=1,preamble="",actual=False):
     readname = read.replace(".py","").split("/")[-1]
     rfile = imp.load_source(readname,read)
     wfile = open(write,'w')
@@ -74,7 +74,7 @@ def makeSkimInput(read,write,export,btype="skim",nfiles=0,data=False,folder="",n
         
         for ind, full_name in enumerate(full_names):
             # account for skipped runs in prompt reco
-            if data and "PromptReco" in full_name and len(folder)>0:
+            if actual or (data and "PromptReco" in full_name and len(folder)>0):
                 fileArrays = filter(None,os.popen("xrdfs root://cmseos.fnal.gov/ ls "+folder+" | grep \""+full_name+"\"").read().split('\n'))
                 # get part numbers of existing ntuples: name format is ...._X_RA2AnalysisTree.root
                 ptmp = [ int(f.split('_')[-2]) for f in fileArrays ]
