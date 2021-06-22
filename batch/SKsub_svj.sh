@@ -45,7 +45,7 @@ done
 for TYPE in ${TYPES[@]}; do
 	TMPINDIR="$INDIR"
 	TMPSTORE="$STORE"
-	if [ "$TYPE" = SVJScan ]; then
+	if [[ $TYPE == "SVJScan"* ]]; then
 		TMPINDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/scan
 		TMPSTORE="$STORE"/scan
 	fi
@@ -67,7 +67,7 @@ for TYPE in ${TYPES[@]}; do
 			done
 			# remove first char, prepend condor stuff
 			SLIST="Process in ${SLIST:1}"
-		elif ( [[ $TYPE == "SVJ" ]] || [[ $TYPE == "SVJScan" ]] ) && [ -n "$SYST" ]; then
+		elif ( [[ $TYPE == "SVJ" ]] || [[ $TYPE == "SVJScan"* ]] ) && [ -n "$SYST" ]; then
 			TMPSELTYPE=$TMPSELTYPE,dijetmtdetahadloosefull_JECup,dijetmtdetahadloosefull_JECdown,dijetmtdetahadloosefull_JERup,dijetmtdetahadloosefull_JERdown,dijetmtdetahadloosefull_JESup,dijetmtdetahadloosefull_JESdown
 		fi
 

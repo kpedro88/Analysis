@@ -51,7 +51,7 @@ SAFEVERSION=$(echo $VERSION | sed 's~/~_~')
 
 for TYPE in ${TYPES[@]}; do
 	PREFIX=DC
-	if [ "$TYPE" = SVJScan ] || [ "$TYPE" = SVJScanBenchmark ]; then
+	if [[ $TYPE == "SVJScan"* ]]; then
 		INDIR=root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ2017/${RUN2PRODV}/Skims/scan
 		DCCONFIG=input/input_DC_config_SVJscan.txt
 	elif [ "$TYPE" = SVJ ]; then
@@ -78,7 +78,7 @@ for TYPE in ${TYPES[@]}; do
 		DCCONFIG=$CONFIG
 	fi
 
-	if [[ -z "$NOSYST" && ("$TYPE" = SVJ  ||  "$TYPE" = SVJScan) ]]; then
+	if [[ -z "$NOSYST" && ("$TYPE" == SVJ  ||  "$TYPE" == "SVJScan"*) ]]; then
 		SYSTS=${NOMINAL},trigfnuncUp,trigfnuncDown,puuncUp,puuncDown,pdfalluncUp,pdfalluncDown,psisruncUp,psisruncDown,psfsruncUp,psfsruncDown
 		VARS=JECup,JECdown,JERup,JERdown,JESup,JESdown
 	else
