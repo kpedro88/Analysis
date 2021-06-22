@@ -5,6 +5,8 @@ hist	mc	SVJ_1500_10_0.3_peak_MC2018
 	base	mc	SVJ_1500_10_0.3_peak_MC2018	s:filename[tree_SVJ_1500_10_0.3_peak_MC2018.root]	d:xsection[0.77]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_1500_1_0.3_peak_MC2018
 	base	mc	SVJ_1500_1_0.3_peak_MC2018	s:filename[tree_SVJ_1500_1_0.3_peak_MC2018.root]	d:xsection[0.77]	b:signal[1]	vi:mother[4900023]
+hist	mc	SVJ_1500_20_0.05_peak_MC2018
+	base	mc	SVJ_1500_20_0.05_peak_MC2018	s:filename[tree_SVJ_1500_20_0.05_peak_MC2018.root]	d:xsection[0.77]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_1500_20_0.1_peak_MC2018
 	base	mc	SVJ_1500_20_0.1_peak_MC2018	s:filename[tree_SVJ_1500_20_0.1_peak_MC2018.root]	d:xsection[0.77]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_1500_20_0.2_peak_MC2018
@@ -53,6 +55,8 @@ hist	mc	SVJ_1700_10_0.3_peak_MC2018
 	base	mc	SVJ_1700_10_0.3_peak_MC2018	s:filename[tree_SVJ_1700_10_0.3_peak_MC2018.root]	d:xsection[0.4327]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_1700_1_0.3_peak_MC2018
 	base	mc	SVJ_1700_1_0.3_peak_MC2018	s:filename[tree_SVJ_1700_1_0.3_peak_MC2018.root]	d:xsection[0.4327]	b:signal[1]	vi:mother[4900023]
+hist	mc	SVJ_1700_20_0.05_peak_MC2018
+	base	mc	SVJ_1700_20_0.05_peak_MC2018	s:filename[tree_SVJ_1700_20_0.05_peak_MC2018.root]	d:xsection[0.4327]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_1700_20_0.1_peak_MC2018
 	base	mc	SVJ_1700_20_0.1_peak_MC2018	s:filename[tree_SVJ_1700_20_0.1_peak_MC2018.root]	d:xsection[0.4327]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_1700_20_0.2_peak_MC2018
@@ -101,6 +105,8 @@ hist	mc	SVJ_1900_10_0.3_peak_MC2018
 	base	mc	SVJ_1900_10_0.3_peak_MC2018	s:filename[tree_SVJ_1900_10_0.3_peak_MC2018.root]	d:xsection[0.2479]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_1900_1_0.3_peak_MC2018
 	base	mc	SVJ_1900_1_0.3_peak_MC2018	s:filename[tree_SVJ_1900_1_0.3_peak_MC2018.root]	d:xsection[0.2479]	b:signal[1]	vi:mother[4900023]
+hist	mc	SVJ_1900_20_0.05_peak_MC2018
+	base	mc	SVJ_1900_20_0.05_peak_MC2018	s:filename[tree_SVJ_1900_20_0.05_peak_MC2018.root]	d:xsection[0.2479]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_1900_20_0.1_peak_MC2018
 	base	mc	SVJ_1900_20_0.1_peak_MC2018	s:filename[tree_SVJ_1900_20_0.1_peak_MC2018.root]	d:xsection[0.2479]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_1900_20_0.2_peak_MC2018
@@ -149,6 +155,8 @@ hist	mc	SVJ_2100_10_0.3_peak_MC2018
 	base	mc	SVJ_2100_10_0.3_peak_MC2018	s:filename[tree_SVJ_2100_10_0.3_peak_MC2018.root]	d:xsection[0.1384]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_2100_1_0.3_peak_MC2018
 	base	mc	SVJ_2100_1_0.3_peak_MC2018	s:filename[tree_SVJ_2100_1_0.3_peak_MC2018.root]	d:xsection[0.1384]	b:signal[1]	vi:mother[4900023]
+hist	mc	SVJ_2100_20_0.05_peak_MC2018
+	base	mc	SVJ_2100_20_0.05_peak_MC2018	s:filename[tree_SVJ_2100_20_0.05_peak_MC2018.root]	d:xsection[0.1384]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_2100_20_0.1_peak_MC2018
 	base	mc	SVJ_2100_20_0.1_peak_MC2018	s:filename[tree_SVJ_2100_20_0.1_peak_MC2018.root]	d:xsection[0.1384]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_2100_20_0.2_peak_MC2018
@@ -197,6 +205,8 @@ hist	mc	SVJ_2300_10_0.3_peak_MC2018
 	base	mc	SVJ_2300_10_0.3_peak_MC2018	s:filename[tree_SVJ_2300_10_0.3_peak_MC2018.root]	d:xsection[0.08124]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_2300_1_0.3_peak_MC2018
 	base	mc	SVJ_2300_1_0.3_peak_MC2018	s:filename[tree_SVJ_2300_1_0.3_peak_MC2018.root]	d:xsection[0.08124]	b:signal[1]	vi:mother[4900023]
+hist	mc	SVJ_2300_20_0.05_peak_MC2018
+	base	mc	SVJ_2300_20_0.05_peak_MC2018	s:filename[tree_SVJ_2300_20_0.05_peak_MC2018.root]	d:xsection[0.08124]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_2300_20_0.1_peak_MC2018
 	base	mc	SVJ_2300_20_0.1_peak_MC2018	s:filename[tree_SVJ_2300_20_0.1_peak_MC2018.root]	d:xsection[0.08124]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_2300_20_0.2_peak_MC2018
@@ -245,6 +255,8 @@ hist	mc	SVJ_2500_10_0.3_peak_MC2018
 	base	mc	SVJ_2500_10_0.3_peak_MC2018	s:filename[tree_SVJ_2500_10_0.3_peak_MC2018.root]	d:xsection[0.04977]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_2500_1_0.3_peak_MC2018
 	base	mc	SVJ_2500_1_0.3_peak_MC2018	s:filename[tree_SVJ_2500_1_0.3_peak_MC2018.root]	d:xsection[0.04977]	b:signal[1]	vi:mother[4900023]
+hist	mc	SVJ_2500_20_0.05_peak_MC2018
+	base	mc	SVJ_2500_20_0.05_peak_MC2018	s:filename[tree_SVJ_2500_20_0.05_peak_MC2018.root]	d:xsection[0.04977]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_2500_20_0.1_peak_MC2018
 	base	mc	SVJ_2500_20_0.1_peak_MC2018	s:filename[tree_SVJ_2500_20_0.1_peak_MC2018.root]	d:xsection[0.04977]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_2500_20_0.2_peak_MC2018
@@ -293,6 +305,8 @@ hist	mc	SVJ_2700_10_0.3_peak_MC2018
 	base	mc	SVJ_2700_10_0.3_peak_MC2018	s:filename[tree_SVJ_2700_10_0.3_peak_MC2018.root]	d:xsection[0.03042]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_2700_1_0.3_peak_MC2018
 	base	mc	SVJ_2700_1_0.3_peak_MC2018	s:filename[tree_SVJ_2700_1_0.3_peak_MC2018.root]	d:xsection[0.03042]	b:signal[1]	vi:mother[4900023]
+hist	mc	SVJ_2700_20_0.05_peak_MC2018
+	base	mc	SVJ_2700_20_0.05_peak_MC2018	s:filename[tree_SVJ_2700_20_0.05_peak_MC2018.root]	d:xsection[0.03042]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_2700_20_0.1_peak_MC2018
 	base	mc	SVJ_2700_20_0.1_peak_MC2018	s:filename[tree_SVJ_2700_20_0.1_peak_MC2018.root]	d:xsection[0.03042]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_2700_20_0.2_peak_MC2018
@@ -341,6 +355,8 @@ hist	mc	SVJ_2900_10_0.3_peak_MC2018
 	base	mc	SVJ_2900_10_0.3_peak_MC2018	s:filename[tree_SVJ_2900_10_0.3_peak_MC2018.root]	d:xsection[0.01969]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_2900_1_0.3_peak_MC2018
 	base	mc	SVJ_2900_1_0.3_peak_MC2018	s:filename[tree_SVJ_2900_1_0.3_peak_MC2018.root]	d:xsection[0.01969]	b:signal[1]	vi:mother[4900023]
+hist	mc	SVJ_2900_20_0.05_peak_MC2018
+	base	mc	SVJ_2900_20_0.05_peak_MC2018	s:filename[tree_SVJ_2900_20_0.05_peak_MC2018.root]	d:xsection[0.01969]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_2900_20_0.1_peak_MC2018
 	base	mc	SVJ_2900_20_0.1_peak_MC2018	s:filename[tree_SVJ_2900_20_0.1_peak_MC2018.root]	d:xsection[0.01969]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_2900_20_0.2_peak_MC2018
@@ -389,6 +405,8 @@ hist	mc	SVJ_3100_10_0.3_peak_MC2018
 	base	mc	SVJ_3100_10_0.3_peak_MC2018	s:filename[tree_SVJ_3100_10_0.3_peak_MC2018.root]	d:xsection[0.01209]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_3100_1_0.3_peak_MC2018
 	base	mc	SVJ_3100_1_0.3_peak_MC2018	s:filename[tree_SVJ_3100_1_0.3_peak_MC2018.root]	d:xsection[0.01209]	b:signal[1]	vi:mother[4900023]
+hist	mc	SVJ_3100_20_0.05_peak_MC2018
+	base	mc	SVJ_3100_20_0.05_peak_MC2018	s:filename[tree_SVJ_3100_20_0.05_peak_MC2018.root]	d:xsection[0.01209]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_3100_20_0.1_peak_MC2018
 	base	mc	SVJ_3100_20_0.1_peak_MC2018	s:filename[tree_SVJ_3100_20_0.1_peak_MC2018.root]	d:xsection[0.01209]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_3100_20_0.2_peak_MC2018
@@ -437,6 +455,8 @@ hist	mc	SVJ_3300_10_0.3_peak_MC2018
 	base	mc	SVJ_3300_10_0.3_peak_MC2018	s:filename[tree_SVJ_3300_10_0.3_peak_MC2018.root]	d:xsection[0.007494]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_3300_1_0.3_peak_MC2018
 	base	mc	SVJ_3300_1_0.3_peak_MC2018	s:filename[tree_SVJ_3300_1_0.3_peak_MC2018.root]	d:xsection[0.007494]	b:signal[1]	vi:mother[4900023]
+hist	mc	SVJ_3300_20_0.05_peak_MC2018
+	base	mc	SVJ_3300_20_0.05_peak_MC2018	s:filename[tree_SVJ_3300_20_0.05_peak_MC2018.root]	d:xsection[0.007494]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_3300_20_0.1_peak_MC2018
 	base	mc	SVJ_3300_20_0.1_peak_MC2018	s:filename[tree_SVJ_3300_20_0.1_peak_MC2018.root]	d:xsection[0.007494]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_3300_20_0.2_peak_MC2018
@@ -485,6 +505,8 @@ hist	mc	SVJ_3500_10_0.3_peak_MC2018
 	base	mc	SVJ_3500_10_0.3_peak_MC2018	s:filename[tree_SVJ_3500_10_0.3_peak_MC2018.root]	d:xsection[0.005036]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_3500_1_0.3_peak_MC2018
 	base	mc	SVJ_3500_1_0.3_peak_MC2018	s:filename[tree_SVJ_3500_1_0.3_peak_MC2018.root]	d:xsection[0.005036]	b:signal[1]	vi:mother[4900023]
+hist	mc	SVJ_3500_20_0.05_peak_MC2018
+	base	mc	SVJ_3500_20_0.05_peak_MC2018	s:filename[tree_SVJ_3500_20_0.05_peak_MC2018.root]	d:xsection[0.005036]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_3500_20_0.1_peak_MC2018
 	base	mc	SVJ_3500_20_0.1_peak_MC2018	s:filename[tree_SVJ_3500_20_0.1_peak_MC2018.root]	d:xsection[0.005036]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_3500_20_0.2_peak_MC2018
@@ -533,6 +555,8 @@ hist	mc	SVJ_3700_10_0.3_peak_MC2018
 	base	mc	SVJ_3700_10_0.3_peak_MC2018	s:filename[tree_SVJ_3700_10_0.3_peak_MC2018.root]	d:xsection[0.003252]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_3700_1_0.3_peak_MC2018
 	base	mc	SVJ_3700_1_0.3_peak_MC2018	s:filename[tree_SVJ_3700_1_0.3_peak_MC2018.root]	d:xsection[0.003252]	b:signal[1]	vi:mother[4900023]
+hist	mc	SVJ_3700_20_0.05_peak_MC2018
+	base	mc	SVJ_3700_20_0.05_peak_MC2018	s:filename[tree_SVJ_3700_20_0.05_peak_MC2018.root]	d:xsection[0.003252]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_3700_20_0.1_peak_MC2018
 	base	mc	SVJ_3700_20_0.1_peak_MC2018	s:filename[tree_SVJ_3700_20_0.1_peak_MC2018.root]	d:xsection[0.003252]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_3700_20_0.2_peak_MC2018
@@ -581,6 +605,8 @@ hist	mc	SVJ_3900_10_0.3_peak_MC2018
 	base	mc	SVJ_3900_10_0.3_peak_MC2018	s:filename[tree_SVJ_3900_10_0.3_peak_MC2018.root]	d:xsection[0.0021]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_3900_1_0.3_peak_MC2018
 	base	mc	SVJ_3900_1_0.3_peak_MC2018	s:filename[tree_SVJ_3900_1_0.3_peak_MC2018.root]	d:xsection[0.0021]	b:signal[1]	vi:mother[4900023]
+hist	mc	SVJ_3900_20_0.05_peak_MC2018
+	base	mc	SVJ_3900_20_0.05_peak_MC2018	s:filename[tree_SVJ_3900_20_0.05_peak_MC2018.root]	d:xsection[0.0021]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_3900_20_0.1_peak_MC2018
 	base	mc	SVJ_3900_20_0.1_peak_MC2018	s:filename[tree_SVJ_3900_20_0.1_peak_MC2018.root]	d:xsection[0.0021]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_3900_20_0.2_peak_MC2018
@@ -629,6 +655,8 @@ hist	mc	SVJ_4100_10_0.3_peak_MC2018
 	base	mc	SVJ_4100_10_0.3_peak_MC2018	s:filename[tree_SVJ_4100_10_0.3_peak_MC2018.root]	d:xsection[0.001356]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_4100_1_0.3_peak_MC2018
 	base	mc	SVJ_4100_1_0.3_peak_MC2018	s:filename[tree_SVJ_4100_1_0.3_peak_MC2018.root]	d:xsection[0.001356]	b:signal[1]	vi:mother[4900023]
+hist	mc	SVJ_4100_20_0.05_peak_MC2018
+	base	mc	SVJ_4100_20_0.05_peak_MC2018	s:filename[tree_SVJ_4100_20_0.05_peak_MC2018.root]	d:xsection[0.001356]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_4100_20_0.1_peak_MC2018
 	base	mc	SVJ_4100_20_0.1_peak_MC2018	s:filename[tree_SVJ_4100_20_0.1_peak_MC2018.root]	d:xsection[0.001356]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_4100_20_0.2_peak_MC2018
@@ -677,6 +705,8 @@ hist	mc	SVJ_4300_10_0.3_peak_MC2018
 	base	mc	SVJ_4300_10_0.3_peak_MC2018	s:filename[tree_SVJ_4300_10_0.3_peak_MC2018.root]	d:xsection[0.0008757]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_4300_1_0.3_peak_MC2018
 	base	mc	SVJ_4300_1_0.3_peak_MC2018	s:filename[tree_SVJ_4300_1_0.3_peak_MC2018.root]	d:xsection[0.0008757]	b:signal[1]	vi:mother[4900023]
+hist	mc	SVJ_4300_20_0.05_peak_MC2018
+	base	mc	SVJ_4300_20_0.05_peak_MC2018	s:filename[tree_SVJ_4300_20_0.05_peak_MC2018.root]	d:xsection[0.0008757]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_4300_20_0.1_peak_MC2018
 	base	mc	SVJ_4300_20_0.1_peak_MC2018	s:filename[tree_SVJ_4300_20_0.1_peak_MC2018.root]	d:xsection[0.0008757]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_4300_20_0.2_peak_MC2018
@@ -725,6 +755,8 @@ hist	mc	SVJ_4500_10_0.3_peak_MC2018
 	base	mc	SVJ_4500_10_0.3_peak_MC2018	s:filename[tree_SVJ_4500_10_0.3_peak_MC2018.root]	d:xsection[0.0005655]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_4500_1_0.3_peak_MC2018
 	base	mc	SVJ_4500_1_0.3_peak_MC2018	s:filename[tree_SVJ_4500_1_0.3_peak_MC2018.root]	d:xsection[0.0005655]	b:signal[1]	vi:mother[4900023]
+hist	mc	SVJ_4500_20_0.05_peak_MC2018
+	base	mc	SVJ_4500_20_0.05_peak_MC2018	s:filename[tree_SVJ_4500_20_0.05_peak_MC2018.root]	d:xsection[0.0005655]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_4500_20_0.1_peak_MC2018
 	base	mc	SVJ_4500_20_0.1_peak_MC2018	s:filename[tree_SVJ_4500_20_0.1_peak_MC2018.root]	d:xsection[0.0005655]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_4500_20_0.2_peak_MC2018
@@ -773,6 +805,8 @@ hist	mc	SVJ_4700_10_0.3_peak_MC2018
 	base	mc	SVJ_4700_10_0.3_peak_MC2018	s:filename[tree_SVJ_4700_10_0.3_peak_MC2018.root]	d:xsection[0.0003652]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_4700_1_0.3_peak_MC2018
 	base	mc	SVJ_4700_1_0.3_peak_MC2018	s:filename[tree_SVJ_4700_1_0.3_peak_MC2018.root]	d:xsection[0.0003652]	b:signal[1]	vi:mother[4900023]
+hist	mc	SVJ_4700_20_0.05_peak_MC2018
+	base	mc	SVJ_4700_20_0.05_peak_MC2018	s:filename[tree_SVJ_4700_20_0.05_peak_MC2018.root]	d:xsection[0.0003652]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_4700_20_0.1_peak_MC2018
 	base	mc	SVJ_4700_20_0.1_peak_MC2018	s:filename[tree_SVJ_4700_20_0.1_peak_MC2018.root]	d:xsection[0.0003652]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_4700_20_0.2_peak_MC2018
@@ -821,6 +855,8 @@ hist	mc	SVJ_4900_10_0.3_peak_MC2018
 	base	mc	SVJ_4900_10_0.3_peak_MC2018	s:filename[tree_SVJ_4900_10_0.3_peak_MC2018.root]	d:xsection[0.0002358]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_4900_1_0.3_peak_MC2018
 	base	mc	SVJ_4900_1_0.3_peak_MC2018	s:filename[tree_SVJ_4900_1_0.3_peak_MC2018.root]	d:xsection[0.0002358]	b:signal[1]	vi:mother[4900023]
+hist	mc	SVJ_4900_20_0.05_peak_MC2018
+	base	mc	SVJ_4900_20_0.05_peak_MC2018	s:filename[tree_SVJ_4900_20_0.05_peak_MC2018.root]	d:xsection[0.0002358]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_4900_20_0.1_peak_MC2018
 	base	mc	SVJ_4900_20_0.1_peak_MC2018	s:filename[tree_SVJ_4900_20_0.1_peak_MC2018.root]	d:xsection[0.0002358]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_4900_20_0.2_peak_MC2018
@@ -869,6 +905,8 @@ hist	mc	SVJ_5100_10_0.3_peak_MC2018
 	base	mc	SVJ_5100_10_0.3_peak_MC2018	s:filename[tree_SVJ_5100_10_0.3_peak_MC2018.root]	d:xsection[0.0001523]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_5100_1_0.3_peak_MC2018
 	base	mc	SVJ_5100_1_0.3_peak_MC2018	s:filename[tree_SVJ_5100_1_0.3_peak_MC2018.root]	d:xsection[0.0001523]	b:signal[1]	vi:mother[4900023]
+hist	mc	SVJ_5100_20_0.05_peak_MC2018
+	base	mc	SVJ_5100_20_0.05_peak_MC2018	s:filename[tree_SVJ_5100_20_0.05_peak_MC2018.root]	d:xsection[0.0001523]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_5100_20_0.1_peak_MC2018
 	base	mc	SVJ_5100_20_0.1_peak_MC2018	s:filename[tree_SVJ_5100_20_0.1_peak_MC2018.root]	d:xsection[0.0001523]	b:signal[1]	vi:mother[4900023]
 hist	mc	SVJ_5100_20_0.2_peak_MC2018
