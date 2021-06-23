@@ -1,0 +1,21 @@
+INPUT
+input/input_svj_paper.txt
+
+OPTION
+bool:treesuffix[0]
+vstring:exthisto_out[MT2500,MT3100]
+int:npanel[1]
+bool:errband[0]
+string:rationame[interp/actual]
+vstring:numers[morph]
+vstring:denoms[rinv005]
+
+#HISTO
+#MT2500	i:xnum[130]	d:xmin[1500]	d:xmax[8000]	s:xtitle[M_{T} [GeV]]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	d:dxmin[1500]	d:dxmax[4000]
+#MT3100	i:xnum[130]	d:xmin[1500]	d:xmax[8000]	s:xtitle[M_{T} [GeV]]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	d:dxmin[1500]	d:dxmax[4000]
+
+SET
+hist	mc	rinv005	s:legname[r_{inv} = 0.05]	c:color[kBlack]
+	base	ext	rinv005	s:extfilename[test/actual_2500_3100_rinv005.root]	vs:exthisto_in[SVJ_mZprime2500_mDark20_rinv005_alphapeak,SVJ_mZprime3100_mDark20_rinv005_alphapeak]
+hist	mc	morph	s:legname[morph]	c:color[kBlue]
+	base	ext	rinv005	s:extfilename[test/testMorph_2500_3100_rinv005.root]	vs:exthisto_in[SVJ_mZprime2500_mDark20_rinv005_alphapeak_integral,SVJ_mZprime3100_mDark20_rinv005_alphapeak_integral]
