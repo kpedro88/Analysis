@@ -106,6 +106,8 @@ input/fast*/
 /intersectLimit.py
 /intersectLimit2D.py
 /skimDataFinal.sh
+/plotDeadCells.C
+/plotTrigStat.C
 
 # linked by setupXML.sh
 /KMVA/pugi*.*

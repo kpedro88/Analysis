@@ -1,0 +1,8 @@
+vstring:RA2BranchNames[MT_AK8,MET]
+vstring:RA2VarNames[RT,MTAK8]
+vfloat:RA2Var0Min[0.25]
+vfloat:RA2Var0Max[9999]
+vfloat:RA2Var1Min[2000]
+vfloat:RA2Var1Max[100000]
+vuint:RA2Var0Bins[0]
+vuint:RA2Var1Bins[0]

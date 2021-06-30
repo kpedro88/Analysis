@@ -1,0 +1,10 @@
+SELECTION
+base
+	METFilter	b:ecaldeadcell[0]
+	PhiSpikeVeto	s:name[PhiSpikeVeto16]	s:yearmc[MC2016]	s:yeardata[JetHT_2016]	s:spikelist[corrections/phispikes16.txt]	s:leadspikelist[corrections/leadphispikes16.txt]	b:tag[0]
+	PhiSpikeVeto	s:name[PhiSpikeVeto17]	s:yearmc[MC2017]	s:yeardata[JetHT_2017]	s:spikelist[corrections/phispikes17.txt]	s:leadspikelist[corrections/leadphispikes17.txt]	b:tag[0]
+	PhiSpikeVeto	s:name[PhiSpikeVeto18]	s:yearmc[MC2018]	s:yeardata[JetHT_2018]	s:spikelist[corrections/phispikes18.txt]	s:leadspikelist[corrections/leadphispikes18.txt]	b:tag[0]
+	DeltaPhiMinAK8	d:max[0.8]
+	RA2Bin	in:options[input/input_svj_bin_options_highCut_midMT.txt]
+	Histo
+
