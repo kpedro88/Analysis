@@ -7,11 +7,12 @@ SNAME="$4"
 NUMSAMP="$5"
 TYPE="$6"
 YEAR="$7"
+NOMINAL="$8"
 
 JDLNAME=jobExecCondorDC_${JOBNAME}.jdl
 
 echo ""
-echo ">> `/bin/date` Submitting condor job(s) in $JDLNAME with params : $1 $2 $3 $4 $5 $6 $7"
+echo ">> `/bin/date` Submitting condor job(s) in $JDLNAME with params : $1 $2 $3 $4 $5 $6 $7 $8"
 
 mkdir -p ${JOBDIR}
 
@@ -23,6 +24,7 @@ cat ./jobExecCondorDC.jdl \
 | sed -e s/NUMSAMP/"${NUMSAMP}"/ \
 | sed -e s/TYPE/"${TYPE}"/ \
 | sed -e s/YEAR/"${YEAR}"/ \
+| sed -e s/NOMINAL/"${NOMINAL}"/ \
 > ${JOBDIR}/${JDLNAME}
 
 cd ${JOBDIR}

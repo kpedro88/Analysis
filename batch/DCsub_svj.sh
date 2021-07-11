@@ -95,6 +95,6 @@ for TYPE in ${TYPES[@]}; do
 		JOBNAME=DC_svj_${SAFEVERSION}_${REGION}_${TYPE}_${YEAR}
 		echo 'MakeAllDCsyst.C+("NEWSAMPLE","'${INDIR}'",{"'${DCCONFIG}'"},{'"$EXTRAS"'},"'${REGION}'","'${SYSTS}'","'${VARS}'")' > jobs/input/macro_${JOBNAME}.txt
 
-		$DRYRUN ./DCtemp.sh ${JOBDIR} ${STORE} ${JOBNAME} ${SNAME} ${#SAMPLES[@]} ${TYPE} ${YEAR}
+		$DRYRUN ./DCtemp.sh ${JOBDIR} ${STORE} ${JOBNAME} ${SNAME} ${#SAMPLES[@]} ${TYPE} ${YEAR} ${NOMINAL}
 	done
 done

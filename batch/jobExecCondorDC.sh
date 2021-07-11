@@ -16,6 +16,7 @@ SNAME=$4
 PROCESS=$5
 TYPE=$6
 YEAR=$7
+NOMINAL=$8
 
 echo ""
 echo "parameter set:"
@@ -26,6 +27,7 @@ echo "SNAME:      $SNAME"
 echo "PROCESS:    $PROCESS"
 echo "TYPE:       $TYPE"
 echo "YEAR:       $YEAR"
+echo "NOMINAL:    $NOMINAL"
 
 # get sample
 source export${SNAME}.sh
@@ -69,7 +71,7 @@ done
 
 # postprocessing for SVJ
 if [ -n "$POSTPROCESS" ]; then
-	python processDatacardsSVJ.py -o datacard_${SAMPLE}.root -f MTAK8_*.root -R 2
+	python processDatacardsSVJ.py -o datacard_${SAMPLE}.root -f MTAK8_*.root -R 2 -m ${NOMINAL}
 	PROCEXIT=$?
 	if [[ $PROCEXIT -ne 0 ]]; then
 		rm *.root
