@@ -43,7 +43,7 @@ def makeSkimLine(short_name,full_names,file_mins,file_maxs,mothers,btype="skim",
     expline = the_name + " \\\n"
     return (line,expline)
 
-def makeSkimInput(read,write,export,btype="skim",nfiles=0,data=False,folder="",nfilesTM=1,preamble="",actual=False):
+def makeSkimInput(read,write,export,btype="skim",nfiles=0,data=False,folder="",nfilesTM=1,preamble="",actual=False,skips=[]):
     readname = read.replace(".py","").split("/")[-1]
     rfile = imp.load_source(readname,read)
     wfile = open(write,'w')
@@ -71,8 +71,14 @@ def makeSkimInput(read,write,export,btype="skim",nfiles=0,data=False,folder="",n
         short_name = rline[1][0]
         mother = []
         if len(rline[1])>1: mother = rline[1][1:]
-        
+
+        do_skip = False        
         for ind, full_name in enumerate(full_names):
+            for skip in skips:
+                if skip in full_name:
+                    do_skip = True
+                    break
+            if do_skip: break
             # account for skipped runs in prompt reco
             if actual or (data and "PromptReco" in full_name and len(folder)>0):
                 fileArrays = filter(None,os.popen("xrdfs root://cmseos.fnal.gov/ ls "+folder+" | grep \""+full_name+"\"").read().split('\n'))
@@ -102,6 +108,7 @@ def makeSkimInput(read,write,export,btype="skim",nfiles=0,data=False,folder="",n
                 file_mins.append(0)
                 file_maxs.append(nJobs-1)
                 totfiles += nJobs
+        if do_skip: continue
         
         # check for splitting into blocks
         fileListLen = sum(file_lens)
@@ -157,6 +164,7 @@ if __name__ == "__main__":
     parser.add_option("-N", "--nfilesTM", dest="nfilesTM", default=1, help="number of files per ntuple (from TreeMaker)")
     parser.add_option("-d", "--data", dest="data", default=False, action="store_true", help="denotes data file (instead of MC)")
     parser.add_option("-f", "--folder", dest="folder", default="", help="EOS directory to check for data ntuples")
+    parser.add_option("-k", "--skip", dest="skip", default="", help="skip sets matching string(s) (comma-separated list)")
     (options, args) = parser.parse_args()
 
-    makeSkimInput(options.read,options.write,options.export,"skim",int(options.nfiles),options.data,options.folder,options.nfilesTM)
+    makeSkimInput(options.read,options.write,options.export,"skim",int(options.nfiles),options.data,options.folder,options.nfilesTM,skips=options.skip.split(','))
