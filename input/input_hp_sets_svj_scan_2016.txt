@@ -1,0 +1,10 @@
+OPTION
+bool:useTreeWeight[0]
+
+SET
+hist	mc	SVJ_2100_20_0.3_peak_MC2016
+	base	mc	SVJ_2100_20_0.3_peak_MC2016	s:filename[SVJ_mZprime-2100_mDark-20_rinv-0.3_alpha-peak_MC2016_scan.root]	d:xsection[0.1384]	b:signal[1]	vi:mother[4900023]	i:nEventProc[75543]
+hist	mc	SVJ_3100_20_0.3_peak_MC2016
+	base	mc	SVJ_3100_20_0.3_peak_MC2016	s:filename[SVJ_mZprime-3100_mDark-20_rinv-0.3_alpha-peak_MC2016_scan.root]	d:xsection[0.01209]	b:signal[1]	vi:mother[4900023]	i:nEventProc[32840]
+hist	mc	SVJ_4100_20_0.3_peak_MC2016
+	base	mc	SVJ_4100_20_0.3_peak_MC2016	s:filename[SVJ_mZprime-4100_mDark-20_rinv-0.3_alpha-peak_MC2016_scan.root]	d:xsection[0.001356]	b:signal[1]	vi:mother[4900023]	i:nEventProc[36685]
