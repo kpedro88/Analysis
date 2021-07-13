@@ -1,0 +1,84 @@
+INPUT
+input/input_svj_hp_Nm1.txt
+
+OPTION
+vstring:selections[base2018,presel2018,preselMinusRT2018,preselMinusDeta2018,preselMinusMT2018,preselMinusNele2018,preselMinusNmu2018,preselMinusRTDeta2018,preselMinusRTMT2018,dijet2018,fullsel2018,fullselMinusRT2018,fullselMinusDeta2018,fullselMinusMT2018,fullselMinusNele2018,fullselMinusNmu2018,fullselMinusDphi2018,fullselMinusRTDeta2018,fullselMinusRTMT2018]
+double:luminorm[59740]
+
+SELECTION
+phispike2018
+	PhiSpikeVeto	s:name[PhiSpikeVeto18]	s:yearmc[MC2018]	s:yeardata[JetHT_2018]	s:spikelist[corrections/phispikes18.txt]	s:leadspikelist[corrections/leadphispikes18.txt]	b:tag[1]
+base2018
+	MCWeight	b:puupdcorr[1]	s:puname1[corrections/PileupHistograms_0118_63mb_pm5.root]	s:puname2[corrections/PileupHistograms_2018_69mb_pm5.root]
+	Histo
+presel2018
+	presel
+	phispike2018
+	base2018
+preselMinusRT2018
+	preselMinusRT
+	phispike2018
+	base2018
+preselMinusDeta2018
+	preselMinusDeta
+	phispike2018
+	base2018
+preselMinusMT2018
+	preselMinusMT
+	phispike2018
+	base2018
+preselMinusNele2018
+	preselMinusNele
+	phispike2018
+	base2018
+preselMinusNmu2018
+	preselMinusNmu
+	phispike2018
+	base2018
+preselMinusRTDeta2018
+	preselMinusRTDeta
+	phispike2018
+	base2018
+preselMinusRTMT2018
+	preselMinusRTMT
+	phispike2018
+	base2018
+dijet2018
+	dijet
+	base2018
+fullsel2018
+	fullsel
+	phispike2018
+	base2018
+fullselMinusRT2018
+	fullselMinusRT
+	phispike2018
+	base2018
+fullselMinusDeta2018
+	fullselMinusDeta
+	phispike2018
+	base2018
+fullselMinusMT2018
+	fullselMinusMT
+	phispike2018
+	base2018
+fullselMinusNele2018
+	fullselMinusNele
+	phispike2018
+	base2018
+fullselMinusNmu2018
+	fullselMinusNmu
+	phispike2018
+	base2018
+fullselMinusDphi2018
+	fullselMinusDphi
+	phispike2018
+	base2018
+fullselMinusRTDeta2018
+	fullselMinusRTDeta
+	phispike2018
+	base2018
+fullselMinusRTMT2018
+	fullselMinusRTMT
+	phispike2018
+	base2018

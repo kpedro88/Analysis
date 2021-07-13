@@ -1,0 +1,5 @@
+INPUT
+input/input_svj_paper.txt
+
+OPTION
+string:prelim_text[Simulation Supplementary]

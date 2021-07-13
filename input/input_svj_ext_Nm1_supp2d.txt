@@ -1,0 +1,17 @@
+INPUT
+input/input_svj_supp.txt
+
+OPTION
+string:rootfile[test/paper/Nm1/Nm1_plots]
+string:printsuffix[Run2ProductionV17_Nm1]
+string:extfilename[test/paper/Nm1/svj_Nm1.root]
+double:zmin[1e-14]
+
+INPUT
+input/input_svj_hists2d_Nm1.txt
+
+SET
+hist	mc	QCD	s:legname[QCD]	c:color[kBlue + 2]	i:panel[0]
+	base	ext	QCD_MC2016	vs:exthisto_in[deltaetaAK8_metMTratio_QCD_MC2016_preselMinusRTDeta2016,metMTratio_MTAK8_QCD_MC2016_dijet2016,met_MTAK8_QCD_MC2016_dijet2016]	vs:exthisto_out[deltaetaAK8_metMTratio,metMTratio_MTAK8,met_MTAK8]
+#	base	ext	QCD_MC2017	vs:exthisto_in[deltaetaAK8_metMTratio_QCD_MC2017_preselMinusRTDeta2017,metMTratio_MTAK8_QCD_MC2017_dijet2017,met_MTAK8_QCD_MC2017_dijet2017]	vs:exthisto_out[deltaetaAK8_metMTratio,metMTratio_MTAK8,met_MTAK8]
+#	base	ext	QCD_MC2018	vs:exthisto_in[deltaetaAK8_metMTratio_QCD_MC2018_preselMinusRTDeta2018,metMTratio_MTAK8_QCD_MC2018_dijet2018,met_MTAK8_QCD_MC2018_dijet2018]	vs:exthisto_out[deltaetaAK8_metMTratio,metMTratio_MTAK8,met_MTAK8]

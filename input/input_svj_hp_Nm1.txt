@@ -1,0 +1,103 @@
+INPUT
+input/input_global.txt
+
+OPTION
+vstring:disable_branches[*]
+bool:useTreeWeight[1]
+bool:disable_rebin[1]
+
+SELECTION
+presel
+	Dijet	i:njet[2]	b:id[1]	d:eta[2.4]	d:pt[200]
+	METMTRatio	d:min[0.15]
+	DeltaEta	d:max[1.5]
+	MTAK8	d:min[1500]
+	MuonVeto	b:loose[1]
+	ElectronVeto
+	METFilter	b:ecaldeadcell[0]
+preselMinusRT
+	Dijet	i:njet[2]	b:id[1]	d:eta[2.4]	d:pt[200]
+	DeltaEta	d:max[1.5]
+	MTAK8	d:min[1500]
+	MuonVeto	b:loose[1]
+	ElectronVeto
+	METFilter	b:ecaldeadcell[0]
+preselMinusDeta
+	Dijet	i:njet[2]	b:id[1]	d:eta[2.4]	d:pt[200]
+	METMTRatio	d:min[0.15]
+	MTAK8	d:min[1500]
+	MuonVeto	b:loose[1]
+	ElectronVeto
+	METFilter	b:ecaldeadcell[0]
+preselMinusMT
+	Dijet	i:njet[2]	b:id[1]	d:eta[2.4]	d:pt[200]
+	METMTRatio	d:min[0.15]
+	DeltaEta	d:max[1.5]
+	MuonVeto	b:loose[1]
+	ElectronVeto
+	METFilter	b:ecaldeadcell[0]
+preselMinusNele
+	Dijet	i:njet[2]	b:id[1]	d:eta[2.4]	d:pt[200]
+	METMTRatio	d:min[0.15]
+	DeltaEta	d:max[1.5]
+	MTAK8	d:min[1500]
+	MuonVeto	b:loose[1]
+	METFilter	b:ecaldeadcell[0]
+preselMinusNmu
+	Dijet	i:njet[2]	b:id[1]	d:eta[2.4]	d:pt[200]
+	METMTRatio	d:min[0.15]
+	DeltaEta	d:max[1.5]
+	MTAK8	d:min[1500]
+	ElectronVeto
+	METFilter	b:ecaldeadcell[0]
+preselMinusRTDeta
+	Dijet	i:njet[2]	b:id[1]	d:eta[2.4]	d:pt[200]
+	MTAK8	d:min[1500]
+	MuonVeto	b:loose[1]
+	ElectronVeto
+	METFilter	b:ecaldeadcell[0]
+preselMinusRTMT
+	Dijet	i:njet[2]	b:id[1]	d:eta[2.4]	d:pt[200]
+	DeltaEta	d:max[1.5]
+	MuonVeto	b:loose[1]
+	ElectronVeto
+	METFilter	b:ecaldeadcell[0]
+dijet
+	Dijet	i:njet[2]	b:id[1]	d:eta[2.4]	d:pt[200]
+postsel
+	GapJetVeto	d:etamin[-1]	d:etamax[-1]	b:abseta[1]	d:phomin[0.7]	d:phomax[-1]	d:ptmin[1000]	u:jindex[0]	b:tag[0]
+	DeltaPhiMinAK8	d:max[0.8]
+postselMinusDphi
+	GapJetVeto	d:etamin[-1]	d:etamax[-1]	b:abseta[1]	d:phomin[0.7]	d:phomax[-1]	d:ptmin[1000]	u:jindex[0]	b:tag[0]
+fullsel
+	presel
+	postsel
+fullselMinusRT
+	preselMinusRT
+	postsel
+fullselMinusDeta
+	preselMinusDeta
+	postsel
+fullselMinusMT
+	preselMinusMT
+	postsel
+fullselMinusNele
+	preselMinusNele
+	postsel
+fullselMinusNmu
+	preselMinusNmu
+	postsel
+fullselMinusDphi
+	presel
+	postselMinusDphi
+fullselMinusRTDeta
+	preselMinusRTDeta
+	postsel
+fullselMinusRTMT
+	preselMinusRTMT
+	postsel
+
+INPUT
+input/input_svj_hists_Nm1.txt
+input/input_svj_hists2_Nm1.txt
+input/input_svj_hists2d_Nm1.txt
