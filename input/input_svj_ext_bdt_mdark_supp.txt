@@ -1,0 +1,34 @@
+INPUT
+input/input_svj_supp.txt
+
+OPTION
+vstring{|}:extra_text[signal (^{}m_{Z'} = 3000 GeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
+vint:extra_text_panels[1,1]
+string:extfilename[test/paper/bdt/svj_dijetmtdetahadloosemf_bothjet_E1_Z30.root]
+string:rootfile[test/paper/bdt/bdt_mdark_plots]
+string:printsuffix[dijetmtdetahadloosemf_bdt_mdark_flatptZ30]
+
+HISTO
+bothjetAK8tau21	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#tau_{21}(^{}J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+bothjetAK8tau32	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[#tau_{32}(^{}J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+bothjetAK8ecfN2b1	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[N_{2}^{(1)}(^{}J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+bothjetAK8ecfN3b1	i:xnum[100]	d:xmin[0]	d:xmax[4.0]	s:xtitle[N_{3}^{(1)}(^{}J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+
+SET
+hist	mc	SVJ_3000_1_0.3_peak	s:legname[m_{dark} = 1 GeV]	c:color[kRed]	i:linestyle[7]	i:panel[1]
+	base	ext	SVJ_3000_1_0.3_peak_MC2017	b:ext_auto[1]
+hist	mc	SVJ_3000_20_0.3_peak	s:legname[m_{dark} = 20 GeV]	c:color[kCyan + 2]	i:linestyle[7]	i:panel[1]
+	base	ext	SVJ_3000_20_0.3_peak_MC2017	b:ext_auto[1]
+hist	mc	SVJ_3000_50_0.3_peak	s:legname[m_{dark} = 50 GeV]	c:color[kBlue]	i:linestyle[7]	i:panel[1]
+	base	ext	SVJ_3000_50_0.3_peak_MC2017	b:ext_auto[1]
+hist	mc	SVJ_3000_100_0.3_peak	s:legname[m_{dark} = 100 GeV]	c:color[kMagenta]	i:linestyle[7]	i:panel[1]
+	base	ext	SVJ_3000_100_0.3_peak_MC2017	b:ext_auto[1]
+hist	mc	QCD	s:legname[QCD]	c:color[kBlue + 2]	i:panel[0]
+	base	ext	QCD_MC2017	b:ext_auto[1]
+hist	mc	ttbar	s:legname[t#bar{t}]	c:color[kOrange - 2]	i:panel[0]
+	base	ext	ttbar_MC2017	b:ext_auto[1]
+hist	mc	wjets	s:legname[W(l#nu)+jets]	c:color[kOrange + 1]	i:panel[0]
+	base	ext	wjets_MC2017	b:ext_auto[1]
+hist	mc	zinv	s:legname[Z(#nu#nu)+jets]	c:color[kViolet + 1]	i:panel[0]
+	base	ext	zinv_MC2017	b:ext_auto[1]
+
