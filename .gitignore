@@ -108,6 +108,7 @@ input/fast*/
 /skimDataFinal.sh
 /plotDeadCells.C
 /plotTrigStat.C
+/make_hp_sets_unskimmed.py
 
 # linked by setupXML.sh
 /KMVA/pugi*.*
