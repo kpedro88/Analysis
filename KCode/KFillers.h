@@ -252,6 +252,22 @@ class KFiller_nmuons : public KFiller {
 };
 REGISTER_FILLER(nmuons);
 
+//# loose muons
+class KFiller_nmuonsloose : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void ListBranches() { branches = {"Muons_miniIso"}; }
+		virtual void Fill(KValue& value, double w) {
+			//loosen iso criteria (loose ID is ntuple baseline)
+			unsigned nmuons = 0;
+			for(auto m : *looper->Muons_MiniIso){
+				if(m < 0.4) ++nmuons;
+			}
+			value.Fill(nmuons,w);
+		}
+};
+REGISTER_FILLER(nmuonsloose);
+
 //# iso tracks
 class KFiller_nisotrack : public KFiller {
 	public:
