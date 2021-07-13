@@ -165,11 +165,11 @@ class KLegend{
 			}
 			
 			double ymin_ = 1;
-			if(globalOpt->Get("ymin",ymin_)) SetManualYmin(ymin_);
+			if(globalOpt->Get("ymin",ymin_) and !globalOpt->Get("disable_ymin",false)) SetManualYmin(ymin_);
 			globalOpt->Get("ymin_min",ymin_min);
 			globalOpt->Get("ymin_max",ymin_max);
 			double ymax_ = 1;
-			if(globalOpt->Get("ymax",ymax_)) SetManualYmax(ymax_);
+			if(globalOpt->Get("ymax",ymax_) and !globalOpt->Get("disable_ymax",false)) SetManualYmax(ymax_);
 			qdefault = 0; globalOpt->Get("qdefault",qdefault);
 		}
 		//destructor
