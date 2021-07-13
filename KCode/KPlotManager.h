@@ -599,11 +599,13 @@ class KPlotManager : public KManager {
 			}
 			
 			//draw each plot - normalization, legend, ratio
-			int rebin = 0; globalOpt->Get("rebin",rebin); //todo: allow per-histo rebin option
+			int rebin = 0; globalOpt->Get("rebin",rebin);
+			bool disable_rebin = globalOpt->Get("disable_rebin",false);
 			bool printyield = globalOpt->Get("printyield",false);
 			bool unitnorm = globalOpt->Get("unitnorm",false);
 			for(auto& p : MyPlots.GetTable()){
 				//get drawing objects from KPlot
+				int rebin_plot = rebin; p.second->GetLocalOpt()->Get("rebin",rebin_plot);
 				TCanvas* can = p.second->GetCanvas();
 				TPad* pad1 = p.second->GetPad1();
 				
@@ -643,7 +645,7 @@ class KPlotManager : public KManager {
 						MySets[s]->Normalize(yieldnormval);
 					}
 					if(printyield) MySets[s]->PrintYield();
-					if(rebin) MySets[s]->Rebin(rebin);
+					if(rebin_plot and !disable_rebin) MySets[s]->Rebin(rebin_plot);
 					if(unitnorm) MySets[s]->Normalize(1,true);
 					if(xbindivide or ybindivide) MySets[s]->BinDivide(xbindivide,ybindivide);
 					MySets[s]->DoFits();
@@ -729,10 +731,13 @@ class KPlotManager : public KManager {
 				for(unsigned s = 0; s < MySets.size(); s++){
 					KBase* theSet = MySets[s];
 					KPlot* ptmp = p2map->Get(theSet->GetName());
+					int rebin_plot = rebin; ptmp->GetLocalOpt()->Get("rebin",rebin_plot);
+					int rebinx_plot = rebin_plot; ptmp->GetLocalOpt()->Get("rebinx",rebinx_plot);
+					int rebiny_plot = rebin_plot; ptmp->GetLocalOpt()->Get("rebiny",rebiny_plot);
 					
 					if(yield>0 and theSet != yieldref and theSet->GetLocalOpt()->Get("yieldnorm",true)) theSet->Normalize(yield);
 					if(printyield) theSet->PrintYield();
-					if(rebin) theSet->Rebin(rebin);
+					if(!disable_rebin and (rebinx_plot or rebiny_plot)) theSet->Rebin(rebinx_plot,rebiny_plot);
 					if(unitnorm) theSet->Normalize(1,true);
 					bool xbindivide = ptmp->GetLocalOpt()->Get("xbindivide",false);
 					bool ybindivide = ptmp->GetLocalOpt()->Get("ybindivide",false);
