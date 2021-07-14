@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Tue Sep 10 14:19:13 2019 by ROOT version 6.06/01
+// Wed Jul 14 16:04:50 2021 by ROOT version 6.06/01
 // from TTree PreSelection/PreSelection
-// from TTree tree/all observables, dijetmtdetahadloosemf
+// from TTree tree/all observables, dijetmtdetahadloose
 // from TTree tree/all observables, signal
 // found on file: root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV17/Autumn18.TTJets_TuneCP5_13TeV-madgraphMLM-pythia8_0_RA2AnalysisTree.root
 //////////////////////////////////////////////////////////
@@ -488,10 +488,12 @@ public :
    Bool_t          HEMVetoFilter;
    Bool_t          HEMOptVetoFilter;
    Bool_t          HEMDPhiVetoFilter;
-   vector<double>  *JetsAK8_maxBvsAll;
+   Bool_t          PhiSpikeVetoFilter;
    UInt_t          RA2bin;
-   vector<double>  *JetsAK8_bdtSVJtag;
+   Bool_t          GapJetVetoFilter;
    vector<unsigned int> *RA2bins;
+   vector<double>  *JetsAK8_maxBvsAll;
+   vector<double>  *JetsAK8_bdtSVJtag;
    Double_t        puWeightNew;
    Double_t        puSysUpNew;
    Double_t        puSysDownNew;
@@ -960,10 +962,12 @@ public :
    TBranch        *b_HEMVetoFilter;   //!
    TBranch        *b_HEMOptVetoFilter;   //!
    TBranch        *b_HEMDPhiVetoFilter;   //!
-   TBranch        *b_JetsAK8_maxBvsAll;   //!
+   TBranch        *b_PhiSpikeVetoFilter;   //!
    TBranch        *b_RA2binBranch;   //!
-   TBranch        *b_JetsAK8_bdtSVJtag;   //!
+   TBranch        *b_GapJetVetoFilter;   //!
    TBranch        *b_RA2bins;   //!
+   TBranch        *b_JetsAK8_maxBvsAll;   //!
+   TBranch        *b_JetsAK8_bdtSVJtag;   //!
    TBranch        *b_puWeightNew;   //!
    TBranch        *b_puSysUpNew;   //!
    TBranch        *b_puSysDownNew;   //!
@@ -1775,10 +1779,12 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("HEMVetoFilter", &HEMVetoFilter, &b_HEMVetoFilter);
    fChain->SetBranchAddress("HEMOptVetoFilter", &HEMOptVetoFilter, &b_HEMOptVetoFilter);
    fChain->SetBranchAddress("HEMDPhiVetoFilter", &HEMDPhiVetoFilter, &b_HEMDPhiVetoFilter);
-   fChain->SetBranchAddress("JetsAK8_maxBvsAll", &JetsAK8_maxBvsAll, &b_JetsAK8_maxBvsAll);
+   fChain->SetBranchAddress("PhiSpikeVetoFilter", &PhiSpikeVetoFilter, &b_PhiSpikeVetoFilter);
    fChain->SetBranchAddress("RA2bin", &RA2bin, &b_RA2binBranch);
-   fChain->SetBranchAddress("JetsAK8_bdtSVJtag", &JetsAK8_bdtSVJtag, &b_JetsAK8_bdtSVJtag);
+   fChain->SetBranchAddress("GapJetVetoFilter", &GapJetVetoFilter, &b_GapJetVetoFilter);
    fChain->SetBranchAddress("RA2bins", &RA2bins, &b_RA2bins);
+   fChain->SetBranchAddress("JetsAK8_maxBvsAll", &JetsAK8_maxBvsAll, &b_JetsAK8_maxBvsAll);
+   fChain->SetBranchAddress("JetsAK8_bdtSVJtag", &JetsAK8_bdtSVJtag, &b_JetsAK8_bdtSVJtag);
    fChain->SetBranchAddress("puWeightNew", &puWeightNew, &b_puWeightNew);
    fChain->SetBranchAddress("puSysUpNew", &puSysUpNew, &b_puSysUpNew);
    fChain->SetBranchAddress("puSysDownNew", &puSysDownNew, &b_puSysDownNew);

@@ -2484,6 +2484,26 @@ class KGapJetVetoSelector : public KFilterSelector {
 REGISTER_SELECTOR(GapJetVeto);
 
 //---------------------------------------------------------------
+//applies existing phi spike filter branch
+class KPhiSpikeFilterSelector : public KSelector {
+	public:
+		//constructor
+		KPhiSpikeFilterSelector() : KSelector() { }
+		KPhiSpikeFilterSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {}
+		virtual void ListBranches(){
+			branches.push_back("PhiSpikeVetoFilter");
+		}
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			return looper->PhiSpikeVetoFilter;
+		}
+		
+		//member variables
+};
+REGISTER_SELECTOR(PhiSpikeFilter);
+
+//---------------------------------------------------------------
 //calculates and applies extra filters (all at once)
 class KEventCleaningSelector : public KSelector {
 	public:
