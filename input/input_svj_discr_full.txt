@@ -22,6 +22,7 @@ vstring:selections[plot]
 SELECTION
 plot
 	MCWeight
+	HV
 	Histo
 
 HISTO

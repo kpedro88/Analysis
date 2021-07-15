@@ -1746,6 +1746,10 @@ double KHisto::GetWeightPerJet(unsigned index){
 		w *= (JetPtFilter->filter==1 and JetPtFilter->JetsAK8_passCut[index]) or
 			 (JetPtFilter->filter==-1 and !JetPtFilter->JetsAK8_passCut[index]);
 	}
+	//requiring truth-level HV tag for a jet
+	if(HVFilter){
+		w *= HVFilter->isHV[index];
+	}
 	return w;
 }
 

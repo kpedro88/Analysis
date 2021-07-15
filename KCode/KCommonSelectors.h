@@ -353,6 +353,36 @@ class KNSVJSelector : public KSelector {
 REGISTER_SELECTOR(NSVJ);
 
 //----------------------------------------------------
+//truth-level HV tag
+class KHVSelector : public KSelector {
+	public:
+		//constructor
+		KHVSelector() : KSelector() { }
+		KHVSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
+			canfail = false;
+		}
+		virtual void CheckBase(){
+			apply = base->GetLocalOpt()->Get("isHV",false);
+		}
+		virtual void ListBranches(){
+			branches.push_back("JetsAK8_isHV");
+		}
+		
+		//this selector doesn't add anything to tree
+		
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			isHV = apply ? *(looper->JetsAK8_isHV) : vector<bool>(looper->JetsAK8_isHV->size(),true);
+			return true;
+		}
+		
+		//member variables
+		bool apply;
+		vector<bool> isHV;
+};
+REGISTER_SELECTOR(HV);
+
+//----------------------------------------------------
 //selects events based on HLT line
 class KHLTSelector : public KSelector {
 	public:

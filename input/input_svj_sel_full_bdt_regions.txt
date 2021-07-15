@@ -5,6 +5,7 @@ string+:printsuffix[_fullbdtregions]
 SELECTION
 plot
 	MCWeight
+	HV
 	Histo
 Bfull
 	METMTRatio	d:min[0.15]	d:max[0.25]

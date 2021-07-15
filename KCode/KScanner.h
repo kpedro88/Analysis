@@ -238,5 +238,6 @@ class KMCWeightSelector : public KSelector {};
 class KSVJFilterSelector : public KSelector {};
 class KLepFracFilterSelector : public KSelector {};
 class KJetPtFilterSelector : public KSelector {};
+class KHVSelector : public KSelector {};
 
 #endif
