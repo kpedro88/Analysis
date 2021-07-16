@@ -13,11 +13,11 @@ QCD_Pt_2400to3200_MC2018 \
 QCD_Pt_3200toInf_MC2018 \
 TTJets_MC2018 \
 TTJets_DiLept_MC2018 \
-#TTJets_DiLept_genMET150_MC2018 \
+TTJets_DiLept_genMET80_MC2018 \
 TTJets_SingleLeptFromT_MC2018 \
-#TTJets_SingleLeptFromT_genMET150_MC2018 \
+TTJets_SingleLeptFromT_genMET80_MC2018 \
 TTJets_SingleLeptFromTbar_MC2018 \
-#TTJets_SingleLeptFromTbar_genMET150_MC2018 \
+TTJets_SingleLeptFromTbar_genMET80_MC2018 \
 TTJets_HT600to800_MC2018 \
 TTJets_HT800to1200_MC2018 \
 TTJets_HT1200to2500_MC2018 \
@@ -33,9 +33,4 @@ ZJetsToNuNu_HT600to800_MC2018 \
 ZJetsToNuNu_HT800to1200_MC2018 \
 ZJetsToNuNu_HT1200to2500_MC2018 \
 ZJetsToNuNu_HT2500toInf_MC2018 \
-ST_s-channel_MC2018 \
-#ST_t-channel_antitop_MC2018 \
-#ST_t-channel_top_MC2018 \
-ST_tW_antitop_MC2018 \
-ST_tW_top_MC2018 \
 )

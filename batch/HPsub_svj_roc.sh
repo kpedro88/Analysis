@@ -3,7 +3,7 @@
 source exportProd.sh
 
 JOBDIR=jobs
-SEL=dijetmtdetahadloosemf
+SEL=dijetmtdetahadloose
 QTY=event
 CHECKARGS=""
 TYPES=()
@@ -58,8 +58,10 @@ if [ -n "$MOREINPUTS" ]; then
 fi
 if [[ $FLATTEN -eq 1 ]]; then
 	INPUTS="$INPUTS"',"input/input_svj_flatten_bothjet.txt"'
-elif [[ $FLATTEN -eq 1 ]]; then
+elif [[ $FLATTEN -eq 2 ]]; then
 	INPUTS="$INPUTS"',"input/input_svj_flatten_bothjet_Z30.txt"'
+else
+	INPUTS="$INPUTS"',"input/input_svj_hist_phispike.txt"'
 fi
 
 for TYPE in ${TYPES[@]}; do
@@ -69,6 +71,7 @@ for TYPE in ${TYPES[@]}; do
 		# skip nonexistent ones
 		if [[ $? -ne 0 ]]; then continue; fi
 
+		INPUTSY="$INPUTS"',"input/input_svj_luminorm_'${YEAR}'.txt"'
 		JOBNAME=${OUTDIR}'_svj_'${TYPE}${YEAR}'_'${SEL}'_'${QTY}
 		SLIST=${#SAMPLES[@]}
 		for ((i=0; i < ${#SAMPLES[@]}; i++)); do
@@ -78,7 +81,7 @@ for TYPE in ${TYPES[@]}; do
 			if [ -n "$EXTRA" ]; then
 				OUTPUT="$OUTPUT","$EXTRA"
 			fi
-			echo 'KPlotDriver.C+("'"$INDIR"'",{'"$INPUTS"'},{'"$OUTPUT"'})' > jobs/input/macro_${SJOBNAME}.txt
+			echo 'KPlotDriver.C+("'"$INDIR"'",{'"$INPUTSY"'},{'"$OUTPUT"'})' > jobs/input/macro_${SJOBNAME}.txt
 		done
 
 		$DRYRUN ./HPtemp.sh ${JOBDIR} ${INDIR} ${STORE} ${JOBNAME} "${SLIST}"

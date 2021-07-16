@@ -33,9 +33,4 @@ ZJetsToNuNu_HT600to800_MC2016 \
 ZJetsToNuNu_HT800to1200_MC2016 \
 ZJetsToNuNu_HT1200to2500_MC2016 \
 ZJetsToNuNu_HT2500toInf_MC2016 \
-ST_s-channel_MC2016 \
-ST_t-channel_antitop_MC2016 \
-ST_t-channel_top_MC2016 \
-ST_tW_antitop_MC2016 \
-ST_tW_top_MC2016 \
 )

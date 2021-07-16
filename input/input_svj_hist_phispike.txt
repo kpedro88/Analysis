@@ -1,0 +1,9 @@
+OPTION
+vstring:selections[simf]
+
+SELECTION
+simf
+	METFilter	b:ecaldeadcell[0]
+	PhiSpikeFilter
+	HV
+	sim

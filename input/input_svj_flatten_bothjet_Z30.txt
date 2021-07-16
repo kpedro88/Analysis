@@ -1,14 +1,17 @@
 OPTION
 vstring:selections[simf]
-string+:rocsuffix[_flatpt]
-string+:printsuffix[_flatpt]
+string+:rocsuffix[_flatptZ30]
+string+:printsuffix[_flatptZ30]
 
 SELECTION
 simw
-	MCWeight	b:flatten[1]	s:flatname[corrections/svj_dijetmtdetahadloosemf_jetAK8.root]	s:flatqty[bothjetAK8pt]	s:flatnumer[SVJ_3000_20_0.3_peak_MC2017]	b:pucorr[1]	b:putree[1]
+	MCWeight	b:flatten[1]	s:flatname[corrections/histJetpt_svj.root]	s:flatqty[bothjetAK8pt]	s:flatnumer[SVJ_3000_20_0.3_peak_MC2017]	b:pucorr[1]	b:putree[1]
 simf
+	METFilter	b:ecaldeadcell[0]
+	PhiSpikeFilter
 	simw
 	JetMatch
+	HV
 	Histo
 simb
 	simw

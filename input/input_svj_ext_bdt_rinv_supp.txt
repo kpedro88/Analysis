@@ -2,11 +2,11 @@ INPUT
 input/input_svj_supp.txt
 
 OPTION
-vstring{|}:extra_text[signal (^{}m_{Z'} = 3000 GeV,|^{}m_{dark} = 20 GeV, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
+vstring{|}:extra_text[signal (^{}m_{Z'} = 3100 GeV,|^{}m_{dark} = 20 GeV, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
 vint:extra_text_panels[1,1]
-string:extfilename[test/paper/bdt/svj_dijetmtdetahadloosemf_bothjet_E1_Z30.root]
+string:extfilename[test/paper/bdt/supp/histBDT_svj.root]
 string:rootfile[test/paper/bdt/bdt_rinv_plots]
-string:printsuffix[dijetmtdetahadloosemf_bdt_rinv_flatptZ30]
+string:printsuffix[dijetmtdetahadloosespike_bdt_rinv_flatptZ30]
 
 HISTO
 bothjetAK8girth	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[girth(^{}J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	d:dxmin[0]	d:dxmax[0.6]
@@ -15,20 +15,20 @@ bothjetAK8axisminor	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[#sigma_{minor}(^{
 bothjetAK8deltaphi	i:xnum[100]	d:xmin[0]	d:xmax[3.15]	s:xtitle[#Delta#phi(^{}J_{1,2},^{}#slash{E}_{T})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
 
 SET
-hist	mc	SVJ_3000_20_0.1_peak	s:legname[r_{inv} = 0.1]	c:color[kRed]	i:linestyle[7]	i:panel[1]
-	base	ext	SVJ_3000_20_0.1_peak_MC2017	b:ext_auto[1]
-hist	mc	SVJ_3000_20_0.3_peak	s:legname[r_{inv} = 0.3]	c:color[kCyan + 2]	i:linestyle[7]	i:panel[1]
-	base	ext	SVJ_3000_20_0.3_peak_MC2017	b:ext_auto[1]
-hist	mc	SVJ_3000_20_0.5_peak	s:legname[r_{inv} = 0.5]	c:color[kBlue]	i:linestyle[7]	i:panel[1]
-	base	ext	SVJ_3000_20_0.5_peak_MC2017	b:ext_auto[1]
-hist	mc	SVJ_3000_20_0.7_peak	s:legname[r_{inv} = 0.7]	c:color[kMagenta]	i:linestyle[7]	i:panel[1]
-	base	ext	SVJ_3000_20_0.7_peak_MC2017	b:ext_auto[1]
+hist	mc	SVJ_3100_20_0.1_peak	s:legname[r_{inv} = 0.1]	c:color[kRed]	i:linestyle[7]	i:panel[1]
+	base	ext	SVJ_3100_20_0.1_peak	b:ext_auto[1]
+hist	mc	SVJ_3100_20_0.3_peak	s:legname[r_{inv} = 0.3]	c:color[kCyan + 2]	i:linestyle[7]	i:panel[1]
+	base	ext	SVJ_3100_20_0.3_peak	b:ext_auto[1]
+hist	mc	SVJ_3100_20_0.5_peak	s:legname[r_{inv} = 0.5]	c:color[kBlue]	i:linestyle[7]	i:panel[1]
+	base	ext	SVJ_3100_20_0.5_peak	b:ext_auto[1]
+hist	mc	SVJ_3100_20_0.7_peak	s:legname[r_{inv} = 0.7]	c:color[kMagenta]	i:linestyle[7]	i:panel[1]
+	base	ext	SVJ_3100_20_0.7_peak	b:ext_auto[1]
 hist	mc	QCD	s:legname[QCD]	c:color[kBlue + 2]	i:panel[0]
-	base	ext	QCD_MC2017	b:ext_auto[1]
+	base	ext	QCD	b:ext_auto[1]
 hist	mc	ttbar	s:legname[t#bar{t}]	c:color[kOrange - 2]	i:panel[0]
-	base	ext	ttbar_MC2017	b:ext_auto[1]
+	base	ext	ttbar	b:ext_auto[1]
 hist	mc	wjets	s:legname[W(l#nu)+jets]	c:color[kOrange + 1]	i:panel[0]
-	base	ext	wjets_MC2017	b:ext_auto[1]
+	base	ext	wjets	b:ext_auto[1]
 hist	mc	zinv	s:legname[Z(#nu#nu)+jets]	c:color[kViolet + 1]	i:panel[0]
-	base	ext	zinv_MC2017	b:ext_auto[1]
+	base	ext	zinv	b:ext_auto[1]
 

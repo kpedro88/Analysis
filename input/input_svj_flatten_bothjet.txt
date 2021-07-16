@@ -5,10 +5,13 @@ string+:printsuffix[_flatpt]
 
 SELECTION
 simw
-	MCWeight	b:flatten[1]	s:flatname[corrections/svj_dijetmtdetahadloosemf_jetAK8.root]	s:flatqty[bothjetAK8pt]	b:pucorr[1]	b:putree[1]
+	MCWeight	b:flatten[1]	s:flatname[corrections/svj_dijetmtdetahadloosespike_jetAK8.root]	s:flatqty[bothjetAK8pt]	b:pucorr[1]	b:putree[1]
 simf
+	METFilter	b:ecaldeadcell[0]
+	PhiSpikeFilter
 	simw
 	JetMatch
+	HV
 	Histo
 simb
 	simw
