@@ -11,8 +11,10 @@ def fprint(msg):
     sys.stdout.flush()
 
 # names = prefix_sample_year_syst
-def get_sample(n,prefix):
-    return '_'.join(n.replace(prefix+"_","").split('_')[:-2])
+def get_sample(n,prefix,keep_year=False):
+    drop = -2
+    if keep_year: drop = -1
+    return '_'.join(n.replace(prefix+"_","").split('_')[:drop])
 def get_year(n):
     return n.split('_')[-2].replace("MC","")
 def get_syst(n):
@@ -31,9 +33,10 @@ def DtoF(hD):
 def convertName(outname,dirname):
     # convert signal name: SVJ_X_Y_Z_W -> SVJ_mZprimeX_mDarkY_rinvZ_alphaW
     namesplit = outname.split('_')
-    newname = '_'.join([namesplit[0],"mZprime"+namesplit[1],"mDark"+namesplit[2],"rinv"+namesplit[3].replace(".",""),"alpha"+namesplit[4]])
+    kept_year = len(namesplit)>5 and namesplit[5].startswith("MC")
+    newname = '_'.join([namesplit[0],"mZprime"+namesplit[1],"mDark"+namesplit[2],"rinv"+namesplit[3].replace(".",""),"alpha"+namesplit[4]]+[namesplit[5]] if kept_year else [])
     newname2 = ""
-    if len(namesplit)>5:
+    if len(namesplit)>(5+1 if kept_year else 0):
         newname2 = "_"
         # statistics formatting: mcstat_binNUp_2016 -> mcstat_dirname_sample_MC2016binNUp
         if "mcstat" in namesplit:
@@ -172,6 +175,7 @@ if __name__=="__main__":
     parser.add_argument("-r", "--rebin", dest="rebin", type=shlex.split, help="rebin options for finalBinning")
     parser.add_argument("-R", "--rebinSimple", dest="rebinSimple", type=int, default=0, help="simple rebin")
     parser.add_argument("-s", "--no-stat", dest="no_stat", default=False, action="store_true", help="disable signal stat histos")
+    parser.add_argument("-k", "--keep-year", dest="keep_year", default=False, action="store_true", help="keep year in sample names")
     args = parser.parse_args()
 
     # bins
@@ -212,13 +216,13 @@ if __name__=="__main__":
         f.Close()
 
     # get list of unique sample names
-    unique_names = usort([get_sample(n,args.prefix) for n in names_hists])
+    unique_names = usort([get_sample(n,args.prefix,args.keep_year) for n in names_hists])
 
     for name in unique_names:
         tmp = Sample(name,names_hists,args.nominal)
-        if name in args.data:
+        if name in args.data or args.data[0]=="all":
             samples["data"].append(tmp)
-        elif name in args.bkgs:
+        elif name in args.bkgs or args.bkgs[0]=="all":
             samples["bkg"].append(tmp)
         else:
             samples["sig"].append(tmp)

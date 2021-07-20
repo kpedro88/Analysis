@@ -1,0 +1,5 @@
+INPUT
+input/input_selection_svj_syst_2018PRE.txt
+
+OPTION
+double:luminorm[59740]

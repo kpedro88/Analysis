@@ -187,6 +187,11 @@ class KCutflow {
 
 		//helper
 		static bool IsWeighted(TH1* h) { return h->GetSumw2()->GetSum()!=h->GetSumOfWeights(); }
+		//easier than static member
+		static const string& nEventProc() {
+			static string s("nEventProc");
+			return s;
+		}
 
 	protected:
 		//members
@@ -195,11 +200,6 @@ class KCutflow {
 		//sorted set (for search) and vector of pointers (for ordering)
 		set<KCutflowItem> itemMap;
 		vector<const KCutflowItem*> itemList;
-		//easier than static member
-		static const string& nEventProc() {
-			static string s("nEventProc");
-			return s;
-		}
 };
 
 KCutflowItem::KCutflowItem(string name_, long long raw_, double rawE_, KCutflow* map, bool weighted, string baseName_, string parentName_) :
@@ -220,9 +220,9 @@ KCutflowItem::KCutflowItem(string name_, long long raw_, double rawE_, KCutflow*
 	double nentriesE = base ? base->rawE : 1;
 	double prevE = parent ? parent->rawE : 1;
 	abs = ((double)raw/(double)nentries)*100;
-	absE = weighted ? KMath::EffErrorWeighted(raw,rawE,nentries,nentriesE) : KMath::EffError(raw,nentries)*100;
+	absE = weighted ? KMath::EffErrorWeighted(raw,rawE,nentries,nentriesE)*100 : KMath::EffError(raw,nentries)*100;
 	rel = ((double)raw/(double)prev)*100;
-	relE = weighted ? KMath::EffErrorWeighted(raw,rawE,prev,prevE) : KMath::EffError(raw,prev)*100;
+	relE = weighted ? KMath::EffErrorWeighted(raw,rawE,prev,prevE)*100 : KMath::EffError(raw,prev)*100;
 }
 
 #endif

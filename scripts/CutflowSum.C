@@ -10,24 +10,41 @@
 #include <exception>
 #include <iostream>
 #include <iomanip>
+#include <cmath>
 
 using namespace std;
 
 struct Sample {
-	Sample(string name_, double xsec_, double lumi_) : name(name_), xsec(xsec_), lumi(lumi_) {}
-	string name;
+	Sample(string name_, double xsec_, double lumi_, string name2_="") : name(name_), name2(!name2_.empty() ? name2_ : name), xsec(xsec_), lumi(lumi_) {}
+	string name, name2;
 	double xsec, lumi;
 };
 
-void CutflowSum(string dir="", vector<Sample> samples={}, bool printerrors=false, int prcsn=2, bool skipzeros=false){
+struct SignalRegion {
+	SignalRegion(string name_) : name(name_), raw(0), rawE2(0) {}
+	string name;
+	double raw, rawE2;
+};
+
+void CutflowSum(string dir="", vector<Sample> samples={}, bool printerrors=false, int prcsn=2, bool skipzeros=false, string srname="", vector<string> regions={}){
 	if(dir.empty()){
 		cout << "Recompiled CutflowSum, exiting." << endl;
 		return;
 	}
-	
+
+	TFile* sfile = NULL;
+	vector<SignalRegion> syields;
+	//include signal regions: for SVJ
+	if(!srname.empty() and !regions.empty()){
+		sfile = KOpen(srname);
+		for(const auto& region: regions){
+			syields.emplace_back(region);
+		}
+	}
+
 	TH1F* nEventHist = NULL;
 	TH1F* cutflowRaw = NULL;
-	
+
 	for(const auto& sample : samples){
 		TFile* file = KOpen(dir+"/tree_"+sample.name+".root");
 		
@@ -55,9 +72,24 @@ void CutflowSum(string dir="", vector<Sample> samples={}, bool printerrors=false
 			nEventHist->Add(nEventTmp);
 			cutflowRaw->Add(cutflowTmp);
 		}
+
+		for(auto& syield: syields){
+			auto dir = KGet<TDirectory>(sfile,syield.name);
+			auto htmp = KGet<TH1F>(dir,sample.name2);
+			double integral = htmp->Integral(-1,-1);
+			syield.raw += integral*weight;
+			syield.rawE2 += pow((integral>0 ? KMath::PoissonErrorUp(integral) : 0.)*weight,2);
+		}
 	}
-	
+
 	cout << fixed << setprecision(prcsn);
 	KCutflow k("print",cutflowRaw,nEventHist,true);
+
+	//add signal regions
+	const auto& parent = k.GetList().back()->GetName();
+	for(const auto& syield: syields){
+		k.AddItem(syield.name, syield.raw, sqrt(syield.rawE2), KCutflow::nEventProc(), parent);
+	}
+
 	k.PrintEfficiency(printerrors);
 }

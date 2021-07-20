@@ -1,6 +1,7 @@
-vstring:selmapSVJ[SVJ_MC2018POST,SVJ_MC2018PRE,SVJ_MC2017,SVJ_MC2016]
+vstring:selmapSVJ[SVJ_MC2018POST,SVJ_MC2018PRE,SVJ_MC2018,SVJ_MC2017,SVJ_MC2016]
 vstring:SVJ_MC2018POST[MC2018POST,input/input_selection_svj_syst_2018POST.txt,input/input_sets_DC_svj_scan_2018POST.txt]
 vstring:SVJ_MC2018PRE[MC2018PRE,input/input_selection_svj_syst_2018PRE.txt,input/input_sets_DC_svj_scan_2018PRE.txt]
+vstring:SVJ_MC2018[MC2018,input/input_selection_svj_syst_2018.txt,input/input_sets_DC_svj_scan_2018.txt]
 vstring:SVJ_MC2017[MC2017,input/input_selection_svj_syst_2017.txt,input/input_sets_DC_svj_scan_2017.txt]
 vstring:SVJ_MC2016[MC2016,input/input_selection_svj_syst_2016.txt,input/input_sets_DC_svj_scan_2016.txt]
 vstring:selmapSVJdata[SVJdata_2018POST,SVJdata_2018PRE,SVJdata_2017,SVJdata_2016]
