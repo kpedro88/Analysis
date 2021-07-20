@@ -574,6 +574,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		plotOpt->Set<bool>("checkerr",false);
 		plotOpt->Set<int>("npanel",1);
 		plotOpt->Set<double>("sizeLeg",20);
+		if(acceff) plotOpt->Set<double>("sizeSymb",0);
 		plotOpt->Set<int>("qdefault",1);
 
 		OptionMap* localOpt = new OptionMap();
