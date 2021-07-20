@@ -33,6 +33,7 @@ void CutflowSum(string dir="", vector<Sample> samples={}, bool printerrors=false
 		
 		//get histos
 		auto nEventTmp = KGet<TH1F>(file,"nEventProc");
+		nEventTmp->SetBinError(1,KMath::PoissonErrorUp(nEventTmp->GetBinContent(1)));
 		auto cutflowTmp = KGet<TH1F>(file,"cutflow");
 
 		//fix error values: PoissonErrorUp doesn't hadd correctly
@@ -57,6 +58,6 @@ void CutflowSum(string dir="", vector<Sample> samples={}, bool printerrors=false
 	}
 	
 	cout << fixed << setprecision(prcsn);
-	KCutflow k("print",cutflowRaw,nEventHist);
+	KCutflow k("print",cutflowRaw,nEventHist,true);
 	k.PrintEfficiency(printerrors);
 }

@@ -136,11 +136,11 @@ class KSet : public KBase {
 			for(unsigned c = 0; c < children.size(); c++){
 				if(c==0){
 					nEventHist = (TH1F*)(children[c]->GetNEventHist())->Clone();
-					cutflowRaw = (TH1F*)(children[c]->GetCutflow(KCutflow::CutRaw))->Clone();
+					cutflowRaw = (TH1F*)(children[c]->GetCutflow(KCutflowType::CutRaw))->Clone();
 				}
 				else {
 					nEventHist->Add(children[c]->GetNEventHist());
-					cutflowRaw->Add(children[c]->GetCutflow(KCutflow::CutRaw));
+					cutflowRaw->Add(children[c]->GetCutflow(KCutflowType::CutRaw));
 				}
 			}
 			//make derived (abs, rel) cutflows

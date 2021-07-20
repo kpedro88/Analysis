@@ -288,7 +288,7 @@ class KBase {
 		virtual TTree* GetTree() { return tree; }
 		virtual TH1F* GetNEventHist() { return nEventHist; }
 		virtual TH1F* GetNEventNegHist() { return nEventNegHist; }
-		virtual TH1F* GetCutflow(KCutflow::CutflowType ct=KCutflow::CutRaw) {
+		virtual TH1F* GetCutflow(KCutflowType ct=KCutflowType::CutRaw) {
 			if(!MyCutflow) MakeCutflows();
 			return (MyCutflow ? MyCutflow->GetEfficiency(ct,globalOpt->Get("cutflownorm",false)) : NULL);
 		}

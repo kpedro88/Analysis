@@ -99,7 +99,7 @@ for signal in options.signals:
     cutflow = filter(None,os.popen(cmd).read().split('\n'))
     started = False
     for line in cutflow:
-        if "NEventProc" in line:
+        if "nEventProc" in line:
             started = True
         elif started and len(line)>0:
             splitline = filter(None,line.split(' '))

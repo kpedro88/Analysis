@@ -304,9 +304,9 @@ class KHisto : public KChecker {
 		}
 		bool IsSpecial() { return isSpecial; }
 		TH1* GetSpecial() {
-			if(name=="cutflowRaw") return base->GetCutflow(KCutflow::CutRaw);
-			else if(name=="cutflowAbs") return base->GetCutflow(KCutflow::CutAbs);
-			else if(name=="cutflowRel") return base->GetCutflow(KCutflow::CutRel);
+			if(name=="cutflowRaw") return base->GetCutflow(KCutflowType::CutRaw);
+			else if(name=="cutflowAbs") return base->GetCutflow(KCutflowType::CutAbs);
+			else if(name=="cutflowRel") return base->GetCutflow(KCutflowType::CutRel);
 			else return NULL;
 		}
 

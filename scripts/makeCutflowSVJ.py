@@ -135,11 +135,12 @@ for procname,proc in procs.iteritems():
     cmd = "root -b -l -q 'CutflowSum.C("+'"'+options.dir+'",{'+','.join(samples)+'},1,'+str(options.prec)+(',1' if options.skipzeros else "")+')'+"'"
     if options.verbose: print(cmd)
     cutflow = filter(None,os.popen(cmd).read().split('\n'))
+    print cutflow
     started = False
     first = 0
     last = 0
     for line in cutflow:
-        if ('raw' in options.type and "NEventProc" in line) or ('raw' not in options.type and "NormType" in line):
+        if ('raw' in options.type and "nEventProc" in line) or ('raw' not in options.type and "NormType" in line):
             started = True
         elif started and len(line)>0:
             splitline = filter(None,line.split(' '))

@@ -17,45 +17,68 @@
 #include <vector>
 #include <cstdlib>
 #include <exception>
+#include <set>
 
 using namespace std;
 
+//forward declaration
+class KCutflow;
+
+//enum
+enum class KCutflowType { CutRaw=0, CutAbs=1, CutRel=2 };
+
+//keeps track of raw values and parent (direct antecedent), base (earliest antecedent)
+class KCutflowItem {
+	public:
+		//constructor
+		KCutflowItem(string name_, long long raw_, double rawE_, KCutflow* map_, bool weighted=false, string baseName_="", string parentName_="");
+		//dummy constructor for finding in set
+		KCutflowItem(string name_) : name(name_) {}
+
+		//accessors
+		const string& GetName() const { return name; }
+		pair<double,double> GetVal(KCutflowType ct) const {
+			return
+				ct==KCutflowType::CutRaw ? make_pair((double)raw,rawE) : (
+				ct==KCutflowType::CutAbs ? make_pair(abs,absE) : (
+				ct==KCutflowType::CutRel ? make_pair(rel,relE) :
+				make_pair(0.,0.) ));
+		}
+		long long GetRaw() const { return raw; }
+
+		//for sorting
+		bool operator<(const KCutflowItem& rhs) const { return name < rhs.name; }
+
+	protected:
+		//members
+		string name, parentName, baseName;
+		long long raw;
+		double rawE, abs, absE, rel, relE;
+		const KCutflowItem* parent = nullptr;
+		const KCutflowItem* base = nullptr;
+};
+
+//ostensibly, to test if a histogram is weighted: h->GetSumw2()->GetSum()!=h->GetSumOfWeights()
+//however, cutflow histograms created in KSelection have bin errors set to Poisson manually, so this fails
+//therefore, just specify whether to treat histograms as weighted when creating cutflow object
 class KCutflow {
 	public:
-		//enum
-		enum CutflowType { CutRaw=0, CutAbs=1, CutRel=2 };
-	
 		//constructors
-		KCutflow(string name_, string fname_) : name(name_), h_raw(NULL), h_abs(NULL), h_rel(NULL) {
-			TFile* file = KOpen(fname_);
-			GetFromFile(file);
-		}
-		KCutflow(string name_, TFile* file) : name(name_), h_raw(NULL), h_abs(NULL), h_rel(NULL) {
-			GetFromFile(file);
-		}
+		KCutflow(string name_, string fname_, bool weighted_=false) : KCutflow(name_, KOpen(fname_), weighted_) {}
+		KCutflow(string name_, TFile* file, bool weighted_=false) : KCutflow(name_, KGet<TH1F>(file,"cutflow"), KGet<TH1F>(file,nEventProc()), weighted_) {}
 		//get nevent info from histo
-		KCutflow(string name_, TH1F* h_tmp, TH1F* h_ntmp) : name(name_), h_raw(h_tmp), nentries(h_ntmp->GetBinContent(1)), nentriesE(h_ntmp->GetBinError(1)), h_abs(NULL), h_rel(NULL) { 
-			//initialize derived histos
-			CalcEfficiency();
-		}
+		KCutflow(string name_, TH1F* h_tmp, TH1F* h_ntmp, bool weighted_=false) : KCutflow(name_, h_tmp, h_ntmp->GetBinContent(1), h_ntmp->GetBinError(1), weighted_) {}
 		//get nevent info directly
-		KCutflow(string name_, TH1F* h_tmp, long long nentries_, double nentriesE_=0) : name(name_), h_raw(h_tmp), nentries(nentries_), nentriesE(nentriesE_), h_abs(NULL), h_rel(NULL) { 
-			//initialize derived histos
-			CalcEfficiency();
-		}
-		//constructor helper
-		void GetFromFile(TFile* file){
-			if(!file) throw runtime_error("null file pointer!");
-			
-			h_raw = KGet<TH1F>(file,"cutflow");
-			
-			TH1F* h_nevent = KGet<TH1F>(file,"nEventProc");
-
-			nentries = h_nevent->GetBinContent(1);
-			nentriesE = h_nevent->GetBinError(1);
-			
-			//initialize derived histos
-			CalcEfficiency();			
+		KCutflow(string name_, TH1F* h_tmp, long long nentries_=0, double nentriesE_=0, bool weighted_=false) : name(name_), title(h_tmp->GetTitle()), weighted(weighted_) {
+			string baseName = "";
+			if(nentries_>0) {
+				baseName = nEventProc();
+				AddItem(baseName,nentries_,nentriesE_);
+			}
+			for(int c = 1; c <= h_tmp->GetNbinsX(); c++){
+				string parentName(c==1 ? baseName : h_tmp->GetXaxis()->GetBinLabel(c-1));
+				AddItem(h_tmp->GetXaxis()->GetBinLabel(c), h_tmp->GetBinContent(c), h_tmp->GetBinError(c), baseName, parentName);
+			}
 		}
 		//destructor
 		virtual ~KCutflow() { }
@@ -63,54 +86,21 @@ class KCutflow {
 		//accessors
 		//todo: expand for object sync selectors
 		
-		//make abs and rel efficiency histograms
-		void CalcEfficiency(){
-			if(!h_raw) return;
-
-			//initialize histos
-			vector<string> names = {"cutflow","cutflowAbs","cutflowRel"};
-			if(name.size()>0){
-				for(auto& name_ : names) name_ += "_"+name;
-			}
-			h_raw->SetName((names[0]).c_str());
-			title = h_raw->GetTitle();
-			h_raw->SetTitle("");
-			h_abs = new TH1F((names[1]).c_str(),"",h_raw->GetNbinsX(),0,h_raw->GetNbinsX());
-			h_rel = new TH1F((names[2]).c_str(),"",h_raw->GetNbinsX(),0,h_raw->GetNbinsX());
-			
-			//fill histos
-			for(int c = 1; c <= h_raw->GetNbinsX(); c++){
-				long long counter = (long long)h_raw->GetBinContent(c);
-				long long prev_counter = c==1 ? nentries : (long long)h_raw->GetBinContent(c-1);
-				
-				h_abs->GetXaxis()->SetBinLabel(c,h_raw->GetXaxis()->GetBinLabel(c));
-				h_abs->SetBinContent(c,((double)counter/(double)nentries)*100);
-				h_abs->SetBinError(c,KMath::EffError(counter,nentries)*100);
-				
-				h_rel->GetXaxis()->SetBinLabel(c,h_raw->GetXaxis()->GetBinLabel(c));
-				h_rel->SetBinContent(c,((double)counter/(double)prev_counter)*100);
-				h_rel->SetBinError(c,KMath::EffError(counter,prev_counter)*100);
-			}
-			h_abs->GetXaxis()->SetNoAlphanumeric();
-			h_rel->GetXaxis()->SetNoAlphanumeric();
-		}
 		//print efficiencies
 		void PrintEfficiency(bool printerrors=false){
-			if(!h_raw) return;
-			if(!h_abs || !h_rel) GetEfficiency();
+			if(itemList.empty()) return;
 
 			//loop to get width of selector name
-			widths = vector<unsigned>(6,0);
+			vector<unsigned> widths(6,0);
 			unsigned width1s = 10;
-			for(int c = 1; c <= h_raw->GetNbinsX(); ++c){
-				string sname = h_raw->GetXaxis()->GetBinLabel(c);
-				if(sname.size()>width1s) width1s = sname.size();
+			for(auto ptr : itemList){
+				width1s = max(width1s, (unsigned)ptr->GetName().size());
 			}
 			
 			//setup widths
 			widths[0] = width1s;
 			if(printerrors) {
-				widths[4] = max(log10(nentries)+1,log10(sqrt(nentries))+1+3); //extra width for num and err, based on # digits
+				widths[4] = max(log10(itemList[0]->GetVal(KCutflowType::CutRaw).first)+1,log10(itemList[0]->GetVal(KCutflowType::CutRaw).second)+1+3); //extra width for num and err, based on # digits
 				int numcolwidth1 = widths[4]*2 + 5; //x + 5 + x (num +/- err)
 				widths[1] = numcolwidth1;
 				widths[5] = 6; //extra width for eff and err (assumes yieldprecision = 2)
@@ -126,52 +116,113 @@ class KCutflow {
 			cout << string(widths[0]+widths[1]+widths[2]+widths[3]+2*(4-1),'-') << endl;
 			cout << "Selection: " << title << endl;
 			cout << left << setw(widths[0]) << "Selector" << "  " << right << setw(widths[1]) << "Raw # Events" << "  " << right << setw(widths[2]) << "Abs. Eff. (%)" << "  " << right << setw(widths[3]) << "Rel. Eff. (%)" << endl;
-			cout << left << setw(widths[0]) << "NEventProc";
-			if(printerrors) cout << "  " << right << setw(widths[4]) << nentries << " +/- " << right << setw(widths[4]) << nentriesE << endl;
-			else cout << "  " << right << setw(widths[1]) << nentries << endl;
-			
+
 			//print selectors
-			for(int c = 1; c <= h_raw->GetNbinsX(); ++c){
-				cout << left << setw(widths[0]) << h_raw->GetXaxis()->GetBinLabel(c);
-				long long raw = (long long)h_raw->GetBinContent(c); double rawE = h_raw->GetBinError(c);
-				double abs = h_abs->GetBinContent(c); double absE = h_abs->GetBinError(c);
-				double rel = h_rel->GetBinContent(c); double relE = h_rel->GetBinError(c);				
+			for(auto ptr : itemList){
+				const auto& item(*ptr);
+				cout << left << setw(widths[0]) << item.GetName();
+				auto raw = item.GetRaw();
+				auto rawE = item.GetVal(KCutflowType::CutRaw).second;
+				auto abs = item.GetVal(KCutflowType::CutAbs);
+				auto rel = item.GetVal(KCutflowType::CutRel);
 				if(printerrors){
-					cout << "  " << right << setw(widths[4]) << raw << " +/- " << right << setw(widths[4]) << rawE;
-					cout << "  " << right << setw(widths[5]) << abs << " +/- " << right << setw(widths[5]) << absE;
-					//rel. eff. = abs. eff. for first selector
-					cout << "  " << right << setw(widths[5]) << rel << " +/- " << right << setw(widths[5]) << relE;
+					cout << "  " << right << setw(widths[4]) << (long long)raw << " +/- " << right << setw(widths[4]) << rawE;
+					if(item.GetName()!=nEventProc()) {
+						cout << "  " << right << setw(widths[5]) << abs.first << " +/- " << right << setw(widths[5]) << abs.second;
+						//rel. eff. = abs. eff. for first selector
+						cout << "  " << right << setw(widths[5]) << rel.first << " +/- " << right << setw(widths[5]) << rel.second;
+					}
 				}
 				else {
 					cout << "  " << right << setw(widths[1]) << raw;
-					cout << "  " << right << setw(widths[2]) << abs;
-					//rel. eff. = abs. eff. for first selector
-					cout << "  " << right << setw(widths[3]) << rel;
+					if(item.GetName()!=nEventProc()) {
+						cout << "  " << right << setw(widths[2]) << abs.first;
+						//rel. eff. = abs. eff. for first selector
+						cout << "  " << right << setw(widths[3]) << rel.first;
+					}
 				}
 				cout << endl;
 			}
 		}
 		//get an efficiency histogram
-		TH1F* GetEfficiency(CutflowType ct=CutRaw, bool cutflownorm=false){
-			if(ct==CutRaw) return h_raw;
-			else if(ct==CutAbs) {
-				if(cutflownorm) h_abs->Scale(100./h_abs->GetBinContent(1));
-				return h_abs;
+		TH1F* GetEfficiency(KCutflowType ct=KCutflowType::CutRaw, bool cutflownorm=false){
+			if(ct==KCutflowType::CutRaw) cutflownorm = false;
+			string name(
+				ct==KCutflowType::CutRaw ? "cutflow" :
+				ct==KCutflowType::CutAbs ? "cutflowAbs" :
+				ct==KCutflowType::CutRel ? "cutflowRel" :
+				""
+			);
+			if(name.empty()) return nullptr;
+			TH1F* h_out = new TH1F(name.c_str(),"",itemList.size(),0,itemList.size());
+			int c = 1;
+			for(auto ptr : itemList){
+				const auto& item(*ptr);
+				h_out->GetXaxis()->SetBinLabel(c,item.GetName().c_str());
+				h_out->SetBinContent(c,item.GetVal(ct).first);
+				h_out->SetBinError(c,item.GetVal(ct).second);
 			}
-			else if(ct==CutRel) {
-				if(cutflownorm) h_rel->Scale(100./h_rel->GetBinContent(1));
-				return h_rel;
-			}
-			else return NULL;
+			h_out->GetXaxis()->SetNoAlphanumeric();
+			if(cutflownorm) h_out->Scale(100./h_out->GetBinContent(1));
+			return h_out;
 		}
-	
-	private:
+
+		//add more items
+		void AddItem(string name_, double raw_, double rawE_, string baseName_="", string parentName_="") {
+			auto iter_succ = itemMap.emplace(name_,raw_,rawE_,this,weighted,baseName_,parentName_);
+			if(!iter_succ.second) throw std::runtime_error("Duplicate item in cutflow map: "+name_);
+			itemList.push_back(&(*iter_succ.first));
+		}
+
+		//more accessors
+		const vector<const KCutflowItem*>& GetList() const { return itemList; }
+		const KCutflowItem* GetItem(const string& name) const {
+			auto iter = itemMap.find(name);
+			if(iter!=itemMap.end()) return &(*iter);
+			else {
+				throw runtime_error("Could not find item: "+name);
+				return nullptr;
+			}
+		}
+
+		//helper
+		static bool IsWeighted(TH1* h) { return h->GetSumw2()->GetSum()!=h->GetSumOfWeights(); }
+
+	protected:
 		//members
 		string name, title;
-		TH1F *h_raw, *h_abs, *h_rel;
-		long long nentries;
-		double nentriesE;
-		vector<unsigned> widths;
+		bool weighted;
+		//sorted set (for search) and vector of pointers (for ordering)
+		set<KCutflowItem> itemMap;
+		vector<const KCutflowItem*> itemList;
+		//easier than static member
+		static const string& nEventProc() {
+			static string s("nEventProc");
+			return s;
+		}
 };
+
+KCutflowItem::KCutflowItem(string name_, long long raw_, double rawE_, KCutflow* map, bool weighted, string baseName_, string parentName_) :
+	name(name_), parentName(parentName_), baseName(baseName_), raw(raw_), rawE(rawE_) {
+	if((!parentName.empty() or !baseName.empty()) and !map) {
+		throw runtime_error("No item map provided");
+	}
+	if(!parentName.empty()){
+		parent = map->GetItem(parentName);
+	}
+	if(!baseName.empty()){
+		base = map->GetItem(baseName);
+	}
+
+	//do calculations
+	long long nentries = base ? base->raw : 1;
+	long long prev = parent ? parent->raw : 1;
+	double nentriesE = base ? base->rawE : 1;
+	double prevE = parent ? parent->rawE : 1;
+	abs = ((double)raw/(double)nentries)*100;
+	absE = weighted ? KMath::EffErrorWeighted(raw,rawE,nentries,nentriesE) : KMath::EffError(raw,nentries)*100;
+	rel = ((double)raw/(double)prev)*100;
+	relE = weighted ? KMath::EffErrorWeighted(raw,rawE,prev,prevE) : KMath::EffError(raw,prev)*100;
+}
 
 #endif
