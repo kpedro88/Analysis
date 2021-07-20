@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 from collections import OrderedDict
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
-from ROOT import TFile,TH1,gRandom,Math
 
 # axis setup (only draw bottom spine, etc.)
 # based on https://matplotlib.org/examples/ticks_and_spines/tick-locators.html
@@ -24,12 +23,14 @@ def setup(ax):
     ax.patch.set_alpha(0.0)
 
 def getMin(bin_min,sigma):
+    from ROOT import Math
     # get confidence interval (e.g. 1 - 0.6827 for 1 sigma)
     if sigma==0: return bin_min
     alpha = 1 - (Math.gaussian_cdf(sigma) - Math.gaussian_cdf(-sigma))
     return Math.gamma_quantile_c(alpha/2.,bin_min+1,1)
 
 def getHist(eosdir,fname,region,hname,hnorm=None):
+    from ROOT import TFile
     file = TFile.Open(eosdir+"/"+fname)
     hist = file.Get(region+"/"+hname)
     hist.SetDirectory(0)
@@ -45,6 +46,7 @@ def getHist(eosdir,fname,region,hname,hnorm=None):
     return hist
 
 def makeToy(hist,prev_neg=False):
+    from ROOT import gRandom
     hist2 = hist
     if prev_neg:
         # prevent negative bins (gives nan in GetRandom())
