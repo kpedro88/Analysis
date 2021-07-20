@@ -12,7 +12,7 @@ HISTO
 bothjetAK8girth	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[girth(^{}J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	d:dxmin[0]	d:dxmax[0.6]
 bothjetAK8axismajor	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[#sigma_{major}(^{}J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
 bothjetAK8axisminor	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[#sigma_{minor}(^{}J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	d:dxmin[0]	d:dxmax[0.3]
-bothjetAK8deltaphi	i:xnum[100]	d:xmin[0]	d:xmax[3.15]	s:xtitle[#Delta#phi(^{}J_{1,2},^{}#slash{E}_{T})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+bothjetAK8deltaphi	i:xnum[100]	d:xmin[0]	d:xmax[3.15]	s:xtitle[#Delta#phi(^{}J_{1,2},^{}p_{T}^{miss})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
 
 SET
 hist	mc	SVJ_3100_20_0.1_peak	s:legname[r_{inv} = 0.1]	c:color[kRed]	i:linestyle[7]	i:panel[1]

@@ -1,5 +1,5 @@
 HISTO
-met	i:xnum[100]	d:xmin[0]	d:xmax[1500]	s:xtitle[#slash{E}_{T} [GeV]]	s:ytitle[arbitrary units]	b:logy[1]	b:ratio[0]
+met	i:xnum[100]	d:xmin[0]	d:xmax[1500]	s:xtitle[p_{T}^{miss} [GeV]]	s:ytitle[arbitrary units]	b:logy[1]	b:ratio[0]
 MTAK8	i:xnum[160]	d:xmin[0]	d:xmax[8000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:logy[1]	b:ratio[0]	vd:xcuts[1500]	vc:xcut_colors[kBlack]	i:rebin[2]
 deltaetaAK8	i:xnum[100]	d:xmin[0]	d:xmax[5.0]	s:xtitle[#Delta#eta(J_{1},J_{2})]	s:ytitle[arbitrary units]	b:logy[1]	b:ratio[0]	vd:xcuts[1.5]	vc:xcut_colors[kBlack]
 nelectrons	i:xnum[5]	d:xmin[0]	d:xmax[5]	s:xtitle[N_{e}]	s:ytitle[arbitrary units]	b:logy[1]	b:ratio[0]	vd:xcuts[1]	vc:xcut_colors[kBlack]

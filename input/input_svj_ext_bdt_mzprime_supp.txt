@@ -5,8 +5,8 @@ OPTION
 vstring{|}:extra_text[signal (^{}m_{dark} = 20 GeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
 vint:extra_text_panels[1,1]
 string:extfilename[test/paper/bdt/supp/histBDT_svj.root]
-string:rootfile[test/paper/bdt/bdt_rinv_plots]
-string:printsuffix[dijetmtdetahadloosespike_bdt_rinv_flatptZ30]
+string:rootfile[test/paper/bdt/bdt_mzprime_plots]
+string:printsuffix[dijetmtdetahadloosespike_bdt_mzprime_flatptZ30]
 
 HISTO
 bothjetAK8fChHad	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{h^{#pm}}(^{}J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]

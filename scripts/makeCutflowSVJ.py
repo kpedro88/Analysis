@@ -52,6 +52,7 @@ parser.add_option("-r", "--regionfile", dest="regionfile", default="", help="roo
 parser.add_option("-s", "--signalregions", dest="signalregions", type='string', default="regions", help="dict of fancy signal region names, in order")
 parser.add_option("-P", "--procs", dest="procs", type='string', default="all", help="categories of procs to include")
 parser.add_option("-E", "--efficiency", dest="efficiency", default=False, action="store_true", help="include line for overall efficiency")
+parser.add_option("-S", "--small", dest="small", default=False, action="store_true", help="smaller font size")
 (options, args) = parser.parse_args()
 
 options.efficiency = options.efficiency or 'raw' in options.type
@@ -173,7 +174,7 @@ if options.procs.startswith("sig"):
     sigs = set()
     varyAll(0,list(sig_vals.iteritems()),[],sigs)
     for point in sorted(sigs):
-        procs['$\\{} = {}{}$'.format(varied, point[varied_ind],sig_units[varied])] = [
+        procs['$\\{} = {}{}$'.format(varied,texVal(varied,point[varied_ind]),sig_units[varied])] = [
             ('_'.join(str(x) for x in ["SVJ"]+list(point)), xsecs[str(point[0])]),
         ]
 
@@ -264,6 +265,7 @@ if options.type=="rawrel":
 wfile.write("\\begin{table}[htb]\n")
 wfile.write(caption+"\n")
 wfile.write("\\begin{center}\n")
+if options.small: wfile.write("{\\footnotesize\n")
 wfile.write("\\begin{tabular}{M"+coltype*len(procs)+"}\n")
 wfile.write("\\hline\n")
 
@@ -276,6 +278,7 @@ for key,val in outDict.iteritems():
 # postamble
 wfile.write("\\hline\n")
 wfile.write("\\end{tabular}\n")
+if options.small: wfile.write("}\n")
 wfile.write("\\label{tab:sel-eff-"+options.outname.replace(".tex","")+"}\n")
 wfile.write("\\end{center}\n")
 wfile.write("\\end{table}\n")
