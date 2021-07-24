@@ -496,14 +496,15 @@ class KMCWeightSelector : public KSelector {
 			
 			//other uncertainty options
 			pdfunc = 0; localOpt->Get("pdfunc",pdfunc);
+			pdfqunc = 0; localOpt->Get("pdfqunc",pdfqunc);
 			scaleunc = 0; localOpt->Get("scaleunc",scaleunc);
-			if(pdfunc!=0 || scaleunc!=0){
+			if(pdfunc!=0 or pdfqunc!=0 or scaleunc!=0){
 				//get the normalizations for pdf/scale uncertainties
 				TH1F* h_norm = KGet<TH1F>(base->GetFile(),"PDFNorm");
-				pdfnorms = vector<double>(4,1.0);
-				//0: PDF up, 1: PDF down, 2: scale up, 3: scale down
+				pdfnorms = vector<double>(6,1.0);
+				//0: PDF up, 1: PDF down, 2: scale up, 3: scale down, 4: PDF up (quantile), 5: PDF down (quantile)
 				double nominal = h_norm->GetBinContent(1);
-				for(unsigned n = 0; n < 4; ++n){
+				for(unsigned n = 0; n < 6; ++n){
 					//(bin in histo = index + 2)
 					pdfnorms[n] = nominal/h_norm->GetBinContent(n+2);
 				}
@@ -551,7 +552,7 @@ class KMCWeightSelector : public KSelector {
 			if(svbweight){
 				if(svbqty==MTAK8) branches.push_back("MT_AK8");
 			}
-			if(pdfunc!=0 or pdfallunc!=0){
+			if(pdfunc!=0 or pdfqunc!=0 or pdfallunc!=0){
 				branches.push_back("PDFweights");
 			}
 			if(scaleunc!=0){
@@ -642,8 +643,18 @@ class KMCWeightSelector : public KSelector {
 			}
 
 			if(pdfunc!=0){
-				if(pdfunc==1) w *= *(TMath::LocMax(looper->PDFweights->begin(),looper->PDFweights->end()))*pdfnorms[0];
-				else if(pdfunc==-1) w *= *(TMath::LocMin(looper->PDFweights->begin(),looper->PDFweights->end()))*pdfnorms[1];
+				double mean, rms;
+				tie(mean,rms) = KMath::MeanRMS(looper->PDFweights->begin(),looper->PDFweights->end());
+				if(pdfunc==1) w *= (mean+rms)*pdfnorms[0];
+				else if(pdfunc==-1) w *= (mean-rms)*pdfnorms[1];
+			}
+
+			if(pdfqunc!=0){
+				//to get quantiles, sort 100 weights and take entries 15, 83 (middle 68%)
+				vector<double> pdf_sorted(looper->PDFweights->begin()+1,looper->PDFweights->end());
+				sort(pdf_sorted.begin(),pdf_sorted.end());
+				if(pdfqunc==1) w *= pdf_sorted[83]*pdfnorms[4];
+				else if(pdfqunc==-1) w *= pdf_sorted[15]*pdfnorms[5];
 			}
 
 			if(scaleunc!=0){
@@ -658,11 +669,7 @@ class KMCWeightSelector : public KSelector {
 			}
 			
 			if(pdfallunc!=0){
-				auto PDFweightsNorm = *looper->PDFweights;
-				std::transform(looper->PDFweights->begin(),looper->PDFweights->end(),pdfallnorms.begin(),PDFweightsNorm.begin(),multiplies<double>());
-				double mean, rms;
-				tie(mean,rms) = KMath::MeanRMS(PDFweightsNorm.begin(),PDFweightsNorm.end());
-				w *= (pdfallunc>0 ? mean+rms : mean-rms);
+				w *= looper->PDFweights->at(pdfallunc)*pdfallnorms[pdfallunc];
 			}
 
 			if(psisrunc!=0){
@@ -826,7 +833,7 @@ class KMCWeightSelector : public KSelector {
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, useTreeXsec, useKFactor, debugWeight, didDebugWeight;
 		bool pucorr, putree, punew, puupdcorr, trigcorr, trigsystcorr, trigfncorr, isrcorr, useisrflat, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr, hemvetocorr, lepcorr, psnorm;
 		double jetidcorrval, isotrackcorrval, trigsystcorrval, lumicorrval, isrflat, psflat;
-		int puunc, puupdunc, pdfunc, pdfallunc, isrunc, scaleunc, trigunc, trigyear, trigfnunc, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc, prefireunc, hemvetounc, lepidunc, lepisounc, leptrkunc, psisrunc, psfsrunc;
+		int puunc, puupdunc, pdfunc, pdfqunc, pdfallunc, isrunc, scaleunc, trigunc, trigyear, trigfnunc, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc, prefireunc, hemvetounc, lepidunc, lepisounc, leptrkunc, psisrunc, psfsrunc;
 		vector<int> mother;
 		TH1 *puhist, *puhistUp, *puhistDown;
 		TH1 *puupdhist, *puupdhistUp, *puupdhistDown;
