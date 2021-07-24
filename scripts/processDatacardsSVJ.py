@@ -34,9 +34,9 @@ def convertName(outname,dirname):
     # convert signal name: SVJ_X_Y_Z_W -> SVJ_mZprimeX_mDarkY_rinvZ_alphaW
     namesplit = outname.split('_')
     kept_year = len(namesplit)>5 and namesplit[5].startswith("MC")
-    newname = '_'.join([namesplit[0],"mZprime"+namesplit[1],"mDark"+namesplit[2],"rinv"+namesplit[3].replace(".",""),"alpha"+namesplit[4]]+[namesplit[5]] if kept_year else [])
+    newname = '_'.join([namesplit[0],"mZprime"+namesplit[1],"mDark"+namesplit[2],"rinv"+namesplit[3].replace(".",""),"alpha"+namesplit[4]]+([namesplit[5]] if kept_year else []))
     newname2 = ""
-    if len(namesplit)>(5+1 if kept_year else 0):
+    if len(namesplit)>(5+(1 if kept_year else 0)):
         newname2 = "_"
         # statistics formatting: mcstat_binNUp_2016 -> mcstat_dirname_sample_MC2016binNUp
         if "mcstat" in namesplit:
