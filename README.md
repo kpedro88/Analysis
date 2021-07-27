@@ -260,16 +260,16 @@ root -b -l -q 'KPlotDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SVJ
 To create histograms for datacards and do post-processing:
 ```
 cd batch
-./DCsub_svj.sh -t SVJData,SVJBkg -y Run2 -v trig5/sigfull
+./DCsub_svj.sh -t SVJData,SVJBkg -y Run2 -v trig6/sigfull
 (wait for jobs to finish)
-../finalizeDatacardsSVJ.sh -d /store/user/pedrok/SVJ2017/Datacards/trig5/sigfull -k
-./DCsub_svj.sh -t SVJScan -y Run2 -v trig5/sigfull
+../finalizeDatacardsSVJ.sh -d /store/user/pedrok/SVJ2017/Datacards/trig6/sigfull -k
+./DCsub_svj.sh -t SVJScan -y Run2 -v trig6/sigfull
 ```
 
 Signal systematics studies:
 ```
 cd batch
-./HSsub.sh -c block,scan -d /store/user/pedrok/SVJ2017/Datacards/trig5/sigfull -S scan -k -n 1
+./HSsub.sh -c block,scan -d /store/user/pedrok/SVJ2017/Datacards/trig6/sigfull -S scan -k -n 1
 cd ..
-python summarizeSyst.py -d /store/user/pedrok/SVJ2017/Datacards/trig5/sigfull -c "mDark==20.&&rinv==0.3&&alpha==-2."
+python summarizeSyst.py -d /store/user/pedrok/SVJ2017/Datacards/trig6/sigfull -c "mDark==20.&&rinv==0.3&&alpha==-2."
 ```

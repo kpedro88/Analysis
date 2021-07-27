@@ -10,6 +10,7 @@ unc_names = {
     "jetidunc": "Jet ID",
     "lumiunc": "Luminosity",
     "MCStatErr": "MC statistical",
+    "MCStatOverallErr": "MC statistical",
     "MHTSyst": "\\MHT modeling",
     "prefireunc": "Prefiring weight",
     "puunc": "Pileup reweighting",
@@ -18,6 +19,7 @@ unc_names = {
     "trigsystunc": "Trigger systematic",
 # SVJ uncs below
     "pdfallunc": "PDF",
+    "pdfunc": "PDF",
     "psfsrunc": "FSR (parton shower)",
     "psisrunc": "ISR (parton shower)",
     "trigfnunc": "Trigger statistical",
@@ -124,7 +126,7 @@ if __name__ == "__main__":
     parser.add_argument("-d", "--dir", dest="dir", type=str, default="/store/user/pedrok/SUSY2015/Analysis/Datacards/Run2ProductionV12", help="directory (LFN) of systematics files")
     parser.add_argument("-k", "--skip", dest="skip", type=str, default=[], nargs='*', help="list of models to skip")
     parser.add_argument("-n", "--include", dest="include", type=str, default=[], nargs='*', help="list of systematics to include in calculations (empty = all)")
-    parser.add_argument("-x", "--exclude", dest="exclude", type=str, default=["contam"], help="list of systematics to exclude from calculations")
+    parser.add_argument("-x", "--exclude", dest="exclude", type=str, default=["contam"], nargs='*', help="list of systematics to exclude from calculations")
     parser.add_argument("-m", "--minimum", dest="minimum", type=float, default=0.01, help="minimum value to display, smaller values rounded to 0")
     parser.add_argument("-g", "--grep", dest="grep", type=str, default="", help="select only models matching this string")
     parser.add_argument("-c", "--cut", dest="cut", type=str, default="", help="apply cut when computing syst min/max")

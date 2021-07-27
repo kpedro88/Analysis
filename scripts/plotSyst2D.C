@@ -16,6 +16,8 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <utility>
+#include <tuple>
 
 using namespace std;
 
@@ -24,6 +26,7 @@ map<string,string> legnames = {
 	{"JEC", "JEC uncertainty [%]"},
 	{"JER", "JER uncertainty [%]"},
 	{"MCStatErr", "MC statistical uncertainty [%]"},
+	{"MCStatOverallErr", "MC statistical uncertainty [%]"},
 	{"MHTSyst", "H_{T}^{miss} modeling uncertainty [%]"},
 	{"puaccunc", "pileup acceptance uncertainty [%]"},
 	{"puunc", "pileup reweighting uncertainty [%]"},
@@ -33,6 +36,7 @@ map<string,string> legnames = {
 	{"prefireunc","L1 prefiring weight uncertainty [%]"},
 	{"hemvetounc","HEM veto uncertainty [%]"},
 	{"contam","SL contamination [%]"},
+	{"pdfunc", "PDF uncertainty [%]"},
 	{"pdfallunc", "PDF uncertainty [%]"},
 	{"psisrunc", "PS ISR uncertainty [%]"},
 	{"psfsrunc", "PS FSR uncertainty [%]"},
@@ -49,27 +53,51 @@ map<string,string> legnames = {
 	{"alpha", "#alpha_{dark}"},
 };
 
-void getBinsQty(string rqty, TTree* tree, double& min, double& max, int& nbins, bool isMassPlane){
+vector<double> getVariableBins(const vector<double>& vals){
+	vector<double> bins; bins.reserve(vals.size()+1);
+	for(unsigned i = 1; i < vals.size(); ++i){
+		//midpoint between bin centers
+		double midpt = (vals[i]+vals[i-1])/2.;
+		//starting point for first bin
+		if(i==1) bins.push_back(2*vals[i-1]-midpt);
+		bins.push_back(midpt);
+		//ending point for last bin
+		if(i==vals.size()-1) bins.push_back(2*vals[i]-midpt);
+	}
+	return bins;
+}
+
+pair<bool,vector<double>> getBinsQty(string rqty, TTree* tree, bool isMassPlane){
+	//fixed-width case: min, max, nbins
+	//variable-width case: bin boundaries (length nbins+1)
+	vector<double> bin_info;
+	bool fixed = true;
 	if(rqty=="mZprime"){
-		min = 1400; max = 5200; nbins = 19;
+		bin_info = {1400,5200,19};
 	}
 	else if(rqty=="mDark"){
-		min = -4; max = 106; nbins = 11;
+		vector<double> vals{1,5,10,20,30,40,50,60,70,80,90,100};
+		bin_info = getVariableBins(vals);
+		fixed = false;
 	}
 	else if(rqty=="rinv"){
-		min = -0.05; max = 1.05; nbins = 11;
+		vector<double> vals{0,0.05,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0};
+		bin_info = getVariableBins(vals);
+		fixed = false;
 	}
 	else if(rqty=="alpha"){
-		min = -3.5; max = -0.5; nbins = 3;
+		bin_info = {-3.5,-0.5,3};
 	}
 	else {
-		min = 0; max = tree->GetMaximum(rqty.c_str()); nbins = 40;
+		bin_info = {0, tree->GetMaximum(rqty.c_str()), 40};
 	}
 
 	if(isMassPlane){
-		min = tree->GetMinimum(rqty.c_str());
-		nbins = (max-min)/25;
+		bin_info[0] = tree->GetMinimum(rqty.c_str());
+		bin_info[2] = (bin_info[1]-bin_info[0])/25;
 	}
+
+	return make_pair(fixed,bin_info);
 }
 
 //make 2D plot
@@ -77,8 +105,7 @@ void plotSyst(TTree* tree, string xqty, string yqty, string model, string outdir
 	//get ranges (use mMother for derived quantity deltaM)
 	string rxqty = (xqty=="deltaM") ? "mMother" : xqty;
 	string ryqty = (yqty=="deltaM") ? "mMother" : yqty;
-	int nbinsx = 0, nbinsy = 0;
-	double xmin = 0, xmax = 0, ymin = 0, ymax = 0;
+	vector<double> binsx, binsy;
 	bool isPlane = false;
 	bool isMassPlane = false;
 	string cutPlane = "";
@@ -106,14 +133,31 @@ void plotSyst(TTree* tree, string xqty, string yqty, string model, string outdir
 		cutPlane = "*(rinv==0.3&&mDark==20)";
 	}
 
-	getBinsQty(rxqty, tree, xmin, xmax, nbinsx, isMassPlane);
-	getBinsQty(ryqty, tree, ymin, ymax, nbinsy, isMassPlane);
+	bool fixedx,fixedy;
+	tie(fixedx,binsx) = getBinsQty(rxqty, tree, isMassPlane);
+	tie(fixedy,binsy) = getBinsQty(ryqty, tree, isMassPlane);
 
 	//make name
 	string hname = "plotSyst2D_"+yqty+"_vs_"+xqty+"_"+model;
 	
 	//initialize histos
-	TH2F* hbase = new TH2F("hbase","",nbinsx,xmin,xmax,nbinsy,ymin,ymax);
+	TH2F* hbase = nullptr;
+	if(fixedx){
+		if(fixedy){
+			hbase = new TH2F("hbase","",binsx[2],binsx[0],binsx[1],binsy[2],binsy[0],binsy[1]);
+		}
+		else {
+			hbase = new TH2F("hbase","",binsx[2],binsx[0],binsx[1],binsy.size()-1,binsy.data());
+		}
+	}
+	else {
+		if(fixedy){
+			hbase = new TH2F("hbase","",binsx.size()-1,binsx.data(),binsy[2],binsy[0],binsy[1]);
+		}
+		else {
+			hbase = new TH2F("hbase","",binsx.size()-1,binsx.data(),binsy.size()-1,binsy.data());
+		}
+	}
 	if(isPlane){
 		hbase->GetXaxis()->SetTitle(legnames[rxqty].c_str());
 		hbase->GetYaxis()->SetTitle(legnames[ryqty].c_str());

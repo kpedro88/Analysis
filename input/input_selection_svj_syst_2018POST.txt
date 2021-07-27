@@ -50,6 +50,12 @@ pdfalluncUp
 pdfalluncDown
 	MCWeight	in:options[input/input_svj_MCWeight_options_2018.txt]	int:pdfallunc[-1]
 	common
+pdfuncUp
+	MCWeight	in:options[input/input_svj_MCWeight_options_2018.txt]	int:pdfunc[1]
+	common
+pdfuncDown
+	MCWeight	in:options[input/input_svj_MCWeight_options_2018.txt]	int:pdfunc[-1]
+	common
 psisruncUp
 	MCWeight	in:options[input/input_svj_MCWeight_options_2018.txt]	b:psnorm[0]	int:psisrunc[1]
 	common

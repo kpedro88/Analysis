@@ -197,6 +197,8 @@ class KSystProcessor {
 			auto ssyst = MakeStat(sname, stat_yield);
 			hsyst.push_back(ssyst);
 			pctDiffMap.Add("MCStatErr",fabs(1-stat_yield/nominal_yield)*100);
+			//average rather than max stat err
+			pctDiffMap.Add("MCStatOverallErr",MakeStatOverall(nominal)*100);
 			
 			//genMHT correction and unc for fastsim
 			if(genMHT){
@@ -258,6 +260,7 @@ class KSystProcessor {
 			);
 		}
 		//functions to be specialized
+		double MakeStatOverall(T* hist);
 		double Integral(T* hist);
 		void DivideBound(T* hist, const string& binname);
 		T* MakeStat(const string& sname, double& yield);
@@ -270,6 +273,18 @@ class KSystProcessor {
 		vector<T*> hcontam;
 		vector<T*> hsyst;
 };
+
+template <> double KSystProcessor<TH1F>::MakeStatOverall(TH1F* hist) {
+	double err = 0.;
+	double hint = hist->IntegralAndError(0,hist->GetNbinsX()+1,err);
+	return err/hint;
+}
+
+template <> double KSystProcessor<TH2F>::MakeStatOverall(TH2F* hist) {
+	double err = 0.;
+	double hint = hist->IntegralAndError(0,hist->GetNbinsX()+1,0,hist->GetNbinsY()+1,err);
+	return err/hint;
+}
 
 template<> double KSystProcessor<TH1F>::Integral(TH1F* hist){ return hist->Integral(0,hist->GetNbinsX()+1); }
 template<> double KSystProcessor<TH2F>::Integral(TH2F* hist){ return hist->Integral(0,hist->GetNbinsX()+1,0,hist->GetNbinsY()+1); }

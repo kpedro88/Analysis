@@ -192,6 +192,8 @@ if __name__=="__main__":
 
     # hardcoded list of correlated systematics
     correl_systs = set([
+        "pdfuncUp",
+        "pdfuncDown",
         "pdfalluncUp",
         "pdfalluncDown",
         "psisruncUp",
