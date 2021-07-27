@@ -166,6 +166,10 @@ TGraph* getBand(TTree* limit, string dname, string cname, double q_dn, double q_
 
 //based on https://gitlab.cern.ch/eno/emerginjetsPlotting/-/blob/master/emjet_exclusion_plots.py
 vector<TGraph*> findExclusionCurve(Limits& lim){
+	vector<TGraph*> results;
+	//no points: nothing to do
+	if(lim.v1.empty()) return results;
+
 	//contours can only be obtained by drawing: put into batch mode temporarily
 	bool isBatch = gROOT->IsBatch();
 	gROOT->SetBatch(kTRUE);
@@ -185,7 +189,7 @@ vector<TGraph*> findExclusionCurve(Limits& lim){
 	auto contour_list = (TList*)(contours->At(0));
 
 	//each contour level may have multiple graphs (in case of disconnected regions)
-	vector<TGraph*> results; results.reserve(contour_list->GetSize());
+	results.reserve(contour_list->GetSize());
 	auto curve = (TGraph*)(contour_list->First());
 	for(unsigned j = 0; j < contour_list->GetSize(); ++j){
 		results.push_back((TGraph*)(curve->Clone()));
