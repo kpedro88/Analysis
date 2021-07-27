@@ -237,6 +237,17 @@ string alphaName(double val){
 	return name;
 }
 
+string erase(string input, const vector<string>& patterns){
+	for(const auto& pattern: patterns){
+		size_t pos = 0;
+		do {
+			pos = input.find(pattern);
+			if(pos!=string::npos) input.erase(pos,pattern.size());
+		} while (pos!=string::npos);
+	}
+	return input;
+}
+
 //usage:
 //root -l 'plotLimit.C+("svj1",{{"mZprime",-1},{"mDark",20},{"rinv",0.3},{"alpha",0.2}},{"i:nsigma[2]"})'
 void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> options={}){
@@ -389,6 +400,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		plotOpt->Set<int>("npanel",1);
 		plotOpt->Set<double>("ymin",ymin);
 		plotOpt->Set<double>("sizeLeg",20);
+		plotOpt->Set<bool>("auto_g",globalOpt->Get("auto_g",true));
 
 		OptionMap* localOpt = new OptionMap();
 		localOpt->Set<bool>("ratio",false);
@@ -443,6 +455,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 			vname << vdict[v.first] << " = ";
 			if(v.first=="alpha" and v.second<0) vname << alphaName(v.second);
 			else vname << v.second;
+			vname << erase(unitdict[v.first],{"[","]"});
 			vname << ", ";
 		}
 		string svname = vname.str(); svname.pop_back(); svname.pop_back();
@@ -634,6 +647,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 			vname << vdict[v.first] << " = ";
 			if(v.first=="alpha" and v.second<0) vname << alphaName(v.second);
 			else vname << v.second;
+			vname << erase(unitdict[v.first],{"[","]"});
 			vname << ", ";
 		}
 		string svname = vname.str(); svname.pop_back(); svname.pop_back();
