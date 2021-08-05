@@ -111,6 +111,7 @@ input/fast*/
 /make_hp_sets_unskimmed.py
 /selections_svj_supp.py
 /regions_svj.py
+/makePieChart.C
 
 # linked by setupXML.sh
 /KMVA/pugi*.*
