@@ -21,7 +21,7 @@ def varyAll(pos,paramlist,sig,sigs):
         stmp = sig[:]+[v]
         # check if last param
         if pos+1==len(paramlist):
-            sigs.add(tuple(stmp))
+            sigs.append(tuple(stmp))
         else:
             varyAll(pos+1,paramlist,stmp,sigs)
 
@@ -171,9 +171,9 @@ if options.procs.startswith("sig"):
         else: sig_vals[p] = [benchmarks[p]]
         sig_captions.append("$\\{} = {}{}$".format(p,texVal(p,sig_vals[p][0]),sig_units[p]))
     sig_captions.insert(-1,"and")
-    sigs = set()
+    sigs = []
     varyAll(0,list(sig_vals.iteritems()),[],sigs)
-    for point in sorted(sigs):
+    for point in sigs:
         procs['$\\{} = {}{}$'.format(varied,texVal(varied,point[varied_ind]),sig_units[varied])] = [
             ('_'.join(str(x) for x in ["SVJ"]+list(point)), xsecs[str(point[0])]),
         ]
@@ -243,18 +243,24 @@ captions = {
     'rel': "Relative efficiencies in \%",
 }
 captions['rawrel'] = captions['raw']+" (relative efficiency in \%)"
+staterr_caption = " Only statistical uncertainties are shown."
+eff_caption = " The line ``Efficiency [\%]'' is the absolute efficiency after the final selection."
+region_caption = " The subsequent lines show the efficiency for each signal region, relative to the final selection."
 if options.procs=="bkg" or options.procs=="all":
-    caption = "\\caption{"+captions[options.type]+" for each step of the event selection process for the major background processes"+(" and benchmark signal model ($\\mZprime = 3000\\GeV$, $\\mDark = 20\\GeV$, $\\rinv = 0.3$, $\\aDark = \\aDarkPeak$)." if options.procs=="all" else ".")+(" Only statistical uncertainties are shown." if options.error else "")+"}"
-    caption = "\\caption{{{} for each step of the event selection process for the major background processes{}.{}}}".format(
+    caption = "\\caption{{{} for each step of the event selection process for the major background processes{}.{}{}{}}}".format(
         captions[options.type],
         " and benchmark signal model ($\\mZprime = 3000\\GeV$, $\\mDark = 20\\GeV$, $\\rinv = 0.3$, $\\aDark = \\aDarkPeak$)" if options.procs=="all" else "",
-        " Only statistical uncertainties are shown." if options.error else "",
+        staterr_caption if options.error else "",
+        eff_caption if options.efficiency else "",
+        region_caption if len(options.regionfile)>0 else "",
     )
 else:
-    caption = "\\caption{{{} for each step of the event selection process for signals with {}.{}}}".format(
+    caption = "\\caption{{{} for each step of the event selection process for signals with {}.{}{}{}}}".format(
         captions[options.type],
         ', '.join(sig_captions).replace("and,","and"),
-        " Only statistical uncertainties are shown." if options.error else "",
+        staterr_caption if options.error else "",
+        eff_caption if options.efficiency else "",
+        region_caption if len(options.regionfile)>0 else "",
     )
 
 # preamble
