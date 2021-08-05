@@ -16,7 +16,7 @@ def find_crossing(array, value):
     # check if previous or next point crosses zero and is closer to zero
     other_idx = []
     if idx>0 and array[idx-1]>0: other_idx.append(idx-1)
-    if array[idx+1]>0: other_idx.append(idx+1)
+    if len(array)>idx+1 and array[idx+1]>0: other_idx.append(idx+1)
     for idx2 in other_idx:
         if abs(array[idx2]) < abs(array[idx]): idx = idx2
     if len(other_idx)==0: idx = -1
