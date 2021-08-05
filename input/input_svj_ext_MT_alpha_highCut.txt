@@ -1,0 +1,12 @@
+INPUT
+input/input_svj_ext_MT_alpha.txt
+
+OPTION
+vstring+:printformat[pdf]
+string:exthisto_dir[highCut_2018]
+vstring{|}:extra_text[high-^{}R_{T}|signal (^{}m_{Z'} = 2.5 TeV,|^{}m_{dark} = 20 GeV, ^{}r_{inv} = 0.3)]
+string+:printsuffix[_highCut]
+bool:unitnorm[0]
+string:lumi_text[137 fb^{-1} (13 TeV)]
+string:rootfile[test/paper/sig/MT_alpha_highCut_plots]
+double:ymin[1e-2]
