@@ -150,10 +150,10 @@ namespace KMath {
 	//from https://github.com/cms-jet/JetMETAnalysis/blob/master/JetUtilities/plugins/MatchRecToGen.cc
 	//but only consider n jets
 	vector<int> MatchGenRec(const vector<TLorentzVector>& Jets, const vector<TLorentzVector>& GenJets, int n){
-		if(n<0 or n>Jets.size()) n = Jets.size();
+		if(n<0 or unsigned(n)>Jets.size()) n = Jets.size();
 
 		map<double,pair<unsigned,unsigned>> matchMap;
-		for(unsigned j = 0; j < n; ++j){
+		for(int j = 0; j < n; ++j){
 			for(unsigned g = 0; g < GenJets.size(); ++g){
 				matchMap.emplace(std::piecewise_construct, std::forward_as_tuple(Jets[j].DeltaR(GenJets[g])), std::forward_as_tuple(j,g));
 			}

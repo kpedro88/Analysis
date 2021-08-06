@@ -166,13 +166,14 @@ class KSet : public KBase {
 			}
 		}
 		//rebin current histo, set implementation
-		virtual void Rebin(int rebin){
-			KBase::Rebin(rebin);
+		using KBase::Rebin;
+		virtual void Rebin(int rebinx, int rebiny=-1){
+			KBase::Rebin(rebinx, rebiny);
 
 			//propagate to children for consistency
 			for(unsigned c = 0; c < children.size(); c++){
-				children[c]->Rebin(rebin);
-			}			
+				children[c]->Rebin(rebinx, rebiny);
+			}
 		}
 		//divide current histo by bin width, set implementation
 		virtual void BinDivide(bool do_x, bool do_y, TH1* htmp=nullptr){
@@ -597,6 +598,7 @@ class KSetRatio: public KSet {
 		virtual void Rebin(int rebin){}
 		virtual void Normalize(double nn, bool toYield) {}
 		//simplified generic build (for using ratio calc in pad1)
+		using KBase::Build;
 		virtual void Build(){
 			int rebin = 0; globalOpt->Get("rebin",rebin);
 			//first, all children build

@@ -2648,7 +2648,7 @@ class KNJetAK8Selector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return looper->JetsAK8->size() >= njet;
+			return looper->JetsAK8->size() >= unsigned(njet);
 		}
 		
 		//member variables
@@ -2675,7 +2675,7 @@ class KEtaJetAK8Selector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			for(unsigned j = 0; j < njet; ++j){
+			for(unsigned j = 0; j < unsigned(njet); ++j){
 				if(eta>0 and abs(looper->JetsAK8->at(j).Eta())>=eta) return false;
 			}
 			return true;
