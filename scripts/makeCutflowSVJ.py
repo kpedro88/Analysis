@@ -152,7 +152,7 @@ if options.procs=="all":
 benchmarks = {"mZprime": 3100, "mDark": 20, "rinv": 0.3, "aDark": "peak"}
 sig_vals = OrderedDict([
     ("mZprime", [2100, 3100, 4100]),
-    ("mDark", [5, 20, 50, 100]),
+    ("mDark", [5, 10, 20, 50, 100]),
     ("rinv", [0.1, 0.3, 0.6, 0.9]),
     ("aDark", ["low","peak","high"]),
 ])

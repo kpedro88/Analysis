@@ -5,6 +5,12 @@ hist	mc	SVJ_2100_5_0.3_peak_MC2017
 	base	mc	SVJ_2100_5_0.3_peak_MC2017	s:filename[tree_SVJ_2100_5_0.3_peak_MC2017.root]	b:unweighted[1]
 hist	mc	SVJ_2100_5_0.3_peak_MC2018
 	base	mc	SVJ_2100_5_0.3_peak_MC2018	s:filename[tree_SVJ_2100_5_0.3_peak_MC2018.root]	b:unweighted[1]
+hist	mc	SVJ_2100_10_0.3_peak_MC2016
+	base	mc	SVJ_2100_10_0.3_peak_MC2016	s:filename[tree_SVJ_2100_10_0.3_peak_MC2016.root]	b:unweighted[1]
+hist	mc	SVJ_2100_10_0.3_peak_MC2017
+	base	mc	SVJ_2100_10_0.3_peak_MC2017	s:filename[tree_SVJ_2100_10_0.3_peak_MC2017.root]	b:unweighted[1]
+hist	mc	SVJ_2100_10_0.3_peak_MC2018
+	base	mc	SVJ_2100_10_0.3_peak_MC2018	s:filename[tree_SVJ_2100_10_0.3_peak_MC2018.root]	b:unweighted[1]
 hist	mc	SVJ_2100_20_0.1_peak_MC2016
 	base	mc	SVJ_2100_20_0.1_peak_MC2016	s:filename[tree_SVJ_2100_20_0.1_peak_MC2016.root]	b:unweighted[1]
 hist	mc	SVJ_2100_20_0.1_peak_MC2017
@@ -59,6 +65,12 @@ hist	mc	SVJ_3100_5_0.3_peak_MC2017
 	base	mc	SVJ_3100_5_0.3_peak_MC2017	s:filename[tree_SVJ_3100_5_0.3_peak_MC2017.root]	b:unweighted[1]
 hist	mc	SVJ_3100_5_0.3_peak_MC2018
 	base	mc	SVJ_3100_5_0.3_peak_MC2018	s:filename[tree_SVJ_3100_5_0.3_peak_MC2018.root]	b:unweighted[1]
+hist	mc	SVJ_3100_10_0.3_peak_MC2016
+	base	mc	SVJ_3100_10_0.3_peak_MC2016	s:filename[tree_SVJ_3100_10_0.3_peak_MC2016.root]	b:unweighted[1]
+hist	mc	SVJ_3100_10_0.3_peak_MC2017
+	base	mc	SVJ_3100_10_0.3_peak_MC2017	s:filename[tree_SVJ_3100_10_0.3_peak_MC2017.root]	b:unweighted[1]
+hist	mc	SVJ_3100_10_0.3_peak_MC2018
+	base	mc	SVJ_3100_10_0.3_peak_MC2018	s:filename[tree_SVJ_3100_10_0.3_peak_MC2018.root]	b:unweighted[1]
 hist	mc	SVJ_3100_20_0.1_peak_MC2016
 	base	mc	SVJ_3100_20_0.1_peak_MC2016	s:filename[tree_SVJ_3100_20_0.1_peak_MC2016.root]	b:unweighted[1]
 hist	mc	SVJ_3100_20_0.1_peak_MC2017
@@ -113,6 +125,12 @@ hist	mc	SVJ_4100_5_0.3_peak_MC2017
 	base	mc	SVJ_4100_5_0.3_peak_MC2017	s:filename[tree_SVJ_4100_5_0.3_peak_MC2017.root]	b:unweighted[1]
 hist	mc	SVJ_4100_5_0.3_peak_MC2018
 	base	mc	SVJ_4100_5_0.3_peak_MC2018	s:filename[tree_SVJ_4100_5_0.3_peak_MC2018.root]	b:unweighted[1]
+hist	mc	SVJ_4100_10_0.3_peak_MC2016
+	base	mc	SVJ_4100_10_0.3_peak_MC2016	s:filename[tree_SVJ_4100_10_0.3_peak_MC2016.root]	b:unweighted[1]
+hist	mc	SVJ_4100_10_0.3_peak_MC2017
+	base	mc	SVJ_4100_10_0.3_peak_MC2017	s:filename[tree_SVJ_4100_10_0.3_peak_MC2017.root]	b:unweighted[1]
+hist	mc	SVJ_4100_10_0.3_peak_MC2018
+	base	mc	SVJ_4100_10_0.3_peak_MC2018	s:filename[tree_SVJ_4100_10_0.3_peak_MC2018.root]	b:unweighted[1]
 hist	mc	SVJ_4100_20_0.1_peak_MC2016
 	base	mc	SVJ_4100_20_0.1_peak_MC2016	s:filename[tree_SVJ_4100_20_0.1_peak_MC2016.root]	b:unweighted[1]
 hist	mc	SVJ_4100_20_0.1_peak_MC2017
