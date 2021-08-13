@@ -88,9 +88,12 @@ struct Curve {
 	bool obs;
 };
 
-void compareLimits(string oname, string input, string options){
+void compareLimits(string oname, string input, string options, vector<string> more_options={}){
 	OptionMap* globalOpt = new OptionMap();
 	KParser::processOption("in:input["+options+"]",globalOpt);
+	for(const auto& opt : more_options){
+		KParser::processOption(opt,globalOpt);
+	}
 	bool do_obs = globalOpt->Get("do_obs",false);
 
 	//set up plot
