@@ -1,5 +1,6 @@
 #include "KCode/KMap.h"
 #include "KCode/KPlot.h"
+#include "KCode/KParser.h"
 #include "KCode/KLegend.h"
 
 #include "TFile.h"
@@ -17,7 +18,12 @@
 
 using namespace std;
 
-void makePieChart(string fname, string region){
+void makePieChart(string fname, string region, vector<string> options={}){
+	OptionMap* globalOpt = new OptionMap();
+	for(const auto& opt : options){
+		KParser::processOption(opt,globalOpt);
+	}
+
 	vector<string> bkgs{"QCD","TT","WJets","ZJets"};
 	vector<int> cols{kBlue + 2, kOrange - 2, kOrange + 1, kViolet + 1};
 	map<string,string> bdict{
@@ -33,8 +39,9 @@ void makePieChart(string fname, string region){
 		{"lowSVJ2","low-SVJ2"},
 	};
 
-	string lumi_text("(13 TeV)");
-	string prelim_text("Simulation Supplementary");
+	string lumi_text("(13 TeV)"); globalOpt->Get("lumi_text",lumi_text);
+	string prelim_text("Simulation Supplementary"); globalOpt->Get("prelim_text",prelim_text);
+	string printsuffix; globalOpt->Get("printsuffix",printsuffix);
 
 	TFile* file = KOpen(fname);
 	TDirectory* dir = KGet<TDirectory>(file,region+"_2018");
@@ -67,6 +74,7 @@ void makePieChart(string fname, string region){
 	localOpt->Set<bool>("logy",false);
 
 	string oname("pie_"+region);
+	if(!printsuffix.empty()) oname += "_"+printsuffix;
 
 	//fake histo
 	TH1F* hbase = new TH1F("base","",1,0,1);
