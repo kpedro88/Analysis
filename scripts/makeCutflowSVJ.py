@@ -152,7 +152,7 @@ if options.procs=="all":
 benchmarks = {"mZprime": 3100, "mDark": 20, "rinv": 0.3, "aDark": "peak"}
 sig_vals = OrderedDict([
     ("mZprime", [2100, 3100, 4100]),
-    ("mDark", [5, 10, 20, 50, 100]),
+    ("mDark", [5, 20, 50, 100]),
     ("rinv", [0.1, 0.3, 0.6, 0.9]),
     ("aDark", ["low","peak","high"]),
 ])
@@ -247,7 +247,7 @@ staterr_caption = " Only statistical uncertainties are shown."
 eff_caption = " The line ``Efficiency [\%]'' is the absolute efficiency after the final selection."
 region_caption = " The subsequent lines show the efficiency for each signal region, relative to the final selection."
 if options.procs=="bkg" or options.procs=="all":
-    caption = "\\caption{{{} for each step of the event selection process for the major background processes{}.{}{}{}}}".format(
+    caption = "\\topcaption{{{} for each step of the event selection process for the major background processes{}.{}{}{}}}".format(
         captions[options.type],
         " and benchmark signal model ($\\mZprime = 3000\\GeV$, $\\mDark = 20\\GeV$, $\\rinv = 0.3$, $\\aDark = \\aDarkPeak$)" if options.procs=="all" else "",
         staterr_caption if options.error else "",
@@ -270,7 +270,7 @@ if options.type=="rawrel":
     else: coltype = "rP"
 wfile.write("\\begin{table}[htb]\n")
 wfile.write(caption+"\n")
-wfile.write("\\begin{center}\n")
+wfile.write("\\centering\n")
 if options.small: wfile.write("{\\footnotesize\n")
 wfile.write("\\begin{tabular}{M"+coltype*len(procs)+"}\n")
 wfile.write("\\hline\n")
@@ -286,7 +286,6 @@ wfile.write("\\hline\n")
 wfile.write("\\end{tabular}\n")
 if options.small: wfile.write("}\n")
 wfile.write("\\label{tab:sel-eff-"+options.outname.replace(".tex","")+"}\n")
-wfile.write("\\end{center}\n")
 wfile.write("\\end{table}\n")
 
 wfile.close()
