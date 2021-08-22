@@ -483,19 +483,19 @@ class KSetMCStack : public KSet {
 			if(globalOpt->Get("errband",true)) BuildErrorBand();
 		}
 		//rebin current histo, stack implementation
-		virtual void Rebin(int rebin){
+		virtual void Rebin(int rebinx, int rebiny=-1){
 			//scale stack histos
 			TObjArray* stack_array = obj->shtmp->GetStack();
 			for(int s = 0; s < stack_array->GetSize(); s++){
 				TH1* hist = (TH1*)stack_array->At(s);
-				hist->Rebin(rebin);
+				hist->Rebin(rebinx);
 			}
-		
+
 			//scale children for consistency
 			for(unsigned c = 0; c < children.size(); c++){
-				children[c]->Rebin(rebin);
+				children[c]->Rebin(rebinx,rebiny);
 			}
-			
+
 			//rebuild error band (enabled by default)
 			if(globalOpt->Get("errband",true)) {
 				BuildErrorBand();
