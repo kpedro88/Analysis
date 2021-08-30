@@ -32,6 +32,7 @@ struct Curve {
 		localOpt->Get("extra_text",extra_text);
 		style = new KStyle(name,globalOpt,localOpt);
 		obs = localOpt->Get("obs",false);
+		skiplegend = localOpt->Get("skiplegend",false);
 
 		string extfilename; localOpt->Get("extfilename",extfilename);
 		//get graph
@@ -86,6 +87,7 @@ struct Curve {
 	KStyle* style;
 	double ymin, ymax;
 	bool obs;
+	bool skiplegend;
 };
 
 void compareLimits(string oname, string input, string options, vector<string> more_options={}){
@@ -123,7 +125,7 @@ void compareLimits(string oname, string input, string options, vector<string> mo
 			curves.pop_back();
 			continue;
 		}
-		curve.AddToLegend(kleg);
+		if(!curve.skiplegend) curve.AddToLegend(kleg);
 		if(curve.ymin<ymin) ymin = curve.ymin;
 		if(curve.ymax>ymax) ymax = curve.ymax;
 	}
