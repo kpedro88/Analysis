@@ -127,11 +127,11 @@ void compareLimits(string oname, string input, string options, vector<string> mo
 		if(curve.ymin<ymin) ymin = curve.ymin;
 		if(curve.ymax>ymax) ymax = curve.ymax;
 	}
-	globalOpt->Get("ymin",ymin);
-	globalOpt->Get("ymax",ymax);
+	bool manual_ymin = globalOpt->Get("ymin",ymin);
+	bool manual_ymax = globalOpt->Get("ymax",ymax);
 	//set extrema
 	double yfactor = 10; globalOpt->Get("yfactor",yfactor);
-	hbase->GetYaxis()->SetRangeUser(ymin/yfactor,ymax*yfactor);
+	hbase->GetYaxis()->SetRangeUser(manual_ymin ? ymin : ymin/yfactor, manual_ymax ? ymax : ymax*yfactor);
 
 	//draw blank histo for axes
 	plot->DrawHist();
