@@ -1,0 +1,33 @@
+INPUT
+input/input_svj_paper.txt
+
+OPTION
+int:npanel[1]
+string:extfilename[test/svj_bkg_discr_vs_pt.root]
+string:printsuffix[_vs_pt_bkg_dijetmtdetahadloose_discr_E3]
+bool:unitnorm[1]
+bool:nosort[1]
+
+HISTO
+bothjetAK8bdtSVJtag	i:xnum[50]	d:xmin[0]	d:xmax[1]	s:xtitle[BDT discriminator (^{}J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	vd:xcuts[0.55]	vc:xcut_colors[kBlack]
+
+SET
+hist	mc	ptbin1	s:legname[0 < ^{}p_{T} < 500]	c:color[kAzure + 1]
+	base	ext	QCD_MC2017	b:ext_auto[1]	s:exthisto_extra[ptbin1]
+	base	ext	TT_MC2017	b:ext_auto[1]	s:exthisto_extra[ptbin1]
+hist	mc	ptbin2	s:legname[500 < ^{}p_{T} < 1000]	c:color[kOrange + 1]
+	base	ext	QCD_MC2017	b:ext_auto[1]	s:exthisto_extra[ptbin2]
+	base	ext	TT_MC2017	b:ext_auto[1]	s:exthisto_extra[ptbin2]
+hist	mc	ptbin3	s:legname[1000 < ^{}p_{T} < 1500]	c:color[kGreen + 1]
+	base	ext	QCD_MC2017	b:ext_auto[1]	s:exthisto_extra[ptbin3]
+	base	ext	TT_MC2017	b:ext_auto[1]	s:exthisto_extra[ptbin3]
+hist	mc	ptbin4	s:legname[1500 < ^{}p_{T} < 2000]	c:color[kRed + 1]
+	base	ext	QCD_MC2017	b:ext_auto[1]	s:exthisto_extra[ptbin4]
+	base	ext	TT_MC2017	b:ext_auto[1]	s:exthisto_extra[ptbin4]
+hist	mc	ptbin5	s:legname[2000 < ^{}p_{T} < 2500]	c:color[kViolet + 1]
+	base	ext	QCD_MC2017	b:ext_auto[1]	s:exthisto_extra[ptbin5]
+	base	ext	TT_MC2017	b:ext_auto[1]	s:exthisto_extra[ptbin5]
+hist	mc	ptbin6	s:legname[^{}p_{T} > 2500]	c:color[kOrange - 7]
+	base	ext	QCD_MC2017	b:ext_auto[1]	s:exthisto_extra[ptbin6]
+	base	ext	TT_MC2017	b:ext_auto[1]	s:exthisto_extra[ptbin6]
+
