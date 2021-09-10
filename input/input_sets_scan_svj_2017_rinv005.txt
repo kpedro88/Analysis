@@ -2,8 +2,8 @@ OPTION
 string:outsuff[_MC2017_fast]
 
 SET
-base	scan	SVJ_Zprime_ScanRinv005_MC2017_block0	u:block[0]	b:chain[1]	ch:filenames[PrivateSamples.MC2017_SVJ_ScanRinv005_2017_TuneCP2_13TeV_pythia8_n-1000_,1,500,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
-base	scan	SVJ_Zprime_ScanRinv005_MC2017_block1	u:block[1]	b:chain[1]	ch:filenames[PrivateSamples.MC2017_SVJ_ScanRinv005_2017_TuneCP2_13TeV_pythia8_n-1000_,501,1000,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
-base	scan	SVJ_Zprime_ScanRinv005_MC2017_block2	u:block[2]	b:chain[1]	ch:filenames[PrivateSamples.MC2017_SVJ_ScanRinv005_2017_TuneCP2_13TeV_pythia8_n-1000_,1001,1500,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
-base	scan	SVJ_Zprime_ScanRinv005_MC2017_block3	u:block[3]	b:chain[1]	ch:filenames[PrivateSamples.MC2017_SVJ_ScanRinv005_2017_TuneCP2_13TeV_pythia8_n-1000_,1501,2000,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
-base	scan	SVJ_Zprime_ScanRinv005_MC2017_block4	u:block[4]	b:chain[1]	ch:filenames[PrivateSamples.MC2017_SVJ_ScanRinv005_2017_TuneCP2_13TeV_pythia8_n-1000_,2001,2280,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
+base	scan	SVJ_Zprime_ScanRinv005_MC2017_block0	u:block[0]	b:chain[1]	ch:filenames[PrivateSamples.MC2017_SVJ_ScanRinv005_2017_TuneCP2_13TeV_pythia8_n-1000_,0,9,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
+base	scan	SVJ_Zprime_ScanRinv005_MC2017_block1	u:block[1]	b:chain[1]	ch:filenames[PrivateSamples.MC2017_SVJ_ScanRinv005_2017_TuneCP2_13TeV_pythia8_n-1000_,10,19,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
+base	scan	SVJ_Zprime_ScanRinv005_MC2017_block2	u:block[2]	b:chain[1]	ch:filenames[PrivateSamples.MC2017_SVJ_ScanRinv005_2017_TuneCP2_13TeV_pythia8_n-1000_,20,29,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
+base	scan	SVJ_Zprime_ScanRinv005_MC2017_block3	u:block[3]	b:chain[1]	ch:filenames[PrivateSamples.MC2017_SVJ_ScanRinv005_2017_TuneCP2_13TeV_pythia8_n-1000_,30,39,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
+base	scan	SVJ_Zprime_ScanRinv005_MC2017_block4	u:block[4]	b:chain[1]	ch:filenames[PrivateSamples.MC2017_SVJ_ScanRinv005_2017_TuneCP2_13TeV_pythia8_n-1000_,40,45,_RA2AnalysisTree.root]	s:chainsuff[/TreeMaker2/PreSelection]	b:data[0]
