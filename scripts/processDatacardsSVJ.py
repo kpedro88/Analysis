@@ -202,6 +202,8 @@ if __name__=="__main__":
         "psfsruncDown",
         "JESup",
         "JESdown",
+        "scaleuncUp",
+        "scaleuncDown",
     ])
 
     from ROOT import *

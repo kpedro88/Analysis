@@ -79,7 +79,7 @@ for TYPE in ${TYPES[@]}; do
 	fi
 
 	if [[ -z "$NOSYST" && ("$TYPE" == SVJ  ||  "$TYPE" == "SVJScan"*) ]]; then
-		SYSTS=${NOMINAL},trigfnuncUp,trigfnuncDown,puuncUp,puuncDown,pdfuncUp,pdfuncDown,psisruncUp,psisruncDown,psfsruncUp,psfsruncDown
+		SYSTS=${NOMINAL},trigfnuncUp,trigfnuncDown,puuncUp,puuncDown,pdfuncUp,pdfuncDown,psisruncUp,psisruncDown,psfsruncUp,psfsruncDown,scaleuncUp,scaleuncDown
 		VARS=JECup,JECdown,JERup,JERdown,JESup,JESdown
 	else
 		SYSTS=${NOMINAL}

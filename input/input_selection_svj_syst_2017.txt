@@ -67,3 +67,9 @@ psfsruncUp
 psfsruncDown
 	MCWeight	in:options[input/input_svj_MCWeight_options_2017.txt]	b:psnorm[0]	int:psfsrunc[-1]
 	common
+scaleuncUp
+	MCWeight	in:options[input/input_svj_MCWeight_options_2017.txt]	int:scaleunc[1]
+	common
+scaleuncDown
+	MCWeight	in:options[input/input_svj_MCWeight_options_2017.txt]	int:scaleunc[-1]
+	common
