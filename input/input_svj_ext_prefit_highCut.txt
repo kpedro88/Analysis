@@ -15,10 +15,10 @@ g_bonly	s:fn[[0]*exp([1]*x/13000)*(x/13000)^([2]*(1+[3]*log(x/13000)))]	vd:pars[
 
 SET
 hist	mc	SVJ_2100_20_0.3_peak_bonly	s:legname[m_{Z'} = 2100 GeV]	c:color[kBlue]	i:linestyle[7]	i:panel[1]	vs:fits[]	b:yieldnorm[0]
-	base	ext	SVJ_2100_20_0.3_peak_bonly	s:extfilename[test/paper/prefit/datacard_final_SVJ_2100_20_0.3_peak.root]	s:exthisto_dir[highCut_2018]	vs:exthisto_in[SVJ_mZprime2100_mDark20_rinv03_alphapeak]	vs:exthisto_out[MTAK8]	d:kfactor[1.5218657]
+	base	ext	SVJ_2100_20_0.3_peak_bonly	s:extfilename[test/paper/prefit/datacard_final_SVJ_2100_20_0.3_peak.root]	s:exthisto_dir[highCut_2018]	vs:exthisto_in[SVJ_mZprime2100_mDark20_rinv03_alphapeak]	vs:exthisto_out[MTAK8]	d:kfactor[0.5922580]
 hist	mc	SVJ_3100_20_0.3_peak_bonly	s:legname[m_{Z'} = 3100 GeV]	c:color[kCyan + 2]	i:linestyle[7]	i:panel[1]	vs:fits[]	b:yieldnorm[0]
-	base	ext	SVJ_3100_20_0.3_peak_bonly	s:extfilename[test/paper/prefit/datacard_final_SVJ_3100_20_0.3_peak.root]	s:exthisto_dir[highCut_2018]	vs:exthisto_in[SVJ_mZprime3100_mDark20_rinv03_alphapeak]	vs:exthisto_out[MTAK8]	d:kfactor[1.7318510]
+	base	ext	SVJ_3100_20_0.3_peak_bonly	s:extfilename[test/paper/prefit/datacard_final_SVJ_3100_20_0.3_peak.root]	s:exthisto_dir[highCut_2018]	vs:exthisto_in[SVJ_mZprime3100_mDark20_rinv03_alphapeak]	vs:exthisto_out[MTAK8]	d:kfactor[0.6225451]
 hist	mc	SVJ_4100_20_0.3_peak_bonly	s:legname[m_{Z'} = 4100 GeV]	c:color[kMagenta]	i:linestyle[7]	i:panel[1]	vs:fits[]	b:yieldnorm[0]
-	base	ext	SVJ_4100_20_0.3_peak_bonly	s:extfilename[test/paper/prefit/datacard_final_SVJ_4100_20_0.3_peak.root]	s:exthisto_dir[highCut_2018]	vs:exthisto_in[SVJ_mZprime4100_mDark20_rinv03_alphapeak]	vs:exthisto_out[MTAK8]	d:kfactor[7.0616117]
+	base	ext	SVJ_4100_20_0.3_peak_bonly	s:extfilename[test/paper/prefit/datacard_final_SVJ_4100_20_0.3_peak.root]	s:exthisto_dir[highCut_2018]	vs:exthisto_in[SVJ_mZprime4100_mDark20_rinv03_alphapeak]	vs:exthisto_out[MTAK8]	d:kfactor[2.3691684]
 hist	data	data	i:panel[1]	s:legname[data]	b:yieldnorm[0]	b:poisson[1]	i:panel[0]	s:drawopt[pe0]
 	base	ext	data	s:extfilename[test/paper/prefit/datacard_final_SVJ_3100_20_0.3_peak.root]	s:exthisto_dir[highCut_2018]	vs:exthisto_in[data_obs]	vs:exthisto_out[MTAK8]
