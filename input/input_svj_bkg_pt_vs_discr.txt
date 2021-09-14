@@ -1,0 +1,69 @@
+INPUT
+input/input_global.txt
+
+OPTION
+int:yieldprecision[4]
+vstring:disable_branches[*]
+bool:closefiles[1]
+bool:debugcut[1]
+bool:debugloop[1]
+bool:unitnorm[1]
+vstring:selections[bdtbin1,bdtbin2,bdtbin3,bdtbin4,bdtbin5]
+string:rootfile[test/svj_bkg_pt_vs_discr]
+
+SELECTION
+base
+	METFilter	b:ecaldeadcell[0]
+	PhiSpikeFilter
+	MCWeight	in:options[input/input_svj_MCWeight_options_2017.txt]
+	Histo
+bdtbin1
+	SVJTag	s:branch[bdtSVJtag]	d:min[0]	d:max[0.2]
+	SVJFilter	i:filter[1]
+	base
+bdtbin2
+	SVJTag	s:branch[bdtSVJtag]	d:min[0.2]	d:max[0.4]
+	SVJFilter	i:filter[1]
+	base
+bdtbin3
+	SVJTag	s:branch[bdtSVJtag]	d:min[0.4]	d:max[0.6]
+	SVJFilter	i:filter[1]
+	base
+bdtbin4
+	SVJTag	s:branch[bdtSVJtag]	d:min[0.6]	d:max[0.8]
+	SVJFilter	i:filter[1]
+	base
+bdtbin5
+	SVJTag	s:branch[bdtSVJtag]	d:min[0.8]
+	SVJFilter	i:filter[1]
+	base
+
+HISTO
+bothjetAK8pt	i:xnum[50]	d:xmin[0]	d:xmax[3000]	s:xtitle[p_{T}(^{}J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]
+
+SET
+hist	mc	QCD_MC2017	s:legname[QCD]	c:color[kBlue + 2]	i:panel[1]
+	base	mc	QCD_Pt_80to120	s:filename[tree_QCD_Pt_80to120_MC2017.root]	d:kfactor[1.9]
+	base	mc	QCD_Pt_120to170	s:filename[tree_QCD_Pt_120to170_MC2017.root]	d:kfactor[1.9]
+	base	mc	QCD_Pt_170to300	s:filename[tree_QCD_Pt_170to300_MC2017.root]	d:kfactor[1.9]
+	base	mc	QCD_Pt_300to470	s:filename[tree_QCD_Pt_300to470_MC2017.root]	d:kfactor[1.9]
+	base	mc	QCD_Pt_470to600	s:filename[tree_QCD_Pt_470to600_MC2017.root]	d:kfactor[1.9]
+	base	mc	QCD_Pt_600to800	s:filename[tree_QCD_Pt_600to800_MC2017.root]	d:kfactor[1.9]
+	base	mc	QCD_Pt_800to1000	s:filename[tree_QCD_Pt_800to1000_MC2017.root]	d:kfactor[1.9]
+	base	mc	QCD_Pt_1000to1400	s:filename[tree_QCD_Pt_1000to1400_MC2017.root]	d:kfactor[1.9]
+	base	mc	QCD_Pt_1400to1800	s:filename[tree_QCD_Pt_1400to1800_MC2017.root]	d:kfactor[1.9]
+	base	mc	QCD_Pt_1800to2400	s:filename[tree_QCD_Pt_1800to2400_MC2017.root]	d:kfactor[1.9]
+	base	mc	QCD_Pt_2400to3200	s:filename[tree_QCD_Pt_2400to3200_MC2017.root]	d:kfactor[1.9]
+	base	mc	QCD_Pt_3200toInf	s:filename[tree_QCD_Pt_3200toInf_MC2017.root]	d:kfactor[1.9]
+hist	mc	TT_MC2017	s:legname[t#bar{t}]	c:color[kOrange - 2]	i:panel[1]
+	base	mc	TTJets	s:filename[tree_TTJets_MC2017.root]	s:normtype[ttbarLowHThad]
+	base	mc	TTJets_DiLept	s:filename[tree_TTJets_DiLept_MC2017.root]	s:normtype[ttbarLowHTLowMET]
+	base	mc	TTJets_DiLept_genMET150	s:filename[tree_TTJets_DiLept_genMET-150_MC2017.root]	s:normtype[ttbarLowHTHighMET]
+	base	mc	TTJets_SingleLeptFromT	s:filename[tree_TTJets_SingleLeptFromT_MC2017.root]	s:normtype[ttbarLowHTLowMET]
+	base	mc	TTJets_SingleLeptFromT_genMET150	s:filename[tree_TTJets_SingleLeptFromT_genMET-150_MC2017.root]	s:normtype[ttbarLowHTHighMET]
+	base	mc	TTJets_SingleLeptFromTbar	s:filename[tree_TTJets_SingleLeptFromTbar_MC2017.root]	s:normtype[ttbarLowHTLowMET]
+	base	mc	TTJets_SingleLeptFromTbar_genMET150	s:filename[tree_TTJets_SingleLeptFromTbar_genMET-150_MC2017.root]	s:normtype[ttbarLowHTHighMET]
+	base	mc	TTJets_HT600to800	s:filename[tree_TTJets_HT-600to800_MC2017.root]	s:normtype[ttbarHighHT]
+	base	mc	TTJets_HT800to1200	s:filename[tree_TTJets_HT-800to1200_MC2017.root]	s:normtype[ttbarHighHT]
+	base	mc	TTJets_HT1200to2500	s:filename[tree_TTJets_HT-1200to2500_MC2017.root]	s:normtype[ttbarHighHT]
+	base	mc	TTJets_HT2500toInf	s:filename[tree_TTJets_HT-2500toInf_MC2017.root]	s:normtype[ttbarHighHT]
