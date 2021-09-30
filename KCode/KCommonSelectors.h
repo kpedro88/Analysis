@@ -276,13 +276,21 @@ class KSVJTagSelector : public KSelector {
 		enum svjbranches { bdt = 0, seltor = 2 };
 		//constructor
 		KSVJTagSelector() : KSelector() { }
-		KSVJTagSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), branch(""), cut(0.), BDT(NULL) { 
+		KSVJTagSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), branch(""), min(-1), max(-1), BDT(NULL) { 
 			//check for option
 			localOpt->Get("branch",branch);
 			if(branch=="bdtSVJtag") ebranch = bdt;
 			else if(branch.empty()) ebranch = seltor;
 			else throw runtime_error("Unknown bdt branch: "+branch);
-			localOpt->Get("cut",cut);
+			double cut(0.); bool oldcut = localOpt->Get("cut",cut);
+			if(oldcut){
+				min = cut;
+				max = -1;
+			}
+			else {
+				localOpt->Get("min",min);
+				localOpt->Get("max",max);
+			}
 			canfail = false;
 		}
 		virtual void ListBranches(){
@@ -304,8 +312,8 @@ class KSVJTagSelector : public KSelector {
 			JetsAK8_tagged.clear();
 			const auto& SVJTag = ebranch==seltor ? BDT->JetsAK8_bdt : *looper->JetsAK8_bdtSVJtag;
 			JetsAK8_tagged.reserve(SVJTag.size());
-			for(unsigned j = 0; j < min(SVJTag.size(),2ul); ++j){
-				JetsAK8_tagged.push_back(SVJTag[j] > cut);
+			for(unsigned j = 0; j < std::min(SVJTag.size(),2ul); ++j){
+				JetsAK8_tagged.push_back((min<0 or SVJTag[j]>min) and (max<0 or SVJTag[j]<max));
 				if(JetsAK8_tagged.back()) ++ntags;
 			}
 
@@ -314,7 +322,7 @@ class KSVJTagSelector : public KSelector {
 		
 		//member variables
 		string branch;
-		double cut;
+		double min, max;
 		unsigned ntags;
 		vector<bool> JetsAK8_tagged;
 		svjbranches ebranch;
