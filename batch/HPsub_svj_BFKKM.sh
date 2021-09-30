@@ -8,9 +8,11 @@ CHECKARGS=""
 YEARS=()
 DRYRUN=""
 STYPE=""
+QTY=input/input_svj_rocs_bothjet_E1.txt
+SUFF=hist
 
 #check arguments
-while getopts "kdy:t:" opt; do
+while getopts "kdy:t:q:s:" opt; do
 	case "$opt" in
 		k) CHECKARGS="${CHECKARGS} -k"
 		;;
@@ -20,10 +22,14 @@ while getopts "kdy:t:" opt; do
 		;;
 		d) DRYRUN="echo"
 		;;
+		q) QTY="$OPTARG"
+		;;
+		s) SUFF="$OPTARG"
+		;;
 	esac
 done
 
-STORE=root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/bfkkm/${STYPE}hist
+STORE=root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/bfkkm/${STYPE}${SUFF}
 
 if [ "$STYPE" != q ] && [ "$STYPE" != s ] && [ "$STYPE" != c ]; then
 	echo "Unknown sample stype $STYPE"
@@ -33,7 +39,7 @@ fi
 ./SKcheck.sh ${CHECKARGS}
 
 for YEAR in ${YEARS[@]}; do
-	INPUTS='"input/input_svj_discr_unskimmed.txt","input/input_svj_rocs_bothjet_E1.txt"'
+	INPUTS='"input/input_svj_discr_unskimmed.txt","'$QTY'"'
 
 	SNAME=HistBFKKM${STYPE}${YEAR}
 	source export${SNAME}.sh
