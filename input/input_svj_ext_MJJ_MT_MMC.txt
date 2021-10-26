@@ -4,7 +4,7 @@ input/input_svj_supp.txt
 OPTION
 int:npanel[1]
 vstring{|}:extra_text[signal|(^{}m_{Z'} = 2.1 TeV, ^{}m_{dark} = 20 GeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
-double:luminorm[137000]
+double:luminorm[138000]
 string:printsuffix[unskimmed_mass_comp]
 string:extfilename[test/paper/sig/svj_unskimmed_mass_central.root]
 double:ymin[1e-6]

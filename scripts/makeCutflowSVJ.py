@@ -60,7 +60,7 @@ options.efficiency = options.efficiency or 'raw' in options.type
 namesDict = getNames(options.names)
 
 lumis = OrderedDict([
-    ("2016", 35920),
+    ("2016", 36330),
     ("2017", 41530),
     ("2018", 59740),
 ])

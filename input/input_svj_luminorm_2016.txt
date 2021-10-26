@@ -1,2 +1,2 @@
 OPTION
-double:luminorm[35920]
+double:luminorm[36330]

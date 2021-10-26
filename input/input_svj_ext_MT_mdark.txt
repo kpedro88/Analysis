@@ -3,7 +3,7 @@ input/input_svj_supp.txt
 
 OPTION
 int:npanel[1]
-double:luminorm[137000]
+double:luminorm[138000]
 string:printsuffix[SVJ_2500_20_0.3_vs_mdark]
 
 HISTO
