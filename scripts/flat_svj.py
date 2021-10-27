@@ -1,4 +1,4 @@
 flat = {
-    "lumiunc": 2.6,
+    "lumiunc": 1.6,
     "trigsystunc": 2.0,
 }
