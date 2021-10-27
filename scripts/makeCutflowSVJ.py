@@ -277,7 +277,7 @@ wfile.write("\\hline\n")
 
 for key,val in outDict.iteritems():
     if key=="NormType" and not 'raw' in options.type: continue
-    if key==list(signalRegions)[0]: wfile.write("\\hline\n")
+    if len(signalRegions)>0 and key==list(signalRegions)[0]: wfile.write("\\hline\n")
     wfile.write(val+" \\\\"+"\n")
     if key=="header1" or (options.efficiency and key==list(namesDict)[-1]): wfile.write("\\hline\n")
 
