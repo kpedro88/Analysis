@@ -201,7 +201,7 @@ vector<TGraph*> findExclusionCurve(Limits& lim){
 	return results;
 }
 
-void styleGraphs(vector<TGraph*>& graphs, Color_t linecolor, int linestyle, int linewidth=2){
+void styleGraphs(vector<TGraph*>& graphs, Color_t linecolor, int linestyle, int linewidth=3){
 	//because graphs are used for legends, the vector should have at least one entry
 	if(graphs.empty()) graphs.push_back(new TGraph());
 	for(auto graph : graphs){
