@@ -8,7 +8,7 @@ selections = OrderedDict([
     ('MuonVeto', '\\nmuons & =0'),
     ('ElectronVeto', '\\neles & =0'),
     ('METFilter', '\\multicolumn{2}{c}{\\ptmiss filters}'),
-    ('PhiSpikeVeto16', '\\DRphispike^{2} & >0.01'),
+    ('PhiSpikeVeto16', '\\DRphispike & >0.1'),
     ('GapJetVeto', '\\text{veto}~f_{\\gamma}(j_{1})>0.7 &\\&~\\pt(j_{1}) > 1000\\GeV'),
     ('DeltaPhiMinAK8', '\\mindphi & <0.8'),
 ])

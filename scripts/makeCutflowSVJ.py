@@ -35,6 +35,8 @@ def convertName(outname):
 def texVal(qty, val):
     if qty=="aDark":
         return "\\"+qty+val.capitalize()
+    elif qty=="mZprime":
+        return val/1000.
     else:
         return val
 

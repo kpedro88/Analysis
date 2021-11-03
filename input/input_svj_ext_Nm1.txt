@@ -14,15 +14,15 @@ INPUT
 input/input_svj_hists_Nm1.txt
 
 SET
-hist	mc	SVJ_2100_20_0.3_peak	s:legname[m_{Z'} = 2100 GeV]	c:color[kBlue]	i:linestyle[7]	i:panel[1]
+hist	mc	SVJ_2100_20_0.3_peak	s:legname[m_{Z'} = 2.1 TeV]	c:color[kBlue]	i:linestyle[7]	i:panel[1]
 	base	ext	SVJ_2100_20_0.3_peak_MC2016	vs:exthisto_in[metMTratio_SVJ_2100_20_0.3_peak_MC2016_preselMinusRT2016,deltaphiminAK8_SVJ_2100_20_0.3_peak_MC2016_presel2016]	vs:exthisto_out[metMTratio,deltaphiminAK8]
 	base	ext	SVJ_2100_20_0.3_peak_MC2017	vs:exthisto_in[metMTratio_SVJ_2100_20_0.3_peak_MC2017_preselMinusRT2017,deltaphiminAK8_SVJ_2100_20_0.3_peak_MC2017_presel2017]	vs:exthisto_out[metMTratio,deltaphiminAK8]
 	base	ext	SVJ_2100_20_0.3_peak_MC2018	vs:exthisto_in[metMTratio_SVJ_2100_20_0.3_peak_MC2018_preselMinusRT2018,deltaphiminAK8_SVJ_2100_20_0.3_peak_MC2018_presel2018]	vs:exthisto_out[metMTratio,deltaphiminAK8]
-hist	mc	SVJ_3100_20_0.3_peak	s:legname[m_{Z'} = 3100 GeV]	c:color[kCyan + 2]	i:linestyle[7]	i:panel[1]
+hist	mc	SVJ_3100_20_0.3_peak	s:legname[m_{Z'} = 3.1 TeV]	c:color[kCyan + 2]	i:linestyle[7]	i:panel[1]
 	base	ext	SVJ_3100_20_0.3_peak_MC2016	vs:exthisto_in[metMTratio_SVJ_3100_20_0.3_peak_MC2016_preselMinusRT2016,deltaphiminAK8_SVJ_3100_20_0.3_peak_MC2016_presel2016]	vs:exthisto_out[metMTratio,deltaphiminAK8]
 	base	ext	SVJ_3100_20_0.3_peak_MC2017	vs:exthisto_in[metMTratio_SVJ_3100_20_0.3_peak_MC2017_preselMinusRT2017,deltaphiminAK8_SVJ_3100_20_0.3_peak_MC2017_presel2017]	vs:exthisto_out[metMTratio,deltaphiminAK8]
 	base	ext	SVJ_3100_20_0.3_peak_MC2018	vs:exthisto_in[metMTratio_SVJ_3100_20_0.3_peak_MC2018_preselMinusRT2018,deltaphiminAK8_SVJ_3100_20_0.3_peak_MC2018_presel2018]	vs:exthisto_out[metMTratio,deltaphiminAK8]
-hist	mc	SVJ_4100_20_0.3_peak	s:legname[m_{Z'} = 4100 GeV]	c:color[kMagenta]	i:linestyle[7]	i:panel[1]
+hist	mc	SVJ_4100_20_0.3_peak	s:legname[m_{Z'} = 4.1 TeV]	c:color[kMagenta]	i:linestyle[7]	i:panel[1]
 	base	ext	SVJ_4100_20_0.3_peak_MC2016	vs:exthisto_in[metMTratio_SVJ_4100_20_0.3_peak_MC2016_preselMinusRT2016,deltaphiminAK8_SVJ_4100_20_0.3_peak_MC2016_presel2016]	vs:exthisto_out[metMTratio,deltaphiminAK8]
 	base	ext	SVJ_4100_20_0.3_peak_MC2017	vs:exthisto_in[metMTratio_SVJ_4100_20_0.3_peak_MC2017_preselMinusRT2017,deltaphiminAK8_SVJ_4100_20_0.3_peak_MC2017_presel2017]	vs:exthisto_out[metMTratio,deltaphiminAK8]
 	base	ext	SVJ_4100_20_0.3_peak_MC2018	vs:exthisto_in[metMTratio_SVJ_4100_20_0.3_peak_MC2018_preselMinusRT2018,deltaphiminAK8_SVJ_4100_20_0.3_peak_MC2018_presel2018]	vs:exthisto_out[metMTratio,deltaphiminAK8]
