@@ -405,6 +405,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		plotOpt->Set<double>("ymin",ymin);
 		plotOpt->Set<double>("sizeLeg",20);
 		plotOpt->Set<bool>("auto_g",globalOpt->Get("auto_g",true));
+		plotOpt->Set<bool>("debug_legend",globalOpt->Get("debug_legend",false));
 
 		OptionMap* localOpt = new OptionMap();
 		localOpt->Set<bool>("ratio",false);
@@ -442,7 +443,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		pad1->SetGridx();
 		pad1->SetGridy();
 
-		//build legend
+		//assemble legend
 		kleg->AddHist(plot->GetHisto()); //for tick sizes
 
 		//preamble of legend
@@ -464,14 +465,16 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		}
 		string svname = vname.str(); svname.pop_back(); svname.pop_back();
 		kleg->AddEntry((TObject*)NULL,svname,"");
+
+		//draw blank histo for axes
+		plot->DrawHist();
+
+		//build legend (after drawing axes)
 		kleg->Build(KLegend::right,KLegend::top);
 		//extra style options
 		auto leg = kleg->GetLegend();
 		leg->SetFillStyle(1001);
 		leg->SetFillColorAlpha(0,0.6);
-
-		//draw blank histo for axes
-		plot->DrawHist();
 
 		//draw graphs
 		if(nsigma>=2) g_two->Draw("f same");
