@@ -1,3 +1,3 @@
-aHigh	s:legname[^{}#alpha_{dark}^{high}]	c:color[kBlue]	i:linestyle[1]	s:drawopt[c]	i:panel[0]	s:extfilename[test/paper/limit/plotAccEff_highSVJ2_vs_mZprime__alphaHigh.root]	s:extgraph[g_central]
-aPeak	s:legname[^{}#alpha_{dark}^{peak}]	c:color[kBlack]	i:linestyle[1]	s:drawopt[c]	i:panel[0]	s:extfilename[test/paper/limit/plotAccEff_highSVJ2_vs_mZprime__alphaPeak.root]	s:extgraph[g_central]
-aLow	s:legname[^{}#alpha_{dark}^{low}]	c:color[kRed]	i:linestyle[1]	s:drawopt[c]	i:panel[0]	s:extfilename[test/paper/limit/plotAccEff_highSVJ2_vs_mZprime__alphaLow.root]	s:extgraph[g_central]	vs{|}:extra_text[^{}m_{dark} = 20 GeV, ^{}r_{inv} = 0.3]
+aHigh	s:legname[^{}#alpha_{dark}^{high}]	c:color[kBlue]	i:linestyle[1]	s:drawopt[c]	i:panel[0]	s:extfilename[test/paper/limit/plotAccEff_highSVJ2_vs_mZprime_1000__alphaHigh.root]	s:extgraph[g_central]
+aPeak	s:legname[^{}#alpha_{dark}^{peak}]	c:color[kBlack]	i:linestyle[1]	s:drawopt[c]	i:panel[0]	s:extfilename[test/paper/limit/plotAccEff_highSVJ2_vs_mZprime_1000__alphaPeak.root]	s:extgraph[g_central]
+aLow	s:legname[^{}#alpha_{dark}^{low}]	c:color[kRed]	i:linestyle[1]	s:drawopt[c]	i:panel[0]	s:extfilename[test/paper/limit/plotAccEff_highSVJ2_vs_mZprime_1000__alphaLow.root]	s:extgraph[g_central]	vs{|}:extra_text[^{}m_{dark} = 20 GeV, ^{}r_{inv} = 0.3]

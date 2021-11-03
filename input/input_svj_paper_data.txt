@@ -1,6 +1,6 @@
 OPTION
 string:prelim_text[]
-string:lumi_text[137 ^{}fb^{-1} (13 TeV)]
+string:lumi_text[138 ^{}fb^{-1} (13 TeV)]
 bool:unitnorm[0]
 string:rationame[(Data-Fit)/#sigma]
 double:ratiomin[-2.5]

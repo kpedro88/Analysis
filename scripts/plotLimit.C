@@ -309,12 +309,14 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	string xname, yname, zname;
 	map<string,string> vdict{
 		{"mZprime","^{}m_{Z'}"},
+		{"mZprime/1000","^{}m_{Z'}"},
 		{"mDark","^{}m_{dark}"},
 		{"rinv","^{}r_{inv}"},
 		{"alpha","^{}#alpha_{dark}"},
 	};
 	map<string,string> unitdict{
 		{"mZprime"," [GeV]"},
+		{"mZprime/1000"," [TeV]"},
 		{"mDark"," [GeV]"},
 		{"rinv",""},
 		{"alpha",""},
