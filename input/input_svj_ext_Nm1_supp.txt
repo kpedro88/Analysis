@@ -2,7 +2,7 @@ INPUT
 input/input_svj_supp.txt
 
 OPTION
-vstring{|}:extra_text[signal (^{}m_{dark} = 20 GeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
+vstring{|}:extra_text[Signal (^{}m_{dark} = 20 GeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
 vint:extra_text_panels[1,1]
 string:rootfile[test/paper/Nm1/Nm1_plots]
 string:printsuffix[Run2ProductionV17_Nm1]

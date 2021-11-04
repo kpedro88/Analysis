@@ -33,10 +33,10 @@ void makePieChart(string fname, string region, vector<string> options={}){
 		{"ZJets","Z(#nu#nu)+jets"},
 	};
 	map<string,string> rdict{
-		{"highCut","high-^{}R_{T}"},
-		{"lowCut","low-^{}R_{T}"},
-		{"highSVJ2","high-SVJ2"},
-		{"lowSVJ2","low-SVJ2"},
+		{"highCut","High-^{}R_{T}"},
+		{"lowCut","Low-^{}R_{T}"},
+		{"highSVJ2","High-SVJ2"},
+		{"lowSVJ2","Low-SVJ2"},
 	};
 
 	string lumi_text("(13 TeV)"); globalOpt->Get("lumi_text",lumi_text);

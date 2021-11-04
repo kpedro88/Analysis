@@ -2,17 +2,17 @@ INPUT
 input/input_svj_supp.txt
 
 OPTION
-vstring{|}:extra_text[signal (^{}m_{Z'} = 3.1 TeV,|^{}m_{dark} = 20 GeV, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
+vstring{|}:extra_text[Signal (^{}m_{Z'} = 3.1 TeV,|^{}m_{dark} = 20 GeV, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
 vint:extra_text_panels[1,1]
 string:extfilename[test/paper/bdt/supp/histBDT_svj.root]
 string:rootfile[test/paper/bdt/bdt_rinv_plots]
 string:printsuffix[dijetmtdetahadloosespike_bdt_rinv_flatptZ30]
 
 HISTO
-bothjetAK8girth	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[g_{jet}(^{}J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	d:dxmin[0]	d:dxmax[0.6]
-bothjetAK8axismajor	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[#sigma_{major}(^{}J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
-bothjetAK8axisminor	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[#sigma_{minor}(^{}J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]	d:dxmin[0]	d:dxmax[0.3]
-bothjetAK8deltaphi	i:xnum[100]	d:xmin[0]	d:xmax[3.15]	s:xtitle[#Delta#phi(^{}J_{1,2},^{}p_{T}^{miss})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+bothjetAK8girth	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[g_{jet}(^{}J_{1,2})]	s:ytitle[Arbitrary units]	b:ratio[0]	b:logy[1]	d:dxmin[0]	d:dxmax[0.6]
+bothjetAK8axismajor	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[#sigma_{major}(^{}J_{1,2})]	s:ytitle[Arbitrary units]	b:ratio[0]	b:logy[1]
+bothjetAK8axisminor	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[#sigma_{minor}(^{}J_{1,2})]	s:ytitle[Arbitrary units]	b:ratio[0]	b:logy[1]	d:dxmin[0]	d:dxmax[0.3]
+bothjetAK8deltaphi	i:xnum[100]	d:xmin[0]	d:xmax[3.15]	s:xtitle[#Delta#phi(^{}J_{1,2},^{}p_{T}^{miss})]	s:ytitle[Arbitrary units]	b:ratio[0]	b:logy[1]
 
 SET
 hist	mc	SVJ_3100_20_0.1_peak	s:legname[r_{inv} = 0.1]	c:color[kRed]	i:linestyle[7]	i:panel[1]

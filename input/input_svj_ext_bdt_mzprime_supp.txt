@@ -2,18 +2,18 @@ INPUT
 input/input_svj_supp.txt
 
 OPTION
-vstring{|}:extra_text[signal (^{}m_{dark} = 20 GeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
+vstring{|}:extra_text[Signal (^{}m_{dark} = 20 GeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
 vint:extra_text_panels[1,1]
 string:extfilename[test/paper/bdt/supp/histBDT_svj.root]
 string:rootfile[test/paper/bdt/bdt_mzprime_plots]
 string:printsuffix[dijetmtdetahadloosespike_bdt_mzprime_flatptZ30]
 
 HISTO
-bothjetAK8fChHad	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{h^{#pm}}(^{}J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
-bothjetAK8fEle	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{e}(^{}J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
-bothjetAK8fNeuHad	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{h^{0}}(^{}J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
-bothjetAK8fMu	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[f_{#mu}(^{}J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
-bothjetAK8fPho	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{#gamma}(^{}J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+bothjetAK8fChHad	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{h^{#pm}}(^{}J_{1,2})]	s:ytitle[Arbitrary units]	b:ratio[0]	b:logy[1]
+bothjetAK8fEle	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{e}(^{}J_{1,2})]	s:ytitle[Arbitrary units]	b:ratio[0]	b:logy[1]
+bothjetAK8fNeuHad	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{h^{0}}(^{}J_{1,2})]	s:ytitle[Arbitrary units]	b:ratio[0]	b:logy[1]
+bothjetAK8fMu	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[f_{#mu}(^{}J_{1,2})]	s:ytitle[Arbitrary units]	b:ratio[0]	b:logy[1]
+bothjetAK8fPho	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{#gamma}(^{}J_{1,2})]	s:ytitle[Arbitrary units]	b:ratio[0]	b:logy[1]
 
 SET
 hist	mc	SVJ_2100_20_0.3_peak	s:legname[m_{Z'} = 2.1 TeV]	c:color[kBlue]	i:linestyle[7]	i:panel[1]

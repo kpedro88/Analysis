@@ -2,14 +2,14 @@ INPUT
 input/input_svj_paper.txt
 
 OPTION
-vstring{|}:extra_text[signal (^{}m_{Z'} = 3.1 TeV,|^{}m_{dark} = 20 GeV, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
+vstring{|}:extra_text[Signal (^{}m_{Z'} = 3.1 TeV,|^{}m_{dark} = 20 GeV, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
 vint:extra_text_panels[1,1]
 string:extfilename[test/paper/bdt/supp/histBDT_svj.root]
 string:rootfile[test/paper/bdt/bdt_rinv_plots]
 string:printsuffix[dijetmtdetahadloosespike_bdt_rinv_flatptZ30]
 
 HISTO
-bothjetAK8ptD	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[D_{p_{T}}(^{}J_{1,2})]	s:ytitle[arbitrary units]	b:ratio[0]	b:logy[1]
+bothjetAK8ptD	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[D_{p_{T}}(^{}J_{1,2})]	s:ytitle[Arbitrary units]	b:ratio[0]	b:logy[1]
 
 SET
 hist	mc	SVJ_3100_20_0.1_peak	s:legname[r_{inv} = 0.1]	c:color[kRed]	i:linestyle[7]	i:panel[1]

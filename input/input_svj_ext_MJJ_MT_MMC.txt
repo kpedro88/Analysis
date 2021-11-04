@@ -3,14 +3,14 @@ input/input_svj_supp.txt
 
 OPTION
 int:npanel[1]
-vstring{|}:extra_text[signal|(^{}m_{Z'} = 2.1 TeV, ^{}m_{dark} = 20 GeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
+vstring{|}:extra_text[Signal|(^{}m_{Z'} = 2.1 TeV, ^{}m_{dark} = 20 GeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
 double:luminorm[138000]
 string:printsuffix[unskimmed_mass_comp]
 string:extfilename[test/paper/sig/svj_unskimmed_mass_central.root]
 double:ymin[1e-6]
 
 HISTO
-MTAK8	i:xnum[150]	d:xmin[0]	d:xmax[6000]	s:xtitle[mass [GeV]]	s:ytitle[arbitrary units]	b:ratio[0]	vd:xcuts[2100]	vc:xcut_colors[kBlack]	b:logy[1]
+MTAK8	i:xnum[150]	d:xmin[0]	d:xmax[6000]	s:xtitle[Mass [GeV]]	s:ytitle[Arbitrary units]	b:ratio[0]	vd:xcuts[2100]	vc:xcut_colors[kBlack]	b:logy[1]
 
 SET
 hist	mc	MTAK8	s:legname[M_{T}]	c:color[kBlue]
