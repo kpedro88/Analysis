@@ -158,7 +158,7 @@ sig_vals = OrderedDict([
     ("rinv", [0.1, 0.3, 0.6, 0.9]),
     ("aDark", ["low","peak","high"]),
 ])
-sig_units = {"mZprime": "\\GeV", "mDark": "\\GeV", "rinv": "", "aDark": ""}
+sig_units = {"mZprime": "\\TeV", "mDark": "\\GeV", "rinv": "", "aDark": ""}
 if options.procs.startswith("sig"):
     procsplit = options.procs.split('_')
     varied = procsplit[1]
