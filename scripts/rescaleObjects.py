@@ -10,7 +10,12 @@ def getAxis(obj, axis):
 
 def scaleGraph(obj, axis, scale):
     if obj.InheritsFrom("TGraph"):
-        obj.Scale(scale,axis)
+        func = None
+        if axis=="x": func = obj.GetX
+        elif axis=="y": func = obj.GetY
+        elif axis=="z": func = obj.GetZ
+        for i in range(obj.GetN()):
+            func()[i] *= scale
 
 # based on https://root-forum.cern.ch/t/can-we-shift-histogram-for-several-channels/12050
 def scaleHist(obj, axis, scale):
@@ -30,6 +35,7 @@ def scaleDir(dir,ofile,args,first=False):
     for key in dir.GetListOfKeys():
         if args.verbose: print dir.GetName(),key.GetName()
         obj = dir.Get(key.GetName())
+        obj.SetName(key.GetName()) # because graphs lose their name when imported
         if obj.InheritsFrom("TDirectory"): scaleDir(obj, ofile, args)
         else:
             # actually do the rescaling
@@ -49,7 +55,7 @@ def scaleDir(dir,ofile,args,first=False):
         ofile.cd()
     # write this dir's contents
     for obj in objs:
-        obj.Write()
+        obj.Write(obj.GetName())
 
 if __name__=="__main__":
     parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
