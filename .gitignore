@@ -112,6 +112,7 @@ input/fast*/
 /selections_svj_supp.py
 /regions_svj.py
 /makePieChart.C
+/rescaleObjects.py
 
 # linked by setupXML.sh
 /KMVA/pugi*.*

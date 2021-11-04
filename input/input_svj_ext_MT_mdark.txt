@@ -7,14 +7,14 @@ double:luminorm[138000]
 string:printsuffix[SVJ_2500_20_0.3_vs_mdark]
 
 HISTO
-MTAK8	i:xnum[65]	d:xmin[1500]	d:xmax[8000]	s:xtitle[M_{T} [GeV]]	s:ytitle[Number of events]	b:ratio[0]	d:dxmin[1500]	d:dxmax[4000]
+MTAK8	i:xnum[65]	d:xmin[1.5]	d:xmax[8.0]	s:xtitle[M_{T} [TeV]]	s:ytitle[Number of events]	b:ratio[0]	d:dxmin[1.5]	d:dxmax[4.0]
 
 SET
 hist	mc	mdark5	s:legname[^{}m_{dark} = 5 GeV]	c:color[kRed]
-	base	ext	SVJ_2500_5_0.3_peak	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig8/sigfull/datacard_SVJ_2500_5_0.3_peak.root]	vs:exthisto_in[SVJ_mZprime2500_mDark5_rinv03_alphapeak]	vs:exthisto_out[MTAK8]	d:kfactor[2.57183041993]
+	base	ext	SVJ_2500_5_0.3_peak	s:extfilename[test/paper/sig/datacard_SVJ_2500_5_0.3_peak_TeV.root]	vs:exthisto_in[SVJ_mZprime2500_mDark5_rinv03_alphapeak]	vs:exthisto_out[MTAK8]	d:kfactor[2.57183041993]
 hist	mc	mdark20	s:legname[^{}m_{dark} = 20 GeV]	c:color[kBlack]
-	base	ext	SVJ_2500_20_0.3_peak	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig8/sigfull/datacard_SVJ_2500_20_0.3_peak.root]	vs:exthisto_in[SVJ_mZprime2500_mDark20_rinv03_alphapeak]	vs:exthisto_out[MTAK8]	d:kfactor[2.57183041993]
+	base	ext	SVJ_2500_20_0.3_peak	s:extfilename[test/paper/sig/datacard_SVJ_2500_20_0.3_peak_TeV.root]	vs:exthisto_in[SVJ_mZprime2500_mDark20_rinv03_alphapeak]	vs:exthisto_out[MTAK8]	d:kfactor[2.57183041993]
 hist	mc	mdark50	s:legname[^{}m_{dark} = 50 GeV]	c:color[kBlue]
-	base	ext	SVJ_2500_50_0.3_peak	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig8/sigfull/datacard_SVJ_2500_50_0.3_peak.root]	vs:exthisto_in[SVJ_mZprime2500_mDark50_rinv03_alphapeak]	vs:exthisto_out[MTAK8]	d:kfactor[2.57183041993]
+	base	ext	SVJ_2500_50_0.3_peak	s:extfilename[test/paper/sig/datacard_SVJ_2500_50_0.3_peak_TeV.root]	vs:exthisto_in[SVJ_mZprime2500_mDark50_rinv03_alphapeak]	vs:exthisto_out[MTAK8]	d:kfactor[2.57183041993]
 hist	mc	mdark100	s:legname[^{}m_{dark} = 100 GeV]	c:color[kMagenta]
-	base	ext	SVJ_2500_100_0.3_peak	s:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Datacards/trig8/sigfull/datacard_SVJ_2500_100_0.3_peak.root]	vs:exthisto_in[SVJ_mZprime2500_mDark100_rinv03_alphapeak]	vs:exthisto_out[MTAK8]	d:kfactor[2.57183041993]
+	base	ext	SVJ_2500_100_0.3_peak	s:extfilename[test/paper/sig/datacard_SVJ_2500_100_0.3_peak_TeV.root]	vs:exthisto_in[SVJ_mZprime2500_mDark100_rinv03_alphapeak]	vs:exthisto_out[MTAK8]	d:kfactor[2.57183041993]

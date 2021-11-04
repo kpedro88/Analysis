@@ -4,7 +4,7 @@ input/input_svj_supp.txt
 OPTION
 string:rootfile[test/paper/Nm1/Nm1_plots]
 string:printsuffix[Run2ProductionV17_Nm1]
-string:extfilename[test/paper/Nm1/svj_Nm1.root]
+string:extfilename[test/paper/Nm1/svj_Nm1_TeVy_TeVx.root]
 double:zmin[1e-14]
 
 INPUT

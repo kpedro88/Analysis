@@ -6,7 +6,7 @@ vstring{|}:extra_text[Signal (^{}m_{dark} = 20 GeV,|^{}r_{inv} = 0.3, ^{}#alpha_
 vint:extra_text_panels[1,1]
 string:rootfile[test/paper/Nm1/Nm1_plots]
 string:printsuffix[Run2ProductionV17_Nm1]
-string:extfilename[test/paper/Nm1/svj_Nm1.root]
+string:extfilename[test/paper/Nm1/svj_Nm1_TeVy_TeVx.root]
 bool:disable_ymin[1]
 double:ymin_min[1e-12]
 
