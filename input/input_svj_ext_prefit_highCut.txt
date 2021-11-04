@@ -5,7 +5,7 @@ input/input_svj_mt_hist_full.txt
 
 OPTION
 string+:printsuffix[_fit_obs_highCut]
-vstring{|}:extra_text[high-^{}R_{T}|signal (^{}m_{dark} = 20 GeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
+vstring{|}:extra_text[High-^{}R_{T}|Signal (^{}m_{dark} = 20 GeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
 vint:extra_text_panels[0,1,1]
 string:rootfile[test/paper/prefit/fit_obs_highCut]
 bool:treesuffix[0]
@@ -20,5 +20,5 @@ hist	mc	SVJ_3100_20_0.3_peak_bonly	s:legname[m_{Z'} = 3.1 TeV]	c:color[kCyan + 2
 	base	ext	SVJ_3100_20_0.3_peak_bonly	s:extfilename[test/paper/prefit/datacard_final_SVJ_3100_20_0.3_peak.root]	s:exthisto_dir[highCut_2018]	vs:exthisto_in[SVJ_mZprime3100_mDark20_rinv03_alphapeak]	vs:exthisto_out[MTAK8]	d:kfactor[0.6179197]
 hist	mc	SVJ_4100_20_0.3_peak_bonly	s:legname[m_{Z'} = 4.1 TeV]	c:color[kMagenta]	i:linestyle[7]	i:panel[1]	vs:fits[]	b:yieldnorm[0]
 	base	ext	SVJ_4100_20_0.3_peak_bonly	s:extfilename[test/paper/prefit/datacard_final_SVJ_4100_20_0.3_peak.root]	s:exthisto_dir[highCut_2018]	vs:exthisto_in[SVJ_mZprime4100_mDark20_rinv03_alphapeak]	vs:exthisto_out[MTAK8]	d:kfactor[2.3592244]
-hist	data	data	i:panel[1]	s:legname[data]	b:yieldnorm[0]	b:poisson[1]	i:panel[0]	s:drawopt[pe0]
+hist	data	data	i:panel[1]	s:legname[Data]	b:yieldnorm[0]	b:poisson[1]	i:panel[0]	s:drawopt[pe0]
 	base	ext	data	s:extfilename[test/paper/prefit/datacard_final_SVJ_3100_20_0.3_peak.root]	s:exthisto_dir[highCut_2018]	vs:exthisto_in[data_obs]	vs:exthisto_out[MTAK8]

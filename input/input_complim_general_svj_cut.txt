@@ -1,5 +1,5 @@
 input:input[input/input_complim_general_svj.txt]
-vstring{|}:extra_text[95% CL upper limits|inclusive]
+vstring{|}:extra_text[95% CL upper limits|Inclusive]
 vint:extra_text_panels[0,1]
 double:ymax[40]
 double:ymin[.0002]

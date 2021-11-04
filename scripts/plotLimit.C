@@ -274,7 +274,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	int itype = interp ? acceff ? 2 : 1 : 0;
 	string fpre(acceff ? "sigAccEff" : "limit");
 	string plotpre(acceff ? "plotAccEff" : "plotLimit");
-	string pname(acceff ? "signal efficiency #times acceptance" : "");
+	string pname(acceff ? "Signal efficiency #times acceptance" : "");
 
 	//ranges for plotting
 	double ymin = 1e10, xmin = 1e10;

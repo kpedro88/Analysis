@@ -211,7 +211,7 @@ class KSet : public KBase {
 			if(localOpt->Get("errband",false) && localOpt->Get("errbandleg",true) and obj->etmp) {
 				//this assumes it has already been created previously... a little unsafe, but a pain in the ass otherwise
 				option = MyStyle->GetLegOptErr();
-				kleg->AddEntry(obj->etmp,"uncertainty",option,panel_tmp);
+				kleg->AddEntry(obj->etmp,"Uncertainty",option,panel_tmp);
 			}
 			//check for fits
 			for(auto fit : obj->ftmp){
@@ -428,7 +428,7 @@ class KSetMCStack : public KSet {
 			localOpt->Get("panel",panel_tmp);
 			if(localOpt->Get("errband",true)) {
 				string option = MyStyle->GetLegOptErr();
-				kleg->AddEntry(obj->etmp,"uncertainty",option,panel_tmp);
+				kleg->AddEntry(obj->etmp,"Uncertainty",option,panel_tmp);
 				//this assumes it has already been created previously... a little unsafe, but a pain in the ass otherwise
 			}
 			//check for fits
