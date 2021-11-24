@@ -5,7 +5,7 @@ OPTION
 vstring{|}:extra_text[Signal (^{}m_{Z'} = 3.1 TeV,|^{}m_{dark} = 20 GeV, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
 vint:extra_text_panels[1,1]
 string:extfilename[test/paper/bdt/supp/histBDT_svj.root]
-string:rootfile[test/paper/bdt/bdt_rinv_plots]
+string:rootfile[test/paper/bdt/supp/bdt_rinv_plots]
 string:printsuffix[dijetmtdetahadloosespike_bdt_rinv_flatptZ30]
 
 HISTO
