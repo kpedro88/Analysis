@@ -48,6 +48,7 @@ parser.add_option("-n", "--names", dest="names", type='string', default="selecti
 parser.add_option("-t", "--type", dest="type", type='choice', default="abs", choices=['abs','rel','raw','rawrel'], help="type of cutflow (abs, rel, raw, rawrel)")
 parser.add_option("-p", "--prec", dest="prec", type='int', default=1, help="numerical precision of output")
 parser.add_option("-e", "--no-error", dest="error", default=True, action="store_false", help="don't display statistical errors")
+parser.add_option("-u", "--summarize-error", dest="summarizeerror", default=False, action="store_true", help="summarize maximum value of statistical errors (goes w/ -e)")
 parser.add_option("-z", "--skipzeros", dest="skipzeros", default=False, action="store_true", help="ignore errors on zero-count bins")
 parser.add_option("-v", "--verbose", dest="verbose", default=False, action="store_true", help="verbose output")
 parser.add_option("-r", "--regionfile", dest="regionfile", default="", help="root file containing signal regions")
@@ -193,6 +194,8 @@ cutflow_inds = {
 }
 cutflow_ind = cutflow_inds[options.type]
 multicol = 3 if options.type=='rawrel' and options.error else 2
+if not options.error: multicol = 1
+max_err = 0
 for procname,proc in procs.iteritems():
     outDict["header1"] += " & " + "\\multicolumn{"+str(multicol)+"}{r}{"+procname+"}"
     
@@ -230,6 +233,7 @@ for procname,proc in procs.iteritems():
             if "PhiSpike" in splitline[0]: splitline[0] = "PhiSpikeVeto16"
             if splitline[0] not in outDict: continue
             outDict[splitline[0]] += " & \\colspace"+splitline[cutflow_ind]+(" & "+splitline[cutflow_ind+2] if options.error else "")
+            max_err = max(max_err, splitline[cutflow_ind+2])
             if options.type=='rawrel': outDict[splitline[0]] += " & "+splitline[cutflow_ind+6]
             if first==0: first = float(splitline[cutflow_inds['raw']])
             elif splitline[0]==list(namesDict)[-1]: last = float(splitline[cutflow_inds['raw']])
@@ -246,13 +250,14 @@ captions = {
 }
 captions['rawrel'] = captions['raw']+" (relative efficiency in \%)"
 staterr_caption = " Only statistical uncertainties are shown."
+maxerr_caption = " Statistical uncertainties, at most {}\%, are omitted.".format(max_err)
 eff_caption = " The line ``Efficiency [\%]'' is the absolute efficiency after the final selection."
 region_caption = " The subsequent lines show the efficiency for each signal region, relative to the final selection."
 if options.procs=="bkg" or options.procs=="all":
     caption = "\\topcaption{{{} for each step of the event selection process for the major background processes{}.{}{}{}}}".format(
         captions[options.type],
         " and benchmark signal model ($\\mZprime = 3000\\GeV$, $\\mDark = 20\\GeV$, $\\rinv = 0.3$, $\\aDark = \\aDarkPeak$)" if options.procs=="all" else "",
-        staterr_caption if options.error else "",
+        staterr_caption if options.error else maxerr_caption if options.summarizeerror else "",
         eff_caption if options.efficiency else "",
         region_caption if len(options.regionfile)>0 else "",
     )
@@ -260,7 +265,7 @@ else:
     caption = "\\caption{{{} for each step of the event selection process for signals with {}.{}{}{}}}".format(
         captions[options.type],
         ', '.join(sig_captions).replace("and,","and"),
-        staterr_caption if options.error else "",
+        staterr_caption if options.error else maxerr_caption if options.summarizeerror else "",
         eff_caption if options.efficiency else "",
         region_caption if len(options.regionfile)>0 else "",
     )
@@ -270,6 +275,8 @@ coltype = "S"
 if options.type=="rawrel":
     if options.error: coltype = "SP"
     else: coltype = "rP"
+elif options.type=="rel":
+    if not options.error: coltype = "r"
 wfile.write("\\begin{table}[htb]\n")
 wfile.write(caption+"\n")
 wfile.write("\\centering\n")
