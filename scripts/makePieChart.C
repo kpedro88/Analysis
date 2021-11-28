@@ -42,6 +42,7 @@ void makePieChart(string fname, string region, vector<string> options={}){
 	string lumi_text("(13 TeV)"); globalOpt->Get("lumi_text",lumi_text);
 	string prelim_text("Simulation Supplementary"); globalOpt->Get("prelim_text",prelim_text);
 	string printsuffix; globalOpt->Get("printsuffix",printsuffix);
+	bool save = globalOpt->Get("save",false);
 
 	TFile* file = KOpen(fname);
 	TDirectory* dir = KGet<TDirectory>(file,region+"_2018");
@@ -105,5 +106,11 @@ void makePieChart(string fname, string region, vector<string> options={}){
 
 	for(const auto& pformat: {"png","pdf"}){
 		can->Print((plot->GetName()+"."+pformat).c_str(),pformat);
+	}
+
+	if(save){
+		auto outfile = TFile::Open((plot->GetName()+".root").c_str(),"RECREATE");
+		outfile->cd();
+		pie->Write();
 	}
 }
