@@ -1994,6 +1994,15 @@ class KJetFiller_AK8ecfN3b2 : public KJetFiller {
 };
 REGISTER_JETFILLER(AK8ecfN3b2);
 
+//pretend transverse mass is a jet quantity even though it's not
+class KJetFiller_AK8MT : public KJetFiller {
+	public:
+		using KJetFiller::KJetFiller;
+		virtual void ListBranches() { branches = {"MT_AK8"}; }
+		virtual void FillPerJet(KValue& value, double w, unsigned index) { value.Fill(looper->MT_AK8,w); }
+};
+REGISTER_JETFILLER(AK8MT);
+
 //-----------------------------------------------------------------------------
 //per-jet quantities based on dark hadron gen info
 class KJetFillerDarkHadron : public KJetFiller {

@@ -1,0 +1,30 @@
+INPUT
+input/input_svj_paper.txt
+
+OPTION
+int:npanel[1]
+string:extfilename[test/svj_bkg_mt_vs_discr.root]
+string:printsuffix[_vs_mt_bkg_dijetmtdetahadloose_discr_E3]
+bool:unitnorm[1]
+bool:nosort[1]
+double:ymin[1e-3]
+
+HISTO
+bothjetAK8MT	i:xnum[50]	d:xmin[1500]	d:xmax[4000]	s:xtitle[M_{T} [GeV]]	s:ytitle[arbitrary units]	b:ratio[1]	b:logy[1]
+
+SET
+hist	mc	bdtbin1	s:legname[0.0 < BDT < 0.2]	c:color[kAzure + 1]
+	base	ext	QCD_MC2017	b:ext_auto[1]	s:exthisto_extra[bdtbin1]
+	base	ext	TT_MC2017	b:ext_auto[1]	s:exthisto_extra[bdtbin1]
+hist	mc	bdtbin2	s:legname[0.2 < BDT < 0.4]	c:color[kOrange + 1]
+	base	ext	QCD_MC2017	b:ext_auto[1]	s:exthisto_extra[bdtbin2]
+	base	ext	TT_MC2017	b:ext_auto[1]	s:exthisto_extra[bdtbin2]
+hist	mc	bdtbin3	s:legname[0.4 < BDT < 0.6]	c:color[kGreen + 1]
+	base	ext	QCD_MC2017	b:ext_auto[1]	s:exthisto_extra[bdtbin3]
+	base	ext	TT_MC2017	b:ext_auto[1]	s:exthisto_extra[bdtbin3]
+hist	mc	bdtbin4	s:legname[0.6 < BDT < 0.8]	c:color[kRed + 1]
+	base	ext	QCD_MC2017	b:ext_auto[1]	s:exthisto_extra[bdtbin4]
+	base	ext	TT_MC2017	b:ext_auto[1]	s:exthisto_extra[bdtbin4]
+hist	mc	bdtbin5	s:legname[BDT > 0.8]	c:color[kViolet + 1]
+	base	ext	QCD_MC2017	b:ext_auto[1]	s:exthisto_extra[bdtbin5]
+	base	ext	TT_MC2017	b:ext_auto[1]	s:exthisto_extra[bdtbin5]
