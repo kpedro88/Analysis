@@ -56,6 +56,7 @@ parser.add_option("-s", "--signalregions", dest="signalregions", type='string', 
 parser.add_option("-P", "--procs", dest="procs", type='string', default="all", help="categories of procs to include")
 parser.add_option("-E", "--efficiency", dest="efficiency", default=False, action="store_true", help="include line for overall efficiency")
 parser.add_option("-S", "--small", dest="small", default=False, action="store_true", help="smaller font size")
+parser.add_option("--topcapt", dest="topcapt", default=False, action="store_true", help="use topcaption instead of caption")
 (options, args) = parser.parse_args()
 
 options.efficiency = options.efficiency or 'raw' in options.type
@@ -254,7 +255,8 @@ maxerr_caption = " Statistical uncertainties, at most {}\%, are omitted.".format
 eff_caption = " The line ``Efficiency [\%]'' is the absolute efficiency after the final selection."
 region_caption = " The subsequent lines show the efficiency for each signal region, relative to the final selection."
 if options.procs=="bkg" or options.procs=="all":
-    caption = "\\topcaption{{{} for each step of the event selection process for the major background processes{}.{}{}{}}}".format(
+    caption = "\\{}{{{} for each step of the event selection process for the major background processes{}.{}{}{}}}".format(
+        "topcaption" if options.topcapt else "caption",
         captions[options.type],
         " and benchmark signal model ($\\mZprime = 3000\\GeV$, $\\mDark = 20\\GeV$, $\\rinv = 0.3$, $\\aDark = \\aDarkPeak$)" if options.procs=="all" else "",
         staterr_caption if options.error else maxerr_caption if options.summarizeerror else "",
@@ -262,7 +264,8 @@ if options.procs=="bkg" or options.procs=="all":
         region_caption if len(options.regionfile)>0 else "",
     )
 else:
-    caption = "\\caption{{{} for each step of the event selection process for signals with {}.{}{}{}}}".format(
+    caption = "\\{}{{{} for each step of the event selection process for signals with {}.{}{}{}}}".format(
+        "topcaption" if options.topcapt else "caption",
         captions[options.type],
         ', '.join(sig_captions).replace("and,","and"),
         staterr_caption if options.error else maxerr_caption if options.summarizeerror else "",
