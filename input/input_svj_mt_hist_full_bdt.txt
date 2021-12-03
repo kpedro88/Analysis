@@ -4,4 +4,4 @@ double:ratiomin[-2.5]
 double:ratiomax[2.5]
 
 HISTO
-MTAK8	i:xnum[130]	d:xmin[1.5]	d:xmax[8.0]	s:xtitle[M_{T} [TeV]]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kMagenta]	d:dxmin[1.5]	d:dxmax[4.0]
+MTAK8	i:xnum[130]	d:xmin[1.5]	d:xmax[8.0]	s:xtitle[m_{T} [TeV]]	s:ytitle[number of events]	b:ratio[1]	b:logy[1]	c:color[kMagenta]	d:dxmin[1.5]	d:dxmax[4.0]
