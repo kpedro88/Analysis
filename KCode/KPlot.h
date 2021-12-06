@@ -17,6 +17,7 @@
 #include <TCanvas.h>
 #include <TPad.h>
 #include <TLine.h>
+#include <TArrow.h>
 #include <TLatex.h>
 #include <TAxis.h>
 #include <TExec.h>
@@ -39,7 +40,7 @@ class KPlot{
 		KPlot() : 
 			name(""), localOpt(0), globalOpt(0), histo(0), ratio(0), exec(0), isInit(false), 
 			can(0), pad1(0), pad2(0), leg(0), rleg(0), textCMS(0), textExtra(0), textLumi(0), line(0),
-			pad1size(0), pad1W(0), pad1H(0), pad2size(0), pad2W(0), pad2H(0)
+			pad1size(0), pad1W(0), pad1H(0), pad2size(0), pad2W(0), pad2H(0), debugarrow(false)
 		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
@@ -59,6 +60,9 @@ class KPlot{
 			
 			//enable histo errors
 			TH1::SetDefaultSumw2(kTRUE);
+
+			//for debugging
+			debugarrow = globalOpt->Get("debugarrow",false);
 			
 			SetStyle();
 		}
@@ -96,6 +100,8 @@ class KPlot{
 			sizeTick = 12; globalOpt->Get("sizeTick",sizeTick);
 			sizeLoff = 5; globalOpt->Get("sizeLoff",sizeLoff);
 			epsilon = 2; globalOpt->Get("epsilon",epsilon);
+			sizeArrow = 0.075; globalOpt->Get("sizeArrow",sizeArrow); //fractional like sizeLeg
+			sizeArrowhead = 8; globalOpt->Get("sizeArrowhead",sizeArrowhead);
 			
 			//todo: font types
 			
@@ -359,15 +365,25 @@ class KPlot{
 			//draw cut lines BEFORE legend/text
 			vector<double> xcuts, ycuts;
 			vector<Color_t> xcut_colors, ycut_colors;
-			
-			//x cuts, use pad y-range
+			vector<int> xcut_arrows, ycut_arrows;
+
+			//pad ranges
+			double x1 = pad1->GetLogx() ? pow(10,pad1->GetUxmin()) : pad1->GetUxmin();
+			double x2 = pad1->GetLogx() ? pow(10,pad1->GetUxmax()) : pad1->GetUxmax();
 			double y1 = pad1->GetLogy() ? pow(10,pad1->GetUymin()) : pad1->GetUymin();
 			double y2 = pad1->GetLogy() ? pow(10,pad1->GetUymax()) : pad1->GetUymax();
+
+			//x cuts, use pad y-range
 			localOpt->Get("xcuts",xcuts);
 			localOpt->Get("xcut_colors",xcut_colors);
+			localOpt->Get("xcut_arrows",xcut_arrows);
 			bool use_xcut_colors = (xcuts.size()==xcut_colors.size());
 			if(!use_xcut_colors && xcut_colors.size()>0){
 				throw runtime_error("in histo "+name+", vector lengths of xcuts and xcut_colors do not match!");
+			}
+			bool use_xcut_arrows = (xcuts.size()==xcut_arrows.size());
+			if(!use_xcut_arrows && xcut_arrows.size()>0){
+				throw runtime_error("in histo "+name+", vector lengths of xcuts and xcut_arrows do not match!");
 			}
 			for(unsigned c = 0; c < xcuts.size(); c++){
 				TLine* tmp = new TLine(xcuts[c],y1,xcuts[c],y2);
@@ -377,16 +393,55 @@ class KPlot{
 				else tmp->SetLineColor(kBlack);
 				tmp->Draw("same");
 				xcut_lines.push_back(tmp);
+				if(use_xcut_arrows){
+					if(xcut_arrows[c]==0) continue;
+					//sign of xcut_arrows determines direction: 1 = toward positive x, -1 = toward negative x
+					double xarrow = xcuts[c]+xcut_arrows[c]*sizeArrow*(x2-x1);
+					//put just below legend (or above if legend on bottom) if arrow would overlap w/ legend
+					//otherwise (or if no legend) Uymax (or Uymin if legend on bottom) (need bigger shift in this case)
+					bool above = leg ? leg->GetLoc().second==KLegend::bottom : false;
+					//include a small offset
+					double yshift = (above ? 1 : -1)*histo->GetYaxis()->GetTickLength();
+					double yarrow = convertNDCtoUser(convertUsertoNDC(y2, pad1, true) + 2*yshift, pad1, true);
+					if(debugarrow) cout << "default: y2 = " << y2 << ", y2NDC = " << convertUsertoNDC(y2,pad1,true) << ", yshift = " << 2*yshift << ", yarrow = " << yarrow << endl;
+					if(leg){
+						auto legx = leg->GetXcoords();
+						legx.first = convertNDCtoUser(legx.first,pad1);
+						legx.second = convertNDCtoUser(legx.second,pad1);
+						//overlap check
+						bool overlap1 = legx.first < xcuts[c] and xcuts[c] < legx.second;
+						bool overlap2 = legx.first < xarrow and xarrow < legx.second;
+						if(debugarrow) cout << "overlap: legx1 = " << legx.first << ", legx2 = " << legx.second << ", xcut = " << xcuts[c] << " (" << overlap1 << "), xarrow = " << xarrow << " (" << overlap2 << ")" << endl;
+						if(overlap1 or overlap2){
+							yarrow = convertNDCtoUser(yshift + (above ? leg->GetYcoords().second : leg->GetYcoords().first), pad1, true);
+						}
+						else if(above){
+							yarrow = convertNDCtoUser(convertUsertoNDC(y1, pad1, true) + 2*yshift, pad1, true);
+						}
+					}
+					if(debugarrow) cout << "final: " << yarrow << endl;
+					TArrow* atmp = new TArrow(xcuts[c],yarrow,xarrow,yarrow,sizeArrowhead/pad1H);
+					atmp->SetLineWidth(2);
+					if(use_xcut_colors){
+						atmp->SetLineColor(xcut_colors[c]);
+						atmp->SetFillColor(xcut_colors[c]);
+					}
+					atmp->Draw();
+					xcut_arrow_lines.push_back(atmp);
+				}
 			}
 			
 			//y cuts, use pad x-range
-			double x1 = pad1->GetLogx() ? pow(10,pad1->GetUxmin()) : pad1->GetUxmin();
-			double x2 = pad1->GetLogx() ? pow(10,pad1->GetUxmax()) : pad1->GetUxmax();
 			localOpt->Get("ycuts",ycuts);
 			localOpt->Get("ycut_colors",ycut_colors);
+			localOpt->Get("ycut_arrows",ycut_arrows);
 			bool use_ycut_colors = (ycuts.size()==ycut_colors.size());
 			if(!use_ycut_colors && ycut_colors.size()>0){
 				throw runtime_error("in histo "+name+", vector lengths of ycuts and ycut_colors do not match!");
+			}
+			bool use_ycut_arrows = (ycuts.size()==ycut_arrows.size());
+			if(!use_ycut_arrows && ycut_arrows.size()>0){
+				throw runtime_error("in histo "+name+", vector lengths of ycuts and ycut_arrows do not match!");
 			}
 			for(unsigned c = 0; c < ycuts.size(); c++){
 				TLine* tmp = new TLine(x1,ycuts[c],x2,ycuts[c]);
@@ -396,8 +451,44 @@ class KPlot{
 				else tmp->SetLineColor(kBlack);
 				tmp->Draw("same");
 				ycut_lines.push_back(tmp);
+				if(use_ycut_arrows){
+					if(ycut_arrows[c]==0) continue;
+					//sign of ycut_arrows determines direction: 1 = toward positive y, -1 = toward negative y
+					double yarrow = ycuts[c]+ycut_arrows[c]*sizeArrow*(y2-y1);
+					//put just left of legend (or right if legend on left) if arrow would overlap w/ legend
+					//otherwise (or if no legend) Uxmax (or Uxmin if legend on right)
+					bool right = leg ? leg->GetLoc().first==KLegend::left : false;
+					//include a small offset
+					double xshift = (right ? 1 : -1)*histo->GetXaxis()->GetTickLength();
+					double xarrow = convertNDCtoUser(convertUsertoNDC(x2, pad1) + 2*xshift, pad1);
+					if(debugarrow) cout << "default: x2 = " << x2 << ", x2NDC = " << convertUsertoNDC(x2,pad1) << ", xshift = " << 2*xshift << ", xarrow = " << xarrow << endl;
+					if(leg){
+						auto legy = leg->GetYcoords();
+						legy.first = convertNDCtoUser(legy.first,pad1,true);
+						legy.second = convertNDCtoUser(legy.second,pad1,true);
+						//overlap check
+						bool overlap1 = legy.first < ycuts[c] and ycuts[c] < legy.second;
+						bool overlap2 = legy.first < yarrow and yarrow < legy.second;
+						if(debugarrow) cout << "overlap: legy1 = " << legy.first << ", legy2 = " << legy.second << ", ycut = " << ycuts[c] << " (" << overlap1 << "), yarrow = " << yarrow << " (" << overlap2 << ")" << endl;
+						if(overlap1 or overlap2){
+							xarrow = convertNDCtoUser(right ? leg->GetXcoords().second : leg->GetXcoords().first, pad1);
+						}
+						else if(right){
+							xarrow = convertNDCtoUser(convertUsertoNDC(x1, pad1) + 2*xshift, pad1);
+						}
+					}
+					if(debugarrow) cout << "final: " << xarrow << endl;
+					TArrow* atmp = new TArrow(xarrow,ycuts[c],xarrow,yarrow,sizeArrowhead/pad1H);
+					atmp->SetLineWidth(2);
+					if(use_ycut_colors){
+						atmp->SetLineColor(ycut_colors[c]);
+						atmp->SetFillColor(ycut_colors[c]);
+					}
+					atmp->Draw();
+					ycut_arrow_lines.push_back(atmp);
+				}
 			}
-			
+
 			if(leg) leg->Draw();
 			textCMS->Draw("same");
 			textExtra->Draw("same");
@@ -510,6 +601,36 @@ class KPlot{
 			hist->GetZaxis()->SetLabelOffset(offZ*sizeLoff/padW);
 			hist->GetZaxis()->SetTickLength(sizeTick/tickScaleY);
 		}
+		double convertUsertoNDC(double val, TPad* pad, bool do_y=false){
+			if(!do_y) {
+				if(pad->GetLogx()) val = log10(val);
+				double x1 = pad->GetX1();
+				double x2 = pad->GetX2();
+				double u = (val-x1)/(x2-x1);
+				return u;
+			}
+			else {
+				if(pad->GetLogy()) val = log10(val);
+				double y1 = pad->GetY1();
+				double y2 = pad->GetY2();
+				double v = (val-y1)/(y2-y1);
+				return v;
+			}
+		}
+		double convertNDCtoUser(double val, TPad* pad, bool do_y=false){
+			if(!do_y) {
+				double x1 = pad->GetX1();
+				double x2 = pad->GetX2();
+				double x = x1 + val*(x2-x1);
+				return pad->GetLogx() ? pow(10,x) : x;
+			}
+			else {
+				double y1 = pad->GetY1();
+				double y2 = pad->GetY2();
+				double y = y1 + val*(y2-y1);
+				return pad->GetLogy() ? pow(10,y) : y;
+			}
+		}
 		
 		//accessors
 		string GetName() { return name; }
@@ -551,9 +672,10 @@ class KPlot{
 		TLatex* textLumi;
 		TLine* line;
 		vector<TLine*> xcut_lines, ycut_lines, xcut_ratio_lines;
+		vector<TArrow*> xcut_arrow_lines, ycut_arrow_lines;
 		double canvasW, canvasH, canvasWextra, canvasHextra, ratioH;
 		double marginL, marginR, marginB, marginT, marginM1, marginM2, marginPal;
-		double sizeT, sizeL, sizeP, sizeTick, sizeLoff, epsilon;
+		double sizeT, sizeL, sizeP, sizeTick, sizeLoff, epsilon, sizeArrow, sizeArrowhead;
 		double NdivX, NdivYhisto, NdivYratio;
 		double pad1size, pad1W, pad1H, pad2size, pad2W, pad2H;
 		double ratiomin, ratiomax;
@@ -562,6 +684,7 @@ class KPlot{
 		int ratiolinewidth, ratiolinestyle;
 		Color_t ratiolinecolor;
 		vector<string> vars;
+		bool debugarrow;
 };
 
 //-----------------------------------------------------------

@@ -20,6 +20,7 @@
 #include <utility>
 #include <iomanip>
 #include <cmath>
+#include <exception>
 
 using namespace std;
 
@@ -108,7 +109,7 @@ class KLegend{
 		KLegend(TPad* pad_, OptionMap* localOpt_, OptionMap* globalOpt_) : 
 			pad(pad_), localOpt(localOpt_), globalOpt(globalOpt_), debug(false), npanel(1), balance_panels(false), legwidth(0), legheight(0), 
 			lbound(0), rbound(0), tbound(0), bbound(0), umin(0), umax(0), vmin(0), vmax(0),
-			leg(0), ymin(0), ymax(0), ymin_min(0.001), ymin_max(1), userange(false), manual_ymin(false), manual_ymax(false)
+			leg(0), ymin(0), ymax(0), ymin_min(0.001), ymin_max(1), userange(false), manual_ymin(false), manual_ymax(false), hdirFinal(hdefault), vdirFinal(vdefault)
 		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
@@ -373,6 +374,9 @@ class KLegend{
 					else leg->AddEntry(entries[p][e].GetObj(),entries[p][e].GetLabel().c_str(),entries[p][e].GetOption().c_str());
 				}
 			}
+
+			hdirFinal = hdir;
+			vdirFinal = vdir;
 		}
 		void Build(Horz hdir=hdefault){
 			bool logy = pad->GetLogy();
@@ -541,6 +545,8 @@ class KLegend{
 		TLegend* GetLegend() { return leg; }
 		bool UseRange() { return userange; }
 		pair<double,double> GetRange(){ return make_pair(ymin,ymax); }
+		pair<double,double> GetXcoords(){ return make_pair(umin,umax); }
+		pair<double,double> GetYcoords(){ return make_pair(vmin,vmax); }
 		void SetManualYmin(double ym) { ymin = ym; manual_ymin = true; }
 		void SetManualYmax(double ym) { ymax = ym; manual_ymax = true; }
 		OptionMap* GetLocalOpt() { return localOpt; }
@@ -549,6 +555,7 @@ class KLegend{
 		void SetGlobalOpt(OptionMap* opt) { globalOpt = opt; if(globalOpt==0) globalOpt = new OptionMap(); } //must always have an option map
 		void SetDefaultQuadrant(int q) { qdefault = q; }
 		int GetDefaultQuadrant() { return qdefault; }
+		pair<Horz,Vert> GetLoc() { return make_pair(hdirFinal,vdirFinal); }
 
 	protected:
 		//member variables
@@ -572,6 +579,8 @@ class KLegend{
 		bool userange;
 		bool manual_ymin, manual_ymax;
 		int qdefault;
+		Horz hdirFinal;
+		Vert vdirFinal;
 };
 
 #endif
