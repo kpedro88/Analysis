@@ -113,6 +113,7 @@ input/fast*/
 /regions_svj.py
 /makePieChart.C
 /rescaleObjects.py
+/fixHWE.py
 
 # linked by setupXML.sh
 /KMVA/pugi*.*
