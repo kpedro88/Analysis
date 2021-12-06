@@ -97,6 +97,8 @@ class KPlot{
 			sizeT = 32; globalOpt->Get("sizeT",sizeT);
 			sizeL = 28; globalOpt->Get("sizeL",sizeL);
 			sizeP = 26; globalOpt->Get("sizeP",sizeP);
+			sizePprelim = 23; globalOpt->Get("sizePprelim",sizePprelim);
+			sizePlumi = 26; globalOpt->Get("sizePlumi",sizePlumi);
 			sizeTick = 12; globalOpt->Get("sizeTick",sizeTick);
 			sizeLoff = 5; globalOpt->Get("sizeLoff",sizeLoff);
 			epsilon = 2; globalOpt->Get("epsilon",epsilon);
@@ -303,18 +305,16 @@ class KPlot{
 			
 			//setup prelim text
 			const int prelimFont = 52;
-			double sizePdiff = 3;
-			double sizePextra = sizeP - sizePdiff; //smaller
 			string prelim_text = "Preliminary";
 			globalOpt->Get("prelim_text",prelim_text);
 			if(!prelim_text.empty() and prelim_text[0]!=' ') prelim_text = " "+prelim_text;
 			TLatex width_test_extra(0,0,prelim_text.c_str());
-			width_test_extra.SetTextSize(sizePextra/pad1H);
+			width_test_extra.SetTextSize(sizePprelim/pad1H);
 			width_test_extra.SetTextFont(prelimFont);
 			double uminExtra = umaxCMS;
 			double umaxExtra = uminExtra + width_test_extra.GetXsize();
 			textExtra = new TLatex(uminExtra,posP,prelim_text.c_str());
-			textExtra->SetTextSize(sizePextra/pad1H);
+			textExtra->SetTextSize(sizePprelim/pad1H);
 			textExtra->SetTextFont(prelimFont);
 			textExtra->SetNDC();
 
@@ -331,12 +331,12 @@ class KPlot{
 			string fbname = fbname_.str();
 			globalOpt->Get("lumi_text",fbname);
 			TLatex width_test_lumi(0,0,fbname.c_str());
-			width_test_lumi.SetTextSize(sizeP/pad1H);
+			width_test_lumi.SetTextSize(sizePlumi/pad1H);
 			width_test_lumi.SetTextFont(lumiFont);
 			double umaxLumi = 1-marginR/pad1W;
 			double uminLumi = umaxLumi - width_test_lumi.GetXsize();
 			textLumi = new TLatex(uminLumi,posP,fbname.c_str());
-			textLumi->SetTextSize(sizeP/pad1H);
+			textLumi->SetTextSize(sizePlumi/pad1H);
 			textLumi->SetTextFont(lumiFont);
 			textLumi->SetNDC();
 		}
@@ -675,7 +675,7 @@ class KPlot{
 		vector<TArrow*> xcut_arrow_lines, ycut_arrow_lines;
 		double canvasW, canvasH, canvasWextra, canvasHextra, ratioH;
 		double marginL, marginR, marginB, marginT, marginM1, marginM2, marginPal;
-		double sizeT, sizeL, sizeP, sizeTick, sizeLoff, epsilon, sizeArrow, sizeArrowhead;
+		double sizeT, sizeL, sizeP, sizePprelim, sizePlumi, sizeTick, sizeLoff, epsilon, sizeArrow, sizeArrowhead;
 		double NdivX, NdivYhisto, NdivYratio;
 		double pad1size, pad1W, pad1H, pad2size, pad2W, pad2H;
 		double ratiomin, ratiomax;
