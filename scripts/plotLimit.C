@@ -275,6 +275,9 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	string fpre(acceff ? "sigAccEff" : "limit");
 	string plotpre(acceff ? "plotAccEff" : "plotLimit");
 	string pname(acceff ? "Signal efficiency #times acceptance" : "");
+	double sizeP = 0; globalOpt->Get("sizeP",sizeP);
+	double sizePprelim = 0; globalOpt->Get("sizePprelim",sizePprelim);
+	double sizePlumi = 0; globalOpt->Get("sizePlumi",sizePlumi);
 
 	//ranges for plotting
 	double ymin = 1e10, xmin = 1e10;
@@ -408,6 +411,9 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		plotOpt->Set<double>("sizeLeg",20);
 		plotOpt->Set<bool>("auto_g",globalOpt->Get("auto_g",true));
 		plotOpt->Set<bool>("debug_legend",globalOpt->Get("debug_legend",false));
+		if(sizeP>0) plotOpt->Set<double>("sizeP",sizeP);
+		if(sizePprelim>0) plotOpt->Set<double>("sizePprelim",sizePprelim);
+		if(sizePlumi>0) plotOpt->Set<double>("sizePlumi",sizePlumi);
 
 		OptionMap* localOpt = new OptionMap();
 		localOpt->Set<bool>("ratio",false);
@@ -598,6 +604,9 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		plotOpt->Set<double>("sizeLeg",20);
 		if(acceff) plotOpt->Set<double>("sizeSymb",0);
 		plotOpt->Set<int>("qdefault",1);
+		if(sizeP>0) plotOpt->Set<double>("sizeP",sizeP);
+		if(sizePprelim>0) plotOpt->Set<double>("sizePprelim",sizePprelim);
+		if(sizePlumi>0) plotOpt->Set<double>("sizePlumi",sizePlumi);
 
 		OptionMap* localOpt = new OptionMap();
 		localOpt->Set<bool>("ratio",false);
