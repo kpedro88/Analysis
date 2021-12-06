@@ -5,7 +5,7 @@ input/input_svj_mt_hist_full_bdt.txt
 
 OPTION
 string+:printsuffix[_fit_obs_lowSVJ2]
-vstring{|}:extra_text[Low-SVJ2|Signal (^{}m_{dark} = 20 GeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
+vstring{|}:extra_text[#scale[1.25]{Low-SVJ2}|Signal (^{}m_{dark} = 20 GeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
 vint:extra_text_panels[0,1,1]
 string:rootfile[test/paper/prefit/fit_obs_lowSVJ2]
 bool:treesuffix[0]
