@@ -16,11 +16,11 @@ bothjetAK8fMu	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[f_{#mu}(^{}J_{1,2})]	s:
 bothjetAK8fPho	i:xnum[100]	d:xmin[0]	d:xmax[1]	s:xtitle[f_{#gamma}(^{}J_{1,2})]	s:ytitle[Arbitrary units]	b:ratio[0]	b:logy[1]
 
 SET
-hist	mc	SVJ_2100_20_0.3_peak	s:legname[m_{Z'} = 2.1 TeV]	c:color[kBlue]	i:linestyle[7]	i:panel[1]
+hist	mc	SVJ_2100_20_0.3_peak	s:legname[m_{Z'} = 2.1 TeV]	c:color[kBlue]	i:linestyle[2]	i:panel[1]
 	base	ext	SVJ_2100_20_0.3_peak	b:ext_auto[1]
 hist	mc	SVJ_3100_20_0.3_peak	s:legname[m_{Z'} = 3.1 TeV]	c:color[kCyan + 2]	i:linestyle[7]	i:panel[1]
 	base	ext	SVJ_3100_20_0.3_peak	b:ext_auto[1]
-hist	mc	SVJ_4100_20_0.3_peak	s:legname[m_{Z'} = 4.1 TeV]	c:color[kMagenta]	i:linestyle[7]	i:panel[1]
+hist	mc	SVJ_4100_20_0.3_peak	s:legname[m_{Z'} = 4.1 TeV]	c:color[kMagenta]	i:linestyle[3]	i:panel[1]
 	base	ext	SVJ_4100_20_0.3_peak	b:ext_auto[1]
 hist	mc	QCD	s:legname[QCD]	c:color[kBlue + 2]	i:panel[0]
 	base	ext	QCD	b:ext_auto[1]

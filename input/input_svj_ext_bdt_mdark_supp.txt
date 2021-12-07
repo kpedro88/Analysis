@@ -15,13 +15,13 @@ bothjetAK8ecfN2b1	i:xnum[100]	d:xmin[0]	d:xmax[0.5]	s:xtitle[N_{2}^{(1)}(^{}J_{1
 bothjetAK8ecfN3b1	i:xnum[100]	d:xmin[0]	d:xmax[4.0]	s:xtitle[N_{3}^{(1)}(^{}J_{1,2})]	s:ytitle[Arbitrary units]	b:ratio[0]	b:logy[1]
 
 SET
-hist	mc	SVJ_3100_1_0.3_peak	s:legname[m_{dark} = 1 GeV]	c:color[kRed]	i:linestyle[7]	i:panel[1]
+hist	mc	SVJ_3100_1_0.3_peak	s:legname[m_{dark} = 1 GeV]	c:color[kRed]	i:linestyle[4]	i:panel[1]
 	base	ext	SVJ_3100_1_0.3_peak	b:ext_auto[1]
 hist	mc	SVJ_3100_20_0.3_peak	s:legname[m_{dark} = 20 GeV]	c:color[kCyan + 2]	i:linestyle[7]	i:panel[1]
 	base	ext	SVJ_3100_20_0.3_peak	b:ext_auto[1]
-hist	mc	SVJ_3100_50_0.3_peak	s:legname[m_{dark} = 50 GeV]	c:color[kBlue]	i:linestyle[7]	i:panel[1]
+hist	mc	SVJ_3100_50_0.3_peak	s:legname[m_{dark} = 50 GeV]	c:color[kBlue]	i:linestyle[2]	i:panel[1]
 	base	ext	SVJ_3100_50_0.3_peak	b:ext_auto[1]
-hist	mc	SVJ_3100_100_0.3_peak	s:legname[m_{dark} = 100 GeV]	c:color[kMagenta]	i:linestyle[7]	i:panel[1]
+hist	mc	SVJ_3100_100_0.3_peak	s:legname[m_{dark} = 100 GeV]	c:color[kMagenta]	i:linestyle[3]	i:panel[1]
 	base	ext	SVJ_3100_100_0.3_peak	b:ext_auto[1]
 hist	mc	QCD	s:legname[QCD]	c:color[kBlue + 2]	i:panel[0]
 	base	ext	QCD	b:ext_auto[1]
