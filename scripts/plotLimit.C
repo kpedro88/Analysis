@@ -278,6 +278,10 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	double sizeP = 0; globalOpt->Get("sizeP",sizeP);
 	double sizePprelim = 0; globalOpt->Get("sizePprelim",sizePprelim);
 	double sizePlumi = 0; globalOpt->Get("sizePlumi",sizePlumi);
+	double yoff = 0; bool use_yoff = globalOpt->Get("yoff",yoff);
+	double hscaleLeg = 0; globalOpt->Get("hscaleLeg",hscaleLeg);
+	double ushiftLeg = 0; globalOpt->Get("ushiftLeg",ushiftLeg);
+	double vshiftLeg = 0; globalOpt->Get("vshiftLeg",vshiftLeg);
 
 	//ranges for plotting
 	double ymin = 1e10, xmin = 1e10;
@@ -414,6 +418,9 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		if(sizeP>0) plotOpt->Set<double>("sizeP",sizeP);
 		if(sizePprelim>0) plotOpt->Set<double>("sizePprelim",sizePprelim);
 		if(sizePlumi>0) plotOpt->Set<double>("sizePlumi",sizePlumi);
+		if(hscaleLeg!=0) plotOpt->Set<double>("hscaleLeg",hscaleLeg);
+		if(ushiftLeg!=0) plotOpt->Set<double>("ushiftLeg",ushiftLeg);
+		if(vshiftLeg!=0) plotOpt->Set<double>("vshiftLeg",vshiftLeg);
 
 		OptionMap* localOpt = new OptionMap();
 		localOpt->Set<bool>("ratio",false);
@@ -475,6 +482,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		kleg->AddEntry((TObject*)NULL,svname,"");
 
 		//draw blank histo for axes
+		if(use_yoff) hbase->GetYaxis()->SetTitleOffset(yoff);
 		plot->DrawHist();
 
 		//build legend (after drawing axes)
@@ -607,6 +615,9 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		if(sizeP>0) plotOpt->Set<double>("sizeP",sizeP);
 		if(sizePprelim>0) plotOpt->Set<double>("sizePprelim",sizePprelim);
 		if(sizePlumi>0) plotOpt->Set<double>("sizePlumi",sizePlumi);
+		if(hscaleLeg!=0) plotOpt->Set<double>("hscaleLeg",hscaleLeg);
+		if(ushiftLeg!=0) plotOpt->Set<double>("ushiftLeg",ushiftLeg);
+		if(vshiftLeg!=0) plotOpt->Set<double>("vshiftLeg",vshiftLeg);
 
 		OptionMap* localOpt = new OptionMap();
 		localOpt->Set<bool>("ratio",false);
@@ -669,6 +680,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 			vname << ", ";
 		}
 		string svname = vname.str(); svname.pop_back(); svname.pop_back();
+		svname = "#lower[-0.1]{"+svname+"}";
 		kleg->AddEntry((TObject*)NULL,svname,"");
 		//add all graphs to legend
 		for(auto& v: {contours_obs,contours_cen}){
@@ -684,6 +696,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		kleg->AddHist(plot->GetHisto()); //for tick sizes
 
 		//use graph "best" algo (must be after axes drawn)
+		if(use_yoff) hbase->GetYaxis()->SetTitleOffset(yoff);
 		plot->DrawHist();
 		kleg->Build(KLegend::hdefault,KLegend::vdefault);
 		//extra style options

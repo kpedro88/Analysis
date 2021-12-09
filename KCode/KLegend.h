@@ -124,6 +124,9 @@ class KLegend{
 			sizeSymb = 25; globalOpt->Get("sizeSymb",sizeSymb);
 			legentry = sizeLeg/padH; //line height for each entry
 			sizeSymb /= padW;
+			hscaleLeg = 1.2; globalOpt->Get("hscaleLeg",hscaleLeg);
+			ushiftLeg = 0; globalOpt->Get("ushiftLeg",ushiftLeg);
+			vshiftLeg = 0; globalOpt->Get("vshiftLeg",vshiftLeg);
 			//todo: configurable font type
 			
 			//get panel setting (global overrides local)
@@ -330,8 +333,8 @@ class KLegend{
 			legwidth += sizeSymb*npanel;
 			double sizeSymbRel = sizeSymb*npanel/legwidth;
 			//add a little padding for each line
-			legheight *= 1.2;
-			
+			legheight *= hscaleLeg;
+
 			if(hdir==left) {
 				umin = lbound;
 				umax = umin + legwidth;
@@ -359,6 +362,13 @@ class KLegend{
 			}
 			
 			if(debug) cout << "coords: " << umin << " " << vmin << " " << umax << " " << vmax << endl;
+			//shifts
+			umin += ushiftLeg;
+			umax += ushiftLeg;
+			vmin += vshiftLeg;
+			vmax += vshiftLeg;
+			if(debug) cout << "coords (shifted): " << umin << " " << vmin << " " << umax << " " << vmax << endl;
+
 			//initialize legend with determined coords
 			leg = new TLegend(umin,vmin,umax,vmax);
 			leg->SetFillColor(0);
@@ -568,7 +578,7 @@ class KLegend{
 		double legwidth, legheight;
 		double lbound, rbound, tbound, bbound;
 		double umin, umax, vmin, vmax;
-		double padH, padW, sizeLeg, legentry, sizeSymb;
+		double padH, padW, sizeLeg, legentry, sizeSymb, hscaleLeg, ushiftLeg, vshiftLeg;
 		vector<KLegendMultiEntry> multi_entries;
 		vector<KLegendMultiEntry> entries;
 		vector<TH1*> hists;
