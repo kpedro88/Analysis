@@ -68,7 +68,9 @@ void makePieChart(string fname, string region, vector<string> options={}){
 	plotOpt->Set<double>("sizeLeg",20);
 	plotOpt->Set<double>("canvasH",676);
 	plotOpt->Set<double>("marginL",10);
-	plotOpt->Set<double>("marginR",10);
+	plotOpt->Set<double>("sizeP",33);
+	plotOpt->Set<double>("sizePprelim",25);
+	plotOpt->Set<double>("sizePlumi",26);
 
 	OptionMap* localOpt = new OptionMap();
 	localOpt->Set<bool>("ratio",false);
