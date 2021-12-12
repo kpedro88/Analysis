@@ -2,8 +2,8 @@ INPUT
 input/input_svj_supp.txt
 
 OPTION
-vstring{|}:extra_text[Signal (^{}m_{Z'} = 3.1 TeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
-vint:extra_text_panels[1,1]
+vstring{|}+:extra_text[Signal (^{}m_{Z'} = 3.1 TeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
+vint+:extra_text_panels[1,1]
 string:extfilename[test/paper/bdt/supp/histBDT_svj.root]
 string:rootfile[test/paper/bdt/supp/bdt_mdark_plots]
 string:printsuffix[dijetmtdetahadloosespike_bdt_mdark_flatptZ30]

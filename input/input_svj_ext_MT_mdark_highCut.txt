@@ -4,7 +4,7 @@ input/input_svj_ext_MT_mdark.txt
 OPTION
 vstring+:printformat[pdf]
 string:exthisto_dir[highCut_2018]
-vstring{|}:extra_text[High-^{}R_{T}|Signal (^{}m_{Z'} = 2.5 TeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
+vstring{|}+:extra_text[High-^{}R_{T}|Signal (^{}m_{Z'} = 2.5 TeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
 string+:printsuffix[_highCut]
 bool:unitnorm[0]
 string:lumi_text[138 fb^{-1} (13 TeV)]

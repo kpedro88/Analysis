@@ -3,3 +3,6 @@ input/input_svj_paper.txt
 
 OPTION
 string:prelim_text[Simulation Supplementary]
+vstring{|}:extra_text[arXiv:####.#####]
+vint:extra_text_panels[0]
+bool:leg2d[1]

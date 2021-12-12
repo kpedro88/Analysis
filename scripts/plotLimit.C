@@ -266,6 +266,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	bool do_obs = globalOpt->Get("do_obs",false);
 	bool show_exp = globalOpt->Get("show_exp",false);
 	bool interp = globalOpt->Get("interp",false);
+	vector<string> extra_text; globalOpt->Get("extra_text",extra_text);
 	string obs_text("Observed"); globalOpt->Get("obs_text",obs_text);
 	string lumi_text("(13 TeV)"); globalOpt->Get("lumi_text",lumi_text);
 	string prelim_text; bool set_prelim = globalOpt->Get("prelim_text",prelim_text);
@@ -408,6 +409,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 
 		//setup plotting options
 		OptionMap* plotOpt = new OptionMap();
+		plotOpt->Set<vector<string>>("extra_text",extra_text);
 		plotOpt->Set<string>("lumi_text",lumi_text);
 		if(set_prelim) plotOpt->Set<string>("prelim_text",prelim_text);
 		plotOpt->Set<bool>("checkerr",false);
@@ -606,6 +608,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 
 		//setup plotting options
 		OptionMap* plotOpt = new OptionMap();
+		plotOpt->Set<vector<string>>("extra_text",extra_text);
 		plotOpt->Set<string>("lumi_text",lumi_text);
 		if(set_prelim) plotOpt->Set<string>("prelim_text",prelim_text);
 		plotOpt->Set<bool>("checkerr",false);

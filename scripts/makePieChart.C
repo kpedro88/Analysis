@@ -39,6 +39,7 @@ void makePieChart(string fname, string region, vector<string> options={}){
 		{"lowSVJ2","Low-SVJ2"},
 	};
 
+	vector<string> extra_text; globalOpt->Get("extra_text",extra_text);
 	string cms_text("CMS"); globalOpt->Get("cms_text",cms_text);
 	string lumi_text("(13 TeV)"); globalOpt->Get("lumi_text",lumi_text);
 	string prelim_text("Simulation Supplementary"); globalOpt->Get("prelim_text",prelim_text);
@@ -62,6 +63,7 @@ void makePieChart(string fname, string region, vector<string> options={}){
 
 	//setup plotting options
 	OptionMap* plotOpt = new OptionMap();
+	plotOpt->Set<vector<string>>("extra_text",extra_text);
 	plotOpt->Set<string>("cms_text",cms_text);
 	plotOpt->Set<string>("lumi_text",lumi_text);
 	plotOpt->Set<string>("prelim_text",prelim_text);
