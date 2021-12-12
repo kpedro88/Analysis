@@ -703,6 +703,7 @@ class KPlotManager : public KManager {
 			}
 
 			//draw each 2D plot - normalization, etc.
+			bool leg2d = globalOpt->Get("leg2d",false);
 			for(auto& pm : MyPlots2D.GetTable()){
 				PlotMap* p2map = pm.second;
 				
@@ -720,7 +721,7 @@ class KPlotManager : public KManager {
 						throw runtime_error("normalization to yield requested for "+pm.first+", but neither yieldref nor yieldnormval are set. Normalization cannot be performed.");
 					}
 				}
-				
+
 				double zmin = 1e100;
 				double zmax = 0;
 				//check if normalization to yield is desired (disabled by default)
@@ -749,6 +750,12 @@ class KPlotManager : public KManager {
 					if(ztmp < zmin) zmin = ztmp;
 					ztmp = theSet->GetHisto()->GetMaximum();
 					if(ztmp > zmax) zmax = ztmp;
+
+					//setup legend if desired
+					if(leg2d){
+						KLegend* kleg = ptmp->GetLegend();
+						kleg->AddHist(theSet->GetHisto());
+					}
 				}
 				if(printyield) cout << endl;
 				globalOpt->Get("zmin",zmin);
@@ -792,6 +799,8 @@ class KPlotManager : public KManager {
 					}
 					//draw blank histo for axes
 					ptmp->DrawHist();
+					//use graph "best" algo (must be after axes drawn)
+					if(leg2d) ptmp->GetLegend()->Build(KLegend::hdefault,KLegend::vdefault);
 					//draw set
 					theSet->Draw(pad1);
 					//save histo in root file if requested

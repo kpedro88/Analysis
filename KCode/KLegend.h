@@ -231,11 +231,26 @@ class KLegend{
 			int nhistpts = 0;
 			for(const auto hist : hists){
 				vector<double> x, y;
-				for(int b = 1; b <= hist->GetNbinsX(); ++b){
-					x.push_back(hist->GetBinCenter(b));
-					y.push_back(hist->GetBinContent(b));
+				int n;
+				if(hist->GetDimension()==2){
+					n = hist->GetNbinsX()*hist->GetNbinsY();
+					for(int bx = 1; bx <= hist->GetNbinsX(); ++bx){
+						for(int by = 1; by <= hist->GetNbinsY(); ++by){
+							if(hist->GetBinContent(bx,by)>hist->GetMinimum()){
+								x.push_back(hist->GetXaxis()->GetBinCenter(bx));
+								y.push_back(hist->GetYaxis()->GetBinCenter(by));
+							}
+						}
+					}
 				}
-				CheckQuadrants(quadrants, bounds, hist->GetNbinsX(), x.data(), y.data());
+				else{
+					n = hist->GetNbinsX();
+					for(int b = 1; b <= hist->GetNbinsX(); ++b){
+						x.push_back(hist->GetBinCenter(b));
+						y.push_back(hist->GetBinContent(b));
+					}
+				}
+				CheckQuadrants(quadrants, bounds, n, x.data(), y.data());
 				nhistpts += x.size();
 			}
 			
@@ -377,6 +392,10 @@ class KLegend{
 			leg->SetTextFont(42);
 			leg->SetNColumns(npanel);
 			leg->SetMargin(sizeSymbRel);
+			if(globalOpt->Get("leg2d",false)){
+				leg->SetFillStyle(1001);
+				leg->SetFillColorAlpha(0,0.6);
+			}
 			
 			for(unsigned e = 0; e < max_panel_entries; e++){
 				for(int p = 0; p < npanel; p++){

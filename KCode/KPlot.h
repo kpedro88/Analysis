@@ -279,12 +279,14 @@ class KPlot{
 			}
 			
 			InitializeText();
+			InitializeLegend();
 			
+			return isInit;
+		}
+		void InitializeLegend(){
 			//create legend
 			leg = new KLegend(pad1,localOpt,globalOpt);
 			if(pad2 and globalOpt->Get("ratioleg",false)) rleg = new KLegend(pad2,localOpt,globalOpt);
-			
-			return isInit;
 		}
 		void InitializeText(){
 			pad1->cd();
@@ -864,6 +866,7 @@ class KPlot2D: public KPlot {
 			SetTitleOffset(pad1,histo->GetZaxis());
 			
 			InitializeText();
+			if(globalOpt->Get("leg2d",false)) InitializeLegend();
 			
 			return isInit;
 		}
