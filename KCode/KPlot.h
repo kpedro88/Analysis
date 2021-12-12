@@ -292,6 +292,7 @@ class KPlot{
 			//setup CMS text
 			const int cmsFont = 61;
 			string cms_text = "CMS";
+			globalOpt->Get("cms_text",cms_text);
 			TLatex width_test_cms(0,0,cms_text.c_str());
 			width_test_cms.SetTextSize(sizeP/pad1H);
 			width_test_cms.SetTextFont(cmsFont);
