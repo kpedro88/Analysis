@@ -1,2 +1,2 @@
 input:input[input/input_compacceff_general_svj.txt]
-vstring:extra_text[High-^{}R_{T}]
+vstring+:extra_text[High-^{}R_{T}]
