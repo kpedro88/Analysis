@@ -231,9 +231,7 @@ class KLegend{
 			int nhistpts = 0;
 			for(const auto hist : hists){
 				vector<double> x, y;
-				int n;
 				if(hist->GetDimension()==2){
-					n = hist->GetNbinsX()*hist->GetNbinsY();
 					for(int bx = 1; bx <= hist->GetNbinsX(); ++bx){
 						for(int by = 1; by <= hist->GetNbinsY(); ++by){
 							if(hist->GetBinContent(bx,by)>hist->GetMinimum()){
@@ -244,13 +242,12 @@ class KLegend{
 					}
 				}
 				else{
-					n = hist->GetNbinsX();
 					for(int b = 1; b <= hist->GetNbinsX(); ++b){
 						x.push_back(hist->GetBinCenter(b));
 						y.push_back(hist->GetBinContent(b));
 					}
 				}
-				CheckQuadrants(quadrants, bounds, n, x.data(), y.data());
+				CheckQuadrants(quadrants, bounds, x.size(), x.data(), y.data());
 				nhistpts += x.size();
 			}
 			
