@@ -11,7 +11,7 @@ string:rootfile[test/paper/sig/svj_unskimmed_mass_central_out]
 double:ymin[1e-6]
 
 HISTO
-MTAK8	i:xnum[150]	d:xmin[0]	d:xmax[6.0]	s:xtitle[Mass [TeV]]	s:ytitle[Arbitrary units]	b:ratio[0]	vd:xcuts[2100]	vc:xcut_colors[kBlack]	b:logy[1]
+MTAK8	i:xnum[150]	d:xmin[0]	d:xmax[6.0]	s:xtitle[Mass [TeV]]	s:ytitle[Arbitrary units]	b:ratio[0]	vd:xcuts[2.1]	vc:xcut_colors[kBlack]	b:logy[1]
 
 SET
 hist	mc	MTAK8	s:legname[m_{T}]	c:color[kBlue]
