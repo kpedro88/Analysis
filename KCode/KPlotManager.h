@@ -932,11 +932,12 @@ class KPlotManager : public KManager {
 		void PrintCanvas(string oname, TCanvas* can, bool roc=false){
 			//print formats given as a vector option
 			vector<string> printformat;
+			bool do_epstopdf = globalOpt->Get("epstopdf",true);
 			if(doPrint && globalOpt->Get<vector<string> >("printformat",printformat)){
 				for(unsigned j = 0; j < printformat.size(); j++){
 					string otmp = oname;
 					string pformat = printformat[j];
-					bool epstopdf = pformat=="pdf";
+					bool epstopdf = do_epstopdf and pformat=="pdf";
 					if(epstopdf) pformat = "eps";
 					string suff = "";
 					if((!roc and globalOpt->Get("printsuffix",suff)) or (roc and globalOpt->Get("rocsuffix",suff))) otmp += "_" + suff;
