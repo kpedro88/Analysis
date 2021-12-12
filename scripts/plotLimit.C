@@ -264,6 +264,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	string region_text; globalOpt->Get("region_text",region_text);
 	bool logy = globalOpt->Get("logy",true);
 	bool do_obs = globalOpt->Get("do_obs",false);
+	bool show_exp = globalOpt->Get("show_exp",false);
 	bool interp = globalOpt->Get("interp",false);
 	string obs_text("Observed"); globalOpt->Get("obs_text",obs_text);
 	string lumi_text("(13 TeV)"); globalOpt->Get("lumi_text",lumi_text);
@@ -532,7 +533,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		//setup plotting options
 		ymax = -1e10;
 		yname = vdict[var2]+unitdict[var2];
-		zname = pname.empty() ? string("95% CL ")+(do_obs ? "obs." : "exp.")+" upper limit on #sigma B [pb]" : pname;
+		zname = pname.empty() ? string("95% CL ")+(do_obs and !show_exp ? "obs." : "exp.")+" upper limit on #sigma B [pb]" : pname;
 		dname += ":trackedParam_"+var2;
 
 		Limits lim_obs, lim_cen;
@@ -576,7 +577,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		TGraph2D* gtmp;
 		if(acceff) gtmp = new TGraph2D(lim_cen.v1.size(),lim_cen.v1.data(),lim_cen.v2.data(),lim_cen.s.data()); //acceff doesn't use log
 		else {
-			if(do_obs) gtmp = new TGraph2D(lim_obs.v1.size(),lim_obs.v1.data(),lim_obs.v2.data(),lim_obs.S.data());
+			if(do_obs and !show_exp) gtmp = new TGraph2D(lim_obs.v1.size(),lim_obs.v1.data(),lim_obs.v2.data(),lim_obs.S.data());
 			else gtmp = new TGraph2D(lim_cen.v1.size(),lim_cen.v1.data(),lim_cen.v2.data(),lim_cen.S.data());
 		}
 		//control number of bins for labeled axes
@@ -648,7 +649,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		//make plot
 		stringstream soname;
 		soname << plotpre << "_" << sname << "_vs_" << var1 << "_" << var2;
-		if(do_obs) soname << "_obs";
+		if(do_obs and !show_exp) soname << "_obs";
 		if(!printsuffix.empty()) soname << "_" << printsuffix;
 		string oname = soname.str();
 		KParser::clean(oname);
