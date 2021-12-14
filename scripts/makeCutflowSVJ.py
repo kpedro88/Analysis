@@ -47,6 +47,7 @@ parser.add_option("-o", "--outname", dest="outname", type='string', default="svj
 parser.add_option("-n", "--names", dest="names", type='string', default="selections", help="dict of fancy selection names, in order")
 parser.add_option("-t", "--type", dest="type", type='choice', default="abs", choices=['abs','rel','raw','rawrel'], help="type of cutflow (abs, rel, raw, rawrel)")
 parser.add_option("-p", "--prec", dest="prec", type='int', default=1, help="numerical precision of output")
+parser.add_option("-m", "--minprec", dest="minprec", type='int', default=1, help="minimum number of digits to display")
 parser.add_option("-e", "--no-error", dest="error", default=True, action="store_false", help="don't display statistical errors")
 parser.add_option("-u", "--summarize-error", dest="summarizeerror", default=False, action="store_true", help="summarize maximum value of statistical errors (goes w/ -e)")
 parser.add_option("-z", "--skipzeros", dest="skipzeros", default=False, action="store_true", help="ignore errors on zero-count bins")
@@ -56,6 +57,7 @@ parser.add_option("-s", "--signalregions", dest="signalregions", type='string', 
 parser.add_option("-P", "--procs", dest="procs", type='string', default="all", help="categories of procs to include")
 parser.add_option("-E", "--efficiency", dest="efficiency", default=False, action="store_true", help="include line for overall efficiency")
 parser.add_option("-S", "--small", dest="small", default=False, action="store_true", help="smaller font size")
+parser.add_option("-D", "--align-decimal", dest="alignDecimal", default=False, action="store_true", help="align columns at decimal")
 parser.add_option("--topcapt", dest="topcapt", default=False, action="store_true", help="use topcaption instead of caption")
 (options, args) = parser.parse_args()
 
@@ -196,6 +198,7 @@ cutflow_inds = {
 cutflow_ind = cutflow_inds[options.type]
 multicol = 3 if options.type=='rawrel' and options.error else 2
 if not options.error: multicol = 1
+if options.alignDecimal: multicol *= 2
 max_err = 0
 for procname,proc in procs.iteritems():
     outDict["header1"] += " & " + "\\multicolumn{"+str(multicol)+"}{r}{"+procname+"}"
@@ -206,7 +209,7 @@ for procname,proc in procs.iteritems():
         for p in proc:
             if ("genMET-80" in p[0] and year!="2018") or ("genMET-150" in p[0] and year=="2018"):
                 continue
-            if "SVJ" in p[0]:
+            if "SVJ" in p[0] and "scan" not in options.dir:
                 year = "2017"
             if "ST_t-channel" in p[0] and year=="2018":
                 year = "2017"
@@ -214,10 +217,11 @@ for procname,proc in procs.iteritems():
             samples.append('{"'+p[0]+'_MC'+year+'",'+str(xsec)+','+str(lumi)+(',"'+convertName(p[0])+'_MC'+year+'"' if options.procs.startswith("sig") else "")+'}')
 
     # process cutflow lines (summed over years)
-    cmd = """root -b -l -q 'CutflowSum.C("{}",{{{}}},1,{},{}{})'""".format(
+    cmd = """root -b -l -q 'CutflowSum.C("{}",{{{}}},1,{},{},{}{})'""".format(
         options.dir,
         ','.join(samples),
         options.prec,
+        options.minprec,
         "1" if options.skipzeros else "0",
 		',"{}",{{{}}}'.format(options.regionfile, ','.join('"{}"'.format(s) for s in signalRegions)) if len(options.regionfile)>0 else "",
     )
@@ -233,13 +237,16 @@ for procname,proc in procs.iteritems():
             splitline = filter(None,line.split(' '))
             if "PhiSpike" in splitline[0]: splitline[0] = "PhiSpikeVeto16"
             if splitline[0] not in outDict: continue
-            outDict[splitline[0]] += " & \\colspace"+splitline[cutflow_ind]+(" & "+splitline[cutflow_ind+2] if options.error else "")
+            otmp = " & \\colspace"+splitline[cutflow_ind]+(" & "+splitline[cutflow_ind+2] if options.error else "")
+            if options.alignDecimal: otmp = otmp.replace(".", "&.", 1)
+            outDict[splitline[0]] += otmp
             max_err = max(max_err, splitline[cutflow_ind+2])
             if options.type=='rawrel': outDict[splitline[0]] += " & "+splitline[cutflow_ind+6]
             if first==0: first = float(splitline[cutflow_inds['raw']])
             elif splitline[0]==list(namesDict)[-1]: last = float(splitline[cutflow_inds['raw']])
     if options.efficiency:
-        outDict["efficiency"] += " & \\multicolumn{"+str(multicol)+"}{r}{"+"{:.2g}".format(last/first*100)+"}"
+        print(procname,last/first*100)
+        outDict["efficiency"] += " & \\multicolumn{"+str(multicol)+"}{"+("l" if options.alignDecimal else "r")+"}{"+("\\colspace" if options.alignDecimal else "")+"{:.2g}".format(last/first*100)+"}"
 
 wfile = open(options.outname,'w')
 
@@ -280,6 +287,7 @@ if options.type=="rawrel":
     else: coltype = "rP"
 elif options.type=="rel":
     if not options.error: coltype = "r"
+if options.alignDecimal: coltype = coltype.replace("r","A")
 wfile.write("\\begin{table}[htb]\n")
 wfile.write(caption+"\n")
 wfile.write("\\centering\n")

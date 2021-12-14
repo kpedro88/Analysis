@@ -31,7 +31,7 @@ enum class KCutflowType { CutRaw=0, CutAbs=1, CutRel=2 };
 class KCutflowItem {
 	public:
 		//constructor
-		KCutflowItem(string name_, long long raw_, double rawE_, KCutflow* map_, bool weighted=false, string baseName_="", string parentName_="");
+		KCutflowItem(string name_, double raw_, double rawE_, KCutflow* map_, bool weighted=false, string baseName_="", string parentName_="");
 		//dummy constructor for finding in set
 		KCutflowItem(string name_) : name(name_) {}
 
@@ -44,7 +44,7 @@ class KCutflowItem {
 				ct==KCutflowType::CutRel ? make_pair(rel,relE) :
 				make_pair(0.,0.) ));
 		}
-		long long GetRaw() const { return raw; }
+		unsigned long long GetRaw() const { return raw; }
 
 		//for sorting
 		bool operator<(const KCutflowItem& rhs) const { return name < rhs.name; }
@@ -52,7 +52,8 @@ class KCutflowItem {
 	protected:
 		//members
 		string name, parentName, baseName;
-		long long raw;
+		unsigned long long raw;
+		double rawD;
 		double rawE, abs, absE, rel, relE;
 		const KCutflowItem* parent = nullptr;
 		const KCutflowItem* base = nullptr;
@@ -69,7 +70,7 @@ class KCutflow {
 		//get nevent info from histo
 		KCutflow(string name_, TH1F* h_tmp, TH1F* h_ntmp, bool weighted_=false) : KCutflow(name_, h_tmp, h_ntmp->GetBinContent(1), h_ntmp->GetBinError(1), weighted_) {}
 		//get nevent info directly
-		KCutflow(string name_, TH1F* h_tmp, long long nentries_=0, double nentriesE_=0, bool weighted_=false) : name(name_), title(h_tmp->GetTitle()), weighted(weighted_) {
+		KCutflow(string name_, TH1F* h_tmp, unsigned long long nentries_=0, double nentriesE_=0, bool weighted_=false) : name(name_), title(h_tmp->GetTitle()), weighted(weighted_) {
 			string baseName = "";
 			if(nentries_>0) {
 				baseName = nEventProc();
@@ -87,7 +88,7 @@ class KCutflow {
 		//todo: expand for object sync selectors
 		
 		//print efficiencies
-		void PrintEfficiency(bool printerrors=false){
+		void PrintEfficiency(bool printerrors=false, int minprec=0){
 			if(itemList.empty()) return;
 
 			//loop to get width of selector name
@@ -118,6 +119,7 @@ class KCutflow {
 			cout << left << setw(widths[0]) << "Selector" << "  " << right << setw(widths[1]) << "Raw # Events" << "  " << right << setw(widths[2]) << "Abs. Eff. (%)" << "  " << right << setw(widths[3]) << "Rel. Eff. (%)" << endl;
 
 			//print selectors
+			unsigned prcsn = cout.precision();
 			for(auto ptr : itemList){
 				const auto& item(*ptr);
 				cout << left << setw(widths[0]) << item.GetName();
@@ -125,20 +127,27 @@ class KCutflow {
 				auto rawE = item.GetVal(KCutflowType::CutRaw).second;
 				auto abs = item.GetVal(KCutflowType::CutAbs);
 				auto rel = item.GetVal(KCutflowType::CutRel);
+
+				//handle minimum precision case
+				//todo: apply to errors, make sure widths are sufficient
+				const auto& s_raw = PrintVal(raw, prcsn, 0); //do not use minprec for integer types (fixed format won't append .0)
+				const auto& s_abs = PrintVal(abs.first, prcsn, minprec);
+				const auto& s_rel = PrintVal(rel.first, prcsn, minprec);
+
 				if(printerrors){
-					cout << "  " << right << setw(widths[4]) << (long long)raw << " +/- " << right << setw(widths[4]) << rawE;
+					cout << "  " << right << setw(widths[4]) << s_raw << " +/- " << right << setw(widths[4]) << rawE;
 					if(item.GetName()!=nEventProc()) {
-						cout << "  " << right << setw(widths[5]) << abs.first << " +/- " << right << setw(widths[5]) << abs.second;
+						cout << "  " << right << setw(widths[5]) << s_abs << " +/- " << right << setw(widths[5]) << abs.second;
 						//rel. eff. = abs. eff. for first selector
-						cout << "  " << right << setw(widths[5]) << rel.first << " +/- " << right << setw(widths[5]) << rel.second;
+						cout << "  " << right << setw(widths[5]) << s_rel << " +/- " << right << setw(widths[5]) << rel.second;
 					}
 				}
 				else {
-					cout << "  " << right << setw(widths[1]) << raw;
+					cout << "  " << right << setw(widths[1]) << s_raw;
 					if(item.GetName()!=nEventProc()) {
-						cout << "  " << right << setw(widths[2]) << abs.first;
+						cout << "  " << right << setw(widths[2]) << s_abs;
 						//rel. eff. = abs. eff. for first selector
-						cout << "  " << right << setw(widths[3]) << rel.first;
+						cout << "  " << right << setw(widths[3]) << s_rel;
 					}
 				}
 				cout << endl;
@@ -192,6 +201,29 @@ class KCutflow {
 			static string s("nEventProc");
 			return s;
 		}
+		template <typename T>
+		string PrintVal(T val, unsigned prcsn, int minprec=0){
+			stringstream ss_val;
+			unsigned new_prcsn = prcsn;
+			bool has_enough = false;
+			while(!has_enough){
+				ss_val.str("");
+				ss_val << fixed << setprecision(new_prcsn);
+				ss_val << val;
+				if(minprec==0 or val==(T)0) break; //no need for anything further in these cases
+				auto tmp = ss_val.str();
+				size_t leading_chars = 0;
+				// remove 0.000 from 0.000x (stop at first non-zero char)
+				for(unsigned i = 0; i < tmp.size(); ++i){
+					if(tmp[i]=='0' or tmp[i]=='.') ++leading_chars;
+					else break;
+				}
+				tmp = tmp.substr(leading_chars,string::npos);
+				has_enough = tmp.size()>=minprec;
+				if(!has_enough) ++new_prcsn;
+			}
+			return ss_val.str();
+		}
 
 	protected:
 		//members
@@ -202,8 +234,8 @@ class KCutflow {
 		vector<const KCutflowItem*> itemList;
 };
 
-KCutflowItem::KCutflowItem(string name_, long long raw_, double rawE_, KCutflow* map, bool weighted, string baseName_, string parentName_) :
-	name(name_), parentName(parentName_), baseName(baseName_), raw(raw_), rawE(rawE_) {
+KCutflowItem::KCutflowItem(string name_, double raw_, double rawE_, KCutflow* map, bool weighted, string baseName_, string parentName_) :
+	name(name_), parentName(parentName_), baseName(baseName_), raw(raw_), rawD(raw_), rawE(rawE_) {
 	if((!parentName.empty() or !baseName.empty()) and !map) {
 		throw runtime_error("No item map provided");
 	}
@@ -214,15 +246,15 @@ KCutflowItem::KCutflowItem(string name_, long long raw_, double rawE_, KCutflow*
 		base = map->GetItem(baseName);
 	}
 
-	//do calculations
-	long long nentries = base ? base->raw : 1;
-	long long prev = parent ? parent->raw : 1;
+	//do calculations using doubles (more accurate for weighted samples)
+	double nentries = base ? base->rawD : 1;
+	double prev = parent ? parent->rawD : 1;
 	double nentriesE = base ? base->rawE : 1;
 	double prevE = parent ? parent->rawE : 1;
-	abs = ((double)raw/(double)nentries)*100;
-	absE = weighted ? KMath::EffErrorWeighted(raw,rawE,nentries,nentriesE)*100 : KMath::EffError(raw,nentries)*100;
-	rel = ((double)raw/(double)prev)*100;
-	relE = weighted ? KMath::EffErrorWeighted(raw,rawE,prev,prevE)*100 : KMath::EffError(raw,prev)*100;
+	abs = (rawD/nentries)*100;
+	absE = weighted ? KMath::EffErrorWeighted(rawD,rawE,nentries,nentriesE)*100 : KMath::EffError(raw,nentries)*100;
+	rel = (rawD/prev)*100;
+	relE = weighted ? KMath::EffErrorWeighted(rawD,rawE,prev,prevE)*100 : KMath::EffError(raw,prev)*100;
 }
 
 #endif

@@ -26,7 +26,7 @@ struct SignalRegion {
 	double raw, rawE2;
 };
 
-void CutflowSum(string dir="", vector<Sample> samples={}, bool printerrors=false, int prcsn=2, bool skipzeros=false, string srname="", vector<string> regions={}){
+void CutflowSum(string dir="", vector<Sample> samples={}, bool printerrors=false, int prcsn=2, int minprec=0, bool skipzeros=false, string srname="", vector<string> regions={}){
 	if(dir.empty()){
 		cout << "Recompiled CutflowSum, exiting." << endl;
 		return;
@@ -91,5 +91,5 @@ void CutflowSum(string dir="", vector<Sample> samples={}, bool printerrors=false
 		k.AddItem(syield.name, syield.raw, sqrt(syield.rawE2), KCutflow::nEventProc(), parent);
 	}
 
-	k.PrintEfficiency(printerrors);
+	k.PrintEfficiency(printerrors,minprec);
 }

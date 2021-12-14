@@ -65,15 +65,15 @@ namespace KMath {
 		return U - N;
 	}
 	//use PoissonErrorUp by default
-	double EffError(long long pass, long long total, bool up=true){
-		long long fail = total-pass;
+	double EffError(unsigned long long pass, unsigned long long total, bool up=true){
+		unsigned long long fail = total-pass;
 		double eff = (double)pass/(double)total;
 		double err_p = up ? PoissonErrorUp(pass) : PoissonErrorLow(pass);
 		double err_f = up ? PoissonErrorUp(fail) : PoissonErrorLow(fail);
 		return sqrt(pow(1-eff,2)*pow(err_p,2) + pow(eff,2)*pow(err_f,2))/(double)total;
 	}
-	double EffErrorWeighted(long long pass, double passE, long long total, double totalE){
-		long long fail = total-pass;
+	double EffErrorWeighted(unsigned long long pass, double passE, unsigned long long total, double totalE){
+		unsigned long long fail = total-pass;
 		double eff = (double)pass/(double)total;
 		double err_p = passE;
 		double err_f = sqrt(totalE*totalE - passE*passE);
