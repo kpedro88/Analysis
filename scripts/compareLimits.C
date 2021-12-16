@@ -98,6 +98,20 @@ void compareLimits(string oname, string input, string options, vector<string> mo
 		KParser::processOption(opt,globalOpt);
 	}
 	bool do_obs = globalOpt->Get("do_obs",false);
+	auto legh = KLegend::hdefault;
+	auto legv = KLegend::vdefault;
+	string slegh; globalOpt->Get("slegh",slegh);
+	if(slegh.size()>0){
+		if(slegh=="left") legh = KLegend::left;
+		else if(slegh=="center") legh = KLegend::center;
+		else if(slegh=="right") legh = KLegend::right;
+	}
+	string slegv; globalOpt->Get("slegv",slegv);
+	if(slegv.size()>0){
+		if(slegv=="top") legv = KLegend::top;
+		else if(slegv=="middle") legv = KLegend::middle;
+		else if(slegv=="bottom") legv = KLegend::bottom;
+	}
 
 	//set up plot
 	vector<double> xvals; globalOpt->Get("xvals",xvals);
@@ -140,7 +154,7 @@ void compareLimits(string oname, string input, string options, vector<string> mo
 	plot->DrawHist();
 	
 	//use graph "best" algo (must be after axes drawn)
-	kleg->Build(KLegend::hdefault,KLegend::vdefault);
+	kleg->Build(legh,legv);
 	//extra style options
 	auto leg = kleg->GetLegend();
 	leg->SetFillStyle(1001);
