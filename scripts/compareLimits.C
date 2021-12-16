@@ -55,6 +55,7 @@ struct Curve {
 		else {
 			vector<double> xvals, yvals, xsecs;
 			globalOpt->Get("xvals",xvals);
+			localOpt->Get("xvals",xvals);
 			bool has_xsec = globalOpt->Get("xsecs",xsecs);
 			localOpt->Get("yvals",yvals);
 			if (has_xsec) {
