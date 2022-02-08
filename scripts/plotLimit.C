@@ -274,9 +274,9 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	string printsuffix; globalOpt->Get("printsuffix",printsuffix);
 	bool acceff = globalOpt->Get("acceff",false);
 	int itype = interp ? acceff ? 2 : 1 : 0;
-	string fpre(acceff ? "sigAccEff" : "limit");
-	string plotpre(acceff ? "plotAccEff" : "plotLimit");
-	string pname(acceff ? "Signal efficiency #times acceptance" : "");
+	string fpre(acceff ? "sigAccEff" : "limit"); globalOpt->Get("fpre",fpre);
+	string plotpre(acceff ? "plotAccEff" : "plotLimit"); globalOpt->Get("plotpre",plotpre);
+	string pname(acceff ? "Signal efficiency #times acceptance" : ""); globalOpt->Get("pname",pname);
 	double sizeP = 0; globalOpt->Get("sizeP",sizeP);
 	double sizePprelim = 0; globalOpt->Get("sizePprelim",sizePprelim);
 	double sizePlumi = 0; globalOpt->Get("sizePlumi",sizePlumi);
