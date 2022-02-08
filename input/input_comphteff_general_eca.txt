@@ -1,0 +1,5 @@
+input:input[input/input_compht_general_eca.txt]
+bool:logy[0]
+string:ytitle[Efficiency]
+double:ymin[0]
+double:ymax[1]
