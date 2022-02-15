@@ -64,7 +64,7 @@ class KGraph2D : public TGraph2D {
 class Limits {
 	public:
 		Limits() {}
-		Limits(int itype, unsigned n, double* rs, double* xs, double* v1s, double* v2s=nullptr){
+		Limits(int itype, bool multxs, unsigned n, double* rs, double* xs, double* v1s, double* v2s=nullptr){
 			//get indices from sorting by v
 			vector<unsigned> order(n);
 			iota(order.begin(),order.end(),0);
@@ -85,14 +85,20 @@ class Limits {
 				l.reserve(n);
 			}
 			for(unsigned i = 0; i < n; ++i){
-				r.push_back(rs[i]);
 				x.push_back(xs[i]);
-				s.push_back(rs[i]*xs[i]);
+				if(multxs) {
+					r.push_back(rs[i]);
+					s.push_back(rs[i]*xs[i]);
+				}
+				else {
+					r.push_back(rs[i]/xs[i]); //so findExclusionCurve will still work
+					s.push_back(rs[i]);
+				}
 				S.push_back(log10(s.back()));
 				v1.push_back(v1s[i]);
 				if(v2s) {
 					v2.push_back(v2s[i]);
-					l.push_back(-log10(rs[i]));
+					l.push_back(-log10(r.back()));
 				}
 				else l.push_back(log10(x.back()));
 			}
@@ -130,21 +136,21 @@ class Limits {
 		vector<double> x_orig, s_orig, v1_orig;
 };
 
-Limits getLimit(TTree* limit, const string& dname, const string& cname, double q, int itype){
+Limits getLimit(TTree* limit, const string& dname, const string& cname, double q, int itype, bool multxs){
 	const double eps = 0.01;
 	stringstream ss;
 	ss << "abs(quantileExpected-" << q << ")<" << eps;
 	int npts = limit->Draw(dname.c_str(),(cname+ss.str()).c_str(),"goff");
 	bool is2D = count(dname.begin(),dname.end(),':') >= 3;
-	Limits lim(itype,npts,limit->GetV1(),limit->GetV2(),limit->GetV3(),is2D ? limit->GetV4() : nullptr);
+	Limits lim(itype,multxs,npts,limit->GetV1(),limit->GetV2(),limit->GetV3(),is2D ? limit->GetV4() : nullptr);
 	return lim;
 }
 
-TGraph* getBand(TTree* limit, string dname, string cname, double q_dn, double q_up, int itype){
-	const auto& lim_dn = getLimit(limit,dname,cname,q_dn,itype);
+TGraph* getBand(TTree* limit, string dname, string cname, double q_dn, double q_up, int itype, bool multxs){
+	const auto& lim_dn = getLimit(limit,dname,cname,q_dn,itype,multxs);
 	int npts_dn = lim_dn.s.size();
 
-	const auto& lim_up = getLimit(limit,dname,cname,q_up,itype);
+	const auto& lim_up = getLimit(limit,dname,cname,q_up,itype,multxs);
 	int npts_up = lim_up.s.size();
 
 	int npts = npts_dn+npts_up;
@@ -266,13 +272,22 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	bool do_obs = globalOpt->Get("do_obs",false);
 	bool show_exp = globalOpt->Get("show_exp",false);
 	bool interp = globalOpt->Get("interp",false);
-	vector<string> extra_text; globalOpt->Get("extra_text",extra_text);
+	bool multxs = globalOpt->Get("multxs",true);
+	vector<string> extra_text; bool set_extra_text = globalOpt->Get("extra_text",extra_text);
 	string obs_text("Observed"); globalOpt->Get("obs_text",obs_text);
+	string the_text("Theoretical"); globalOpt->Get("the_text",the_text);
+	string med_text("Median expected"); globalOpt->Get("med_text",med_text);
+	string one_text("68% expected"); globalOpt->Get("one_text",one_text);
+	string two_text("95% expected"); globalOpt->Get("two_text",two_text);
 	string lumi_text("(13 TeV)"); globalOpt->Get("lumi_text",lumi_text);
 	string prelim_text; bool set_prelim = globalOpt->Get("prelim_text",prelim_text);
 	string dir; globalOpt->Get("dir",dir);
 	string printsuffix; globalOpt->Get("printsuffix",printsuffix);
+	string limitqty = "limit"; globalOpt->Get("limitqty",limitqty);
+	string xsecqty = "xsec"; globalOpt->Get("xsecqty",xsecqty);
 	bool acceff = globalOpt->Get("acceff",false);
+	bool interp_log = globalOpt->Get("interp_log",!acceff);
+	bool logz = globalOpt->Get("logz",!acceff);
 	int itype = interp ? acceff ? 2 : 1 : 0;
 	string fpre(acceff ? "sigAccEff" : "limit"); globalOpt->Get("fpre",fpre);
 	string plotpre(acceff ? "plotAccEff" : "plotLimit"); globalOpt->Get("plotpre",plotpre);
@@ -284,6 +299,10 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	double hscaleLeg = 0; globalOpt->Get("hscaleLeg",hscaleLeg);
 	double ushiftLeg = 0; globalOpt->Get("ushiftLeg",ushiftLeg);
 	double vshiftLeg = 0; globalOpt->Get("vshiftLeg",vshiftLeg);
+
+	vector<string> base_extra_text{"95% CL upper limits"};
+	if(acceff) base_extra_text = {};
+	if(!set_extra_text) extra_text = base_extra_text;
 
 	//ranges for plotting
 	double ymin = 1e10, xmin = 1e10;
@@ -322,6 +341,8 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		{"mDark","^{}m_{dark}"},
 		{"rinv","^{}r_{inv}"},
 		{"alpha","^{}#alpha_{dark}"},
+		{"g_q","^{}g_{q}"},
+		{"g_dark","^{}g_{#chi}"},
 	};
 	map<string,string> unitdict{
 		{"mZprime"," [GeV]"},
@@ -329,11 +350,16 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		{"mDark"," [GeV]"},
 		{"rinv",""},
 		{"alpha",""},
+		{"g_q",""},
+		{"g_dark",""},
 	};
 	KMap<vector<string>> labels;
 	labels.Add("alpha",{alphaName(-3.),alphaName(-2.),alphaName(-1.)});
 	xname = vdict[var1]+unitdict[var1];
-	string dname = "limit:trackedParam_xsec:trackedParam_"+var1;
+	string dname = limitqty+":";
+	if (xsecqty.empty()) dname += "1";
+	else dname += "trackedParam_"+xsecqty;
+	dname += ":trackedParam_"+var1;
 
 	//1D plot
 	if(var2.empty()) {
@@ -345,35 +371,33 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 
 		if(!acceff){
 			//get observed limit (w/ xsec)
-			auto lim_obs = getLimit(limit,dname,cname,-1,itype);
+			auto lim_obs = getLimit(limit,dname,cname,-1,itype,multxs);
 			npts = lim_obs.s.size();
-			g_obs = new TGraph(npts,lim_obs.v1.data(),lim_obs.s.data());
-			g_obs->SetMarkerColor(kBlack);
-			g_obs->SetLineColor(kBlack);
-			g_obs->SetMarkerStyle(20);
-			g_obs->SetLineStyle(1);
-			g_obs->SetLineWidth(2);
-			getRange(npts,lim_obs.s.data(),ymin,ymax);
+			if(npts>0){
+				g_obs = new TGraph(npts,lim_obs.v1.data(),lim_obs.s.data());
+				g_obs->SetMarkerColor(kBlack);
+				g_obs->SetLineColor(kBlack);
+				g_obs->SetMarkerStyle(20);
+				g_obs->SetLineStyle(1);
+				g_obs->SetLineWidth(2);
+				getRange(npts,lim_obs.s.data(),ymin,ymax);
 
-			if(interp){
-				g_obs_pt = new TGraph(lim_obs.s_orig.size(),lim_obs.v1_orig.data(),lim_obs.s_orig.data());
-				g_obs_pt->SetMarkerColor(kBlack);
-				g_obs_pt->SetLineColor(kBlack);
-				g_obs_pt->SetMarkerStyle(20);
-				g_obs_pt->SetLineStyle(1);
-				g_obs_pt->SetLineWidth(2);
+				if(interp){
+					g_obs_pt = new TGraph(lim_obs.s_orig.size(),lim_obs.v1_orig.data(),lim_obs.s_orig.data());
+					g_obs_pt->SetMarkerColor(kBlack);
+					g_obs_pt->SetLineColor(kBlack);
+					g_obs_pt->SetMarkerStyle(20);
+					g_obs_pt->SetLineStyle(1);
+					g_obs_pt->SetLineWidth(2);
+				}
 			}
-
-			//get cross section
-			g_xsec = new TGraph(npts,lim_obs.v1.data(),lim_obs.x.data());
-			g_xsec->SetLineColor(kMagenta);
-			g_xsec->SetLineStyle(1);
-			g_xsec->SetLineWidth(2);
-			getRange(npts,lim_obs.x.data(),ymin,ymax);
+			else if(do_obs){
+				throw runtime_error("Did not find any observed limit values");
+			}
 		}
 
 		//get central value (expected)
-		const auto& lim_cen = getLimit(limit,dname,cname,0.5,itype);
+		const auto& lim_cen = getLimit(limit,dname,cname,0.5,itype,multxs);
 		npts = lim_cen.s.size();
 		TGraph* g_central = new TGraph(npts,lim_cen.v1.data(),lim_cen.s.data());
 		g_central->SetLineColor(kBlue);
@@ -384,16 +408,25 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		const auto& xvals = getRange(npts,lim_cen.v1.data(),xmin,xmax,true);
 		xmax += eps;
 
+		if(!acceff){
+			//get cross section
+			g_xsec = new TGraph(npts,lim_cen.v1.data(),lim_cen.x.data());
+			g_xsec->SetLineColor(kMagenta);
+			g_xsec->SetLineStyle(1);
+			g_xsec->SetLineWidth(2);
+			getRange(npts,lim_cen.x.data(),ymin,ymax);
+		}
+
 		//get bands (expected)
 		TGraph* g_one = NULL;
 		if(nsigma>=1){
-			g_one = getBand(limit,dname,cname,0.16,0.84,itype);
+			g_one = getBand(limit,dname,cname,0.16,0.84,itype,multxs);
 			g_one->SetFillColor(kGreen+1);
 			getRange(npts*2,g_one->GetY(),ymin,ymax);
 		}
 		TGraph* g_two = NULL;
 		if(nsigma>=2){
-			g_two = getBand(limit,dname,cname,0.025,0.975,itype);
+			g_two = getBand(limit,dname,cname,0.025,0.975,itype,multxs);
 			g_two->SetFillColor(kOrange);
 			getRange(npts*2,g_two->GetY(),ymin,ymax);
 		}
@@ -465,13 +498,12 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		kleg->AddHist(plot->GetHisto()); //for tick sizes
 
 		//preamble of legend
-		if(!acceff) kleg->AddEntry((TObject*)NULL,"95% CL upper limits","");
 		if(!region_text.empty()) kleg->AddEntry((TObject*)NULL,region_text,"");
-		if(g_xsec) kleg->AddEntry(g_xsec,"Theoretical","l");
+		if(g_xsec) kleg->AddEntry(g_xsec,the_text,"l");
 		if(do_obs and g_obs) kleg->AddEntry(g_obs,obs_text,"pe");
-		if(!acceff) kleg->AddEntry(g_central,"Median expected","l");
-		if(nsigma>=1) kleg->AddEntry(g_one,"68% expected","f");
-		if(nsigma>=2) kleg->AddEntry(g_two,"95% expected","f");
+		if(!acceff) kleg->AddEntry(g_central,med_text,"l");
+		if(nsigma>=1) kleg->AddEntry(g_one,one_text,"f");
+		if(nsigma>=2) kleg->AddEntry(g_two,two_text,"f");
 		stringstream vname;
 		for(const auto& v : vars){
 			if(v.first==var1) continue;
@@ -481,8 +513,11 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 			vname << erase(unitdict[v.first],{"[","]"});
 			vname << ", ";
 		}
-		string svname = vname.str(); svname.pop_back(); svname.pop_back();
-		kleg->AddEntry((TObject*)NULL,svname,"");
+		string svname = vname.str();
+		if(!svname.empty()){
+			svname.pop_back(); svname.pop_back();
+			kleg->AddEntry((TObject*)NULL,svname,"");
+		}
 
 		//draw blank histo for axes
 		if(use_yoff) hbase->GetYaxis()->SetTitleOffset(yoff);
@@ -543,16 +578,18 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		set<double> xvals, yvals;
 
 		//only get x,y ranges once
-		lim_cen = getLimit(limit,dname,cname,0.5,itype);
+		lim_cen = getLimit(limit,dname,cname,0.5,itype,multxs);
 		int npts = lim_cen.r.size();
 		xvals = getRange(npts,lim_cen.v1.data(),xmin,xmax,true);
 		yvals = getRange(npts,lim_cen.v2.data(),ymin,ymax,true);
 
 		if(!acceff){
-			//get observed limit (w/ xsec) & exclusion contour
-			lim_obs = getLimit(limit,dname,cname,-1,itype);
-			contours_obs = findExclusionCurve(lim_obs);
-			styleGraphs(contours_obs,kBlack,1);
+			if(do_obs){
+				//get observed limit (w/ xsec) & exclusion contour
+				lim_obs = getLimit(limit,dname,cname,-1,itype,multxs);
+				contours_obs = findExclusionCurve(lim_obs);
+				styleGraphs(contours_obs,kBlack,1);
+			}
 
 			//get central value (expected) & exclusion contour
 			contours_cen = findExclusionCurve(lim_cen);
@@ -562,12 +599,12 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		//get uncertainty bands and contours
 		vector<Limits> lim_sigmas;
 		if(nsigma>=1){
-			lim_sigmas.push_back(getLimit(limit,dname,cname,0.16,itype));
-			lim_sigmas.push_back(getLimit(limit,dname,cname,0.84,itype));
+			lim_sigmas.push_back(getLimit(limit,dname,cname,0.16,itype,multxs));
+			lim_sigmas.push_back(getLimit(limit,dname,cname,0.84,itype,multxs));
 		}
 		if(nsigma>=2){
-			lim_sigmas.push_back(getLimit(limit,dname,cname,0.025,itype));
-			lim_sigmas.push_back(getLimit(limit,dname,cname,0.975,itype));
+			lim_sigmas.push_back(getLimit(limit,dname,cname,0.025,itype,multxs));
+			lim_sigmas.push_back(getLimit(limit,dname,cname,0.975,itype,multxs));
 		}
 		vector<vector<TGraph*>> contours_sigmas;
 		for(unsigned i = 0; i < lim_sigmas.size(); ++i){
@@ -577,7 +614,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 
 		//get histogram to plot
 		TGraph2D* gtmp;
-		if(acceff) gtmp = new TGraph2D(lim_cen.v1.size(),lim_cen.v1.data(),lim_cen.v2.data(),lim_cen.s.data()); //acceff doesn't use log
+		if(!interp_log) gtmp = new TGraph2D(lim_cen.v1.size(),lim_cen.v1.data(),lim_cen.v2.data(),lim_cen.s.data()); //acceff doesn't use log
 		else {
 			if(do_obs and !show_exp) gtmp = new TGraph2D(lim_obs.v1.size(),lim_obs.v1.data(),lim_obs.v2.data(),lim_obs.S.data());
 			else gtmp = new TGraph2D(lim_cen.v1.size(),lim_cen.v1.data(),lim_cen.v2.data(),lim_cen.S.data());
@@ -588,12 +625,12 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		auto h2d = (TH2F*)(gtmp->GetHistogram()->Clone());
 		//convert back to normal scale
 		//bins with zero content and zero error correspond to empty parts of graph: set to very small value
-		double empty = acceff ? -1 : 1e-100;
-		double zmin = acceff ? 0 : 1e10;
+		double empty = !interp_log ? -1 : 1e-100;
+		double zmin = !interp_log ? 0 : 1e10;
 		for(unsigned i = 0; i <= h2d->GetNbinsX()+1; ++i){
 			for(unsigned j = 0; j <= h2d->GetNbinsY()+1; ++j){
 				if(h2d->GetBinContent(i,j)==0. and h2d->GetBinError(i,j)==0.) h2d->SetBinContent(i,j,empty);
-				else if(!acceff){ //acceff doesn't use log
+				else if(interp_log){ //acceff doesn't use log
 					double new_content = pow(10,h2d->GetBinContent(i,j));
 					h2d->SetBinContent(i,j,new_content);
 					if(new_content<zmin) zmin = new_content;
@@ -625,7 +662,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 
 		OptionMap* localOpt = new OptionMap();
 		localOpt->Set<bool>("ratio",false);
-		localOpt->Set<bool>("logz",!acceff);
+		localOpt->Set<bool>("logz",logz);
 		localOpt->Set<int>("xnum",xvals.size());
 		localOpt->Set<double>("xmin",xmin);
 		localOpt->Set<double>("xmax",xmax);
@@ -668,12 +705,11 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 
 		//make legend
 		KLegend* kleg = new KLegend(pad1,localOpt,plotOpt);
-		if(!acceff) kleg->AddEntry((TObject*)NULL,"95% CL upper limits","");
 		if(!region_text.empty()) kleg->AddEntry((TObject*)NULL,region_text,"");
 		if(do_obs and !contours_obs.empty()) kleg->AddEntry(contours_obs[0],obs_text,"l");
-		if(!contours_cen.empty()) kleg->AddEntry(contours_cen[0],"Median expected","l");
-		if(nsigma>=1) kleg->AddEntry(contours_sigmas[0][0],"68% expected","l");
-		if(nsigma>=2) kleg->AddEntry(contours_sigmas[2][0],"95% expected","l");
+		if(!contours_cen.empty()) kleg->AddEntry(contours_cen[0],med_text,"l");
+		if(nsigma>=1) kleg->AddEntry(contours_sigmas[0][0],one_text,"l");
+		if(nsigma>=2) kleg->AddEntry(contours_sigmas[2][0],two_text,"l");
 		stringstream vname;
 		for(const auto& v : vars){
 			if(v.first==var1 or v.first==var2) continue;
@@ -683,9 +719,12 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 			vname << erase(unitdict[v.first],{"[","]"});
 			vname << ", ";
 		}
-		string svname = vname.str(); svname.pop_back(); svname.pop_back();
-		svname = "#lower[-0.1]{"+svname+"}";
-		kleg->AddEntry((TObject*)NULL,svname,"");
+		string svname = vname.str();
+		if(!svname.empty()){
+			svname.pop_back(); svname.pop_back();
+			svname = "#lower[-0.1]{"+svname+"}";
+			kleg->AddEntry((TObject*)NULL,svname,"");
+		}
 		//add all graphs to legend
 		for(auto& v: {contours_obs,contours_cen}){
 			for(auto c: v){
