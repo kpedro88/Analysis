@@ -299,6 +299,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	double hscaleLeg = 0; globalOpt->Get("hscaleLeg",hscaleLeg);
 	double ushiftLeg = 0; globalOpt->Get("ushiftLeg",ushiftLeg);
 	double vshiftLeg = 0; globalOpt->Get("vshiftLeg",vshiftLeg);
+	int np2d = 40; globalOpt->Get("np2d",np2d); //40 is ROOT default
 
 	vector<string> base_extra_text{"95% CL upper limits"};
 	if(acceff) base_extra_text = {};
@@ -621,7 +622,9 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		}
 		//control number of bins for labeled axes
 		if(labels.Has(var1)) ((KGraph2D*)gtmp)->SetNpx(xvals.size());
+		else ((KGraph2D*)gtmp)->SetNpx(np2d);
 		if(labels.Has(var2)) ((KGraph2D*)gtmp)->SetNpy(yvals.size());
+		else ((KGraph2D*)gtmp)->SetNpy(np2d);
 		auto h2d = (TH2F*)(gtmp->GetHistogram()->Clone());
 		//convert back to normal scale
 		//bins with zero content and zero error correspond to empty parts of graph: set to very small value
