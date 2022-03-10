@@ -8,7 +8,7 @@ CHECKARGS=""
 DRYRUN=""
 
 #check arguments
-while getopts "kdy:t:" opt; do
+while getopts "kd" opt; do
 	case "$opt" in
 		k) CHECKARGS="${CHECKARGS} -k"
 		;;
