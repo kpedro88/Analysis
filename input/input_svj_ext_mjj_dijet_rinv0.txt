@@ -1,0 +1,23 @@
+INPUT
+input/input_svj_paper.txt
+
+OPTION
+int:npanel[1]
+vstring{|}+:extra_text[Signal|(^{}m_{Z'} = 3.1 TeV,|^{}m_{dark} = 20 GeV,|^{}r_{inv} = 0,|^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
+double:luminorm[138000]
+string:printsuffix[svj_dijet_reinterp_rinv0]
+string:extfilename[test/dijet/hist_dijet_combine_SVJ_3100_20_0_peak_TeV.root]
+double:ymin[1e-1]
+bool:unitnorm[0]
+string:lumi_text[138 fb^{-1} (13 TeV)]
+
+HISTO
+widejetmass	vd:xbins[1.530,1.607,1.687,1.770,1.856,1.945,2.037,2.132,2.231,2.332,2.438,2.546,2.659,2.775,2.895,3.019,3.147,3.279,3.416,3.558,3.704,3.854,4.010,4.171,4.337,4.509,4.686,4.869,5.058,5.253,5.455,5.663,5.877,6.099,6.328,6.564,6.808,7.060,7.320,7.589,7.866,8.152,8.752]	s:xtitle[M_{JJ} [TeV]]	s:ytitle[number of events]	b:ratio[0]	b:logy[1]	d:dxmin[1.530]	d:dxmax[6.000]
+
+SET
+hist	mc	total	s:legname[total]	c:color[kBlack]
+	base	ext	MJJ	vs:exthisto_in[widejetmass_SVJ_3100_20_0_peak_cmsdijet]	vs:exthisto_out[widejetmass]
+hist	mc	svj	s:legname[Z' #rightarrow #chi#bar{#chi}]	c:color[kBlue]	i:linestyle[7]
+	base	ext	MJJ	s:extfilename[test/dijet/svj_dijet_TeV.root]	vs:exthisto_in[widejetmass_SVJ_3100_20_0_peak_cmsdijet]	vs:exthisto_out[widejetmass]
+hist	mc	dijet	s:legname[Z' #rightarrow q#bar{q}]	c:color[kRed]	i:linestyle[3]
+	base	ext	MJJ	vs:exthisto_in[h_qq_3100]	vs:exthisto_out[widejetmass]
