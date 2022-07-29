@@ -88,7 +88,7 @@ puaccuncDown
 	MCWeight	in:options[input/input_MCWeight_options_2016.txt]	int:puaccunc[-1]
 	common
 prefireuncUp
-	MCWeight	in:options[input/input_MCWeight_options_2016.txt]	int:prefireunc[]
+	MCWeight	in:options[input/input_MCWeight_options_2016.txt]	int:prefireunc[1]
 	common
 prefireuncDown
 	MCWeight	in:options[input/input_MCWeight_options_2016.txt]	int:prefireunc[-1]
