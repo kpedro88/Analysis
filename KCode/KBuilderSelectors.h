@@ -294,7 +294,7 @@ class KMCWeightSelector : public KSelector {
 					//normalize weights to preserve total # events in sample
 					if(localOpt->Get("svbnorm",false)){
 						TH1F* svbnorm = svb_isnumer ? (TH1F*)numer->Clone() : (TH1F*)denom->Clone();
-						svbnorm->Scale(1.0/svbnorm->Integral(0,svbnorm->GetNbinsX()+1));
+						svbnorm->Scale(1.0/svbnorm->Integral(-1,-1));
 						hsvb->Multiply(svbnorm);
 					}
 				}

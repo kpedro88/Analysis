@@ -24,7 +24,7 @@ class Flattener {
 			else {
 				h_dist = (TH1*)dist->Clone();
 				//make sure normalized
-				h_dist->Scale(1.0/h_dist->Integral(0,h_dist->GetNbinsX()+1));
+				h_dist->Scale(1.0/h_dist->Integral(-1,-1));
 				//invert weights to flatten
 				for(int b = 0; b <= h_dist->GetNbinsX()+1; ++b){
 					double content = h_dist->GetBinContent(b);

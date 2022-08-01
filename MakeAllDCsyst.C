@@ -276,18 +276,18 @@ class KSystProcessor {
 
 template <> double KSystProcessor<TH1F>::MakeStatOverall(TH1F* hist) {
 	double err = 0.;
-	double hint = hist->IntegralAndError(0,hist->GetNbinsX()+1,err);
+	double hint = hist->IntegralAndError(-1,-1,err);
 	return err/hint;
 }
 
 template <> double KSystProcessor<TH2F>::MakeStatOverall(TH2F* hist) {
 	double err = 0.;
-	double hint = hist->IntegralAndError(0,hist->GetNbinsX()+1,0,hist->GetNbinsY()+1,err);
+	double hint = hist->IntegralAndError(-1,-1,-1,-1,err);
 	return err/hint;
 }
 
-template<> double KSystProcessor<TH1F>::Integral(TH1F* hist){ return hist->Integral(0,hist->GetNbinsX()+1); }
-template<> double KSystProcessor<TH2F>::Integral(TH2F* hist){ return hist->Integral(0,hist->GetNbinsX()+1,0,hist->GetNbinsY()+1); }
+template<> double KSystProcessor<TH1F>::Integral(TH1F* hist){ return hist->Integral(-1,-1); }
+template<> double KSystProcessor<TH2F>::Integral(TH2F* hist){ return hist->Integral(-1,-1,-1,-1); }
 
 template<> void KSystProcessor<TH1F>::DivideBound(TH1F* hist, const string& binname){
 	for(int b = 1; b <= hist->GetNbinsX(); ++b){

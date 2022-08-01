@@ -21,10 +21,10 @@ class ISRCorrector {
 			//normalize weights using overall NJetsISR spectrum so total number of gen events will stay the same
 			h_weights = (TH1*)weights->Clone();
 			h_njetsisr = all;
-			double A_LO = h_njetsisr->Integral(0,h_njetsisr->GetNbinsX()+1);
+			double A_LO = h_njetsisr->Integral(-1,-1);
 			TH1* h_njetsisrW = (TH1*)all->Clone();
 			h_njetsisrW->Multiply(h_weights);
-			double A_NLO = h_njetsisrW->Integral(0,h_njetsisrW->GetNbinsX()+1);
+			double A_NLO = h_njetsisrW->Integral(-1,-1);
 			h_weights->Scale(A_LO/A_NLO);
 		}
 		

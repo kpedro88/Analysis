@@ -461,7 +461,7 @@ class KSetMCStack : public KSet {
 		}
 		//normalize all children histos
 		virtual void Normalize(double nn, bool toYield=true){
-			double simyield = obj->htmp->Integral(0,obj->htmp->GetNbinsX()+1); //yield of summed histo
+			double simyield = obj->htmp->Integral(-1,-1); //yield of summed histo
 			
 			//scale stack histos
 			TObjArray* stack_array = obj->shtmp->GetStack();

@@ -225,7 +225,7 @@ class KBase {
 			//calculate efficiencies
 			//normal: yield(i,nbins)/yield(0,nbins)
 			obj->efftmp = new vector<double>(obj->htmp->GetNbinsX()+1);
-			double ydenom = obj->htmp->Integral(0,obj->htmp->GetNbinsX()+1);
+			double ydenom = obj->htmp->Integral(-1,-1);
 			if(debugroc) cout << name << " " << stmp << ":";
 			for(int b = 0; b < obj->htmp->GetNbinsX()+1; b++){
 				obj->efftmp->at(b) = obj->htmp->Integral(b,obj->htmp->GetNbinsX()+1)/ydenom;
@@ -247,10 +247,10 @@ class KBase {
 		void SetGlobalOpt(OptionMap* opt) { globalOpt = opt; if(globalOpt==0) globalOpt = new OptionMap(); } //must always have an option map
 		virtual void PrintYield() {
 			double err = 0;
-			double hint = obj->htmp->IntegralAndError(0,obj->htmp->GetNbinsX()+1,err);
+			double hint = obj->htmp->IntegralAndError(-1,-1,err);
 			cout << name << ": " << hint << " +/- " << err << endl;
 		}
-		virtual double GetYield() { return obj->htmp->Integral(0,obj->htmp->GetNbinsX()+1); }
+		virtual double GetYield() { return obj->htmp->Integral(-1,-1); }
 		TFile* GetFile() { return file; }
 		virtual void CloseFile() { if(file) file->Close(); }
 		//rebin current histo

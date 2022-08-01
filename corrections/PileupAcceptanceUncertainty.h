@@ -22,7 +22,7 @@ class PileupAcceptanceUncertainty {
 			h_nvtx = htmp;
 			
 			//check normalization
-			double i_nvtx = h_nvtx->Integral(0,h_nvtx->GetNbinsX()+1);
+			double i_nvtx = h_nvtx->Integral(-1,-1);
 			h_nvtx->Scale(1.0/i_nvtx);
 			
 			//compute central expectation value and uncertainty variations

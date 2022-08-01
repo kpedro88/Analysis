@@ -352,7 +352,7 @@ TH1* KBase::AddHisto(string s, TH1* h, OptionMap* omap){
 void KBase::Normalize(double nn, bool toYield){
 	if(obj->khtmp and obj->khtmp->IsSpecial()) return;
 	if(obj->htmp->InheritsFrom(TProfile::Class())) return;
-	double simyield = obj->htmp->GetDimension()==2 ? ((TH2*)obj->htmp)->Integral(0,obj->htmp->GetNbinsX()+1,0,obj->htmp->GetNbinsY()+1) : obj->htmp->Integral(0,obj->htmp->GetNbinsX()+1);
+	double simyield = obj->htmp->GetDimension()==2 ? ((TH2*)obj->htmp)->Integral(-1,-1,-1,-1) : obj->htmp->Integral(-1,-1);
 	if(toYield) obj->htmp->Scale(nn/simyield);
 	else obj->htmp->Scale(nn);
 }
