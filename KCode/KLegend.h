@@ -243,7 +243,7 @@ class KLegend{
 				}
 				else{
 					for(int b = 1; b <= hist->GetNbinsX(); ++b){
-						x.push_back(hist->GetBinCenter(b));
+						x.push_back(hist->GetXaxis()->GetBinCenter(b));
 						y.push_back(hist->GetBinContent(b));
 					}
 				}

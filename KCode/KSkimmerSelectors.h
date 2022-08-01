@@ -1731,7 +1731,7 @@ class KPileupWeightSelector : public KSelector {
 			return puhistMap_;
 		}
 		double GetBinContentBounded(TH1* hist, double val){
-			return hist->GetBinContent(hist->GetXaxis()->FindBin(min(val,hist->GetBinLowEdge(hist->GetNbinsX()+1))));
+			return hist->GetBinContent(hist->GetXaxis()->FindBin(min(val,hist->GetXaxis()->GetBinLowEdge(hist->GetNbinsX()+1))));
 		}
 		
 		//used for non-dummy selectors

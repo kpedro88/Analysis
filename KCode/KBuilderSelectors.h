@@ -587,7 +587,7 @@ class KMCWeightSelector : public KSelector {
 			}
 		}
 		double GetBinContentBounded(TH1* hist, double val){
-			return hist->GetBinContent(hist->GetXaxis()->FindBin(min(val,hist->GetBinLowEdge(hist->GetNbinsX()+1))));
+			return hist->GetBinContent(hist->GetXaxis()->FindBin(min(val,hist->GetXaxis()->GetBinLowEdge(hist->GetNbinsX()+1))));
 		}
 		double GetWeight(){
 			double w = 1.;
@@ -764,7 +764,7 @@ class KMCWeightSelector : public KSelector {
 			if(svbweight){
 				double qty = 0;
 				if(svbqty==MTAK8) qty = looper->MT_AK8;
-				w *= hsvb->GetBinContent(hsvb->GetXaxis()->FindBin(min(qty,hsvb->GetBinLowEdge(hsvb->GetNbinsX()+1))));
+				w *= hsvb->GetBinContent(hsvb->GetXaxis()->FindBin(min(qty,hsvb->GetXaxis()->GetBinLowEdge(hsvb->GetNbinsX()+1))));
 			}
 			
 			//now do scaling: norm*xsection/nevents

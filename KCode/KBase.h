@@ -102,8 +102,8 @@ class KBase {
 			TGraphAsymmErrors* esim = new TGraphAsymmErrors(obj->htmp->GetNbinsX()+2); //under- and overflow
 			for(int b = 0; b < esim->GetN(); b++){
 				if(obj->htmp->GetBinContent(b)>0){
-					esim->SetPoint(b,obj->htmp->GetBinCenter(b),obj->htmp->GetBinContent(b)); //set to y value of sim
-					double width = obj->htmp->GetBinWidth(b);
+					esim->SetPoint(b,obj->htmp->GetXaxis()->GetBinCenter(b),obj->htmp->GetBinContent(b)); //set to y value of sim
+					double width = obj->htmp->GetXaxis()->GetBinWidth(b);
 					esim->SetPointEXlow(b, width/2.);
 					esim->SetPointEXhigh(b, width/2.);
 					esim->SetPointEYlow(b, obj->htmp->GetBinError(b));

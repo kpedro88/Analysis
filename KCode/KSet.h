@@ -787,7 +787,7 @@ class KSetRatio: public KSet {
 					else if(calc==PullFit){ //divide by data error
 						for(int b = 0; b < nbins; b++){
 							//subtract by integral rather than center of bin
-							rtmp->SetBinContent(b, rtmp->GetBinContent(b) - fit->GetFn()->Integral(rtmp->GetBinLowEdge(b), rtmp->GetBinLowEdge(b+1))/rtmp->GetBinWidth(b));
+							rtmp->SetBinContent(b, rtmp->GetBinContent(b) - fit->GetFn()->Integral(rtmp->GetXaxis()->GetBinLowEdge(b), rtmp->GetXaxis()->GetBinLowEdge(b+1))/rtmp->GetXaxis()->GetBinWidth(b));
 							//choice of up or down err follows:
 							//  https://github.com/CMSDIJET/DijetRootTreeAnalyzer/blob/5735a7ff8819093e67ad189589dcb10e08b0520a/python/BinnedFit.py#L116-L209
 							//  RooHist::makeResidHist()
@@ -845,8 +845,8 @@ class KSetRatio: public KSet {
 			TGraphAsymmErrors* erat = new TGraphAsymmErrors(obj->htmp->GetNbinsX()+2); //under- and overflow
 			for(int b = 0; b < erat->GetN(); b++){
 				if(obj->htmp->GetBinContent(b)>0){
-					erat->SetPoint(b,obj->htmp->GetBinCenter(b),1); //hypothesis: numer/denom = 1
-					double width = obj->htmp->GetBinWidth(b);
+					erat->SetPoint(b,obj->htmp->GetXaxis()->GetBinCenter(b),1); //hypothesis: numer/denom = 1
+					double width = obj->htmp->GetXaxis()->GetBinWidth(b);
 					erat->SetPointEXlow(b, width/2.);
 					erat->SetPointEXhigh(b, width/2.);
 					//y widths use error propagation for f = data/mc : sigma_f = sigma_mc*data/mc^2

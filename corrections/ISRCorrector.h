@@ -30,7 +30,7 @@ class ISRCorrector {
 		
 		//function
 		double GetCorrection(int NJetsISR){
-			return h_weights ? h_weights->GetBinContent(h_weights->GetXaxis()->FindBin(min(double(NJetsISR),h_weights->GetBinLowEdge(h_weights->GetNbinsX())))) : 1.;
+			return h_weights ? h_weights->GetBinContent(h_weights->GetXaxis()->FindBin(min(double(NJetsISR),h_weights->GetXaxis()->GetBinLowEdge(h_weights->GetNbinsX())))) : 1.;
 		}
 		
 		//member variables

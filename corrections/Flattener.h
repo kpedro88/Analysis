@@ -38,7 +38,7 @@ class Flattener {
 		//function
 		double GetWeight(double qty){
 			if(!h_dist) return 1.0;
-			return h_dist ? h_dist->GetBinContent(h_dist->GetXaxis()->FindBin(min(qty,h_dist->GetBinLowEdge(h_dist->GetNbinsX())))) : 1.;
+			return h_dist ? h_dist->GetBinContent(h_dist->GetXaxis()->FindBin(min(qty,h_dist->GetXaxis()->GetBinLowEdge(h_dist->GetNbinsX())))) : 1.;
 		}
 		
 		//member variables
