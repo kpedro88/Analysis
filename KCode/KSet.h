@@ -2,6 +2,7 @@
 #define KSET_H
 
 //custom headers
+#include "THN.h"
 #include "KMap.h"
 #include "KBase.h"
 #include "KHisto.h"
@@ -47,7 +48,7 @@ class KSet : public KBase {
 		KBase* GetParent() { return parent; }
 		void SetParent(KBase* p) { parent = p; }
 		//add function - does formatting
-		TH1* AddHisto(string s, TH1* h, OptionMap* omap=NULL){
+		THN* AddHisto(string s, THN* h, OptionMap* omap=NULL){
 			//does *not* make KHisto (not needed)
 			if(h) KBase::AddHisto(s,h);
 			
@@ -77,12 +78,12 @@ class KSet : public KBase {
 				GetHisto(sit.first); //this will propagate to children
 				if(obj->khtmp and obj->khtmp->IsSpecial()) continue; //don't hadd special histos
 
-				TH1* htmp = nullptr;
+				THN* htmp = nullptr;
 				bool all_ext = true;
 				if(debug) cout << "Histo " << sit.first << ":" << endl;
 				for(auto& child: children){ //include option to subtract histos, off by default
 					if(htmp==nullptr){
-						htmp = (TH1*)child->GetHisto()->Clone();
+						htmp = child->GetHisto()->Clone();
 						htmp->Reset("ICESM");
 						if(poisson) htmp->SetBinErrorOption(TH1::kPoisson);
 					}
@@ -148,7 +149,7 @@ class KSet : public KBase {
 		}
 		//resetting current histo propagates to children for consistency
 		using KBase::GetHisto;
-		virtual TH1* GetHisto(string hname){
+		virtual THN* GetHisto(string hname){
 			KObject* otmp = MyObjects.Get(hname);
 			if(otmp and otmp->htmp) {
 				stmp = hname;
@@ -176,7 +177,7 @@ class KSet : public KBase {
 			}
 		}
 		//divide current histo by bin width, set implementation
-		virtual void BinDivide(bool do_x, bool do_y, TH1* htmp=nullptr){
+		virtual void BinDivide(bool do_x, bool do_y, THN* htmp=nullptr){
 			KBase::BinDivide(do_x,do_y);
 		
 			//scale children for consistency
@@ -338,7 +339,7 @@ class KSetMCStack : public KSet {
 		}
 
 		//polymorphic add function for stacks (does formatting)
-		virtual TH1* AddHisto(string s, TH1* h, OptionMap* omap=NULL){
+		virtual THN* AddHisto(string s, THN* h, OptionMap* omap=NULL){
 			stmp = s;
 			obj = new KObject();
 			obj->shtmp = new THStack(stmp.c_str(),stmp.c_str());
@@ -374,11 +375,11 @@ class KSetMCStack : public KSet {
 				int c_sigstack = -1;
 				for(unsigned c = 0; c < children.size(); c++){
 					if(do_sigstack && children[c]->GetName()==sigstack) c_sigstack = c; //do not add stacked signal yet, just store index
-					else obj->shtmp->Add(children[c]->GetHisto());
+					else obj->shtmp->Add(children[c]->GetHisto()->TH1());
 				}
 				
 				//fill in htmp now that shtmp is built
-				obj->htmp = (TH1*)obj->shtmp->GetStack()->Last();
+				obj->htmp = new THN1((TH1*)obj->shtmp->GetStack()->Last());
 				//build error band, enabled by default for stack
 				if(localOpt->Get("errband",true)) {
 					BuildErrorBand();
@@ -387,17 +388,17 @@ class KSetMCStack : public KSet {
 				}
 				
 				//add stacked signal histo after calculating error band
-				if(c_sigstack > -1) obj->shtmp->Add(children[c_sigstack]->GetHisto());				
+				if(c_sigstack > -1) obj->shtmp->Add(children[c_sigstack]->GetHisto()->TH1());
 			}
 		}
 		//polymorphic GetHisto for stacks
 		using KBase::GetHisto;
-		virtual TH1* GetHisto(string hname) {
+		virtual THN* GetHisto(string hname) {
 			KObject* otmp = MyObjects.Get(hname);
 			if(otmp and otmp->shtmp) {
 				stmp = hname;
 				obj = otmp;
-				if(obj->shtmp->GetStack()) obj->htmp = (TH1*)obj->shtmp->GetStack()->Last();
+				if(obj->shtmp->GetStack()) obj->htmp = new THN1((TH1*)obj->shtmp->GetStack()->Last());
 				else obj->htmp = NULL; //might have a THStack but no GetStack during the histo building process
 				for(unsigned c = 0; c < children.size(); c++){
 					children[c]->GetHisto(hname); //ignore returned pointer
@@ -446,7 +447,7 @@ class KSetMCStack : public KSet {
 				if(localOpt->Get("errband",true)) obj->etmp->Draw(MyStyle->GetDrawOptErr("same").c_str());
 				
 				if(globalOpt->Get("bgline",false) and obj->htmp){
-					TH1* hoverlay = (TH1*)obj->htmp->Clone();
+					THN* hoverlay = obj->htmp->Clone();
 					MyStyle->Format(hoverlay);
 					hoverlay->Draw(MyStyle->GetDrawOpt("same").c_str());
 				}
@@ -504,12 +505,12 @@ class KSetMCStack : public KSet {
 			}
 		}
 		//divide current histo by bin width, stack implementation
-		virtual void BinDivide(bool do_x, bool do_y, TH1* htmp=nullptr){
+		virtual void BinDivide(bool do_x, bool do_y, THN* htmp=nullptr){
 			//scale stack histos
 			TObjArray* stack_array = obj->shtmp->GetStack();
 			for(int s = 0; s < stack_array->GetSize(); s++){
 				TH1* hist = (TH1*)stack_array->At(s);
-				BinDivide(do_x,do_y,hist);
+				BinDivide(do_x,do_y,new THN1(hist));
 			}
 		
 			//scale children for consistency
@@ -618,22 +619,22 @@ class KSetRatio: public KSet {
 		//ratio class acts a little differently:
 		//only builds from the current histo of numer and denom
 		//(since some histos might not want ratios, and also has to wait for possible norm to yield)
-		void Build(OptionMap* omap, OptionMapMap& fitopts, TH1* htemp=NULL){
+		void Build(OptionMap* omap, OptionMapMap& fitopts, THN* htemp=NULL){
 			Build(children[0]->GetHistoName(),children[0]->GetHisto(),children[1]->GetHisto(),htemp);
 			if(omap==NULL) return;
 			AddFits(stmp,omap,fitopts,"ratiofits");
 			DoFits();
 		}
 		//in case of standalone use
-		void Build(string histoname, TH1* h0, TH1* h1, TH1* htemp=NULL){
+		void Build(string histoname, THN* h0, THN* h1, THN* htemp=NULL){
 			stmp = histoname;
 			obj = new KObject();
 
-			TH1* hdata = h0;
-			TH1* hsim = h1;
-			TH1* hsim0 = (TH1*)hsim->Clone();
+			THN* hdata = h0;
+			THN* hsim = h1;
+			THN* hsim0 = hsim->Clone();
 			//in case displaying with different number of bins than original histo
-			TH1* hrat = (htemp ? (TH1*)htemp->Clone() : (TH1*)h0->Clone());
+			THN* hrat = htemp ? htemp->Clone() : h0->Clone();
 
 			int nbins = hrat->GetNbinsX()+1;
 			ratiocalc calc = calc1D;
@@ -652,10 +653,10 @@ class KSetRatio: public KSet {
 			//todo: add others
 			if(hrat->InheritsFrom(TProfile::Class())) {
 				calc = DataMC;
-				hrat = static_cast<TProfile*>(hrat)->ProjectionX();
-				hdata = static_cast<TProfile*>(hdata)->ProjectionX();
-				hsim = static_cast<TProfile*>(hsim)->ProjectionX();
-				hsim0 = static_cast<TProfile*>(hsim0)->ProjectionX();
+				hrat = new THN1(static_cast<TProfile*>(hrat->TH1())->ProjectionX());
+				hdata = new THN1(static_cast<TProfile*>(hdata->TH1())->ProjectionX());
+				hsim = new THN1(static_cast<TProfile*>(hsim->TH1())->ProjectionX());
+				hsim0 = new THN1(static_cast<TProfile*>(hsim0->TH1())->ProjectionX());
 			}
 			//only data/MC supported for ratio of ratios
 			if(children[0]->IsRatio() and children[1]->IsRatio()) calc = DataMC;
@@ -700,7 +701,7 @@ class KSetRatio: public KSet {
 				noErrBand = true;
 			}
 			else if(calc==Binom){ //binomial error case
-				obj->btmp = new TGraphAsymmErrors(hdata,hsim);
+				obj->btmp = new TGraphAsymmErrors(hdata->TH1(),hsim->TH1());
 
 				//remove x errors
 				for(int b = 0; b < obj->btmp->GetN(); b++){
@@ -777,7 +778,7 @@ class KSetRatio: public KSet {
 			else if(calc==Res or calc==RelRes or calc==PullFit){ //data-fit, (data-fit)/fit, (data-fit)/err
 				const auto& basefits = children[0]->GetFits();
 				for(auto fit : basefits){
-					TH1* rtmp = (TH1*)hrat->Clone((calcName1D+"_"+fit->GetName()).c_str());
+					THN* rtmp = hrat->Clone((calcName1D+"_"+fit->GetName()).c_str());
 					//subtract function
 					if(calc==Res or calc==RelRes){
 						rtmp->Add(fit->GetFn(),-1);
@@ -804,7 +805,7 @@ class KSetRatio: public KSet {
 				}
 				//signal case (no fit): (s+b)-b = s (data should be denom)
 				if(basefits.empty() and calc==PullFit){
-					TH1* rtmp = (TH1*)hrat->Clone((calcName1D+"_"+children[0]->GetName()).c_str());
+					THN* rtmp = hrat->Clone((calcName1D+"_"+children[0]->GetName()).c_str());
 					for(int b = 0; b < nbins; b++){
 						//s+b > b always, so use up err
 						double err_tot_data = KMath::PoissonErrorUp(h1->GetBinContent(b));
@@ -840,7 +841,7 @@ class KSetRatio: public KSet {
 		}
 		//calculate ratio error band from denom
 		using KBase::BuildErrorBand;
-		TGraphAsymmErrors* BuildErrorBand(TH1* hdata, TH1* hsim){
+		TGraphAsymmErrors* BuildErrorBand(THN* hdata, THN* hsim){
 			//make sim error band
 			TGraphAsymmErrors* erat = new TGraphAsymmErrors(obj->htmp->GetNbinsX()+2); //under- and overflow
 			for(int b = 0; b < erat->GetN(); b++){
@@ -902,11 +903,11 @@ class KSetRatio: public KSet {
 			//for legend placement
 			if(!obj->rtmp.empty()) {
 				for(auto res : obj->rtmp){
-					kleg->AddHist(res);
+					kleg->AddHist(res->TH1());
 				}
 			}
 			else if(obj->btmp) kleg->AddGraph(obj->btmp);
-			else kleg->AddHist(obj->htmp);
+			else kleg->AddHist(obj->htmp->TH1());
 			//todo: add ratio w/ marker, error band?
 			for(auto fit : obj->ftmp){
 				//how to assign panel?

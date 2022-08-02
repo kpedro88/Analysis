@@ -2,6 +2,7 @@
 #define KHISTO_H
 
 //custom headers
+#include "THN.h"
 #include "KMap.h"
 #include "KChecker.h"
 #include "KFactory.h"
@@ -113,7 +114,7 @@ class KHisto : public KChecker {
 	public:
 		//constructors
 		KHisto() : KChecker(), isSpecial(false), MCWeight(0) {}
-		KHisto(string name_, OptionMap* localOpt_, TH1* htmp_, KBase* base_) : KChecker(name_, localOpt_), htmp(htmp_), isSpecial(false), MCWeight(0) {
+		KHisto(string name_, OptionMap* localOpt_, THN* htmp_, KBase* base_) : KChecker(name_, localOpt_), htmp(htmp_), isSpecial(false), MCWeight(0) {
 			//initialization - checkers
 			SetSelection(base_->GetSelection());
 			SetBase(base_);
@@ -140,7 +141,7 @@ class KHisto : public KChecker {
 			}
 			//if htmp is null, assume it is a special histo
 			else {
-				htmp = GetSpecial();
+				htmp = new THN1(GetSpecial());
 				isSpecial = true;
 			}
 		}
@@ -149,7 +150,7 @@ class KHisto : public KChecker {
 		virtual ~KHisto() {}
 		
 		//accessors
-		virtual TH1* GetHisto() { return htmp; }
+		virtual THN* GetHisto() { return htmp; }
 		virtual void Fill(){
 			if(fillers.empty()) return; //nothing to do
 			
@@ -162,9 +163,10 @@ class KHisto : public KChecker {
 			}
 			
 			//now fill the histogram
+			TH1* h1tmp = htmp->TH1();
 			if(fillers.size()==1){
 				for(int ix = 0; ix < values[0].GetSize(); ix++){
-					htmp->Fill(values[0].GetValue(ix), values[0].GetWeight(ix));
+					h1tmp->Fill(values[0].GetValue(ix), values[0].GetWeight(ix));
 				}
 			}
 			else if(fillers.size()==2){
@@ -172,26 +174,26 @@ class KHisto : public KChecker {
 				//these three cases allow for various x vs. y comparisons: same # entries per event, or 1 vs. N per event
 				if(values[0].GetSize()==values[1].GetSize()) {
 					for(int i = 0; i < values[0].GetSize(); i++){
-						if(htmp->GetDimension()==1)
-							static_cast<TProfile*>(htmp)->Fill(values[0].GetValue(i), values[1].GetValue(i), values[0].GetWeight(i)); //pick the x weight by default
-						else if(htmp->GetDimension()==2)
-							static_cast<TH2*>(htmp)->Fill(values[0].GetValue(i), values[1].GetValue(i), values[0].GetWeight(i)); //pick the x weight by default
+						if(h1tmp->GetDimension()==1)
+							static_cast<TProfile*>(h1tmp)->Fill(values[0].GetValue(i), values[1].GetValue(i), values[0].GetWeight(i)); //pick the x weight by default
+						else if(h1tmp->GetDimension()==2)
+							static_cast<TH2*>(h1tmp)->Fill(values[0].GetValue(i), values[1].GetValue(i), values[0].GetWeight(i)); //pick the x weight by default
 					}
 				}
 				else if(values[0].GetSize()==1){
 					for(int iy = 0; iy < values[1].GetSize(); iy++){
-						if(htmp->GetDimension()==1)
-							static_cast<TProfile*>(htmp)->Fill(values[0].GetValue(0), values[1].GetValue(iy), values[1].GetWeight(iy));
-						else if(htmp->GetDimension()==2)
-							static_cast<TH2*>(htmp)->Fill(values[0].GetValue(0), values[1].GetValue(iy), values[1].GetWeight(iy));
+						if(h1tmp->GetDimension()==1)
+							static_cast<TProfile*>(h1tmp)->Fill(values[0].GetValue(0), values[1].GetValue(iy), values[1].GetWeight(iy));
+						else if(h1tmp->GetDimension()==2)
+							static_cast<TH2*>(h1tmp)->Fill(values[0].GetValue(0), values[1].GetValue(iy), values[1].GetWeight(iy));
 					}
 				}
 				else if(values[1].GetSize()==1){
 					for(int ix = 0; ix < values[0].GetSize(); ix++){
-						if(htmp->GetDimension()==1)
-							static_cast<TProfile*>(htmp)->Fill(values[0].GetValue(ix), values[1].GetValue(0), values[0].GetWeight(ix));
-						else if(htmp->GetDimension()==2)
-							static_cast<TH2*>(htmp)->Fill(values[0].GetValue(ix), values[1].GetValue(0), values[0].GetWeight(ix));
+						if(h1tmp->GetDimension()==1)
+							static_cast<TProfile*>(h1tmp)->Fill(values[0].GetValue(ix), values[1].GetValue(0), values[0].GetWeight(ix));
+						else if(h1tmp->GetDimension()==2)
+							static_cast<TH2*>(h1tmp)->Fill(values[0].GetValue(ix), values[1].GetValue(0), values[0].GetWeight(ix));
 					}
 				}
 			}
@@ -201,7 +203,7 @@ class KHisto : public KChecker {
 		//defined in K(Builder/Skimmer)Selectors.h to avoid circular dependency
 		virtual double GetWeight();
 		virtual double GetWeightPerJet(unsigned index);
-		virtual void Finalize(TH1* haxis=NULL){
+		virtual void Finalize(THN* haxis=NULL){
 			//propagate SetAxisRange to external histos
 			//based on upper edge of first and last bins in axis histo (subtract 1 because upper edge is always assigned to next bin)
 			if(haxis) {
@@ -220,7 +222,7 @@ class KHisto : public KChecker {
 				//handle change in displayed x-axis
 				bool overflowall = base->GetGlobalOpt()->Get("plotoverflowall",overflow);
 				//temporary histo to calculate error correctly when adding overflow bin to last bin
-				TH1* otmp = (TH1*)htmp->Clone();
+				THN* otmp = htmp->Clone();
 				otmp->Reset("ICEM");
 				int ovbin = htmp->GetNbinsX()+1;
 				int ovbin0 = overflowall ? htmp->GetXaxis()->GetLast()+1 : ovbin;
@@ -319,7 +321,7 @@ class KHisto : public KChecker {
 
 	protected:
 		//member variables
-		TH1* htmp;
+		THN* htmp;
 		bool isSpecial;
 		vector<KFiller*> fillers;
 };
@@ -330,13 +332,13 @@ double KJetFiller::GetWeight(unsigned index){
 
 //avoid circular dependency
 //add a blank histo for future building
-TH1* KBase::AddHisto(string s, TH1* h, OptionMap* omap){
+THN* KBase::AddHisto(string s, THN* h, OptionMap* omap){
 	//avoid re-adding
 	if(!GetHisto(s)){
 		stmp = s;
 		obj = new KObject();
 		if(h){
-			obj->htmp = (TH1*)h->Clone();
+			obj->htmp = h->Clone();
 			obj->htmp->Sumw2();					
 		}
 		//KHisto will generate special histo automatically (if h==NULL)
@@ -357,7 +359,7 @@ void KBase::Normalize(double nn, bool toYield){
 	else obj->htmp->Scale(nn);
 }
 //histo add so external histos won't get overwritten
-TH1* KBaseExt::AddHisto(string s, TH1* h, OptionMap* omap){
+THN* KBaseExt::AddHisto(string s, THN* h, OptionMap* omap){
 	//set current name
 	stmp = s;
 	
@@ -373,7 +375,7 @@ TH1* KBaseExt::AddHisto(string s, TH1* h, OptionMap* omap){
 	
 	//otherwise, set current histo the usual way
 	obj = new KObject();
-	obj->htmp = (TH1*)h->Clone();
+	obj->htmp = h->Clone();
 	if(poisson) obj->htmp->SetBinErrorOption(TH1::kPoisson);
 	if (useKFactor) obj->htmp->Scale(kfactor);
 	obj->khtmp = new KHisto(s,omap,obj->htmp,this);
@@ -384,4 +386,5 @@ TH1* KBaseExt::AddHisto(string s, TH1* h, OptionMap* omap){
 	}
 	return obj->htmp;
 }
+
 #endif

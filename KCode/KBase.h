@@ -2,6 +2,7 @@
 #define KBASE_H
 
 //custom headers
+#include "THN.h"
 #include "KMap.h"
 #include "KFit.h"
 #include "KFactory.h"
@@ -39,14 +40,14 @@ class KSelection;
 //contains various linked objects used for sets
 class KObject {
 	public:
-		TH1* htmp = nullptr;
+		THN* htmp = nullptr;
 		KHisto* khtmp = nullptr;
 		THStack* shtmp = nullptr;
 		TGraphAsymmErrors* etmp = nullptr;
 		TGraphAsymmErrors* btmp = nullptr;
 		vector<double>* efftmp = nullptr;
 		vector<KFit*> ftmp;
-		vector<TH1*> rtmp;
+		vector<THN*> rtmp;
 };
 typedef KMap<KObject*> ObjectMap;
 
@@ -131,7 +132,7 @@ class KBase {
 		void SetSelection(KSelection* sel_); //defined in KSelection.h
 		KSelection* GetSelection() { return MySelection; }
 		//implemented in KHisto.h
-		virtual TH1* AddHisto(string s, TH1* h, OptionMap* omap=NULL);
+		virtual THN* AddHisto(string s, THN* h, OptionMap* omap=NULL);
 		//sets up fits for current histo (should only be called on top-level sets)
 		virtual void AddFits(string s, OptionMap* omap, OptionMapMap& fitopts, string fitopt="fits") {
 			//histo fit list overrides global fit list
@@ -168,13 +169,13 @@ class KBase {
 			}
 		}
 		//gets current histo
-		virtual TH1* GetHisto(){ return obj->htmp; }
+		virtual THN* GetHisto(){ return obj->htmp; }
 		//gets current histo name
 		virtual string GetHistoName() { return stmp; }
 		//gets fits associated w/ current histo
 		virtual vector<KFit*> GetFits() { return obj->ftmp; }
 		//resets current name and histo
-		virtual TH1* GetHisto(string hname) {
+		virtual THN* GetHisto(string hname) {
 			KObject* otmp = MyObjects.Get(hname);
 			if(otmp) {
 				stmp = hname;
@@ -262,7 +263,7 @@ class KBase {
 			else obj->htmp->Rebin(rebinx);
 		}
 		//divide current histo by bin width, default implementation
-		virtual void BinDivide(bool do_x, bool do_y, TH1* htmp=nullptr){
+		virtual void BinDivide(bool do_x, bool do_y, THN* htmp=nullptr){
 			if(!htmp) htmp = obj->htmp;
 			//in TH1 case, GetNbinsY() == 1
 			for(int by = 1; by <= htmp->GetNbinsY(); ++by){
@@ -316,7 +317,7 @@ class KBase {
 		virtual void AddChild(KBase*) {}
 		virtual void SetAddExt(bool) {}
 		virtual void Build() {}
-		virtual void Build(TH1*) {}
+		virtual void Build(THN*) {}
 		
 	protected:
 		//member variables
@@ -387,7 +388,7 @@ class KBaseExt : public KBase {
 					string ntmp = key->GetName();
 					//look for names in the format histo_suff(_extra)
 					if(ntmp.size() > hsuff.size() and ntmp.compare(ntmp.size()-hsuff.size(),hsuff.size(),hsuff)==0){
-						auto extmp = dir ? KGet<TH1,TDirectory>(dir,ntmp) : KGet<TH1>(file,ntmp);
+						auto extmp = new THN1(dir ? KGet<TH1,TDirectory>(dir,ntmp) : KGet<TH1>(file,ntmp));
 						AddHisto(ntmp.substr(0,ntmp.size()-hsuff.size()-1),extmp);
 						++counter;
 					}
@@ -406,7 +407,7 @@ class KBaseExt : public KBase {
 					throw runtime_error("vectors of external histo input and output names have different lengths "+to_string(exthisto_in.size())+", "+to_string(exthisto_out.size())+" (in "+name+")");
 				}
 				for(unsigned i = 0; i < exthisto_in.size(); i++){
-					auto extmp = dir ? KGet<TH1,TDirectory>(dir,exthisto_in[i]) : KGet<TH1>(file,exthisto_in[i]);
+					auto extmp = new THN1(dir ? KGet<TH1,TDirectory>(dir,exthisto_in[i]) : KGet<TH1>(file,exthisto_in[i]));
 					AddHisto(exthisto_out[i],extmp);
 				}
 			}
@@ -416,7 +417,7 @@ class KBaseExt : public KBase {
 		//change histo add mode
 		void SetAddExt(bool ae) { add_ext = ae; }
 		//histo add so external histos won't get overwritten, implemented in KHisto.h
-		virtual TH1* AddHisto(string s, TH1* h, OptionMap* omap=NULL);
+		virtual THN* AddHisto(string s, THN* h, OptionMap* omap=NULL);
 		
 		//external histos do not need to build
 		using KBase::Build;
@@ -449,13 +450,13 @@ class KComp {
 			
 			//no name - select current histo
 			if(name.size()==0) {
-				h1 = ch1->GetHisto();
-				h2 = ch2->GetHisto();
+				h1 = ch1->GetHisto()->TH1();
+				h2 = ch2->GetHisto()->TH1();
 			}
 			//otherwise, reset current histo to this name
 			else {
-				h1 = ch1->GetHisto(name);
-				h2 = ch2->GetHisto(name);
+				h1 = ch1->GetHisto(name)->TH1();
+				h2 = ch2->GetHisto(name)->TH1();
 			}
 			double p1, p2;
 			p1 = p2 = 0; //equality by default

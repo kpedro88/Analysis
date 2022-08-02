@@ -280,8 +280,8 @@ class KMCWeightSelector : public KSelector {
 					if(ssvbqty=="MTAK8") svbqty = MTAK8;
 
 					//use ratio object w/ built-in calculations
-					TH1F* numer = KGet<TH1F>(svbfile,ssvbqty+"_"+svbnumer);
-					TH1F* denom = KGet<TH1F>(svbfile,ssvbqty+"_"+svbdenom);
+					THN* numer = new THN1(KGet<TH1F>(svbfile,ssvbqty+"_"+svbnumer));
+					THN* denom = new THN1(KGet<TH1F>(svbfile,ssvbqty+"_"+svbdenom));
 					string svbcalc; localOpt->Get("svbcalc",svbcalc);
 					KSetRatio svbratio("svb",nullptr,nullptr);
 					svbratio.SetCalc(svbcalc);
@@ -293,7 +293,7 @@ class KMCWeightSelector : public KSelector {
 
 					//normalize weights to preserve total # events in sample
 					if(localOpt->Get("svbnorm",false)){
-						TH1F* svbnorm = svb_isnumer ? (TH1F*)numer->Clone() : (TH1F*)denom->Clone();
+						THN* svbnorm = svb_isnumer ? numer->Clone() : denom->Clone();
 						svbnorm->Scale(1.0/svbnorm->Integral(-1,-1));
 						hsvb->Multiply(svbnorm);
 					}
@@ -849,7 +849,7 @@ class KMCWeightSelector : public KSelector {
 		string sflatqty;
 		flatqtys flatqty;
 		svbqtys svbqty;
-		TH1* hsvb;
+		THN* hsvb;
 };
 REGISTER_SELECTOR(MCWeight);
 

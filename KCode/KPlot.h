@@ -2,6 +2,7 @@
 #define KPLOT_H
 
 //custom headers
+#include "THN.h"
 #include "KMap.h"
 #include "KLegend.h"
 #include "KParser.h"
@@ -142,13 +143,13 @@ class KPlot{
 			}
 
 			if(!xbins.empty()){ //variable binning case
-				if(vars.size()==2) histo = new TProfile(name.c_str(),"",xbins.size()-1,&xbins[0]);
-				else histo = new TH1F(name.c_str(),"",xbins.size()-1,&xbins[0]);
+				if(vars.size()==2) histo = new THN1(new TProfile(name.c_str(),"",xbins.size()-1,&xbins[0]));
+				else histo = new THN1(new TH1F(name.c_str(),"",xbins.size()-1,&xbins[0]));
 				isInit = true;
 			}
 			else if(xnum>0 and xmax>xmin){ //standard binning case
-				if(vars.size()==2) histo = new TProfile(name.c_str(),"",xnum,xmin,xmax);
-				else histo = new TH1F(name.c_str(),"",xnum,xmin,xmax);
+				if(vars.size()==2) histo = new THN1(new TProfile(name.c_str(),"",xnum,xmin,xmax));
+				else histo = new THN1(new TH1F(name.c_str(),"",xnum,xmin,xmax));
 				isInit = true;
 			}
 			else { //no/incomplete binning information, build failed
@@ -163,7 +164,7 @@ class KPlot{
 				histo->SetAxisRange(dxmin,dxmax);
 			}
 		}
-		virtual bool Initialize(TH1* histo_=NULL){
+		virtual bool Initialize(THN* histo_=NULL){
 			if(isInit) return isInit;
 			
 			//check for TProfile case
@@ -226,7 +227,7 @@ class KPlot{
 				pad2->Draw();
 			
 				//format ratio histo
-				ratio = (TH1F*)histo->Clone();
+				ratio = histo->Clone();
 				ratio->SetMarkerStyle(20);
 				ratio->SetMarkerColor(kBlack);
 				ratio->SetLineColor(kBlack);
@@ -554,7 +555,7 @@ class KPlot{
 			
 			axis->SetTitleOffset(Toff);
 		}
-		virtual void FormatHist(TPad* pad, TH1* hist){
+		virtual void FormatHist(TPad* pad, THN* hist){
 			double padW, padH;
 			double tickScaleX, tickScaleY;
 			pad->cd();
@@ -641,8 +642,8 @@ class KPlot{
 		virtual string GetNameY() { return ""; }
 		bool IsInit() { return isInit; }
 		void SetName(string name_) { name = name_; }
-		TH1* GetHisto() { return histo; }
-		TH1* GetRatio() { return ratio; }
+		THN* GetHisto() { return histo; }
+		THN* GetRatio() { return ratio; }
 		TCanvas* GetCanvas() { return can; }
 		TPad* GetPad1() { return pad1; }
 		TPad* GetPad2() { return pad2; }
@@ -663,7 +664,7 @@ class KPlot{
 		string name;
 		OptionMap* localOpt;
 		OptionMap* globalOpt;
-		TH1 *histo, *ratio;
+		THN *histo, *ratio;
 		TExec *exec;
 		bool isInit;
 		TCanvas *can;
@@ -745,11 +746,11 @@ class KPlot2D: public KPlot {
 
 			if(!xbins.empty()){ //variable x-binning case
 				if(!ybins.empty()) { //variable y-binning case
-					histo = new TH2F(name.c_str(),"",xbins.size()-1,&xbins[0],ybins.size()-1,&ybins[0]);	
+					histo = new THN1(new TH2F(name.c_str(),"",xbins.size()-1,&xbins[0],ybins.size()-1,&ybins[0]));
 					isInit = true;
 				}
 				else if(ynum>0 and ymax>ymin){ //standard y-binning case
-					histo = new TH2F(name.c_str(),"",xbins.size()-1,&xbins[0],ynum,ymin,ymax);
+					histo = new THN1(new TH2F(name.c_str(),"",xbins.size()-1,&xbins[0],ynum,ymin,ymax));
 					isInit = true;
 				}
 				else { //no/incomplete binning information, build failed
@@ -759,11 +760,11 @@ class KPlot2D: public KPlot {
 			}
 			else if(xnum>0 and xmax>xmin){ //standard x-binning case
 				if(!ybins.empty()) { //variable y-binning case
-					histo = new TH2F(name.c_str(),"",xnum,xmin,xmax,ybins.size()-1,&ybins[0]);	
+					histo = new THN1(new TH2F(name.c_str(),"",xnum,xmin,xmax,ybins.size()-1,&ybins[0]));
 					isInit = true;
 				}
 				else if(ynum>0 and ymax>ymin){ //standard y-binning case
-					histo = new TH2F(name.c_str(),"",xnum,xmin,xmax,ynum,ymin,ymax);
+					histo = new THN1(new TH2F(name.c_str(),"",xnum,xmin,xmax,ynum,ymin,ymax));
 					isInit = true;
 				}
 				else { //no/incomplete binning information, build failed
@@ -839,7 +840,7 @@ class KPlot2D: public KPlot {
 				histo->GetZaxis()->SetTitle(((legname.size()>0 ? legname : setname) + ": " + ztitle).c_str());
 			}
 		}
-		virtual bool Initialize(TH1* histo_=NULL){
+		virtual bool Initialize(THN* histo_=NULL){
 			if(isInit) return isInit;
 			
 			histo = histo_;

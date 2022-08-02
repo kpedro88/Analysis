@@ -522,10 +522,10 @@ class KPlotManager : public KManager {
 				omap->Get("dimension",dim);
 				if(dim==1){
 					KPlot* ptmp = new KPlot(ntmp->fields[0],omap,globalOpt);
-					TH1* hptmp = NULL;
-					TH1* hspecial = MySets[0]->GetHisto(ntmp->fields[0]);
+					THN* hptmp = NULL;
+					THN* hspecial = MySets[0]->GetHisto(ntmp->fields[0]);
 					if(hspecial) {
-						hptmp = (TH1*)(hspecial)->Clone();
+						hptmp = hspecial->Clone();
 						hptmp->Reset();
 					}
 					if(ptmp->Initialize(hptmp)) MyPlots.Add(ntmp->fields[0],ptmp);
@@ -745,16 +745,16 @@ class KPlotManager : public KManager {
 					if(xbindivide or ybindivide) theSet->BinDivide(xbindivide,ybindivide);
 					
 					//check z-axis limits after all potential normalizations are done
-					double ztmp = theSet->GetHisto()->GetMinimum();
-					if(ptmp->GetLocalOpt()->Get("logz",false)) ztmp = theSet->GetHisto()->GetMinimum(0.0);
+					double ztmp = theSet->GetHisto()->TH1()->GetMinimum();
+					if(ptmp->GetLocalOpt()->Get("logz",false)) ztmp = theSet->GetHisto()->TH1()->GetMinimum(0.0);
 					if(ztmp < zmin) zmin = ztmp;
-					ztmp = theSet->GetHisto()->GetMaximum();
+					ztmp = theSet->GetHisto()->TH1()->GetMaximum();
 					if(ztmp > zmax) zmax = ztmp;
 
 					//setup legend if desired
 					if(leg2d){
 						KLegend* kleg = ptmp->GetLegend();
-						kleg->AddHist(theSet->GetHisto());
+						kleg->AddHist(theSet->GetHisto()->TH1());
 					}
 				}
 				if(printyield) cout << endl;
@@ -786,7 +786,7 @@ class KPlotManager : public KManager {
 					if(s>=MySets.size()) {
 						//symmetric axis for ratio (by default)
 						//take min above -999 because empty bins set to -1000 (drawing hack)
-						double zmax_ratio = fmax(fabs(theSet->GetHisto()->GetMinimum(-999)),fabs(theSet->GetHisto()->GetMaximum()));
+						double zmax_ratio = fmax(fabs(theSet->GetHisto()->TH1()->GetMinimum(-999)),fabs(theSet->GetHisto()->TH1()->GetMaximum()));
 						double ratiomin = -zmax_ratio; globalOpt->Get("ratiomin",ratiomin);
 						double ratiomax = zmax_ratio; globalOpt->Get("ratiomax",ratiomax);
 						ptmp->GetHisto()->GetZaxis()->SetRangeUser(ratiomin,ratiomax);
@@ -880,7 +880,7 @@ class KPlotManager : public KManager {
 					p_roc->GetLocalOpt()->Set("ratio",false);
 					p_roc->GetLocalOpt()->Set("logx",roclogx);
 					p_roc->GetLocalOpt()->Set("logy",roclogy);
-					p_roc->Initialize(h_base);
+					p_roc->Initialize(new THN1(h_base));
 					
 					//get drawing objects from KPlot
 					TCanvas* can = p_roc->GetCanvas();
@@ -888,7 +888,7 @@ class KPlotManager : public KManager {
 					
 					//get legend
 					KLegend* kleg = p_roc->GetLegend();
-					kleg->AddHist(p_roc->GetHisto());
+					kleg->AddHist(p_roc->GetHisto()->TH1());
 
 					//sort by auc
 					sort(rocs.begin(),rocs.end());

@@ -585,7 +585,7 @@ class KBTagEfficiencySelector : public KSelector {
 			TH1::AddDirectory(kFALSE);
 			KPlot2D* ptmp = new KPlot2D("n_eff_b","",localOpt,NULL);
 			ptmp->CreateHist();
-			n_eff_b = (TH2F*)ptmp->GetHisto();
+			n_eff_b = (TH2F*)ptmp->GetHisto()->TH1();
 			delete ptmp;
 			//reset z-title
 			n_eff_b->GetZaxis()->SetTitle("");
@@ -677,7 +677,7 @@ class KNJetsISRSelector : public KSelector {
 			TH1::AddDirectory(kFALSE);
 			KPlot* ptmp = new KPlot("NJetsISR",localOpt,NULL);
 			ptmp->CreateHist();
-			h_njetsisr = ptmp->GetHisto();
+			h_njetsisr = ptmp->GetHisto()->TH1();
 			delete ptmp;
 		}
 		
@@ -807,11 +807,11 @@ class KPileupAccSelector : public KSelector {
 			TH1::AddDirectory(kFALSE);
 			KPlot* ptmpLo = new KPlot("NVtxLo",localOpt,NULL);
 			ptmpLo->CreateHist();
-			h_nvtxLo = ptmpLo->GetHisto();
+			h_nvtxLo = ptmpLo->GetHisto()->TH1();
 			delete ptmpLo;
 			KPlot* ptmpHi = new KPlot("NVtxHi",localOpt,NULL);
 			ptmpHi->CreateHist();
-			h_nvtxHi = ptmpHi->GetHisto();
+			h_nvtxHi = ptmpHi->GetHisto()->TH1();
 			delete ptmpHi;
 		}
 		virtual void CheckDeps(){
