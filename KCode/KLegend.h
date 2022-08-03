@@ -566,7 +566,7 @@ class KLegend{
 		}
 		
 		//accessors
-		void AddHist(TH1* h) { hists.push_back(h); }
+		void AddHist(TH1* h) { if(h) hists.push_back(h); }
 		void AddGraph(TGraph* g) { graphs.push_back(g); }
 		TLegend* GetLegend() { return leg; }
 		bool UseRange() { return userange; }

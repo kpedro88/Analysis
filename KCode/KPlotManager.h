@@ -754,7 +754,7 @@ class KPlotManager : public KManager {
 					//setup legend if desired
 					if(leg2d){
 						KLegend* kleg = ptmp->GetLegend();
-						kleg->AddHist(theSet->GetHisto()->TH1());
+						kleg->AddHist(theSet->GetHisto()->TH1F());
 					}
 				}
 				if(printyield) cout << endl;
@@ -888,7 +888,7 @@ class KPlotManager : public KManager {
 					
 					//get legend
 					KLegend* kleg = p_roc->GetLegend();
-					kleg->AddHist(p_roc->GetHisto()->TH1());
+					kleg->AddHist(p_roc->GetHisto()->TH1F());
 
 					//sort by auc
 					sort(rocs.begin(),rocs.end());

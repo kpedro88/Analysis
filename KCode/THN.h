@@ -5,6 +5,7 @@
 #include <TObject.h>
 #include <TString.h>
 #include <TH1.h>
+#include <TH1F.h>
 #include <THnSparse.h>
 #include <TF1.h>
 #include <TFitResultPtr.h>
@@ -20,6 +21,8 @@ class THN {
 		//to get the underlying pointer
 		virtual ::TH1* TH1() { return nullptr; }
 		virtual const ::TH1* TH1() const { return nullptr; }
+		virtual ::TH1F* TH1F() { return nullptr; }
+		virtual const ::TH1F* TH1F() const { return nullptr; }
 		virtual ::THnSparse* THnSparse() { return nullptr; }
 		virtual const ::THnSparse* THnSparse() const { return nullptr; }
 		virtual string cl() const { return ""; }
@@ -104,6 +107,8 @@ class THNT<::TH1> : public THN {
 		THNT<::TH1>(::TH1* h_) : h(h_) {}
 		::TH1* TH1() override { return h; }
 		const ::TH1* TH1() const override { return h; }
+		::TH1F* TH1F() override { return (::TH1F*)h; }
+		const ::TH1F* TH1F() const override { return (::TH1F*)h; }
 		string cl() const override { return "TH1"; }
 
 		Bool_t Add (const ::TH1 *h1, const ::TH1 *h2, Double_t c1=1, Double_t c2=1) override { return h->Add(h1,h2,c1,c2); }

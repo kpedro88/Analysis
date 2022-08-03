@@ -207,7 +207,7 @@ class KSet : public KBase {
 			if(IsData() and option.find("e")!=string::npos && (globalOpt->Get("horizerrbars",false) || obj->htmp->GetXaxis()->IsVariableBinSize())){
 				option += "l";
 			}
-			kleg->AddEntry(obj->htmp ? (TObject*)obj->htmp : (TObject*)obj->btmp,GetLegName(),option,panel_tmp,extra_text);
+			kleg->AddEntry(obj->htmp ? (TObject*)obj->htmp->TH1() : (TObject*)obj->btmp,GetLegName(),option,panel_tmp,extra_text);
 			//check if error band needs to be added
 			if(localOpt->Get("errband",false) && localOpt->Get("errbandleg",true) and obj->etmp) {
 				//this assumes it has already been created previously... a little unsafe, but a pain in the ass otherwise
@@ -903,11 +903,11 @@ class KSetRatio: public KSet {
 			//for legend placement
 			if(!obj->rtmp.empty()) {
 				for(auto res : obj->rtmp){
-					kleg->AddHist(res->TH1());
+					kleg->AddHist(res->TH1F());
 				}
 			}
 			else if(obj->btmp) kleg->AddGraph(obj->btmp);
-			else kleg->AddHist(obj->htmp->TH1());
+			else kleg->AddHist(obj->htmp->TH1F());
 			//todo: add ratio w/ marker, error band?
 			for(auto fit : obj->ftmp){
 				//how to assign panel?
