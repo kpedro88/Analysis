@@ -135,6 +135,24 @@ class KFiller_nsvj : public KFiller {
 };
 REGISTER_FILLER(nsvj);
 
+//first signal model parameter
+class KFiller_id1 : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void ListBranches() { branches = {"SignalParameters"}; }
+		virtual void Fill(KValue& value, double w) { if(looper->SignalParameters->size()>0) value.Fill(looper->SignalParameters->at(0),w); }
+};
+REGISTER_FILLER(id1);
+
+//second signal model parameter
+class KFiller_id2 : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void ListBranches() { branches = {"SignalParameters"}; }
+		virtual void Fill(KValue& value, double w) { if(looper->SignalParameters->size()>1) value.Fill(looper->SignalParameters->at(1),w); }
+};
+REGISTER_FILLER(id2);
+
 //-----------------------------------------------------------------------------
 //for hemispheres
 class KFillerHemi : public KFiller {
