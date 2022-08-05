@@ -163,6 +163,23 @@ class KHisto : public KChecker {
 			}
 			
 			//now fill the histogram
+			THnSparse* hntmp = htmp->THnSparse();
+			if(hntmp){
+				//currently only supports case w/ same # entries per event for each dim
+				//todo: some generalization of 2D cases (below) - take any value w/ size 1 and copy its contents n times? what to do about weights?
+				for(int i = 0; i < values[0].GetSize(); ++i){
+					vector<double> vals;
+					vals.reserve(values.size());
+					for(int v = 0; v < values.size(); ++v){
+						if(values[v].GetSize() != values[0].GetSize()) throw runtime_error("Inconsistent sizes in histogram filler values");
+						vals.push_back(values[v].GetValue(i));
+					}
+					hntmp->Fill(vals.data(), values[0].GetWeight(i)); //pick the x weight by default
+				}
+				return;
+			}
+
+			//"normal" case
 			TH1* h1tmp = htmp->TH1();
 			if(fillers.size()==1){
 				for(int ix = 0; ix < values[0].GetSize(); ix++){

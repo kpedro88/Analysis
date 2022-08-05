@@ -15,6 +15,7 @@
 #include <TProfile.h>
 #include <TH2.h>
 #include <TH2F.h>
+#include <THnSparse.h>
 #include <TCanvas.h>
 #include <TPad.h>
 #include <TLine.h>
@@ -164,6 +165,48 @@ class KPlot{
 				histo->SetAxisRange(dxmin,dxmax);
 			}
 		}
+		virtual void CreateSparseHist(){
+			vector<int> nums; localOpt->Get("nums",nums);
+			vector<double> mins; localOpt->Get("mins",mins);
+			vector<double> maxs; localOpt->Get("maxs",maxs);
+
+			//safety checks
+			if(vars.size() != nums.size() || nums.size() != mins.size() || nums.size() != maxs.size()){
+				throw runtime_error("Inconsistent sizes for vars, nums, mins, maxs: "+to_string(vars.size())+", "+to_string(nums.size())+", "+to_string(mins.size())+", "+to_string(maxs.size()));
+			}
+
+			//create sparse histogram
+			THnSparse* htmp = new THnSparseF(name.c_str(),"",vars.size(),nums.data(),mins.data(),maxs.data());
+
+			//check for variable binning (indicated by num=0)
+			vector<vector<double>> bins(nums.size());
+			for(int i = 0; i < nums.size(); ++i){
+				bool variable_bins = false;
+				if(nums[i]==0){
+					bool found_bins = localOpt->Get("bins"+to_string(i),bins[i]);
+					if(!found_bins) throw runtime_error("Indicated variable bins for dimension "+to_string(i)+" but bins"+to_string(i)+" not found");
+					variable_bins = true;
+				}
+				//evenly-spaced bins for log scale
+				else if(localOpt->Get("logbin"+to_string(i),false)){
+					double bmin = log10(mins[i]);
+					double bmax = log10(maxs[i]);
+					double width = (bmax-bmin)/nums[i];
+					bins[i].reserve(nums[i]+1);
+					for(int b = 0; b <= nums[i]; ++b){
+						bins[i].push_back(pow(10.,bmin+b*width));
+					}
+					variable_bins = true;
+				}
+
+				if(variable_bins){
+					htmp->SetBinEdges(i, bins[i].data());
+				}
+			}
+
+			histo = new THNn(htmp);
+			isInit = true;
+		}
 		virtual bool Initialize(THN* histo_=NULL){
 			if(isInit) return isInit;
 			
@@ -173,7 +216,12 @@ class KPlot{
 				KParser::process(name,'_',vars);
 			}
 			histo = histo_;
-			if(!histo) CreateHist();
+			if(!histo){
+				int dim = -1;
+				localOpt->Get("dimension",dim);
+				if(dim==0) CreateSparseHist();
+				else CreateHist();
+			}
 			if(!histo) return isInit; //histo creation failed
 			else isInit = true;
 			

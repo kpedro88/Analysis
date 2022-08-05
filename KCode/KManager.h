@@ -104,6 +104,7 @@ class KManager {
 				//check for input type
 				if(line.compare(0,6,"OPTION")==0) { intype = "OPTION"; continue; }
 				else if(line.compare(0,3,"SET")==0) { intype = "SET"; continue; }
+				else if(line.compare(0,7,"HISTOND")==0) { intype = "HISTOND"; continue; }
 				else if(line.compare(0,7,"HISTO2D")==0) { intype = "HISTO2D"; continue; }
 				else if(line.compare(0,5,"HISTO")==0) { intype = "HISTO"; continue; }
 				else if(line.compare(0,10,"VARIATION")==0) { intype = "VARIATION"; continue; }
@@ -116,6 +117,7 @@ class KManager {
 				//otherwise, process line according to input type
 				if(intype=="OPTION") KParser::processOption(line,globalOpt);
 				else if(intype=="SET") processSet(line);
+				else if(intype=="HISTOND") processHisto(line,0);
 				else if(intype=="HISTO2D") processHisto(line,2);
 				else if(intype=="HISTO") processHisto(line,1);
 				else if(intype=="VARIATION") processVariation(line);

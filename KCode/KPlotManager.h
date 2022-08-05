@@ -518,15 +518,17 @@ class KPlotManager : public KManager {
 						MySets[s]->AddHisto(ntmp->fields[0],NULL,omap);
 					}
 				}
-				int dim = 0;
+				int dim = -1;
 				omap->Get("dimension",dim);
-				if(dim==1){
+				if(dim==0 or dim==1){
 					KPlot* ptmp = new KPlot(ntmp->fields[0],omap,globalOpt);
 					THN* hptmp = NULL;
-					THN* hspecial = MySets[0]->GetHisto(ntmp->fields[0]);
-					if(hspecial) {
-						hptmp = hspecial->Clone();
-						hptmp->Reset();
+					if(dim==1){ //not for THnSparse case
+						THN* hspecial = MySets[0]->GetHisto(ntmp->fields[0]);
+						if(hspecial) {
+							hptmp = hspecial->Clone();
+							hptmp->Reset();
+						}
 					}
 					if(ptmp->Initialize(hptmp)) MyPlots.Add(ntmp->fields[0],ptmp);
 					else {
@@ -565,6 +567,7 @@ class KPlotManager : public KManager {
 						throw runtime_error("unable to build any 2D histos "+ntmp->fields[0]+". Check binning options.");
 					}
 				}
+				else throw runtime_error("Unknown or unspecified dim: "+to_string(dim));
 			}
 		
 			//load histos into sets
