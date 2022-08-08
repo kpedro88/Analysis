@@ -104,6 +104,7 @@ public :
    vector<bool>    *Electrons_passIso;
    vector<bool>    *Electrons_tightID;
    vector<double>  *Electrons_TrkEnergyCorr;
+   Double_t        FastSimWeightPR31285To36122;
    Double_t        fixedGridRhoFastjetAll;
    vector<TLorentzVector> *GenElectrons;
    vector<bool>    *GenElectrons_fromTau;
@@ -578,6 +579,7 @@ public :
    TBranch        *b_Electrons_passIso;   //!
    TBranch        *b_Electrons_tightID;   //!
    TBranch        *b_Electrons_TrkEnergyCorr;   //!
+   TBranch        *b_FastSimWeightPR31285To36122;   //!
    TBranch        *b_fixedGridRhoFastjetAll;   //!
    TBranch        *b_GenElectrons;   //!
    TBranch        *b_GenElectrons_fromTau;   //!
@@ -1395,6 +1397,7 @@ void NtupleClass::Init(TTree *tree)
    fChain->SetBranchAddress("Electrons_passIso", &Electrons_passIso, &b_Electrons_passIso);
    fChain->SetBranchAddress("Electrons_tightID", &Electrons_tightID, &b_Electrons_tightID);
    fChain->SetBranchAddress("Electrons_TrkEnergyCorr", &Electrons_TrkEnergyCorr, &b_Electrons_TrkEnergyCorr);
+   fChain->SetBranchAddress("FastSimWeightPR31285To36122", &FastSimWeightPR31285To36122, &b_FastSimWeightPR31285To36122);
    fChain->SetBranchAddress("fixedGridRhoFastjetAll", &fixedGridRhoFastjetAll, &b_fixedGridRhoFastjetAll);
    fChain->SetBranchAddress("GenElectrons", &GenElectrons, &b_GenElectrons);
    fChain->SetBranchAddress("GenElectrons_fromTau", &GenElectrons_fromTau, &b_GenElectrons_fromTau);
