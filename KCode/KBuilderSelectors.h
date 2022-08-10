@@ -77,7 +77,17 @@ class KMCWeightSelector : public KSelector {
 			norm = 0; got_luminorm = base->GetGlobalOpt()->Get("luminorm",norm);
 			debugWeight = base->GetGlobalOpt()->Get("debugWeight",false); didDebugWeight = false;
 			fastsim = base->GetLocalOpt()->Get("fastsim",false);
-			
+
+			//special fastsim weight for pMSSM
+			vector<string> fscorrlist; localOpt->Get("fscorrlist",fscorrlist);
+			fscorr = false;
+			for(const auto& sig : fscorrlist){
+				if(fastsim and base->GetName().find(sig)!=string::npos){
+					fscorr = true;
+					break;
+				}
+			}
+
 			//PU options
 			pucorr = localOpt->Get("pucorr",false);
 			putree = localOpt->Get("putree",false); //option to use puWeight from tree
@@ -528,6 +538,7 @@ class KMCWeightSelector : public KSelector {
 			branches.push_back("Weight"); //needed for negative weights even if useTreeWeight==false
 			if(useTreeXsec) branches.push_back("CrossSection");
 			if(internalNormType) NormType->CheckBranches();
+			if(fscorr) branches.push_back("FastSimWeightPR31285To36122");
 			if(pucorr){
 				branches.push_back("TrueNumInteractions");
 				if(putree){
@@ -592,8 +603,10 @@ class KMCWeightSelector : public KSelector {
 		double GetWeight(){
 			double w = 1.;
 			if(unweighted) return w;
-			
-			//check option in case correction types are disabled globally
+
+			if(fscorr) {
+				w *= looper->FastSimWeightPR31285To36122;
+			}			
 			
 			if(pucorr) {
 				//use TreeMaker weights if no histo provided
@@ -831,7 +844,7 @@ class KMCWeightSelector : public KSelector {
 		KNormTypeSelector* NormType;
 		bool internalNormType;
 		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, useTreeXsec, useKFactor, debugWeight, didDebugWeight;
-		bool pucorr, putree, punew, puupdcorr, trigcorr, trigsystcorr, trigfncorr, isrcorr, useisrflat, fastsim, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr, hemvetocorr, lepcorr, psnorm;
+		bool pucorr, putree, punew, puupdcorr, trigcorr, trigsystcorr, trigfncorr, isrcorr, useisrflat, fastsim, fscorr, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr, hemvetocorr, lepcorr, psnorm;
 		double jetidcorrval, isotrackcorrval, trigsystcorrval, lumicorrval, isrflat, psflat;
 		int puunc, puupdunc, pdfunc, pdfqunc, pdfallunc, isrunc, scaleunc, trigunc, trigyear, trigfnunc, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc, prefireunc, hemvetounc, lepidunc, lepisounc, leptrkunc, psisrunc, psfsrunc;
 		vector<int> mother;
