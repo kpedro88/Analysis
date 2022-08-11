@@ -163,8 +163,7 @@ class KHisto : public KChecker {
 			}
 			
 			//now fill the histogram
-			THnSparse* hntmp = htmp->THnSparse();
-			if(hntmp){
+			if(htmp->THnSparse()){
 				//currently only supports case w/ same # entries per event for each dim
 				//todo: some generalization of 2D cases (below) - take any value w/ size 1 and copy its contents n times? what to do about weights?
 				for(int i = 0; i < values[0].GetSize(); ++i){
@@ -174,16 +173,15 @@ class KHisto : public KChecker {
 						if(values[v].GetSize() != values[0].GetSize()) throw runtime_error("Inconsistent sizes in histogram filler values");
 						vals.push_back(values[v].GetValue(i));
 					}
-					hntmp->Fill(vals.data(), values[0].GetWeight(i)); //pick the x weight by default
+					htmp->Fill(vals, values[0].GetWeight(i)); //pick the x weight by default
 				}
 				return;
 			}
 
 			//"normal" case
-			TH1* h1tmp = htmp->TH1();
 			if(fillers.size()==1){
 				for(int ix = 0; ix < values[0].GetSize(); ix++){
-					h1tmp->Fill(values[0].GetValue(ix), values[0].GetWeight(ix));
+					htmp->Fill({values[0].GetValue(ix)}, values[0].GetWeight(ix));
 				}
 			}
 			else if(fillers.size()==2){
@@ -191,26 +189,17 @@ class KHisto : public KChecker {
 				//these three cases allow for various x vs. y comparisons: same # entries per event, or 1 vs. N per event
 				if(values[0].GetSize()==values[1].GetSize()) {
 					for(int i = 0; i < values[0].GetSize(); i++){
-						if(h1tmp->GetDimension()==1)
-							static_cast<TProfile*>(h1tmp)->Fill(values[0].GetValue(i), values[1].GetValue(i), values[0].GetWeight(i)); //pick the x weight by default
-						else if(h1tmp->GetDimension()==2)
-							static_cast<TH2*>(h1tmp)->Fill(values[0].GetValue(i), values[1].GetValue(i), values[0].GetWeight(i)); //pick the x weight by default
+						htmp->Fill({values[0].GetValue(i), values[1].GetValue(i)}, values[0].GetWeight(i)); //pick the x weight by default
 					}
 				}
 				else if(values[0].GetSize()==1){
 					for(int iy = 0; iy < values[1].GetSize(); iy++){
-						if(h1tmp->GetDimension()==1)
-							static_cast<TProfile*>(h1tmp)->Fill(values[0].GetValue(0), values[1].GetValue(iy), values[1].GetWeight(iy));
-						else if(h1tmp->GetDimension()==2)
-							static_cast<TH2*>(h1tmp)->Fill(values[0].GetValue(0), values[1].GetValue(iy), values[1].GetWeight(iy));
+						htmp->Fill({values[0].GetValue(0), values[1].GetValue(iy)}, values[1].GetWeight(iy));
 					}
 				}
 				else if(values[1].GetSize()==1){
 					for(int ix = 0; ix < values[0].GetSize(); ix++){
-						if(h1tmp->GetDimension()==1)
-							static_cast<TProfile*>(h1tmp)->Fill(values[0].GetValue(ix), values[1].GetValue(0), values[0].GetWeight(ix));
-						else if(h1tmp->GetDimension()==2)
-							static_cast<TH2*>(h1tmp)->Fill(values[0].GetValue(ix), values[1].GetValue(0), values[0].GetWeight(ix));
+						htmp->Fill({values[0].GetValue(ix), values[1].GetValue(0)}, values[0].GetWeight(ix));
 					}
 				}
 			}

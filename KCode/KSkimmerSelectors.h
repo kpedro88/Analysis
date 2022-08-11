@@ -577,29 +577,16 @@ class KBTagEfficiencySelector : public KSelector {
 	public:
 		//constructor
 		KBTagEfficiencySelector() : KSelector() { }
-		KBTagEfficiencySelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {
+		KBTagEfficiencySelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), pmssm(false) {
 			canfail = false;
 			set_wp = localOpt->Get("wp",wp);
 			if(!set_wp) localOpt->Get("wps",wps);
-			//initialize histograms using KPlot2D::CreateHist() method
-			TH1::AddDirectory(kFALSE);
-			KPlot2D* ptmp = new KPlot2D("n_eff_b","",localOpt,NULL);
-			ptmp->CreateHist();
-			n_eff_b = (TH2F*)ptmp->GetHisto()->TH1();
-			delete ptmp;
-			//reset z-title
-			n_eff_b->GetZaxis()->SetTitle("");
-			//clone histo
-			n_eff_c = (TH2F*)n_eff_b->Clone("n_eff_c");
-			n_eff_udsg = (TH2F*)n_eff_b->Clone("n_eff_udsg");
-			d_eff_b = (TH2F*)n_eff_b->Clone("d_eff_b");
-			d_eff_c = (TH2F*)n_eff_b->Clone("d_eff_c");
-			d_eff_udsg = (TH2F*)n_eff_b->Clone("d_eff_udsg");
 		}
 		virtual void CheckBase(){
 			//disable this for data
 			if(base->IsData()) {
 				dummy = true;
+				return;
 			}
 			//year-dependent WP
 			if(!set_wp){
@@ -608,6 +595,36 @@ class KBTagEfficiencySelector : public KSelector {
 				else if(base->GetName().find("MC2018")!=std::string::npos) wp = wps[2];
 				else wp = 0.;
 			}
+
+			pmssm = base->GetLocalOpt()->Get("pmssm",false);
+			KPlot* ptmp = nullptr;
+			string hname("n_eff_b");
+			if(pmssm){
+				//initialize histograms using KPlot::CreateSparseHist() method
+				ptmp = new KPlot(hname,localOpt,NULL);
+				//extend histo options w/ x and y axes from 2D case
+				ptmp->ExtendHistoOptions("x");
+				ptmp->ExtendHistoOptions("y");
+				ptmp->CreateSparseHist();
+			}
+			else {
+				//initialize histograms using KPlot2D::CreateHist() method
+				TH1::AddDirectory(kFALSE);
+				ptmp = new KPlot2D(hname,"",localOpt,NULL);
+				ptmp->CreateHist();
+			}
+			ptmp->LabelHist();
+			n_eff_b = ptmp->GetHisto();
+			delete ptmp;
+			//reset z-title
+			if(n_eff_b->TH1()) n_eff_b->GetZaxis()->SetTitle("");
+
+			//clone histo
+			n_eff_c = n_eff_b->Clone("n_eff_c");
+			n_eff_udsg = n_eff_b->Clone("n_eff_udsg");
+			d_eff_b = n_eff_b->Clone("d_eff_b");
+			d_eff_c = n_eff_b->Clone("d_eff_c");
+			d_eff_udsg = n_eff_b->Clone("d_eff_udsg");
 		}
 		
 		//this selector doesn't add anything to tree
@@ -625,17 +642,24 @@ class KBTagEfficiencySelector : public KSelector {
 				double pt = looper->Jets->at(ja).Pt();
 				//use abs(eta) for now
 				double eta = fabs(looper->Jets->at(ja).Eta());
+				vector<double> vals;
+				if(pmssm) {
+					vals.push_back(looper->SignalParameters->at(0));
+					vals.push_back(looper->SignalParameters->at(1));
+				}
+				vals.push_back(pt);
+				vals.push_back(eta);
 				if(flav==5){
-					d_eff_b->Fill(pt,eta);
-					if(csv > wp) n_eff_b->Fill(pt,eta);
+					d_eff_b->Fill(vals);
+					if(csv > wp) n_eff_b->Fill(vals);
 				}
 				else if(flav==4){
-					d_eff_c->Fill(pt,eta);
-					if(csv > wp) n_eff_c->Fill(pt,eta);
+					d_eff_c->Fill(vals);
+					if(csv > wp) n_eff_c->Fill(vals);
 				}
 				else if(flav<4 || flav==21){
-					d_eff_udsg->Fill(pt,eta);
-					if(csv > wp) n_eff_udsg->Fill(pt,eta);
+					d_eff_udsg->Fill(vals);
+					if(csv > wp) n_eff_udsg->Fill(vals);
 				}
 			}
 			
@@ -659,8 +683,9 @@ class KBTagEfficiencySelector : public KSelector {
 		bool set_wp;
 		double wp;
 		vector<double> wps;
-		TH2F *n_eff_b, *n_eff_c, *n_eff_udsg;
-		TH2F *d_eff_b, *d_eff_c, *d_eff_udsg;
+		bool pmssm;
+		THN *n_eff_b, *n_eff_c, *n_eff_udsg;
+		THN *d_eff_b, *d_eff_c, *d_eff_udsg;
 };
 REGISTER_SELECTOR(BTagEfficiency);
 
@@ -670,25 +695,42 @@ class KNJetsISRSelector : public KSelector {
 	public:
 		//constructor
 		KNJetsISRSelector() : KSelector() { }
-		KNJetsISRSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), h_njetsisr(NULL) {
+		KNJetsISRSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), pmssm(false), h_njetsisr(NULL) {
 			canfail = false;
 			localOpt->Get("xbins",xbins);
-			//initialize histograms using KPlot:CreateHist() method
-			TH1::AddDirectory(kFALSE);
+		}
+		virtual void CheckBase(){
+			pmssm = base->GetLocalOpt()->Get("pmssm",false);
+			//initialize histograms using KPlot
 			KPlot* ptmp = new KPlot("NJetsISR",localOpt,NULL);
-			ptmp->CreateHist();
-			h_njetsisr = ptmp->GetHisto()->TH1();
+			if(pmssm){
+				//extend histo options w/ x axis from 1D case
+				ptmp->ExtendHistoOptions("x");
+				ptmp->CreateSparseHist();
+			}
+			else {
+				TH1::AddDirectory(kFALSE);
+				ptmp->CreateHist();
+			}
+			ptmp->LabelHist();
+			h_njetsisr = ptmp->GetHisto();
 			delete ptmp;
 		}
-		
+
 		//this selector doesn't add anything to tree
-		
+
 		//used for non-dummy selectors
 		virtual bool Cut() {
 			//fill histo
 			double weight = looper->Weight<0 ? -1.0 : 1.0;
-			h_njetsisr->Fill(min(double(looper->NJetsISR),xbins[xbins.size()-2]),weight);
-			
+			vector<double> vals;
+			if(pmssm) {
+				vals.push_back(looper->SignalParameters->at(0));
+				vals.push_back(looper->SignalParameters->at(1));
+			}
+			vals.push_back(min(double(looper->NJetsISR),xbins[xbins.size()-2]));
+			h_njetsisr->Fill(vals,weight);
+
 			return true;
 		}
 		
@@ -697,9 +739,10 @@ class KNJetsISRSelector : public KSelector {
 			file->cd();
 			h_njetsisr->Write();
 		}
-		
+
 		//member variables
-		TH1 *h_njetsisr;
+		bool pmssm;
+		THN *h_njetsisr;
 		vector<double> xbins;
 };
 REGISTER_SELECTOR(NJetsISR);
@@ -721,8 +764,8 @@ class KPDFNormSelector : public KSelector {
 			h_all = new TH1F("PDFAllNorm","",103,0.5,103.5);
 		}
 		virtual void CheckBase(){
-			//disable this for data
-			if(base->IsData()) {
+			//disable this for data or pmssm
+			if(base->IsData() or base->GetLocalOpt()->Get("pmssm",false)) {
 				dummy = true;
 				delete h_norm;
 				delete h_all;

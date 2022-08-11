@@ -7,6 +7,8 @@
 #include <TH1.h>
 #include <TH1F.h>
 #include <THnSparse.h>
+#include <TH2.h>
+#include <TProfile.h>
 #include <TF1.h>
 #include <TFitResultPtr.h>
 
@@ -46,7 +48,8 @@ class THN {
 		//changed return type
 		virtual THN * Clone (const char *newname="") { unimpl(__PRETTY_FUNCTION__); return nullptr; }
 		virtual void Draw (Option_t *option="") { unimpl(__PRETTY_FUNCTION__); }
-		//Fill() is OMITTED because the signatures are (significantly) different -> need to specify what kind of object you're filling, done in KHisto
+		//use THnSparse-style interface, but with STL
+		virtual Long64_t Fill(const vector<Double_t>& x, Double_t w=1.) { unimpl(__PRETTY_FUNCTION__); return 0; }
 		virtual TFitResultPtr Fit (TF1 *f1, Option_t *option="", Option_t *goption="", Double_t xmin=0, Double_t xmax=0) { unimpl(__PRETTY_FUNCTION__); return nullptr; }
 		//use larger input datatype from THnSparse
 		virtual Long64_t FindBin (Double_t x, Double_t y=0, Double_t z=0) { unimpl(__PRETTY_FUNCTION__); return 0; }
@@ -104,7 +107,7 @@ class THNT : public THN {};
 template <>
 class THNT<::TH1> : public THN {
 	public:
-		THNT<::TH1>(::TH1* h_) : h(h_) {}
+		THNT<::TH1>(::TH1* h_) : h(h_), isTH2(h->InheritsFrom(TH2::Class())), isTProfile(h->InheritsFrom(TProfile::Class())) { }
 		::TH1* TH1() override { return h; }
 		const ::TH1* TH1() const override { return h; }
 		::TH1F* TH1F() override { return (::TH1F*)h; }
@@ -147,6 +150,11 @@ class THNT<::TH1> : public THN {
 
 		THN * Clone (const char *newname="") override { return new THNT<::TH1>((::TH1*)h->Clone(newname)); }
 		void Draw (Option_t *option="") override { h->Draw(option); }
+		Long64_t Fill(const vector<Double_t>& x, Double_t w=1.) override {
+			if(isTProfile) return static_cast<TProfile*>(h)->Fill(x[0], x[1], w);
+			else if(isTH2) return static_cast<TH2*>(h)->Fill(x[0], x[1], w);
+			else return h->Fill(x[0], w);
+		}
 		TFitResultPtr Fit (TF1 *f1, Option_t *option="", Option_t *goption="", Double_t xmin=0, Double_t xmax=0) override { return h->Fit(f1,option,goption,xmin,xmax); }
 		Long64_t FindBin (Double_t x, Double_t y=0, Double_t z=0) override { return (Long64_t)h->FindBin(x,y,z); }
 		Long64_t GetBin (Int_t binx, Int_t biny=0, Int_t binz=0) const override { return (Long64_t)h->GetBin(binx,biny,binz); }
@@ -197,6 +205,7 @@ class THNT<::TH1> : public THN {
 
 	protected:
 		::TH1* h;
+		bool isTH2, isTProfile;
 };
 using THN1 = THNT<::TH1>;
 
@@ -232,6 +241,7 @@ class THNT<::THnSparse> : public THN {
 
 		THN * Clone (const char *newname="") override { return new THNT<::THnSparse>((::THnSparse*)h->Clone(newname)); }
 		void Draw (Option_t *option="") override { h->Draw(option); }
+		Long64_t Fill(const vector<Double_t>& x, Double_t w=1.) override { return h->Fill(x.data(),w); }
 		TFitResultPtr Fit (TF1 *f1, Option_t *option="", Option_t *goption="", Double_t xmin=0, Double_t xmax=0) override {
 			if(xmin!=0 or xmax!=0) { unimpl(__PRETTY_FUNCTION__); return nullptr; }
 			return h->Fit(f1,option,goption);

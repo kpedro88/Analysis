@@ -207,6 +207,76 @@ class KPlot{
 			histo = new THNn(htmp);
 			isInit = true;
 		}
+		//helper for sparse histo options
+		virtual void ExtendHistoOptions(const string& axis){
+			//sparse histo options
+			vector<int> nums; localOpt->Get("nums",nums);
+			vector<double> mins; localOpt->Get("mins",mins);
+			vector<double> maxs; localOpt->Get("maxs",maxs);
+			vector<string> titles; localOpt->Get("titles",titles);
+
+			//normal histo axis options
+			vector<double> abins; localOpt->Get(axis+"bins",abins);
+			int anum = 0; localOpt->Get(axis+"num",anum);
+			double amin = 0; localOpt->Get(axis+"min",amin);
+			double amax = 0; localOpt->Get(axis+"max",amax);
+			string atitle; localOpt->Get(axis+"title",atitle);
+
+			if(!abins.empty()){
+				nums.push_back(0);
+				mins.push_back(0);
+				maxs.push_back(0);
+				localOpt->Set("bins"+to_string(nums.size()),abins);
+			}
+			else {
+				nums.push_back(anum);
+				mins.push_back(amin);
+				maxs.push_back(amax);
+			}
+			titles.push_back(atitle);
+
+			localOpt->Set("nums",nums);
+			localOpt->Set("mins",mins);
+			localOpt->Set("maxs",maxs);
+			localOpt->Set("titles",titles);
+		}
+		virtual void LabelHist(){
+			if(histo->TH1()){
+				//assign bin labels if requested
+				//we might want to relabel an existing histo
+				if(localOpt->Get("xbinlabel",false)){
+					vector<string> labels;
+					//check both option maps
+					bool has_labels = localOpt->Get("xlabels",labels) || globalOpt->Get(vars[0]+"_labels",labels);
+					if(has_labels){
+						histo->LabelsOption("v","X");
+						for(unsigned b = 0; b < labels.size(); b++){
+							histo->GetXaxis()->SetBinLabel(b+1,labels[b].c_str());
+						}
+						histo->GetXaxis()->SetNoAlphanumeric(); //todo: make optional?
+					}
+				}
+
+				string xtitle, ytitle;
+				if(localOpt->Get("xtitle",xtitle)) histo->GetXaxis()->SetTitle(xtitle.c_str());
+				if(localOpt->Get("ytitle",ytitle)) histo->GetYaxis()->SetTitle(ytitle.c_str());
+				//allow global override of y title
+				if(globalOpt->Get("ytitle",ytitle)) histo->GetYaxis()->SetTitle(ytitle.c_str());
+			}
+			else {
+				vector<string> titles; localOpt->Get("titles",titles);
+
+				//safety checks
+				if(vars.size() != titles.size()){
+					throw runtime_error("Inconsistent sizes for vars, titles: "+to_string(vars.size())+", "+to_string(titles.size()));
+				}
+
+				auto htmp = histo->THnSparse();
+				for(unsigned i = 0; i < vars.size(); ++i){
+					htmp->GetAxis(i)->SetTitle(titles[i].c_str());
+				}
+			}
+		}
 		virtual bool Initialize(THN* histo_=NULL){
 			if(isInit) return isInit;
 			
@@ -215,6 +285,7 @@ class KPlot{
 				//split up histo variables from name (if not otherwise specified)
 				KParser::process(name,'_',vars);
 			}
+
 			histo = histo_;
 			if(!histo){
 				int dim = -1;
@@ -224,30 +295,12 @@ class KPlot{
 			}
 			if(!histo) return isInit; //histo creation failed
 			else isInit = true;
-			
-			//assign bin labels if requested
-			//we might want to relabel an existing histo
-			if(localOpt->Get("xbinlabel",false)){
-				vector<string> labels;
-				//check both option maps
-				bool has_labels = localOpt->Get("xlabels",labels) || globalOpt->Get(vars[0]+"_labels",labels);
-				if(has_labels){
-					histo->LabelsOption("v","X");
-					for(unsigned b = 0; b < labels.size(); b++){
-						histo->GetXaxis()->SetBinLabel(b+1,labels[b].c_str());
-					}
-					histo->GetXaxis()->SetNoAlphanumeric(); //todo: make optional?
-				}
-			}
-			string xtitle, ytitle;
-			if(localOpt->Get("xtitle",xtitle)) histo->GetXaxis()->SetTitle(xtitle.c_str());
-			if(localOpt->Get("ytitle",ytitle)) histo->GetYaxis()->SetTitle(ytitle.c_str());
-			//allow global override of y title
-			if(globalOpt->Get("ytitle",ytitle)) histo->GetYaxis()->SetTitle(ytitle.c_str());
-			
+
+			//labels: separate from CreateHist, in case changing labels of external histo
+			LabelHist();
+
 			//plotting with ratio enabled by default
 			if(localOpt->Get("ratio",true)) {
-				
 				canvasH += ratioH;
 				//can = new TCanvas(histo->GetName(),histo->GetName(),700,700);
 				//account for window frame: 2+2px width, 2+26px height
@@ -837,26 +890,11 @@ class KPlot2D: public KPlot {
 				histo->SetAxisRange(dymin,dymax,"Y");
 			}
 
-			//get vars for labels
-			if(!localOpt->Get("vars",vars)){
-				//split up histo variables from name (if not otherwise specified)
-				KParser::process(name,'_',vars);
-			}
-			
-			//assign bin labels if requested
-			//we might want to relabel an existing histo
-			if(localOpt->Get("xbinlabel",false)){
-				vector<string> labels;
-				//check both option maps
-				bool has_labels = localOpt->Get("xlabels",labels) || globalOpt->Get(vars[0]+"_labels",labels);
-				if(has_labels){
-					histo->LabelsOption("v","X");
-					for(unsigned b = 0; b < labels.size(); b++){
-						histo->GetXaxis()->SetBinLabel(b+1,labels[b].c_str());
-					}
-					histo->GetXaxis()->SetNoAlphanumeric(); //todo: make optional?
-				}
-			}
+			LabelHist();
+		}
+		virtual void LabelHist(){
+			KPlot::LabelHist();
+
 			if(localOpt->Get("ybinlabel",false)){
 				vector<string> labels;
 				//check both option maps
@@ -870,12 +908,8 @@ class KPlot2D: public KPlot {
 				}
 			}
 
-			string xtitle, ytitle, ztitle;
-			localOpt->Get("xtitle",xtitle);
-			localOpt->Get("ytitle",ytitle);
+			string ztitle;
 			localOpt->Get("ztitle",ztitle);
-			histo->GetXaxis()->SetTitle(xtitle.c_str());
-			histo->GetYaxis()->SetTitle(ytitle.c_str());
 			//include name of ratio in z title
 			if(setname.find("ratio")!=string::npos){
 				string rationame2D = "";
@@ -890,10 +924,19 @@ class KPlot2D: public KPlot {
 		}
 		virtual bool Initialize(THN* histo_=NULL){
 			if(isInit) return isInit;
+
+			//get vars for labels
+			if(!localOpt->Get("vars",vars)){
+				//split up histo variables from name (if not otherwise specified)
+				KParser::process(name,'_',vars);
+			}
 			
 			histo = histo_;
 			if(!histo) CreateHist();
 			if(!histo) return isInit; //histo creation failed
+
+			//labels
+			LabelHist();
 			
 			string cname = name;
 			cname = cname + "_" + setname;
