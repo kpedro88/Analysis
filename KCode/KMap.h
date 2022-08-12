@@ -1,6 +1,9 @@
 #ifndef KMAP_H
 #define KMAP_H
 
+//custom headers
+#include "THN.h"
+
 //ROOT headers
 #include <TROOT.h>
 #include <TFile.h>
@@ -45,6 +48,18 @@ T* KGet(F* file, string getname, bool dothrow=true){
 	}
 	return obj;
 }
+template <class F=TFile>
+THN* KGetTHN(F* file, string getname, bool dothrow=true){
+	TObject* obj = KGet<TObject>(file, getname, dothrow);
+	THN* hobj = nullptr;
+	if(obj){
+		if(obj->InheritsFrom(TH1::Class())) hobj = new THN1(static_cast<TH1*>(obj));
+		else if(obj->InheritsFrom(THnSparse::Class())) hobj = new THNn(static_cast<THnSparse*>(obj));
+		else if(dothrow) throw runtime_error("Error getting "+getname+" from "+_KGet_name<F>()+" "+file->GetName()+": Unknown class type for THN conversion");
+	}
+	return hobj;
+}
+
 
 //------------------------------------------------------
 //special map class with key=string and optimized insert

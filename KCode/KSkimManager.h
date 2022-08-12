@@ -73,6 +73,7 @@ class KSkimManager : public KManager {
 			}
 			
 			//construct requested selections
+			MySkimmer->MakeNEventSelection();
 			for(unsigned i = 0; i < fields.size(); i++){
 				//make selection
 				KSelection* sntmp = makeSelection(fields[i]);

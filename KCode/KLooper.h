@@ -6,6 +6,7 @@
 #endif
 
 //custom headers
+#include "THN.h"
 #include "KMap.h"
 #include "NtupleClass.h"
 
@@ -106,24 +107,25 @@ class KOpener {
 						static_cast<TChain*>(tree)->Add((filename+chainsuff).c_str());
 
 						//these aren't necessarily required
-						TH1F* nEventHistTmp = KGet<TH1F>(ftmp,"nEventProc",false);
+						THN* nEventHistTmp = KGetTHN(ftmp,"nEventProc",false);
 						//sum up nEventProc histos
 						if(nEventHistTmp) {
 							if(nEventHist) nEventHist->Add(nEventHistTmp);
 							else {
-								nEventHist = (TH1F*)nEventHistTmp->Clone("nEventProc");
+								nEventHist = nEventHistTmp->Clone("nEventProc");
 								nEventHist->SetDirectory(0);
 							}
 						}
-						TH1F* nEventNegHistTmp = KGet<TH1F>(ftmp,"nEventNeg",false);
+						THN* nEventNegHistTmp = KGetTHN(ftmp,"nEventNeg",false);
 						//sum up nEventNeg histos
-						if(nEventNegHistTmp) {
+						if(nEventNegHistTmp){
 							if(nEventNegHist) nEventNegHist->Add(nEventNegHistTmp);
 							else {
-								nEventNegHist = (TH1F*)nEventNegHistTmp->Clone("nEventNeg");
+								nEventNegHist = nEventNegHistTmp->Clone("nEventNeg");
 								nEventNegHist->SetDirectory(0);
 							}
 						}
+
 						ftmp->Close();
 					}
 				}
@@ -141,8 +143,8 @@ class KOpener {
 				tree = KGet<TTree>(file,treename); //this might cause an issue for ext
 
 				//these aren't necessarily required
-				nEventHist = KGet<TH1F>(file,"nEventProc",false);
-				nEventNegHist = KGet<TH1F>(file,"nEventNeg",false);
+				nEventHist = KGetTHN(file,"nEventProc",false);
+				nEventNegHist = KGetTHN(file,"nEventNeg",false);
 			}
 		}
 		//destructor
@@ -154,8 +156,8 @@ class KOpener {
 		TFile* GetFile() { return file; }
 		virtual void CloseFile() { if(file) file->Close(); }
 		virtual TTree* GetTree() { return tree; }
-		virtual TH1F* GetNEventHist() { return nEventHist; }
-		virtual TH1F* GetNEventNegHist() { return nEventNegHist; }
+		virtual THN* GetNEventHist() { return nEventHist; }
+		virtual THN* GetNEventNegHist() { return nEventNegHist; }
 
 	protected:
 		//member variables
@@ -163,7 +165,7 @@ class KOpener {
 		OptionMap* globalOpt;
 		TFile* file;
 		TTree* tree;
-		TH1F *nEventHist, *nEventNegHist;
+		THN *nEventHist, *nEventNegHist;
 };
 
 //use first base class to get tree before initializing MakeClass base

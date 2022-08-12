@@ -3,7 +3,6 @@
 
 //custom headers
 #include "KVariation.h"
-#include "KSkimmer.h"
 #include "KMath.h"
 
 //ROOT headers

@@ -8,6 +8,7 @@
 #include "KPlot.h"
 #include "KHisto.h"
 #include "KBDTVar.h"
+#include "KSkimmer.h"
 #include "../corrections/EventListFilter.h"
 #include "../corrections/Flattener.h"
 #include "../corrections/L1ECALPrefiringWeightCorrector.h"
@@ -62,23 +63,117 @@ class KLepFracFilterSelector : public KSelector {};
 class KJetPtFilterSelector : public KSelector {};
 
 //----------------------------------------------------
+//counts events (used for KSkimmer)
+class KNEventProcSelector : public KSelector {
+	public:
+		//constructor
+		KNEventProcSelector() : KSelector() { }
+		KNEventProcSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), pmssm(false) {
+			canfail = false;
+		}
+		virtual void CheckBase(){
+			pmssm = base->GetLocalOpt()->Get("pmssm",false);
+			//initialize histograms using KPlot
+			KPlot* ptmp = new KPlot("nEventProc",localOpt,NULL);
+			if(pmssm){
+				//extend histo options w/ x axis from 1D case
+				ptmp->ExtendHistoOptions("x");
+				ptmp->CreateSparseHist();
+			}
+			else {
+				TH1::AddDirectory(kFALSE);
+				ptmp->CreateHist();
+			}
+			ptmp->LabelHist();
+			nEventHist = ptmp->GetHisto();
+			delete ptmp;
+		}
+
+		//used for non-dummy selectors
+		virtual bool Cut() {
+			vector<double> vals;
+			if(pmssm) {
+				vals.push_back(looper->SignalParameters->at(0));
+				vals.push_back(looper->SignalParameters->at(1));
+			}
+			vals.push_back(0.5);
+			nEventHist->Fill(vals);
+			return true;
+		}
+
+		//member variables
+		bool pmssm;
+		THN* nEventHist;
+};
+REGISTER_SELECTOR(NEventProc);
+
+//----------------------------------------------------
 //selects negative-weight events (used for KSkimmer)
 class KNegativeWeightSelector : public KSelector {
 	public:
 		//constructor
 		KNegativeWeightSelector() : KSelector() { }
-		KNegativeWeightSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) {}
-		
-		//this selector doesn't add anything to tree
-		
+		KNegativeWeightSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_), pmssm(false) {
+			canfail = false;
+		}
+		virtual void CheckBase(){
+			pmssm = base->GetLocalOpt()->Get("pmssm",false);
+			//initialize histograms using KPlot
+			KPlot* ptmp = new KPlot("nEventNeg",localOpt,NULL);
+			if(pmssm){
+				//extend histo options w/ x axis from 1D case
+				ptmp->ExtendHistoOptions("x");
+				ptmp->CreateSparseHist();
+			}
+			else {
+				TH1::AddDirectory(kFALSE);
+				ptmp->CreateHist();
+			}
+			ptmp->LabelHist();
+			nEventNegHist = ptmp->GetHisto();
+			delete ptmp;
+		}
+
 		//used for non-dummy selectors
 		virtual bool Cut() {
-			return looper->Weight<0;
+			if(looper->Weight<0) {
+				vector<double> vals;
+				if(pmssm) {
+					vals.push_back(looper->SignalParameters->at(0));
+					vals.push_back(looper->SignalParameters->at(1));
+				}
+				vals.push_back(0.5);
+				nEventNegHist->Fill(vals);
+			}
+			return true;
 		}
-		
+
 		//member variables
+		bool pmssm;
+		THN* nEventNegHist;
 };
 REGISTER_SELECTOR(NegativeWeight);
+
+//because this function depends on derived classes above
+void KSkimmer::Finalize(){
+	//final steps
+	unsigned firstSelIndex = 0;
+	if(theSelections[0]->GetName()==nEventSelName){
+		firstSelIndex = 1;
+		if(!nEventHist){
+			auto sel = theSelections[0]->Get<KNEventProcSelector*>(nEventProcName);
+			if(sel) nEventHist = sel->nEventHist;
+		}
+		if(!nEventNegHist){
+			auto sel = theSelections[0]->Get<KNegativeWeightSelector*>(nEventNegName);
+			if(sel) nEventNegHist = sel->nEventNegHist;
+		}
+	}
+	for(unsigned s = firstSelIndex; s < theSelections.size(); s++){
+		theSelections[s]->PrintEfficiency(nEventHist);
+		theSelections[s]->Finalize(nEventHist,nEventNegHist);
+	}
+}
 
 //----------------------------------------------------
 //selects events based on number of jets

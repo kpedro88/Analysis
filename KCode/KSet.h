@@ -136,7 +136,7 @@ class KSet : public KBase {
 			//todo: allow weighting
 			for(unsigned c = 0; c < children.size(); c++){
 				if(c==0){
-					nEventHist = (TH1F*)(children[c]->GetNEventHist())->Clone();
+					nEventHist = children[c]->GetNEventHist()->Clone();
 					cutflowRaw = (TH1F*)(children[c]->GetCutflow(KCutflowType::CutRaw))->Clone();
 				}
 				else {

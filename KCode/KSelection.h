@@ -222,7 +222,7 @@ class KSelection {
 			
 			//todo: add object ctr histogram for syncing
 		}
-		void PrintEfficiency(TH1F* nEventHist){
+		void PrintEfficiency(THN* nEventHist){
 			if(!nEventHist) return;
 			if(!cutflowHist) GetEfficiency();
 			
@@ -241,7 +241,7 @@ class KSelection {
 			KCutflow kcut("",cutflowHist,nentries,nentriesE);
 			kcut.PrintEfficiency(printerrors);
 		}
-		void Finalize(TH1F* nEventHist=NULL, TH1F* nEventNegHist=NULL){
+		void Finalize(THN* nEventHist=NULL, THN* nEventNegHist=NULL){
 			if(file){
 				file->cd();
 				if(nEventHist) nEventHist->Write();
@@ -270,6 +270,7 @@ class KSelection {
 				if(!selectorList[s]->Dummy()) selectorList[s]->CheckBranches();
 			}
 		}
+		bool empty() { return selectorList.empty(); }
 		
 	private:
 		//member variables

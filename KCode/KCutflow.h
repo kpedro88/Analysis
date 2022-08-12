@@ -2,6 +2,7 @@
 #define KCUTFLOW_H
 
 //custom headers
+#include "THN.h"
 #include "KMath.h"
 #include "KMap.h"
 
@@ -18,6 +19,7 @@
 #include <cstdlib>
 #include <exception>
 #include <set>
+#include <utility>
 
 using namespace std;
 
@@ -64,11 +66,28 @@ class KCutflowItem {
 //therefore, just specify whether to treat histograms as weighted when creating cutflow object
 class KCutflow {
 	public:
+		//helper for constructor
+		static pair<unsigned long long, double> GetNEntriesPair(THN* h_ntmp){
+			unsigned long long n;
+			double err;
+			if(h_ntmp->TH1()){
+				n = h_ntmp->GetBinContent(1);
+				err = h_ntmp->GetBinError(1);
+			}
+			else {
+				auto tmp = h_ntmp->THnSparse()->Projection(h_ntmp->GetDimension()-1,"E");
+				n = tmp->IntegralAndError(-1,-1,err);
+			}
+			return make_pair(n, err);
+		}
+
 		//constructors
 		KCutflow(string name_, string fname_, bool weighted_=false) : KCutflow(name_, KOpen(fname_), weighted_) {}
-		KCutflow(string name_, TFile* file, bool weighted_=false) : KCutflow(name_, KGet<TH1F>(file,"cutflow"), KGet<TH1F>(file,nEventProc()), weighted_) {}
+		KCutflow(string name_, TFile* file, bool weighted_=false) : KCutflow(name_, KGet<TH1F>(file,"cutflow"), KGetTHN(file,nEventProc()), weighted_) {}
 		//get nevent info from histo
-		KCutflow(string name_, TH1F* h_tmp, TH1F* h_ntmp, bool weighted_=false) : KCutflow(name_, h_tmp, h_ntmp->GetBinContent(1), h_ntmp->GetBinError(1), weighted_) {}
+		KCutflow(string name_, TH1F* h_tmp, THN* h_ntmp, bool weighted_=false) : KCutflow(name_, h_tmp, GetNEntriesPair(h_ntmp), weighted_) {}
+		//intermediate constructor to split nentries, error from THn
+		KCutflow(string name_, TH1F* h_tmp, const pair<unsigned long long, double>& nentriesPair_, bool weighted_=false) : KCutflow(name_, h_tmp, nentriesPair_.first, nentriesPair_.second, weighted_) {}
 		//get nevent info directly
 		KCutflow(string name_, TH1F* h_tmp, unsigned long long nentries_=0, double nentriesE_=0, bool weighted_=false) : name(name_), title(h_tmp->GetTitle()), weighted(weighted_) {
 			string baseName = "";

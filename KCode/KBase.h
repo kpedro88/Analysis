@@ -87,9 +87,9 @@ class KBase {
 			//store this value (number of events processed) at the beginning so histo only has to be accessed once
 			int nEventProc = 0;
 			if(not localOpt->Get("nEventProc",nEventProc) and nEventHist) {
-				nEventProc = nEventHist->GetBinContent(1);
+				nEventProc = nEventHist->Integral(-1,-1);
 				//for samples with negative weights, Neff = Npos - Nneg = Ntot - 2*Nneg
-				if(nEventNegHist) nEventProc -= 2*(nEventNegHist->GetBinContent(1));
+				if(nEventNegHist) nEventProc -= 2*(nEventNegHist->Integral(-1,-1));
 			}
 			localOpt->Set("nEventProc",max(nEventProc,1));
 		}
@@ -287,8 +287,8 @@ class KBase {
 			MyCutflow = new KCutflow(name,file);
 		}
 		virtual TTree* GetTree() { return tree; }
-		virtual TH1F* GetNEventHist() { return nEventHist; }
-		virtual TH1F* GetNEventNegHist() { return nEventNegHist; }
+		virtual THN* GetNEventHist() { return nEventHist; }
+		virtual THN* GetNEventNegHist() { return nEventNegHist; }
 		virtual TH1F* GetCutflow(KCutflowType ct=KCutflowType::CutRaw) {
 			if(!MyCutflow) MakeCutflows();
 			return (MyCutflow ? MyCutflow->GetEfficiency(ct,globalOpt->Get("cutflownorm",false)) : NULL);
@@ -327,7 +327,7 @@ class KBase {
 		OptionMap* globalOpt;
 		TFile* file;
 		TTree* tree;
-		TH1F *nEventHist, *nEventNegHist;
+		THN *nEventHist, *nEventNegHist;
 		KCutflow* MyCutflow;
 		KLooper* MyLooper;
 		KSelection* MySelection;

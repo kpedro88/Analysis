@@ -11,6 +11,7 @@
 #include <TProfile.h>
 #include <TF1.h>
 #include <TFitResultPtr.h>
+#include <TDirectory.h>
 
 #include <string>
 #include <vector>
@@ -80,6 +81,7 @@ class THN {
 		virtual void SetBinContent (Long64_t bin, Double_t content) { unimpl(__PRETTY_FUNCTION__); }
 		virtual void SetBinError (Long64_t bin, Double_t error) { unimpl(__PRETTY_FUNCTION__); }
 		virtual void SetBinErrorOption (::TH1::EBinErrorOpt type) { unimpl(__PRETTY_FUNCTION__); }
+		virtual void SetDirectory (TDirectory *dir) { unimpl(__PRETTY_FUNCTION__); }
 		virtual void SetName (const char *name) { unimpl(__PRETTY_FUNCTION__); }
 		virtual void Sumw2 (Bool_t flag=kTRUE) { unimpl(__PRETTY_FUNCTION__); }
 		virtual Int_t Write (const char *name=0, Int_t option=0, Int_t bufsize=0) { unimpl(__PRETTY_FUNCTION__); return 0; }
@@ -187,6 +189,7 @@ class THNT<::TH1> : public THN {
 		void SetBinContent (Long64_t bin, Double_t content) override { h->SetBinContent((Int_t)bin,content); }
 		void SetBinError (Long64_t bin, Double_t error) override { h->SetBinError((Int_t)bin,error); }
 		void SetBinErrorOption (::TH1::EBinErrorOpt type) override { h->SetBinErrorOption(type); }
+		void SetDirectory (TDirectory *dir) override { h->SetDirectory(dir); }
 		void SetName (const char *name) override { h->SetName(name); }
 		void Sumw2 (Bool_t flag=kTRUE) override { h->Sumw2(flag); }
 		Int_t Write (const char *name=0, Int_t option=0, Int_t bufsize=0) override { return h->Write(name,option,bufsize); }
@@ -320,6 +323,7 @@ class THNT<::THnSparse> : public THN {
 		void SetBinContent (Long64_t bin, Double_t content) override { h->SetBinContent(bin,content); }
 		void SetBinError (Long64_t bin, Double_t error) override { h->SetBinError(bin,error); }
 		void SetBinErrorOption (::TH1::EBinErrorOpt type) override { } //does nothing
+		void SetDirectory (TDirectory *dir) override { }
 		void SetName (const char *name) override { h->SetName(name); }
 		void Sumw2 (Bool_t flag=kTRUE) override { h->Sumw2(); } //false does nothing
 		Int_t Write (const char *name=0, Int_t option=0, Int_t bufsize=0) override { return h->Write(name,option,bufsize); }
