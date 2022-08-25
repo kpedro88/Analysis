@@ -166,6 +166,12 @@ class KPlot{
 			}
 		}
 		virtual void CreateSparseHist(){
+			//first, extend options if requested
+			vector<string> extend; localOpt->Get("extend",extend);
+			for(const auto& ext : extend){
+				ExtendHistoOptions(ext);
+			}
+
 			vector<int> nums; localOpt->Get("nums",nums);
 			vector<double> mins; localOpt->Get("mins",mins);
 			vector<double> maxs; localOpt->Get("maxs",maxs);
