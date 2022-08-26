@@ -58,6 +58,7 @@ class KSkimmer : public KLooper {
 			nEventOpt->Set<int>("xbins",1);
 			nEventOpt->Set<double>("xmin",0);
 			nEventOpt->Set<double>("xmax",0);
+			nEventOpt->Set<vector<string>>("extend",{"x"});
 			return nEventOpt;
 		}
 		//destructor

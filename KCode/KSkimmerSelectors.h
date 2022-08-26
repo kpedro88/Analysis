@@ -76,8 +76,6 @@ class KNEventProcSelector : public KSelector {
 			//initialize histograms using KPlot
 			KPlot* ptmp = new KPlot("nEventProc",localOpt,NULL);
 			if(pmssm){
-				//extend histo options w/ x axis from 1D case
-				localOpt->Set<vector<string>>("extend",{"x"});
 				ptmp->CreateSparseHist();
 			}
 			else {
@@ -121,8 +119,6 @@ class KNegativeWeightSelector : public KSelector {
 			//initialize histograms using KPlot
 			KPlot* ptmp = new KPlot("nEventNeg",localOpt,NULL);
 			if(pmssm){
-				//extend histo options w/ x axis from 1D case
-				localOpt->Set<vector<string>>("extend",{"x"});
 				ptmp->CreateSparseHist();
 			}
 			else {
@@ -697,8 +693,6 @@ class KBTagEfficiencySelector : public KSelector {
 			if(pmssm){
 				//initialize histograms using KPlot::CreateSparseHist() method
 				ptmp = new KPlot(hname,localOpt,NULL);
-				//extend histo options w/ x and y axes from 2D case
-				localOpt->Set<vector<string>>("extend",{"x","y"});
 				ptmp->CreateSparseHist();
 			}
 			else {
@@ -798,8 +792,6 @@ class KNJetsISRSelector : public KSelector {
 			//initialize histograms using KPlot
 			KPlot* ptmp = new KPlot("NJetsISR",localOpt,NULL);
 			if(pmssm){
-				//extend histo options w/ x axis from 1D case
-				localOpt->Set<vector<string>>("extend",{"x"});
 				ptmp->CreateSparseHist();
 			}
 			else {
