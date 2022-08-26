@@ -87,11 +87,13 @@ class KBase {
 			//store this value (number of events processed) at the beginning so histo only has to be accessed once
 			int nEventProc = 0;
 			if(not localOpt->Get("nEventProc",nEventProc) and nEventHist) {
-				nEventProc = nEventHist->Integral(-1,-1);
 				//for samples with negative weights, Neff = Npos - Nneg = Ntot - 2*Nneg
-				if(nEventNegHist) nEventProc -= 2*(nEventNegHist->Integral(-1,-1));
+				if(nEventNegHist) nEventHist->Add(nEventNegHist, -2);
+				if(nEventHist->TH1()) {
+					nEventProc = nEventHist->Integral(-1,-1);
+					localOpt->Set("nEventProc",max(nEventProc,1));
+				}
 			}
-			localOpt->Set("nEventProc",max(nEventProc,1));
 		}
 		virtual KLooper* MakeLooper() { return new KLooper(localOpt,globalOpt); }
 		//destructor

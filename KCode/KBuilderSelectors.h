@@ -73,10 +73,16 @@ class KMCWeightSelector : public KSelector {
 			useTreeXsec = base->GetGlobalOpt()->Get("useTreeXsec",false);
 			useKFactor = base->GetLocalOpt()->Get("kfactor",kfactor);
 			nEventProc = 0; got_nEventProc = base->GetLocalOpt()->Get("nEventProc",nEventProc);
+			if(!got_nEventProc) {
+				nEventHist = base->GetNEventHist();
+				if(nEventHist) got_nEventProc = true;
+			}
 			xsection = 0; got_xsection = base->GetLocalOpt()->Get("xsection",xsection);
 			norm = 0; got_luminorm = base->GetGlobalOpt()->Get("luminorm",norm);
 			debugWeight = base->GetGlobalOpt()->Get("debugWeight",false); didDebugWeight = false;
 			fastsim = base->GetLocalOpt()->Get("fastsim",false);
+			pmssm = base->GetLocalOpt()->Get("pmssm",false);
+			if(pmssm) currid = {-1,-1};
 
 			//special fastsim weight for pMSSM
 			vector<string> fscorrlist; localOpt->Get("fscorrlist",fscorrlist);
@@ -234,11 +240,12 @@ class KMCWeightSelector : public KSelector {
 					isrhistMap().Add(isrname,hmtmp);
 					isrfile->Close();
 				}
-				TH1* isrtmp = NULL;
-				if(isrunc==1) isrtmp = isrhistUp;
-				else if(isrunc==-1) isrtmp = isrhistDown;
-				else isrtmp = isrhist;
-				isrcorror.SetWeights(isrtmp,KGet<TH1>(base->GetFile(),"NJetsISR"));
+				isrweights = NULL;
+				if(isrunc==1) isrweights = isrhistUp;
+				else if(isrunc==-1) isrweights = isrhistDown;
+				else isrweights = isrhist;
+				isrnorm = KGetTHN(base->GetFile(),"NJetsISR");
+				if(isrnorm->TH1()) isrcorror.SetWeights(isrweights,isrnorm->TH1());
 			}
 			
 			//flattening options
@@ -355,6 +362,13 @@ class KMCWeightSelector : public KSelector {
 			btagCFunc = 0; localOpt->Get("btagCFunc",btagCFunc);
 			ctagCFunc = 0; localOpt->Get("ctagCFunc",ctagCFunc);
 			mistagCFunc = 0; localOpt->Get("mistagCFunc",mistagCFunc);
+			if(btagcorr and pmssm){
+				vector<string> hnames{"n_eff_b","d_eff_b","n_eff_c","d_eff_c","n_eff_udsg","d_eff_udsg"};
+				btageffs.reserve(hnames.size());
+				for(const auto& hname : hnames){
+					btageffs.push_back(KGetTHN(base->GetFile(),hname));
+				}
+			}
 
 			//prefire corr options
 			prefirecorr = localOpt->Get("prefirecorr",false);
@@ -522,10 +536,10 @@ class KMCWeightSelector : public KSelector {
 			pdfallunc = 0; localOpt->Get("pdfallunc",pdfallunc);
 			if(pdfallunc!=0){
 				TH1F* h_norm = KGet<TH1F>(base->GetFile(),"PDFAllNorm");
-				int nEventProc = h_norm->GetBinContent(1);
+				int nEventVal = h_norm->GetBinContent(1);
 				pdfallnorms = vector<double>(h_norm->GetNbinsX()-1,0.);
 				for(int n = 2; n <= h_norm->GetNbinsX(); ++n){
-					pdfallnorms[n-2] = double(nEventProc)/h_norm->GetBinContent(n);
+					pdfallnorms[n-2] = double(nEventVal)/h_norm->GetBinContent(n);
 				}
 			}
 			psisrunc = 0; localOpt->Get("psisrunc",psisrunc);
@@ -539,6 +553,7 @@ class KMCWeightSelector : public KSelector {
 			if(useTreeXsec) branches.push_back("CrossSection");
 			if(internalNormType) NormType->CheckBranches();
 			if(fscorr) branches.push_back("FastSimWeightPR31285To36122");
+			if(pmssm) branches.push_back("SignalParameters");
 			if(pucorr){
 				branches.push_back("TrueNumInteractions");
 				if(putree){
@@ -599,6 +614,33 @@ class KMCWeightSelector : public KSelector {
 		}
 		double GetBinContentBounded(TH1* hist, double val){
 			return hist->GetBinContent(hist->GetXaxis()->FindBin(min(val,hist->GetXaxis()->GetBinLowEdge(hist->GetNbinsX()+1))));
+		}
+		void GetProj(){
+			pair<double,double> idtmp{looper->SignalParameters->at(0), looper->SignalParameters->at(1)};
+			if(idtmp!=currid) {
+				if(nEventHist) {
+					nEventHistTmp = KMath::ProjectTHN(nEventHist, idtmp);
+					nEventProc = nEventHistTmp->GetBinContent(1);
+				}
+				if(isrnorm) {
+					isrnormtmp = KMath::ProjectTHN(isrnorm, idtmp);
+					isrcorror.SetWeights(isrweights,isrnormtmp);
+				}
+				if(!btageffs.empty()){
+					btageffstmp.clear();
+					btageffstmp.reserve(btageffs.size());
+					for(auto btageff : btageffs){
+						btageffstmp.push_back((TH2*)KMath::ProjectTHN(btageff, idtmp));
+					}
+					btag->h_eff_b = (TH2F*)btageffstmp[0]->Clone("h_eff_b");
+					btag->h_eff_b->Divide(btageffstmp[1]);
+					btag->h_eff_c = (TH2F*)btageffstmp[2]->Clone("h_eff_c");
+					btag->h_eff_c->Divide(btageffstmp[3]);
+					btag->h_eff_udsg = (TH2F*)btageffstmp[4]->Clone("h_eff_udsg");
+					btag->h_eff_udsg->Divide(btageffstmp[5]);
+				}
+				currid = idtmp;
+			}
 		}
 		double GetWeight(){
 			double w = 1.;
@@ -788,7 +830,7 @@ class KMCWeightSelector : public KSelector {
 				w *= xsection/nEventProc;
 				//account for negative weight events
 				if(looper->Weight<0) w *= -1;
-				
+
 				//debugging
 				if(debugWeight && !didDebugWeight){
 					int oldprec = cout.precision(20);
@@ -833,6 +875,8 @@ class KMCWeightSelector : public KSelector {
 		
 		//used for non-dummy selectors
 		virtual bool Cut() {
+			if(pmssm) GetProj();
+
 			bool goodEvent = true;
 
 			if(internalNormType) goodEvent &= NormType->Cut();
@@ -850,8 +894,16 @@ class KMCWeightSelector : public KSelector {
 		vector<int> mother;
 		TH1 *puhist, *puhistUp, *puhistDown;
 		TH1 *puupdhist, *puupdhistUp, *puupdhistDown;
+		TH1 *isrweights;
 		vector<double> pdfnorms, pdfallnorms;
 		int nEventProc;
+		bool pmssm;
+		pair<double,double> currid;
+		THN *nEventHist, *isrnorm;
+		TH1 *nEventHistTmp, *isrnormtmp;
+		vector<THN*> btageffs;
+		vector<TH2*> btageffstmp;
+		BTagCorrector* btag;
 		double xsection, norm, kfactor;
 		ISRCorrector isrcorror;
 		TriggerCorrector trigcorror;
@@ -1168,6 +1220,7 @@ class KBTagSFSelector : public KSelector {
 			//set dependencies here
 			MCWeight = sel->Get<KMCWeightSelector*>("MCWeight");
 			if(!MCWeight) depfailed = true;
+			else MCWeight->btag = &btagcorr;
 		}
 		virtual void ListBranches(){
 			branches.insert(branches.end(),{
@@ -1189,7 +1242,7 @@ class KBTagSFSelector : public KSelector {
 			int mistagSFunc = MCWeight->mistagSFunc; btagcorr.SetMistagSFunc(mistagSFunc);
 			
 			//get efficiency histograms
-			btagcorr.SetEffs(base->GetFile());
+			if(!base->GetLocalOpt()->Get("pmssm",false)) btagcorr.SetEffs(base->GetFile());
 			
 			//check fastsim stuff
 			bool fastsim = base->GetLocalOpt()->Get("fastsim",false);

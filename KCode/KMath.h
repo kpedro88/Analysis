@@ -175,6 +175,38 @@ namespace KMath {
 
 		return Jets_genIndex;
 	}
+	TH1* ProjectTHN(THN* histo, const pair<double,double>& vals){
+		THnSparse* hsparse = histo->THnSparse();
+		if(!hsparse) throw runtime_error("ProjectTHN requires THnSparse input");
+
+		int dims = histo->GetDimension();
+		int npmssm = 2;
+		int pdims = dims - npmssm;
+		if(pdims > 2 or pdims < 1) throw runtime_error("Can only project to TH1 or TH2, but requested projection to "+to_string(pdims));
+
+		TAxis* ax1 = hsparse->GetAxis(0);
+		int bin1 = ax1->FindBin(vals.first);
+		ax1->SetRange(bin1,bin1);
+
+		TAxis* ax2 = hsparse->GetAxis(1);
+		int bin2 = ax2->FindBin(vals.second);
+		ax2->SetRange(bin2,bin2);
+
+		if(pdims==1){
+			TH1D* hproj = hsparse->Projection(2,"E");
+			TH1F* hfproj = new TH1F();
+			hfproj->Copy(*hproj);
+			return hfproj;
+		}
+		else if(pdims==2){
+			TH2D* hproj = hsparse->Projection(3,2,"E");
+			TH2F* hfproj = new TH2F();
+			hfproj->Copy(*hproj);
+			return hfproj;
+		}
+		//should never get here
+		else return nullptr;
+	}
 }
 
 #endif
