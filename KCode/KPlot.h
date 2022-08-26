@@ -223,45 +223,58 @@ class KPlot{
 
 			//normal histo axis options
 			vector<double> abins; localOpt->Get(axis+"bins",abins);
-			int anum = 0; localOpt->Get(axis+"num",anum);
-			double amin = 0; localOpt->Get(axis+"min",amin);
-			double amax = 0; localOpt->Get(axis+"max",amax);
 			string atitle; localOpt->Get(axis+"title",atitle);
-
-			if(!abins.empty()){
-				nums.push_back(0);
-				mins.push_back(0);
-				maxs.push_back(0);
-				localOpt->Set("bins"+to_string(nums.size()),abins);
+			int anum = 0;
+			double amin = 0;
+			double amax = 0;
+			if(abins.empty()){
+				localOpt->Get(axis+"num",anum);
+				localOpt->Get(axis+"min",amin);
+				localOpt->Get(axis+"max",amax);
 			}
 			else {
-				nums.push_back(anum);
-				mins.push_back(amin);
-				maxs.push_back(amax);
+				localOpt->Set("bins"+to_string(nums.size()),abins);
 			}
+
+			nums.push_back(anum);
+			mins.push_back(amin);
+			maxs.push_back(amax);
 			titles.push_back(atitle);
 
 			localOpt->Set("nums",nums);
 			localOpt->Set("mins",mins);
 			localOpt->Set("maxs",maxs);
 			localOpt->Set("titles",titles);
+
+			//bin label options
+			bool abinlabel = localOpt->Get(axis+"binlabel",false);
+			if(abinlabel) localOpt->Set("binlabel"+to_string(nums.size()),true);
+			vector<string> alabels;
+			if(localOpt->Get(axis+"labels",alabels)) localOpt->Set("labels"+to_string(nums.size()),alabels);
+		}
+		virtual void LabelBins(string ax, int index){
+			string pre, suf;
+			if(ax.empty()) suf = to_string(index);
+			else pre = ax;
+
+			if(localOpt->Get(pre+"binlabel"+suf,false)){
+				vector<string> labels;
+				//check both option maps
+				bool has_labels = localOpt->Get(pre+"labels"+suf,labels) || globalOpt->Get(vars[index]+"_labels",labels);
+				if(has_labels){
+					histo->GetAxis(index)->LabelsOption("v");
+					for(unsigned b = 0; b < labels.size(); b++){
+						histo->GetAxis(index)->SetBinLabel(b+1,labels[b].c_str());
+					}
+					histo->GetAxis(index)->SetNoAlphanumeric(); //todo: make optional?
+				}
+			}
 		}
 		virtual void LabelHist(){
 			if(histo->TH1()){
 				//assign bin labels if requested
 				//we might want to relabel an existing histo
-				if(localOpt->Get("xbinlabel",false)){
-					vector<string> labels;
-					//check both option maps
-					bool has_labels = localOpt->Get("xlabels",labels) || globalOpt->Get(vars[0]+"_labels",labels);
-					if(has_labels){
-						histo->LabelsOption("v","X");
-						for(unsigned b = 0; b < labels.size(); b++){
-							histo->GetXaxis()->SetBinLabel(b+1,labels[b].c_str());
-						}
-						histo->GetXaxis()->SetNoAlphanumeric(); //todo: make optional?
-					}
-				}
+				LabelBins("x",0);
 
 				string xtitle, ytitle;
 				if(localOpt->Get("xtitle",xtitle)) histo->GetXaxis()->SetTitle(xtitle.c_str());
@@ -277,9 +290,9 @@ class KPlot{
 					throw runtime_error("Inconsistent sizes for vars, titles: "+to_string(vars.size())+", "+to_string(titles.size()));
 				}
 
-				auto htmp = histo->THnSparse();
 				for(unsigned i = 0; i < vars.size(); ++i){
-					htmp->GetAxis(i)->SetTitle(titles[i].c_str());
+					LabelBins("",i);
+					histo->GetAxis(i)->SetTitle(titles[i].c_str());
 				}
 			}
 		}
@@ -901,18 +914,7 @@ class KPlot2D: public KPlot {
 		virtual void LabelHist(){
 			KPlot::LabelHist();
 
-			if(localOpt->Get("ybinlabel",false)){
-				vector<string> labels;
-				//check both option maps
-				bool has_labels = localOpt->Get("ylabels",labels) || globalOpt->Get(vars[1]+"_labels",labels);
-				if(has_labels){
-					histo->LabelsOption("h","Y");
-					for(unsigned b = 0; b < labels.size(); b++){
-						histo->GetYaxis()->SetBinLabel(b+1,labels[b].c_str());
-					}
-					histo->GetYaxis()->SetNoAlphanumeric(); //todo: make optional?
-				}
-			}
+			LabelBins("y",1);
 
 			string ztitle;
 			localOpt->Get("ztitle",ztitle);

@@ -61,6 +61,8 @@ class THN {
 		virtual Int_t GetDimension () const { unimpl(__PRETTY_FUNCTION__); return 0; }
 		virtual Int_t GetNbinsX () const { unimpl(__PRETTY_FUNCTION__); return 0; }
 		virtual Int_t GetNbinsY () const { unimpl(__PRETTY_FUNCTION__); return 0; }
+		virtual TAxis * GetAxis (Int_t dim) { unimpl(__PRETTY_FUNCTION__); return nullptr; }
+		virtual const TAxis * GetAxis (Int_t dim) const { unimpl(__PRETTY_FUNCTION__); return nullptr; }
 		virtual TAxis* GetXaxis() { unimpl(__PRETTY_FUNCTION__); return nullptr; }
 		virtual const TAxis* GetXaxis() const { unimpl(__PRETTY_FUNCTION__); return nullptr; }
 		virtual TAxis* GetYaxis() { unimpl(__PRETTY_FUNCTION__); return nullptr; }
@@ -88,7 +90,6 @@ class THN {
 		virtual Int_t Write (const char *name=0, Int_t option=0, Int_t bufsize=0) const { unimpl(__PRETTY_FUNCTION__); return 0; }
 
 		//style accessors
-		virtual void LabelsOption (Option_t *option="h", Option_t *axis="X") { unimpl(__PRETTY_FUNCTION__); }
 		virtual void SetFillColor (Color_t fcolor) { unimpl(__PRETTY_FUNCTION__); }
 		virtual void SetFillStyle (Style_t fstyle) { unimpl(__PRETTY_FUNCTION__); }
 		virtual void SetLineColor (Color_t lcolor) { unimpl(__PRETTY_FUNCTION__); }
@@ -166,6 +167,18 @@ class THNT<::TH1> : public THN {
 		Int_t GetDimension () const override { return h->GetDimension(); }
 		Int_t GetNbinsX () const override { return h->GetNbinsX(); }
 		Int_t GetNbinsY () const override { return h->GetNbinsY(); }
+		TAxis * GetAxis (Int_t dim) override {
+			if(dim==0) return GetXaxis();
+			else if(dim==1) return GetYaxis();
+			else if(dim==2) return GetZaxis();
+			else { unimpl(string(__PRETTY_FUNCTION__)+"w/ arg "+to_string(dim)); return nullptr; }
+		}
+		const TAxis * GetAxis (Int_t dim) const override {
+			if(dim==0) return GetXaxis();
+			else if(dim==1) return GetYaxis();
+			else if(dim==2) return GetZaxis();
+			else { unimpl(string(__PRETTY_FUNCTION__)+"w/ arg "+to_string(dim)); return nullptr; }
+		}
 		TAxis* GetXaxis() override { return h->GetXaxis(); }
 		const TAxis* GetXaxis() const override { return h->GetXaxis(); }
 		TAxis* GetYaxis() override { return h->GetYaxis(); }
@@ -196,7 +209,6 @@ class THNT<::TH1> : public THN {
 		Int_t Write (const char *name=0, Int_t option=0, Int_t bufsize=0) const override { return h->Write(name,option,bufsize); }
 
 		//style accessors
-		void LabelsOption (Option_t *option="h", Option_t *axis="X") override { h->LabelsOption(option,axis); }
 		void SetFillColor (Color_t fcolor) override { h->SetFillColor(fcolor); }
 		void SetFillStyle (Style_t fstyle) override { h->SetFillStyle(fstyle); }
 		void SetLineColor (Color_t lcolor) override { h->SetLineColor(lcolor); }
@@ -269,6 +281,8 @@ class THNT<::THnSparse> : public THN {
 		Int_t GetDimension () const override { return h->GetNdimensions(); }
 		Int_t GetNbinsX () const override { return GetXaxis()->GetNbins(); }
 		Int_t GetNbinsY () const override { return GetYaxis()->GetNbins(); }
+		TAxis * GetAxis (Int_t dim) override { return h->GetAxis(dim); }
+		const TAxis * GetAxis (Int_t dim) const override { return h->GetAxis(dim); }
 		TAxis* GetXaxis() override { return h->GetAxis(0); }
 		const TAxis* GetXaxis() const override { return h->GetAxis(0); }
 		TAxis* GetYaxis() override { return h->GetAxis(1); }
@@ -330,7 +344,6 @@ class THNT<::THnSparse> : public THN {
 		Int_t Write (const char *name=0, Int_t option=0, Int_t bufsize=0) const override { return h->Write(name,option,bufsize); }
 
 		//style accessors do nothing for THn
-		void LabelsOption (Option_t *option="h", Option_t *axis="X") override { }
 		void SetFillColor (Color_t fcolor) override { }
 		void SetFillStyle (Style_t fstyle) override { }
 		void SetLineColor (Color_t lcolor) override { }
