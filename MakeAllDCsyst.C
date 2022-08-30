@@ -22,7 +22,7 @@ using namespace std;
 
 //modes
 enum class Mode {
-	RA2full, RA2fast, RA2data, SVJsig, SVJscan, SVJdata, SVJbkg
+	RA2full, RA2fast, RA2data, RA2pmssm, SVJsig, SVJscan, SVJdata, SVJbkg
 };
 
 class ModeInfo {
@@ -66,6 +66,7 @@ class ModeInfo {
 				{"RA2full",Mode::RA2full},
 				{"RA2fast",Mode::RA2fast},
 				{"RA2data",Mode::RA2data},
+				{"RA2pmssm",Mode::RA2pmssm},
 				{"SVJsig",Mode::SVJsig},
 				{"SVJscan",Mode::SVJscan},
 				{"SVJdata",Mode::SVJdata},
@@ -113,7 +114,7 @@ template <class T>
 class KSystProcessor {
 	public:
 		//constructor that finds members from file
-		KSystProcessor(const string& setname_, const string& therootfile_) : setname(setname_), therootfile(therootfile_) {
+		KSystProcessor(const string& setname_, const string& therootfile_, const ModeInfo& info_) : setname(setname_), therootfile(therootfile_), info(info_) {
 			TFile* infile = KOpen(therootfile_);
 			TKey *key;
 			TIter next(infile->GetListOfKeys());
@@ -127,7 +128,7 @@ class KSystProcessor {
 			}
 		}
 	
-		void process(ModeInfo info){
+		void process(){
 			//todo: factorize the operations below
 			
 			//setup systematics analysis tree (to study changes in yield)
@@ -211,14 +212,16 @@ class KSystProcessor {
 			}
 			
 			//fill and write tree w/ hadd-able filename
-			tree->Fill();
-			TFile* trfile = KOpen(thetrfile,"RECREATE");
-			trfile->cd();
-			tree->Write();
-			trfile->Close();
+			if(!thetrfile.empty()){
+				tree->Fill();
+				TFile* trfile = KOpen(thetrfile,"RECREATE");
+				trfile->cd();
+				tree->Write();
+				trfile->Close();
+			}
 
 			//write processed syst histos
-			if(info.mode==Mode::RA2full or info.mode==Mode::RA2fast){
+			if(info.mode==Mode::RA2full or info.mode==Mode::RA2fast or info.mode==Mode::RA2pmssm){
 				string thenewfile = info.outpre+"proc"+info.osuff+".root";
 				TFile* outfile = KOpen(thenewfile,"RECREATE");
 				outfile->cd();
@@ -252,7 +255,7 @@ class KSystProcessor {
 			//set
 			hist->SetBinContent(b,unc);
 		}
-		void MakeStat_impl(T* hist, unsigned b, double& stat_yield){
+		void MakeStat_impl(T* hist, Long64_t b, double& stat_yield){
 			stat_yield += hist->GetBinError(b)+hist->GetBinContent(b);
 			//divide
 			hist->SetBinContent(b,
@@ -262,12 +265,14 @@ class KSystProcessor {
 		//functions to be specialized
 		double MakeStatOverall(T* hist);
 		double Integral(T* hist);
+		TAxis* Axis(T* hist);
 		void DivideBound(T* hist, const string& binname);
 		T* MakeStat(const string& sname, double& yield);
 		void MakeGenMHT(KMap<double>& pctDiffMap, double nominal_yield);
 	
 		//members
 		string setname, therootfile;
+		ModeInfo info;
 		T* nominal = NULL;
 		T* genMHT = NULL;
 		vector<T*> hcontam;
@@ -279,15 +284,26 @@ template <> double KSystProcessor<TH1F>::MakeStatOverall(TH1F* hist) {
 	double hint = hist->IntegralAndError(-1,-1,err);
 	return err/hint;
 }
-
 template <> double KSystProcessor<TH2F>::MakeStatOverall(TH2F* hist) {
 	double err = 0.;
 	double hint = hist->IntegralAndError(-1,-1,-1,-1,err);
 	return err/hint;
 }
+template <> double KSystProcessor<THnSparse>::MakeStatOverall(THnSparse* hist) {
+	//essentially unimplemented (todo)
+	return 0.;
+}
 
 template<> double KSystProcessor<TH1F>::Integral(TH1F* hist){ return hist->Integral(-1,-1); }
 template<> double KSystProcessor<TH2F>::Integral(TH2F* hist){ return hist->Integral(-1,-1,-1,-1); }
+template<> double KSystProcessor<THnSparse>::Integral(THnSparse* hist){ return hist->ComputeIntegral(); }
+
+template<> TAxis* KSystProcessor<TH1F>::Axis(TH1F* hist){ return hist->GetXaxis(); }
+template<> TAxis* KSystProcessor<TH2F>::Axis(TH2F* hist){ return nullptr; } //not used/implemented
+template<> TAxis* KSystProcessor<THnSparse>::Axis(THnSparse* hist){
+	if(info.mode==Mode::RA2pmssm) return hist->GetAxis(2);
+	else return nullptr;
+}
 
 template<> void KSystProcessor<TH1F>::DivideBound(TH1F* hist, const string& binname){
 	for(int b = 1; b <= hist->GetNbinsX(); ++b){
@@ -302,6 +318,15 @@ template<> void KSystProcessor<TH2F>::DivideBound(TH2F* hist, const string& binn
 			DivideBound_impl(hist,b);
 			//no labels
 		}
+	}
+}
+template<> void KSystProcessor<THnSparse>::DivideBound(THnSparse* hist, const string& binname){
+	//from THnBase::ProjectionAny()
+	THnIter iter{hist};
+	Long64_t b = 0;
+	while((b = iter.Next()) >= 0){
+		DivideBound_impl(hist,b);
+		Axis(hist)->SetBinLabel(b,binname.c_str());
 	}
 }
 
@@ -323,6 +348,19 @@ template<> TH2F* KSystProcessor<TH2F>::MakeStat(const string& sname, double& sta
 			MakeStat_impl(hist,b,stat_yield);
 			//no labels
 		}
+	}
+	return hist;
+}
+template<> THnSparse* KSystProcessor<THnSparse>::MakeStat(const string& sname, double& stat_yield){
+	THnSparse* hist = (THnSparse*)nominal->Clone(sname.c_str());
+	//from THnBase::ProjectionAny()
+	THnIter iter{hist};
+	Long64_t b = 0;
+	while((b = iter.Next()) >= 0){
+		MakeStat_impl(hist,b,stat_yield);
+		string slabel = "signal_MCStatErr_";
+		slabel += Axis(hist)->GetBinLabel(b);
+		Axis(hist)->SetBinLabel(b,slabel.c_str());
 	}
 	return hist;
 }
@@ -350,6 +388,29 @@ template<> void KSystProcessor<TH1F>::MakeGenMHT(KMap<double>& pctDiffMap, doubl
 }
 template<> void KSystProcessor<TH2F>::MakeGenMHT(KMap<double>& pctDiffMap, double nominal_yield){
 	//not implemented
+}
+template<> void KSystProcessor<THnSparse>::MakeGenMHT(KMap<double>& pctDiffMap, double nominal_yield){
+	//keep original nominal histogram
+	string nname = changeHistoName(nominal->GetName(),"nominalOrig");
+	THnSparse* nominalOrig = (THnSparse*)nominal->Clone(nname.c_str());
+	string gname = changeHistoName(nominal->GetName(),"MHTSyst");
+	THnSparse* gsyst = (THnSparse*)nominal->Clone(gname.c_str());
+	double g_yield = 0;
+	
+	//modify nominal as average of nominal and genMHT & compute syst as difference
+	THnIter iter{gsyst};
+	Long64_t b = 0;
+	while((b = iter.Next()) >= 0){
+		gsyst->SetBinContent(b, 1.0+abs(nominal->GetBinContent(b) - genMHT->GetBinContent(b))/2.0);
+		Axis(gsyst)->SetBinLabel(b,"signal_MHTSyst");
+		nominal->SetBinContent(b, (nominal->GetBinContent(b) + genMHT->GetBinContent(b))/2.0);
+		g_yield += (gsyst->GetBinContent(b)-1.0)+nominal->GetBinContent(b);
+	}
+	
+	hsyst.push_back(gsyst);
+	hsyst.push_back(nominalOrig);
+	hsyst.push_back(genMHT);
+	pctDiffMap.Add("MHTSyst",fabs(1-g_yield/nominal_yield)*100);
 }
 
 //recompile:
@@ -389,7 +450,7 @@ void MakeAllDCsyst(string setname="", string indir="root://cmseos.fnal.gov//stor
 
 	//do the full variations separately
 	//produce a selection for each variation on the fly, cloned from nominal
-	vector<string> leptonsigs = {"T1tttt","T2tt","T5qqqqVV"};
+	vector<string> leptonsigs = {"T1tttt","T2tt","T5qqqqVV","pMSSM"};
 	bool islepton = leptonsigs.end()!=find_if(leptonsigs.begin(),leptonsigs.end(),[&](const string& s){return setname.find(s)!=string::npos;});
 	for(auto& ivar : vars){
 		string selection_base = "nominal";
@@ -423,16 +484,20 @@ void MakeAllDCsyst(string setname="", string indir="root://cmseos.fnal.gov//stor
 	}
 	if(find(systs.begin(),systs.end(),"nominal")==systs.end()){ //for signal case when checking specific syst
 		cout << "Nominal histogram not found, will not make relative systematics." << endl;
-		return;		
+		return;
 	}
 	
 	//further processing
 	if(info.mode==Mode::RA2full or info.mode==Mode::RA2fast){
-		KSystProcessor<TH1F> proc(setname,therootfile);
-		proc.process(info);		
+		KSystProcessor<TH1F> proc(setname,therootfile,info);
+		proc.process();
+	}
+	else if(info.mode==Mode::RA2pmssm){
+		KSystProcessor<TH1F> proc(setname,therootfile,info);
+		proc.process();
 	}
 	else if(info.mode==Mode::SVJsig or info.mode==Mode::SVJscan){
-		KSystProcessor<TH2F> proc(setname,therootfile);
-		proc.process(info);
+		KSystProcessor<TH2F> proc(setname,therootfile,info);
+		proc.process();
 	}
 }
