@@ -90,7 +90,7 @@ class ModeInfo {
 				if(setname.find(selline[0])!=string::npos){
 					found = true;
 					if(!localOpt->Has("selection")) localOpt->Set("selection",selline[1]);
-					if(selline.size()>2 and !localOpt->Has("setlist")) localOpt->Set("selection",selline[2]);
+					if(selline.size()>2 and !localOpt->Has("setlist")) localOpt->Set("setlist",selline[2]);
 					break;
 				}
 			}
