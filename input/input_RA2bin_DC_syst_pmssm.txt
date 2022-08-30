@@ -1,0 +1,19 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+INPUT
+input/input_global.txt
+
+OPTION
+int:yieldprecision[8]
+vstring:disable_branches[*]
+bool:closefiles[1]
+bool:debugcut[1]
+
+HISTO
+id1_id2_RA2bin	in:input[input/input_pmssm_bins.txt]	vs:extend[x]	i:xnum[174]	d:xmin[0.5]	d:xmax[174.5]	s:xtitle[RA2 bin [^{}n_{j},^{}n_{b},^{}H_{T}^{miss},^{}H_{T}]]	b:ratio[0]	b:xbinlabel[1]
