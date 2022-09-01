@@ -34,16 +34,16 @@ def getNormType(short_name):
     if short_name in normtypes: return normtypes[short_name]
     else: return ""
 
-def makeSkimLine(short_name,full_names,file_mins,file_maxs,mothers,btype="skim",block=-1,data=False):
+def makeSkimLine(short_name,full_names,file_mins,file_maxs,mothers,btype="skim",block=-1,data=False,fast=False,pmssm=False):
     the_name = short_name + ("_block"+str(block) if block >= 0 else "")
     nt = getNormType(short_name)
     line = "base" + "\t" + btype + "\t" + the_name + ("\t" + "u:block[" + str(block) + "]" if block >= 0 else "") + "\t" + "b:chain[1]" + "\t"
     line += "ch:filenames[" + str(','.join(full_names[i]+"_,"+str(file_mins[i])+","+str(file_maxs[i])+","+"_RA2AnalysisTree.root" for i, x in enumerate(full_names))) + "]" + "\t" 
-    line += "s:chainsuff[/TreeMaker2/PreSelection]" + ("\t"+"vi:mother["+str(','.join(str(m) for m in mothers))+"]" if len(mothers) > 0 else "") + ("\t"+"b:data[1]" if data else "\t"+"b:data[0]") + ("\t"+"s:normtype["+nt+"]" if len(nt)>0 else "") + "\n"
+    line += "s:chainsuff[/TreeMaker2/PreSelection]" + ("\t"+"vi:mother["+str(','.join(str(m) for m in mothers))+"]" if len(mothers) > 0 else "") + ("\t"+"b:data[1]" if data else "\t"+"b:data[0]") + ("\t" + "b:fastsim[1]" if fast else "") + ("\t" + "b:pmssm[1]" if pmssm else "") + ("\t"+"s:normtype["+nt+"]" if len(nt)>0 else "") + "\n"
     expline = the_name + " \\\n"
     return (line,expline)
 
-def makeSkimInput(read,write,export,btype="skim",nfiles=0,data=False,folder="",nfilesTM=1,preamble="",actual=False,skips=[]):
+def makeSkimInput(read,write,export,btype="skim",nfiles=0,data=False,fast=False,pmssm=False,folder="",nfilesTM=1,preamble="",actual=False,skips=[]):
     readname = read.replace(".py","").split("/")[-1]
     rfile = imp.load_source(readname,read)
     wfile = open(write,'w')
@@ -135,8 +135,8 @@ def makeSkimInput(read,write,export,btype="skim",nfiles=0,data=False,folder="",n
                 pnumberMin = pnumbers[fileMin]
                 pnumberMax = pnumbers[fileMax]
                 # check for crossover between two samples
-                if indexMin == indexMax: wline,eline = makeSkimLine(short_name,[full_names[indexMin]],[pnumberMin],[pnumberMax],mother,btype,block,data)
-                else: wline,eline = makeSkimLine(short_name,[full_names[indexMin],full_names[indexMax]],[pnumberMin,0],[file_lens[indexMin]-1,pnumberMax],mother,btype,block,data)
+                if indexMin == indexMax: wline,eline = makeSkimLine(short_name,[full_names[indexMin]],[pnumberMin],[pnumberMax],mother,btype,block,data,fast,pmssm)
+                else: wline,eline = makeSkimLine(short_name,[full_names[indexMin],full_names[indexMax]],[pnumberMin,0],[file_lens[indexMin]-1,pnumberMax],mother,btype,block,data,fast,pmssm)
                 wfile.write(wline)
                 efile.write(eline)
         print short_name + " : nfiles = " + str(fileListLen) + ", njobs = " + str(max(nblocks,1))
@@ -164,7 +164,9 @@ if __name__ == "__main__":
     parser.add_option("-N", "--nfilesTM", dest="nfilesTM", default=1, help="number of files per ntuple (from TreeMaker)")
     parser.add_option("-d", "--data", dest="data", default=False, action="store_true", help="denotes data file (instead of MC)")
     parser.add_option("-f", "--folder", dest="folder", default="", help="EOS directory to check for data ntuples")
+    parser.add_option("-F", "--fast", dest="fast", default=False, action="store_true", help="denotes fastsim file (instead of regular MC)")
+    parser.add_option("-P", "--pmssm", dest="pmssm", default=False, action="store_true", help="denotes pmssm file")
     parser.add_option("-k", "--skip", dest="skip", default="", help="skip sets matching string(s) (comma-separated list)")
     (options, args) = parser.parse_args()
 
-    makeSkimInput(options.read,options.write,options.export,"skim",int(options.nfiles),options.data,options.folder,options.nfilesTM,skips=options.skip.split(','))
+    makeSkimInput(options.read,options.write,options.export,"skim",int(options.nfiles),options.data,options.fast,options.pmssm,options.folder,options.nfilesTM,skips=options.skip.split(',') if options.skip else [])
