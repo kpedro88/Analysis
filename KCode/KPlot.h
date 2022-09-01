@@ -63,6 +63,12 @@ class KPlot{
 			//enable histo errors
 			TH1::SetDefaultSumw2(kTRUE);
 
+			//check for TProfile case
+			if(!localOpt->Get("vars",vars)){
+				//split up histo variables from name (if not otherwise specified)
+				KParser::process(name,'_',vars);
+			}
+
 			//for debugging
 			debugarrow = globalOpt->Get("debugarrow",false);
 			
@@ -298,12 +304,6 @@ class KPlot{
 		}
 		virtual bool Initialize(THN* histo_=NULL){
 			if(isInit) return isInit;
-			
-			//check for TProfile case
-			if(!localOpt->Get("vars",vars)){
-				//split up histo variables from name (if not otherwise specified)
-				KParser::process(name,'_',vars);
-			}
 
 			histo = histo_;
 			if(!histo){

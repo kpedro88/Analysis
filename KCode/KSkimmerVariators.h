@@ -130,6 +130,7 @@ class KJetVariator : public KVariator {
 		KJetVariator(string name_, OptionMap* localOpt_) : KVariator(name_,localOpt_), vtype(NoVar), Jets(new vector<TLorentzVector>), JetsAK8(new vector<TLorentzVector>)
 		{
 			//check options
+			doAK8 = localOpt->Get("doAK8",true);
 			string vname = "";
 			localOpt->Get("vartype",vname);
 			if(vname=="JECup") vtype = JECup;
@@ -410,15 +411,17 @@ class KJetVariator : public KVariator {
 				RecomputeJets(Jets_origIndex, Jets_jerFactor, Jets_orig, JetsUnc_origIndex, JetsUnc_jerFactor, Jets_unc, Jets, order);
 
 				//now the same for AK8
-				const auto& JetsAK8_origIndex = *looper->JetsAK8_origIndex;
-				const auto& JetsAK8_jerFactor = *looper->JetsAK8_jerFactor;
+				if(doAK8){
+					const auto& JetsAK8_origIndex = *looper->JetsAK8_origIndex;
+					const auto& JetsAK8_jerFactor = *looper->JetsAK8_jerFactor;
 
-				//get branches depending on which uncertainty type is chosen
-				const auto& JetsAK8Unc_origIndex = vtype==JECup?*looper->JetsAK8JECup_origIndex:vtype==JECdown?*looper->JetsAK8JECdown_origIndex:vtype==JERup?*looper->JetsAK8JERup_origIndex:vtype==JERdown?*looper->JetsAK8JERdown_origIndex:*looper->JetsAK8_origIndex; //last one is a dummy value
-				const auto& JetsAK8Unc_jerFactor = vtype==JECup?*looper->JetsAK8JECup_jerFactor:vtype==JECdown?*looper->JetsAK8JECdown_jerFactor:*looper->JetsAK8_jerFactor; //last one is a dummy value
-				const auto& JetsAK8_unc = vtype==JECup?*looper->JetsAK8_jecUnc:vtype==JECdown?*looper->JetsAK8_jecUnc:vtype==JERup?*looper->JetsAK8_jerFactorUp:vtype==JERdown?*looper->JetsAK8_jerFactorDown:*looper->JetsAK8_jecFactor; //last one is a dummy value
+					//get branches depending on which uncertainty type is chosen
+					const auto& JetsAK8Unc_origIndex = vtype==JECup?*looper->JetsAK8JECup_origIndex:vtype==JECdown?*looper->JetsAK8JECdown_origIndex:vtype==JERup?*looper->JetsAK8JERup_origIndex:vtype==JERdown?*looper->JetsAK8JERdown_origIndex:*looper->JetsAK8_origIndex; //last one is a dummy value
+					const auto& JetsAK8Unc_jerFactor = vtype==JECup?*looper->JetsAK8JECup_jerFactor:vtype==JECdown?*looper->JetsAK8JECdown_jerFactor:*looper->JetsAK8_jerFactor; //last one is a dummy value
+					const auto& JetsAK8_unc = vtype==JECup?*looper->JetsAK8_jecUnc:vtype==JECdown?*looper->JetsAK8_jecUnc:vtype==JERup?*looper->JetsAK8_jerFactorUp:vtype==JERdown?*looper->JetsAK8_jerFactorDown:*looper->JetsAK8_jecFactor; //last one is a dummy value
 
-				RecomputeJets(JetsAK8_origIndex, JetsAK8_jerFactor, JetsAK8_orig, JetsAK8Unc_origIndex, JetsAK8Unc_jerFactor, JetsAK8_unc, JetsAK8, orderAK8);
+					RecomputeJets(JetsAK8_origIndex, JetsAK8_jerFactor, JetsAK8_orig, JetsAK8Unc_origIndex, JetsAK8Unc_jerFactor, JetsAK8_unc, JetsAK8, orderAK8);
+				}
 
 				//vary MET coherently			
 				MET = vtype==JECup?looper->METUp->at(1):vtype==JECdown?looper->METDown->at(1):vtype==JERup?looper->METUp->at(0):vtype==JERdown?looper->METDown->at(0):looper->MET;
@@ -426,24 +429,26 @@ class KJetVariator : public KVariator {
 			}
 
 			//recompute scalars by hand
-			TLorentzVector vjj;
-			int counter = 0;
-			for(unsigned j = 0; j < JetsAK8->size(); ++j){
-				if(counter>=2) break;
-				if(counter<2) {
-					vjj += JetsAK8->at(j);
-					++counter;
+			if(doAK8){
+				TLorentzVector vjj;
+				int counter = 0;
+				for(unsigned j = 0; j < JetsAK8->size(); ++j){
+					if(counter>=2) break;
+					if(counter<2) {
+						vjj += JetsAK8->at(j);
+						++counter;
+					}
+					if(DeltaPhi1_AK8>9) DeltaPhi1_AK8 = abs(KMath::DeltaPhi(JetsAK8->at(j).Phi(),METPhi));
+					else if(DeltaPhi2_AK8>9) DeltaPhi2_AK8 = abs(KMath::DeltaPhi(JetsAK8->at(j).Phi(),METPhi));
 				}
-				if(DeltaPhi1_AK8>9) DeltaPhi1_AK8 = abs(KMath::DeltaPhi(JetsAK8->at(j).Phi(),METPhi));
-				else if(DeltaPhi2_AK8>9) DeltaPhi2_AK8 = abs(KMath::DeltaPhi(JetsAK8->at(j).Phi(),METPhi));
-			}
-
-			//check for 2 jets
-			DeltaPhiMin_AK8 = min(DeltaPhi1_AK8,DeltaPhi2_AK8);
-			if(counter>=2){
-				MJJ_AK8 = vjj.M();
-				MT_AK8 = KMath::TransverseMass(vjj.Px(),vjj.Py(),vjj.M(),MET*cos(METPhi),MET*sin(METPhi),0);
-				//skipping Mmc for now
+	
+				//check for 2 jets
+				DeltaPhiMin_AK8 = min(DeltaPhi1_AK8,DeltaPhi2_AK8);
+				if(counter>=2){
+					MJJ_AK8 = vjj.M();
+					MT_AK8 = KMath::TransverseMass(vjj.Px(),vjj.Py(),vjj.M(),MET*cos(METPhi),MET*sin(METPhi),0);
+					//skipping Mmc for now
+				}
 			}
 
 			for(auto& branch : linkbranches){
@@ -559,6 +564,7 @@ class KJetVariator : public KVariator {
 		}
 		
 		//member variables
+		bool doAK8;
 		vartypes vtype;
 		double AK8factor, AK4factor;
 		int njets;

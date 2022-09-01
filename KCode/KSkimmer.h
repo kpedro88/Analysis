@@ -42,23 +42,24 @@ class KSkimmer : public KLooper {
 			KSelection* nEventSelection = new KSelection(nEventSelName, globalOpt);
 			string pmssm_options; globalOpt->Get("pmssm_options",pmssm_options);
 			if(!nEventHist){
-				KSelector* NEventProc = KSelectorFactory::GetFactory().construct(nEventProcName,nEventProcName,GetNEventOpt(pmssm_options));
+				KSelector* NEventProc = KSelectorFactory::GetFactory().construct(nEventProcName,nEventProcName,GetNEventOpt(pmssm_options,"nEventProc"));
 				nEventSelection->AddSelector(NEventProc);
 			}
 			if(!nEventNegHist){
-				KSelector* NegativeWeight = nEventNegHist ? nullptr : KSelectorFactory::GetFactory().construct(nEventNegName,nEventNegName,GetNEventOpt(pmssm_options));
+				KSelector* NegativeWeight = nEventNegHist ? nullptr : KSelectorFactory::GetFactory().construct(nEventNegName,nEventNegName,GetNEventOpt(pmssm_options,"nEventNeg"));
 				nEventSelection->AddSelector(NegativeWeight);
 			}
 			if(nEventSelection->empty()) delete nEventSelection;
 			else AddSelection(nEventSelection);
 		}
-		OptionMap* GetNEventOpt(const string& options){
+		OptionMap* GetNEventOpt(const string& options, const string& var){
 			OptionMap* nEventOpt = new OptionMap();
 			if(!options.empty()) KParser::processOption("in:input["+options+"]", nEventOpt);
-			nEventOpt->Set<int>("xbins",1);
+			nEventOpt->Set<int>("xnum",1);
 			nEventOpt->Set<double>("xmin",0);
 			nEventOpt->Set<double>("xmax",0);
 			nEventOpt->Set<vector<string>>("extend",{"x"});
+			nEventOpt->Set<vector<string>>("vars",{"id1","id2",var});
 			return nEventOpt;
 		}
 		//destructor
