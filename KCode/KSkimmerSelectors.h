@@ -1848,7 +1848,7 @@ class KPileupWeightSelector : public KSelector {
 			}
 		}
 		virtual void SetBranches(){
-			if(dummy) return;
+			if(!tree or dummy) return;
 
 			tree->Branch("puWeightNew",&puWeightNew,"puWeightNew/D");
 			tree->Branch("puSysUpNew",&puSysUpNew,"puSysUpNew/D");

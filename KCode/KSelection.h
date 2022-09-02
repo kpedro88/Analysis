@@ -142,15 +142,17 @@ class KSelection {
 			file = new TFile(oname.c_str(), "RECREATE");
 			
 			//create output tree
-			if(clone){ //option to preserve all branches from input ntuple
-				string treedesc = "all observables, " + name;
-				tree = clone->CloneTree(0);
-				tree->SetName("tree");
-				tree->SetTitle(treedesc.c_str());
-			}
-			else{ //only add non-cloned trees to Selectors
-				string treedesc = "selected observables, " + name;
-				tree = new TTree("tree", treedesc.c_str());
+			if(globalOpt->Get("saveTree",true)){
+				if(clone){ //option to preserve all branches from input ntuple
+					string treedesc = "all observables, " + name;
+					tree = clone->CloneTree(0);
+					tree->SetName("tree");
+					tree->SetTitle(treedesc.c_str());
+				}
+				else{ //only add non-cloned trees to Selectors
+					string treedesc = "selected observables, " + name;
+					tree = new TTree("tree", treedesc.c_str());
+				}
 			}
 			//allow to force add branches even if cloned tree
 			for(unsigned s = 0; s < selectorList.size(); s++){
@@ -244,9 +246,13 @@ class KSelection {
 		void Finalize(THN* nEventHist=NULL, THN* nEventNegHist=NULL){
 			if(file){
 				file->cd();
-				if(nEventHist) nEventHist->Write();
-				if(nEventNegHist) nEventNegHist->Write();
-				if(cutflowHist) cutflowHist->Write();
+				if(globalOpt->Get("saveEventHists",true)){
+					if(nEventHist) nEventHist->Write();
+					if(nEventNegHist) nEventNegHist->Write();
+				}
+				if(globalOpt->Get("saveCutflow",true)){
+					if(cutflowHist) cutflowHist->Write();
+				}
 				if(tree) tree->Write();
 				
 				//just in case selectors have something to add
