@@ -1,6 +1,7 @@
 import sys, os, stat
 from optparse import OptionParser
 import imp
+from makeFastCommon import *
 
 def getNormType(short_name):
     if "_MC20" in short_name:
@@ -41,17 +42,22 @@ def makeSkimLine(short_name,full_names,file_mins,file_maxs,mothers,btype="skim",
     line += "ch:filenames[" + str(','.join(full_names[i]+"_,"+str(file_mins[i])+","+str(file_maxs[i])+","+"_RA2AnalysisTree.root" for i, x in enumerate(full_names))) + "]" + "\t" 
     line += "s:chainsuff[/TreeMaker2/PreSelection]" + ("\t"+"vi:mother["+str(','.join(str(m) for m in mothers))+"]" if len(mothers) > 0 else "") + ("\t"+"b:data[1]" if data else "\t"+"b:data[0]") + ("\t" + "b:fastsim[1]" if fast else "") + ("\t" + "b:pmssm[1]" if pmssm else "") + ("\t"+"s:normtype["+nt+"]" if len(nt)>0 else "") + "\n"
     expline = the_name + " \\\n"
-    return (line,expline)
+    # make set list for datacards with xsecs
+    dline = makeLineDCHist(the_name)
+    dline += makeLineDCBase(the_name,the_name,full=not fast,pmssm=pmssm)
+    return (line,expline,dline)
 
-def makeSkimInput(read,write,export,btype="skim",nfiles=0,data=False,fast=False,pmssm=False,folder="",nfilesTM=1,preamble="",actual=False,skips=[]):
+def makeSkimInput(read,write,card,export,btype="skim",nfiles=0,data=False,fast=False,pmssm=False,folder="",nfilesTM=1,preamble="",actual=False,skips=[]):
     readname = read.replace(".py","").split("/")[-1]
     rfile = imp.load_source(readname,read)
     wfile = open(write,'w')
     efile = open(export,'w')
+    dfile = open(card,'w') if len(card)>0 else None
 
     # preamble for file
     if len(preamble)>0: wfile.write(preamble+"\n")
     wfile.write("SET\n")
+    if dfile is not None: dfile.write("SET\n")
     
     # preamble for script to export array of sample names
     efile.write("#!/bin/bash\n")
@@ -116,9 +122,10 @@ def makeSkimInput(read,write,export,btype="skim",nfiles=0,data=False,fast=False,
         if nfiles>0: nblocks = fileListLen/nfiles + int(fileListLen%nfiles!=0)
         
         if nblocks<2: # all files in one chain (either no splitting or nfiles < fileListLen)
-            wline,eline = makeSkimLine(short_name,full_names,file_mins,file_maxs,mother,btype,-1,data)
+            wline,eline,dline = makeSkimLine(short_name,full_names,file_mins,file_maxs,mother,btype,-1,data,fast,pmssm)
             wfile.write(wline)
             efile.write(eline)
+            if dfile is not None: dfile.write(dline)
         else: # split chains into several blocks
             # make list of file indices and part numbers
             for ind, full_name in enumerate(full_names):
@@ -135,10 +142,11 @@ def makeSkimInput(read,write,export,btype="skim",nfiles=0,data=False,fast=False,
                 pnumberMin = pnumbers[fileMin]
                 pnumberMax = pnumbers[fileMax]
                 # check for crossover between two samples
-                if indexMin == indexMax: wline,eline = makeSkimLine(short_name,[full_names[indexMin]],[pnumberMin],[pnumberMax],mother,btype,block,data,fast,pmssm)
-                else: wline,eline = makeSkimLine(short_name,[full_names[indexMin],full_names[indexMax]],[pnumberMin,0],[file_lens[indexMin]-1,pnumberMax],mother,btype,block,data,fast,pmssm)
+                if indexMin == indexMax: wline,eline,dline = makeSkimLine(short_name,[full_names[indexMin]],[pnumberMin],[pnumberMax],mother,btype,block,data,fast,pmssm)
+                else: wline,eline,dline = makeSkimLine(short_name,[full_names[indexMin],full_names[indexMax]],[pnumberMin,0],[file_lens[indexMin]-1,pnumberMax],mother,btype,block,data,fast,pmssm)
                 wfile.write(wline)
                 efile.write(eline)
+                if dfile is not None: dfile.write(dline)
         print short_name + " : nfiles = " + str(fileListLen) + ", njobs = " + str(max(nblocks,1))
         totjobs += max(nblocks,1)
     print "total nfiles = " + str(totfiles) + ", total njobs = " + str(totjobs)
@@ -158,7 +166,8 @@ if __name__ == "__main__":
     # define options
     parser = OptionParser()
     parser.add_option("-r", "--read", dest="read", default="input/dict_skim.txt", help="input file to read")
-    parser.add_option("-w", "--write", dest="write", default="input/input_sets_skim.txt", help="output file to write")
+    parser.add_option("-w", "--write", dest="write", default="input/input_sets_skim.txt", help="skim output file to write")
+    parser.add_option("-c", "--card", dest="card", default="", help="datacard output file to write")
     parser.add_option("-e", "--export", dest="export", default="batch/exportSkim.sh", help="export file to write")
     parser.add_option("-n", "--nfiles", dest="nfiles", default=0, help="number of files per block for skim input")
     parser.add_option("-N", "--nfilesTM", dest="nfilesTM", default=1, help="number of files per ntuple (from TreeMaker)")
@@ -169,4 +178,4 @@ if __name__ == "__main__":
     parser.add_option("-k", "--skip", dest="skip", default="", help="skip sets matching string(s) (comma-separated list)")
     (options, args) = parser.parse_args()
 
-    makeSkimInput(options.read,options.write,options.export,"skim",int(options.nfiles),options.data,options.fast,options.pmssm,options.folder,options.nfilesTM,skips=options.skip.split(',') if options.skip else [])
+    makeSkimInput(options.read,options.write,options.card,options.export,"skim",int(options.nfiles),options.data,options.fast,options.pmssm,options.folder,options.nfilesTM,skips=options.skip.split(',') if options.skip else [])
