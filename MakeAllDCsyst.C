@@ -493,7 +493,7 @@ void MakeAllDCsyst(string setname="", string indir="root://cmseos.fnal.gov//stor
 		proc.process();
 	}
 	else if(info.mode==Mode::RA2pmssm){
-		KSystProcessor<TH1F> proc(setname,therootfile,info);
+		KSystProcessor<THnSparse> proc(setname,therootfile,info);
 		proc.process();
 	}
 	else if(info.mode==Mode::SVJsig or info.mode==Mode::SVJscan){

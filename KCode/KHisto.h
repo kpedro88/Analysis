@@ -164,16 +164,45 @@ class KHisto : public KChecker {
 			
 			//now fill the histogram
 			if(htmp->THnSparse()){
-				//currently only supports case w/ same # entries per event for each dim
-				//todo: some generalization of 2D cases (below) - take any value w/ size 1 and copy its contents n times? what to do about weights?
+				//generalization of 2D cases (below)
+				//step 1: check value sizes; allow at most one non-0, non-1 value
+				unsigned size_multi = 0;
+				unsigned indx_multi = 0;
+				unsigned sizes_zero = 0;
+				unsigned sizes_diff = 0;
+				for(int v = 0; v < values.size(); ++v){
+					if(values[v].GetSize()==1) continue;
+					else if(values[v].GetSize()==0) ++sizes_zero;
+					else if(size_multi==0) { size_multi = values[v].GetSize(); indx_multi = v; }
+					else ++sizes_diff;
+				}
+				//check for error conditions
+				if(sizes_zero or sizes_diff){
+					stringstream ss;
+					ss << "Inconsistent sizes in histogram " << name << " filler values: ";
+					for(int v = 0; v < values.size(); ++v){
+						ss << values[v].GetSize() << " ";
+					}
+					throw runtime_error(ss.str());
+				}
+				//step 2: in multi-value case, take any value w/ size 1 and copy its contents n times
+				if(size_multi){
+					for(int v = 0; v < values.size(); ++v){
+						if(values[v].GetSize()==1){
+							for(unsigned i = 1; i < size_multi; ++i){
+								values[v].Fill(values[v].GetValue(0),values[v].GetWeight(0));
+							}
+						}
+					}
+				}
+				//take weights from first value array w/ size n (if any)
 				for(int i = 0; i < values[0].GetSize(); ++i){
 					vector<double> vals;
 					vals.reserve(values.size());
 					for(int v = 0; v < values.size(); ++v){
-						if(values[v].GetSize() != values[0].GetSize()) throw runtime_error("Inconsistent sizes in histogram filler values");
 						vals.push_back(values[v].GetValue(i));
 					}
-					htmp->Fill(vals, values[0].GetWeight(i)); //pick the x weight by default
+					htmp->Fill(vals, values[indx_multi].GetWeight(i));
 				}
 				return;
 			}
@@ -223,7 +252,7 @@ class KHisto : public KChecker {
 
 			bool overflow = base->GetGlobalOpt()->Get("plotoverflow",false);
 			if(overflow){
-				if(fillers.size()==2) return; //not implemented for 2D histos or profiles yet
+				if(fillers.size()==2 or htmp->THnSparse()) return; //not implemented for 2D histos or profiles or sparse yet
 
 				//handle change in displayed x-axis
 				bool overflowall = base->GetGlobalOpt()->Get("plotoverflowall",overflow);
