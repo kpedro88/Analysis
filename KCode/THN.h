@@ -16,6 +16,8 @@
 #include <string>
 #include <vector>
 #include <exception>
+#include <iostream>
+#define DEBUG_THN
 
 using namespace std;
 
@@ -227,87 +229,92 @@ using THN1 = THNT<::TH1>;
 template <>
 class THNT<::THnSparse> : public THN {
 	public:
-		THNT<::THnSparse>(::THnSparse* h_) : h(h_) {}
+		THNT<::THnSparse>(::THnSparse* h_) : h(h_) { debug(__PRETTY_FUNCTION__); }
 		::THnSparse* THnSparse() override { return h; }
 		const ::THnSparse* THnSparse() const override { return h; }
 		string cl() const override { return "THnSparse"; }
+		void debug(const string& fn) const {
+#ifdef DEBUG_THN
+			cout << "THnSparse: called " << fn << endl; h->Print("asm"); cout << h->GetWeightSum() << endl;
+#endif
+		}
 
-		Bool_t Add (const ::TH1 *h1, Double_t c1=1) override { h->Add(h1,c1); return true; }
-		Bool_t Add (const THN *h1, Double_t c1=1) override {
+		Bool_t Add (const ::TH1 *h1, Double_t c1=1) override { debug(__PRETTY_FUNCTION__); h->Add(h1,c1); return true; }
+		Bool_t Add (const THN *h1, Double_t c1=1) override { debug(__PRETTY_FUNCTION__);
 			if(h1->THnSparse()) { h->Add(h1->THnSparse(),c1); return true; }
 			else { h->Add(h1->TH1(),c1); return true; }
 		}
-		Bool_t Divide (const THN *h1) override {
+		Bool_t Divide (const THN *h1) override { debug(__PRETTY_FUNCTION__);
 			if(!h1->THnSparse()) return false;
 			h->Divide(h1->THnSparse());
 			return true;
 		}
-		Bool_t Divide (const THN *h1, const THN *h2, Double_t c1=1, Double_t c2=1, Option_t *option="") override {
+		Bool_t Divide (const THN *h1, const THN *h2, Double_t c1=1, Double_t c2=1, Option_t *option="") override { debug(__PRETTY_FUNCTION__);
 			if(!h1->THnSparse() or !h2->THnSparse()) return false;
 			h->Divide(h1->THnSparse(),h2->THnSparse(),c1,c2,option);
 			return true;
 		}
-		Bool_t Multiply (TF1 *f1, Double_t c1=1) override { h->Multiply(f1,c1); return true; }
-		Bool_t Multiply (const THN *h1) override {
+		Bool_t Multiply (TF1 *f1, Double_t c1=1) override { debug(__PRETTY_FUNCTION__); h->Multiply(f1,c1); return true; }
+		Bool_t Multiply (const THN *h1) override { debug(__PRETTY_FUNCTION__);
 			if(!h1->THnSparse()) return false;
 			h->Multiply(h1->THnSparse());
 			return true;
 		}
 
-		THN * Clone (const char *newname="") override { return new THNT<::THnSparse>((::THnSparse*)h->Clone(newname)); }
-		void Draw (Option_t *option="") override { h->Draw(option); }
-		Long64_t Fill(const vector<Double_t>& x, Double_t w=1.) override { return h->Fill(x.data(),w); }
-		TFitResultPtr Fit (TF1 *f1, Option_t *option="", Option_t *goption="", Double_t xmin=0, Double_t xmax=0) override {
+		THN * Clone (const char *newname="") override { debug(__PRETTY_FUNCTION__); return new THNT<::THnSparse>((::THnSparse*)h->Clone(newname)); }
+		void Draw (Option_t *option="") override { debug(__PRETTY_FUNCTION__); h->Draw(option); }
+		Long64_t Fill(const vector<Double_t>& x, Double_t w=1.) override { debug(__PRETTY_FUNCTION__); return h->Fill(x.data(),w); }
+		TFitResultPtr Fit (TF1 *f1, Option_t *option="", Option_t *goption="", Double_t xmin=0, Double_t xmax=0) override { debug(__PRETTY_FUNCTION__);
 			if(xmin!=0 or xmax!=0) { unimpl(__PRETTY_FUNCTION__); return nullptr; }
 			return h->Fit(f1,option,goption);
 		}
-		Long64_t FindBin (Double_t x, Double_t y=0, Double_t z=0) override {
+		Long64_t FindBin (Double_t x, Double_t y=0, Double_t z=0) override { debug(__PRETTY_FUNCTION__);
 			vector<int> values(GetDimension(),0);
 			if(values.size()>0) values[0] = x;
 			if(values.size()>1) values[1] = y;
 			if(values.size()>2) values[2] = z;
 			return h->GetBin(values.data(),false);
 		}
-		Long64_t GetBin (Int_t binx, Int_t biny=0, Int_t binz=0) const override {
+		Long64_t GetBin (Int_t binx, Int_t biny=0, Int_t binz=0) const override { debug(__PRETTY_FUNCTION__);
 			vector<int> coords(GetDimension(),0);
 			if(coords.size()>0) coords[0] = binx;
 			if(coords.size()>1) coords[1] = biny;
 			if(coords.size()>2) coords[2] = binz;
 			return h->GetBin(coords.data(),false);
 		}
-		Double_t GetBinContent (Long64_t bin) const override { return h->GetBinContent(bin); }
-		Double_t GetBinError (Long64_t bin) const override { return h->GetBinError(bin); }
-		::TH1::EBinErrorOpt GetBinErrorOption () const override { return ::TH1::kNormal; }
-		Int_t GetDimension () const override { return h->GetNdimensions(); }
-		Int_t GetNbinsX () const override { return GetXaxis()->GetNbins(); }
-		Int_t GetNbinsY () const override { return GetYaxis()->GetNbins(); }
-		TAxis * GetAxis (Int_t dim) override { return h->GetAxis(dim); }
-		const TAxis * GetAxis (Int_t dim) const override { return h->GetAxis(dim); }
-		TAxis* GetXaxis() override { return h->GetAxis(0); }
-		const TAxis* GetXaxis() const override { return h->GetAxis(0); }
-		TAxis* GetYaxis() override { return h->GetAxis(1); }
-		const TAxis* GetYaxis() const override { return h->GetAxis(1); }
-		TAxis* GetZaxis() override { return h->GetAxis(2); }
-		const TAxis* GetZaxis() const override { return h->GetAxis(2); }
-		Bool_t InheritsFrom (const char *classname) const override { return h->InheritsFrom(classname); }
-		Bool_t InheritsFrom (const TClass *cl) const override { return h->InheritsFrom(cl); }
-		Double_t Integral (Int_t binx1, Int_t binx2, Option_t *option="") const override {
+		Double_t GetBinContent (Long64_t bin) const override { debug(__PRETTY_FUNCTION__); return h->GetBinContent(bin); }
+		Double_t GetBinError (Long64_t bin) const override { debug(__PRETTY_FUNCTION__); return h->GetBinError(bin); }
+		::TH1::EBinErrorOpt GetBinErrorOption () const override { debug(__PRETTY_FUNCTION__); return ::TH1::kNormal; }
+		Int_t GetDimension () const override { debug(__PRETTY_FUNCTION__); return h->GetNdimensions(); }
+		Int_t GetNbinsX () const override { debug(__PRETTY_FUNCTION__); return GetXaxis()->GetNbins(); }
+		Int_t GetNbinsY () const override { debug(__PRETTY_FUNCTION__); return GetYaxis()->GetNbins(); }
+		TAxis * GetAxis (Int_t dim) override { debug(__PRETTY_FUNCTION__); return h->GetAxis(dim); }
+		const TAxis * GetAxis (Int_t dim) const override { debug(__PRETTY_FUNCTION__); return h->GetAxis(dim); }
+		TAxis* GetXaxis() override { debug(__PRETTY_FUNCTION__); return h->GetAxis(0); }
+		const TAxis* GetXaxis() const override { debug(__PRETTY_FUNCTION__); return h->GetAxis(0); }
+		TAxis* GetYaxis() override { debug(__PRETTY_FUNCTION__); return h->GetAxis(1); }
+		const TAxis* GetYaxis() const override { debug(__PRETTY_FUNCTION__); return h->GetAxis(1); }
+		TAxis* GetZaxis() override { debug(__PRETTY_FUNCTION__); return h->GetAxis(2); }
+		const TAxis* GetZaxis() const override { debug(__PRETTY_FUNCTION__); return h->GetAxis(2); }
+		Bool_t InheritsFrom (const char *classname) const override { debug(__PRETTY_FUNCTION__); return h->InheritsFrom(classname); }
+		Bool_t InheritsFrom (const TClass *cl) const override { debug(__PRETTY_FUNCTION__); return h->InheritsFrom(cl); }
+		Double_t Integral (Int_t binx1, Int_t binx2, Option_t *option="") const override { debug(__PRETTY_FUNCTION__);
 			TString opt = option;
 			opt.ToLower();
 			if(binx1==-1 and binx2==-1 and !opt.Contains("width")) return h->GetWeightSum();
 			else { unimpl(__PRETTY_FUNCTION__); return 0.; }
 		}
-		Double_t Integral (Option_t *option="") const override {
+		Double_t Integral (Option_t *option="") const override { debug(__PRETTY_FUNCTION__);
 			TString opt = option;
 			opt.ToLower();
 			if(!opt.Contains("width")) return h->ComputeIntegral();
 			else { unimpl(__PRETTY_FUNCTION__); return 0.; }
 		}
 		//todo: get a sensible value for err
-		Double_t IntegralAndError (Int_t binx1, Int_t binx2, Double_t &err, Option_t *option="") const override { err = 0.; return Integral(binx1,binx2,option); }
-		void Print (Option_t *option="") const override { h->Print(option); }
+		Double_t IntegralAndError (Int_t binx1, Int_t binx2, Double_t &err, Option_t *option="") const override { debug(__PRETTY_FUNCTION__); err = 0.; return Integral(binx1,binx2,option); }
+		void Print (Option_t *option="") const override { debug(__PRETTY_FUNCTION__); h->Print(option); }
 		//the behavior for xbins!=0 is not the same as TH1
-		THN * Rebin (Int_t ngroup=2, const char *newname="", const Double_t *xbins=0) override {
+		THN * Rebin (Int_t ngroup=2, const char *newname="", const Double_t *xbins=0) override { debug(__PRETTY_FUNCTION__);
 			::THnSparse* hnew = nullptr;
 			if(xbins) { vector<int> group; group.insert(group.end(), xbins, xbins + h->GetNbins()); hnew = h->Rebin(group.data()); }
 			else { hnew = h->Rebin(ngroup); }
@@ -315,14 +322,14 @@ class THNT<::THnSparse> : public THN {
 			if(!newname){ h = hnew; return this; }
 			else { return new THNT<::THnSparse>(hnew); }
 		}
-		void Reset (Option_t *option="") override { h->Reset(option); }
-		void Scale (Double_t c1=1, Option_t *option="") override {
+		void Reset (Option_t *option="") override { debug(__PRETTY_FUNCTION__); h->Reset(option); }
+		void Scale (Double_t c1=1, Option_t *option="") override { debug(__PRETTY_FUNCTION__);
 			TString opt = option;
 			opt.ToLower();
 			if(!opt.Contains("width")) h->Scale(c1);
 			else { unimpl(__PRETTY_FUNCTION__); }
 		}
-		void SetAxisRange (Double_t xmin, Double_t xmax, Option_t *axis="X") override {
+		void SetAxisRange (Double_t xmin, Double_t xmax, Option_t *axis="X") override { debug(__PRETTY_FUNCTION__);
 			//based on TH1::AxisChoice() and TH1::SetAxisRange()
 			char achoice = toupper(axis[0]);
 			TAxis* taxis = nullptr;
@@ -334,24 +341,24 @@ class THNT<::THnSparse> : public THN {
 			Int_t bin2 = taxis->FindFixBin(xmax);
 			taxis->SetRange(bin1, bin2);
 		}
-		void SetBinContent (Long64_t bin, Double_t content) override { h->SetBinContent(bin,content); }
-		void SetBinError (Long64_t bin, Double_t error) override { h->SetBinError(bin,error); }
-		void SetBinErrorOption (::TH1::EBinErrorOpt type) override { } //does nothing
-		void SetDirectory (TDirectory *dir) override { }
-		void SetName (const char *name) override { h->SetName(name); }
-		void Sumw2 (Bool_t flag=kTRUE) override { h->Sumw2(); } //false does nothing
-		Int_t Write (const char *name=0, Int_t option=0, Int_t bufsize=0) override { return h->Write(name,option,bufsize); }
-		Int_t Write (const char *name=0, Int_t option=0, Int_t bufsize=0) const override { return h->Write(name,option,bufsize); }
+		void SetBinContent (Long64_t bin, Double_t content) override { debug(__PRETTY_FUNCTION__); h->SetBinContent(bin,content); }
+		void SetBinError (Long64_t bin, Double_t error) override { debug(__PRETTY_FUNCTION__); h->SetBinError(bin,error); }
+		void SetBinErrorOption (::TH1::EBinErrorOpt type) override { debug(__PRETTY_FUNCTION__); } //does nothing
+		void SetDirectory (TDirectory *dir) override { debug(__PRETTY_FUNCTION__); }
+		void SetName (const char *name) override { debug(__PRETTY_FUNCTION__); h->SetName(name); }
+		void Sumw2 (Bool_t flag=kTRUE) override { debug(__PRETTY_FUNCTION__); h->Sumw2(); } //false does nothing
+		Int_t Write (const char *name=0, Int_t option=0, Int_t bufsize=0) override { debug(__PRETTY_FUNCTION__); return h->Write(name,option,bufsize); }
+		Int_t Write (const char *name=0, Int_t option=0, Int_t bufsize=0) const override { debug(__PRETTY_FUNCTION__); return h->Write(name,option,bufsize); }
 
 		//style accessors do nothing for THn
-		void SetFillColor (Color_t fcolor) override { }
-		void SetFillStyle (Style_t fstyle) override { }
-		void SetLineColor (Color_t lcolor) override { }
-		void SetLineStyle (Style_t lstyle) override { }
-		void SetLineWidth (Width_t lwidth) override { }
-		void SetMarkerColor (Color_t mcolor=1) override { }
-		void SetMarkerSize (Size_t msize=1) override { }
-		void SetMarkerStyle (Style_t mstyle=1) override { }
+		void SetFillColor (Color_t fcolor) override { debug(__PRETTY_FUNCTION__); }
+		void SetFillStyle (Style_t fstyle) override { debug(__PRETTY_FUNCTION__); }
+		void SetLineColor (Color_t lcolor) override { debug(__PRETTY_FUNCTION__); }
+		void SetLineStyle (Style_t lstyle) override { debug(__PRETTY_FUNCTION__); }
+		void SetLineWidth (Width_t lwidth) override { debug(__PRETTY_FUNCTION__); }
+		void SetMarkerColor (Color_t mcolor=1) override { debug(__PRETTY_FUNCTION__); }
+		void SetMarkerSize (Size_t msize=1) override { debug(__PRETTY_FUNCTION__); }
+		void SetMarkerStyle (Style_t mstyle=1) override { debug(__PRETTY_FUNCTION__); }
 
 	protected:
 		::THnSparse* h;
