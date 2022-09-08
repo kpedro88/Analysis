@@ -79,7 +79,7 @@ class KMCWeightSelector : public KSelector {
 			}
 			xsection = 0; got_xsection = base->GetLocalOpt()->Get("xsection",xsection);
 			norm = 0; got_luminorm = base->GetGlobalOpt()->Get("luminorm",norm);
-			debugWeight = base->GetGlobalOpt()->Get("debugWeight",false); didDebugWeight = false;
+			debugWeight = base->GetGlobalOpt()->Get("debugWeight",false);
 			fastsim = base->GetLocalOpt()->Get("fastsim",false);
 			pmssm = base->GetLocalOpt()->Get("pmssm",false);
 			if(pmssm) currid = {-1,-1};
@@ -245,7 +245,7 @@ class KMCWeightSelector : public KSelector {
 				else if(isrunc==-1) isrweights = isrhistDown;
 				else isrweights = isrhist;
 				isrnorm = KGetTHN(base->GetFile(),"NJetsISR");
-				if(isrnorm->TH1()) isrcorror.SetWeights(isrweights,isrnorm->TH1());
+				if(isrnorm->TH1()) isrcorror.SetWeights(isrweights,isrnorm->TH1(),debugWeight);
 			}
 			
 			//flattening options
@@ -624,7 +624,7 @@ class KMCWeightSelector : public KSelector {
 				}
 				if(isrnorm) {
 					isrnormtmp = KMath::ProjectTHN(isrnorm, idtmp);
-					isrcorror.SetWeights(isrweights,isrnormtmp);
+					isrcorror.SetWeights(isrweights,isrnormtmp,debugWeight);
 				}
 				if(!btageffs.empty()){
 					btageffstmp.clear();
@@ -642,12 +642,22 @@ class KMCWeightSelector : public KSelector {
 				currid = idtmp;
 			}
 		}
+		//helper for debugging
+		void debugWeightMsg(const string& wname, double w){
+			int oldprec = cout.precision(20);
+			cout << "w(+" << wname << ") = " << w << endl;
+			cout.precision(oldprec);
+		}
 		double GetWeight(){
 			double w = 1.;
 			if(unweighted) return w;
 
+			if(debugWeight) cout << "Weight debugging for " << base->GetName() << endl;
+
 			if(fscorr) {
 				w *= looper->FastSimWeightPR31285To36122;
+
+				if(debugWeight) debugWeightMsg("fscorr",w);
 			}			
 			
 			if(pucorr) {
@@ -655,16 +665,22 @@ class KMCWeightSelector : public KSelector {
 				if(puunc==1) w *= puhistUp ? GetBinContentBounded(puhistUp,looper->TrueNumInteractions) : punew ? looper->puSysUpNew : looper->puSysUp;
 				else if(puunc==-1) w *= puhistDown ? GetBinContentBounded(puhistDown,looper->TrueNumInteractions) : punew ? looper->puSysDownNew : looper->puSysDown;
 				else w *= puhist ? GetBinContentBounded(puhist,looper->TrueNumInteractions) : punew ? looper->puWeightNew : looper->puWeight;
+
+				if(debugWeight) debugWeightMsg("pucorr",w);
 			}
 
 			if(puupdcorr){
 				if(puupdunc==1) w *= (puupdhistUp ? GetBinContentBounded(puupdhistUp,looper->TrueNumInteractions) : 1.0) * looper->puSysUp;
 				else if(puupdunc==-1) w *= (puupdhistDown ? GetBinContentBounded(puupdhistDown,looper->TrueNumInteractions) : 1.0) * looper->puSysDown;
 				else w *= (puupdhist ? GetBinContentBounded(puupdhist,looper->TrueNumInteractions) : 1.0) * looper->puWeight;
+
+				if(debugWeight) debugWeightMsg("puupdcorr",w);
 			}
 			
 			if(puacccorr){
 				w *= puacc.GetCorrection(puaccunc);
+
+				if(debugWeight) debugWeightMsg("puacccorr",w);
 			}
 			
 			if(trigcorr){
@@ -679,14 +695,20 @@ class KMCWeightSelector : public KSelector {
 				else {
 					w *= trigcorror.GetCorrection(looper->HT,trigunc);
 				}
+
+				if(debugWeight) debugWeightMsg("trigcorr",w);
 			}
 
 			if(trigfncorr){
 				w *= trigfncorror.GetCorrection(looper->MT_AK8,trigfnunc);
+
+				if(debugWeight) debugWeightMsg("trigfncorr",w);
 			}
 			
 			if(trigsystcorr){
 				w *= trigsystcorrval;
+
+				if(debugWeight) debugWeightMsg("trigsystcorr",w);
 			}
 
 			if(isrcorr){
@@ -694,7 +716,9 @@ class KMCWeightSelector : public KSelector {
 					if(isrunc<0) w *= (1 - isrflat);
 					else if(isrunc>0) w *= (1 + isrflat);
 				}
-				else w *= isrcorror.GetCorrection(looper->NJetsISR);
+				else w *= isrcorror.GetCorrection(looper->NJetsISR,debugWeight);
+
+				if(debugWeight) debugWeightMsg("isrcorr",w);
 			}
 
 			if(pdfunc!=0){
@@ -702,6 +726,8 @@ class KMCWeightSelector : public KSelector {
 				tie(mean,rms) = KMath::MeanRMS(looper->PDFweights->begin(),looper->PDFweights->end());
 				if(pdfunc==1) w *= (mean+rms)*pdfnorms[0];
 				else if(pdfunc==-1) w *= (mean-rms)*pdfnorms[1];
+
+				if(debugWeight) debugWeightMsg("pdfunc",w);
 			}
 
 			if(pdfqunc!=0){
@@ -710,6 +736,8 @@ class KMCWeightSelector : public KSelector {
 				sort(pdf_sorted.begin(),pdf_sorted.end());
 				if(pdfqunc==1) w *= pdf_sorted[83]*pdfnorms[4];
 				else if(pdfqunc==-1) w *= pdf_sorted[15]*pdfnorms[5];
+
+				if(debugWeight) debugWeightMsg("pdfqunc",w);
 			}
 
 			if(scaleunc!=0){
@@ -721,10 +749,14 @@ class KMCWeightSelector : public KSelector {
 				
 				if(scaleunc==1) w *= *(TMath::LocMax(ScaleWeightsMod.begin(),ScaleWeightsMod.end()))*pdfnorms[2];
 				else if(scaleunc==-1) w *= *(TMath::LocMin(ScaleWeightsMod.begin(),ScaleWeightsMod.end()))*pdfnorms[3];
+
+				if(debugWeight) debugWeightMsg("scaleunc",w);
 			}
 			
 			if(pdfallunc!=0){
 				w *= looper->PDFweights->at(pdfallunc)*pdfallnorms[pdfallunc];
+
+				if(debugWeight) debugWeightMsg("pdfallunc",w);
 			}
 
 			if(psisrunc!=0){
@@ -739,6 +771,8 @@ class KMCWeightSelector : public KSelector {
 					if(psisrunc==1) w *= (1+psflat);
 					else if(psisrunc==-1) w *= (1-psflat);
 				}
+
+				if(debugWeight) debugWeightMsg("psisrunc",w);
 			}
 			if(psfsrunc!=0){
 				//skip ps unc if weights missing
@@ -752,25 +786,35 @@ class KMCWeightSelector : public KSelector {
 					if(psfsrunc==1) w *= (1+psflat);
 					else if(psfsrunc==-1) w *= (1-psflat);
 				}
+
+				if(debugWeight) debugWeightMsg("psfsrunc",w);
 			}
 
 			//correct for expected FullSim PFJetID efficiency
 			if(jetidcorr){
 				w *= jetidcorrval;
+
+				if(debugWeight) debugWeightMsg("jetidcorr",w);
 			}
 			
 			if(isotrackcorr){
 				w *= isotrackcorrval;
+
+				if(debugWeight) debugWeightMsg("isotrackcorr",w);
 			}
 			
 			if(lumicorr){
 				w *= lumicorrval;
+
+				if(debugWeight) debugWeightMsg("lumicorr",w);
 			}
 
 			if(prefirecorr){
 				if(prefireunc==0) w *= looper->NonPrefiringProb;
 				else if(prefireunc>0) w *= looper->NonPrefiringProbUp;
 				else if(prefireunc<0) w *= looper->NonPrefiringProbDown;
+
+				if(debugWeight) debugWeightMsg("prefirecorr",w);
 			}
 
 			if(hemvetocorr){
@@ -782,6 +826,8 @@ class KMCWeightSelector : public KSelector {
 					if(!looper->HEMDPhiVetoFilter) w *= -1;
 					else w *= 1;
 				}
+
+				if(debugWeight) debugWeightMsg("hemvetocorr",w);
 			}
 
 			if(lepcorr){
@@ -814,16 +860,24 @@ class KMCWeightSelector : public KSelector {
 						}
 					}
 				}
+
+				if(debugWeight) debugWeightMsg("lepcorr",w);
 			}
 
 			if(svbweight){
 				double qty = 0;
 				if(svbqty==MTAK8) qty = looper->MT_AK8;
 				w *= hsvb->GetBinContent(hsvb->GetXaxis()->FindBin(min(qty,hsvb->GetXaxis()->GetBinLowEdge(hsvb->GetNbinsX()+1))));
+
+				if(debugWeight) debugWeightMsg("svbweight",w);
 			}
 			
 			//now do scaling: norm*xsection/nevents
-			if(useTreeWeight && !fastsim) w *= looper->Weight;
+			if(useTreeWeight && !fastsim) {
+				w *= looper->Weight;
+
+				if(debugWeight) debugWeightMsg("TreeWeight",w);
+			}
 			else if(got_nEventProc && nEventProc>0 && (got_xsection or useTreeXsec)){
 				if(useTreeXsec and !got_xsection) xsection = looper->CrossSection;
 
@@ -832,19 +886,29 @@ class KMCWeightSelector : public KSelector {
 				if(looper->Weight<0) w *= -1;
 
 				//debugging
-				if(debugWeight && !didDebugWeight){
+				if(debugWeight){
+					debugWeightMsg("xsec/nEventProc",w);
 					int oldprec = cout.precision(20);
-					cout << base->GetName() << endl;
-					cout << "TreeMaker: " << fabs(looper->Weight) << endl;
-					cout << "    KCode: " << xsection/nEventProc << " = " << xsection << " / " << nEventProc << endl;
-					didDebugWeight = true;
+					cout << "    TreeMaker: " << fabs(looper->Weight) << endl;
+					cout << "        KCode: " << xsection/nEventProc << " = " << xsection << " / " << nEventProc << endl;
 					cout.precision(oldprec);
 				}
 			}
-			if(useKFactor) w *= kfactor;
+			if(useKFactor) {
+				w *= kfactor;
+
+				if(debugWeight) debugWeightMsg("kfactor",w);
+			}
 			
 			//use lumi norm (default)
-			if(got_luminorm) w *= norm;
+			if(got_luminorm) {
+				w *= norm;
+
+				if(debugWeight) debugWeightMsg("luminorm",w);
+			}
+
+			//only debug first event
+			if(debugWeight) debugWeight = false;
 			
 			return w;
 		}
@@ -887,7 +951,7 @@ class KMCWeightSelector : public KSelector {
 		//member variables
 		KNormTypeSelector* NormType;
 		bool internalNormType;
-		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, useTreeXsec, useKFactor, debugWeight, didDebugWeight;
+		bool unweighted, got_nEventProc, got_xsection, got_luminorm, useTreeWeight, useTreeXsec, useKFactor, debugWeight;
 		bool pucorr, putree, punew, puupdcorr, trigcorr, trigsystcorr, trigfncorr, isrcorr, useisrflat, fastsim, fscorr, jetidcorr, isotrackcorr, lumicorr, btagcorr, puacccorr, flatten, svbweight, prefirecorr, hemvetocorr, lepcorr, psnorm;
 		double jetidcorrval, isotrackcorrval, trigsystcorrval, lumicorrval, isrflat, psflat;
 		int puunc, puupdunc, pdfunc, pdfqunc, pdfallunc, isrunc, scaleunc, trigunc, trigyear, trigfnunc, btagSFunc, mistagSFunc, btagCFunc, ctagCFunc, mistagCFunc, puaccunc, prefireunc, hemvetounc, lepidunc, lepisounc, leptrkunc, psisrunc, psfsrunc;

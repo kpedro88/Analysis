@@ -16,7 +16,7 @@ class ISRCorrector {
 		virtual ~ISRCorrector() {}
 		
 		//accessors
-		void SetWeights(TH1* weights, TH1* all){
+		void SetWeights(TH1* weights, TH1* all, bool debug=false){
 			if(!weights) return;
 			//normalize weights using overall NJetsISR spectrum so total number of gen events will stay the same
 			h_weights = (TH1*)weights->Clone();
@@ -26,11 +26,19 @@ class ISRCorrector {
 			h_njetsisrW->Multiply(h_weights);
 			double A_NLO = h_njetsisrW->Integral(-1,-1);
 			h_weights->Scale(A_LO/A_NLO);
+
+			if(debug) std::cout << "ISRCorrector norm: " << A_LO << " / " << A_NLO << " = " << A_LO/A_NLO << std::endl;
 		}
 		
 		//function
-		double GetCorrection(int NJetsISR){
-			return h_weights ? h_weights->GetBinContent(h_weights->GetXaxis()->FindBin(min(double(NJetsISR),h_weights->GetXaxis()->GetBinLowEdge(h_weights->GetNbinsX())))) : 1.;
+		double GetCorrection(int NJetsISR, bool debug=false){
+			double binval = min(double(NJetsISR),h_weights->GetXaxis()->GetBinLowEdge(h_weights->GetNbinsX()));
+			int bin = h_weights ? h_weights->GetXaxis()->FindBin(binval) : -1;
+			double val = h_weights ? h_weights->GetBinContent(bin) : 1.;
+
+			if(debug) std::cout << "ISRCorrector corr: NJetsISR = " << NJetsISR << ", binval = " << binval << ", bin = " << bin << ", val = " << val << std::endl;
+
+			return val;
 		}
 		
 		//member variables
