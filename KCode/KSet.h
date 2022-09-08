@@ -81,19 +81,34 @@ class KSet : public KBase {
 				THN* htmp = nullptr;
 				bool all_ext = true;
 				if(debug) cout << "Histo " << sit.first << ":" << endl;
-				for(auto& child: children){ //include option to subtract histos, off by default
-					if(htmp==nullptr){
-						htmp = child->GetHisto()->Clone();
-						htmp->Reset("ICESM");
-						if(poisson) htmp->SetBinErrorOption(TH1::kPoisson);
-					}
-					all_ext &= child->IsExt();
+				//workaround for THnSparse::Add() bug
+				if(children.size()==1){
+					auto& child = children[0];
+					htmp = child->GetHisto()->Clone();
+					if(poisson) htmp->SetBinErrorOption(TH1::kPoisson);
+					all_ext = child->IsExt();
 					if(debug){
 						cout << "child " << name << (child->IsExt() ? " (ext)" : " ") << ":" << endl;
 						child->GetHisto()->Print();
 					}
-					htmp->Add(child->GetHisto(), child->GetLocalOpt()->Get("subtract",false) ? -1 : 1);				
+					if(child->GetLocalOpt()->Get("subtract",false)) htmp->Scale(-1);
 				}
+				else {
+					for(auto& child: children){ //include option to subtract histos, off by default
+						if(htmp==nullptr){
+							htmp = child->GetHisto()->Clone();
+							htmp->Reset("ICESM");
+							if(poisson) htmp->SetBinErrorOption(TH1::kPoisson);
+						}
+						all_ext &= child->IsExt();
+						if(debug){
+							cout << "child " << name << (child->IsExt() ? " (ext)" : " ") << ":" << endl;
+							child->GetHisto()->Print();
+						}
+						htmp->Add(child->GetHisto(), child->GetLocalOpt()->Get("subtract",false) ? -1 : 1);				
+					}
+				}
+
 				//special case to allow external histos to have different binning
 				if(all_ext){
 					double diffmin = obj->htmp->GetXaxis()->GetXmin() - htmp->GetXaxis()->GetXmin();
@@ -114,7 +129,9 @@ class KSet : public KBase {
 					}
 				}
 				else {
-					obj->htmp->Add(htmp);
+					//continue workaround
+					if(children.size()==1) obj->htmp = htmp;
+					else obj->htmp->Add(htmp);
 				}
 				if(debug) {
 					cout << "Result:" << endl;

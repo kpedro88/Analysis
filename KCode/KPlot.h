@@ -163,6 +163,7 @@ class KPlot{
 				isInit = false;
 				return;
 			}
+			histo->Sumw2();
 
 			//option to change displayed axis
 			double dxmin = 0; bool has_dxmin = localOpt->Get("dxmin",dxmin);
@@ -217,6 +218,7 @@ class KPlot{
 			}
 
 			histo = new THNn(htmp);
+			histo->Sumw2();
 			isInit = true;
 		}
 		//helper for sparse histo options
@@ -896,6 +898,7 @@ class KPlot2D: public KPlot {
 				isInit = false;
 				return;
 			}
+			histo->Sumw2();
 
 			//option to change displayed axis
 			double dxmin = 0; bool has_dxmin = localOpt->Get("dxmin",dxmin);
