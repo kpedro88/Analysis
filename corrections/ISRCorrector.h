@@ -25,9 +25,11 @@ class ISRCorrector {
 			TH1* h_njetsisrW = (TH1*)all->Clone();
 			h_njetsisrW->Multiply(h_weights);
 			double A_NLO = h_njetsisrW->Integral(-1,-1);
-			h_weights->Scale(A_LO/A_NLO);
 
-			if(debug) std::cout << "ISRCorrector norm: " << A_LO << " / " << A_NLO << " = " << A_LO/A_NLO << std::endl;
+			double scale = A_NLO > 0 ? A_LO/A_NLO : 1.;
+			h_weights->Scale(scale);
+
+			if(debug) std::cout << "ISRCorrector norm: " << A_LO << " / " << A_NLO << " = " << scale << std::endl;
 		}
 		
 		//function
