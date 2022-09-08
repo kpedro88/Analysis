@@ -294,7 +294,7 @@ class THNT<::THnSparse> : public THN {
 		Double_t Integral (Int_t binx1, Int_t binx2, Option_t *option="") const override {
 			TString opt = option;
 			opt.ToLower();
-			if(binx1==-1 and binx2==-1 and !opt.Contains("width")) return h->ComputeIntegral();
+			if(binx1==-1 and binx2==-1 and !opt.Contains("width")) return h->GetWeightSum();
 			else { unimpl(__PRETTY_FUNCTION__); return 0.; }
 		}
 		Double_t Integral (Option_t *option="") const override {
