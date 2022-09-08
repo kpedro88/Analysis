@@ -44,7 +44,7 @@ def makeSkimLine(short_name,full_names,file_mins,file_maxs,mothers,btype="skim",
     expline = the_name + " \\\n"
     # make set list for datacards with xsecs
     dline = makeLineDCHist(the_name)
-    dline += makeLineDCBase(the_name,the_name,full=not fast,pmssm=pmssm)
+    dline += makeLineDCBase(the_name,the_name,full=not fast,pmssm=pmssm,xsec=1)
     return (line,expline,dline)
 
 def makeSkimInput(read,write,card,export,btype="skim",nfiles=0,data=False,fast=False,pmssm=False,folder="",nfilesTM=1,preamble="",actual=False,skips=[]):
