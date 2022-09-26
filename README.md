@@ -16,6 +16,7 @@ cd Analysis
 ./setupScripts.sh
 ./setupTM.sh
 ./setupXML.sh
+./setupRootfix.sh
 ```
 
 The script `setupScripts.sh` links useful tools kept in the `scripts` folder for easier use.
@@ -23,6 +24,8 @@ The script `setupScripts.sh` links useful tools kept in the `scripts` folder for
 The script `setupTM.sh` compiles specific parts of [TreeMaker](https://github.com/TreeMaker/TreeMaker) that are used in this code.
 
 The script `setupXML.sh` downloads the [pugixml](https://github.com/zeux/pugixml) library (for use with the custom BDT evaluator).
+
+The script `setupRootfix.sh` installs an updated library that includes the patch from https://github.com/root-project/root/pull/11407 for adding THnSparse objects.
 
 ## Recompiling
 
