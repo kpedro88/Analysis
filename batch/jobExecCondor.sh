@@ -10,28 +10,20 @@ echo "System release " `cat /etc/redhat-release` #And the system release
 echo "CMSSW on Condor"
 
 CMSSWVER=$1
-INPUT=$2
-SNAME=$3
-PROCESS=$4
-SELTYPE=$5
-INDIR=$6
-OUTDIR=$7
-STORE=$8
+OUTDIR="$2"
+STORE="$3"
+JOBNAME="$4"
+PROCESS="$5"
+PMSSM="$6"
 
 echo ""
 echo "parameter set:"
 echo "CMSSWVER:   $CMSSWVER"
-echo "INPUT:      $INPUT"
-echo "SNAME:      $SNAME"
-echo "PROCESS:    $PROCESS"
-echo "SELTYPE:    $SELTYPE"
-echo "INDIR:      $INDIR"
 echo "OUTDIR:     $OUTDIR"
 echo "STORE:      $STORE"
-
-#get sample
-source export${SNAME}.sh
-SAMPLE=${SAMPLES[$PROCESS]}
+echo "JOBNAME:    $JOBNAME"
+echo "PROCESS:    $PROCESS"
+echo "PMSSM:      $PMSSM"
 
 source stageOut.sh
 tar -xzf ${CMSSWVER}.tar.gz
@@ -43,14 +35,26 @@ eval `scramv1 runtime -sh`
 cd src/Analysis
 
 #run macro
-echo "run: root -b -q -l 'KSkimDriver.C+("'"'$SAMPLE'","'$SELTYPE'","'$INDIR'",{"'$INPUT'"},{},"'$OUTDIR'"'")' 2>&1"
-root -b -q -l 'KSkimDriver.C+("'$SAMPLE'","'$SELTYPE'","'$INDIR'",{"'$INPUT'"},{},"'$OUTDIR'")' 2>&1
+MACRO=$(cat $_CONDOR_SCRATCH_DIR/macro_${JOBNAME}_part${PROCESS}.txt)
+echo "run: root -b -q -l '$MACRO'"
+root -b -q -l "${MACRO}" 2>&1
 
 ROOTEXIT=$?
 
 if [[ $ROOTEXIT -ne 0 ]]; then
   echo "exit code $ROOTEXIT, skipping xrdcp"
   exit $ROOTEXIT
+fi
+
+# hadd in common file
+if [ $PMSSM -eq 1 ]; then
+  for TREEDIR in ${OUTDIR}*/; do
+    for FILE in ${TREEDIR}/*.root; do
+      BASEFILE=$(basename $FILE | sed 's/_block[0-9]*//')
+      mv $FILE ${FILE}.bak
+      hadd $FILE ${FILE}.bak ${STORE}/${OUTDIR}_common/${BASEFILE}
+    done
+  done
 fi
 
 # list output
