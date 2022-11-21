@@ -271,9 +271,9 @@ KCutflowItem::KCutflowItem(string name_, double raw_, double rawE_, KCutflow* ma
 	double nentriesE = base ? base->rawE : 1;
 	double prevE = parent ? parent->rawE : 1;
 	abs = (rawD/nentries)*100;
-	absE = weighted ? KMath::EffErrorWeighted(rawD,rawE,nentries,nentriesE)*100 : KMath::EffError(raw,nentries)*100;
+	absE = base ? weighted ? KMath::EffErrorWeighted(rawD,rawE,nentries,nentriesE)*100 : KMath::EffError(raw,nentries)*100 : 0;
 	rel = (rawD/prev)*100;
-	relE = weighted ? KMath::EffErrorWeighted(rawD,rawE,prev,prevE)*100 : KMath::EffError(raw,prev)*100;
+	relE = parent ? weighted ? KMath::EffErrorWeighted(rawD,rawE,prev,prevE)*100 : KMath::EffError(raw,prev)*100 : 0;
 }
 
 #endif
