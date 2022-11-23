@@ -109,7 +109,7 @@ class KSet : public KBase {
 					else {
 						std::stringstream sdiff;
 						sdiff << scientific << setprecision(10) << diffmin << "," << diffmax;
-						throw runtime_error("Build error: inconsistent ranges in base histo ("+to_string(obj->htmp->GetXaxis()->GetXmin())+","+to_string(obj->htmp->GetXaxis()->GetXmax())+") and child histo ("+to_string(htmp->GetXaxis()->GetXmin())+","+to_string(htmp->GetXaxis()->GetXmax())+") [diff = "+sdiff.str()+"]");
+						throw runtime_error("Build error: inconsistent ranges for histo "+stmp+" in set "+name+": base ("+to_string(obj->htmp->GetXaxis()->GetXmin())+","+to_string(obj->htmp->GetXaxis()->GetXmax())+"), child ("+to_string(htmp->GetXaxis()->GetXmin())+","+to_string(htmp->GetXaxis()->GetXmax())+") [diff = "+sdiff.str()+"]");
 					}
 				}
 				else {
