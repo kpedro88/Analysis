@@ -27,21 +27,22 @@ using namespace std;
 class KValue {
 	public:
 		//constructor
-		KValue() : values(0), weights(0) {}
+		KValue() : values(0), weights(0), conversion(1) {}
 		//accessors
 		void Fill(double v, double w=1){
-			values.push_back(v);
+			values.push_back(v*conversion);
 			weights.push_back(w);
 		}
 		double & GetValue(int iv) { return values[iv]; }
 		double & GetWeight(int iw) { return weights[iw]; }
 		int GetSize() { return values.size(); }
-		
+		void SetConversion(double c) { conversion = c; }
+
 	protected:
 		//member variables
 		vector<double> values;
 		vector<double> weights;
-	
+		double conversion;
 };
 
 //forward declarations
@@ -134,9 +135,14 @@ class KHisto : public KChecker {
 					if(IsPerJet(var,vname2,indices)) fillers.push_back(KJetFillerFactory::GetFactory().construct(vname2,vname2,localOpt,this,indices));
 					else fillers.push_back(KFillerFactory::GetFactory().construct(var,var,localOpt,this));
 				}
-				
+
 				//finish initializing fillers
 				CheckFillers();
+
+				//get conversion factors if any
+				if(!localOpt->Get("conversions",conversions)){
+					conversions = vector<double>(fillers.size(),1);
+				}
 			}
 			//if htmp is null, assume it is a special histo
 			else {
@@ -158,6 +164,7 @@ class KHisto : public KChecker {
 			
 			vector<KValue> values(fillers.size());
 			for(unsigned i = 0; i < fillers.size(); ++i){
+				values[i].SetConversion(conversions[i]);
 				fillers[i]->Fill(values[i],w);
 			}
 			
@@ -322,6 +329,7 @@ class KHisto : public KChecker {
 		TH1* htmp;
 		bool isSpecial;
 		vector<KFiller*> fillers;
+		vector<double> conversions;
 };
 
 double KJetFiller::GetWeight(unsigned index){
