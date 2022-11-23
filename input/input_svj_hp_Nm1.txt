@@ -97,6 +97,10 @@ fullselMinusRTMT
 	preselMinusRTMT
 	postsel
 
+VARIATION
+gen
+	GenJet
+
 INPUT
 input/input_svj_hists_Nm1.txt
 input/input_svj_hists2_Nm1.txt

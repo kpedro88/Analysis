@@ -741,12 +741,14 @@ class KGenJetVariator : public KVariator {
 		//constructor
 		KGenJetVariator() : KVariator() { }
 		KGenJetVariator(string name_, OptionMap* localOpt_) : KVariator(name_,localOpt_),
-			placeholderB(true), placeholderN(0), placeholderF(1), JetsAK8_ID(new vector<bool>)
+			placeholderB(true), placeholderN(0), placeholderF(1), placeholderV(new vector<double>), JetsAK8_ID(new vector<bool>), Jets_ID(new vector<bool>)
 		{
 			clear();
 		}
 		~KGenJetVariator() {
 			delete JetsAK8_ID;
+			delete Jets_ID;
+			delete placeholderV;
 		}
 		virtual void ListBranches(){
 			//set up linked branches for all variations
@@ -759,7 +761,9 @@ class KGenJetVariator : public KVariator {
 				new KLinkedBranchD(KBranchD(&looper->MT_AK8,"MT_AK8"),KBranchD(&MT_AK8)),
 				new KLinkedBranchD(KBranchD(&looper->Mmc_AK8,"Mmc_AK8"),KBranchD(&Mmc_AK8)),
 				new KLinkedBranchVB(KBranchVB(&looper->JetsAK8_ID,"JetsAK8_ID"),KBranchVB(&JetsAK8_ID)),
+				new KLinkedBranchVB(KBranchVB(&looper->Jets_ID,"Jets_ID"),KBranchVB(&Jets_ID)),
 				//filters replaced with default placeholder values
+				new KLinkedBranchB(KBranchB(&looper->JetID,"JetID"),KBranchB(&placeholderB)),
 				new KLinkedBranchB(KBranchB(&looper->JetIDAK8,"JetIDAK8"),KBranchB(&placeholderB)),
 				new KLinkedBranchB(KBranchB(&looper->BadChargedCandidateFilter,"BadChargedCandidateFilter"),KBranchB(&placeholderB)),
 				new KLinkedBranchB(KBranchB(&looper->BadPFMuonFilter,"BadPFMuonFilter"),KBranchB(&placeholderB)),
@@ -774,10 +778,12 @@ class KGenJetVariator : public KVariator {
 				new KLinkedBranchI(KBranchI(&looper->NVtx,"NVtx"),KBranchI(&placeholderF)),
 				new KLinkedBranchI(KBranchI(&looper->NElectrons,"NElectrons"),KBranchI(&placeholderN)),
 				new KLinkedBranchI(KBranchI(&looper->NMuons,"NMuons"),KBranchI(&placeholderN)),
+				new KLinkedBranchVD(KBranchVD(&looper->Muons_MiniIso,"Muons_MiniIso"),KBranchVD(&placeholderV)),
 				//"top-level" quantities get replaced
-				new KLinkedBranchVL(KBranchVL(&looper->JetsAK8,"JetsAK8"),KBranchVL(&looper->GenJetsAK8)),
-				new KLinkedBranchD(KBranchD(&looper->MET,"MET"),KBranchD(&looper->GenMET)),
-				new KLinkedBranchD(KBranchD(&looper->METPhi,"METPhi"),KBranchD(&looper->GenMETPhi))
+				new KLinkedBranchVL(KBranchVL(&looper->Jets,"Jets"),KBranchVL(&looper->GenJets,"GenJets")),
+				new KLinkedBranchVL(KBranchVL(&looper->JetsAK8,"JetsAK8"),KBranchVL(&looper->GenJetsAK8,"GenJetsAK8")),
+				new KLinkedBranchD(KBranchD(&looper->MET,"MET"),KBranchD(&looper->GenMET,"GenMET")),
+				new KLinkedBranchD(KBranchD(&looper->METPhi,"METPhi"),KBranchD(&looper->GenMETPhi,"GenMETPhi"))
 			};
 		}
 		virtual void DoVariation(){
@@ -804,6 +810,10 @@ class KGenJetVariator : public KVariator {
 				}
 				JetsAK8_ID->push_back(true);
 			}
+			const auto& Jets = *looper->GenJets;
+			for(unsigned j = 0; j < Jets.size(); ++j){
+				Jets_ID->push_back(true);
+			}
 
 			//check for 2 jets
 			DeltaPhiMin_AK8 = min(DeltaPhi1_AK8,DeltaPhi2_AK8);
@@ -821,6 +831,7 @@ class KGenJetVariator : public KVariator {
 
 		//helper
 		void clear(){
+			Jets_ID->clear();
 			JetsAK8_ID->clear();
 			DeltaPhi1_AK8 = 10;
 			DeltaPhi2_AK8 = 10;
@@ -833,7 +844,9 @@ class KGenJetVariator : public KVariator {
 		//member variables
 		bool placeholderB;
 		int placeholderN, placeholderF;
+		vector<double>* placeholderV;
 		vector<bool>* JetsAK8_ID;
+		vector<bool>* Jets_ID;
 		double DeltaPhi1_AK8;
 		double DeltaPhi2_AK8;
 		double DeltaPhiMin_AK8;

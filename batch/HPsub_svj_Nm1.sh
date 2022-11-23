@@ -10,9 +10,10 @@ YEARS=()
 TYPE=""
 DRYRUN=""
 MATCH=""
+GEN=
 
 #check arguments
-while getopts "kdy:t:m:" opt; do
+while getopts "kdy:t:m:g" opt; do
 	case "$opt" in
 		k) CHECKARGS="${CHECKARGS} -k"
 		;;
@@ -21,6 +22,9 @@ while getopts "kdy:t:m:" opt; do
 		t) TYPE="$OPTARG"
 		;;
 		m) MATCH="$OPTARG"
+		;;
+		g) GEN=gen;
+		   STORE=root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Nm1/hist_gen
 		;;
 		d) DRYRUN="echo"
 		;;
@@ -34,12 +38,12 @@ if [[ "$TYPE" == "scan" ]]; then
 fi
 
 for YEAR in ${YEARS[@]}; do
-	INPUTS='"input/input_svj_hp_Nm1_'${YEAR}'.txt","input/input_hp_sets_svj_'$TYPE'_'$YEAR'.txt"'
+	INPUTS='"input/input_svj_hp_Nm1_'${YEAR}${GEN}'.txt","input/input_hp_sets_svj_'$TYPE'_'$YEAR'.txt"'
 
 	SNAME=HistSVJ${TYPE}Unskimmed${YEAR}
 	source export${SNAME}.sh
 
-	JOBNAME="svj_Nm1_${TYPE}_${YEAR}"
+	JOBNAME="svj_Nm1_${TYPE}_${YEAR}${GEN}"
 	SLIST=${#SAMPLES[@]}
 	if [ -n "$MATCH" ]; then
 		SLIST=""

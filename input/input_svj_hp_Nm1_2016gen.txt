@@ -1,0 +1,84 @@
+INPUT
+input/input_svj_hp_Nm1.txt
+
+OPTION
+vstring:selections[base2016_gen,presel2016_gen,preselMinusRT2016_gen,preselMinusDeta2016_gen,preselMinusMT2016_gen,preselMinusNele2016_gen,preselMinusNmu2016_gen,preselMinusRTDeta2016_gen,preselMinusRTMT2016_gen,dijet2016_gen,fullsel2016_gen,fullselMinusRT2016_gen,fullselMinusDeta2016_gen,fullselMinusMT2016_gen,fullselMinusNele2016_gen,fullselMinusNmu2016_gen,fullselMinusDphi2016_gen,fullselMinusRTDeta2016_gen,fullselMinusRTMT2016_gen]
+double:luminorm[36330]
+
+SELECTION
+phispike2016
+	PhiSpikeVeto	s:name[PhiSpikeVeto16]	s:yearmc[MC2016]	s:yeardata[JetHT_2016]	s:spikelist[corrections/phispikes16.txt]	s:leadspikelist[corrections/leadphispikes16.txt]	b:tag[0]
+base2016
+	MCWeight	b:puupdcorr[1]	s:puname1[corrections/PileupHistograms_0121_69p2mb_pm4p6.root]	s:puname2[corrections/PileupHistograms_2016_69mb_pm5.root]
+	Histo
+presel2016
+	presel
+	phispike2016
+	base2016
+preselMinusRT2016
+	preselMinusRT
+	phispike2016
+	base2016
+preselMinusDeta2016
+	preselMinusDeta
+	phispike2016
+	base2016
+preselMinusMT2016
+	preselMinusMT
+	phispike2016
+	base2016
+preselMinusNele2016
+	preselMinusNele
+	phispike2016
+	base2016
+preselMinusNmu2016
+	preselMinusNmu
+	phispike2016
+	base2016
+preselMinusRTDeta2016
+	preselMinusRTDeta
+	phispike2016
+	base2016
+preselMinusRTMT2016
+	preselMinusRTMT
+	phispike2016
+	base2016
+dijet2016
+	dijet
+	base2016
+fullsel2016
+	fullsel
+	phispike2016
+	base2016
+fullselMinusRT2016
+	fullselMinusRT
+	phispike2016
+	base2016
+fullselMinusDeta2016
+	fullselMinusDeta
+	phispike2016
+	base2016
+fullselMinusMT2016
+	fullselMinusMT
+	phispike2016
+	base2016
+fullselMinusNele2016
+	fullselMinusNele
+	phispike2016
+	base2016
+fullselMinusNmu2016
+	fullselMinusNmu
+	phispike2016
+	base2016
+fullselMinusDphi2016
+	fullselMinusDphi
+	phispike2016
+	base2016
+fullselMinusRTDeta2016
+	fullselMinusRTDeta
+	phispike2016
+	base2016
+fullselMinusRTMT2016
+	fullselMinusRTMT
+	phispike2016
+	base2016
