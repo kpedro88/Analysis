@@ -220,7 +220,7 @@ class KVariator : public KChecker {
 		virtual void CheckBranches() {
 			ListBranches();
 			for(auto& branch: linkbranches){
-				branch->Enable(looper->fChain,1);
+				branch->Enable(looper->fChain);
 				branch->Check(looper->fChain);
 			}
 			looper->EnableBranches(branches);
