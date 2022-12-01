@@ -13,7 +13,7 @@ MATCH=""
 GEN=
 
 #check arguments
-while getopts "kdy:t:m:g" opt; do
+while getopts "kdy:t:m:go:" opt; do
 	case "$opt" in
 		k) CHECKARGS="${CHECKARGS} -k"
 		;;
@@ -24,12 +24,17 @@ while getopts "kdy:t:m:g" opt; do
 		m) MATCH="$OPTARG"
 		;;
 		g) GEN=gen;
-		   STORE=root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Nm1/hist_gen
+		;;
+		o) STORE="$OPTARG"
 		;;
 		d) DRYRUN="echo"
 		;;
 	esac
 done
+
+if [ -n "$GEN" ]; then
+	STORE=${STORE}_gen
+fi
 
 ./SKcheck.sh ${CHECKARGS}
 

@@ -1,0 +1,18 @@
+INPUT
+input/input_svj_supp.txt
+
+OPTION
+string:rootfile[test/paper/Nm1/Nm1_plots_supp2d_new]
+string:printsuffix[Run2ProductionV17_Nm1_new]
+string:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Nm1/hist2d/svj_Nm1.root]
+double:zmin[1e-14]
+double:hscaleLeg[1.5]
+bool:epstopdf[0]
+double:sizeSymb[0]
+
+HISTO2D
+met_metMTratio	i:xnum[100]	d:xmin[0]	d:xmax[1.5]	s:xtitle[p_{T}^{miss} [TeV]]	i:ynum[100]	d:ymin[0]	d:ymax[0.5]	s:ytitle[R_{T}]	s:ztitle[arbitrary units]	b:ratio[0]	b:logz[1]	i:rebiny[2]	vd:conversions[.001,1]	vd:ycuts[0.15,0.25]	vc:ycut_colors[kBlack,kBlue]	vi:ycut_arrows[1,0]
+
+SET
+hist	mc	QCD	s:legname[QCD]	c:color[kBlue + 2]	i:panel[0]
+	base	ext	QCD_MC2018	vs:exthisto_in[met_metMTratio_QCD_MC2018_preselMinusRT2018]	vs:exthisto_out[met_metMTratio]
