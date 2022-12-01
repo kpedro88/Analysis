@@ -1,0 +1,20 @@
+universe = vanilla
+Executable = ../jobExecCondorDC.sh
++REQUIRED_OS = "rhel7"
+request_disk = 1000000
+request_memory = 2000
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT
+Transfer_Input_Files = ../jobExecCondorDC.sh, CMSSWVER.tar.gz, ../stageOut.sh, input/macro_JOBNAME1_part$(Process).txt, input/macro_JOBNAME2_part$(Process).txt
+Output = dc_JOBNAME2_$(Process)_$(Cluster).stdout
+Error = dc_JOBNAME2_$(Process)_$(Cluster).stderr
+Log = dc_JOBNAME2_$(Process)_$(Cluster).condor
+notification = Never
+x509userproxy = $ENV(X509_USER_PROXY)
+Arguments = CMSSWVER OUTDIR STORE1 STORE2 JOBNAME1 JOBNAME2 $(Process)
+on_exit_remove = (ExitBySignal == False) && (ExitCode == 0)
+on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
+on_exit_hold_reason = strcat("Job held by ON_EXIT_HOLD due to ",\
+	ifThenElse((ExitBySignal == True), "exit by signal", \
+				strcat("exit code ",ExitCode)), ".")
+Queue NUMSAMP
