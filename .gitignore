@@ -114,6 +114,7 @@ input/fast*/
 /makePieChart.C
 /rescaleObjects.py
 /fixHWE.py
+/projectMET.py
 
 # linked by setupXML.sh
 /KMVA/pugi*.*

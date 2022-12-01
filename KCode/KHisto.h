@@ -143,6 +143,9 @@ class KHisto : public KChecker {
 				if(!localOpt->Get("conversions",conversions)){
 					conversions = vector<double>(fillers.size(),1);
 				}
+				else{
+					if(conversions.size()!=fillers.size()) throw runtime_error("must specify one conversion per histogram variable");
+				}
 			}
 			//if htmp is null, assume it is a special histo
 			else {
