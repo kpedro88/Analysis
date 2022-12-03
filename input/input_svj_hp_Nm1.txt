@@ -105,3 +105,4 @@ INPUT
 input/input_svj_hists_Nm1.txt
 input/input_svj_hists2_Nm1.txt
 input/input_svj_hists2d_Nm1.txt
+input/input_svj_hists3_Nm1.txt

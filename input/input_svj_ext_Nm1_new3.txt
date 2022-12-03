@@ -1,0 +1,28 @@
+INPUT
+input/input_svj_paper.txt
+
+OPTION
+vstring{|}:extra_text[QCD]
+int:npanel[1]
+string:rootfile[test/paper/Nm1/Nm1_plots_new3]
+string:printsuffix[Run2ProductionV17_Nm1_new3]
+string:extfilename[root://cmseos.fnal.gov//store/user/pedrok/SVJ2017/Nm1/hist3/svj_Nm1.root]
+bool:disable_ymin[1]
+double:ymin_min[1e-12]
+bool:unitnorm[0]
+string:lumi_text[59.7 fb^{-1} (13 TeV)]
+
+INPUT
+input/input_svj_hists3_Nm1.txt
+
+SET
+hist	mc	QCD_dijet	s:legname[2 jets]	c:color[kBlack]	i:panel[0]
+	base	ext	QCD_MC2018	vs:exthisto_in[subleadjetAK4abseta_QCD_MC2018_dijet2018,subleadjetAK8abseta_QCD_MC2018_dijet2018,deltaetaAK8_subleadjetAK4abseta_QCD_MC2018_dijet2018,deltaetaAK8_subleadjetAK8abseta_QCD_MC2018_dijet2018]	vs:exthisto_out[subleadjetAK4abseta,subleadjetAK8abseta,deltaetaAK8_subleadjetAK4abseta,deltaetaAK8_subleadjetAK8abseta]
+hist	mc	QCD_preselMinusRTDeta	s:legname[no R_{T}, #Delta#eta cut]	c:color[kBlue]	i:panel[0]
+	base	ext	QCD_MC2018	vs:exthisto_in[subleadjetAK4abseta_QCD_MC2018_preselMinusRTDeta2018,subleadjetAK8abseta_QCD_MC2018_preselMinusRTDeta2018,deltaetaAK8_subleadjetAK4abseta_QCD_MC2018_preselMinusRTDeta2018,deltaetaAK8_subleadjetAK8abseta_QCD_MC2018_preselMinusRTDeta2018]	vs:exthisto_out[subleadjetAK4abseta,subleadjetAK8abseta,deltaetaAK8_subleadjetAK4abseta,deltaetaAK8_subleadjetAK8abseta]
+hist	mc	QCD_preselMinusRT	s:legname[no R_{T} cut]	c:color[kMagenta]	i:panel[0]
+	base	ext	QCD_MC2018	vs:exthisto_in[subleadjetAK4abseta_QCD_MC2018_preselMinusRT2018,subleadjetAK8abseta_QCD_MC2018_preselMinusRT2018,deltaetaAK8_subleadjetAK4abseta_QCD_MC2018_preselMinusRT2018,deltaetaAK8_subleadjetAK8abseta_QCD_MC2018_preselMinusRT2018]	vs:exthisto_out[subleadjetAK4abseta,subleadjetAK8abseta,deltaetaAK8_subleadjetAK4abseta,deltaetaAK8_subleadjetAK8abseta]
+hist	mc	QCD_preselMinusDeta	s:legname[no #Delta#eta cut]	c:color[kOrange + 2]	i:panel[0]
+	base	ext	QCD_MC2018	vs:exthisto_in[subleadjetAK4abseta_QCD_MC2018_preselMinusDeta2018,subleadjetAK8abseta_QCD_MC2018_preselMinusDeta2018,deltaetaAK8_subleadjetAK4abseta_QCD_MC2018_preselMinusDeta2018,deltaetaAK8_subleadjetAK8abseta_QCD_MC2018_preselMinusDeta2018]	vs:exthisto_out[subleadjetAK4abseta,subleadjetAK8abseta,deltaetaAK8_subleadjetAK4abseta,deltaetaAK8_subleadjetAK8abseta]
+hist	mc	QCD_presel	s:legname[presel]	c:color[kRed]	i:panel[0]
+	base	ext	QCD_MC2018	vs:exthisto_in[subleadjetAK4abseta_QCD_MC2018_presel2018,subleadjetAK8abseta_QCD_MC2018_presel2018,deltaetaAK8_subleadjetAK4abseta_QCD_MC2018_presel2018,deltaetaAK8_subleadjetAK8abseta_QCD_MC2018_presel2018]	vs:exthisto_out[subleadjetAK4abseta,subleadjetAK8abseta,deltaetaAK8_subleadjetAK4abseta,deltaetaAK8_subleadjetAK8abseta]
