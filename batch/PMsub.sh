@@ -14,7 +14,8 @@ INPUT=input/input_selection_pmssm.txt
 EXTRAS='"OPTION","b:saveEventHists[0]"'
 TYPE=Pmssm
 PREFIX=Skim
-INDIR=.
+INDIR1=root://cmseos.fnal.gov//store/user/lpcpmssm/${RUN2PRODV}
+INDIR2=.
 DCCONFIG=input/input_DC_config_RA2pmssm.txt
 CHECKARGS=""
 SUFFIX=""
@@ -64,8 +65,8 @@ for YEAR in ${YEARS[@]}; do
 
 	for ((PROCESS=0; PROCESS < ${#SAMPLES[@]}; PROCESS++)); do
 		SAMPLE=${SAMPLES[$PROCESS]}
-		echo 'KSkimDriver.C+("'$SAMPLE'","'$SELS'","'$INDIR'",{"'$INPUT'"},{'"$EXTRAS"'},"'$OUTDIR'")' > jobs/input/macro_${JOBNAME1}_part${PROCESS}.txt
-		echo 'MakeAllDCsyst.C+("'$SAMPLE'","'${INDIR}'",{"'${DCCONFIG}'"},{},"'${REGION}'","'${SYSTS}'","'${VARS}'")' > jobs/input/macro_${JOBNAME2}_part${PROCESS}.txt
+		echo 'KSkimDriver.C+("'$SAMPLE'","'$SELS'","'$INDIR1'",{"'$INPUT'"},{'"$EXTRAS"'},"'$OUTDIR'")' > jobs/input/macro_${JOBNAME1}_part${PROCESS}.txt
+		echo 'MakeAllDCsyst.C+("'$SAMPLE'","'${INDIR2}'",{"'${DCCONFIG}'"},{},"'${REGION}'","'${SYSTS}'","'${VARS}'")' > jobs/input/macro_${JOBNAME2}_part${PROCESS}.txt
 	done
 
 	$DRYRUN ./PMtemp.sh ${JOBDIR} ${STORE1} ${STORE2} ${JOBNAME1} ${JOBNAME2} ${OUTDIR} ${#SAMPLES[@]}
