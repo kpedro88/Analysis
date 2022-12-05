@@ -75,12 +75,14 @@ class KBuilder : public KLooper {
 			unsigned firstevent = 0;
 			if(globalOpt->Get("firstevent",firstevent) && firstevent < nentries) jentry = firstevent;
 			bool debugloop = globalOpt->Get("debugloop",false);
+			int reportevery = 10000;
+			globalOpt->Get("reportevery",reportevery);
 			Long64_t nbytes = 0, nb = 0;
 			for (; jentry<nentries;jentry++) {
 				Long64_t ientry = LoadTree(jentry);
 				if (ientry < 0) break;
 				nb = fChain->GetEntry(jentry);   nbytes += nb;
-				if(debugloop && jentry % 10000 == 0) cout << MyBases[0]->GetName() << " " << jentry << "/" << nentries << endl;
+				if(debugloop && jentry % reportevery == 0) cout << MyBases[0]->GetName() << " " << jentry << "/" << nentries << endl;
 				
 				for(auto& base : MyBases){
 					base->GetSelection()->DoSelection();

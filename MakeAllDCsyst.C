@@ -415,7 +415,7 @@ template<> void KSystProcessor<THnSparse>::MakeGenMHT(KMap<double>& pctDiffMap, 
 
 //recompile:
 //root -b -l -q MakeAllDCsyst.C++
-void MakeAllDCsyst(string setname="", string indir="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV11", vector<string> input = {}, vector<string> extras = {}, string region="", string systTypes="nominal", string varTypes=""){
+void MakeAllDCsyst(string setname="", string indir="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV11", vector<string> input = {}, vector<string> extras = {}, string region="", string systTypes="nominal", string varTypes="", vector<string> driver_extras = {}, bool verbose=false){
 	gErrorIgnoreLevel = kBreak;
 	
 	if(setname.empty()){
@@ -445,7 +445,20 @@ void MakeAllDCsyst(string setname="", string indir="root://cmseos.fnal.gov//stor
 	//do the simple systematics all at once
 	if(!systTypes.empty()){
 		rootfiles.push_back(info.outdir+info.outpre+info.region+info.osuff);
-		KPlotDriver(indir+info.inpre+info.region,{info.input,info.setlist},{"INPUT",info.selbase,info.selection,"OPTION","vstring:chosensets["+setname+"]","string:rootfile["+rootfiles.back()+"]","vstring:selections["+systTypes+"]"});
+		string tmpdir(indir+info.inpre+info.region);
+		vector<string> tmpinputs{info.input,info.setlist};
+		vector<string> tmpextras{"INPUT",info.selbase,info.selection,"OPTION","vstring:chosensets["+setname+"]","string:rootfile["+rootfiles.back()+"]","vstring:selections["+systTypes+"]"};
+		tmpextras.insert(tmpextras.end(),driver_extras.begin(),driver_extras.end());
+		if(verbose){
+			tmpextras.push_back("b:debugloop[1]");
+			tmpextras.push_back("b:debugcut[1]");
+			cout << "run: KPlotDriver(" << tmpdir << ",{";
+			KParser::printvec(tmpinputs,cout,",");
+			cout << "},{";
+			KParser::printvec(tmpextras,cout,",");
+			cout << "})" << endl;
+		}
+		KPlotDriver(tmpdir,tmpinputs,tmpextras);
 	}
 
 	//do the full variations separately
@@ -466,7 +479,20 @@ void MakeAllDCsyst(string setname="", string indir="root://cmseos.fnal.gov//stor
 			if(ivar.size()>3) ivar[3] = '-';
 		}
 		rootfiles.push_back(info.outdir+info.outpre+region_+info.osuff);
-		KPlotDriver(indir+info.inpre+region_,{info.input,info.setlist},{"INPUT",info.selbase,info.selection,"OPTION","vstring:chosensets["+setname+"]","string:rootfile["+rootfiles.back()+"]","vstring:selections["+ivar+"]","SELECTION",ivar,"\t"+selection_base});
+		string tmpdir(indir+info.inpre+region_);
+		vector<string> tmpinputs{info.input,info.setlist};
+		vector<string> tmpextras{"INPUT",info.selbase,info.selection,"OPTION","vstring:chosensets["+setname+"]","string:rootfile["+rootfiles.back()+"]","vstring:selections["+ivar+"]","SELECTION",ivar,"\t"+selection_base};
+		tmpextras.insert(tmpextras.end(),driver_extras.begin(),driver_extras.end());
+		if(verbose){
+			tmpextras.push_back("b:debugloop[1]");
+			tmpextras.push_back("b:debugcut[1]");
+			cout << "run: KPlotDriver(" << tmpdir << ",{";
+			KParser::printvec(tmpinputs,cout,",");
+			cout << "},{";
+			KParser::printvec(tmpextras,cout,",");
+			cout << "})" << endl;
+		}
+		KPlotDriver(tmpdir,tmpinputs,tmpextras);
 	}
 	
 	//hadd and put file in pwd (for stageout)
@@ -474,6 +500,7 @@ void MakeAllDCsyst(string setname="", string indir="root://cmseos.fnal.gov//stor
 	KParser::printvec(rootfiles,slist,".root ");
 	string therootfile = info.outpre+info.region+info.osuff+".root";
 	string cmd = "hadd -f "+therootfile+" "+slist.str()+".root"; //add trailing delim
+	if(verbose) cout << cmd << endl;
 	system(cmd.c_str());
 
 	vector<string> systs;
