@@ -269,7 +269,7 @@ class THNT<::THnSparse> : public THN {
 			return h->Fit(f1,option,goption);
 		}
 		Long64_t FindBin (Double_t x, Double_t y=0, Double_t z=0) override { debug(__PRETTY_FUNCTION__);
-			vector<int> values(GetDimension(),0);
+			vector<double> values(GetDimension(),0);
 			if(values.size()>0) values[0] = x;
 			if(values.size()>1) values[1] = y;
 			if(values.size()>2) values[2] = z;
