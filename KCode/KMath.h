@@ -175,7 +175,66 @@ namespace KMath {
 
 		return Jets_genIndex;
 	}
-	TH1* ProjectTHN(THN* histo, const pair<double,double>& vals){
+	TH1* ProjectTHNFast(THnSparse* hsparse, const pair<int,int>& bins, int ndim, int offset){
+		//stripped-down version of THnBase::CreateHist()
+		string name(hsparse->GetName());
+		name += "_proj";
+		vector<TAxis*> axes;
+		TH1* hist = nullptr;
+		if(ndim==1){
+			hist = new TH1F(name.c_str(),"",1,0.,1.);
+			axes.push_back(hsparse->GetAxis(0+offset));
+		}
+		else if(ndim==2){
+			hist = new TH2F(name.c_str(),"",1,0.,1.,1,0.,1.);
+			axes.push_back(hsparse->GetAxis(0+offset));
+			axes.push_back(hsparse->GetAxis(1+offset));
+		}
+		TAxis* hax[2] = {hist->GetXaxis(), hist->GetYaxis()};
+		for(unsigned d = 0; d < ndim; ++d){
+			TAxis* reqaxis = axes[d];
+			hax[d]->SetTitle(reqaxis->GetTitle());
+			if (reqaxis->GetXbins()->GetSize()) {
+				//non-uniform bins
+				hax[d]->Set(reqaxis->GetNbins(), reqaxis->GetXbins()->GetArray());
+			}
+			else {
+				//uniform bins
+				hax[d]->Set(reqaxis->GetNbins(), reqaxis->GetXmin(), reqaxis->GetXmax());
+			}
+		}
+		hist->Rebuild();
+
+		//minimal version of THnBase::ProjectionAny()
+		if(ndim==1){
+			vector<int> coords{bins.first,bins.second,-1};
+			for(int bx = 0; bx <= hist->GetXaxis()->GetNbins()+1; ++bx){
+				coords[2] = bx;
+				int idx = hsparse->GetBin(coords.data(),kFALSE);
+				if(idx>=0){
+					hist->SetBinContent(bx, hsparse->GetBinContent(idx));
+					hist->SetBinError(bx, hsparse->GetBinError(idx));
+				}
+			}
+		}
+		else if(ndim==2){
+			vector<int> coords{bins.first,bins.second,-1,-1};
+			for(int bx = 0; bx <= hist->GetXaxis()->GetNbins()+1; ++bx){
+				coords[2] = bx;
+				for(int by = 0; by <= hist->GetXaxis()->GetNbins()+1; ++by){
+					coords[3] = by;
+					int idx = hsparse->GetBin(coords.data(),kFALSE);
+					if(idx>=0){
+						hist->SetBinContent(bx, by, hsparse->GetBinContent(idx));
+						hist->SetBinError(bx, by, hsparse->GetBinError(idx));
+					}
+				}
+			}
+		}
+
+		return hist;
+	}
+	TH1* ProjectTHN(THN* histo, const pair<double,double>& vals, bool fast=true){
 		THnSparse* hsparse = histo->THnSparse();
 		if(!hsparse) throw runtime_error("ProjectTHN requires THnSparse input");
 
@@ -186,26 +245,31 @@ namespace KMath {
 
 		TAxis* ax1 = hsparse->GetAxis(0);
 		int bin1 = ax1->FindBin(vals.first);
-		ax1->SetRange(bin1,bin1);
 
 		TAxis* ax2 = hsparse->GetAxis(1);
 		int bin2 = ax2->FindBin(vals.second);
-		ax2->SetRange(bin2,bin2);
 
-		if(pdims==1){
-			TH1D* hproj = hsparse->Projection(2,"E");
-			TH1F* hfproj = new TH1F();
-			hfproj->Copy(*hproj);
-			return hfproj;
+		if(fast){
+			return ProjectTHNFast(hsparse, make_pair(bin1,bin2), pdims, npmssm);
 		}
-		else if(pdims==2){
-			TH2D* hproj = hsparse->Projection(3,2,"E");
-			TH2F* hfproj = new TH2F();
-			hfproj->Copy(*hproj);
-			return hfproj;
+		else{
+			ax1->SetRange(bin1,bin1);
+			ax2->SetRange(bin2,bin2);
+			if(pdims==1){
+				TH1D* hproj = hsparse->Projection(2,"E");
+				TH1F* hfproj = new TH1F();
+				hfproj->Copy(*hproj);
+				return hfproj;
+			}
+			else if(pdims==2){
+				TH2D* hproj = hsparse->Projection(3,2,"E");
+				TH2F* hfproj = new TH2F();
+				hfproj->Copy(*hproj);
+				return hfproj;
+			}
+			//should never get here
+			else return nullptr;
 		}
-		//should never get here
-		else return nullptr;
 	}
 }
 
