@@ -1,11 +1,11 @@
 universe = vanilla
-Executable = ../jobExecCondorDC.sh
+Executable = ../jobExecCondorPM.sh
 +REQUIRED_OS = "rhel7"
 request_disk = 1000000
-request_memory = 2000
+request_memory = 4000
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
-Transfer_Input_Files = ../jobExecCondorDC.sh, CMSSWVER.tar.gz, ../stageOut.sh, input/macro_JOBNAME1_part$(Process).txt, input/macro_JOBNAME2_part$(Process).txt
+Transfer_Input_Files = ../jobExecCondorPM.sh, CMSSWVER.tar.gz, ../stageOut.sh, input/macro_JOBNAME1_part$(Process).txt, input/macro_JOBNAME2_part$(Process).txt
 Output = dc_JOBNAME2_$(Process)_$(Cluster).stdout
 Error = dc_JOBNAME2_$(Process)_$(Cluster).stderr
 Log = dc_JOBNAME2_$(Process)_$(Cluster).condor
