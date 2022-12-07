@@ -258,13 +258,13 @@ namespace KMath {
 			if(pdims==1){
 				TH1D* hproj = hsparse->Projection(2,"E");
 				TH1F* hfproj = new TH1F();
-				hfproj->Copy(*hproj);
+				hproj->Copy(*hfproj);
 				return hfproj;
 			}
 			else if(pdims==2){
 				TH2D* hproj = hsparse->Projection(3,2,"E");
 				TH2F* hfproj = new TH2F();
-				hfproj->Copy(*hproj);
+				hproj->Copy(*hfproj);
 				return hfproj;
 			}
 			//should never get here

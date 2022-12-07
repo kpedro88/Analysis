@@ -188,17 +188,15 @@ class KPlot{
 				throw runtime_error("Inconsistent sizes for vars, nums, mins, maxs: "+to_string(vars.size())+", "+to_string(nums.size())+", "+to_string(mins.size())+", "+to_string(maxs.size()));
 			}
 
-			//create sparse histogram
-			THnSparse* htmp = new THnSparseF(name.c_str(),"",vars.size(),nums.data(),mins.data(),maxs.data());
-
 			//check for variable binning (indicated by num=0)
+			//do this before creating histogram, because bin number has to be specified correctly at construction time
 			vector<vector<double>> bins(nums.size());
 			for(int i = 0; i < nums.size(); ++i){
-				bool variable_bins = false;
 				if(nums[i]==0){
 					bool found_bins = localOpt->Get("bins"+to_string(i),bins[i]);
 					if(!found_bins) throw runtime_error("Indicated variable bins for dimension "+to_string(i)+" but bins"+to_string(i)+" not found");
-					variable_bins = true;
+					if(bins[i].size()<2) throw runtime_error("Indicated variable bins for dimension "+to_string(i)+" but bins"+to_string(i)+" empty");
+					nums[i] = bins[i].size()-1;
 				}
 				//evenly-spaced bins for log scale
 				else if(localOpt->Get("logbin"+to_string(i),false)){
@@ -209,12 +207,15 @@ class KPlot{
 					for(int b = 0; b <= nums[i]; ++b){
 						bins[i].push_back(pow(10.,bmin+b*width));
 					}
-					variable_bins = true;
 				}
+			}
 
-				if(variable_bins){
-					htmp->SetBinEdges(i, bins[i].data());
-				}
+			//create sparse histogram
+			THnSparse* htmp = new THnSparseF(name.c_str(),"",vars.size(),nums.data(),mins.data(),maxs.data());
+
+			//apply variable bins
+			for(int i = 0; i < nums.size(); ++i){
+				if(!bins[i].empty()) htmp->SetBinEdges(i, bins[i].data());
 			}
 
 			histo = new THNn(htmp);
