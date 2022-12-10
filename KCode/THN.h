@@ -31,6 +31,7 @@ class THN {
 		virtual ::THnSparse* THnSparse() { return nullptr; }
 		virtual const ::THnSparse* THnSparse() const { return nullptr; }
 		virtual string cl() const { return ""; }
+		virtual void clear() {}
 
 		virtual Bool_t Add (const ::TH1 *h1, const ::TH1 *h2, Double_t c1=1, Double_t c2=1) { unimpl(__PRETTY_FUNCTION__); return false; }
 		virtual Bool_t Add (const ::TH1 *h1, Double_t c1=1) { unimpl(__PRETTY_FUNCTION__); return false; }
@@ -118,6 +119,7 @@ class THNT<::TH1> : public THN {
 		::TH1F* TH1F() override { return (::TH1F*)h; }
 		const ::TH1F* TH1F() const override { return (::TH1F*)h; }
 		string cl() const override { return "TH1"; }
+		void clear() override { delete h; }
 
 		Bool_t Add (const ::TH1 *h1, const ::TH1 *h2, Double_t c1=1, Double_t c2=1) override { return h->Add(h1,h2,c1,c2); }
 		Bool_t Add (const ::TH1 *h1, Double_t c1=1) override { return h->Add(h1,c1); }
@@ -238,6 +240,7 @@ class THNT<::THnSparse> : public THN {
 			cout << "THnSparse: called " << fn << endl; h->Print("asm"); cout << h->GetWeightSum() << endl;
 #endif
 		}
+		void clear() override { delete h; }
 
 		Bool_t Add (const ::TH1 *h1, Double_t c1=1) override { debug(__PRETTY_FUNCTION__); h->Add(h1,c1); return true; }
 		Bool_t Add (const THN *h1, Double_t c1=1) override { debug(__PRETTY_FUNCTION__);

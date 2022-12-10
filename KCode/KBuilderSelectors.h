@@ -363,11 +363,7 @@ class KMCWeightSelector : public KSelector {
 			ctagCFunc = 0; localOpt->Get("ctagCFunc",ctagCFunc);
 			mistagCFunc = 0; localOpt->Get("mistagCFunc",mistagCFunc);
 			if(btagcorr and pmssm){
-				vector<string> hnames{"n_eff_b","d_eff_b","n_eff_c","d_eff_c","n_eff_udsg","d_eff_udsg"};
-				btageffs.reserve(hnames.size());
-				for(const auto& hname : hnames){
-					btageffs.push_back(KGetTHN(base->GetFile(),hname));
-				}
+				btageffnames = {"n_eff_b","d_eff_b","n_eff_c","d_eff_c","n_eff_udsg","d_eff_udsg"};
 			}
 
 			//prefire corr options
@@ -626,11 +622,17 @@ class KMCWeightSelector : public KSelector {
 					isrnormtmp = KMath::ProjectTHN(isrnorm, idtmp);
 					isrcorror.SetWeights(isrweights,isrnormtmp,debugWeight);
 				}
-				if(!btageffs.empty()){
+				if(!btageffnames.empty()){
 					btageffstmp.clear();
-					btageffstmp.reserve(btageffs.size());
-					for(auto btageff : btageffs){
-						btageffstmp.push_back((TH2*)KMath::ProjectTHN(btageff, idtmp));
+					btageffstmp.reserve(btageffnames.size());
+					for(const auto& hname : btageffnames){
+						//fast projection requires filling hash table of coords -> index
+						//this uses too much memory for multiple 2D histograms, leads to bad_alloc
+						//clearing hash table would be a marginally better fix
+						//but just reading from disk each time is easier to implement
+						auto htmp = KGetTHN(base->GetFile(),hname);
+						btageffstmp.push_back((TH2*)KMath::ProjectTHN(htmp, idtmp));
+						htmp->clear();
 					}
 					btag->h_eff_b = (TH2F*)btageffstmp[0]->Clone("h_eff_b");
 					btag->h_eff_b->Divide(btageffstmp[1]);
@@ -965,7 +967,7 @@ class KMCWeightSelector : public KSelector {
 		pair<double,double> currid;
 		THN *nEventHist, *isrnorm;
 		TH1 *nEventHistTmp, *isrnormtmp;
-		vector<THN*> btageffs;
+		vector<string> btageffnames;
 		vector<TH2*> btageffstmp;
 		BTagCorrector* btag;
 		double xsection, norm, kfactor;
