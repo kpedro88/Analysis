@@ -175,7 +175,24 @@ namespace KMath {
 
 		return Jets_genIndex;
 	}
-	TH1* ProjectTHNFast(THnSparse* hsparse, const pair<int,int>& bins, int ndim, int offset){
+	void makePartialMap(THNn* histo){
+		//create map of pmssm bins : list of linear bins
+		//to avoid O(N) loop over all N sparse bins for each projection (default algorithm)
+		if(histo->fBinMap.empty()){
+			THnSparse* hsparse = histo->THnSparse();
+			//based on parts of THnBase::ProjectionAny()
+			Long64_t myLinBin = 0;
+			THnIter iter(hsparse, kTRUE /*use axis range*/);
+			while ((myLinBin = iter.Next()) >= 0) {
+				Double_t v = hsparse->GetBinContent(myLinBin);
+				histo->fBinMap[make_pair(iter.GetCoord(0),iter.GetCoord(1))].push_back(myLinBin);
+			}
+		}
+	}
+	TH1* ProjectTHNFast(THNn* histo, const pair<int,int>& bins, int ndim, int offset){
+		THnSparse* hsparse = histo->THnSparse();
+		makePartialMap(histo);
+
 		//stripped-down version of THnBase::CreateHist()
 		string name(hsparse->GetName());
 		name += "_proj";
@@ -206,30 +223,16 @@ namespace KMath {
 		hist->Rebuild();
 
 		//minimal version of THnBase::ProjectionAny()
-		if(ndim==1){
-			vector<int> coords{bins.first,bins.second,-1};
-			for(int bx = 0; bx <= hist->GetXaxis()->GetNbins()+1; ++bx){
-				coords[2] = bx;
-				int idx = hsparse->GetBin(coords.data(),kFALSE);
-				if(idx>=0){
-					hist->SetBinContent(bx, hsparse->GetBinContent(idx));
-					hist->SetBinError(bx, hsparse->GetBinError(idx));
-				}
-			}
-		}
-		else if(ndim==2){
-			vector<int> coords{bins.first,bins.second,-1,-1};
-			for(int bx = 0; bx <= hist->GetXaxis()->GetNbins()+1; ++bx){
-				coords[2] = bx;
-				for(int by = 0; by <= hist->GetXaxis()->GetNbins()+1; ++by){
-					coords[3] = by;
-					int idx = hsparse->GetBin(coords.data(),kFALSE);
-					if(idx>=0){
-						hist->SetBinContent(bx, by, hsparse->GetBinContent(idx));
-						hist->SetBinError(bx, by, hsparse->GetBinError(idx));
-					}
-				}
-			}
+		//avoid using THnSparse::GetBin() - requires instantiation of coords->linear index hash table, can run out of memory
+		const auto& linBins = histo->fBinMap[bins];
+		vector<int> coords{bins.first,bins.second,-1,-1};
+		for(auto linBin : linBins){
+			Double_t v = hsparse->GetBinContent(linBin,coords.data());
+			int projBin = -1;
+			if(ndim==1) projBin = coords[2];
+			else if(ndim==2) projBin = hist->GetBin(coords[2],coords[3]);
+			hist->SetBinContent(projBin, v);
+			hist->SetBinError(projBin, hsparse->GetBinError(linBin));
 		}
 
 		return hist;
@@ -250,7 +253,7 @@ namespace KMath {
 		int bin2 = ax2->FindBin(vals.second);
 
 		if(fast){
-			return ProjectTHNFast(hsparse, make_pair(bin1,bin2), pdims, npmssm);
+			return ProjectTHNFast((THNn*)histo, make_pair(bin1,bin2), pdims, npmssm);
 		}
 		else{
 			ax1->SetRange(bin1,bin1);
