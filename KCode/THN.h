@@ -17,6 +17,8 @@
 #include <vector>
 #include <exception>
 #include <iostream>
+#include <utility>
+#include <unordered_map>
 //#define DEBUG_THN
 
 using namespace std;
@@ -226,6 +228,37 @@ class THNT<::TH1> : public THN {
 };
 using THN1 = THNT<::TH1>;
 
+//taken from FWCore/Utilities in newer CMSSW (originally from boost)
+namespace {
+  template <typename T>
+  inline void hash_combine(size_t& seed, const T& val) {
+    seed ^= hash<T>()(val) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+  }
+
+  template <typename T, typename... Types>
+  inline void hash_combine(size_t& seed, const T& val, const Types&... args) {
+    hash_combine(seed, val);
+    hash_combine(seed, args...);
+  }
+
+  template <typename... Types>
+  inline size_t hash_value(const Types&... args) {
+    size_t seed{0};
+    hash_combine(seed, args...);
+    return seed;
+  }
+
+  struct StdPairHasher {
+    size_t operator()(const pair<const string, const string>& a) const noexcept {
+      return hash_value(a.first, a.second);
+    }
+    size_t operator()(const pair<const unsigned int, const unsigned int>& a) const noexcept {
+      return hash_value(a.first, a.second);
+    }
+  };
+}
+typedef unordered_map<pair<int,int>,vector<Long64_t>,StdPairHasher> PartialBinMap;
+
 template <>
 class THNT<::THnSparse> : public THN {
 	public:
@@ -359,6 +392,9 @@ class THNT<::THnSparse> : public THN {
 		void SetMarkerColor (Color_t mcolor=1) override { debug(__PRETTY_FUNCTION__); }
 		void SetMarkerSize (Size_t msize=1) override { debug(__PRETTY_FUNCTION__); }
 		void SetMarkerStyle (Style_t mstyle=1) override { debug(__PRETTY_FUNCTION__); }
+
+		//member for pmssm projection/slice
+		PartialBinMap fBinMap;
 
 	protected:
 		::THnSparse* h;
