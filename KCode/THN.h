@@ -401,4 +401,33 @@ class THNT<::THnSparse> : public THN {
 };
 using THNn = THNT<::THnSparse>;
 
+class THnSparseCoordCompressionDummy {
+private:
+   Int_t  fNdimensions;     // number of dimensions
+   Int_t  fCoordBufferSize; // size of coordbuf
+   Int_t *fBitOffsets;      //[fNdimensions + 1] bit offset of each axis index
+};
+
+class THnSparseCompactBinCoordDummy : public THnSparseCoordCompressionDummy {
+private:
+   ULong64_t fHash;      // hash for current coordinates; 0 if not calculated
+   Char_t *fCoordBuffer; // compact buffer of coordinates
+   Int_t *fCurrentBin;   // current coordinates
+};
+
+class THnSparseClearer : public THnBase {
+private:
+   Int_t      fChunkSize;    // number of entries for each chunk
+   Long64_t   fFilledBins;   // number of filled bins
+   TObjArray  fBinContent;   // array of THnSparseArrayChunk
+   TExMap     fBins;         //! filled bins
+   TExMap     fBinsContinued;//! filled bins for non-unique hashes, containing pairs of (bin index 0, bin index 1)
+   THnSparseCompactBinCoord *fCompactCoord; //! compact coordinate
+public:
+   void clear() {
+      fBins.Delete();
+      fBinsContinued.Clear();
+   }
+};
+
 #endif

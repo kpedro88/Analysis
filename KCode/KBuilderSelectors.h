@@ -363,10 +363,19 @@ class KMCWeightSelector : public KSelector {
 			ctagCFunc = 0; localOpt->Get("ctagCFunc",ctagCFunc);
 			mistagCFunc = 0; localOpt->Get("mistagCFunc",mistagCFunc);
 			if(btagcorr and pmssm){
-				vector<string> hnames{"n_eff_b","d_eff_b","n_eff_c","d_eff_c","n_eff_udsg","d_eff_udsg"};
+				vector<string> nnames{"n_eff_b","n_eff_c","n_eff_udsg"};
+				vector<string> dnames{"d_eff_b","d_eff_c","d_eff_udsg"};
+				vector<string> hnames{"h_eff_b","h_eff_c","h_eff_udsg"};
 				btageffs.reserve(hnames.size());
-				for(const auto& hname : hnames){
-					btageffs.push_back(KGetTHN(base->GetFile(),hname));
+				for(unsigned h = 0; h < hnames.size(); ++h){
+					auto numer = KGetTHN(base->GetFile(),nnames[h]);
+					auto denom = KGetTHN(base->GetFile(),dnames[h]);
+					auto bhist = numer->Clone(hnames[h].c_str());
+					bhist->Divide(denom);
+					reinterpret_cast<THnSparseClearer*>(bhist->THnSparse())->clear();
+					btageffs.push_back(bhist);
+					delete numer;
+					delete denom;
 				}
 			}
 
@@ -627,17 +636,9 @@ class KMCWeightSelector : public KSelector {
 					isrcorror.SetWeights(isrweights,isrnormtmp,debugWeight);
 				}
 				if(!btageffs.empty()){
-					btageffstmp.clear();
-					btageffstmp.reserve(btageffs.size());
-					for(auto btageff : btageffs){
-						btageffstmp.push_back((TH2*)KMath::ProjectTHN(btageff, idtmp));
-					}
-					btag->h_eff_b = (TH2F*)btageffstmp[0]->Clone("h_eff_b");
-					btag->h_eff_b->Divide(btageffstmp[1]);
-					btag->h_eff_c = (TH2F*)btageffstmp[2]->Clone("h_eff_c");
-					btag->h_eff_c->Divide(btageffstmp[3]);
-					btag->h_eff_udsg = (TH2F*)btageffstmp[4]->Clone("h_eff_udsg");
-					btag->h_eff_udsg->Divide(btageffstmp[5]);
+					btag->h_eff_b = (TH2F*)KMath::ProjectTHN(btageffs[0], idtmp);
+					btag->h_eff_c = (TH2F*)KMath::ProjectTHN(btageffs[1], idtmp);
+					btag->h_eff_udsg = (TH2F*)KMath::ProjectTHN(btageffs[2], idtmp);
 				}
 				currid = idtmp;
 			}
@@ -966,7 +967,6 @@ class KMCWeightSelector : public KSelector {
 		THN *nEventHist, *isrnorm;
 		TH1 *nEventHistTmp, *isrnormtmp;
 		vector<THN*> btageffs;
-		vector<TH2*> btageffstmp;
 		BTagCorrector* btag;
 		double xsection, norm, kfactor;
 		ISRCorrector isrcorror;

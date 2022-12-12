@@ -56,6 +56,7 @@ THN* KGetTHN(F* file, string getname, bool dothrow=true){
 		if(obj->InheritsFrom(TH1::Class())) hobj = new THN1(static_cast<TH1*>(obj));
 		else if(obj->InheritsFrom(THnSparse::Class())) hobj = new THNn(static_cast<THnSparse*>(obj));
 		else if(dothrow) throw runtime_error("Error getting "+getname+" from "+_KGet_name<F>()+" "+file->GetName()+": Unknown class type for THN conversion");
+		cout << "KGetTHN: " << getname << endl;
 	}
 	return hobj;
 }
