@@ -20,9 +20,6 @@
 #include <tuple>
 #include <map>
 
-//custom headers
-#include "THnSparseMin.h"
-
 using namespace std;
 
 namespace KMath {
@@ -179,9 +176,6 @@ namespace KMath {
 		return Jets_genIndex;
 	}
 	TH1* ProjectTHNFast(THnSparse* hsparse, const pair<int,int>& bins, int ndim, int offset){
-		//avoid over-allocating hash table
-		THnSparseMin* hsparsemin = reinterpret_cast<THnSparseMin*>(hsparse);
-		hsparsemin->FillExMap();
 		//stripped-down version of THnBase::CreateHist()
 		string name(hsparse->GetName());
 		name += "_proj";
