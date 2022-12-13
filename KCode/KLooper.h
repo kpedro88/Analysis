@@ -140,7 +140,13 @@ class KOpener {
 			}
 		}
 		//destructor
-		virtual ~KOpener() {}
+		virtual ~KOpener() {
+			for(auto& h : hists.GetTable()){
+				if(h.second->TH1()) delete h.second->TH1();
+				else if(h.second->THnSparse()) delete h.second->THnSparse();
+				delete h.second;
+			}
+		}
 		//accessors
 		string GetName() { return name; }
 		OptionMap* GetGlobalOpt() { return globalOpt; }

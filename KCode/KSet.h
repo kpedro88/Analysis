@@ -36,7 +36,11 @@ class KSet : public KBase {
 			debug = globalOpt->Get("debugset",false);
 		}
 		//destructor
-		virtual ~KSet() {}
+		virtual ~KSet() {
+			for(auto& child : children){
+				delete child;
+			}
+		}
 		
 		virtual void AddChild(KBase* ch){
 			children.push_back(ch);

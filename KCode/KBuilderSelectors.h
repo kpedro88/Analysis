@@ -46,6 +46,10 @@ class KMCWeightSelector : public KSelector {
 		KMCWeightSelector() : KSelector() {}
 		KMCWeightSelector(string name_, OptionMap* localOpt_) : KSelector(name_,localOpt_) { 
 		}
+		//destructor
+		~KMCWeightSelector() {
+			if(pmssm) CleanProj();
+		}
 		//enum for flattening qtys
 		enum flatqtys { noflatqty = 0, leadjetAK8pt = 1, subleadjetAK8pt = 2, bothjetAK8pt = 3, thirdjetAK8pt = 4, fourthjetAK8pt = 5 };
 		enum svbqtys { nosvbqty = 0, MTAK8 = 1 };
@@ -216,6 +220,7 @@ class KMCWeightSelector : public KSelector {
 			base->GetLocalOpt()->Get("mother",mother);
 			isrunc = 0; localOpt->Get("isrunc", isrunc);
 			useisrflat = localOpt->Get("isrflat", isrflat);
+			isrnormtmp = nullptr;
 			if(isrcorr and not useisrflat){
 				TH1* isrhist = NULL;
 				TH1* isrhistUp = NULL;
@@ -615,12 +620,29 @@ class KMCWeightSelector : public KSelector {
 		double GetBinContentBounded(TH1* hist, double val){
 			return hist->GetBinContent(hist->GetXaxis()->FindBin(min(val,hist->GetXaxis()->GetBinLowEdge(hist->GetNbinsX()+1))));
 		}
+		void CleanProj(){
+			if(isrnormtmp) {
+				delete isrnormtmp;
+				isrnormtmp = nullptr;
+				delete isrcorror.h_weights;
+			}
+			if(!btageffstmp.empty()){
+				for(auto btagefftmp : btageffstmp){
+					delete btagefftmp;
+				}
+				delete btag->h_eff_b;
+				delete btag->h_eff_c;
+				delete btag->h_eff_udsg;
+			}
+		}
 		void GetProj(){
 			pair<double,double> idtmp{looper->SignalParameters->at(0), looper->SignalParameters->at(1)};
 			if(idtmp!=currid) {
+				CleanProj();
 				if(nEventHist) {
-					nEventHistTmp = KMath::ProjectTHN(nEventHist, idtmp);
+					TH1* nEventHistTmp = KMath::ProjectTHN(nEventHist, idtmp);
 					nEventProc = nEventHistTmp->GetBinContent(1);
+					delete nEventHistTmp;
 				}
 				if(isrnorm) {
 					isrnormtmp = KMath::ProjectTHN(isrnorm, idtmp);
@@ -964,7 +986,7 @@ class KMCWeightSelector : public KSelector {
 		bool pmssm;
 		pair<double,double> currid;
 		THN *nEventHist, *isrnorm;
-		TH1 *nEventHistTmp, *isrnormtmp;
+		TH1 *isrnormtmp;
 		vector<THN*> btageffs;
 		vector<TH2*> btageffstmp;
 		BTagCorrector* btag;
