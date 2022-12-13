@@ -244,7 +244,7 @@ class KMCWeightSelector : public KSelector {
 				if(isrunc==1) isrweights = isrhistUp;
 				else if(isrunc==-1) isrweights = isrhistDown;
 				else isrweights = isrhist;
-				isrnorm = KGetTHN(base->GetFile(),"NJetsISR");
+				isrnorm = base->GetLooper()->GetHist("NJetsISR");
 				if(isrnorm->TH1()) isrcorror.SetWeights(isrweights,isrnorm->TH1(),debugWeight);
 			}
 			
@@ -366,7 +366,7 @@ class KMCWeightSelector : public KSelector {
 				vector<string> hnames{"n_eff_b","d_eff_b","n_eff_c","d_eff_c","n_eff_udsg","d_eff_udsg"};
 				btageffs.reserve(hnames.size());
 				for(const auto& hname : hnames){
-					btageffs.push_back(KGetTHN(base->GetFile(),hname));
+					btageffs.push_back(base->GetLooper()->GetHist(hname));
 				}
 			}
 

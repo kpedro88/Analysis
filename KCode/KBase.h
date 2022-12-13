@@ -81,8 +81,8 @@ class KBase {
 			else MyLooper->AddBase(this); //in case of KBuilder
 			file = MyLooper->GetFile();
 			tree = MyLooper->GetTree();
-			nEventHist = MyLooper->GetNEventHist();
-			nEventNegHist = MyLooper->GetNEventNegHist();
+			nEventHist = MyLooper->GetHist("nEventProc");
+			nEventNegHist = MyLooper->GetHist("nEventNeg");
 
 			//store this value (number of events processed) at the beginning so histo only has to be accessed once
 			int nEventProc = 0;
