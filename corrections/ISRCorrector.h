@@ -25,6 +25,7 @@ class ISRCorrector {
 			TH1* h_njetsisrW = (TH1*)all->Clone();
 			h_njetsisrW->Multiply(h_weights);
 			double A_NLO = h_njetsisrW->Integral(-1,-1);
+			delete h_njetsisrW;
 
 			double scale = A_NLO > 0 ? A_LO/A_NLO : 1.;
 			h_weights->Scale(scale);

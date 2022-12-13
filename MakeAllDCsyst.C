@@ -413,6 +413,17 @@ template<> void KSystProcessor<THnSparse>::MakeGenMHT(KMap<double>& pctDiffMap, 
 	pctDiffMap.Add("MHTSyst",fabs(1-g_yield/nominal_yield)*100);
 }
 
+namespace {
+	void CleanLoopers(){
+		auto& MyLoopers = KLooper::GetLooperMap();
+		auto& MyLoopersTable = MyLoopers.GetTable();
+		for(auto& MyLooper : MyLoopersTable){
+			delete MyLooper.second;
+			MyLoopersTable.erase(MyLooper.first);
+		}
+	}
+}
+
 //recompile:
 //root -b -l -q MakeAllDCsyst.C++
 void MakeAllDCsyst(string setname="", string indir="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV11", vector<string> input = {}, vector<string> extras = {}, string region="", string systTypes="nominal", string varTypes="", vector<string> driver_extras = {}, bool verbose=false){
@@ -459,6 +470,7 @@ void MakeAllDCsyst(string setname="", string indir="root://cmseos.fnal.gov//stor
 			cout << "})" << endl;
 		}
 		KPlotDriver(tmpdir,tmpinputs,tmpextras);
+		CleanLoopers();
 	}
 
 	//do the full variations separately
@@ -493,6 +505,7 @@ void MakeAllDCsyst(string setname="", string indir="root://cmseos.fnal.gov//stor
 			cout << "})" << endl;
 		}
 		KPlotDriver(tmpdir,tmpinputs,tmpextras);
+		CleanLoopers();
 	}
 	
 	//hadd and put file in pwd (for stageout)

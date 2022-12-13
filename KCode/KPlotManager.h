@@ -227,7 +227,11 @@ class KPlotManager : public KManager {
 			finalizeSets();
 		}
 		//destructor
-		virtual ~KPlotManager() {}
+		virtual ~KPlotManager() {
+			for(auto& MySet : MySets){
+				delete MySet;
+			}
+		}
 		//helpers
 		void processSet(string line){
 			//cout << line << endl;
