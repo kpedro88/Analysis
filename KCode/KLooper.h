@@ -63,13 +63,19 @@ class KOpenerName {
 class KOpener {
 	public:
 		//constructors
-		KOpener() : globalOpt(new OptionMap()), file(0), tree(0), nEventHist(0), nEventNegHist(0) {}
+		KOpener() : globalOpt(new OptionMap()), file(0), tree(0) {}
 		KOpener(OptionMap* localOpt, OptionMap* globalOpt_) : 
-			globalOpt(globalOpt_ ? globalOpt_ : new OptionMap()), file(0), tree(0), nEventHist(0), nEventNegHist(0)
+			globalOpt(globalOpt_ ? globalOpt_ : new OptionMap()), file(0), tree(0)
 		{
 			//local map not stored, just used for initialization
 			if(localOpt==0) localOpt = new OptionMap();
-			
+
+			//default list of hists to fetch
+			vector<string> hnames{"nEventProc","nEventNeg"};
+			//local overrides global
+			globalOpt->Get("fetch_histos",hnames);
+			localOpt->Get("fetch_histos",hnames);
+
 			KOpenerName helper(localOpt,globalOpt);
 			name = helper.name;
 			string filename = helper.filename;
@@ -107,23 +113,8 @@ class KOpener {
 						static_cast<TChain*>(tree)->Add((filename+chainsuff).c_str());
 
 						//these aren't necessarily required
-						THN* nEventHistTmp = KGetTHN(ftmp,"nEventProc",false);
-						//sum up nEventProc histos
-						if(nEventHistTmp) {
-							if(nEventHist) nEventHist->Add(nEventHistTmp);
-							else {
-								nEventHist = nEventHistTmp->Clone("nEventProc");
-								nEventHist->SetDirectory(0);
-							}
-						}
-						THN* nEventNegHistTmp = KGetTHN(ftmp,"nEventNeg",false);
-						//sum up nEventNeg histos
-						if(nEventNegHistTmp){
-							if(nEventNegHist) nEventNegHist->Add(nEventNegHistTmp);
-							else {
-								nEventNegHist = nEventNegHistTmp->Clone("nEventNeg");
-								nEventNegHist->SetDirectory(0);
-							}
+						for(const auto& hname : hnames){
+							GetAndAdd(ftmp, hname);
 						}
 
 						ftmp->Close();
@@ -143,8 +134,9 @@ class KOpener {
 				tree = KGet<TTree>(file,treename); //this might cause an issue for ext
 
 				//these aren't necessarily required
-				nEventHist = KGetTHN(file,"nEventProc",false);
-				nEventNegHist = KGetTHN(file,"nEventNeg",false);
+				for(const auto& hname : hnames){
+					hists.Add(hname, KGetTHN(file,hname,false));
+				}
 			}
 		}
 		//destructor
@@ -156,16 +148,30 @@ class KOpener {
 		TFile* GetFile() { return file; }
 		virtual void CloseFile() { if(file) file->Close(); }
 		virtual TTree* GetTree() { return tree; }
-		virtual THN* GetNEventHist() { return nEventHist; }
-		virtual THN* GetNEventNegHist() { return nEventNegHist; }
+		virtual THN* GetHist(const string& hname) { return hists.Get(hname); }
 
 	protected:
+		//helper
+		void GetAndAdd(TFile* ftmp, const string& hname){
+			THN* htmp = KGetTHN(ftmp,hname,false);
+			//sum up
+			if(htmp) {
+				THN* hist = GetHist(hname); 
+				if(hist) hist->Add(htmp);
+				else {
+					hist = htmp->Clone(hname.c_str());
+					hist->SetDirectory(0);
+					hists.Add(hname,hist);
+				}
+			}
+		}
+
 		//member variables
 		string name;
 		OptionMap* globalOpt;
 		TFile* file;
 		TTree* tree;
-		THN *nEventHist, *nEventNegHist;
+		KMap<THN*> hists;
 };
 
 //use first base class to get tree before initializing MakeClass base
