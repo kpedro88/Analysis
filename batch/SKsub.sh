@@ -71,7 +71,7 @@ for TYPE in ${TYPES[@]}; do
 	DO_PMSSM=0
 	if [ "$TYPE" = Pmssm ]; then
 		if [ "$COMMON" -eq 1 ]; then
-			SELS=common
+			SELS=common,common_JECup,common_JECdown,common_JERup,common_JERdown,common_genMHT
 			EXTRAS='"OPTION","b:saveTree[0]","b:saveCutflow[0]"'
 		else
 			DO_PMSSM=1

@@ -49,10 +49,15 @@ fi
 # hadd in common file
 if [ $PMSSM -eq 1 ]; then
   for TREEDIR in ${OUTDIR}*/; do
+    COMMONDIR=${OUTDIR}_common
+    COMMONVAR=$(echo ${TREEDIR} | cut -d'_' -f3)
+    if [ -n "$COMMONVAR" ]; then
+      COMMONDIR=${COMMONDIR}_${COMMONVAR}
+    fi
     for FILE in ${TREEDIR}/*.root; do
       BASEFILE=$(basename $FILE | sed 's/_block[0-9]*//')
       mv $FILE ${FILE}.bak
-      hadd $FILE ${FILE}.bak ${STORE}/${OUTDIR}_common/${BASEFILE}
+      hadd $FILE ${FILE}.bak ${STORE}/${COMMONDIR}/${BASEFILE}
     done
   done
 fi
