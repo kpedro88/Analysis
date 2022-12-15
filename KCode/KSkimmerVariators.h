@@ -497,8 +497,10 @@ class KJetVariator : public KVariator {
 								   const vector<int>& JetsUnc_origIndex, const vector<double>& JetsUnc_jerFactor, const vector<double>& Jets_unc,
 								   vector<TLorentzVector>* theJets, vector<unsigned>& theOrder)
 		{
+			//in case some jets are missing for some reason
+			int maxIndex = 1+*max_element(Jets_origIndex.begin(),Jets_origIndex.end());
 			//index of common ancestor (before JER smearing)
-			vector<int> newIndex(Jets_origIndex.size(),-1);
+			vector<int> newIndex(maxIndex,-1);
 			for(unsigned k = 0; k < Jets_origIndex.size(); ++k){
 				//reverse the index vector
 				newIndex[Jets_origIndex[k]] = k;
@@ -511,8 +513,11 @@ class KJetVariator : public KVariator {
 				//Jets[Unc]_origIndex is sorted in the final order after uncertainty variation is applied
 				//go up to common ancestor, then down to central smeared collection
 				int i = newIndex[JetsUnc_origIndex[j]];
+
+				//missing jet
+				if(i<0) continue;
+
 				theOrder.push_back(i);
-				
 				//undo central smearing, apply JEC unc, redo smearing w/ new smearing factor
 				     if(vtype==JECup)   theJets->push_back(Jets_orig[i]*(1./Jets_jerFactor[i])*(1+Jets_unc[i])*JetsUnc_jerFactor[j]);
 				else if(vtype==JECdown) theJets->push_back(Jets_orig[i]*(1./Jets_jerFactor[i])*(1-Jets_unc[i])*JetsUnc_jerFactor[j]);
