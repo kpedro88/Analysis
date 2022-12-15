@@ -11,6 +11,8 @@
 #include <vector>
 #include <string>
 #include <cstdlib>
+#include <cstdio>
+#include "sys/wait.h"
 #include <iostream>
 #include <sstream>
 #include <algorithm>
@@ -414,13 +416,23 @@ template<> void KSystProcessor<THnSparse>::MakeGenMHT(KMap<double>& pctDiffMap, 
 }
 
 namespace {
-	void CleanLoopers(){
-		auto& MyLoopers = KLooper::GetLooperMap();
-		auto& MyLoopersTable = MyLoopers.GetTable();
-		for(auto& MyLooper : MyLoopersTable){
-			delete MyLooper.second;
-			MyLoopersTable.erase(MyLooper.first);
-		}
+	string PlotCommand(const string& indir="", const vector<string>& input={}, const vector<string>& extras={}){
+		stringstream cmd;
+		cmd << "root -b -l -q 'KPlotDriver.C+(";
+		KParser::printstring(indir,cmd);
+		cmd << ",{";
+		KParser::printvecstring(input,cmd,",");
+		cmd << "},{";
+		KParser::printvecstring(extras,cmd,",");
+		cmd << "})'";
+		return cmd.str();
+	}
+	void RunCommand(const string& cmd, bool verbose=false){
+		if(verbose) cout << cmd << endl;
+		int ret = system(cmd.c_str());
+		int ret_exit = WEXITSTATUS(ret);
+		if(verbose) cout << "exit code: " << ret_exit << endl;
+		if(ret_exit!=0) exit(ret_exit);
 	}
 }
 
@@ -463,14 +475,9 @@ void MakeAllDCsyst(string setname="", string indir="root://cmseos.fnal.gov//stor
 		if(verbose){
 			tmpextras.push_back("b:debugloop[1]");
 			tmpextras.push_back("b:debugcut[1]");
-			cout << "run: KPlotDriver(" << tmpdir << ",{";
-			KParser::printvec(tmpinputs,cout,",");
-			cout << "},{";
-			KParser::printvec(tmpextras,cout,",");
-			cout << "})" << endl;
 		}
-		KPlotDriver(tmpdir,tmpinputs,tmpextras);
-		CleanLoopers();
+		string cmd = PlotCommand(tmpdir,tmpinputs,tmpextras);
+		RunCommand(cmd,verbose);
 	}
 
 	//do the full variations separately
@@ -498,14 +505,9 @@ void MakeAllDCsyst(string setname="", string indir="root://cmseos.fnal.gov//stor
 		if(verbose){
 			tmpextras.push_back("b:debugloop[1]");
 			tmpextras.push_back("b:debugcut[1]");
-			cout << "run: KPlotDriver(" << tmpdir << ",{";
-			KParser::printvec(tmpinputs,cout,",");
-			cout << "},{";
-			KParser::printvec(tmpextras,cout,",");
-			cout << "})" << endl;
 		}
-		KPlotDriver(tmpdir,tmpinputs,tmpextras);
-		CleanLoopers();
+		string cmd = PlotCommand(tmpdir,tmpinputs,tmpextras);
+		RunCommand(cmd,verbose);
 	}
 	
 	//hadd and put file in pwd (for stageout)
@@ -513,8 +515,7 @@ void MakeAllDCsyst(string setname="", string indir="root://cmseos.fnal.gov//stor
 	KParser::printvec(rootfiles,slist,".root ");
 	string therootfile = info.outpre+info.region+info.osuff+".root";
 	string cmd = "hadd -f "+therootfile+" "+slist.str()+".root"; //add trailing delim
-	if(verbose) cout << cmd << endl;
-	system(cmd.c_str());
+	RunCommand(cmd,verbose);
 
 	vector<string> systs;
 	KParser::process(systTypes,',',systs);

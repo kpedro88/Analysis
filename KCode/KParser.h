@@ -180,6 +180,20 @@ namespace KParser {
 			out << *(end(vec)-1);
 		}
 	}
+	template <class O>
+	void printstring(const string& str, O& out){
+		out << "\"" << str << "\"";
+	}
+	template <class O>
+	void printvecstring(vector<string> vec, O& out, const string& delim){
+		if(!vec.empty()){
+			for_each(vec.begin(),vec.end(),[](string& item){item = "\""+item+"\"";});
+			//avoid trailing delim
+			copy(vec.begin(),vec.end()-1,ostream_iterator<string>(out,delim.c_str()));
+			//last element
+			out << vec.back();
+		}
+	}
 	//forward declaration
 	void processOption(string line, OptionMap* option);
 	//generalization for processing a line
