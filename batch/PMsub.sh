@@ -66,7 +66,7 @@ for YEAR in ${YEARS[@]}; do
 	for ((PROCESS=0; PROCESS < ${#SAMPLES[@]}; PROCESS++)); do
 		SAMPLE=${SAMPLES[$PROCESS]}
 		echo 'KSkimDriver.C+("'$SAMPLE'","'$SELS'","'$INDIR1'",{"'$INPUT'"},{'"$EXTRAS"'},"'$OUTDIR'")' > jobs/input/macro_${JOBNAME1}_part${PROCESS}.txt
-		echo 'MakeAllDCsyst.C+("'$SAMPLE'","'${INDIR2}'",{"'${DCCONFIG}'"},{},"'${REGION}'","'${SYSTS}'","'${VARS}'")' > jobs/input/macro_${JOBNAME2}_part${PROCESS}.txt
+		echo 'MakeAllDCsyst.C+("'$SAMPLE'","'${INDIR2}'",{"'${DCCONFIG}'"},{},"'${REGION}'","'${SYSTS}'","'${VARS}'",{},1)' > jobs/input/macro_${JOBNAME2}_part${PROCESS}.txt
 	done
 
 	$DRYRUN ./PMtemp.sh ${JOBDIR} ${STORE1} ${STORE2} ${JOBNAME1} ${JOBNAME2} ${OUTDIR} ${#SAMPLES[@]}
