@@ -58,7 +58,7 @@ for TREEDIR in ${OUTDIR}*/; do
 	for FILE in ${TREEDIR}/*.root; do
 		BASEFILE=$(basename $FILE | sed 's/_block[0-9]*//')
 		mv $FILE ${FILE}.bak
-		hadd $FILE ${FILE}.bak ${STORE}/${COMMONDIR}/${BASEFILE}
+		hadd $FILE ${FILE}.bak ${STORE1}/${COMMONDIR}/${BASEFILE}
 	done
 done
 
