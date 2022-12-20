@@ -7,10 +7,15 @@ JOBNAME1="$4"
 JOBNAME2="$5"
 OUTDIR="$6"
 NUMSAMP="$7"
+REQMEM=4000
+if [[ "$NUMSAMP" == *","* ]]; then
+	# detect missing mode
+	REQMEM=6000
+fi
 
 JDLNAME=jobExecCondor_${JOBNAME2}.jdl
 echo ""
-echo ">> `/bin/date` Submitting condor job(s) in $JDLNAME with params : $1 $2 $3 $4 $5 $6 $7"
+echo ">> `/bin/date` Submitting condor job(s) in $JDLNAME with params : $1 $2 $3 $4 $5 $6 $7 $REQMEM"
 
 mkdir -p ${JOBDIR}
 
@@ -22,6 +27,7 @@ cat ./jobExecCondorPM.jdl \
 | sed -e s~STORE2~"${STORE2}"~ \
 | sed -e s/JOBNAME1/"${JOBNAME1}"/ \
 | sed -e s/JOBNAME2/"${JOBNAME2}"/ \
+| sed -e s/REQMEM/"${REQMEM}"/ \
 > ${JOBDIR}/${JDLNAME}
 
 cd ${JOBDIR}

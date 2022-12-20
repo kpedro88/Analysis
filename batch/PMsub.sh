@@ -21,9 +21,10 @@ CHECKARGS=""
 SUFFIX=""
 YEARS=()
 DRYRUN=""
+MISSING=
 
 #check arguments
-while getopts "kx:y:d" opt; do
+while getopts "kx:y:dm" opt; do
 	case "$opt" in
 		k) CHECKARGS="${CHECKARGS} -k"
 		;;
@@ -32,6 +33,8 @@ while getopts "kx:y:d" opt; do
 		y) IFS="," read -a YEARS <<< "$OPTARG"
 		;;
 		d) DRYRUN="echo"
+		;;
+		m) MISSING=1
 		;;
 	esac
 done
@@ -63,11 +66,32 @@ for YEAR in ${YEARS[@]}; do
 	JOBNAME1=skim_${TYPE}${YEAR}
 	JOBNAME2=DC_ra2_${VERSION}_${REGION}_${TYPE}_${YEAR}
 
+	LFNSTORE2=$(echo $STORE2 | sed 's~root://cmseos.fnal.gov/~~')
+	NUMSAMP=
 	for ((PROCESS=0; PROCESS < ${#SAMPLES[@]}; PROCESS++)); do
 		SAMPLE=${SAMPLES[$PROCESS]}
+
+		if [ -n "$MISSING" ]; then
+			if eos root://cmseos.fnal.gov ls $LFNSTORE2/RA2bin_proc_${SAMPLE}.root >& /dev/null; then
+				continue
+			else
+				NUMSAMP="$NUMSAMP,$PROCESS"
+			fi
+		fi
+
 		echo 'KSkimDriver.C+("'$SAMPLE'","'$SELS'","'$INDIR1'",{"'$INPUT'"},{'"$EXTRAS"'},"'$OUTDIR'")' > jobs/input/macro_${JOBNAME1}_part${PROCESS}.txt
 		echo 'MakeAllDCsyst.C+("'$SAMPLE'","'${INDIR2}'",{"'${DCCONFIG}'"},{},"'${REGION}'","'${SYSTS}'","'${VARS}'",{},1)' > jobs/input/macro_${JOBNAME2}_part${PROCESS}.txt
 	done
 
-	$DRYRUN ./PMtemp.sh ${JOBDIR} ${STORE1} ${STORE2} ${JOBNAME1} ${JOBNAME2} ${OUTDIR} ${#SAMPLES[@]}
+	if [ -z "$MISSING" ]; then
+		NUMSAMP=${#SAMPLES[@]}
+	else
+		if [ -z "$NUMSAMP" ]; then
+			echo "No missing jobs in ${YEAR}"
+			continue
+		else
+			NUMSAMP="Process in ${NUMSAMP:1}"
+		fi
+	fi
+	$DRYRUN ./PMtemp.sh ${JOBDIR} ${STORE1} ${STORE2} ${JOBNAME1} ${JOBNAME2} ${OUTDIR} "${NUMSAMP}"
 done
