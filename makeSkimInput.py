@@ -43,7 +43,7 @@ def makeSkimLine(short_name,full_names,file_mins,file_maxs,mothers,btype="skim",
     line += "s:chainsuff[/TreeMaker2/PreSelection]" + ("\t"+"vi:mother["+str(','.join(str(m) for m in mothers))+"]" if len(mothers) > 0 else "") + ("\t"+"b:data[1]" if data else "\t"+"b:data[0]") + ("\t" + "b:fastsim[1]" if fast else "") + ("\t" + "b:pmssm[1]" if pmssm else "") + ("\t"+"s:normtype["+nt+"]" if len(nt)>0 else "") + "\n"
     expline = the_name + " \\\n"
     # make set list for datacards with xsecs
-    dline = makeLineDCHist(the_name)
+    dline = makeLineDCHist(the_name,oname=short_name if pmssm else None)
     dline += makeLineDCBase(the_name,the_name,full=not fast,pmssm=pmssm,xsec=1)
     return (line,expline,dline)
 
