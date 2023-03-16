@@ -4,7 +4,7 @@ int:yieldprecision[4]
 vstring:disable_branches[*clean*,*Clean*]
 bool:debugloop[1]
 bool:debugcut[1]
-vstring:selections[cmsdijet,cmsdijet_jesUp,cmsdijet_jesDown,cmsdijet_jerUp,cmsdijet_jerDown]
+vstring:selections[cmsdijet,cmsdijetCRmiddle,cmsdijetCRhigh,cmsdijet_jesUp,cmsdijet_jesDown,cmsdijet_jerUp,cmsdijet_jerDown]
 
 INPUT
 input/input_style_default.txt
@@ -14,6 +14,20 @@ cmsdijet
 	DijetAK4	b:id[1]	d:pt[30]	d:eta[2.5]
 	WideJet	d:radius[1.1]
 	WideJetDeltaEta	d:max[1.1]
+	WideJetMass	d:min[1530]
+	MCWeight
+	Histo
+cmsdijetCRmiddle
+	DijetAK4	b:id[1]	d:pt[30]	d:eta[2.5]
+	WideJet	d:radius[1.1]
+	WideJetDeltaEta	d:min[1.1]	d:max[1.5]
+	WideJetMass	d:min[1530]
+	MCWeight
+	Histo
+cmsdijetCRhigh
+	DijetAK4	b:id[1]	d:pt[30]	d:eta[2.5]
+	WideJet	d:radius[1.1]
+	WideJetDeltaEta	d:min[1.5]	d:max[2.6]
 	WideJetMass	d:min[1530]
 	MCWeight
 	Histo
