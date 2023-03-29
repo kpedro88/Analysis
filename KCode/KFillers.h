@@ -739,6 +739,19 @@ class KFiller_widejetmass : public KFiller {
 };
 REGISTER_FILLER(widejetmass);
 
+//wide jet mass, relative to mediator mass
+class KFiller_widejetmassrel : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void CheckBase(){ base->GetLocalOpt()->Get("mMediator",mMed); }
+		virtual void CheckDeps(){ WideJetMass = sel->Get<KWideJetMassSelector*>("WideJetMass"); }
+		virtual void Fill(KValue& value, double w) { if(WideJetMass and mMed>0) value.Fill(WideJetMass->mass/mMed,w); }
+		//member variables
+		KWideJetMassSelector* WideJetMass = NULL;
+		double mMed = 0;
+};
+REGISTER_FILLER(widejetmassrel);
+
 //-----------------------------------------------------------------------------
 //transverse mass w/ regression
 class KFiller_MTAK8reg : public KFiller {
