@@ -598,6 +598,12 @@ class KPlotManager : public KManager {
 				return;
 			}
 			
+			if(out_file and globalOpt->Get("saveCutflow",false)){
+				for(unsigned s = 0; s < MySets.size(); s++){
+					MySets[s]->SaveCutflow(out_file);
+				}
+			}
+
 			//draw each plot - normalization, legend, ratio
 			int rebin = 0; globalOpt->Get("rebin",rebin);
 			bool disable_rebin = globalOpt->Get("disable_rebin",false);

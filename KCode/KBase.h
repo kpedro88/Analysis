@@ -183,6 +183,8 @@ class KBase {
 			}
 			else return nullptr; //do not reset if the histo does not exist
 		}
+		//implemented in KSelection.h
+		virtual void SaveCutflow(TFile* file);
 		virtual void SaveHisto(string pname, TFile* file){
 			file->cd();
 			string outname = name;

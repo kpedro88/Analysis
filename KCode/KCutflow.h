@@ -65,8 +65,8 @@ class KCutflowItem {
 class KCutflow {
 	public:
 		//constructors
-		KCutflow(string name_, string fname_, bool weighted_=false) : KCutflow(name_, KOpen(fname_), weighted_) {}
-		KCutflow(string name_, TFile* file, bool weighted_=false) : KCutflow(name_, KGet<TH1F>(file,"cutflow"), KGet<TH1F>(file,nEventProc()), weighted_) {}
+		KCutflow(string name_, string fname_, string suff_="", bool weighted_=false) : KCutflow(name_, KOpen(fname_), suff_, weighted_) {}
+		KCutflow(string name_, TFile* file, string suff_="", bool weighted_=false) : KCutflow(name_, KGet<TH1F>(file,"cutflow"+(suff_.empty() ? "" : "_"+suff_)), KGet<TH1F>(file,nEventProc()+(suff_.empty() ? "" : "_"+suff_)), weighted_) {}
 		//get nevent info from histo
 		KCutflow(string name_, TH1F* h_tmp, TH1F* h_ntmp, bool weighted_=false) : KCutflow(name_, h_tmp, h_ntmp->GetBinContent(1), h_ntmp->GetBinError(1), weighted_) {}
 		//get nevent info directly

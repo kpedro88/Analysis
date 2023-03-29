@@ -87,16 +87,17 @@ class KBuilder : public KLooper {
 				}
 			}
 			
-			//final steps
-			if(globalOpt->Get("debugcut",false)) {
-				for(auto& base : MyBases){
+			//finalize histos etc.
+			bool saveCutflow = globalOpt->Get("saveCutflow",false);
+			bool debugCut = globalOpt->Get("debugcut",false);
+			for(auto& base : MyBases){
+				if(saveCutflow){
+					base->GetSelection()->GetEfficiency(nentries);
+				}
+				if(debugCut){
 					cout << base->GetName() << endl;
 					base->GetSelection()->PrintEfficiency(nentries,sqrt((double)nentries));
 				}
-			}
-			
-			//finalize histos
-			for(auto& base : MyBases){
 				base->SetBuilt();
 				KSelector* Histo = base->GetSelection()->Get<KSelector*>("Histo");
 				Histo->Finalize(NULL);

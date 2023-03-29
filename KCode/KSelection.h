@@ -96,7 +96,7 @@ class KSelection {
 	public:
 		//constructor
 		KSelection() : name(""), variation(0), looper(0), file(0), tree(0), cutflowHist(0), eventlist(""), base(0) {}
-		KSelection(string name_, OptionMap* globalOpt_) : name(name_), globalOpt(globalOpt_), variation(0), looper(0), file(0), tree(0), cutflowHist(0), filter(0), eventlist(""), base(0) {
+		KSelection(string name_, OptionMap* globalOpt_) : name(name_), globalOpt(globalOpt_), variation(0), looper(0), file(0), tree(0), cutflowHist(0), nEventHist(0), filter(0), eventlist(""), base(0) {
 			//must always have option map
 			if(globalOpt==0) globalOpt = new OptionMap();
 			globalOpt->Get("selectevents",eventlist);
@@ -109,6 +109,8 @@ class KSelection {
 		//accessors
 		string GetName() { return name; }
 		OptionMap* GetGlobalOpt() { return globalOpt; }
+		TH1F* GetCutflow() { return cutflowHist; }
+		TH1F* GetNEventHist() { return nEventHist; }
 		void SetVariation(KVariation* varn) { variation = varn; }
 		void AddSelector(KSelector* sel_){
 			//safety check
@@ -202,7 +204,7 @@ class KSelection {
 			
 			return result;
 		}
-		void GetEfficiency(){
+		void GetEfficiency(int nentries=0){
 			vector<KCutflowEntry> cuts;
 			for(unsigned s = 0; s < selectorList.size(); s++){
 				int prev_counter = 0;
@@ -221,16 +223,17 @@ class KSelection {
 			cutflowHist->GetXaxis()->SetNoAlphanumeric();
 			
 			//todo: add object ctr histogram for syncing
+
+			//save nentries in a histogram for plot mode
+			//(KBuilder handles multiple bases - can't store single nentries histogram like KSkimmer)
+			if(nentries>0){
+				nEventHist = new TH1F("nEventProc","",1,0,1);
+				nEventHist->SetBinContent(1,nentries);
+			}
 		}
 		void PrintEfficiency(TH1F* nEventHist){
 			if(!nEventHist) return;
-			if(!cutflowHist) GetEfficiency();
-			
-			//check if error printing should be enabled
-			bool printerrors = globalOpt->Get("printerrors",false);
-			//use helper class to print
-			KCutflow kcut("",cutflowHist,nEventHist);
-			kcut.PrintEfficiency(printerrors);
+			PrintEfficiency(nEventHist->GetBinContent(1),nEventHist->GetBinError(1));
 		}
 		void PrintEfficiency(int nentries, double nentriesE=0){
 			if(!cutflowHist) GetEfficiency();
@@ -282,6 +285,7 @@ class KSelection {
 		TFile* file;
 		TTree* tree;
 		TH1F* cutflowHist;
+		TH1F* nEventHist;
 		EventListFilter* filter;
 		string eventlist;
 		KBase* base;
@@ -289,6 +293,15 @@ class KSelection {
 
 //defined here to avoid circular dependency
 void KBase::SetSelection(KSelection* sel_) { MySelection = sel_; MySelection->SetBase(this); }
+void KBase::SaveCutflow(TFile* file){
+	file->cd();
+	string outname = name;
+	localOpt->Get("outname",outname);
+	string cname = "cutflow_" + outname;
+	MySelection->GetCutflow()->Write(cname.c_str());
+	string nname = "nEventProc_" + outname;
+	MySelection->GetNEventHist()->Write(nname.c_str());
+}
 
 //-------------------------------------------------------------
 //addition to KParser to create selectors

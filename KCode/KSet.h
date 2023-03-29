@@ -160,6 +160,12 @@ class KSet : public KBase {
 			}
 			else return nullptr; //do not reset if the histo does not exist
 		}
+		using KBase::SaveCutflow;
+		virtual void SaveCutflow(TFile* file){
+			for(unsigned c = 0; c < children.size(); c++){
+				children[c]->SaveCutflow(file);
+			}
+		}
 		virtual void CloseFile(){
 			for(unsigned c = 0; c < children.size(); c++){
 				children[c]->CloseFile();

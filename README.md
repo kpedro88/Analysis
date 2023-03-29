@@ -71,7 +71,7 @@ After the skims finish, some may need to be hadded (split or extended samples):
 ```
 root -b -l -q 'KCutflowDriver.C+("root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV17/tree_signal/tree_T1tttt_1500_100.root")'
 ```
-Additional arguments can be added to enable printing statistical errors and to change the number of significant figures printed.
+Additional arguments can be added to select a non-standard histogram name, to enable printing statistical errors, and to change the number of significant figures printed.
 
 ## Scanning
 
