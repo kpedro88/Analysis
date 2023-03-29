@@ -25,9 +25,9 @@ with open("input/input_sets_DC_svj_scan_2016.txt",'r') as infile, open("input/in
                 neventproc[year] = tree.GetEntries()
 
             # use kfactor for lumi
-            line = line.replace("\n","\ti:nEventProc[{}]".format(neventproc[2016])+"\td:kfactor[36330]\n")
-            line2 = line2.replace("\n","\ti:nEventProc[{}]".format(neventproc[2017])+"\td:kfactor[41530]\n")
-            line3 = line3.replace("\n","\ti:nEventProc[{}]".format(neventproc[2018])+"\td:kfactor[59740]\n")
+            line = line.replace("\n","\td:mMediator[{}]".format(fsplit[2])+"\ti:nEventProc[{}]".format(neventproc[2016])+"\td:kfactor[36330]\n")
+            line2 = line2.replace("\n","\td:mMediator[{}]".format(fsplit[2])+"\ti:nEventProc[{}]".format(neventproc[2017])+"\td:kfactor[41530]\n")
+            line3 = line3.replace("\n","\td:mMediator[{}]".format(fsplit[2])+"\ti:nEventProc[{}]".format(neventproc[2018])+"\td:kfactor[59740]\n")
 
             outfile.write(line)
             outfile.write(line2)
