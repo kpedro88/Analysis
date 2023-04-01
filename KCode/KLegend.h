@@ -232,8 +232,8 @@ class KLegend{
 			for(const auto hist : hists){
 				vector<double> x, y;
 				if(hist->GetDimension()==2){
-					for(int bx = 1; bx <= hist->GetNbinsX(); ++bx){
-						for(int by = 1; by <= hist->GetNbinsY(); ++by){
+					for(int bx = hist->GetXaxis()->GetFirst(); bx <= hist->GetXaxis()->GetLast(); ++bx){
+						for(int by = hist->GetYaxis()->GetFirst(); by <= hist->GetYaxis()->GetLast(); ++by){
 							if(hist->GetBinContent(bx,by)>hist->GetMinimum()){
 								x.push_back(hist->GetXaxis()->GetBinCenter(bx));
 								y.push_back(hist->GetYaxis()->GetBinCenter(by));
@@ -242,7 +242,7 @@ class KLegend{
 					}
 				}
 				else{
-					for(int b = 1; b <= hist->GetNbinsX(); ++b){
+					for(int b = hist->GetXaxis()->GetFirst(); b <= hist->GetXaxis()->GetLast(); ++b){
 						x.push_back(hist->GetBinCenter(b));
 						y.push_back(hist->GetBinContent(b));
 					}
@@ -410,21 +410,21 @@ class KLegend{
 		
 			//step 1: determine the highest peak
 			int p = 1; //bin number of peak
-			int nbins = 1; //number of bins of histo
+			double binmid = 0; //midpoint of [bin1,binN] of histo
 			double ph = 0; //height of peak + error
 			//(could have to modify this later to use error band separately, in case of systematics)
 			//loop over sets
 			for(unsigned s = 0; s < hists.size(); s++){
 				int p_ = hists[s]->GetMaximumBin();
-				int nbins_ = hists[s]->GetNbinsX();
+				double binmid_ = (hists[s]->GetXaxis()->GetLast() + hists[s]->GetXaxis()->GetFirst())/2.;
 				double ph_ = hists[s]->GetBinContent(p_) + hists[s]->GetBinError(p_);
 				//check peak height
-				if(ph_ > ph) { p = p_; nbins = nbins_; ph = ph_; }
+				if(ph_ > ph) { p = p_; binmid = binmid_; ph = ph_; }
 			}
 			
 			//step 2: determine appropriate legend coords
 			if(hdir==hdefault){
-				if(p > nbins/2) hdir = left;
+				if(p > binmid) hdir = left;
 				else hdir = right;
 			}
 			Build(hdir,top);
@@ -507,11 +507,11 @@ class KLegend{
 					xbmin = logx
 							? x1->FindBin(x1min*pow(x1max/x1min, (ucmin[i] - pad->GetLeftMargin())/gx))
 							: x1->FindBin((ucmin[i] - pad->GetLeftMargin())*(x1max - x1min)/gx + x1min);
-					if(i==1 and xbmin > 1) xbmin -= 1; //include extra bin for non-legend side (in case histo taller than legend)
+					if(i==1 and xbmin > xomin) xbmin -= 1; //include extra bin for non-legend side (in case histo taller than legend)
 					xbmax = logx
 							? x1->FindBin(x1min*pow(x1max/x1min, (ucmax[i] - pad->GetLeftMargin())/gx))
 							: x1->FindBin((ucmax[i] - pad->GetLeftMargin())*(x1max - x1min)/gx + x1min);
-					if(i==1 and xbmax < hists[s]->GetNbinsX()) xbmax += 1; //include extra bin for non-legend side (in case histo taller than legend)
+					if(i==1 and xbmax < xomax) xbmax += 1; //include extra bin for non-legend side (in case histo taller than legend)
 
 					//set range for search
 					x1->SetRange(xbmin,xbmax);
