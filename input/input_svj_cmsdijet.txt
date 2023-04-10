@@ -4,7 +4,7 @@ int:yieldprecision[4]
 vstring:disable_branches[*clean*,*Clean*]
 bool:debugloop[1]
 bool:debugcut[1]
-vstring:selections[cmsdijet,cmsdijetCRmiddle,cmsdijetCRhigh,cmsdijet_jesUp,cmsdijet_jesDown,cmsdijet_jerUp,cmsdijet_jerDown]
+vstring:selections[cmsdijet,cmsdijet_jesUp,cmsdijet_jesDown,cmsdijet_jerUp,cmsdijet_jerDown,cmsdijetCRmiddle,cmsdijetCRmiddle_jesUp,cmsdijetCRmiddle_jesDown,cmsdijetCRmiddle_jerUp,cmsdijetCRmiddle_jerDown,cmsdijetCRhigh,cmsdijetCRhigh_jesUp,cmsdijetCRhigh_jesDown,cmsdijetCRhigh_jerUp,cmsdijetCRhigh_jerDown]
 bool:saveCutflow[1]
 
 INPUT
