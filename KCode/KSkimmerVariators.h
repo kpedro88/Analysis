@@ -498,7 +498,7 @@ class KJetVariator : public KVariator {
 								   vector<TLorentzVector>* theJets, vector<unsigned>& theOrder)
 		{
 			//in case some jets are missing for some reason
-			int maxIndex = 1+*max_element(Jets_origIndex.begin(),Jets_origIndex.end());
+			int maxIndex = 1+(Jets_origIndex.empty() ? 0 : *max_element(Jets_origIndex.begin(),Jets_origIndex.end()));
 			//index of common ancestor (before JER smearing)
 			vector<int> newIndex(maxIndex,-1);
 			for(unsigned k = 0; k < Jets_origIndex.size(); ++k){
