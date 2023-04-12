@@ -6,4 +6,5 @@ flist = [
 [['Fall17Fast.PMSSM_set_2_LL_1_TuneCP2_13TeV-pythia8'],['pMSSM_set2LL1_MC2017']],
 [['Fall17Fast.PMSSM_set_2_LL_2_TuneCP2_13TeV-pythia8'],['pMSSM_set2LL2_MC2017']],
 [['Fall17Fast.PMSSM_set_2_prompt_1_TuneCP2_13TeV-pythia8'],['pMSSM_set2prompt1_MC2017']],
+[['Fall17Fast.PMSSM_set_2_prompt_2_TuneCP2_13TeV-pythia8'],['pMSSM_set2prompt2_MC2017']],
 ]
