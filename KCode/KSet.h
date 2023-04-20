@@ -173,12 +173,12 @@ class KSet : public KBase {
 		}
 		//rebin current histo, set implementation
 		using KBase::Rebin;
-		virtual void Rebin(int rebinx, int rebiny=-1){
-			KBase::Rebin(rebinx, rebiny);
+		virtual void Rebin(int rebinx, int rebiny=-1, const vector<double>& xbins={}){
+			KBase::Rebin(rebinx, rebiny, xbins);
 
 			//propagate to children for consistency
 			for(unsigned c = 0; c < children.size(); c++){
-				children[c]->Rebin(rebinx, rebiny);
+				children[c]->Rebin(rebinx, rebiny, xbins);
 			}
 		}
 		//divide current histo by bin width, set implementation

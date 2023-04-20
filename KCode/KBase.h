@@ -256,12 +256,15 @@ class KBase {
 		TFile* GetFile() { return file; }
 		virtual void CloseFile() { if(file) file->Close(); }
 		//rebin current histo
-		virtual void Rebin(int rebinx, int rebiny=-1){
+		virtual void Rebin(int rebinx, int rebiny=-1, const vector<double>& xbins={}){
 			if(rebiny<0) rebiny = rebinx;
 			if(rebinx==0) rebinx = 1;
 			if(rebiny==0) rebiny = 1;
 			if(obj->htmp->GetDimension()==2) ((TH2*)obj->htmp)->Rebin2D(rebinx,rebiny);
-			else obj->htmp->Rebin(rebinx);
+			else {
+				if (xbins.empty()) obj->htmp->Rebin(rebinx);
+				else obj->htmp = obj->htmp->Rebin(xbins.size()-1,"",xbins.data());
+			}
 		}
 		//divide current histo by bin width, default implementation
 		virtual void BinDivide(bool do_x, bool do_y, TH1* htmp=nullptr){

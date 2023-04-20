@@ -606,23 +606,26 @@ class KPlotManager : public KManager {
 
 			//draw each plot - normalization, legend, ratio
 			int rebin = 0; globalOpt->Get("rebin",rebin);
+			vector<double> rebins; globalOpt->Get("rebins",rebins);
 			bool disable_rebin = globalOpt->Get("disable_rebin",false);
 			bool printyield = globalOpt->Get("printyield",false);
 			bool unitnorm = globalOpt->Get("unitnorm",false);
 			for(auto& p : MyPlots.GetTable()){
 				//get drawing objects from KPlot
 				int rebin_plot = rebin; p.second->GetLocalOpt()->Get("rebin",rebin_plot);
+				vector<double> rebins_plot = rebins; p.second->GetLocalOpt()->Get("rebins",rebins_plot);
 				TCanvas* can = p.second->GetCanvas();
 				TPad* pad1 = p.second->GetPad1();
-				
+
 				//get legend
 				KLegend* kleg = p.second->GetLegend();
-				
+
 				//select current histogram in sets
 				for(unsigned s = 0; s < MySets.size(); s++){
 					MySets[s]->GetHisto(p.first);
 				}
-				
+
+				//FIRST rebin (variable-bin rebinning can remove some contents), then:
 				//check if normalization to yield is desired (disabled by default)
 				//BEFORE printing yields
 				//needs to be separate loop because yieldref must have current histo selected to get appropriate yield
@@ -645,13 +648,13 @@ class KPlotManager : public KManager {
 				bool xbindivide = p.second->GetLocalOpt()->Get("xbindivide",false);
 				bool ybindivide = p.second->GetLocalOpt()->Get("ybindivide",false);
 				for(unsigned s = 0; s < MySets.size(); s++){
+					if((rebin_plot or !rebins_plot.empty()) and !disable_rebin) MySets[s]->Rebin(rebin_plot,-1,rebins_plot);
 					if(yieldnorm && yield>0 && MySets[s] != yieldref && MySets[s]->GetLocalOpt()->Get("yieldnorm",true)) {
 						double yieldnormval = yield;
 						MySets[s]->GetLocalOpt()->Get("yieldnormval",yieldnormval);
 						MySets[s]->Normalize(yieldnormval);
 					}
 					if(printyield) MySets[s]->PrintYield();
-					if(rebin_plot and !disable_rebin) MySets[s]->Rebin(rebin_plot);
 					if(unitnorm) MySets[s]->Normalize(1,true);
 					if(xbindivide or ybindivide) MySets[s]->BinDivide(xbindivide,ybindivide);
 					MySets[s]->DoFits();
