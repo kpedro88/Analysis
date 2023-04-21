@@ -273,6 +273,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	bool show_exp = globalOpt->Get("show_exp",false);
 	bool interp = globalOpt->Get("interp",false);
 	bool multxs = globalOpt->Get("multxs",true);
+	bool colz = globalOpt->Get("colz",true);
 	vector<string> extra_text; bool set_extra_text = globalOpt->Get("extra_text",extra_text);
 	string obs_text("Observed"); globalOpt->Get("obs_text",obs_text);
 	string the_text("Theoretical"); globalOpt->Get("the_text",the_text);
@@ -285,6 +286,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	string printsuffix; globalOpt->Get("printsuffix",printsuffix);
 	string limitqty = "limit"; globalOpt->Get("limitqty",limitqty);
 	string xsecqty = "xsec"; globalOpt->Get("xsecqty",xsecqty);
+	double xsecval = 1; globalOpt->Get("xsecval",xsecval);
 	bool acceff = globalOpt->Get("acceff",false);
 	bool interp_log = globalOpt->Get("interp_log",!acceff);
 	bool logz = globalOpt->Get("logz",!acceff);
@@ -300,6 +302,8 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	double ushiftLeg = 0; globalOpt->Get("ushiftLeg",ushiftLeg);
 	double vshiftLeg = 0; globalOpt->Get("vshiftLeg",vshiftLeg);
 	int np2d = 40; globalOpt->Get("np2d",np2d); //40 is ROOT default
+	Color_t expcolor = kRed; globalOpt->Get("expcolor",expcolor);
+	Color_t obscolor = kBlack; globalOpt->Get("obscolor",obscolor);
 
 	vector<string> base_extra_text{"95% CL upper limits"};
 	if(acceff) base_extra_text = {};
@@ -358,7 +362,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	labels.Add("alpha",{alphaName(-3.),alphaName(-2.),alphaName(-1.)});
 	xname = vdict[var1]+unitdict[var1];
 	string dname = limitqty+":";
-	if (xsecqty.empty()) dname += "1";
+	if (xsecqty.empty()) dname += to_string(xsecval);
 	else dname += "trackedParam_"+xsecqty;
 	dname += ":trackedParam_"+var1;
 
@@ -589,12 +593,12 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 				//get observed limit (w/ xsec) & exclusion contour
 				lim_obs = getLimit(limit,dname,cname,-1,itype,multxs);
 				contours_obs = findExclusionCurve(lim_obs);
-				styleGraphs(contours_obs,kBlack,1);
+				styleGraphs(contours_obs,obscolor,1);
 			}
 
 			//get central value (expected) & exclusion contour
 			contours_cen = findExclusionCurve(lim_cen);
-			styleGraphs(contours_cen,kRed,1);
+			styleGraphs(contours_cen,expcolor,1);
 		}
 
 		//get uncertainty bands and contours
@@ -610,7 +614,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		vector<vector<TGraph*>> contours_sigmas;
 		for(unsigned i = 0; i < lim_sigmas.size(); ++i){
 			contours_sigmas.push_back(findExclusionCurve(lim_sigmas[i]));
-			styleGraphs(contours_sigmas.back(), kRed, i>=2 ? 2 : 7);
+			styleGraphs(contours_sigmas.back(), expcolor, i>=2 ? 2 : 7);
 		}
 
 		//get histogram to plot
@@ -751,7 +755,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		leg->SetFillColorAlpha(0,0.6);
 
 		//draw objects
-		h2d->Draw("colz same");
+		if(colz) h2d->Draw("colz same");
 		for(const auto& v: contours_sigmas){
 			for(auto c: v){
 				c->Draw("c same");
