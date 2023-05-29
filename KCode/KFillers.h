@@ -13,6 +13,7 @@
 
 //STL headers
 #include <cmath>
+#include <algorithm>
 
 using namespace std;
 
@@ -400,6 +401,15 @@ class KFiller_deltaphi4 : public KFiller {
 		virtual void Fill(KValue& value, double w) { value.Fill(looper->DeltaPhi4,w); }
 };
 REGISTER_FILLER(deltaphi4);
+
+//mindeltaphi of four jets
+class KFiller_deltaphimin : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void ListBranches() { branches = {"DeltaPhi1","DeltaPhi2","DeltaPhi3","DeltaPhi4"}; }
+		virtual void Fill(KValue& value, double w) { value.Fill(std::min({looper->DeltaPhi1,looper->DeltaPhi2,looper->DeltaPhi3,looper->DeltaPhi4}),w); }
+};
+REGISTER_FILLER(deltaphimin);
 
 //difference between mMother and mLSP
 class KFiller_deltam : public KFiller {
