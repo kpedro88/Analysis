@@ -485,6 +485,17 @@ class KFiller_deltaphirecoil : public KFiller {
 };
 REGISTER_FILLER(deltaphirecoil);
 
+//rinv model parameter
+class KFiller_rinv : public KFiller {
+	public:
+		using KFiller::KFiller;
+		virtual void CheckBase(){ rinv = 0; base->GetLocalOpt()->Get("rinv",rinv); }
+		virtual void Fill(KValue& value, double w) { value.Fill(rinv,w); }
+		//member variables
+		double rinv;
+};
+REGISTER_FILLER(rinv);
+
 //sigma ieta ieta variable for all photon candidates
 class KFiller_sigmaietaieta : public KFiller {
 	public:
