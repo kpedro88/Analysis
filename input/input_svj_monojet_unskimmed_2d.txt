@@ -1,0 +1,39 @@
+INPUT
+input/input_svj_paper.txt
+
+OPTION
+bool:appendsel[1]
+bool:useTreeWeight[0]
+vstring:selections[unskimmed,met]
+string:rootfile[test/monojet/met_deltaphimin_unskimmed_2d]
+vstring{|}:extra_text[Signal (^{}m_{Z'} = 2.1 TeV,|^{}m_{dark} = 20 GeV, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
+vint:extra_text_panels[0,0]
+bool:leg2d[1]
+string:unitnormdim[y]
+
+SELECTION
+unskimmed
+	MCWeight
+	Histo
+met
+	MET	d:min[250]
+	unskimmed
+
+HISTO2D
+met_rinv	i:xnum[150]	d:xmin[0]	d:xmax[1500]	i:ynum[11]	d:ymin[-0.05]	d:ymax[1.05]	s:xtitle[p_{T}^{miss} [GeV]]	s:ytitle[r_{inv}]	s:ztitle[Arbitrary units]	b:ratio[0]	b:logy[z]
+deltaphimin_rinv	i:xnum[63]	d:xmin[0]	d:xmax[3.15]	i:ynum[11]	d:ymin[-0.05]	d:ymax[1.05]	s:xtitle[#Delta#phi_{min}]	s:ytitle[r_{inv}]	s:ztitle[Arbitrary units]	b:logz[1]	b:ratio[0]
+nbjets_rinv	i:xnum[11]	d:xmin[-0.5]	d:xmax[10.5]	i:ynum[11]	d:ymin[-0.05]	d:ymax[1.05]	s:xtitle[N_{b-jet}]	s:ytitle[r_{inv}]	s:ztitle[Arbitrary units]	b:logz[1]	b:ratio[0]
+
+SET
+hist	mc	SVJ_2100_20_peak_MC2018	s:legname[]	c:color[kBlack]	i:linestyle[1]
+	base	mc	SVJ_2100_20_0_peak	s:filename[SVJ_mZprime-2100_mDark-20_rinv-0_alpha-peak_MC2018_scan.root]	d:rinv[0]
+	base	mc	SVJ_2100_20_0.1_peak	s:filename[SVJ_mZprime-2100_mDark-20_rinv-0.1_alpha-peak_MC2018_scan.root]	d:rinv[0.1]
+	base	mc	SVJ_2100_20_0.2_peak	s:filename[SVJ_mZprime-2100_mDark-20_rinv-0.2_alpha-peak_MC2018_scan.root]	d:rinv[0.2]
+	base	mc	SVJ_2100_20_0.3_peak	s:filename[SVJ_mZprime-2100_mDark-20_rinv-0.3_alpha-peak_MC2018_scan.root]	d:rinv[0.3]
+	base	mc	SVJ_2100_20_0.4_peak	s:filename[SVJ_mZprime-2100_mDark-20_rinv-0.4_alpha-peak_MC2018_scan.root]	d:rinv[0.4]
+	base	mc	SVJ_2100_20_0.5_peak	s:filename[SVJ_mZprime-2100_mDark-20_rinv-0.5_alpha-peak_MC2018_scan.root]	d:rinv[0.5]
+	base	mc	SVJ_2100_20_0.6_peak	s:filename[SVJ_mZprime-2100_mDark-20_rinv-0.6_alpha-peak_MC2018_scan.root]	d:rinv[0.6]
+	base	mc	SVJ_2100_20_0.7_peak	s:filename[SVJ_mZprime-2100_mDark-20_rinv-0.7_alpha-peak_MC2018_scan.root]	d:rinv[0.7]
+	base	mc	SVJ_2100_20_0.8_peak	s:filename[SVJ_mZprime-2100_mDark-20_rinv-0.8_alpha-peak_MC2018_scan.root]	d:rinv[0.8]
+	base	mc	SVJ_2100_20_0.9_peak	s:filename[SVJ_mZprime-2100_mDark-20_rinv-0.9_alpha-peak_MC2018_scan.root]	d:rinv[0.9]
+	base	mc	SVJ_2100_20_1_peak	s:filename[SVJ_mZprime-2100_mDark-20_rinv-1_alpha-peak_MC2018_scan.root]	d:rinv[1]
