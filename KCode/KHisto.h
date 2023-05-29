@@ -360,12 +360,35 @@ TH1* KBase::AddHisto(string s, TH1* h, OptionMap* omap){
 	return obj->htmp;
 }
 //in case of normalization to yield or other scaling
-void KBase::Normalize(double nn, bool toYield){
+void KBase::Normalize(double nn, bool toYield, char dim){
 	if(obj->khtmp and obj->khtmp->IsSpecial()) return;
 	if(obj->htmp->InheritsFrom(TProfile::Class())) return;
-	double simyield = obj->htmp->GetDimension()==2 ? ((TH2*)obj->htmp)->Integral(0,obj->htmp->GetNbinsX()+1,0,obj->htmp->GetNbinsY()+1) : obj->htmp->Integral(0,obj->htmp->GetNbinsX()+1);
-	if(toYield) obj->htmp->Scale(nn/simyield);
-	else obj->htmp->Scale(nn);
+	//normalize by row or column
+	if((dim=='x' or dim=='y') and obj->htmp->GetDimension()==2){
+		TAxis* normaxis = dim=='x' ? obj->htmp->GetXaxis() : obj->htmp->GetYaxis();
+		TAxis* otheraxis = dim=='x' ? obj->htmp->GetYaxis() : obj->htmp->GetXaxis();
+		double ranges[4] = {-1,-1,-1,-1};
+		int normindex = dim=='x' ? 0 : 2;
+		int otherindex = dim=='x' ? 2 : 0;
+		for(int bn = normaxis->GetFirst(); bn <= normaxis->GetLast(); ++bn){
+			ranges[normindex] = bn;
+			ranges[normindex+1] = bn;
+			ranges[otherindex] = -1;
+			ranges[otherindex+1] = -1;
+			double normintegral = ((TH2*)obj->htmp)->Integral(ranges[0],ranges[1],ranges[2],ranges[3]);
+			double normscale = normintegral != 0 ? nn/normintegral : 0;
+			for(int bo = 0; bo <= otheraxis->GetNbins()+1; ++bo){
+				ranges[otherindex] = bo;
+				obj->htmp->SetBinContent(ranges[0],ranges[2],normscale*obj->htmp->GetBinContent(ranges[0],ranges[2]));
+				obj->htmp->SetBinError(ranges[0],ranges[2],normscale*obj->htmp->GetBinError(ranges[0],ranges[2]));
+			}
+		}
+	}
+	else {
+		double simyield = obj->htmp->GetDimension()==2 ? ((TH2*)obj->htmp)->Integral(0,obj->htmp->GetNbinsX()+1,0,obj->htmp->GetNbinsY()+1) : obj->htmp->Integral(0,obj->htmp->GetNbinsX()+1);
+		if(toYield) obj->htmp->Scale(nn/simyield);
+		else obj->htmp->Scale(nn);
+	}
 }
 //histo add so external histos won't get overwritten
 TH1* KBaseExt::AddHisto(string s, TH1* h, OptionMap* omap){

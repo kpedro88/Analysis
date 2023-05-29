@@ -191,14 +191,14 @@ class KSet : public KBase {
 			}
 		}
 		//in case of normalization to yield or other scaling
-		virtual void Normalize(double nn, bool toYield=true){
+		virtual void Normalize(double nn, bool toYield=true, char dim=' '){
 			if(obj->khtmp and obj->khtmp->IsSpecial()) return;
 			//first, normalize all children
 			for(unsigned c = 0; c < children.size(); c++){
-				children[c]->Normalize(nn,toYield);
+				children[c]->Normalize(nn,toYield,dim);
 			}
 			//then do current histo
-			KBase::Normalize(nn,toYield);
+			KBase::Normalize(nn,toYield,dim);
 		}
 		//adds histo to legend
 		void AddToLegend(KLegend* kleg) {

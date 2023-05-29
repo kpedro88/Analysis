@@ -286,7 +286,7 @@ class KBase {
 			}
 		}
 		//implemented in KHisto.h
-		virtual void Normalize(double nn, bool toYield=true);
+		virtual void Normalize(double nn, bool toYield=true, char dim=' ');
 		virtual void MakeCutflows(){
 			MyCutflow = new KCutflow(name,file);
 		}

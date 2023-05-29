@@ -610,6 +610,8 @@ class KPlotManager : public KManager {
 			bool disable_rebin = globalOpt->Get("disable_rebin",false);
 			bool printyield = globalOpt->Get("printyield",false);
 			bool unitnorm = globalOpt->Get("unitnorm",false);
+			string unitnormdim; globalOpt->Get("unitnormdim",unitnormdim);
+			char unitnormchar = unitnormdim.empty() ? ' ' : unitnormdim[0];
 			for(auto& p : MyPlots.GetTable()){
 				//get drawing objects from KPlot
 				int rebin_plot = rebin; p.second->GetLocalOpt()->Get("rebin",rebin_plot);
@@ -748,7 +750,7 @@ class KPlotManager : public KManager {
 					if(yield>0 and theSet != yieldref and theSet->GetLocalOpt()->Get("yieldnorm",true)) theSet->Normalize(yield);
 					if(printyield) theSet->PrintYield();
 					if(!disable_rebin and (rebinx_plot or rebiny_plot)) theSet->Rebin(rebinx_plot,rebiny_plot);
-					if(unitnorm) theSet->Normalize(1,true);
+					if(unitnorm) theSet->Normalize(1,true,unitnormchar);
 					bool xbindivide = ptmp->GetLocalOpt()->Get("xbindivide",false);
 					bool ybindivide = ptmp->GetLocalOpt()->Get("ybindivide",false);
 					if(xbindivide or ybindivide) theSet->BinDivide(xbindivide,ybindivide);
