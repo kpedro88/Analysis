@@ -1,0 +1,3 @@
+met	s:legname[p_{T}^{miss} > 250 GeV]	vd:yvals[0.00452,0.12677,0.24711,0.34070,0.38307,0.40463,0.39973,0.36111,0.29786,0.20370,0.08674]	c:color[kRed]	i:linestyle[1]	i:linewidth[2]	s:drawopt[c]	s:legopt[l]
+dphi	s:legname[#Delta#phi(^{}#vec{p}_{T}(^{}j_{1,2,3,4}), ^{}#vec{p}_{T}^{miss}) > 0.5]	vd:yvals[0.09677,0.11213,0.14387,0.16950,0.23051,0.29631,0.38120,0.49231,0.61815,0.77929,0.93537]	c:color[kMagenta]	i:linestyle[7]	i:linewidth[2]	s:drawopt[c]	s:legopt[l]
+bveto	s:legname[N_{b-jet} = 0]	vd:yvals[0.07860,0.07711,0.08334,0.10491,0.13407,0.17707,0.23396,0.30927,0.41570,0.57464,0.89104]	c:color[kBlue]	i:linestyle[2]	i:linewidth[2]	s:drawopt[c]	s:legopt[l]
