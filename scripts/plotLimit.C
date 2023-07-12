@@ -3,6 +3,8 @@
 #include <TTree.h>
 #include <TH1.h>
 #include <TH2.h>
+#include <TGraph.h>
+#include <TGraphErrors.h>
 #include <TGraphAsymmErrors.h>
 #include <TGraph2D.h>
 #include <TCanvas.h>
@@ -64,7 +66,7 @@ class KGraph2D : public TGraph2D {
 class Limits {
 	public:
 		Limits() {}
-		Limits(int itype, bool multxs, unsigned n, double* rs, double* xs, double* v1s, double* v2s=nullptr){
+		Limits(int itype, bool multxs, unsigned n, double* rs, double* xs, double* v1s, double* v2s=nullptr, double* errs=nullptr){
 			//get indices from sorting by v
 			vector<unsigned> order(n);
 			iota(order.begin(),order.end(),0);
@@ -84,6 +86,7 @@ class Limits {
 				v2.reserve(n);
 				l.reserve(n);
 			}
+			if(errs) err.reserve(n);
 			for(unsigned i = 0; i < n; ++i){
 				x.push_back(xs[i]);
 				if(multxs) {
@@ -101,6 +104,7 @@ class Limits {
 					l.push_back(-log10(r.back()));
 				}
 				else l.push_back(log10(x.back()));
+				if(errs) err.push_back(errs[i]);
 			}
 
 			interp(itype);
@@ -132,17 +136,17 @@ class Limits {
 		//s = r * x, cross section limit
 		//l = log10(1/r), for 2D exclusion contours; OR log10(x), for 1D interpolation
 		//S = log10(s), for 2D exclusion histogram & 1D interpolation
-		vector<double> r, x, s, v1, v2, l, S;
+		vector<double> r, x, s, v1, v2, l, S, err;
 		vector<double> x_orig, s_orig, v1_orig;
 };
 
-Limits getLimit(TTree* limit, const string& dname, const string& cname, double q, int itype, bool multxs){
+Limits getLimit(TTree* limit, const string& dname, const string& cname, double q, int itype, bool multxs, bool has_err=false){
 	const double eps = 0.01;
 	stringstream ss;
 	ss << "abs(quantileExpected-" << q << ")<" << eps;
 	int npts = limit->Draw(dname.c_str(),(cname+ss.str()).c_str(),"goff");
 	bool is2D = count(dname.begin(),dname.end(),':') >= 3;
-	Limits lim(itype,multxs,npts,limit->GetV1(),limit->GetV2(),limit->GetV3(),is2D ? limit->GetV4() : nullptr);
+	Limits lim(itype,multxs,npts,limit->GetV1(),limit->GetV2(),limit->GetV3(),is2D ? limit->GetV4() : nullptr,has_err ? limit->GetV4() : nullptr);
 	return lim;
 }
 
@@ -225,12 +229,16 @@ void writeContour(const std::string& cname, const vector<TGraph*>& v){
 	}
 }
 
-set<double> getRange(int n, const double* arr, double& ymin, double& ymax, bool do_set=false){
-	double ymin_ = TMath::MinElement(n,arr);
-	if(ymin_ < ymin) ymin = ymin_;
-	
-	double ymax_ = TMath::MaxElement(n,arr);
-	if(ymax_ > ymax) ymax = ymax_;
+set<double> getRange(int n, const double* arr, double& ymin, double& ymax, bool do_set=false, bool manual_ymin=false, bool manual_ymax=false){
+	if(!manual_ymin){
+		double ymin_ = TMath::MinElement(n,arr);
+		if(ymin_ < ymin) ymin = ymin_;
+	}
+
+	if(!manual_ymax){
+		double ymax_ = TMath::MaxElement(n,arr);
+		if(ymax_ > ymax) ymax = ymax_;
+	}
 
 	set<double> vals;
 	if(do_set) vals.insert(arr, arr+n);
@@ -288,6 +296,8 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	string xsecqty = "xsec"; globalOpt->Get("xsecqty",xsecqty);
 	double xsecval = 1; globalOpt->Get("xsecval",xsecval);
 	bool acceff = globalOpt->Get("acceff",false);
+	string errqty = "";
+	bool has_err = acceff ? globalOpt->Get("errqty",errqty) : false;
 	bool interp_log = globalOpt->Get("interp_log",!acceff);
 	bool logz = globalOpt->Get("logz",!acceff);
 	int itype = interp ? acceff ? 2 : 1 : 0;
@@ -310,8 +320,18 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	if(!set_extra_text) extra_text = base_extra_text;
 
 	//ranges for plotting
-	double ymin = 1e10, xmin = 1e10;
-	double ymax = 0, xmax = -1e10;
+	double xmin = 1e10;
+	bool manual_xmin = globalOpt->Get("xmin",xmin);
+	double xmax = -1e10;
+	bool manual_xmax = globalOpt->Get("xmax",xmax);
+	double ymin = 1e10;
+	bool manual_ymin = globalOpt->Get("ymin",ymin);
+	double ymax = 0;
+	bool manual_ymax = globalOpt->Get("ymax",ymax);
+	double zmin = !interp_log ? 0 : 1e10;
+	bool manual_zmin = globalOpt->Get("zmin",zmin);
+	double zmax = 0;
+	bool manual_zmax = globalOpt->Get("zmax",zmax);
 	gStyle->SetOptStat(0);
 
 	//extract info from hadded limit file
@@ -374,6 +394,8 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		TGraph *g_obs = nullptr, *g_obs_pt = nullptr, *g_xsec = nullptr;
 		int npts = 0;
 
+		if(has_err) dname += ":"+errqty;
+
 		if(!acceff){
 			//get observed limit (w/ xsec)
 			auto lim_obs = getLimit(limit,dname,cname,-1,itype,multxs);
@@ -385,7 +407,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 				g_obs->SetMarkerStyle(20);
 				g_obs->SetLineStyle(1);
 				g_obs->SetLineWidth(2);
-				getRange(npts,lim_obs.s.data(),ymin,ymax);
+				getRange(npts,lim_obs.s.data(),ymin,ymax,false,manual_ymin,manual_ymax);
 
 				if(interp){
 					g_obs_pt = new TGraph(lim_obs.s_orig.size(),lim_obs.v1_orig.data(),lim_obs.s_orig.data());
@@ -402,15 +424,23 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		}
 
 		//get central value (expected)
-		const auto& lim_cen = getLimit(limit,dname,cname,0.5,itype,multxs);
+		const auto& lim_cen = getLimit(limit,dname,cname,0.5,itype,multxs,has_err);
 		npts = lim_cen.s.size();
-		TGraph* g_central = new TGraph(npts,lim_cen.v1.data(),lim_cen.s.data());
-		g_central->SetLineColor(kBlue);
-		g_central->SetLineStyle(2);
-		g_central->SetLineWidth(2);
-		getRange(npts,lim_cen.s.data(),ymin,ymax);
+		TGraphErrors* g_central = new TGraphErrors(npts,lim_cen.v1.data(),lim_cen.s.data(),nullptr,lim_cen.err.data());
+		if(has_err){
+			g_central->SetMarkerColor(kBlack);
+			g_central->SetMarkerStyle(20);
+			g_central->SetLineColor(kBlack);
+			g_central->SetLineWidth(2);
+		}
+		else{
+			g_central->SetLineColor(kBlue);
+			g_central->SetLineStyle(2);
+			g_central->SetLineWidth(2);
+		}
+		getRange(npts,lim_cen.s.data(),ymin,ymax,false,manual_ymin,manual_ymax);
 		//only get x range once
-		const auto& xvals = getRange(npts,lim_cen.v1.data(),xmin,xmax,true);
+		const auto& xvals = getRange(npts,lim_cen.v1.data(),xmin,xmax,true,manual_xmin,manual_xmax);
 		xmax += eps;
 
 		if(!acceff){
@@ -419,7 +449,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 			g_xsec->SetLineColor(kMagenta);
 			g_xsec->SetLineStyle(1);
 			g_xsec->SetLineWidth(2);
-			getRange(npts,lim_cen.x.data(),ymin,ymax);
+			getRange(npts,lim_cen.x.data(),ymin,ymax,false,manual_ymin,manual_ymax);
 		}
 
 		//get bands (expected)
@@ -427,13 +457,13 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		if(nsigma>=1){
 			g_one = getBand(limit,dname,cname,0.16,0.84,itype,multxs);
 			g_one->SetFillColor(kGreen+1);
-			getRange(npts*2,g_one->GetY(),ymin,ymax);
+			getRange(npts*2,g_one->GetY(),ymin,ymax,false,manual_ymin,manual_ymax);
 		}
 		TGraph* g_two = NULL;
 		if(nsigma>=2){
 			g_two = getBand(limit,dname,cname,0.025,0.975,itype,multxs);
 			g_two->SetFillColor(kOrange);
-			getRange(npts*2,g_two->GetY(),ymin,ymax);
+			getRange(npts*2,g_two->GetY(),ymin,ymax,false,manual_ymin,manual_ymax);
 		}
 
 		globalOpt->Get("ymin",ymin);
@@ -443,7 +473,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		ymax = ymax*yfactor;
 		ymin = ymin/yfactor;
 		//avoid huge range
-		ymin = max(ymin,1e-5);
+		if(yfactor>1) ymin = max(ymin,1e-5);
 
 		//setup plotting options
 		OptionMap* plotOpt = new OptionMap();
@@ -453,6 +483,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		plotOpt->Set<bool>("checkerr",false);
 		plotOpt->Set<int>("npanel",1);
 		plotOpt->Set<double>("ymin",ymin);
+		if(manual_ymax) plotOpt->Set<double>("ymax",ymax);
 		plotOpt->Set<double>("sizeLeg",20);
 		plotOpt->Set<bool>("auto_g",globalOpt->Get("auto_g",true));
 		plotOpt->Set<bool>("debug_legend",globalOpt->Get("debug_legend",false));
@@ -538,7 +569,8 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		//draw graphs
 		if(nsigma>=2) g_two->Draw("f same");
 		if(nsigma>=1) g_one->Draw("f same");
-		g_central->Draw("L same");
+		if(has_err) g_central->Draw("pz same");
+		else g_central->Draw("L same");
 		if(interp){
 			if(do_obs){
 				if(g_obs) g_obs->Draw("L same");
@@ -585,8 +617,8 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		//only get x,y ranges once
 		lim_cen = getLimit(limit,dname,cname,0.5,itype,multxs);
 		int npts = lim_cen.r.size();
-		xvals = getRange(npts,lim_cen.v1.data(),xmin,xmax,true);
-		yvals = getRange(npts,lim_cen.v2.data(),ymin,ymax,true);
+		xvals = getRange(npts,lim_cen.v1.data(),xmin,xmax,true,manual_xmin,manual_xmax);
+		yvals = getRange(npts,lim_cen.v2.data(),ymin,ymax,true,manual_xmin,manual_xmax);
 
 		if(!acceff){
 			if(do_obs){
@@ -633,19 +665,18 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		//convert back to normal scale
 		//bins with zero content and zero error correspond to empty parts of graph: set to very small value
 		double empty = !interp_log ? -1 : 1e-100;
-		double zmin = !interp_log ? 0 : 1e10;
 		for(unsigned i = 0; i <= h2d->GetNbinsX()+1; ++i){
 			for(unsigned j = 0; j <= h2d->GetNbinsY()+1; ++j){
 				if(h2d->GetBinContent(i,j)==0. and h2d->GetBinError(i,j)==0.) h2d->SetBinContent(i,j,empty);
 				else if(interp_log){ //acceff doesn't use log
 					double new_content = pow(10,h2d->GetBinContent(i,j));
 					h2d->SetBinContent(i,j,new_content);
-					if(new_content<zmin) zmin = new_content;
+					if(!manual_zmin and new_content<zmin) zmin = new_content;
 				}
 			}
 		}
 		//take z axis max
-		double zmax = h2d->GetMaximum();
+		if(!manual_zmax) zmax = h2d->GetMaximum();
 		//set range to avoid filling empty parts
 		h2d->GetZaxis()->SetRangeUser(zmin,zmax);
 		h2d->GetZaxis()->SetTitle(zname.c_str());
