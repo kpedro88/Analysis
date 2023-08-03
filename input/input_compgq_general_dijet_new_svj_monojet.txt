@@ -1,0 +1,6 @@
+input:input[input/input_complim_general_dijet_new_svj_2d.txt]
+vdouble:xvals[1.5,5.1]
+string:dir[test/monojet]
+string:ytitle[g_{q}]
+double:ymin[0]
+double:ymax[0.4]
