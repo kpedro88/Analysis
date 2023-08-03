@@ -63,12 +63,10 @@ class KGraph2D : public TGraph2D {
 		}
 };
 
-enum class LimitTransform { none=0, xs=1, gq=2 };
-
 class Limits {
 	public:
 		Limits() {}
-		Limits(int itype, LimitTransform transform, unsigned n, double* rs, double* xs, double* v1s, double* v2s=nullptr, double* errs=nullptr){
+		Limits(int itype, bool multxs, unsigned n, double* rs, double* xs, double* v1s, double* v2s=nullptr, double* errs=nullptr){
 			//get indices from sorting by v
 			vector<unsigned> order(n);
 			iota(order.begin(),order.end(),0);
@@ -91,22 +89,14 @@ class Limits {
 			if(errs) err.reserve(n);
 			for(unsigned i = 0; i < n; ++i){
 				x.push_back(xs[i]);
-				if(transform==LimitTransform::xs) {
+				if(multxs) {
 					r.push_back(rs[i]);
 					s.push_back(rs[i]*xs[i]);
 				}
-				else if(transform==LimitTransform::gq) {
-					//conversion: g_q = 0.25 * sqrt(limit / xsec)
-					//and limit/xsec is just r
-					double gq_base = 0.25;
-					r.push_back(rs[i]);
-					s.push_back(gq_base*sqrt(rs[i]));
-				}
-				else if(transform==LimitTransform::none){
+				else {
 					r.push_back(rs[i]/xs[i]); //so findExclusionCurve will still work
 					s.push_back(rs[i]);
 				}
-				else throw std::runtime_error("Unknown limit transform specified: "+std::to_string((int)transform));
 				S.push_back(log10(s.back()));
 				v1.push_back(v1s[i]);
 				if(v2s) {
@@ -150,21 +140,21 @@ class Limits {
 		vector<double> x_orig, s_orig, v1_orig;
 };
 
-Limits getLimit(TTree* limit, const string& dname, const string& cname, double q, int itype, LimitTransform transform, bool has_err=false){
+Limits getLimit(TTree* limit, const string& dname, const string& cname, double q, int itype, bool multxs, bool has_err=false){
 	const double eps = 0.01;
 	stringstream ss;
 	ss << "abs(quantileExpected-" << q << ")<" << eps;
 	int npts = limit->Draw(dname.c_str(),(cname+ss.str()).c_str(),"goff");
 	bool is2D = count(dname.begin(),dname.end(),':') >= 3;
-	Limits lim(itype,transform,npts,limit->GetV1(),limit->GetV2(),limit->GetV3(),is2D ? limit->GetV4() : nullptr,has_err ? limit->GetV4() : nullptr);
+	Limits lim(itype,multxs,npts,limit->GetV1(),limit->GetV2(),limit->GetV3(),is2D ? limit->GetV4() : nullptr,has_err ? limit->GetV4() : nullptr);
 	return lim;
 }
 
-TGraph* getBand(TTree* limit, string dname, string cname, double q_dn, double q_up, int itype, LimitTransform transform){
-	const auto& lim_dn = getLimit(limit,dname,cname,q_dn,itype,transform);
+TGraph* getBand(TTree* limit, string dname, string cname, double q_dn, double q_up, int itype, bool multxs){
+	const auto& lim_dn = getLimit(limit,dname,cname,q_dn,itype,multxs);
 	int npts_dn = lim_dn.s.size();
 
-	const auto& lim_up = getLimit(limit,dname,cname,q_up,itype,transform);
+	const auto& lim_up = getLimit(limit,dname,cname,q_up,itype,multxs);
 	int npts_up = lim_up.s.size();
 
 	int npts = npts_dn+npts_up;
@@ -290,8 +280,6 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	bool do_obs = globalOpt->Get("do_obs",false);
 	bool show_exp = globalOpt->Get("show_exp",false);
 	bool interp = globalOpt->Get("interp",false);
-	string transform_name = "gq"; globalOpt->Get("transform",transform_name);
-	//backward compatibility
 	bool multxs = globalOpt->Get("multxs",true);
 	bool colz = globalOpt->Get("colz",true);
 	vector<string> extra_text; bool set_extra_text = globalOpt->Get("extra_text",extra_text);
@@ -328,26 +316,6 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	int np2d = 40; globalOpt->Get("np2d",np2d); //40 is ROOT default
 	Color_t expcolor = kRed; globalOpt->Get("expcolor",expcolor);
 	Color_t obscolor = kBlack; globalOpt->Get("obscolor",obscolor);
-
-	//get transform
-	KMap<LimitTransform> transform_map;
-	transform_map.GetTable() = {
-		{"none", LimitTransform::none},
-		{"xs", LimitTransform::xs},
-		{"gq", LimitTransform::gq}
-	};
-	LimitTransform transform(LimitTransform::xs);
-	if(!transform_name.empty()) {
-		if(!transform_map.Has(transform_name)) throw std::runtime_error("Unknown transform name: "+transform_name);
-		transform = transform_map.Get(transform_name);
-	}
-	//backward compatibility
-	if(multxs==false) transform = LimitTransform::none;
-	//special settings
-	if(transform==LimitTransform::gq) {
-		do_contour = false;
-		do_xsec = false;
-	}
 
 	vector<string> base_extra_text{"95% CL upper limits"};
 	if(acceff) base_extra_text = {};
@@ -432,7 +400,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 
 		if(!acceff){
 			//get observed limit (w/ xsec)
-			auto lim_obs = getLimit(limit,dname,cname,-1,itype,transform);
+			auto lim_obs = getLimit(limit,dname,cname,-1,itype,multxs);
 			npts = lim_obs.s.size();
 			if(npts>0){
 				g_obs = new TGraph(npts,lim_obs.v1.data(),lim_obs.s.data());
@@ -458,7 +426,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		}
 
 		//get central value (expected)
-		const auto& lim_cen = getLimit(limit,dname,cname,0.5,itype,transform,has_err);
+		const auto& lim_cen = getLimit(limit,dname,cname,0.5,itype,multxs,has_err);
 		npts = lim_cen.s.size();
 		TGraphErrors* g_central = new TGraphErrors(npts,lim_cen.v1.data(),lim_cen.s.data(),nullptr,lim_cen.err.data());
 		if(has_err){
@@ -489,13 +457,13 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		//get bands (expected)
 		TGraph* g_one = NULL;
 		if(nsigma>=1){
-			g_one = getBand(limit,dname,cname,0.16,0.84,itype,transform);
+			g_one = getBand(limit,dname,cname,0.16,0.84,itype,multxs);
 			g_one->SetFillColor(kGreen+1);
 			getRange(npts*2,g_one->GetY(),ymin,ymax,false,manual_ymin,manual_ymax);
 		}
 		TGraph* g_two = NULL;
 		if(nsigma>=2){
-			g_two = getBand(limit,dname,cname,0.025,0.975,itype,transform);
+			g_two = getBand(limit,dname,cname,0.025,0.975,itype,multxs);
 			g_two->SetFillColor(kOrange);
 			getRange(npts*2,g_two->GetY(),ymin,ymax,false,manual_ymin,manual_ymax);
 		}
@@ -649,7 +617,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		set<double> xvals, yvals;
 
 		//only get x,y ranges once
-		lim_cen = getLimit(limit,dname,cname,0.5,itype,transform);
+		lim_cen = getLimit(limit,dname,cname,0.5,itype,multxs);
 		int npts = lim_cen.r.size();
 		xvals = getRange(npts,lim_cen.v1.data(),xmin,xmax,true,manual_xmin,manual_xmax);
 		yvals = getRange(npts,lim_cen.v2.data(),ymin,ymax,true,manual_xmin,manual_xmax);
@@ -657,7 +625,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		if(do_contour){
 			if(do_obs){
 				//get observed limit (w/ xsec) & exclusion contour
-				lim_obs = getLimit(limit,dname,cname,-1,itype,transform);
+				lim_obs = getLimit(limit,dname,cname,-1,itype,multxs);
 				contours_obs = findExclusionCurve(lim_obs);
 				styleGraphs(contours_obs,obscolor,1);
 			}
@@ -670,12 +638,12 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		//get uncertainty bands and contours
 		vector<Limits> lim_sigmas;
 		if(nsigma>=1){
-			lim_sigmas.push_back(getLimit(limit,dname,cname,0.16,itype,transform));
-			lim_sigmas.push_back(getLimit(limit,dname,cname,0.84,itype,transform));
+			lim_sigmas.push_back(getLimit(limit,dname,cname,0.16,itype,multxs));
+			lim_sigmas.push_back(getLimit(limit,dname,cname,0.84,itype,multxs));
 		}
 		if(nsigma>=2){
-			lim_sigmas.push_back(getLimit(limit,dname,cname,0.025,itype,transform));
-			lim_sigmas.push_back(getLimit(limit,dname,cname,0.975,itype,transform));
+			lim_sigmas.push_back(getLimit(limit,dname,cname,0.025,itype,multxs));
+			lim_sigmas.push_back(getLimit(limit,dname,cname,0.975,itype,multxs));
 		}
 		vector<vector<TGraph*>> contours_sigmas;
 		if(do_contour){
