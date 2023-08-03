@@ -4,3 +4,5 @@ string:dir[test/monojet]
 string:ytitle[g_{q}]
 double:ymin[0]
 double:ymax[0.4]
+string:slegv[bottom]
+
