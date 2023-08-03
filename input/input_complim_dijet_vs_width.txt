@@ -1,0 +1,2 @@
+EXOobs	s:legname[Observed]	c:color[kBlack]	i:linestyle[1]	i:linewidth[3]	s:drawopt[pl]	s:legopt[pl]	vd:xvals[0.0100,0.1000,0.3000,0.5500]	vd:yvals[0.0239,0.0526,0.1224,0.1998]
+EXOthy	s:legname[Theoretical]	c:color[kMagenta]	i:linestyle[1]	i:linewidth[3]	s:drawopt[c]	s:legopt[l]	vd:xvals[0.0313,0.0456,0.0695,0.1029,0.1459,0.1984,0.2605,0.3321,0.4133,0.5040]	vd:yvals[0.0008,0.0097,0.0394,0.0972,0.1907,0.3267,0.5180,0.7530,1.0735,1.3657]
