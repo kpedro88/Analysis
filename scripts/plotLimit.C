@@ -63,6 +63,11 @@ class KGraph2D : public TGraph2D {
 		}
 };
 
+//helper function for gq interpretation
+double sqrtpos(double x, double m){
+	return x>=0 ? sqrt(x) : m;
+}
+
 class Limits {
 	public:
 		Limits() {}
