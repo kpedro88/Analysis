@@ -24,7 +24,7 @@
 using namespace std;
 
 struct Curve {
-	Curve(KNamed* tmp, OptionMap* globalOpt){
+	Curve(KNamed* tmp, OptionMap* globalOpt) : ymin(1e10), ymax(-1e10) {
 		localOpt = tmp->localOpt();
 		name = tmp->fields[0];
 		localOpt->Get("legname",legname);
@@ -40,7 +40,6 @@ struct Curve {
 			auto extfile = KOpen(extfilename);
 			string extgraph; localOpt->Get("extgraph",extgraph);
 			graph = KGet<TGraph>(extfile,extgraph);
-			style->Format(graph);
 			//option to multiply graph by something
 			vector<double> xsecs;
 			bool has_xsec = globalOpt->Get("xsecs",xsecs);
@@ -50,6 +49,19 @@ struct Curve {
 					graph->GetY()[i] = graph->GetY()[i]*xsecs[i];
 				}
 			}
+			//option to completely remove points outside of specified y bounds
+			if(globalOpt->Get("ytruncate",false)){
+				bool manual_ymin = globalOpt->Get("ymin",ymin);
+				bool manual_ymax = globalOpt->Get("ymax",ymax);
+				vector<double> xvals, yvals;
+				for(unsigned i = 0; i < graph->GetN(); ++i){
+					if((manual_ymin and graph->GetY()[i] < ymin) or (manual_ymax and graph->GetY()[i] > ymax)) continue;
+					xvals.push_back(graph->GetX()[i]);
+					yvals.push_back(graph->GetY()[i]);
+				}
+				graph = new TGraph(xvals.size(),xvals.data(),yvals.data());
+			}
+			style->Format(graph);
 		}
 		//make graph
 		else {
@@ -68,8 +80,10 @@ struct Curve {
 		}
 
 		//get extrema
-		ymin = TMath::MinElement(graph->GetN(),graph->GetY());
-		ymax = TMath::MaxElement(graph->GetN(),graph->GetY());
+		if(graph->GetN()>0){
+			ymin = TMath::MinElement(graph->GetN(),graph->GetY());
+			ymax = TMath::MaxElement(graph->GetN(),graph->GetY());
+		}
 	}
 	//helpers
 	void AddToLegend(KLegend* kleg){
