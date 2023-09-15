@@ -140,6 +140,8 @@ class KLegend{
 			vector<int> extra_text_panels;
 			bool set_panels = globalOpt->Get("extra_text_panels",extra_text_panels);
 			unsigned panel_ctr = 0;
+			string extra_text_opt = "";
+			if(globalOpt->Get("extra_text_header",false)) extra_text_opt = "h";
 			//will be added to top of legend
 			for(unsigned t = 0; t < extra_text.size(); t++){
 				unsigned panel_tmp = 0;
@@ -147,7 +149,7 @@ class KLegend{
 				
 				if(extra_text_panels.size()>t) panel_tmp = extra_text_panels[t];
 				else panel_tmp = panel_ctr;
-				AddEntry((TObject*)NULL,extra_text[t],"",panel_tmp);
+				AddEntry((TObject*)NULL,extra_text[t],extra_text_opt,panel_tmp);
 				
 				panel_ctr++;
 			}
@@ -156,7 +158,7 @@ class KLegend{
 			if(!set_panels){
 				for(unsigned t = 0; t < (npanel - extra_text.size()%npanel)%npanel; t++){
 					if(panel_ctr%npanel==0) panel_ctr = 0;
-					AddEntry((TObject*)NULL,"","",panel_ctr);
+					AddEntry((TObject*)NULL,"",extra_text_opt,panel_ctr);
 					panel_ctr++;
 				}
 			}
