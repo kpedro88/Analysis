@@ -195,27 +195,45 @@ class KPlot{
 			if(localOpt->Get("ytitle",ytitle)) histo->GetYaxis()->SetTitle(ytitle.c_str());
 			//allow global override of y title
 			if(globalOpt->Get("ytitle",ytitle)) histo->GetYaxis()->SetTitle(ytitle.c_str());
-			
+
+			InitializePad();
+			InitializeText();
+			InitializeLegend();
+
+			return isInit;
+		}
+		virtual bool ReInitialize(){
+			SetStyle();
+			//apparently don't need 'extra' when resizing
+			can->SetCanvasSize(canvasW,canvasH);
+			InitializePad();
+			InitializeText();
+			//finish the legend
+			leg->SetStyle();
+			leg->InitializeLegend();
+			return true;
+		}
+		virtual void InitializePad(){
 			//plotting with ratio enabled by default
 			if(localOpt->Get("ratio",true)) {
-				
-				canvasH += ratioH;
-				//can = new TCanvas(histo->GetName(),histo->GetName(),700,700);
-				//account for window frame: 2+2px width, 2+26px height
-				can = new TCanvas(name.c_str(),name.c_str(),canvasW+canvasWextra,canvasH+canvasHextra);
-				//500/(5/7) = 700
+				if(!can){
+					canvasH += ratioH; globalOpt->Set("canvasH",canvasH);
+					//account for window frame: 2+2px width, 2+26px height
+					can = new TCanvas(name.c_str(),name.c_str(),canvasW+canvasWextra,canvasH+canvasHextra);
+				}
 
 				//setup histo and ratio areas for canvas
-				pad1 = new TPad("graph","",0,pad2size/(pad1size+pad2size),1.0,1.0);
+				if(!pad1) pad1 = new TPad("graph","",0,pad2size/(pad1size+pad2size),1.0,1.0);
 				pad1W = pad1->GetWw()*pad1->GetAbsWNDC();
 				pad1H = pad1->GetWh()*pad1->GetAbsHNDC();
+				can->cd();
 				pad1->SetMargin(marginL/pad1W,marginR/pad1W,marginM1/pad1H,marginT/pad1H);
 				pad1->SetTicks(1,1);
 				if(localOpt->Get("logy",true)) pad1->SetLogy(); //logy on by default (i.e. liny off by default)
 				if(localOpt->Get("logx",false)) pad1->SetLogx(); //logx off by default (i.e. linx on by default)
 				pad1->Draw();
-			
-				pad2 = new TPad("dmc","",0,0,1.0,pad2size/(pad1size+pad2size));
+
+				if(!pad2) pad2 = new TPad("dmc","",0,0,1.0,pad2size/(pad1size+pad2size));
 				pad2W = pad2->GetWw()*pad2->GetAbsWNDC();
 				pad2H = pad2->GetWh()*pad2->GetAbsHNDC();
 				can->cd();
@@ -226,7 +244,7 @@ class KPlot{
 				pad2->Draw();
 			
 				//format ratio histo
-				ratio = (TH1F*)histo->Clone();
+				if(!ratio) ratio = (TH1F*)histo->Clone();
 				ratio->SetMarkerStyle(20);
 				ratio->SetMarkerColor(kBlack);
 				ratio->SetLineColor(kBlack);
@@ -249,7 +267,7 @@ class KPlot{
 				
 				//make line
 				pad2->cd();
-				line = new TLine(
+				if(!line) line = new TLine(
 					ratio->GetXaxis()->GetBinLowEdge(ratio->GetXaxis()->GetFirst()),
 					ratiolineval,
 					ratio->GetXaxis()->GetBinUpEdge(ratio->GetXaxis()->GetLast()),
@@ -260,13 +278,15 @@ class KPlot{
 				line->SetLineColor(ratiolinecolor);
 			}
 			else {
-				//can = new TCanvas(histo->GetName(),histo->GetName(),700,550);
-				//account for window frame: 2+2px width, 2+26px height
-				can = new TCanvas(name.c_str(),name.c_str(),canvasW+canvasWextra,canvasH+canvasHextra);
-			
-				pad1 = new TPad("graph","",0,0,1,1);
+				if(!can){
+					//account for window frame: 2+2px width, 2+26px height
+					can = new TCanvas(name.c_str(),name.c_str(),canvasW+canvasWextra,canvasH+canvasHextra);
+				}
+
+				if(!pad1) pad1 = new TPad("graph","",0,0,1,1);
 				pad1W = pad1->GetWw()*pad1->GetAbsWNDC();
 				pad1H = pad1->GetWh()*pad1->GetAbsHNDC();
+				can->cd();
 				pad1->SetMargin(marginL/pad1W,marginR/pad1W,marginB/pad1H,marginT/pad1H);
 				pad1->SetTicks(1,1);
 				if(localOpt->Get("logy",true)) pad1->SetLogy(); //logy on by default (i.e. liny off by default)
@@ -277,11 +297,6 @@ class KPlot{
 				SetTitleOffset(pad1,histo->GetXaxis());
 				SetTitleOffset(pad1,histo->GetYaxis());
 			}
-			
-			InitializeText();
-			InitializeLegend();
-			
-			return isInit;
 		}
 		void InitializeLegend(){
 			//create legend
@@ -347,6 +362,8 @@ class KPlot{
 		//drawing
 		virtual void DrawHist(){
 			pad1->cd();
+			//resize to put legend outside of plot
+			if(leg->ResizeCanvas()) ReInitialize();
 			//get y axis range of histo from KLegend
 			if(leg->UseRange()) histo->GetYaxis()->SetRangeUser(leg->GetRange().first,leg->GetRange().second);
 			histo->Draw("hist");

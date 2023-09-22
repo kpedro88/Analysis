@@ -99,17 +99,18 @@ class KLegendMultiEntry {
 
 //----------------------------------------------------------------------------------------------
 //class for automatic legend construction and placement
-class KLegend{
+class KLegend {
 	public:
 		//position enums
-		enum Horz { hdefault, left, center, right };
+		enum Horz { hdefault, left, center, right, side };
 		enum Vert { vdefault, top, middle, bottom };
 	
 		//constructor
 		KLegend(TPad* pad_, OptionMap* localOpt_, OptionMap* globalOpt_) : 
 			pad(pad_), localOpt(localOpt_), globalOpt(globalOpt_), debug(false), npanel(1), balance_panels(false), legwidth(0), legheight(0), 
 			lbound(0), rbound(0), tbound(0), bbound(0), umin(0), umax(0), vmin(0), vmax(0),
-			leg(0), ymin(0), ymax(0), ymin_min(0.001), ymin_max(1), userange(false), manual_ymin(false), manual_ymax(false), hdirFinal(hdefault), vdirFinal(vdefault)
+			leg(0), ymin(0), ymax(0), ymin_min(0.001), ymin_max(1), userange(false), resizeCanvas(false),
+			manual_ymin(false), manual_ymax(false), hdirFinal(hdefault), vdirFinal(vdefault)
 		{
 			//must always have local & global option maps
 			if(localOpt==0) localOpt = new OptionMap();
@@ -117,18 +118,10 @@ class KLegend{
 			
 			debug = globalOpt->Get("debug_legend",false);
 			auto_g = globalOpt->Get("auto_g",true);
-			
-			padH = pad->GetWh()*pad->GetAbsHNDC();
-			padW = pad->GetWw()*pad->GetAbsWNDC();
-			sizeLeg = 26; globalOpt->Get("sizeLeg",sizeLeg);
-			sizeSymb = 25; globalOpt->Get("sizeSymb",sizeSymb);
-			legentry = sizeLeg/padH; //line height for each entry
-			sizeSymb /= padW;
-			hscaleLeg = 1.2; globalOpt->Get("hscaleLeg",hscaleLeg);
-			ushiftLeg = 0; globalOpt->Get("ushiftLeg",ushiftLeg);
-			vshiftLeg = 0; globalOpt->Get("vshiftLeg",vshiftLeg);
-			//todo: configurable font type
-			
+
+			//need to do this first to ensure extra_text included in legend height
+			SetStyle();
+
 			//get panel setting (global overrides local)
 			localOpt->Get("npanel",npanel);
 			globalOpt->Get("npanel",npanel);
@@ -182,6 +175,19 @@ class KLegend{
 		virtual ~KLegend() {}
 		
 		//functions
+		virtual void SetStyle(){
+			padH = pad->GetWh()*pad->GetAbsHNDC();
+			padW = pad->GetWw()*pad->GetAbsWNDC();
+			sizeLeg = 26; globalOpt->Get("sizeLeg",sizeLeg);
+			sizeSymb = 25; globalOpt->Get("sizeSymb",sizeSymb);
+			legentry = sizeLeg/padH; //line height for each entry
+			sizeSymb /= padW;
+			hscaleLeg = 1.2; globalOpt->Get("hscaleLeg",hscaleLeg);
+			ushiftLeg = 0; globalOpt->Get("ushiftLeg",ushiftLeg);
+			vshiftLeg = 0; globalOpt->Get("vshiftLeg",vshiftLeg);
+			//todo: configurable font type
+			if(debug) cout << "padW = " << padW << ", padH = " << padH << ", legentry = " << legentry << ", sizeSymb = " << sizeSymb << ", hscaleLeg = " << hscaleLeg << endl;
+		}
 		void CheckQuadrants(vector<unsigned>& quadrants, const vector<double>& bounds, int n, double* x, double* y){
 			double x0 = bounds[0], x1 = bounds[1], x2 = bounds[2];
 			double y0 = bounds[3], y1 = bounds[4], y2 = bounds[5];
@@ -288,7 +294,12 @@ class KLegend{
 			tbound = 1 - (pad->GetTopMargin() + xtick);
 			bbound = pad->GetBottomMargin() + xtick;
 			if(debug) cout << "bounds: " << lbound << " " << rbound << " " << tbound << " " << bbound << endl;
-			
+
+			if(hdir==side){
+				if(vdir==vdefault) vdir = top;
+				//pointless in this case
+				auto_g = false;
+			}
 			//use graph-based algo
 			if((auto_g and !graphs.empty()) or (hdir==hdefault and vdir==vdefault)){
 				auto dirs = BuildG();
@@ -335,7 +346,7 @@ class KLegend{
 			}
 			
 			//account for npanel
-			unsigned max_panel_entries = 0;
+			max_panel_entries = 0;
 			legwidth = legheight = 0;
 			for(int p = 0; p < npanel; p++){
 				if(entries[p].size()>max_panel_entries) max_panel_entries = entries[p].size();
@@ -345,11 +356,10 @@ class KLegend{
 			
 			//symbol box takes up fMargin = 0.25 by default (now configurable in pixels)
 			legwidth += sizeSymb*npanel;
-			double sizeSymbRel = sizeSymb*npanel/legwidth;
 			//add a little padding for each line
 			legheight *= hscaleLeg;
 
-			if(hdir==left) {
+			if(hdir==left){
 				umin = lbound;
 				umax = umin + legwidth;
 			}
@@ -360,6 +370,17 @@ class KLegend{
 			else if(hdir==center){
 				umin = (lbound + rbound)/2. - legwidth/2.;
 				umax = (lbound + rbound)/2. + legwidth/2.;
+			}
+			else if(hdir==side){
+				double legW = legwidth*padW;
+				umin = padW/(padW+legW);
+				padW += legW;
+				umax = umin + legwidth;
+				//notify KPlot to resize canvas and re-initialize
+				globalOpt->Set("canvasW",padW);
+				globalOpt->Set("marginR",5+legW); //arbitrary bit of space
+				//todo: handle case w/ legends in both upper and lower panels
+				resizeCanvas = true;
 			}
 			
 			if(vdir==top){
@@ -374,6 +395,9 @@ class KLegend{
 				vmin = (tbound + bbound)/2. - legheight/2.;
 				vmax = (tbound + bbound)/2. + legheight/2.;
 			}
+
+			hdirFinal = hdir;
+			vdirFinal = vdir;
 			
 			if(debug) cout << "coords: " << umin << " " << vmin << " " << umax << " " << vmax << endl;
 			//shifts
@@ -383,7 +407,11 @@ class KLegend{
 			vmax += vshiftLeg;
 			if(debug) cout << "coords (shifted): " << umin << " " << vmin << " " << umax << " " << vmax << endl;
 
+			if(!resizeCanvas) InitializeLegend();
+		}
+		void InitializeLegend(){
 			//initialize legend with determined coords
+			double sizeSymbRel = sizeSymb*npanel/legwidth;
 			leg = new TLegend(umin,vmin,umax,vmax);
 			leg->SetFillColor(0);
 			leg->SetBorderSize(0);
@@ -402,9 +430,6 @@ class KLegend{
 					else leg->AddEntry(entries[p][e].GetObj(),entries[p][e].GetLabel().c_str(),entries[p][e].GetOption().c_str());
 				}
 			}
-
-			hdirFinal = hdir;
-			vdirFinal = vdir;
 		}
 		void Build(Horz hdir=hdefault){
 			bool logy = pad->GetLogy();
@@ -572,6 +597,9 @@ class KLegend{
 		void AddGraph(TGraph* g) { graphs.push_back(g); }
 		TLegend* GetLegend() { return leg; }
 		bool UseRange() { return userange; }
+		bool ResizeCanvas() { return resizeCanvas; }
+		double GetPadW() { return padW; }
+		double GetPadH() { return padH; }
 		pair<double,double> GetRange(){ return make_pair(ymin,ymax); }
 		pair<double,double> GetXcoords(){ return make_pair(umin,umax); }
 		pair<double,double> GetYcoords(){ return make_pair(vmin,vmax); }
@@ -593,6 +621,7 @@ class KLegend{
 		bool debug, auto_g;
 		int npanel;
 		bool balance_panels;
+		unsigned max_panel_entries;
 		double legwidth, legheight;
 		double lbound, rbound, tbound, bbound;
 		double umin, umax, vmin, vmax;
@@ -604,7 +633,7 @@ class KLegend{
 		TLegend* leg;
 		double ymin, ymax;
 		double ymin_min, ymin_max;
-		bool userange;
+		bool userange, resizeCanvas;
 		bool manual_ymin, manual_ymax;
 		int qdefault;
 		Horz hdirFinal;

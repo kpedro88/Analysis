@@ -119,6 +119,7 @@ void compareLimits(string oname, string input, string options, vector<string> mo
 		if(slegh=="left") legh = KLegend::left;
 		else if(slegh=="center") legh = KLegend::center;
 		else if(slegh=="right") legh = KLegend::right;
+		else if(slegh=="side") legh = KLegend::side;
 	}
 	string slegv; globalOpt->Get("slegv",slegv);
 	if(slegv.size()>0){
@@ -164,15 +165,18 @@ void compareLimits(string oname, string input, string options, vector<string> mo
 	double yfactor = 10; globalOpt->Get("yfactor",yfactor);
 	hbase->GetYaxis()->SetRangeUser(manual_ymin ? ymin : ymin/yfactor, manual_ymax ? ymax : ymax*yfactor);
 
-	//draw blank histo for axes
-	plot->DrawHist();
-	
-	//use graph "best" algo (must be after axes drawn)
-	kleg->Build(legh,legv);
-	//extra style options
-	auto leg = kleg->GetLegend();
-	leg->SetFillStyle(1001);
-	leg->SetFillColorAlpha(0,0.6);
+	if(legh==KLegend::side){
+		kleg->Build(legh,legv);
+		//building legend determines plot width
+		plot->DrawHist();
+	}
+	else{
+		//draw blank histo for axes
+		plot->DrawHist();
+		//use graph "best" algo (must be after axes drawn)
+		globalOpt->Set("leg2d",true); //enables alpha transparency
+		kleg->Build(legh,legv);
+	}
 
 	//draw graphs
 	if(globalOpt->Get("reverse",false)){
