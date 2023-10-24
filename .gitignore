@@ -116,6 +116,7 @@ input/fast*/
 /fixHWE.py
 /projectMET.py
 /gq_transform.py
+/sigAccBoosted.py
 
 # linked by setupXML.sh
 /KMVA/pugi*.*
