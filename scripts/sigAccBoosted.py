@@ -1,21 +1,21 @@
 import numpy as np
 from ROOT import TGraph, TCanvas
 
-addr_base = "/eos/uscms/store/user/lpcdarkqcd/boosted/Skims/HADD_puweight/signal_notruth/"
+addr_base = "/eos/uscms/store/user/lpcdarkqcd/boosted/signal_production_1dscans_v01/BDTNPZ_v01/"
 
 params = {
     "rinv": {
-        "addr": "madpt300_mz350_mdark10_rinv{}.npz",
+        "addr": "s-channel_mMed-350_mDark-10_rinv-{}_alpha-peak_MADPT300_13TeV-madgraphMLM-pythia8.npz",
         "axis": "r_{inv}",
-        "values": ["0.1","0.3","0.7"], # todo: get the rest when available
+        "values": ["0","0.05","0.1","0.2","0.3","0.4","0.5","0.6","0.7","0.8","0.9","1"],
     },
     "mZprime": {
-        "addr": "madpt300_mz{}_mdark10_rinv0.3.npz",
+        "addr": "s-channel_mMed-{}_mDark-10_rinv-0.3_alpha-peak_MADPT300_13TeV-madgraphMLM-pythia8.npz",
         "axis": "m_{Z'}",
         "values": ["200","250","300","350","400","450","500","550"],
     },
     "mDark": {
-        "addr": "madpt300_mz350_mdark{}_rinv0.3.npz",
+        "addr": "s-channel_mMed-350_mDark-{}_rinv-0.3_alpha-peak_MADPT300_13TeV-madgraphMLM-pythia8.npz",
         "axis": "m_{dark}",
         "values": ["1","5","10"],
     },
