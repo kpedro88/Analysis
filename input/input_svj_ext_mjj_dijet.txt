@@ -12,7 +12,7 @@ string:lumi_text[138 fb^{-1} (13 TeV)]
 string:extfilename[test/dijetDMshape/hist_dijet_combine_fit_SVJ_3100_20_RINV_peak_fit_DM_SM_TeV.root]
 
 HISTO
-widejetmass	vd:xbins[1.530,1.607,1.687,1.770,1.856,1.945,2.037,2.132,2.231,2.332,2.438,2.546,2.659,2.775,2.895,3.019,3.147,3.279,3.416,3.558,3.704,3.854,4.010,4.171,4.337,4.509,4.686,4.869,5.058,5.253,5.455,5.663,5.877,6.099,6.328,6.564,6.808,7.060,7.320,7.589,7.866,8.152,8.752]	s:xtitle[m_{JJ} [TeV]]	s:ytitle[number of events]	b:ratio[0]	b:logy[1]	d:dxmin[1.530]	d:dxmax[6.000]
+widejetmass	vd:xbins[1.530,1.607,1.687,1.770,1.856,1.945,2.037,2.132,2.231,2.332,2.438,2.546,2.659,2.775,2.895,3.019,3.147,3.279,3.416,3.558,3.704,3.854,4.010,4.171,4.337,4.509,4.686,4.869,5.058,5.253,5.455,5.663,5.877,6.099,6.328,6.564,6.808,7.060,7.320,7.589,7.866,8.152,8.752]	s:xtitle[m_{JJ} [TeV]]	s:ytitle[Number of events]	b:ratio[0]	b:logy[1]	d:dxmin[1.530]	d:dxmax[6.000]
 
 SET
 hist	mc	total	s:legname[total]	c:color[kBlack]
