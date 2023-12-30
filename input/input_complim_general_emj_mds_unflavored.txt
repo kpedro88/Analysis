@@ -1,0 +1,5 @@
+input:input[input/input_complim_general_emj_mds.txt]
+vstring{|}+:extra_text[unflavored model| ]
+vdouble:xvals[1,100000]
+double:ymax[100]
+double:ymin[0.01]
