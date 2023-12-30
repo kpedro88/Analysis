@@ -571,7 +571,7 @@ class KLegend {
 			pad->cd();
 			if(leg) leg->Draw("same");
 		}
-		void AddEntry(TObject* obj, string label, string option, int panel=0, const vector<string>& extra_text=vector<string>(), bool addToPrev=false){
+		void AddEntry(TObject* obj, string label, string option, int panel=0, const vector<string>& extra_text=vector<string>(), const vector<string>& extra_text_opt=vector<string>(), bool addToPrev=false){
 			if(panel>=npanel) panel = npanel - 1;
 		
 			if(balance_panels && (!addToPrev || multi_entries.size()==0)) multi_entries.push_back(KLegendMultiEntry());
@@ -587,8 +587,10 @@ class KLegend {
 				if(gtest) graphs.push_back(gtest);
 			}
 			//add extra text to multi
-			for(unsigned t = 0; t < extra_text.size(); t++){				
-				multi.push_back(KLegendEntry((TObject*)NULL,extra_text[t],"",pad,legentry));
+			bool use_opt = !extra_text_opt.empty();
+			if(use_opt and extra_text_opt.size()!=extra_text.size()) throw runtime_error("vector length mismatches in extra_text ("+to_string(extra_text.size())+") and extra_text_opt ("+to_string(extra_text_opt.size())+") for "+label);
+			for(unsigned t = 0; t < extra_text.size(); t++){
+				multi.push_back(KLegendEntry((TObject*)NULL,extra_text[t],use_opt ? extra_text_opt[t] : "",pad,legentry));
 			}
 		}
 		

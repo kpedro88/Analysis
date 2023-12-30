@@ -30,6 +30,7 @@ struct Curve {
 		localOpt->Get("legname",legname);
 		panel = 0; localOpt->Get("panel",panel);
 		localOpt->Get("extra_text",extra_text);
+		localOpt->Get("extra_text_opt",extra_text_opt);
 		style = new KStyle(name,globalOpt,localOpt);
 		obs = localOpt->Get("obs",false);
 		skiplegend = localOpt->Get("skiplegend",false);
@@ -87,7 +88,7 @@ struct Curve {
 	}
 	//helpers
 	void AddToLegend(KLegend* kleg){
-		kleg->AddEntry(graph,legname,style->GetLegOpt(),panel,extra_text);
+		kleg->AddEntry(graph,legname,style->GetLegOpt(),panel,extra_text,extra_text_opt);
 	}
 	void Draw(){
 		graph->Draw(style->GetDrawOpt("same").c_str());
@@ -98,6 +99,7 @@ struct Curve {
 	string legname;
 	int panel;
 	vector<string> extra_text;
+	vector<string> extra_text_opt;
 	TGraph* graph;
 	KStyle* style;
 	double ymin, ymax;

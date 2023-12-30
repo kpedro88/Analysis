@@ -139,8 +139,8 @@ class KFit {
 				}
 			}
 			string option = style->GetLegOpt();
-			kleg->AddEntry(fn,ssleg,style->GetLegOpt(),panel,extra_text,assoc);
-			if(band) kleg->AddEntry(band,"Uncertainty [^{}"+legname+"]",bstyle->GetLegOpt(),panel,{},assoc);
+			kleg->AddEntry(fn,ssleg,style->GetLegOpt(),panel,extra_text,{},assoc);
+			if(band) kleg->AddEntry(band,"Uncertainty [^{}"+legname+"]",bstyle->GetLegOpt(),panel,{},{},assoc);
 		}
 		void Draw(TPad* pad){
 			if(band) band->Draw(bstyle->GetDrawOpt("same").c_str());
