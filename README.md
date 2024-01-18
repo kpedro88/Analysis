@@ -18,6 +18,11 @@ cd Analysis
 ./setupXML.sh
 ```
 
+If `CMSSW_10_2_13` is used instead (e.g. to support alpha transparency in plots), the following script should also be run:
+```
+./setupRootfix.sh
+```
+
 The script `setupScripts.sh` links useful tools kept in the `scripts` folder for easier use.
 
 The script `setupTM.sh` compiles specific parts of [TreeMaker](https://github.com/TreeMaker/TreeMaker) that are used in this code.
