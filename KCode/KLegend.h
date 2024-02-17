@@ -421,7 +421,8 @@ class KLegend {
 			leg->SetMargin(sizeSymbRel);
 			if(globalOpt->Get("leg2d",false)){
 				leg->SetFillStyle(1001);
-				leg->SetFillColorAlpha(0,0.6);
+				double alpha = 0.6; globalOpt->Get("alphaLeg",alpha);
+				leg->SetFillColorAlpha(0,alpha);
 			}
 			
 			for(unsigned e = 0; e < max_panel_entries; e++){
