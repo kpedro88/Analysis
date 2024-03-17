@@ -1,0 +1,27 @@
+INPUT
+input/input_svj_paper.txt
+
+OPTION
+vstring{|}:extra_text[Signal (^{}m_{Z'} = 3.1 TeV,|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak})]
+vint:extra_text_panels[1,1]
+string:extfilename[test/paper/bdt/supp/histBDT_svj.root]
+string:rootfile[test/paper/bdt/bdt_mdark_plots]
+string:printsuffix[dijetmtdetahadloosespike_bdt_mdark_flatptZ30_ECA]
+bool:plotoverflow[0]
+double:ymin[1e-3]
+
+HISTO
+bothjetAK8msd	i:xnum[100]	d:xmin[0]	d:xmax[500]	s:xtitle[m_{SD}(^{}J_{1,2}) [GeV]]	s:ytitle[Arbitrary units]	b:ratio[0]	b:logy[1]	d:dxmin[0]	d:dxmax[200]
+
+SET
+hist	mc	SVJ_3100_20_0.3_peak	s:legname[m_{dark} = 20 GeV]	c:color[#e42536]	i:linestyle[7]	i:panel[1]
+	base	ext	SVJ_3100_20_0.3_peak	b:ext_auto[1]
+hist	mc	SVJ_3100_50_0.3_peak	s:legname[m_{dark} = 50 GeV]	c:color[#5790fc]	i:linestyle[2]	i:panel[1]
+	base	ext	SVJ_3100_50_0.3_peak	b:ext_auto[1]
+hist	mc	SVJ_3100_100_0.3_peak	s:legname[m_{dark} = 100 GeV]	c:color[#964a8b]	i:linestyle[3]	i:panel[1]
+	base	ext	SVJ_3100_100_0.3_peak	b:ext_auto[1]
+hist	mc	QCD	s:legname[QCD]	c:color[#9c9ca1]	i:panel[0]
+	base	ext	QCD	b:ext_auto[1]
+hist	mc	ttbar	s:legname[t#bar{t}]	c:color[#f89c20]	i:panel[0]
+	base	ext	ttbar	b:ext_auto[1]
+
