@@ -6,6 +6,7 @@
 
 //ROOT headers
 #include <TROOT.h>
+#include <TColor.h>
 
 //STL headers
 #include <string>
@@ -209,8 +210,10 @@ namespace KParser {
 		process(line,' ',fields);
 		
 		Color_t color = 0;
+		//option to use hex color codes
+		if(fields[0][0]=='#') color = TColor::GetColor(fields[0].c_str());
 		//mapping of strings to Color_t enums (from Rtypes.h)
-		if(fields[0]=="kWhite") color = kWhite;
+		else if(fields[0]=="kWhite") color = kWhite;
 		else if(fields[0]=="kBlack") color = kBlack;
 		else if(fields[0]=="kGray") color = kGray;
 		else if(fields[0]=="kRed") color = kRed;
