@@ -243,7 +243,8 @@ class KSystProcessor {
 			string sname = ssname.str();
 			return sname;
 		}
-		void DivideBound_impl(T* hist, unsigned b){
+		template <class B>
+		void DivideBound_impl(T* hist, B b){
 			//divide
 			double unc = 1.0;
 			double denom = nominal->GetBinContent(b);
@@ -257,7 +258,8 @@ class KSystProcessor {
 			//set
 			hist->SetBinContent(b,unc);
 		}
-		void MakeStat_impl(T* hist, Long64_t b, double& stat_yield){
+		template <class B>
+		void MakeStat_impl(T* hist, B b, double& stat_yield){
 			stat_yield += hist->GetBinError(b)+hist->GetBinContent(b);
 			//divide
 			hist->SetBinContent(b,
@@ -326,9 +328,10 @@ template<> void KSystProcessor<THnSparse>::DivideBound(THnSparse* hist, const st
 	//from THnBase::ProjectionAny()
 	THnIter iter{hist};
 	Long64_t b = 0;
-	while((b = iter.Next()) >= 0){
-		DivideBound_impl(hist,b);
-		Axis(hist)->SetBinLabel(b,binname.c_str());
+	vector<int> coords(hist->GetNdimensions(),-1);
+	while((b = iter.Next(coords.data())) >= 0){
+		DivideBound_impl(hist,coords.data());
+		Axis(hist)->SetBinLabel(coords.back(),binname.c_str());
 	}
 }
 
@@ -358,11 +361,12 @@ template<> THnSparse* KSystProcessor<THnSparse>::MakeStat(const string& sname, d
 	//from THnBase::ProjectionAny()
 	THnIter iter{hist};
 	Long64_t b = 0;
-	while((b = iter.Next()) >= 0){
-		MakeStat_impl(hist,b,stat_yield);
+	vector<int> coords(hist->GetNdimensions(),-1);
+	while((b = iter.Next(coords.data())) >= 0){
+		MakeStat_impl(hist,coords.data(),stat_yield);
 		string slabel = "signal_MCStatErr_";
 		slabel += Axis(hist)->GetBinLabel(b);
-		Axis(hist)->SetBinLabel(b,slabel.c_str());
+		Axis(hist)->SetBinLabel(coords.back(),slabel.c_str());
 	}
 	return hist;
 }
@@ -400,13 +404,16 @@ template<> void KSystProcessor<THnSparse>::MakeGenMHT(KMap<double>& pctDiffMap, 
 	double g_yield = 0;
 	
 	//modify nominal as average of nominal and genMHT & compute syst as difference
+	//not fully correct in sparse case (nominal may have different bins filled than gsyst)
+	//but it's redone in SCRA2BLE anyway
 	THnIter iter{gsyst};
 	Long64_t b = 0;
-	while((b = iter.Next()) >= 0){
-		gsyst->SetBinContent(b, 1.0+abs(nominal->GetBinContent(b) - genMHT->GetBinContent(b))/2.0);
-		Axis(gsyst)->SetBinLabel(b,"signal_MHTSyst");
-		nominal->SetBinContent(b, (nominal->GetBinContent(b) + genMHT->GetBinContent(b))/2.0);
-		g_yield += (gsyst->GetBinContent(b)-1.0)+nominal->GetBinContent(b);
+	vector<int> coords(gsyst->GetNdimensions(),-1);
+	while((b = iter.Next(coords.data())) >= 0){
+		gsyst->SetBinContent(coords.data(), 1.0+abs(nominal->GetBinContent(coords.data()) - genMHT->GetBinContent(coords.data()))/2.0);
+		Axis(gsyst)->SetBinLabel(coords.back(),"signal_MHTSyst");
+		nominal->SetBinContent(coords.data(), (nominal->GetBinContent(coords.data()) + genMHT->GetBinContent(coords.data()))/2.0);
+		g_yield += (gsyst->GetBinContent(coords.data())-1.0)+nominal->GetBinContent(coords.data());
 	}
 	
 	hsyst.push_back(gsyst);
