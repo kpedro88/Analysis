@@ -257,9 +257,9 @@ class KPlot{
 
 			//bin label options
 			bool abinlabel = localOpt->Get(axis+"binlabel",false);
-			if(abinlabel) localOpt->Set("binlabel"+to_string(nums.size()),true);
+			if(abinlabel) localOpt->Set("binlabel"+to_string(nums.size()-1),true);
 			vector<string> alabels;
-			if(localOpt->Get(axis+"labels",alabels)) localOpt->Set("labels"+to_string(nums.size()),alabels);
+			if(localOpt->Get(axis+"labels",alabels)) localOpt->Set("labels"+to_string(nums.size()-1),alabels);
 		}
 		virtual void LabelBins(string ax, int index){
 			string pre, suf;
