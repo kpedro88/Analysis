@@ -50,6 +50,7 @@ class THN {
 		virtual Bool_t Multiply (const THN *h1) { unimpl(__PRETTY_FUNCTION__); return false; }
 		virtual Bool_t Multiply (const THN *h1, const THN *h2, Double_t c1=1, Double_t c2=1, Option_t *option="") { unimpl(__PRETTY_FUNCTION__); return false; }
 
+		virtual const char* GetName() const { unimpl(__PRETTY_FUNCTION__); return ""; }
 		//changed return type
 		virtual THN * Clone (const char *newname="") { unimpl(__PRETTY_FUNCTION__); return nullptr; }
 		virtual void Draw (Option_t *option="") { unimpl(__PRETTY_FUNCTION__); }
@@ -155,6 +156,7 @@ class THNT<::TH1> : public THN {
 			return h->Multiply(h1->TH1(),h2->TH1(),c1,c2,option);
 		}
 
+		const char* GetName() const override { return h->GetName(); }
 		THN * Clone (const char *newname="") override { return new THNT<::TH1>((::TH1*)h->Clone(newname)); }
 		void Draw (Option_t *option="") override { h->Draw(option); }
 		Long64_t Fill(const vector<Double_t>& x, Double_t w=1.) override {
@@ -294,6 +296,7 @@ class THNT<::THnSparse> : public THN {
 			return true;
 		}
 
+		const char* GetName() const override { return h->GetName(); }
 		THN * Clone (const char *newname="") override { debug(__PRETTY_FUNCTION__); return new THNT<::THnSparse>((::THnSparse*)h->Clone(newname)); }
 		void Draw (Option_t *option="") override { debug(__PRETTY_FUNCTION__); h->Draw(option); }
 		Long64_t Fill(const vector<Double_t>& x, Double_t w=1.) override { debug(__PRETTY_FUNCTION__); return h->Fill(x.data(),w); }
