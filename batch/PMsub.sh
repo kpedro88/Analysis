@@ -22,9 +22,10 @@ SUFFIX=""
 YEARS=()
 DRYRUN=""
 MISSING=
+MATCH=
 
 #check arguments
-while getopts "kx:y:dm" opt; do
+while getopts "kx:y:dmM:" opt; do
 	case "$opt" in
 		k) CHECKARGS="${CHECKARGS} -k"
 		;;
@@ -35,6 +36,8 @@ while getopts "kx:y:dm" opt; do
 		d) DRYRUN="echo"
 		;;
 		m) MISSING=1
+		;;
+		M) MATCH="$OPTARG"
 		;;
 	esac
 done
@@ -67,15 +70,26 @@ for YEAR in ${YEARS[@]}; do
 	JOBNAME2=DC_ra2_${VERSION}_${REGION}_${TYPE}_${YEAR}
 
 	LFNSTORE2=$(echo $STORE2 | sed 's~root://cmseos.fnal.gov/~~')
-	NUMSAMP=
+	SLIST=${#SAMPLES[@]}
+	if [ -n "$MATCH" ]; then
+		SLIST=""
+	fi
 	for ((PROCESS=0; PROCESS < ${#SAMPLES[@]}; PROCESS++)); do
 		SAMPLE=${SAMPLES[$PROCESS]}
+
+		if [ -n "$MATCH" ]; then
+			if [[ "$SAMPLE" == *"$MATCH"* ]]; then
+				SLIST="$SLIST,$PROCESS"
+			else
+				continue
+			fi
+		fi
 
 		if [ -n "$MISSING" ]; then
 			if eos root://cmseos.fnal.gov ls $LFNSTORE2/RA2bin_proc_${SAMPLE}.root >& /dev/null; then
 				continue
 			else
-				NUMSAMP="$NUMSAMP,$PROCESS"
+				SLIST="$SLIST,$PROCESS"
 			fi
 		fi
 
@@ -83,15 +97,14 @@ for YEAR in ${YEARS[@]}; do
 		echo 'MakeAllDCsyst.C+("'$SAMPLE'","'${INDIR2}'",{"'${DCCONFIG}'"},{},"'${REGION}'","'${SYSTS}'","'${VARS}'",{},1)' > jobs/input/macro_${JOBNAME2}_part${PROCESS}.txt
 	done
 
-	if [ -z "$MISSING" ]; then
-		NUMSAMP=${#SAMPLES[@]}
-	else
-		if [ -z "$NUMSAMP" ]; then
+	if [ -n "$MATCH" ] || [ -n "$MISSING" ]; then
+		if [ -z "$SLIST" ]; then
 			echo "No missing jobs in ${YEAR}"
 			continue
-		else
-			NUMSAMP="Process in ${NUMSAMP:1}"
 		fi
+		# remove first char, prepend condor stuff
+		SLIST="Process in ${SLIST:1}"
 	fi
-	$DRYRUN ./PMtemp.sh ${JOBDIR} ${STORE1} ${STORE2} ${JOBNAME1} ${JOBNAME2} ${OUTDIR} "${NUMSAMP}"
+
+	$DRYRUN ./PMtemp.sh ${JOBDIR} ${STORE1} ${STORE2} ${JOBNAME1} ${JOBNAME2} ${OUTDIR} "${SLIST}"
 done
