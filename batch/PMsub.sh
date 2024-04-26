@@ -77,20 +77,25 @@ for YEAR in ${YEARS[@]}; do
 	for ((PROCESS=0; PROCESS < ${#SAMPLES[@]}; PROCESS++)); do
 		SAMPLE=${SAMPLES[$PROCESS]}
 
+		ADD=true
 		if [ -n "$MATCH" ]; then
 			if [[ "$SAMPLE" == *"$MATCH"* ]]; then
-				SLIST="$SLIST,$PROCESS"
+				ADD=true
 			else
-				continue
+				ADD=
 			fi
 		fi
 
-		if [ -n "$MISSING" ]; then
+		if [ -n "$MISSING" ] && [ -n "$ADD" ]; then
 			if eos root://cmseos.fnal.gov ls $LFNSTORE2/RA2bin_proc_${SAMPLE}.root >& /dev/null; then
-				continue
+				ADD=
 			else
-				SLIST="$SLIST,$PROCESS"
+				ADD=true
 			fi
+		fi
+
+		if [ -n "$ADD" ]; then
+			SLIST="$SLIST,$PROCESS"
 		fi
 
 		echo 'KSkimDriver.C+("'$SAMPLE'","'$SELS'","'$INDIR1'",{"'$INPUT'"},{'"$EXTRAS"'},"'$OUTDIR'")' > jobs/input/macro_${JOBNAME1}_part${PROCESS}.txt
@@ -104,6 +109,8 @@ for YEAR in ${YEARS[@]}; do
 		fi
 		# remove first char, prepend condor stuff
 		SLIST="Process in ${SLIST:1}"
+	else
+		SLIST=${#SAMPLES[@]}
 	fi
 
 	$DRYRUN ./PMtemp.sh ${JOBDIR} ${STORE1} ${STORE2} ${JOBNAME1} ${JOBNAME2} ${OUTDIR} "${SLIST}"
