@@ -116,7 +116,8 @@ template <class T>
 class KSystProcessor {
 	public:
 		//constructor that finds members from file
-		KSystProcessor(const string& setname_, const string& therootfile_, const ModeInfo& info_) : setname(setname_), therootfile(therootfile_), info(info_) {
+		KSystProcessor(const string& setname_, const string& therootfile_, const ModeInfo& info_, bool stop=false) : setname(setname_), therootfile(therootfile_), info(info_) {
+			if(stop) return;
 			TFile* infile = KOpen(therootfile_);
 			TKey *key;
 			TIter next(infile->GetListOfKeys());
@@ -130,7 +131,7 @@ class KSystProcessor {
 			}
 		}
 	
-		void process(){
+		virtual void process(){
 			//todo: factorize the operations below
 			
 			//setup systematics analysis tree (to study changes in yield)
@@ -540,10 +541,7 @@ void MakeAllDCsyst(string setname="", string indir="root://cmseos.fnal.gov//stor
 		KSystProcessor<TH1F> proc(setname,therootfile,info);
 		proc.process();
 	}
-	else if(info.mode==Mode::RA2pmssm){
-		KSystProcessor<THnSparse> proc(setname,therootfile,info);
-		proc.process();
-	}
+	//skip RA2pmssm here: has to be done after hadd
 	else if(info.mode==Mode::SVJsig or info.mode==Mode::SVJscan){
 		KSystProcessor<TH2F> proc(setname,therootfile,info);
 		proc.process();

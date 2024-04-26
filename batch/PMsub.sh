@@ -18,18 +18,15 @@ INDIR1=root://cmseos.fnal.gov//store/user/lpcpmssm/${RUN2PRODV}
 INDIR2=.
 DCCONFIG=input/input_DC_config_RA2pmssm.txt
 CHECKARGS=""
-SUFFIX=""
 YEARS=()
 DRYRUN=""
 MISSING=
 MATCH=
 
 #check arguments
-while getopts "kx:y:dmM:" opt; do
+while getopts "ky:dmM:" opt; do
 	case "$opt" in
 		k) CHECKARGS="${CHECKARGS} -k"
-		;;
-		x) SUFFIX=$OPTARG
 		;;
 		y) IFS="," read -a YEARS <<< "$OPTARG"
 		;;

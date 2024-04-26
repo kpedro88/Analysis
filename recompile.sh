@@ -16,6 +16,7 @@ KSkimDriver \
 KScanDriver \
 KPlotDriver \
 MakeAllDCsyst \
+MakeAllDCproc \
 KCutflowDriver \
 )
 
