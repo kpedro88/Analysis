@@ -366,7 +366,7 @@ template<> THnSparse* KSystProcessor<THnSparse>::MakeStat(const string& sname, d
 	while((b = iter.Next(coords.data())) >= 0){
 		MakeStat_impl(hist,coords.data(),stat_yield);
 		string slabel = "signal_MCStatErr_";
-		slabel += Axis(hist)->GetBinLabel(b);
+		slabel += Axis(hist)->GetBinLabel(coords.back());
 		Axis(hist)->SetBinLabel(coords.back(),slabel.c_str());
 	}
 	return hist;
