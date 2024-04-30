@@ -34,6 +34,9 @@ class KSystProcessorPMSSM : public KSystProcessor<T> {
 					ssyst->Write();
 					delete ssyst;
 				}
+				else if(ntmp.find("SLe")!=string::npos or ntmp.find("SLm")!=string::npos) { //keep same order as below
+					continue;
+				}
 				else if(ntmp.find("genMHT")!=string::npos) { //handled later
 					if(verbose) cout << ntmp << endl;
 					this->genMHT = htmp;
@@ -48,14 +51,14 @@ class KSystProcessorPMSSM : public KSystProcessor<T> {
 				if(ntmp.find("nominal")!=string::npos){
 					continue;
 				}
-				else if(ntmp.find("genMHT")!=string::npos){
-					continue;
-				}
 				else if(ntmp.find("SLe")!=string::npos or ntmp.find("SLm")!=string::npos) { //contams
 					if(verbose) cout << ntmp << endl;
 					outfile->cd();
 					htmp->Write();
 					delete htmp;
+				}
+				else if(ntmp.find("genMHT")!=string::npos){
+					continue;
 				}
 				else { //systematics
 					if(verbose) cout << ntmp << endl;
