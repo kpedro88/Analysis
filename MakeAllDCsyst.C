@@ -359,15 +359,19 @@ template<> TH2F* KSystProcessor<TH2F>::MakeStat(const string& sname, double& sta
 }
 template<> THnSparse* KSystProcessor<THnSparse>::MakeStat(const string& sname, double& stat_yield){
 	THnSparse* hist = (THnSparse*)nominal->Clone(sname.c_str());
+	//update bin labels first (short loop)
+	TAxis* axis = Axis(hist);
+	for(int b = 1; b <= axis->GetNbins(); ++b){
+		string slabel = "signal_MCStatErr_";
+		slabel += axis->GetBinLabel(b);
+		axis->SetBinLabel(b,slabel.c_str());
+	}
 	//from THnBase::ProjectionAny()
 	THnIter iter{hist};
 	Long64_t b = 0;
 	vector<int> coords(hist->GetNdimensions(),-1);
 	while((b = iter.Next(coords.data())) >= 0){
 		MakeStat_impl(hist,coords.data(),stat_yield);
-		string slabel = "signal_MCStatErr_";
-		slabel += Axis(hist)->GetBinLabel(coords.back());
-		Axis(hist)->SetBinLabel(coords.back(),slabel.c_str());
 	}
 	return hist;
 }
