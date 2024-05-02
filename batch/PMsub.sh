@@ -68,7 +68,7 @@ for YEAR in ${YEARS[@]}; do
 
 	LFNSTORE2=$(echo $STORE2 | sed 's~root://cmseos.fnal.gov/~~')
 	SLIST=${#SAMPLES[@]}
-	if [ -n "$MATCH" ]; then
+	if [ -n "$MATCH" ] || [ -n "$MISSING" ]; then
 		SLIST=""
 	fi
 	for ((PROCESS=0; PROCESS < ${#SAMPLES[@]}; PROCESS++)); do
@@ -84,7 +84,7 @@ for YEAR in ${YEARS[@]}; do
 		fi
 
 		if [ -n "$MISSING" ] && [ -n "$ADD" ]; then
-			if eos root://cmseos.fnal.gov ls $LFNSTORE2/RA2bin_proc_${SAMPLE}.root >& /dev/null; then
+			if eos root://cmseos.fnal.gov ls $LFNSTORE2/RA2bin_signal_${SAMPLE}.root >& /dev/null; then
 				ADD=
 			else
 				ADD=true
