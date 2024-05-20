@@ -1,0 +1,4 @@
+input:input[input/input_complim_general_dijet_new_svj_monojet_2d.txt]
+string:ytitle[m_{dark} [GeV]]
+double:ymax[100]
+double:ymin[1]
