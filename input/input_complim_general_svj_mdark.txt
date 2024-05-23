@@ -1,4 +1,5 @@
 input:input[input/input_complim_general_dijet_new_svj_monojet_2d.txt]
+vstring{|}:extra_text[95% CL upper limits|^{}r_{inv} = 0.3, ^{}#alpha_{dark} = ^{}#alpha_{dark}^{peak}]
 string:ytitle[m_{dark} [GeV]]
 double:ymax[100]
 double:ymin[1]
