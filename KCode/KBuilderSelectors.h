@@ -638,6 +638,7 @@ class KMCWeightSelector : public KSelector {
 		void GetProj(){
 			pair<double,double> idtmp{looper->SignalParameters->at(0), looper->SignalParameters->at(1)};
 			if(idtmp!=currid) {
+				if(debugWeight) cout << "pmssm id: " << idtmp.first << ", " << idtmp.second << endl;
 				CleanProj();
 				if(nEventHist) {
 					TH1* nEventHistTmp = KMath::ProjectTHN(nEventHist, idtmp);
@@ -895,9 +896,11 @@ class KMCWeightSelector : public KSelector {
 			}
 			
 			//now do scaling: norm*xsection/nevents
+			if(debugWeight) cout << "useTreeWeight = " << useTreeWeight << ", fastsim = " << fastsim << ", got_nEventProc = " << got_nEventProc << ", nEventProc = " << nEventProc << ", got_xsection = " << got_xsection << ", useTreeXsec = " << useTreeXsec;
 			if(useTreeWeight && !fastsim) {
 				w *= looper->Weight;
 
+				if(debugWeight) cout << "; case 1" << endl;
 				if(debugWeight) debugWeightMsg("TreeWeight",w);
 			}
 			else if(got_nEventProc && nEventProc>0 && (got_xsection or useTreeXsec)){
@@ -908,6 +911,7 @@ class KMCWeightSelector : public KSelector {
 				if(looper->Weight<0) w *= -1;
 
 				//debugging
+				if(debugWeight) cout << "; case 2" << endl;
 				if(debugWeight){
 					debugWeightMsg("xsec/nEventProc",w);
 					int oldprec = cout.precision(20);
@@ -916,6 +920,10 @@ class KMCWeightSelector : public KSelector {
 					cout.precision(oldprec);
 				}
 			}
+			else {
+				if(debugWeight) cout << "; case 3" << endl;
+			}
+
 			if(useKFactor) {
 				w *= kfactor;
 
