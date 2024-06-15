@@ -57,7 +57,7 @@ class KSkimmer : public KLooper {
 			if(!options.empty()) KParser::processOption("in:input["+options+"]", nEventOpt);
 			nEventOpt->Set<int>("xnum",1);
 			nEventOpt->Set<double>("xmin",0);
-			nEventOpt->Set<double>("xmax",0);
+			nEventOpt->Set<double>("xmax",1);
 			nEventOpt->Set<vector<string>>("extend",{"x"});
 			nEventOpt->Set<vector<string>>("vars",{"id1","id2",var});
 			return nEventOpt;
