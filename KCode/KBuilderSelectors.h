@@ -87,6 +87,18 @@ class KMCWeightSelector : public KSelector {
 			fastsim = base->GetLocalOpt()->Get("fastsim",false);
 			pmssm = base->GetLocalOpt()->Get("pmssm",false);
 			if(pmssm) currid = {-1,-1};
+			string xsec_filename; base->GetGlobalOpt()->Get("xsec_file",xsec_filename);
+			string xsec_treename; base->GetGlobalOpt()->Get("xsec_tree",xsec_treename);
+			string xsec_branchname; base->GetGlobalOpt()->Get("xsec_branch",xsec_branchname);
+			if(!xsec_filename.empty() and !xsec_treename.empty() and !xsec_branchname.empty()){
+				xsec_file = KOpen(xsec_filename);
+				xsec_tree = KGet<TTree>(xsec_file,xsec_treename);
+				xsec_tree->SetBranchAddress(xsec_branchname.c_str(),&xsection);
+			}
+			else {
+				xsec_file = NULL;
+				xsec_tree = NULL;
+			}
 
 			//special fastsim weight for pMSSM
 			vector<string> fscorrlist; localOpt->Get("fscorrlist",fscorrlist);
@@ -662,6 +674,10 @@ class KMCWeightSelector : public KSelector {
 					btag->h_eff_udsg = (TH2F*)btageffstmp[4]->Clone("h_eff_udsg");
 					btag->h_eff_udsg->Divide(btageffstmp[5]);
 				}
+				if(xsec_tree){
+					xsec_tree->GetEntryWithIndex(idtmp.first,idtmp.second);
+					got_xsection = true;
+				}
 				currid = idtmp;
 			}
 		}
@@ -991,6 +1007,8 @@ class KMCWeightSelector : public KSelector {
 		TH1 *isrweights;
 		vector<double> pdfnorms, pdfallnorms;
 		int nEventProc;
+		TFile* xsec_file;
+		TTree* xsec_tree;
 		bool pmssm;
 		pair<double,double> currid;
 		THN *nEventHist, *isrnorm;
