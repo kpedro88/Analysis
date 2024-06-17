@@ -89,11 +89,14 @@ class KMCWeightSelector : public KSelector {
 			if(pmssm) currid = {-1,-1};
 			string xsec_filename; base->GetGlobalOpt()->Get("xsec_file",xsec_filename);
 			string xsec_treename; base->GetGlobalOpt()->Get("xsec_tree",xsec_treename);
-			string xsec_branchname; base->GetGlobalOpt()->Get("xsec_branch",xsec_branchname);
-			if(!xsec_filename.empty() and !xsec_treename.empty() and !xsec_branchname.empty()){
+			vector<string> xsec_branchnames; base->GetGlobalOpt()->Get("xsec_branches",xsec_branchnames);
+			if(!xsec_filename.empty() and !xsec_treename.empty() and !xsec_branchnames.empty()){
 				xsec_file = KOpen(xsec_filename);
 				xsec_tree = KGet<TTree>(xsec_file,xsec_treename);
-				xsec_tree->SetBranchAddress(xsec_branchname.c_str(),&xsection);
+				xsec_branches = vector<double>(xsec_branchnames.size());
+				for(int i = 0; i < xsec_branches.size(); ++i){
+					xsec_tree->SetBranchAddress(xsec_branchnames[i].c_str(),&xsec_branches[i]);
+				}
 			}
 			else {
 				xsec_file = NULL;
@@ -676,6 +679,13 @@ class KMCWeightSelector : public KSelector {
 				}
 				if(xsec_tree){
 					xsec_tree->GetEntryWithIndex(idtmp.first,idtmp.second);
+					xsection = 1;
+					if(debugWeight) cout << "pmssm xsec: 1 ";
+					for(auto xsec_branch : xsec_branches){
+						if(debugWeight) cout << " * " << xsec_branch;
+						xsection *= xsec_branch;
+					}
+					if(debugWeight) cout << " = " << xsection << endl;
 					got_xsection = true;
 				}
 				currid = idtmp;
@@ -1009,6 +1019,7 @@ class KMCWeightSelector : public KSelector {
 		int nEventProc;
 		TFile* xsec_file;
 		TTree* xsec_tree;
+		vector<double> xsec_branches;
 		bool pmssm;
 		pair<double,double> currid;
 		THN *nEventHist, *isrnorm;

@@ -16,7 +16,7 @@ bool:closefiles[1]
 vstring:fetch_histos[nEventProc,nEventNeg,NJetsISR,n_eff_b,d_eff_b,n_eff_c,d_eff_c,n_eff_udsg,d_eff_udsg]
 string:xsec_file[TheNewestAndMostExcitingMinTree.root]
 string:xsec_tree[mcmc]
-string:xsec_branch[xsec_tot_pb]
+vstring:xsec_branches[xsec_tot_pb,filter_eff]
 
 HISTOND
 id1_id2_RA2bin	in:input[input/input_pmssm_bins.txt]	vs:extend[x]	i:xnum[174]	d:xmin[0.5]	d:xmax[174.5]	s:xtitle[RA2 bin [^{}n_{j},^{}n_{b},^{}H_{T}^{miss},^{}H_{T}]]	b:ratio[0]	b:xbinlabel[1]
