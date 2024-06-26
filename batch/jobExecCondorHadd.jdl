@@ -1,6 +1,7 @@
 universe = vanilla
 Executable = ../jobExecCondorHadd.sh
 +REQUIRED_OS = "rhel7"
++DesiredOS = REQUIRED_OS
 request_disk = 10000000
 request_memory = 3100
 Should_Transfer_Files = YES

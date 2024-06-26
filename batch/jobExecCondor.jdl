@@ -1,6 +1,7 @@
 universe = vanilla
 Executable = ../jobExecCondor.sh
 +REQUIRED_OS = "rhel7"
++DesiredOS = REQUIRED_OS
 request_disk = 1000000
 request_memory = 2000
 Should_Transfer_Files = YES
