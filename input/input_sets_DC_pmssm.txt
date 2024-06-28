@@ -1,4 +1,5 @@
 INPUT
+input/input_sets_DC_pmssm_2016.txt
 input/input_sets_DC_pmssm_2017.txt
 input/input_sets_DC_pmssm_2018.txt
 input/input_sets_DC_pmssm_2018HEM.txt
