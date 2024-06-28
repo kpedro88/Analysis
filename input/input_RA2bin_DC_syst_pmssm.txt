@@ -14,7 +14,7 @@ int:yieldprecision[8]
 vstring:disable_branches[*]
 bool:closefiles[1]
 vstring:fetch_histos[nEventProc,nEventNeg,NJetsISR,n_eff_b,d_eff_b,n_eff_c,d_eff_c,n_eff_udsg,d_eff_udsg]
-string:xsec_file[TheNewestAndMostExcitingMinTree.root]
+string:xsec_file[root://cmseos.fnal.gov//store/user/lpcpmssm/TheNewestAndMostExcitingMinTree.root]
 string:xsec_tree[mcmc]
 vstring:xsec_branches[xsec_tot_pb,filter_eff]
 
