@@ -7,10 +7,10 @@ JOBNAME1="$4"
 JOBNAME2="$5"
 OUTDIR="$6"
 NUMSAMP="$7"
-REQMEM=4000
+REQMEM=6000
 if [[ "$NUMSAMP" == *","* ]]; then
 	# detect missing mode
-	REQMEM=6000
+	REQMEM=8000
 fi
 
 JDLNAME=jobExecCondor_${JOBNAME2}.jdl
