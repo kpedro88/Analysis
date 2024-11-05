@@ -271,6 +271,35 @@ string erase(string input, const vector<string>& patterns){
 	return input;
 }
 
+template <class T>
+string smart_to_string(T v){
+	if (v==T(0)) return "0";
+
+	//implements "g" formatting
+	int prec = 6;
+	int expo = floor(log10(v));
+
+	stringstream ss;
+	if ((prec > expo) and (expo >= -4)) ss << fixed << setprecision(prec - 1 - expo);
+	else ss << scientific << setprecision(prec - 1);
+	ss << v;
+
+	string str = ss.str();
+	//remove trailing zeroes
+	if (str.find('.') != string::npos){
+		str = str.substr(0, str.find_last_not_of('0')+1);
+		if (str.find('.') == str.size()-1){
+			str = str.substr(0, str.size()-1);
+		}
+	}
+	return str;
+}
+
+template <class In, class Out>
+void to_string(const In& vec_in, Out& vec_out){
+	std::transform(vec_in.begin(), vec_in.end(), std::back_inserter(vec_out), [](auto d){ return smart_to_string(d); });
+}
+
 //usage:
 //root -l 'plotLimit.C+("svj1",{{"mZprime",-1},{"mDark",20},{"rinv",0.3},{"alpha",0.2}},{"i:nsigma[2]"})'
 void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> options={}){
@@ -319,6 +348,8 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 	double ushiftLeg = 0; globalOpt->Get("ushiftLeg",ushiftLeg);
 	double vshiftLeg = 0; globalOpt->Get("vshiftLeg",vshiftLeg);
 	int np2d = 40; globalOpt->Get("np2d",np2d); //40 is ROOT default
+	bool labelx = globalOpt->Get("labelx",false);
+	bool labely = globalOpt->Get("labely",false);
 	Color_t expcolor = kRed; globalOpt->Get("expcolor",expcolor);
 	Color_t obscolor = kBlack; globalOpt->Get("obscolor",obscolor);
 
@@ -516,6 +547,12 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 				localOpt->Set<vector<string>>("xlabels",label);
 			}
 		}
+		else if (labelx){
+			localOpt->Set<bool>("xbinlabel",true);
+			vector<string> labels_tmp;
+			to_string(xvals, labels_tmp);
+			localOpt->Set<vector<string>>("xlabels", labels_tmp);
+		}
 
 		//make plot
 		stringstream soname;
@@ -666,9 +703,9 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 			else gtmp = new TGraph2D(lim_cen.v1.size(),lim_cen.v1.data(),lim_cen.v2.data(),lim_cen.S.data());
 		}
 		//control number of bins for labeled axes
-		if(labels.Has(var1)) ((KGraph2D*)gtmp)->SetNpx(xvals.size());
+		if(labels.Has(var1) or labelx) ((KGraph2D*)gtmp)->SetNpx(xvals.size());
 		else ((KGraph2D*)gtmp)->SetNpx(np2d);
-		if(labels.Has(var2)) ((KGraph2D*)gtmp)->SetNpy(yvals.size());
+		if(labels.Has(var2) or labely) ((KGraph2D*)gtmp)->SetNpy(yvals.size());
 		else ((KGraph2D*)gtmp)->SetNpy(np2d);
 		auto h2d = (TH2F*)(gtmp->GetHistogram()->Clone());
 		//convert back to normal scale
@@ -725,12 +762,24 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 				localOpt->Set<vector<string>>("xlabels",label);
 			}
 		}
+		else if (labelx){
+			localOpt->Set<bool>("xbinlabel",true);
+			vector<string> labels_tmp;
+			to_string(xvals, labels_tmp);
+			localOpt->Set<vector<string>>("xlabels", labels_tmp);
+		}
 		if (labels.Has(var2)){
 			const auto& label = labels.Get(var2);
 			if (label.size()==yvals.size()){
 				localOpt->Set<bool>("ybinlabel",true);
 				localOpt->Set<vector<string>>("ylabels",label);
 			}
+		}
+		else if (labely){
+			localOpt->Set<bool>("ybinlabel",true);
+			vector<string> labels_tmp;
+			to_string(yvals, labels_tmp);
+			localOpt->Set<vector<string>>("ylabels", labels_tmp);
 		}
 
 		//make plot
