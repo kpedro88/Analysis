@@ -7,7 +7,7 @@ bool:ratioline[0]
 bool:ratioleg[0]
 string+:printsuffix[_toy_fit]
 double:luminorm[137200]
-double:NdivYratio[505]
+int:NdivYratio[505]
 vstring:chosensets[SVJ_2100_20_0.3_peak,SVJ_3100_20_0.3_peak,SVJ_4100_20_0.3_peak]
 vstring:numers[SVJ_2100_20_0.3_peak,SVJ_3100_20_0.3_peak,SVJ_4100_20_0.3_peak]
 

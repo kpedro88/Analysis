@@ -552,7 +552,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 			vector<string> labels_tmp;
 			to_string(xvals, labels_tmp);
 			localOpt->Set<vector<string>>("xlabels", labels_tmp);
-			localOpt->Set<bool>("xnoalpha",false);
+			plotOpt->Set<int>("NdivX",-1*int(xvals.size()));
 		}
 
 		//make plot
@@ -768,7 +768,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 			vector<string> labels_tmp;
 			to_string(xvals, labels_tmp);
 			localOpt->Set<vector<string>>("xlabels", labels_tmp);
-			localOpt->Set<bool>("xnoalpha",false);
+			plotOpt->Set<int>("NdivX",-1*int(xvals.size()));
 		}
 		if (labels.Has(var2)){
 			const auto& label = labels.Get(var2);
@@ -782,7 +782,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 			vector<string> labels_tmp;
 			to_string(yvals, labels_tmp);
 			localOpt->Set<vector<string>>("ylabels", labels_tmp);
-			localOpt->Set<bool>("ynoalpha",false);
+			plotOpt->Set<int>("NdivYhisto",-1*int(yvals.size()));
 		}
 
 		//make plot

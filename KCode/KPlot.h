@@ -696,7 +696,7 @@ class KPlot{
 		double canvasW, canvasH, canvasWextra, canvasHextra, ratioH;
 		double marginL, marginR, marginB, marginT, marginM1, marginM2, marginPal;
 		double sizeT, sizeL, sizeP, sizePprelim, sizePlumi, sizeTick, sizeLoff, epsilon, sizeArrow, sizeArrowhead;
-		double NdivX, NdivYhisto, NdivYratio;
+		int NdivX, NdivYhisto, NdivYratio;
 		double pad1size, pad1W, pad1H, pad2size, pad2W, pad2H;
 		double ratiomin, ratiomax;
 		bool ratiology;
