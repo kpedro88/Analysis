@@ -552,7 +552,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 			vector<string> labels_tmp;
 			to_string(xvals, labels_tmp);
 			localOpt->Set<vector<string>>("xlabels", labels_tmp);
-			localOpt->Set("xnoalpha",false);
+			localOpt->Set<bool>("xnoalpha",false);
 		}
 
 		//make plot
@@ -768,7 +768,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 			vector<string> labels_tmp;
 			to_string(xvals, labels_tmp);
 			localOpt->Set<vector<string>>("xlabels", labels_tmp);
-			localOpt->Set("xnoalpha",false);
+			localOpt->Set<bool>("xnoalpha",false);
 		}
 		if (labels.Has(var2)){
 			const auto& label = labels.Get(var2);
@@ -782,7 +782,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 			vector<string> labels_tmp;
 			to_string(yvals, labels_tmp);
 			localOpt->Set<vector<string>>("ylabels", labels_tmp);
-			localOpt->Set("ynoalpha",false);
+			localOpt->Set<bool>("ynoalpha",false);
 		}
 
 		//make plot
@@ -880,7 +880,7 @@ void plotLimit(string sname, vector<pair<string,double>> vars, vector<string> op
 		//save objects
 		auto outfile = TFile::Open((plot->GetName()+".root").c_str(),"RECREATE");
 		outfile->cd();
-		hbase->Write();
+		hbase->Write("hbase");
 		h2d->Write();
 		//write contours w/ unique names
 		if(do_contour){
