@@ -187,7 +187,7 @@ class KPlot{
 					for(unsigned b = 0; b < labels.size(); b++){
 						histo->GetXaxis()->SetBinLabel(b+1,labels[b].c_str());
 					}
-					histo->GetXaxis()->SetNoAlphanumeric(); //todo: make optional?
+					if(localOpt->Get("xnoalpha",true)) histo->GetXaxis()->SetNoAlphanumeric();
 				}
 			}
 			string xtitle, ytitle;
@@ -822,7 +822,7 @@ class KPlot2D: public KPlot {
 					for(unsigned b = 0; b < labels.size(); b++){
 						histo->GetXaxis()->SetBinLabel(b+1,labels[b].c_str());
 					}
-					histo->GetXaxis()->SetNoAlphanumeric(); //todo: make optional?
+					if(localOpt->Get("xnoalpha",true)) histo->GetXaxis()->SetNoAlphanumeric();
 				}
 			}
 			if(localOpt->Get("ybinlabel",false)){
@@ -834,7 +834,7 @@ class KPlot2D: public KPlot {
 					for(unsigned b = 0; b < labels.size(); b++){
 						histo->GetYaxis()->SetBinLabel(b+1,labels[b].c_str());
 					}
-					histo->GetYaxis()->SetNoAlphanumeric(); //todo: make optional?
+					if(localOpt->Get("ynoalpha",true)) histo->GetYaxis()->SetNoAlphanumeric();
 				}
 			}
 
