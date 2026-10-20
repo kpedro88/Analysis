@@ -1,0 +1,42 @@
+#three sections: global options in OPTION, 1D histograms in HISTO, 2D histograms in HISTO2D, datasets in SET
+#option format is: type:name[val] or vtype:name[val1,val2,...]
+#available types are (full/abbrev): bool/b, int/i, double/d, string/s, color/c
+#items on each line in the HISTO, HISTO2D, and SET sections must be tab-separated, with required items first, in order
+#HISTO/HISTO2D: only required item is name (but without binning options afterward, it won't build properly)
+#SET: required items are type (stack, hist, base), subtype (data, mc, ext), name
+#for datasets, child-parent relationships are indicated by tab-indentation
+
+#root -l 'KPlotDriver.C+(".",{"input/input_pileupcomp_2425.txt"},{},1)'
+
+INPUT
+input/input_global.txt
+
+OPTION
+double:sizeLeg[26]
+double:sizeSymb[25]
+vstring:printformat[png]
+string:lumi_text[(13.6 TeV)]
+bool:printyield[1]
+int:yieldprecision[2]
+bool:plotoverflow[1]
+vstring:disable_branches[*]
+int:npanel[1]
+bool:treesuffix[0]
+string:printsuffix[pileupcomp2425]
+double:ymin[1e-1]
+vstring:denoms[2024]
+vstring:numers[2025]
+double:ratiomin[2e-1]
+double:ratiomax[20]
+string:rationame[2025/2024]
+bool:ratiology[1]
+bool:appendsel[0]
+
+HISTO
+numint	i:xnum[100]	d:xmin[0]	d:xmax[100]	s:xtitle[number of interactions]	s:ytitle[PU weight]
+
+SET
+hist	mc	2024	c:color[kBlue]
+	base	ext	data	s:extfilename[corrections/PileupHistograms2024.root]	vs:exthisto_in[pu_weights_central]	vs:exthisto_out[numint]
+hist	mc	2025	c:color[kRed]
+	base	ext	data	s:extfilename[corrections/PileupHistograms2025.root]	vs:exthisto_in[pu_weights_central]	vs:exthisto_out[numint]
