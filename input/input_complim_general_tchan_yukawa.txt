@@ -1,0 +1,8 @@
+input:input[input/input_complim_general_dijet_new_svj_monojet_2d.txt]
+vstring{|}:extra_text[95% CL upper limits|^{}m_{dark} = 20 GeV, ^{}r_{inv} = 0.3]
+string:ytitle[#lambda]
+double:ymax[3.5]
+double:ymin[0.5]
+string:xtitle[m_{#Phi} [GeV]]
+vdouble:xvals[500,4000]
+string:dir[test/tchan]

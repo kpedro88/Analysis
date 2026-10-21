@@ -1,0 +1,4 @@
+WNAE	s:legname[Unsupervised]	c:color[kBlue]	i:linestyle[1]	i:linewidth[-303]	i:fillstyle[3004]	s:drawopt[c]	i:panel[1]	s:extfilename[test/tchan/HEPData-1792559636-v1-Figure_8c_exclusion_contours.root]	s:extgraph[Observed]	b:obs[1]
+WNAEexp	s:legname[EXO-24-010]	c:color[kBlue]	i:linestyle[7]	i:linewidth[2]	s:drawopt[c]	b:skiplegend[1]	i:panel[1]	s:extfilename[test/tchan/HEPData-1792559636-v1-Figure_8c_exclusion_contours.root]	s:extgraph[Expected]
+PNET	s:legname[Supervised]	c:color[kRed]	i:linestyle[1]	i:linewidth[-303]	i:fillstyle[3004]	s:drawopt[c]	i:panel[1]	s:extfilename[test/tchan/HEPData-1792559636-v1-Figure_7c_exclusion_contours.root]	s:extgraph[Observed]	b:obs[1]
+PNETexp	s:legname[EXO-24-010]	c:color[kRed]	i:linestyle[7]	i:linewidth[2]	s:drawopt[c]	b:skiplegend[1]	i:panel[1]	s:extfilename[test/tchan/HEPData-1792559636-v1-Figure_7c_exclusion_contours.root]	s:extgraph[Expected]
